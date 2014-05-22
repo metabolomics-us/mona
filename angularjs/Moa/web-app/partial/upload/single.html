@@ -1,0 +1,16 @@
+<div>
+    <div class="container">
+
+        <div ng-value="error"></div>
+
+        <label for="spectra">Please paste the content of your spectra here</label>
+        <textarea id="spectra" ng-model="spectra.content">
+
+        </textarea>
+
+        <label for="inchiKey">Please enter the related InChI Key</label>
+        <input id="inchiKey" ng-model="spectra.compound"/>
+
+        <button ng-click="addSpectra()">Add a new spectra</button>
+    </div>
+</div>

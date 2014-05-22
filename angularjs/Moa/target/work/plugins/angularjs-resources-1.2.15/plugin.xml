@@ -1,0 +1,26 @@
+<plugin name='angularjs-resources' version='1.2.15' grailsVersion='2.2 &gt; *'>
+  <author>Sandro Martini, originally developed by Vladimír Oraný</author>
+  <authorEmail>sandro.martini@gmail.com</authorEmail>
+  <title>AngularJS Resources Plugin</title>
+  <description>Angular JS resources plugin</description>
+  <documentation>http://smartiniongithub.github.com/grails-angularjs-resources/</documentation>
+  <type>AngularjsResourcesGrailsPlugin</type>
+  <resources>
+    <resource>AngularjsResourcesConfig</resource>
+    <resource>AngularjsResourcesPluginResources</resource>
+    <resource>AngularjsResourcesUrlMappings</resource>
+    <resource>angularjs.Nge2eController</resource>
+  </resources>
+  <repositories>
+    <repository name='grailsCentral' url='http://grails.org/plugins' />
+    <repository name='mavenCentral' url='http://repo1.maven.org/maven2/' />
+  </repositories>
+  <dependencies />
+  <plugins>
+    <runtime>
+      <plugin group='org.grails.plugins' name='resources' version='1.2.7' />
+    </runtime>
+  </plugins>
+  <runtimePluginRequirements />
+  <behavior />
+</plugin>

@@ -1,0 +1,4 @@
+/*
+*= require font-awesome
+*= require${org.codehaus.groovy.grails.commons.ApplicationHolder.application.config.grails.plugins.fontawesomeresources.includeIe7 ? ' font-awesome-ie7' : '_self'}
+*/
