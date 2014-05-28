@@ -5,5 +5,7 @@ class UrlMappings {
         "/rest/submitters"(resources: 'Submitter')
 
         "/"(view: "/index")
+
+        "/rest/util/converter/molToInchi"(controller: "molConverter", action: "moltoinchi")
     }
 }

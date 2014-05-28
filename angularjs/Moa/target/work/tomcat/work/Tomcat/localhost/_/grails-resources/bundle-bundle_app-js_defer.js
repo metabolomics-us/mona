@@ -1,7 +1,11 @@
 /**
  * Main application file
  */
-var massspecsOfAmerica = angular.module('massspecsOfAmerica', ['ngRoute', 'ngResource','ui.bootstrap']);
+var massspecsOfAmerica = angular.module('massspecsOfAmerica', [
+    'ngRoute',
+    'ngResource',
+    'ui.bootstrap'
+]);
 
 /**
  * Defines all our routes in this application
@@ -14,7 +18,7 @@ massspecsOfAmerica.config(['$routeProvider',
                 controller: 'SubmitterController'
             }
         ).
-            when('/upload/single', {
+            when('/upload', {
                 templateUrl: 'partial/upload/single.html',
                 controller: 'SpectraController'
             }
@@ -39,15 +43,36 @@ massspecsOfAmerica.factory("Submitter", function ($resource) {
         {id: "@id"},
         {
             'update': {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                method: 'PUT'
+
             }
         }
     )
 });
 
+/**
+ * does an http ajax call to the server and tries to provide us with a valid inchi key for the given mol file
+ */
+massspecsOfAmerica.service("MolConverter", function ($http) {
+
+    /**
+     * converts the molecule to an inchi code
+     * @param molecule
+     * @returns {IHttpPromise<T>}
+     */
+    this.convertToInchiKey = function (molecule) {
+        return $http({
+                method: 'POST',
+                url: '/rest/util/converter/molToInchi',
+                data: {mol: molecule}
+            }
+        ).success(function (data, status, headers, config) {
+                alert(data);
+            }).
+            error(function (data, status, headers, config) {
+            });
+    }
+});
 /**
  * these are all our controllers
  */
@@ -248,9 +273,128 @@ controllers.SubmitterModalController = function ($scope, Submitter, $modalInstan
  * handles all interactions with spectra
  * @constructor
  */
-controllers.SpectraController = function ($scope) {
+controllers.SpectraController = function ($scope, $modal) {
 
+    /**
+     * initializes our spectra upload dialog
+     */
+    $scope.uploadSpectraDialog = function () {
+        var modalInstance = $modal.open({
+            templateUrl: '/partial/upload/dialog/wizard.html',
+            controller: controllers.SpectraWizardController,
+            size: 'lg',
+            backdrop: 'static',
+            resolve: {
+
+            }
+        });
+
+        //retrieve the result from the dialog and save it
+        modalInstance.result.then(function (spectra) {
+        });
+    }
 };
+
+/**
+ * wizard to upload spectra
+ * @param $scope
+ * @constructor
+ */
+controllers.SpectraWizardController = function ($scope, $modalInstance, $window,MolConverter,$http) {
+
+    /**
+     * definition of all our steps
+     * @type {string[]}
+     */
+    $scope.steps = ['spectra', 'inchi', 'name', 'meta'];
+
+    $scope.step = 0;
+
+    $scope.spectra = {inchi:""};
+
+    /**
+     * is this our current step
+     * @param step
+     * @returns {boolean}
+     */
+    $scope.isCurrentStep = function (step) {
+        return $scope.step === step;
+    };
+
+    /**
+     * set the current step
+     * @param step
+     */
+    $scope.setCurrentStep = function (step) {
+        $scope.step = step;
+    };
+
+    /**
+     * the current step of the wizard
+     * @returns {*}
+     */
+    $scope.getCurrentStep = function () {
+        return $scope.steps[$scope.step];
+    };
+
+    /**
+     * are we on the first step
+     * @returns {boolean}
+     */
+    $scope.isFirstStep = function () {
+        return $scope.step === 0;
+    };
+
+    /**
+     * are we on the last step
+     * @returns {boolean}
+     */
+    $scope.isLastStep = function () {
+        return $scope.step === ($scope.steps.length - 1);
+    };
+
+    /**
+     * returns the label of the current step
+     * @returns {string}
+     */
+    $scope.getNextLabel = function () {
+        return ($scope.isLastStep()) ? 'Submit' : 'Next';
+    };
+
+    /**
+     * previous step
+     */
+    $scope.handlePrevious = function () {
+        $scope.step -= ($scope.isFirstStep()) ? 0 : 1;
+    };
+
+    $scope.isStepComplete = function (uploadWizard) {
+        //is the rawdata field valid
+        if ($scope.getCurrentStep() === 'spectra' && uploadWizard.rawdata.$valid) {
+            return true;
+        }
+
+        //the inchi key field is valid
+        if ($scope.getCurrentStep() === 'inchi' && uploadWizard.inchi.$valid) {
+            return true;
+        }
+
+        //nope we are done
+        return false;
+    };
+    /**
+     * next step
+     * @param dismiss
+     */
+    $scope.handleNext = function (dismiss) {
+        if ($scope.isLastStep()) {
+            $modalInstance.close();
+        } else {
+            $scope.step += 1;
+        }
+    };
+};
+
 
 /**
  * handles all our navigations

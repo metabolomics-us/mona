@@ -9,7 +9,7 @@ massspecsOfAmerica.config(['$routeProvider',
                 controller: 'SubmitterController'
             }
         ).
-            when('/upload/single', {
+            when('/upload', {
                 templateUrl: 'partial/upload/single.html',
                 controller: 'SpectraController'
             }

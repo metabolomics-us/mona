@@ -20,7 +20,7 @@
                     <ul class="nav navbar-nav" ng-controller="NavigationController">
                         <li ng-class="navClass('home')"><a href='#/home'>Compounds</a></li>
                         <li ng-class="navClass('about')"><a href='#/submitters'>Submitters</a></li>
-                        <li ng-class="navClass('contact')"><a href='#/upload/single'>Upload</a></li>
+                        <li ng-class="navClass('contact')"><a href='#/upload'>Upload</a></li>
                     </ul>
                 </div>
             </div>
