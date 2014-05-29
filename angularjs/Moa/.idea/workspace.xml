@@ -64,88 +64,17 @@
     <favorites_list name="Moa" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
-      <split-first>
-        <leaf>
-          <file leaf-file-name="routes.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/web-app/js/routes.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="16" column="13" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="420">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="controllers.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/web-app/js/controllers.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="303" column="12" selection-start="7599" selection-end="7599" vertical-scroll-proportion="0.0" vertical-offset="4419" max-vertical-offset="5160">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="createUpdateForm.html" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/web-app/partial/submitters/template/createUpdateForm.html">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="58" column="60" selection-start="2262" selection-end="2340" vertical-scroll-proportion="-13.541667" vertical-offset="545" max-vertical-offset="1185">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="wizard.html" pinned="false" current="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/web-app/partial/upload/dialog/wizard.html">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="42" column="0" selection-start="1825" selection-end="1825" vertical-scroll-proportion="0.39399624" vertical-offset="420" max-vertical-offset="1245">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="services.js" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/web-app/js/services.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="30" column="26" selection-start="666" selection-end="683" vertical-scroll-proportion="0.0" vertical-offset="217" max-vertical-offset="690">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="single.html" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/web-app/partial/upload/single.html">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="5" column="6" selection-start="204" selection-end="204" vertical-scroll-proportion="-3.125" vertical-offset="0" max-vertical-offset="165">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MolConverterController.groovy" pinned="false" current="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/grails-app/controllers/moa/MolConverterController.groovy">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="15" column="18" selection-start="245" selection-end="255" vertical-scroll-proportion="-9.782609" vertical-offset="0" max-vertical-offset="375">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="controllers.js" pinned="false" current="true" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/web-app/js/controllers.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="287" column="0" selection-start="7114" selection-end="7114" vertical-scroll-proportion="7.422414" vertical-offset="0" max-vertical-offset="5160">
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf>
+      <file leaf-file-name="BuildConfig.groovy" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/grails-app/conf/BuildConfig.groovy">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="77" column="0" selection-start="3330" selection-end="3330" vertical-scroll-proportion="0.7297297" vertical-offset="750" max-vertical-offset="1335">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -184,11 +113,11 @@
         <option value="$PROJECT_DIR$/web-app/partial/submitters/template/createUpdateForm.html" />
         <option value="$PROJECT_DIR$/grails-app/conf/ApplicationResources.groovy" />
         <option value="$PROJECT_DIR$/web-app/partial/upload/dialog/wizard.html" />
-        <option value="$PROJECT_DIR$/grails-app/conf/BuildConfig.groovy" />
         <option value="$PROJECT_DIR$/grails-app/controllers/moa/MolConverterController.groovy" />
         <option value="$PROJECT_DIR$/grails-app/conf/UrlMappings.groovy" />
         <option value="$PROJECT_DIR$/web-app/js/services.js" />
         <option value="$PROJECT_DIR$/web-app/js/controllers.js" />
+        <option value="$PROJECT_DIR$/grails-app/conf/BuildConfig.groovy" />
       </list>
     </option>
   </component>
@@ -258,7 +187,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="web-app" />
+              <option name="myItemId" value="grails-app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -272,11 +201,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="web-app" />
+              <option name="myItemId" value="grails-app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
+              <option name="myItemId" value="conf" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -608,12 +537,12 @@
       <workItem from="1399083742827" duration="266000" />
       <workItem from="1399084039411" duration="40973000" />
       <workItem from="1400556228895" duration="43564000" />
-      <workItem from="1400785426547" duration="15156000" />
+      <workItem from="1400785426547" duration="15528000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="99959000" />
+    <option name="totallyTimeSpent" value="100331000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1280" height="713" extended-state="6" />
@@ -634,7 +563,7 @@
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28513733" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28513733" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45652175" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
@@ -1007,14 +936,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web-app/partial/submitters/template/createUpdateForm.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="60" selection-start="2262" selection-end="2340" vertical-scroll-proportion="-13.541667" vertical-offset="545" max-vertical-offset="1185">
+        <state line="58" column="60" selection-start="2262" selection-end="2340" vertical-scroll-proportion="0.5711775" vertical-offset="545" max-vertical-offset="1185">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web-app/partial/upload/single.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="6" selection-start="204" selection-end="204" vertical-scroll-proportion="-3.125" vertical-offset="0" max-vertical-offset="165">
+        <state line="5" column="6" selection-start="204" selection-end="204" vertical-scroll-proportion="0.13181019" vertical-offset="0" max-vertical-offset="569">
           <folding />
         </state>
       </provider>
@@ -1022,20 +951,6 @@
     <entry file="file://$PROJECT_DIR$/grails-app/controllers/moa/SubmitterController.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="15" selection-start="106" selection-end="144" vertical-scroll-proportion="-3.9130435" vertical-offset="0" max-vertical-offset="480">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/grails-app/controllers/moa/MolConverterController.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="18" selection-start="245" selection-end="255" vertical-scroll-proportion="-9.782609" vertical-offset="0" max-vertical-offset="375">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/grails-app/conf/BuildConfig.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="30" selection-start="2210" selection-end="2210" vertical-scroll-proportion="0.6229508" vertical-offset="470" max-vertical-offset="1305">
           <folding />
         </state>
       </provider>
@@ -1056,21 +971,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web-app/js/services.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="26" selection-start="666" selection-end="683" vertical-scroll-proportion="0.0" vertical-offset="217" max-vertical-offset="690">
+        <state line="30" column="26" selection-start="666" selection-end="683" vertical-scroll-proportion="0.54468805" vertical-offset="97" max-vertical-offset="690">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web-app/partial/upload/dialog/wizard.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="0" selection-start="1825" selection-end="1825" vertical-scroll-proportion="0.39399624" vertical-offset="420" max-vertical-offset="1245">
+        <state line="42" column="0" selection-start="1825" selection-end="1825" vertical-scroll-proportion="0.36906853" vertical-offset="420" max-vertical-offset="1245">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grails-app/controllers/moa/MolConverterController.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="0" selection-start="171" selection-end="171" vertical-scroll-proportion="0.2631579" vertical-offset="0" max-vertical-offset="570">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web-app/js/controllers.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="287" column="0" selection-start="7114" selection-end="7114" vertical-scroll-proportion="7.422414" vertical-offset="0" max-vertical-offset="5160">
+        <state line="303" column="12" selection-start="7599" selection-end="7599" vertical-scroll-proportion="0.21247892" vertical-offset="4419" max-vertical-offset="5160">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grails-app/conf/BuildConfig.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="77" column="0" selection-start="3330" selection-end="3330" vertical-scroll-proportion="0.7297297" vertical-offset="750" max-vertical-offset="1335">
           <folding />
         </state>
       </provider>
