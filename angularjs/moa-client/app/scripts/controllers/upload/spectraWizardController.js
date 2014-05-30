@@ -8,7 +8,7 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
 	 * definition of all our steps
 	 * @type {string[]}
 	 */
-	$scope.steps = ['spectra', 'inchi', 'name', 'meta'];
+	$scope.steps = ['spectra', 'bioLogicalInchi','chemicalInChI', 'name', 'meta'];
 
 	$scope.step = 0;
 
@@ -76,10 +76,15 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
 			return true;
 		}
 
-		//the inchi key field is valid
-		if ($scope.getCurrentStep() === 'inchi' && uploadWizard.inchi.$valid) {
+		//the biological inchi key field is valid
+		if ($scope.getCurrentStep() === 'bioLogicalInchi' && uploadWizard.biologicalInchi.$valid) {
 			return true;
 		}
+
+		if ($scope.getCurrentStep() === 'chemicalInChI' && uploadWizard.chemicalInChI.$valid) {
+			return true;
+		}
+
 
 		//nope we are done
 		return false;
