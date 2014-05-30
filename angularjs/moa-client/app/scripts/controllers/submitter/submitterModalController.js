@@ -3,7 +3,7 @@
  */
 'use strict';
 
-app.controller('SubmitterModalController',function ($scope, Submitter, $modalInstance, newSubmitter) {
+moaControllers.SubmitterModalController = function ($scope, Submitter, $modalInstance, newSubmitter) {
 
 	/**
 	 * contains our results
@@ -14,14 +14,14 @@ app.controller('SubmitterModalController',function ($scope, Submitter, $modalIns
 	/**
 	 * cancels any dialog in this controller
 	 */
-	$scope.cancel = function () {
+	$scope.cancelDialog = function () {
 		$modalInstance.dismiss('cancel');
 	};
 
 	/**
 	 * takes care of updates
 	 */
-	$scope.update = function () {
+	$scope.updateSubmitter = function () {
 
 		var submitter = createSubmitterFromScope();
 		//update the submitter
@@ -35,9 +35,7 @@ app.controller('SubmitterModalController',function ($scope, Submitter, $modalIns
 	/**
 	 * takes care of creates
 	 */
-	$scope.create = function () {
-
-		alert('calling create...');
+	$scope.createNewSubmitter = function () {
 		var submitter = createSubmitterFromScope();
 		//no submitter id so create a new one
 		Submitter.save(submitter, function (savedSubmitter) {
@@ -87,4 +85,4 @@ app.controller('SubmitterModalController',function ($scope, Submitter, $modalIns
 			$scope.formErrors = "we had an unexpected error, please check the JS console";
 		}
 	}
-});
+};

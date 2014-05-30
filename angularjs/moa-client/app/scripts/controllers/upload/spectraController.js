@@ -3,7 +3,7 @@
  */
 'use strict';
 
-app.controller('SpectraController', function ($scope, $modal) {
+moaControllers.SpectraController = function ($scope, $modal) {
 
 	/**
 	 * initializes our spectra upload dialog
@@ -11,7 +11,7 @@ app.controller('SpectraController', function ($scope, $modal) {
 	$scope.uploadSpectraDialog = function () {
 		var modalInstance = $modal.open({
 			templateUrl: '/views/upload/dialog/wizard.html',
-			controller: app.controller.SpectraWizardController,
+			controller: moaControllers.SpectraWizardController,
 			size: 'lg',
 			backdrop: 'static',
 			resolve: {
@@ -23,5 +23,5 @@ app.controller('SpectraController', function ($scope, $modal) {
 		modalInstance.result.then(function (spectra) {
 		});
 	}
-});
+};
 

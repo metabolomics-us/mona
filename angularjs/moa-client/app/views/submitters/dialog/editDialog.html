@@ -7,10 +7,10 @@
 </div>
 
 <div class="modal-body">
-    <submitter-form/>
+    <div submitter-form></div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-    <button class="btn btn-default" ng-click="update()" ng-disabled="submitterForm.$invalid">Update</button>
+    <button class="btn btn-warning" ng-click="cancelDialog()">Cancel</button>
+    <button class="btn btn-default" ng-click="updateSubmitter()" ng-disabled="submitterForm.$invalid">Update</button>
 </div>
 

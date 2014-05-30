@@ -10,7 +10,7 @@
     <div class="modal-body">
         <div>
 
-            <div ng-switch="getCurrentStep()" ng-animate="wave" class="slide-frame">
+            <div ng-switch="getCurrentStep()" ng-animate="'slide'" class="slide-frame">
                 <div ng-switch-when="spectra">
 
                     <fieldset>
@@ -38,9 +38,10 @@
                 </div>
                 <div ng-switch-when="inchi">
                     <fieldset>
-                        <p>please add your inchi key or draw your structure with the editor</p>
+                        <p>please add your biological inchi key or draw your structure with the editor</p>
                         <input type="text" ng-model="spectra.inchi" name="inchi" ng-required/>
 
+                        <p>The biological InChI Key is the key, which reflects the actual substance, prior to modifications due to aducts, dehydration or derivatisation</p>
                     </fieldset>
 
                     <div>

@@ -3,8 +3,7 @@
  */
 'use strict';
 
-app.controller('SpectraWizardController', function ($scope, $modalInstance, $window,MolConverter,$http) {
-
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window,MolConverter,$http) {
 	/**
 	 * definition of all our steps
 	 * @type {string[]}
@@ -96,4 +95,4 @@ app.controller('SpectraWizardController', function ($scope, $modalInstance, $win
 			$scope.step += 1;
 		}
 	};
-});
+};

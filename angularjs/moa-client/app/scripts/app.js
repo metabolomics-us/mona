@@ -2,10 +2,8 @@
 
 var app = angular
     .module('moaClientApp', [
-        'ngCookies',
-        'ngResource',
-        'ngSanitize',
-        'ngRoute',
+		'ngRoute',
+		'ngResource',
 		'ui.bootstrap'
 	]);
 
@@ -31,3 +29,14 @@ app.config(function ($routeProvider) {
     });
 
 app.constant('REST_BACKEND_SERVER','http://192.168.1.75:8080');
+
+/**
+ * holder for all our controllers
+ * @type {{}}
+ */
+var moaControllers = {};
+
+/**
+ * lets assign them
+ */
+app.controller(moaControllers);

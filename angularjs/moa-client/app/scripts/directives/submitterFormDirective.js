@@ -3,7 +3,7 @@
  */
 app.directive('submitterForm', function() {
 	return {
-		restrict: "E",
+		restrict: "A",
 		replace: true,
 		templateUrl: '/views/submitters/template/createUpdateForm.html'
 	};

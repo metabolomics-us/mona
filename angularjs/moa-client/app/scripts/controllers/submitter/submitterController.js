@@ -3,7 +3,7 @@
  */
 'use strict';
 
-app.controller('SubmitterController', function ($scope, Submitter, $modal) {
+moaControllers.SubmitterController = function ($scope, Submitter, $modal) {
 
 	/**
 	 * contains all local objects
@@ -41,8 +41,9 @@ app.controller('SubmitterController', function ($scope, Submitter, $modal) {
 
 		var modalInstance = $modal.open({
 			templateUrl: '/views/submitters/dialog/createDialog.html',
-			controller: app.controller.SubmitterModalController,
+			controller: moaControllers.SubmitterModalController,
 			size: 'lg',
+			backdrop: 'static',
 			resolve: {
 				//just an empty object
 				newSubmitter: function () {
@@ -65,8 +66,9 @@ app.controller('SubmitterController', function ($scope, Submitter, $modal) {
 	$scope.displayEditDialog = function (index) {
 		var modalInstance = $modal.open({
 			templateUrl: '/views/submitters/dialog/editDialog.html',
-			controller: app.controller.SubmitterModalController,
+			controller: moaControllers.SubmitterModalController,
 			size: 'lg',
+			backdrop: 'static',
 			resolve: {
 				//populate the dialog with the given submitter at this index
 				newSubmitter: function () {
@@ -91,4 +93,4 @@ app.controller('SubmitterController', function ($scope, Submitter, $modal) {
 		})
 	}
 
-});
+};
