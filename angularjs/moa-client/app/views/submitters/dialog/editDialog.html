@@ -1,0 +1,16 @@
+<div class="modal-header">
+    <h4 class="modal-title">Modify an existing Submitter</h4>
+
+    <h5>
+        Please adjust out all the properties of your Submitter
+    </h5>
+</div>
+
+<div class="modal-body">
+    <div submitter-form></div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancelDialog()">Cancel</button>
+    <button class="btn btn-default" ng-click="updateSubmitter()" ng-disabled="submitterForm.$invalid">Update</button>
+</div>
+

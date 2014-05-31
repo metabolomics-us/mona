@@ -1,0 +1,137 @@
+<form role="form" name="uploadWizard">
+    <div class="modal-header">
+        <h4 class="modal-title">Upload a spectra to the system</h4>
+
+        <h5>
+            Please fill out all the properties to define a new spectra. This wizard should guide you
+        </h5>
+
+    </div>
+    <div class="modal-body">
+        <div>
+
+            <div ng-switch="getCurrentStep()" ng-animate="'slide'" class="slide-frame">
+                <div ng-switch-when="spectra">
+
+                    <fieldset>
+                        <div class="form-group"
+                             ng-class="{'has-error' : uploadWizard.rawdata.$invalid && !uploadWizard.rawdata.$pristine}">
+                            <label for="rawdata" class="control-label">Please paste your spectra into the text
+                                area</label>
+
+                            <textarea class="form-control" rows="3" ng-model="spectra.rawData" name="rawdata"
+                                      id="rawdata"
+                                      ng-required
+                                      ng-pattern="/^(\d+:\d+\s*)+$/">
+
+                            </textarea>
+                        </div>
+
+                        <p ng-show="uploadWizard.rawdata.$invalid && !uploadWizard.rawdata.$pristine"
+                           class="help-block">
+                            please make sure that the spectra is formatted the following way: ion:intensity
+                            ion:intensity...
+                        </p>
+
+                    </fieldset>
+
+                </div>
+                <div ng-switch-when="bioLogicalInchi">
+                    <fieldset>
+                        <div class="form-group"
+                             ng-class="{'has-error' : uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine}">
+                            <p>please add your biological InChI key or draw the structure with the editor</p>
+                            <input class="form-control" type="text" ng-model="spectra.inchi" name="biologicalInchi"
+                                   ng-required
+                                   ng-pattern=/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
+
+                            <p>The biological InChI Key is the key, which reflects the actual substance, prior to
+                                modifications due to aducts, dehydration or derivatisation. You will be able to define
+                                the actual chemical InChI Key in the next step</p>
+
+                            <p ng-show=" uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine"
+                               class="help-block">
+                                please make sure that the value is a valid InChI Key. It needs to look something like
+                                'RYGMFSIKBFXOCR-UHFFFAOYSA-N'
+                            </p>
+
+                        </div>
+
+                    </fieldset>
+
+                    <div>
+                        <canvas id="sketcherSingle" ng-model="spectra.inchi"></canvas>
+                        <!--
+                                                <script>
+
+                                                    var sketcherSingle = new ChemDoodle.SketcherCanvas('sketcherSingle', 500, 300, {useServices: true, oneMolecule: true});
+                                                    sketcherSingle.specs.atoms_displayTerminalCarbonLabels_2D = true;
+                                                    sketcherSingle.specs.atoms_useJMOLColors = true;
+                                                    sketcherSingle.specs.bonds_clearOverlaps_2D = true;
+                                                    sketcherSingle.repaint();
+
+                                                </script>
+
+                                                -->
+                    </div>
+                </div>
+
+                <div ng-switch-when="chemicalInChI">
+                    <fieldset>
+                        <div class="form-group"
+                             ng-class="{'has-error' : uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine}">
+                            <p>please add your biological InChI key or draw the structure with the editor</p>
+                            <input class="form-control" type="text" ng-model="spectra.inchi" name="chemicalInChI"
+                                   ng-required
+                                   ng-pattern=/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
+
+                            <p>The chemical InChI Key is the key, which reflects your measured substance,including
+                                modifications due to aducts, dehydration or derivatisation.</p>
+
+                            <p ng-show="uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine"
+                               class="help-block">
+                                please make sure that the value is a valid InChI Key. It needs to look something like
+                                'RYGMFSIKBFXOCR-UHFFFAOYSA-N'
+                            </p>
+
+                        </div>
+
+                    </fieldset>
+
+                    <div>
+                        <!--
+                                                <script>
+
+                                                    var sketcherSingle = new ChemDoodle.SketcherCanvas('sketcherSingle', 500, 300, {useServices: true, oneMolecule: true});
+                                                    sketcherSingle.specs.atoms_displayTerminalCarbonLabels_2D = true;
+                                                    sketcherSingle.specs.atoms_useJMOLColors = true;
+                                                    sketcherSingle.specs.bonds_clearOverlaps_2D = true;
+                                                    sketcherSingle.repaint();
+
+                                                </script>
+
+                                                -->
+                    </div>
+                </div>
+
+
+                <div ng-switch-when="name">
+                    <fieldset>
+                        <p>please provide us with a name of this compound</p>
+                        <input type="text" ng-model="spectra.name" name="name" ng-required/>
+                    </fieldset>
+
+                </div>
+                <div ng-switch-when="meta">
+                    <fieldset>
+                        <p>can you add some additional metadata</p>
+                    </fieldset>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn btn-primary" ng-click="handleNext(dismiss)" ng-disabled="!isStepComplete(uploadWizard)">{{getNextLabel()}}</a>
+    </div>
+</form>

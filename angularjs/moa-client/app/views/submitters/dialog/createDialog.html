@@ -1,0 +1,16 @@
+<div class="modal-header">
+    <h4 class="modal-title">Create a new Submitter</h4>
+
+    <h5>
+        Please fill out all the properties to define a new Submitter
+    </h5>
+
+</div>
+<div class="modal-body">
+    <div submitter-form></div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancelDialog()">Cancel</button>
+    <button class="btn btn-default" ng-click="createNewSubmitter()" ng-disabled="submitterForm.$invalid">Add
+    </button>
+</div>
