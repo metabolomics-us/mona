@@ -64,17 +64,7 @@
     <favorites_list name="Moa" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="BuildConfig.groovy" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/grails-app/conf/BuildConfig.groovy">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="77" column="0" selection-start="3330" selection-end="3330" vertical-scroll-proportion="0.7297297" vertical-offset="750" max-vertical-offset="1335">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -174,38 +164,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Moa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Moa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Moa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="grails-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Moa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Moa" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="grails-app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="conf" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -537,16 +495,16 @@
       <workItem from="1399083742827" duration="266000" />
       <workItem from="1399084039411" duration="40973000" />
       <workItem from="1400556228895" duration="43564000" />
-      <workItem from="1400785426547" duration="15528000" />
+      <workItem from="1400785426547" duration="16176000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="100331000" />
+    <option name="totallyTimeSpent" value="100979000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1280" height="713" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="16" side_tool="false" content_ui="tabs" />
@@ -563,7 +521,7 @@
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28513733" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28513733" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45652175" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
@@ -641,48 +599,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/grails-app/conf/ApplicationResources.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="32" selection-start="545" selection-end="545" vertical-scroll-proportion="0.0" vertical-offset="240" max-vertical-offset="615">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web-app/partial/submitters/dialog/editDialog.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="9" selection-start="171" selection-end="171" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="330">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web-app/js/directives.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="50" selection-start="262" selection-end="262" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="225">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web-app/partial/submitters/template/createUpdateForm.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="0" selection-start="2802" selection-end="2802" vertical-scroll-proportion="0.0" vertical-offset="639" max-vertical-offset="1185">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web-app/js/services.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="22" selection-start="344" selection-end="344" vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="405">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web-app/js/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="22" selection-start="37" selection-end="55" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="150">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/grails-app/controllers/moa/SubmitterController.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="54" selection-start="274" selection-end="274" vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="480">
@@ -999,7 +915,49 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/grails-app/conf/BuildConfig.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="77" column="0" selection-start="3330" selection-end="3330" vertical-scroll-proportion="0.7297297" vertical-offset="750" max-vertical-offset="1335">
+        <state line="66" column="43" selection-start="2917" selection-end="2967" vertical-scroll-proportion="-9.6" vertical-offset="750" max-vertical-offset="1335">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/work/plugins/angularjs-resources-1.2.15/web-app/js/angular/angular-route.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="15" selection-start="600" selection-end="600" vertical-scroll-proportion="0.0" vertical-offset="180" max-vertical-offset="13995">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/work/plugins/angularjs-resources-1.2.15/web-app/js/angular/angular-sanitize.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="2" selection-start="362" selection-end="362" vertical-scroll-proportion="0.0" vertical-offset="1890" max-vertical-offset="9450">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/work/plugins/angularjs-resources-1.2.15/web-app/js/angular/angular-touch.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="32" selection-start="256" selection-end="264" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8715">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/work/plugins/angularjs-resources-1.2.15/web-app/js/angular/angular.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="2" selection-start="301" selection-end="301" vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="317595">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/work/plugins/angularjs-resources-1.2.15/web-app/js/angular/angular-animate.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="50" selection-start="1286" selection-end="1302" vertical-scroll-proportion="0.0" vertical-offset="3795" max-vertical-offset="24285">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/work/plugins/angularjs-resources-1.2.15/web-app/js/angular/angular-cookies.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="12" selection-start="518" selection-end="518" vertical-scroll-proportion="0.33620688" vertical-offset="165" max-vertical-offset="3030">
           <folding />
         </state>
       </provider>

@@ -64,7 +64,7 @@ grails.project.dependency.resolution = {
 
         // plugins for the compile step
         compile ':cache:1.1.1'
-        compile ':angularjs-resources:1.2.15'
+            compile ':angularjs-resources:1.2.15'
         compile ":font-awesome-resources:4.0.3.0"
         runtime ':twitter-bootstrap:3.0.3'
 
