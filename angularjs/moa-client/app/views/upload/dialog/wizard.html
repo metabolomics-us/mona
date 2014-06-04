@@ -57,23 +57,10 @@
 
                         </div>
 
+                        <div chemical-sketcher id="bioLogicalInChi"></div>
+
                     </fieldset>
 
-                    <div>
-                        <canvas id="sketcherSingle" ng-model="spectra.inchi"></canvas>
-                        <!--
-                                                <script>
-
-                                                    var sketcherSingle = new ChemDoodle.SketcherCanvas('sketcherSingle', 500, 300, {useServices: true, oneMolecule: true});
-                                                    sketcherSingle.specs.atoms_displayTerminalCarbonLabels_2D = true;
-                                                    sketcherSingle.specs.atoms_useJMOLColors = true;
-                                                    sketcherSingle.specs.bonds_clearOverlaps_2D = true;
-                                                    sketcherSingle.repaint();
-
-                                                </script>
-
-                                                -->
-                    </div>
                 </div>
 
                 <div ng-switch-when="chemicalInChI">
@@ -95,6 +82,9 @@
                             </p>
 
                         </div>
+
+                        <div chemical-sketcher id="chemicalInChI"></div>
+
 
                     </fieldset>
 

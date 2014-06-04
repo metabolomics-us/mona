@@ -16,5 +16,5 @@ app.factory('Submitter', function ($resource, REST_BACKEND_SERVER, $http) {
 
 			}
 		}
-	)
+	);
 });
