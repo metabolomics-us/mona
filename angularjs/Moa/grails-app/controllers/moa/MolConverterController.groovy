@@ -20,6 +20,6 @@ class MolConverterController {
         log.warn("params: ${params}" )
         log.warn("json: ${request.JSON}")
 
-        ["key":"QNAYBMKLOCPYGJ-UWTATZPHSA-N"]
+        respond (["key":"QNAYBMKLOCPYGJ-UWTATZPHSA-N"])
     }
 }
