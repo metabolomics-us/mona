@@ -1,5 +1,7 @@
 package moa
 
+import grails.converters.JSON
+
 class MolConverterController {
     static responseFormats = ['json']
 
@@ -14,6 +16,10 @@ class MolConverterController {
      * converts a mol file to an inchi key
      */
     def moltoinchi() {
-        render "[nothing:dadas]"
+        log.warn("we are running in DUMMY mode, and always return the same inchi")
+        log.warn("params: ${params}" )
+        log.warn("json: ${request.JSON}")
+
+        respond (["key":"QNAYBMKLOCPYGJ-UWTATZPHSA-N"])
     }
 }
