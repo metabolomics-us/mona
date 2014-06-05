@@ -40,8 +40,9 @@
                     <fieldset>
                         <div class="form-group"
                              ng-class="{'has-error' : uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine}">
-                            <p>please add your biological InChI key or draw the structure with the editor</p>
-                            <input class="form-control" type="text" ng-model="spectra.biologicalInChI" name="biologicalInchi"
+                            <p><label for="bioLogicalInChi">please add your biological InChI key or draw the structure with the editor</label></p>
+                            <input class="form-control" type="text" ng-model="spectra.biologicalInChI"
+                                   name="biologicalInchi"
                                    ng-required
                                    ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
 
@@ -67,8 +68,9 @@
                     <fieldset>
                         <div class="form-group"
                              ng-class="{'has-error' : uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine}">
-                            <p>please add your biological InChI key or draw the structure with the editor</p>
-                            <input class="form-control" type="text" ng-model="spectra.chemicalInChI" name="chemicalInChI"
+                            <p><label for="chemicalInChI">please add your biological InChI key or draw the structure with the editor</label></p>
+                            <input class="form-control" type="text" ng-model="spectra.chemicalInChI"
+                                   name="chemicalInChI"
                                    ng-required
                                    ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
 
@@ -92,8 +94,8 @@
 
                 <div ng-switch-when="name">
                     <fieldset>
-                        <p>please provide us with a name of this compound</p>
-                        <input type="text" ng-model="spectra.name" name="name" ng-required/>
+                        <p><label for="name">please provide us with a name of this compound</label></p>
+                        <input type="text" ng-model="spectra.name" name="name" id="name" ng-required/>
                     </fieldset>
 
                 </div>
