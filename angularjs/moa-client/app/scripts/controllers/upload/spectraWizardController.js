@@ -12,8 +12,6 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
 
 	$scope.step = 0;
 
-	$scope.spectra = {inchi:""};
-
 	/**
 	 * is this our current step
 	 * @param step

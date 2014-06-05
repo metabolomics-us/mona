@@ -41,9 +41,9 @@
                         <div class="form-group"
                              ng-class="{'has-error' : uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine}">
                             <p>please add your biological InChI key or draw the structure with the editor</p>
-                            <input class="form-control" type="text" ng-model="spectra.inchi" name="biologicalInchi"
+                            <input class="form-control" type="text" ng-model="spectra.biologicalInChI" name="biologicalInchi"
                                    ng-required
-                                   ng-pattern=/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
+                                   ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
 
                             <p>The biological InChI Key is the key, which reflects the actual substance, prior to
                                 modifications due to aducts, dehydration or derivatisation. You will be able to define
@@ -57,7 +57,7 @@
 
                         </div>
 
-                        <div chemical-sketcher id="bioLogicalInChi"></div>
+                        <div chemical-sketcher id="bioLogicalInChi" ng-model="spectra.biologicalInChI"></div>
 
                     </fieldset>
 
@@ -68,9 +68,9 @@
                         <div class="form-group"
                              ng-class="{'has-error' : uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine}">
                             <p>please add your biological InChI key or draw the structure with the editor</p>
-                            <input class="form-control" type="text" ng-model="spectra.inchi" name="chemicalInChI"
+                            <input class="form-control" type="text" ng-model="spectra.chemicalInChI" name="chemicalInChI"
                                    ng-required
-                                   ng-pattern=/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
+                                   ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
 
                             <p>The chemical InChI Key is the key, which reflects your measured substance,including
                                 modifications due to aducts, dehydration or derivatisation.</p>
@@ -83,25 +83,10 @@
 
                         </div>
 
-                        <div chemical-sketcher id="chemicalInChI"></div>
+                        <div chemical-sketcher id="chemicalInChI" ng-model="spectra.chemicalInChI"></div>
 
 
                     </fieldset>
-
-                    <div>
-                        <!--
-                                                <script>
-
-                                                    var sketcherSingle = new ChemDoodle.SketcherCanvas('sketcherSingle', 500, 300, {useServices: true, oneMolecule: true});
-                                                    sketcherSingle.specs.atoms_displayTerminalCarbonLabels_2D = true;
-                                                    sketcherSingle.specs.atoms_useJMOLColors = true;
-                                                    sketcherSingle.specs.bonds_clearOverlaps_2D = true;
-                                                    sketcherSingle.repaint();
-
-                                                </script>
-
-                                                -->
-                    </div>
                 </div>
 
 

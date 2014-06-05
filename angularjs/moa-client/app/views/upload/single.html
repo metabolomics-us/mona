@@ -4,6 +4,11 @@
         <button ng-click="uploadSpectraDialog()">Add a new spectra</button>
     </div>
 
-    <div chemical-sketcher id="firstInchi"></div>
+
+    <div>
+        <div chemical-sketcher id="firstInchi" ng-model="myInchi.inchi"></div>
+    </div>
+
+    <input type="text" ng-model="myInchi.inchi" required ng-pattern="/.*/"/>
 
 </div>

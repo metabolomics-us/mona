@@ -3,13 +3,15 @@
  */
 'use strict';
 
-app.directive('chemicalSketcher', function () {
+app.directive('chemicalSketcher', function (MolConverter) {
 	return {
 		restrict: "A",
 		replace: false,
+		require: 'ngModel',
 
 		scope: {
-			id: '@id'
+			id: '@id',
+			bindModel: '=ngModel'
 		},
 		/**
 		 * links our sketcher into the directive
@@ -36,13 +38,18 @@ app.directive('chemicalSketcher', function () {
 					var mol = sketcher.getMolecule();
 					var molFile = ChemDoodle.writeMOL(mol);
 
-					alert(molFile);
+					MolConverter.convertToInchiKey(molFile).then(function (data) {
+
+						//update our bound model with the given key
+						$scope.bindModel = data.key;
+					});
+
 				};
 
 				/**
 				 * destroy our sketcher
 				 */
-				$scope.$on("$destroy",function() {
+				$scope.$on("$destroy", function () {
 					sketcher = null;
 					var sameLevelElems = element.children();
 
