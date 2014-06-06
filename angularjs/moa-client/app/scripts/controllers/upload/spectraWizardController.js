@@ -11,6 +11,10 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
 	 */
 	$scope.steps = ['spectra', 'bioLogicalInchi','chemicalInChI', 'meta','summary'];
 
+	/**
+	 * our current step where we are at
+	 * @type {number}
+	 */
 	$scope.step = 0;
 
 	/**
@@ -75,6 +79,11 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
 		$scope.step -= ($scope.isFirstStep()) ? 0 : 1;
 	};
 
+	/**
+	 * checks if the current step is complete of the wizard
+	 * @param uploadWizard
+	 * @returns {boolean}
+	 */
 	$scope.isStepComplete = function (uploadWizard) {
 
 		//is the rawdata field valid
@@ -100,7 +109,6 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
 		if($scope.getCurrentStep() === 'summary'){
 			return true;
 		}
-
 
 		//nope we are done
 		return false;

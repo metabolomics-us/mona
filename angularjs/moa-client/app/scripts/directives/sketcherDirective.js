@@ -39,11 +39,9 @@ app.directive('chemicalSketcher', function (MolConverter) {
 					var molFile = ChemDoodle.writeMOL(mol);
 
 					MolConverter.convertToInchiKey(molFile).then(function (data) {
-
 						//update our bound model with the given key
 						$scope.bindModel = data.key;
 					});
-
 				};
 
 				/**
@@ -57,7 +55,6 @@ app.directive('chemicalSketcher', function (MolConverter) {
 						sameLevelElems[i].remove();
 					}
 				});
-
 			}
 
 		}
