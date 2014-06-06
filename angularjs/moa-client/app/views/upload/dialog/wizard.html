@@ -11,6 +11,8 @@
         <div>
 
             <div ng-switch="getCurrentStep()" ng-animate="'slide'" class="slide-frame">
+
+                <!-- here we define the spectra -->
                 <div ng-switch-when="spectra">
 
                     <fieldset>
@@ -34,15 +36,17 @@
                         </p>
 
                     </fieldset>
-
                 </div>
+                <!-- defines the biological inchi and it's name -->
                 <div ng-switch-when="bioLogicalInchi">
                     <fieldset>
                         <div class="form-group"
                              ng-class="{'has-error' : uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine}">
-                            <p><label for="bioLogicalInChi">please add your biological InChI key or draw the structure with the editor</label></p>
+                            <label for="bioLogicalInChi">please add your biological InChI key or draw the structure
+                                with the editor</label>
                             <input class="form-control" type="text" ng-model="spectra.biologicalInChI"
                                    name="biologicalInchi"
+                                   id="bioLogicalInChi"
                                    ng-required
                                    ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
 
@@ -50,7 +54,7 @@
                                 modifications due to aducts, dehydration or derivatisation. You will be able to define
                                 the actual chemical InChI Key in the next step</p>
 
-                            <p ng-show=" uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine"
+                            <p ng-show="uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine"
                                class="help-block">
                                 please make sure that the value is a valid InChI Key. It needs to look something like
                                 'RYGMFSIKBFXOCR-UHFFFAOYSA-N'
@@ -58,20 +62,36 @@
 
                         </div>
 
-                        <div chemical-sketcher id="bioLogicalInChi" ng-model="spectra.biologicalInChI"></div>
+                        <div class="form-group"
+                             ng-class="{'has-error' : uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine}">
+                            <label for="biologicalInChIName">Please provide us with a name for this chemical</label>
+
+                            <input class="form-control" type="text" ng-model="spectra.biologicalInChIName"
+                                   name="biologicalInChIName" id="biologicalInChIName" ng-required/>
+
+                            <p ng-show="uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine"
+                               class="help-block">
+                                please make sure you provide a valid name
+                            </p>
+                        </div>
+
+                        <div chemical-sketcher id="bioLogicalInChiSketcher" ng-model="spectra.biologicalInChI"></div>
 
                     </fieldset>
 
                 </div>
 
+                <!-- defines the chemical inchi and it's name -->
                 <div ng-switch-when="chemicalInChI">
                     <fieldset>
                         <div class="form-group"
                              ng-class="{'has-error' : uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine}">
-                            <p><label for="chemicalInChI">please add your biological InChI key or draw the structure with the editor</label></p>
+                            <label for="chemicalInChI">please add your biological InChI key or draw the structure
+                                with the editor</label>
                             <input class="form-control" type="text" ng-model="spectra.chemicalInChI"
                                    name="chemicalInChI"
                                    ng-required
+                                   id="chemicalInChI"
                                    ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
 
                             <p>The chemical InChI Key is the key, which reflects your measured substance,including
@@ -84,26 +104,57 @@
                             </p>
 
                         </div>
-
-                        <div chemical-sketcher id="chemicalInChI" ng-model="spectra.chemicalInChI"></div>
+                        <div class="form-group"
+                             ng-class="{'has-error' : uploadWizard.chemicalInChIName.$invalid && !uploadWizard.chemicalInChIName.$pristine}">
+                            <label for="chemicalInChIName">Please provide us with a name for this chemical</label>
+                            <input class="form-control" type="text" ng-model="spectra.chemicalInChIName"
+                                   name="chemicalInChIName" id="chemicalInChIName" ng-required/>
+                        </div>
+                        <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalInChI"></div>
 
 
                     </fieldset>
                 </div>
 
-
-                <div ng-switch-when="name">
-                    <fieldset>
-                        <p><label for="name">please provide us with a name of this compound</label></p>
-                        <input type="text" ng-model="spectra.name" name="name" id="name" ng-required/>
-                    </fieldset>
-
-                </div>
+                <!-- defines our meta informations -->
                 <div ng-switch-when="meta">
                     <fieldset>
-                        <p>can you add some additional metadata</p>
+                        <p>{{spectra | json}}</p>
                     </fieldset>
                 </div>
+
+                <div ng-switch-when="summary">
+                    <p>This is the summary of your provided information, please press submit to persist this to the server</p>
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Biological InChI Key</td>
+                            <td>{{spectra.biologicalInChI}}</td>
+                        </tr>
+                        <tr>
+                            <td>Chemical InChI Key</td>
+                            <td>{{spectra.chemicalInChI}}</td>
+                        </tr>
+                        <tr>
+                            <td>Biological Name</td>
+                            <td>{{spectra.biologicalInChIName}}</td>
+                        </tr>
+                        <tr>
+                            <td>Chemical Name</td>
+                            <td>{{spectra.chemicalInChIName}}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
 
             </div>
         </div>

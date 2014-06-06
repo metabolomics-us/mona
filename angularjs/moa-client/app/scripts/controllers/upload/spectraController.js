@@ -21,6 +21,7 @@ moaControllers.SpectraController = function ($scope, $modal) {
 
 		//retrieve the result from the dialog and save it
 		modalInstance.result.then(function (spectra) {
+			alert(spectra);
 		});
 	}
 };

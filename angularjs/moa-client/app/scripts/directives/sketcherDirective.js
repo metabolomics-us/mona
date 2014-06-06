@@ -25,7 +25,7 @@ app.directive('chemicalSketcher', function (MolConverter) {
 			if (angular.isDefined($scope.id)) {
 				var myId = $scope.id + '_sketcher';
 				element.append('<canvas id="' + myId + '"></canvas>');
-				var sketcher = new ChemDoodle.SketcherCanvas(myId, 500, 300, {useServices: true, oneMolecule: true});
+				var sketcher = new ChemDoodle.SketcherCanvas(myId, 500, 300, {useServices: false, oneMolecule: true});
 
 				sketcher.specs.atoms_displayTerminalCarbonLabels_2D = true;
 				sketcher.specs.atoms_useJMOLColors = true;
