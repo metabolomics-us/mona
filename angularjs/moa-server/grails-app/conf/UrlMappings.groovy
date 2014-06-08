@@ -2,10 +2,14 @@ class UrlMappings {
 
     static mappings = {
 
+        /**
+         * provides us with the submiter resource to persist it
+         */
         "/rest/submitters"(resources: 'Submitter')
 
-        "/"(view: "/index")
-
+        /**
+         * a simple rest converter for testing
+         */
         "/rest/util/converter/molToInchi"(controller: "molConverter", action: "moltoinchi")
     }
 }

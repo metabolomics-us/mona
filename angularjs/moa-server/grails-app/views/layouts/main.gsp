@@ -10,9 +10,6 @@
 
     <g:layoutHead/>
 
-    <r:require modules="app"/>
-    <r:require modules="bootstrap"/>
-
     <r:layoutResources/>
 </head>
 
