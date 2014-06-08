@@ -23,6 +23,17 @@ moaControllers.SpectraController = function ($scope, $modal) {
 		modalInstance.result.then(function (spectra) {
 			alert(spectra);
 		});
-	}
+	};
+
+	$scope.availableNames = [{name:'test'},{name: 'test-2'}];
+
+	$scope.biologicalName = 1;
+
+	$scope.counter = 1;
+	$scope.$watch('biologicalName', function() {
+		$scope.availableNames.push({name:'another one ' + $scope.counter});
+		$scope.counter++;
+	});
+
 };
 

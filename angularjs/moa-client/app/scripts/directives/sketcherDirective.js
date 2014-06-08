@@ -45,7 +45,7 @@ app.directive('chemicalSketcher', function (MolConverter) {
 				};
 
 				/**
-				 * destroy our sketcher
+				 * destroy our sketcher - doesn't work
 				 */
 				$scope.$on("$destroy", function () {
 					sketcher = null;
