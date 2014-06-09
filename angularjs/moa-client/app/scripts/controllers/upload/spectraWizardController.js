@@ -12,6 +12,17 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     $scope.steps = ['spectra', 'bioLogicalInchi', 'chemicalInChI', 'meta', 'tags', 'summary'];
 
     /**
+     * contains all possible chemical names
+     * @type {Array}
+     */
+    $scope.possibleChemicalNames = [];
+
+    /**
+     * all possible names for a biological inchi
+     * @type {Array}
+     */
+    $scope.possibleBiologicalNames = [];
+    /**
      * our current step where we are at
      * @type {number}
      */
@@ -92,13 +103,13 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
         }
 
         //the biological inchi key field is valid
-        if ($scope.getCurrentStep() === 'bioLogicalInchi' && uploadWizard.biologicalInchi.$valid && uploadWizard.biologicalInChIName.$valid) {
+        if ($scope.getCurrentStep() === 'bioLogicalInchi' && uploadWizard.biologicalInchi.$valid /*&& uploadWizard.biologicalInChIName.$valid*/) {
 
             return true;
         }
 
         //the chemical inchi page is complete
-        if ($scope.getCurrentStep() === 'chemicalInChI' && uploadWizard.chemicalInChI.$valid && uploadWizard.chemicalInChIName.$valid) {
+        if ($scope.getCurrentStep() === 'chemicalInChI' && uploadWizard.chemicalInChI.$valid /*&& uploadWizard.chemicalInChIName.$valid*/) {
             return true;
         }
 
@@ -140,10 +151,13 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
         //only if it's a valid inchi key we will query the server for valid names
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
         if (angular.isDefined($scope.spectra)) {
-            CTSService.getNamesForInChIKey($scope.spectra.biologicalInchi).then(function (result) {
-                $scope.possibleBiologicalNames = result;
+            if (angular.isDefined($scope.spectra.chemicalInChI)) {
 
-            });
+                CTSService.getNamesForInChIKey($scope.spectra.biologicalInchi).then(function (result) {
+                    $scope.possibleBiologicalNames = result;
+
+                });
+            }
         }
         //}
 
@@ -160,10 +174,12 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
         if (angular.isDefined($scope.spectra)) {
 
-            CTSService.getNamesForInChIKey($scope.spectra.chemicalInChI).then(function (result) {
-                $scope.possibleChemicalNames = result;
+            if (angular.isDefined($scope.spectra.chemicalInChI)) {
+                CTSService.getNamesForInChIKey($scope.spectra.chemicalInChI).then(function (result) {
+                    $scope.possibleChemicalNames = result;
 
-            });
+                });
+            }
         }
         //}
 
