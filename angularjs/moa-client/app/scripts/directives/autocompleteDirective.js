@@ -7,12 +7,18 @@
  * added features:
  *
  * we are taking our given query string as succesful result, if the user presses enter.
+ * possible to define a name for the generated field, so that we can watch it
  */
 app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 		return {
-			restrict: 'EA',
+			restrict: 'A',
+
+            /**
+             * what we need scope wise
+             */
 			scope: {
-				"id": "@id",
+				"id": "@inputid",
+                "name": "@inputname",
 				"placeholder": "@placeholder",
 				"selectedObject": "=selectedobject",
 				"url": "@url",
@@ -27,9 +33,16 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 				"minLengthUser": "@minlength",
 				"matchClass": "@matchclass"
 			},
-			template: '<div class="angucomplete-holder"><input id="{{id}}_value" ng-model="searchStr" type="text" placeholder="{{placeholder}}" class="{{inputClass}}" onmouseup="this.select();" ng-focus="resetHideResults()" ng-blur="hideResults()" /><div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-if="showDropdown"><div class="angucomplete-searching" ng-show="searching">Searching...</div><div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)">No results found, please press return to use the entered text!</div><div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseover="hoverRow()" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}"><div ng-if="imageField" class="angucomplete-image-holder"><img ng-if="result.image && result.image != \'\'" ng-src="{{result.image}}" class="angucomplete-image"/><div ng-if="!result.image && result.image != \'\'" class="angucomplete-image-default"></div></div><div class="angucomplete-title" ng-if="matchClass" ng-bind-html="result.title"></div><div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div><div ng-if="result.description && result.description != \'\'" class="angucomplete-description">{{result.description}}</div></div></div></div>',
 
-			/**
+
+            /**
+             * generates our field
+             */
+			template: '<div class="angucomplete-holder"><input name="{{name}}" id="{{id}}" ng-model="searchStr" type="text" placeholder="{{placeholder}}" class="{{inputClass}}" onmouseup="this.select();" ng-focus="resetHideResults()" ng-blur="hideResults()" /><div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-if="showDropdown"><div class="angucomplete-searching" ng-show="searching">Searching...</div><div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)">No results found, please press return to use the entered text!</div><div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseover="hoverRow()" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}"><div ng-if="imageField" class="angucomplete-image-holder"><img ng-if="result.image && result.image != \'\'" ng-src="{{result.image}}" class="angucomplete-image"/><div ng-if="!result.image && result.image != \'\'" class="angucomplete-image-default"></div></div><div class="angucomplete-title" ng-if="matchClass" ng-bind-html="result.title"></div><div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div><div ng-if="result.description && result.description != \'\'" class="angucomplete-description">{{result.description}}</div></div></div></div>',
+
+            replace: true,
+
+            /**
 			 * does the actual linking
 			 * @param $scope
 			 * @param elem

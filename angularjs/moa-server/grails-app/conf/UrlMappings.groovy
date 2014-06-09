@@ -11,5 +11,11 @@ class UrlMappings {
          * a simple rest converter for testing
          */
         "/rest/util/converter/molToInchi"(controller: "molConverter", action: "moltoinchi")
+
+        /**
+         * simples access to the cts service
+         */
+        "/rest/util/cts/inchiToName/$inchi"(controller: "CTS", action: "getNamesForInChIKey")
+
     }
 }

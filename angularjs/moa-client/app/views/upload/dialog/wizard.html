@@ -66,8 +66,18 @@
                              ng-class="{'has-error' : uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine}">
                             <label for="biologicalInChIName">Please provide us with a name for this chemical</label>
 
-                            <input class="form-control" type="text" ng-model="spectra.biologicalInChIName"
-                                   name="biologicalInChIName" id="biologicalInChIName" ng-required/>
+
+                            <div fl-angucomplete inputid="biologicalInChIName"
+                                 inputName="biologicalInChIName"
+                                 placeholder="Search for a valid Name"
+                                 pause="100"
+                                 selectedobject="spectra.biologicalInChIName"
+                                 localdata="possibleBiologicalNames"
+                                 searchfields="name"
+                                 titlefield="name"
+                                 minlength="1"
+                                 inputclass="form-control form-control-small"></div>
+
 
                             <p ng-show="uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine"
                                class="help-block">
@@ -107,8 +117,18 @@
                         <div class="form-group"
                              ng-class="{'has-error' : uploadWizard.chemicalInChIName.$invalid && !uploadWizard.chemicalInChIName.$pristine}">
                             <label for="chemicalInChIName">Please provide us with a name for this chemical</label>
-                            <input class="form-control" type="text" ng-model="spectra.chemicalInChIName"
-                                   name="chemicalInChIName" id="chemicalInChIName" ng-required/>
+
+                            <div fl-angucomplete inputid="chemicalInChIName"
+                                 inputName="chemicalInChIName"
+                                 placeholder="Search for a valid Name"
+                                 pause="100"
+                                 selectedobject="spectra.chemicalInChIName"
+                                 localdata="possibleChemicalNames"
+                                 searchfields="name"
+                                 titlefield="name"
+                                 minlength="1"
+                                 inputclass="form-control form-control-small"></div>
+
                         </div>
                         <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalInChI"></div>
 
@@ -119,12 +139,19 @@
                 <!-- defines our meta informations -->
                 <div ng-switch-when="meta">
                     <fieldset>
-                        <p>{{spectra | json}}</p>
                     </fieldset>
                 </div>
 
+                <div ng-switch-when="tags">
+                    <p>Please add any 'tags' here, you consider useful for other people. Tags are providing an easy way to find and label spectra.</p>
+
+                    <tags-input ng-model="spectra.tags"></tags-input>
+
+                </div>
+
                 <div ng-switch-when="summary">
-                    <p>This is the summary of your provided information, please press submit to persist this to the server</p>
+                    <p>This is the summary of your provided information, please press submit to persist this to the
+                        server</p>
 
                     <table class="table">
                         <thead>
@@ -153,9 +180,10 @@
 
                         </tbody>
                     </table>
+
+                    <div>{{spectra | json}}</div>
+
                 </div>
-
-
             </div>
         </div>
     </div>

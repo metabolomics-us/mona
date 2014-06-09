@@ -2,34 +2,46 @@
 
 var app = angular
     .module('moaClientApp', [
-		'ngRoute',
-		'ngResource',
-		'ui.bootstrap'
-	]);
+        'ngRoute',
+        'ngResource',
+        'ui.bootstrap',
+        'ngTagsInput'
+    ]);
 
 
 app.config(function ($routeProvider) {
-        $routeProvider
-            .when('/', {
-                templateUrl: 'views/main.html',
-                controller: 'MainCtrl'
-            }).when('/submitters', {
-                templateUrl: 'views/submitters/list.html',
-                controller: 'SubmitterController'
-            }
-        ).
-            when('/upload', {
-                templateUrl: 'views/upload/single.html',
-                controller: 'SpectraController'
-            }
-        )
-            .otherwise({
-                redirectTo: '/'
-            });
-    });
+    $routeProvider
+        .when('/', {
+            templateUrl: 'views/main.html',
+            controller: 'MainCtrl'
+        }).when('/submitters', {
+            templateUrl: 'views/submitters/list.html',
+            controller: 'SubmitterController'
+        }
+    ).
+        when('/upload', {
+            templateUrl: 'views/upload/single.html',
+            controller: 'SpectraController'
+        }
+    )
+        .otherwise({
+            redirectTo: '/'
+        });
+});
 
-app.constant('REST_BACKEND_SERVER','http://192.168.1.75:8080');
+/**
+ * location of our backend server
+ */
+app.constant('REST_BACKEND_SERVER', 'http://127.0.0.1:8080');
 
+/**
+ * enable cross domain stuff
+ */
+app.config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.defaults.useXDomain = true;
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+}
+]);
 /**
  * holder for all our controllers
  * @type {{}}

@@ -74,6 +74,7 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.10.2.2"
         runtime ":resources:1.2.1"
         runtime ":cors:1.1.4"
+        compile ":rest-client-builder:2.0.0"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0.1"
