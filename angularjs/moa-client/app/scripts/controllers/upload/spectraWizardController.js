@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService) {
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService) {
 
     /**
      * definition of all our steps
@@ -144,21 +144,20 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     /**
      * popluate the biological inchi names field
      */
-    $scope.$watch('spectra.biologicalName', function () {
+    $scope.$watch('spectra.biologicalInChI', function () {
 
         //get all names for the inchi key
 
         //only if it's a valid inchi key we will query the server for valid names
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
-        if (angular.isDefined($scope.spectra)) {
-            if (angular.isDefined($scope.spectra.chemicalInChI)) {
+        if (angular.isDefined($scope.spectra.biologicalInChI)) {
 
-                CTSService.getNamesForInChIKey($scope.spectra.biologicalInchi).then(function (result) {
-                    $scope.possibleBiologicalNames = result;
+            CTSService.getNamesForInChIKey($scope.spectra.biologicalInChI).then(function (result) {
+                $scope.possibleBiologicalNames = result;
 
-                });
-            }
+            });
         }
+
         //}
 
     });
@@ -172,18 +171,25 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
 
         //only if it's a valid inchi key we will query the server for valid names
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
-        if (angular.isDefined($scope.spectra)) {
 
-            if (angular.isDefined($scope.spectra.chemicalInChI)) {
-                CTSService.getNamesForInChIKey($scope.spectra.chemicalInChI).then(function (result) {
-                    $scope.possibleChemicalNames = result;
+        if (angular.isDefined($scope.spectra.chemicalInChI)) {
+            CTSService.getNamesForInChIKey($scope.spectra.chemicalInChI).then(function (result) {
+                $scope.possibleChemicalNames = result;
 
-                });
-            }
+            });
+
         }
         //}
 
     });
 
 
+    /**
+     * provides us with an overview of all our tags
+     * @param query
+     * @returns {*}
+     */
+    $scope.loadTags = function(query) {
+        return TaggingService.getTags();
+    };
 };

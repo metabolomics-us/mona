@@ -51,7 +51,7 @@
                                    ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
 
                             <p>The biological InChI Key is the key, which reflects the actual substance, prior to
-                                modifications due to aducts, dehydration or derivatisation. You will be able to define
+                                modifications due to adducts, dehydration or derivatisation. You will be able to define
                                 the actual chemical InChI Key in the next step</p>
 
                             <p ng-show="uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine"
@@ -75,7 +75,6 @@
                                  localdata="possibleBiologicalNames"
                                  searchfields="name"
                                  titlefield="name"
-                                 minlength="1"
                                  inputclass="form-control form-control-small"></div>
 
 
@@ -126,7 +125,6 @@
                                  localdata="possibleChemicalNames"
                                  searchfields="name"
                                  titlefield="name"
-                                 minlength="1"
                                  inputclass="form-control form-control-small"></div>
 
                         </div>
@@ -145,7 +143,9 @@
                 <div ng-switch-when="tags">
                     <p>Please add any 'tags' here, you consider useful for other people. Tags are providing an easy way to find and label spectra.</p>
 
-                    <tags-input ng-model="spectra.tags"></tags-input>
+                    <tags-input ng-model="spectra.tags">
+                        <auto-complete source="loadTags($query)"></auto-complete>
+                    </tags-input>
 
                 </div>
 

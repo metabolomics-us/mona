@@ -38,7 +38,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
             /**
              * generates our field
              */
-			template: '<div class="angucomplete-holder"><input name="{{name}}" id="{{id}}" ng-model="searchStr" type="text" placeholder="{{placeholder}}" class="{{inputClass}}" onmouseup="this.select();" ng-focus="resetHideResults()" ng-blur="hideResults()" /><div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-if="showDropdown"><div class="angucomplete-searching" ng-show="searching">Searching...</div><div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)">No results found, please press return to use the entered text!</div><div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseover="hoverRow()" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}"><div ng-if="imageField" class="angucomplete-image-holder"><img ng-if="result.image && result.image != \'\'" ng-src="{{result.image}}" class="angucomplete-image"/><div ng-if="!result.image && result.image != \'\'" class="angucomplete-image-default"></div></div><div class="angucomplete-title" ng-if="matchClass" ng-bind-html="result.title"></div><div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div><div ng-if="result.description && result.description != \'\'" class="angucomplete-description">{{result.description}}</div></div></div></div>',
+			template: '<div class="angucomplete-holder"><input  autocomplete="off" name="{{name}}" id="{{id}}" ng-model="searchStr" type="text" placeholder="{{placeholder}}" class="{{inputClass}}" onmouseup="this.select();" ng-focus="resetHideResults()" ng-blur="hideResults()" /><div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-if="showDropdown"><div class="angucomplete-searching" ng-show="searching">Searching...</div><div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)">No results found, please press return to use the entered text!</div><div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseover="hoverRow()" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}"><div ng-if="imageField" class="angucomplete-image-holder"><img ng-if="result.image && result.image != \'\'" ng-src="{{result.image}}" class="angucomplete-image"/><div ng-if="!result.image && result.image != \'\'" class="angucomplete-image-default"></div></div><div class="angucomplete-title" ng-if="matchClass" ng-bind-html="result.title"></div><div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div><div ng-if="result.description && result.description != \'\'" class="angucomplete-description">{{result.description}}</div></div></div></div>',
 
             replace: true,
 
@@ -56,7 +56,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 				$scope.hideTimer = null;
 				$scope.searching = false;
 				$scope.pause = 500;
-				$scope.minLength = 3;
+				$scope.minLength = 1;
 				$scope.searchStr = null;
 
 				if ($scope.minLengthUser && $scope.minLengthUser != "") {
@@ -67,6 +67,12 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 					$scope.pause = $scope.userPause;
 				}
 
+                /**
+                 * are we requiring to update our search
+                 * @param newTerm
+                 * @param oldTerm
+                 * @returns {boolean}
+                 */
 				var isNewSearchNeeded = function (newTerm, oldTerm) {
 					return newTerm.length >= $scope.minLength && newTerm != oldTerm
 				};
@@ -110,14 +116,13 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 								text = $sce.trustAsHtml(text.replace(re, '<span class="' + $scope.matchClass + '">' + strPart + '</span>'));
 							}
 
-							var resultRow = {
-								title: text,
-								description: description,
-								image: image,
-								originalObject: responseData[i]
-							};
-
-							$scope.results[$scope.results.length] = resultRow;
+                            //assign our result object
+							$scope.results[$scope.results.length] =  {
+                                title: text,
+                                description: description,
+                                image: image,
+                                originalObject: responseData[i]
+                            };
 						}
 
 
@@ -179,10 +184,19 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 					}
 				};
 
+                /**
+                 * if we hover over a row. we need to execute this action
+                 * @param index
+                 */
 				$scope.hoverRow = function (index) {
-					$scope.currentIndex = index;
+                    $scope.currentIndex = index;
+
 				};
 
+                /**
+                 * if we press an enter key or so
+                 * @param event
+                 */
 				$scope.keyPressed = function (event) {
 					if (!(event.which == 38 || event.which == 40 || event.which == 13)) {
 						if (!$scope.searchStr || $scope.searchStr == "") {
@@ -209,15 +223,20 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 					}
 				};
 
+                /**
+                 * actually assign the result
+                 * @param result
+                 */
 				$scope.selectResult = function (result) {
+
+
 					if ($scope.matchClass) {
 						result.title = result.title.toString().replace(/(<([^>]+)>)/ig, '');
 					}
-					$scope.searchStr = $scope.lastSearchTerm = result.title;
+					$scope.searchStr = result.title;
 					$scope.selectedObject = result;
 					$scope.showDropdown = false;
 					$scope.results = [];
-					//$scope.$apply();
 				};
 
 				var inputField = elem.find('input');
@@ -250,21 +269,20 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 							event.stopPropagation();
 						} else {
 
-							//object is needed to look like if we actual return from autocomplete instead of utilizing a new object
+							//object is needed to look like if we actual return from auto complete instead of utilizing a new object
 							var originalResponse = {};
 							originalResponse[$scope.titleField] = $scope.searchStr;
 
 							$scope.results = [];
 
-							//build our selected object from the input string
-							$scope.selectedObject = {
-								title: $scope.searchStr,
-								description: "",
-								image: "",
-								originalObject: originalResponse
-							};
+                            $scope.selectResult({
+                                title: $scope.searchStr,
+                                description: "",
+                                image: "",
+                                originalObject: originalResponse
+                            });
 
-							//no dropdown needed since we decided to add our own object
+                            //no dropdown needed since we decided to add our own object
 							$scope.showDropdown = false;
 
 							$scope.$apply();
