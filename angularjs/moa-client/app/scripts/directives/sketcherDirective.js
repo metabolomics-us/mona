@@ -18,6 +18,7 @@ app.directive('chemicalSketcher', function (MolConverter) {
 		 * @param $scope
 		 * @param element
 		 * @param attrs
+         * @param ngModel
 		 */
 		link: function ($scope, element, attrs,ngModel) {
 
