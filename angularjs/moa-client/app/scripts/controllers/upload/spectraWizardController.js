@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService,AuthentificationService) {
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, $http, CTSService, TaggingService,AuthentificationService) {
 
     /**
      * definition of all our steps

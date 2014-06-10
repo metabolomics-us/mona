@@ -95,13 +95,14 @@
                     <fieldset>
                         <div class="form-group"
                              ng-class="{'has-error' : uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine}">
-                            <label for="chemicalInChI">please add your biological InChI key or draw the structure
+                            <label for="chemicalInChI">please add your chemical InChI key or draw the structure
                                 with the editor</label>
                             <input class="form-control" type="text" ng-model="spectra.chemicalCompound.inchi"
                                    name="chemicalInChI"
                                    ng-required
                                    id="chemicalInChI"
-                                   ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"/>
+                                   ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"
+                                    />
 
                             <p>The chemical InChI Key is the key, which reflects your measured substance,including
                                 modifications due to aducts, dehydration or derivatisation.</p>
@@ -128,7 +129,7 @@
                                  inputclass="form-control form-control-small"></div>
 
                         </div>
-                        <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalCompound.inchi"></div>
+                        <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalCompound.inchi" readonly="true"></div>
 
 
                     </fieldset>
