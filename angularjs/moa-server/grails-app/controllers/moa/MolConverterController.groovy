@@ -27,6 +27,7 @@ class MolConverterController {
             body(form)
         }
 
+        response.status = resp.getStatusCode().value();
         log.info("response: " + resp.json)
         respond(["key": resp.json.inchikey])
 
@@ -42,8 +43,8 @@ class MolConverterController {
         log.info("requesting names for ${params.ichi}")
         def resp = rest.get("${ctsUrl}/service/inchikeytomol/${request.JSON.inchi}")
 
-        println(resp.json)
 
+        response.status = resp.getStatusCode().value();
         respond(["molecule": resp.json.molecule])
     }
 }

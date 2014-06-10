@@ -41,7 +41,11 @@ app.directive('chemicalSketcher', function (MolConverter) {
 
                     MolConverter.convertToInchiKey(molFile).then(function (data) {
                         //update our bound model with the given key
+                        $scope.click = true;
+                        $scope.lastValue = $scope.bindModel;
                         $scope.bindModel = data.key;
+                        $scope.$apply();
+                        $scope.click = false;
                     });
                 };
 
@@ -53,16 +57,18 @@ app.directive('chemicalSketcher', function (MolConverter) {
                     return ngModel.$modelValue;
                 },function(v){
 
-                    if(v !=$scope.lastValue) {
+                    if(v !=$scope.lastValue && $scope.click == false) {
                         $scope.lastValue = v;
 
                         MolConverter.convertInchiKeyToMol(v).then(function(data){
                             if(angular.isDefined(data.molecule) && data.molecule != '') {
 
                                 var mol = ChemDoodle.readMOL(data.molecule);
-                                sketcher.loadMo
+                                sketcher.loadMolecule(mol);
+
                             }
                         });
+
                     }
                 });
 
