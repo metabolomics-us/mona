@@ -11,6 +11,16 @@ hibernate {
 //    cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory' // Hibernate 4
 }
 
+grails {
+    mongo {
+        host = "localhost"
+        port = 27017
+        username = ""
+        password = ""
+        databaseName = "moa"
+    }
+}
+
 // environment specific settings
 environments {
     development {
