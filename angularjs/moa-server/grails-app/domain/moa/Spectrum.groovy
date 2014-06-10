@@ -2,7 +2,7 @@ package moa
 
 import grails.rest.Resource
 
-@Resource(uri="/rest/spectra", formats=['json'])
+@Resource()
 class Spectrum {
 	// mongo injection
 	def mongo

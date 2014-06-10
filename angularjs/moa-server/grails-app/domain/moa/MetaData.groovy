@@ -2,7 +2,7 @@ package moa
 
 import grails.rest.Resource
 
-@Resource(uri = "/rest/metadata", formats=['json'])
+@Resource()
 class MetaData {
 	// mongo injection
 	def mongo
