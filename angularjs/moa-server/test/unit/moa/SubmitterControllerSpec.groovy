@@ -1,6 +1,7 @@
 package moa
 
 import grails.test.mixin.TestFor
+import moa.persistence.SubmitterController
 import spock.lang.Specification
 
 /**
