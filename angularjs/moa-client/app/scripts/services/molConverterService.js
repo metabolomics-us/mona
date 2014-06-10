@@ -9,88 +9,47 @@
  */
 app.service('MolConverter', function ($http, REST_BACKEND_SERVER, $q) {
 
-		/**
-		 * converts the given molecule to an inchi key
-		 * @param molecule
-		 * @returns {*}
-		 */
-		this.convertToInchiKey = function (molecule) {
+        /**
+         * converts the given molecule to an inchi key
+         * @param molecule
+         * @returns {*}
+         */
+        this.convertToInchiKey = function (molecule) {
 
-			var deferred = $q.defer();
+            var deferred = $q.defer();
 
-			$http.post(REST_BACKEND_SERVER + '/rest/util/converter/molToInchi', {
-					params: {
-						data: {mol: molecule}
-					}
-				}
-			).success(function (result) {
-					deferred.resolve(result);
-				});
+            $http.post(REST_BACKEND_SERVER + '/rest/util/converter/molToInchi', {
+                    mol: molecule
 
-			return deferred.promise;
-		};
+                }
+            ).success(function (result) {
+                    deferred.resolve(result);
+                });
 
-		/**
-		 * calculates the InChI Code for the given Molecule
-		 * @param molecule
-		 * @returns {*}
-		 */
-		this.convertToInchi = function (molecule) {
+            return deferred.promise;
+        };
 
-			var deferred = $q.defer();
+        /**
+         * attemps to convert the given InChI Key to a mol file
+         * @param inchiKey
+         * @returns {*}
+         */
+        this.convertInchiKeyToMol = function (inchiKey) {
 
-			$http.post(REST_BACKEND_SERVER + '/rest/util/converter/molToInchi', {
-					params: {
-						data: {mol: molecule}
-					}
-				}
-			).success(function (result) {
-					deferred.resolve(result);
-				});
+            var deferred = $q.defer();
 
-			return deferred.promise;
-		};
+            $http.post(REST_BACKEND_SERVER + '/rest/util/converter/inchiKeyToMol', {
 
-		/**
-		 * converts the given inchi code to a mol file
-		 * @param inchiCode
-		 * @returns {*}
-		 */
-		this.convertInchiToMol = function (inchiCode) {
+                    inchi: inchiKey
 
-			var deferred = $q.defer();
 
-			$http.post(REST_BACKEND_SERVER + '/rest/util/converter/inchiToMol', {
-					params: {
-						data: {mol: inchiCode}
-					}
-				}
-			).success(function (result) {
-					deferred.resolve(result);
-				});
+                }
+            ).
+                success(function (result) {
+                    deferred.resolve(result);
+                });
 
-			return deferred.promise;
-		};
-
-		/**
-		 * attemps to convert the given InChI Key to a mol file
-		 * @param inchiKey
-		 * @returns {*}
-		 */
-		this.convertInchiKeyToMol = function (inchiKey) {
-
-			var deferred = $q.defer();
-
-			$http.post(REST_BACKEND_SERVER + '/rest/util/converter/inchiKeyToMol', {
-					params: {
-						data: {mol: inchiKey}
-					}
-				}
-			).success(function (result) {
-					deferred.resolve(result);
-				});
-
-			return deferred.promise;
-		}
-	}
+            return deferred.promise;
+        }
+    }
 );

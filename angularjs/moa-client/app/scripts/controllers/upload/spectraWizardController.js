@@ -3,13 +3,13 @@
  */
 'use strict';
 
-moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService) {
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService,AuthentificationService) {
 
     /**
      * definition of all our steps
      * @type {string[]}
      */
-    $scope.steps = ['spectra', 'bioLogicalInchi', 'chemicalInChI', 'meta', 'tags', 'summary'];
+    $scope.steps = ['spectra', 'bioLogicalInchi', 'chemicalInChI','meta', 'tags', 'comment', 'summary'];
 
     /**
      * contains all possible chemical names
@@ -32,7 +32,14 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * this object contains all our generated data
      * @type {{}}
      */
-    $scope.spectra = {};
+    $scope.spectra = {biologicalCompound: {}, chemicalCompound: {}, tags: [], metadata: []};
+
+    /**
+     * assign the currently logged in user as submitter
+     */
+    AuthentificationService.getCurrentUser().then(function(data){
+        $scope.spectra.submitter = data;
+    });
 
     /**
      * is this our current step
@@ -98,7 +105,7 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     $scope.isStepComplete = function (uploadWizard) {
 
         //is the rawdata field valid
-        if ($scope.getCurrentStep() === 'spectra' && uploadWizard.rawdata.$valid && !uploadWizard.rawdata.$pristine) {
+        if ($scope.getCurrentStep() === 'spectra' && uploadWizard.rawdata.$valid) {
             return true;
         }
 
@@ -125,6 +132,12 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
             return true;
         }
 
+        if ($scope.getCurrentStep() === 'comment') {
+            return true;
+        }
+
+
+
         //nope we are done
         return false;
     };
@@ -144,15 +157,15 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     /**
      * popluate the biological inchi names field
      */
-    $scope.$watch('spectra.biologicalInChI', function () {
+    $scope.$watch('spectra.biologicalCompound.inchi', function () {
 
         //get all names for the inchi key
 
         //only if it's a valid inchi key we will query the server for valid names
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
-        if (angular.isDefined($scope.spectra.biologicalInChI)) {
+        if (angular.isDefined($scope.spectra.biologicalCompound.inchi)) {
 
-            CTSService.getNamesForInChIKey($scope.spectra.biologicalInChI).then(function (result) {
+            CTSService.getNamesForInChIKey($scope.spectra.biologicalCompound.inchi).then(function (result) {
                 $scope.possibleBiologicalNames = result;
 
             });
@@ -165,15 +178,15 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     /**
      * populate the chemical inchi name field
      */
-    $scope.$watch('spectra.chemicalInChI', function () {
+    $scope.$watch('spectra.chemicalCompound.inchi', function () {
 
         //get all names for the inchi key
 
         //only if it's a valid inchi key we will query the server for valid names
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
 
-        if (angular.isDefined($scope.spectra.chemicalInChI)) {
-            CTSService.getNamesForInChIKey($scope.spectra.chemicalInChI).then(function (result) {
+        if (angular.isDefined($scope.spectra.chemicalCompound.inchi)) {
+            CTSService.getNamesForInChIKey($scope.spectra.chemicalCompound.inchi).then(function (result) {
                 $scope.possibleChemicalNames = result;
 
             });
@@ -189,7 +202,7 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * @param query
      * @returns {*}
      */
-    $scope.loadTags = function(query) {
+    $scope.loadTags = function (query) {
         return TaggingService.getTags();
     };
 };

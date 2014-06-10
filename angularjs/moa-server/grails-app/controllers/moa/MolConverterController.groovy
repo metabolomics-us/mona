@@ -1,25 +1,49 @@
 package moa
 
-import grails.converters.JSON
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 
 class MolConverterController {
     static responseFormats = ['json']
 
-    /**
-     * converts a mol file to an inchi code
-     */
-    def molToInChICode() {
-
-    }
+    def ctsUrl = "http://127.0.0.1:9999/cts"
+    def rest
 
     /**
      * converts a mol file to an inchi key
      */
     def moltoinchi() {
-        log.warn("we are running in DUMMY mode, and always return the same inchi")
-        log.warn("params: ${params}" )
-        log.warn("json: ${request.JSON}")
 
-        respond (["key":"QNAYBMKLOCPYGJ-UWTATZPHSA-N"])
+        def object = request.JSON.mol.toString()
+        log.info("generating inchi for: ${object}")
+
+
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<String, String>()
+
+        form.add("mol", object)
+
+        def resp = rest.post("${ctsUrl}/service/moltoinchi") {
+            accept "application/json"
+            body(form)
+        }
+
+        log.info("response: " + resp.json)
+        respond(["key": resp.json.inchikey])
+
+    }
+
+    /**
+     * generates a molecule for the given inchi key
+     * @return
+     */
+    def inchiKeyToMol() {
+
+        println(request.JSON)
+        log.info("requesting names for ${params.ichi}")
+        def resp = rest.get("${ctsUrl}/service/inchikeytomol/${request.JSON.inchi}")
+
+        println(resp.json)
+
+        respond(["molecule": resp.json.molecule])
     }
 }
