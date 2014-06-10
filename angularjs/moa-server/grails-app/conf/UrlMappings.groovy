@@ -8,6 +8,11 @@ class UrlMappings {
         "/rest/submitters"(resources: 'Submitter')
 
         /**
+         * provides us with the tag resource to persist it
+         */
+        "/rest/tags"(resources: 'Tag')
+
+        /**
          * a simple rest converter for testing
          */
         "/rest/util/converter/molToInchi"(controller: "molConverter", action: "moltoinchi")

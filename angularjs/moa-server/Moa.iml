@@ -115,6 +115,12 @@
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-logging-log4j/7.0.50/tomcat-embed-logging-log4j-7.0.50.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-jasper/7.0.50/tomcat-embed-jasper-7.0.50.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina-ant/7.0.50/tomcat-catalina-ant-7.0.50.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-rest-client/1.0.0.RELEASE/grails-datastore-rest-client-1.0.0.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-simple/2.0.7.RELEASE/grails-datastore-simple-2.0.7.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm/2.0.7.RELEASE/grails-datastore-gorm-2.0.7.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final/hibernate-jpa-2.0-api-1.0.1.Final.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/javassist/javassist/3.17.1-GA/javassist-3.17.1-GA.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-core/2.0.7.RELEASE/grails-datastore-core-2.0.7.RELEASE.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -122,6 +128,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="Moa-grailsPlugins" />
+    <orderEntry type="library" name="grails-2.3.8" level="application" />
   </component>
 </module>
 

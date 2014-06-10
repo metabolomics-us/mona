@@ -7,11 +7,11 @@
           <root url="file://$MODULE_DIR$/target/work/plugins/angularjs-resources-1.2.15/web-app" relative="/" />
           <root url="file://$MODULE_DIR$/target/work/plugins/angularjs-resources-1.2.15/grails-app/views" relative="/" />
           <root url="file://$MODULE_DIR$/target/work/plugins/font-awesome-resources-4.0.3.0/web-app" relative="/" />
-          <root url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.3.8/grails-app/views" relative="/" />
-          <root url="file://$MODULE_DIR$/target/work/plugins/jquery-1.10.2.2/web-app" relative="/" />
-          <root url="file://$MODULE_DIR$/target/work/plugins/cors-1.1.4/web-app" relative="/" />
-          <root url="file://$MODULE_DIR$/target/work/plugins/twitter-bootstrap-3.0.3/web-app" relative="/" />
           <root url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1/web-app" relative="/" />
+          <root url="file://$MODULE_DIR$/target/work/plugins/twitter-bootstrap-3.0.3/web-app" relative="/" />
+          <root url="file://$MODULE_DIR$/target/work/plugins/cors-1.1.4/web-app" relative="/" />
+          <root url="file://$MODULE_DIR$/target/work/plugins/jquery-1.10.2.2/web-app" relative="/" />
+          <root url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.3.8/grails-app/views" relative="/" />
         </webroots>
         <sourceRoots />
       </configuration>
@@ -58,6 +58,7 @@
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1/grails-app/i18n" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1/grails-app/taglib" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/target/work/plugins/rest-client-builder-2.0.0" />
     <content url="file://$MODULE_DIR$/target/work/plugins/tomcat-7.0.50">
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/tomcat-7.0.50/src/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/tomcat-7.0.50/src/groovy" isTestSource="false" />
@@ -71,7 +72,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="grails-2.3.5" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="grails-2.3.8" level="application" />
     <orderEntry type="module-library" exported="">
       <library name="Grails User Library (Moa-grailsPlugins)">
         <CLASSES>
@@ -120,6 +121,12 @@
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-logging-log4j/7.0.50/tomcat-embed-logging-log4j-7.0.50.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-jasper/7.0.50/tomcat-embed-jasper-7.0.50.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina-ant/7.0.50/tomcat-catalina-ant-7.0.50.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-rest-client/1.0.0.RELEASE/grails-datastore-rest-client-1.0.0.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-simple/2.0.7.RELEASE/grails-datastore-simple-2.0.7.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm/2.0.7.RELEASE/grails-datastore-gorm-2.0.7.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final/hibernate-jpa-2.0-api-1.0.1.Final.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/javassist/javassist/3.17.1-GA/javassist-3.17.1-GA.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-core/2.0.7.RELEASE/grails-datastore-core-2.0.7.RELEASE.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -13,7 +13,7 @@ class Spectra {
     /**
      * we can have a lot of associated data
      */
-    static hasMany = [associatedDatas:AssociatedData]
+    static hasMany = [associatedDatas: AssociatedData]
 
     static constraints = {
     }

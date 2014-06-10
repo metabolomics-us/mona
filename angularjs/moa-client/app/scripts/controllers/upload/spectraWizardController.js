@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService) {
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService, $q) {
 
     /**
      * definition of all our steps
@@ -26,7 +26,7 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * our current step where we are at
      * @type {number}
      */
-    $scope.step = 0;
+    $scope.step = 4;
 
     /**
      * this object contains all our generated data
@@ -190,6 +190,9 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * @returns {*}
      */
     $scope.loadTags = function(query) {
-        return TaggingService.getTags();
+        return TaggingService.query(function (data) {
+        }, function (error) {
+            alert('failed: ' + error);
+        }).$promise
     };
 };

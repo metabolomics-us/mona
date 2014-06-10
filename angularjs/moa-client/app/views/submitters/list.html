@@ -23,10 +23,10 @@
                 <td>{{submitter.lastName}}</td>
                 <td>{{submitter.emailAddress}}</td>
                 <td>
-                    <button ng-click="remove($index)" class="btn btn-default"><i
-                            class="fa fa-minus-square"></i></button>
                     <button ng-click="displayEditDialog($index)" class="btn btn-default"><i
                             class="fa fa-pencil-square-o "></i></button>
+                    <button ng-click="remove($index)" class="btn btn-default"><i
+                            class="fa fa-minus-square"></i></button>
 
                     <input type="hidden" name="submitter.id" ng-value="submitter.id" value="{{submitter.id}}"/>
                 </td>

@@ -2,7 +2,7 @@ package moa
 
 import grails.rest.Resource
 
-@Resource(uri = "/rest/metadata", formats=['json'])
+@Resource(uri = "/rest/metadata", formats = ['json'])
 class AssociatedData {
 
     static constraints = {
@@ -24,12 +24,12 @@ class AssociatedData {
     String identifier
 
     /**
-     * possible parent in case there is a hirachy of metadata
+     * possible parent in case there is a hierarchy of metadata
      */
     AssociatedData parent
 
     /**
-     * possible list of children in case there is a hirachy
+     * possible list of children in case there is a hierarchy
      */
     Set<AssociatedData> children
 
