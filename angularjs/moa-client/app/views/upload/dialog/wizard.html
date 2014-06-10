@@ -44,7 +44,7 @@
                              ng-class="{'has-error' : uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine}">
                             <label for="bioLogicalInChi">please add your biological InChI key or draw the structure
                                 with the editor</label>
-                            <input class="form-control" type="text" ng-model="spectra.biologicalInChI"
+                            <input class="form-control" type="text" ng-model="spectra.biologicalCompound.inchi"
                                    name="biologicalInchi"
                                    id="bioLogicalInChi"
                                    ng-required
@@ -71,7 +71,7 @@
                                  inputName="biologicalInChIName"
                                  placeholder="Search for a valid Name"
                                  pause="100"
-                                 selectedobject="spectra.biologicalInChIName"
+                                 selectedobject="spectra.biologicalCompound.name"
                                  localdata="possibleBiologicalNames"
                                  searchfields="name"
                                  titlefield="name"
@@ -84,7 +84,7 @@
                             </p>
                         </div>
 
-                        <div chemical-sketcher id="bioLogicalInChiSketcher" ng-model="spectra.biologicalInChI"></div>
+                        <div chemical-sketcher id="bioLogicalInChiSketcher" ng-model="spectra.biologicalCompound.inchi"></div>
 
                     </fieldset>
 
@@ -97,7 +97,7 @@
                              ng-class="{'has-error' : uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine}">
                             <label for="chemicalInChI">please add your biological InChI key or draw the structure
                                 with the editor</label>
-                            <input class="form-control" type="text" ng-model="spectra.chemicalInChI"
+                            <input class="form-control" type="text" ng-model="spectra.chemicalCompound.inchi"
                                    name="chemicalInChI"
                                    ng-required
                                    id="chemicalInChI"
@@ -122,14 +122,14 @@
                                  inputName="chemicalInChIName"
                                  placeholder="Search for a valid Name"
                                  pause="100"
-                                 selectedobject="spectra.chemicalInChIName"
+                                 selectedobject="spectra.chemicalCompound.name"
                                  localdata="possibleChemicalNames"
                                  searchfields="name"
                                  titlefield="name"
                                  inputclass="form-control form-control-small"></div>
 
                         </div>
-                        <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalInChI"></div>
+                        <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalCompound.inchi"></div>
 
 
                     </fieldset>
@@ -150,6 +150,19 @@
 
                 </div>
 
+                <!-- allows us to procide some comments to this spectra -->
+
+                <div ng-switch-when="comment">
+                    <fieldset>
+                        <div class="form-group"
+                             ng-class="{'has-error' : uploadWizard.comment.$invalid && !uploadWizard.comment.$pristine}">
+                            <label for="comment">Please add any comments to this spectra you consider of importance. These comments will be indexed and we will try to extract all useful information</label>
+
+                            <textarea ng-model="spectra.comment" id="comment" class="form-control" rows="6"></textarea>
+                        </div>
+                    </fieldset>
+                </div>
+
                 <div ng-switch-when="summary">
                     <p>This is the summary of your provided information, please press submit to persist this to the
                         server</p>
@@ -164,31 +177,41 @@
                         <tbody>
                         <tr>
                             <td>Biological InChI Key</td>
-                            <td>{{spectra.biologicalInChI}}</td>
+                            <td>{{spectra.biologicalCompound.inchi}}</td>
                         </tr>
                         <tr>
                             <td>Chemical InChI Key</td>
-                            <td>{{spectra.chemicalInChI}}</td>
+                            <td>{{spectra.chemicalCompound.inchi}}</td>
                         </tr>
                         <tr>
                             <td>Biological Name</td>
-                            <td>{{spectra.biologicalInChIName}}</td>
+                            <td>{{spectra.biologicalCompound.name}}</td>
                         </tr>
                         <tr>
                             <td>Chemical Name</td>
-                            <td>{{spectra.chemicalInChIName}}</td>
+                            <td>{{spectra.chemicalCompound.name}}</td>
                         </tr>
 
                         </tbody>
                     </table>
 
-                    <div>{{spectra | json}}</div>
+                    <p>Provided comments</p>
+                    <div>
+                        {{spectra.comment}}
+                    </div>
 
                 </div>
             </div>
+
+            <p>
+                generated object for the upload:
+            </p>
+            <div>{{spectra | json}}</div>
+
         </div>
     </div>
     <div class="modal-footer">
+        <a class="btn" ng-click="handlePrevious()" ng-show="!isFirstStep()">Back</a>
         <a class="btn btn-primary" ng-click="handleNext(dismiss)" ng-disabled="!isStepComplete(uploadWizard)">{{getNextLabel()}}</a>
     </div>
 </form>

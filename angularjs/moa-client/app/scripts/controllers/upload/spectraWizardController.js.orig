@@ -3,7 +3,13 @@
  */
 'use strict';
 
-moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService, AuthentificationService) {
+<<<<<<< HEAD
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService, $q) {
+||||||| merged common ancestors
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService) {
+=======
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, MolConverter, $http, CTSService, TaggingService,AuthentificationService) {
+>>>>>>> origin/wohlgemuth
 
     /**
      * definition of all our steps
@@ -202,10 +208,18 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * @param query
      * @returns {*}
      */
+<<<<<<< HEAD
     $scope.loadTags = function(query) {
         return TaggingService.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         }).$promise
+||||||| merged common ancestors
+    $scope.loadTags = function(query) {
+        return TaggingService.getTags();
+=======
+    $scope.loadTags = function (query) {
+        return TaggingService.getTags();
+>>>>>>> origin/wohlgemuth
     };
 };

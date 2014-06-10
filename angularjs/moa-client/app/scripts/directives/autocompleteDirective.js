@@ -234,7 +234,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 						result.title = result.title.toString().replace(/(<([^>]+)>)/ig, '');
 					}
 					$scope.searchStr = result.title;
-					$scope.selectedObject = result;
+					$scope.selectedObject = result.title;
 					$scope.showDropdown = false;
 					$scope.results = [];
 				};

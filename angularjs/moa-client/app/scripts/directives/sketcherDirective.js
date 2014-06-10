@@ -18,8 +18,9 @@ app.directive('chemicalSketcher', function (MolConverter) {
 		 * @param $scope
 		 * @param element
 		 * @param attrs
+         * @param ngModel
 		 */
-		link: function ($scope, element, attrs) {
+		link: function ($scope, element, attrs,ngModel) {
 
 			//only render if we got an id object
 			if (angular.isDefined($scope.id)) {
@@ -31,18 +32,45 @@ app.directive('chemicalSketcher', function (MolConverter) {
 				sketcher.specs.atoms_useJMOLColors = true;
 				sketcher.specs.bonds_clearOverlaps_2D = true;
 
-				/**
-				 * get the actual molecule information and tell our parent scope that this value needs updating
-				 */
-				sketcher.click = function () {
-					var mol = sketcher.getMolecule();
-					var molFile = ChemDoodle.writeMOL(mol);
+                /**
+                 * get the actual molecule information and tell our parent scope that this value needs updating
+                 */
+                sketcher.click = function(){
+                    var mol = sketcher.getMolecule();
+                    var molFile = ChemDoodle.writeMOL(mol);
 
-					MolConverter.convertToInchiKey(molFile).then(function (data) {
-						//update our bound model with the given key
-						$scope.bindModel = data.key;
-					});
-				};
+                    MolConverter.convertToInchiKey(molFile).then(function (data) {
+                        //update our bound model with the given key
+                        $scope.click = true;
+                        $scope.lastValue = $scope.bindModel;
+                        $scope.bindModel = data.key;
+                        $scope.$apply();
+                        $scope.click = false;
+                    });
+                };
+
+
+                /**
+                 * tracks changes to the model and if it's changes attempt to draw the structure
+                 */
+                $scope.$watch(function(){
+                    return ngModel.$modelValue;
+                },function(v){
+
+                    if(v !=$scope.lastValue && $scope.click == false) {
+                        $scope.lastValue = v;
+
+                        MolConverter.convertInchiKeyToMol(v).then(function(data){
+                            if(angular.isDefined(data.molecule) && data.molecule != '') {
+
+                                var mol = ChemDoodle.readMOL(data.molecule);
+                                sketcher.loadMolecule(mol);
+
+                            }
+                        });
+
+                    }
+                });
 
 				/**
 				 * destroy our sketcher - doesn't work
