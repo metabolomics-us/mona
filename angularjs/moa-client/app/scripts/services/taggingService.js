@@ -7,28 +7,19 @@
 /**
  * simple service to help with available tags
  */
-app.service('TaggingService',function($http, $q, REST_BACKEND_SERVER){
 
-    /**
-     * returns all possible tags
-     */
-    this.getTags = function(){
+app.factory('TaggingService', function ($resource, REST_BACKEND_SERVER, $http) {
 
-        /**
-         * later will be populated by a rest backend
-         * @type {{text: string}[]}
-         */
-        var tags = [
-            {"text":"dirty"},
-            {"text":"clean"},
-            {"text":"mixed"},
-            {"text":"standard"},
-            {"text":"injected"},
-            {"text":"experimental"}
-        ];
+    $http.defaults.useXDomain = true;
 
-        var deferred = $q.defer();
-        deferred.resolve(tags);
-        return deferred.promise;
-    }
+    return $resource(
+            REST_BACKEND_SERVER + '/rest/tags/:id',
+        {id: "@id"},
+        {
+            'update': {
+                method: 'PUT'
+
+            }
+        }
+    );
 });

@@ -8,9 +8,15 @@ class UrlMappings {
         "/rest/submitters"(resources: 'Submitter')
 
         /**
+         * provides us with the tag resource to persist it
+         */
+        "/rest/tags"(resources: 'Tag')
+
+        /**
          * converts a mol file to inchi
          */
         "/rest/util/converter/molToInchi"(controller: "molConverter", action: "moltoinchi")
+
         /**
          * converts an inchi key to a mol file
          */

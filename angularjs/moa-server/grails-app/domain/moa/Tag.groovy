@@ -4,12 +4,12 @@ class Tag {
 	// mongo injection
 	def mongo
 
-	/**
-	 * tag value
-	 */
-	String value
+    static constraints = {
+        text(blank: false)
+    }
 
-	static constraints = {
-		value blank:false
-	}
+    /**
+     * name of tag
+     */
+    String text
 }

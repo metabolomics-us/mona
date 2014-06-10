@@ -32,7 +32,7 @@ app.config(function ($routeProvider) {
 /**
  * location of our backend server
  */
-app.constant('REST_BACKEND_SERVER', 'http://127.0.0.1:9090');
+app.constant('REST_BACKEND_SERVER', 'http://127.0.0.1:8080');
 
 /**
  * enable cross domain stuff
