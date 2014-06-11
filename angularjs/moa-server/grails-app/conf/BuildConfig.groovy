@@ -12,11 +12,11 @@ grails.project.fork = [
         //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
 
         // configure settings for the test-app JVM, uses the daemon by default
-        test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon: true],
+        test   : [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon: true],
         // configure settings for the run-app JVM
-        run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve: false],
+        run    : [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve: false],
         // configure settings for the run-war JVM
-        war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve: false],
+        war    : [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve: false],
         // configure settings for the Console UI JVM
         console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
 ]
@@ -46,11 +46,11 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
 
+
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         // runtime 'mysql:mysql-connector-java:5.1.27'
         // runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'
-
 
 
     }
@@ -62,10 +62,8 @@ grails.project.dependency.resolution = {
         // plugins for the compile step
         compile ":mongodb:3.0.1"
 
-
         // plugins needed at runtime but not for compilation
         runtime ":database-migration:1.3.8"
-        runtime ":jquery:1.10.2.2"
         runtime ":resources:1.2.1"
         runtime ":cors:1.1.4"
         compile ":rest-client-builder:2.0.0"

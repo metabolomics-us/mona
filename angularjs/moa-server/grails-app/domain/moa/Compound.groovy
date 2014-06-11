@@ -6,8 +6,14 @@ import grails.rest.Resource
 class Compound {
     def mongo
 
+
     static constraints = {
     }
+
+	/**
+	 * this compound belongs to one spectrum
+	 */
+	static belongsTo = [spectrum: Spectrum]
 
     /**
      * inchiKey of this compound
@@ -19,4 +25,8 @@ class Compound {
      */
     String inchiCode
 
+	/**
+	 * names associated to this compound
+	 */
+	List<String> names
 }

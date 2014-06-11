@@ -1,6 +1,7 @@
 package moa.server
 
 import grails.test.mixin.TestFor
+import moa.SpectrumController
 import spock.lang.Specification
 
 /**
