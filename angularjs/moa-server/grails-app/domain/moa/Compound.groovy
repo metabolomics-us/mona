@@ -4,15 +4,16 @@ import grails.rest.Resource
 
 @Resource(uri="/rest/compound", formats=['json'])
 class Compound {
+	// mongo injection
+	def mongo
 
     static constraints = {
     }
 
-    /**
-     * one compound can have many spectra associated to it
-     */
-    static hasMany = [associatedSpectra:Spectra]
-
+	/**
+	 * this compound belongs to one spectrum
+	 */
+	static belongsTo = [spectrum: Spectrum]
 
     /**
      * inchiKey of this compound
@@ -24,8 +25,8 @@ class Compound {
      */
     String inchiCode
 
-    /**
-     * all known associated spectra
-     */
-    List<Spectra> associatedSpectra
+	/**
+	 * names associated to this compound
+	 */
+	List<String> names
 }

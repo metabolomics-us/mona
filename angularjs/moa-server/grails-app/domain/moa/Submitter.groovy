@@ -7,6 +7,8 @@ import grails.rest.Resource
  */
 @Resource()
 class Submitter {
+	// mongo injection
+	def mongo
 
     static constraints = {
         emailAddress(unique: true, blank: false)
