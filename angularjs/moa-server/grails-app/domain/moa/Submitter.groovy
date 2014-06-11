@@ -1,11 +1,7 @@
 package moa
-
-import grails.rest.Resource
-
 /**
  * who submitted this spectra
  */
-@Resource()
 class Submitter {
     def mongo
 
