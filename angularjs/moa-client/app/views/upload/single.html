@@ -2,26 +2,8 @@
     <div class="container">
         <p>Dear user, here you can submit your new spectra to the system</p>
         <button ng-click="uploadSpectraDialog()">Add a new spectra</button>
+        <button ng-click="uploadLibraryDialog()">Upload a spectra library</button>
+
     </div>
 
-
-    <div fl-angucomplete inputid="ex1"
-                  name="myFieldToMonitor"
-                  placeholder="Search for a valid Name"
-                  pause="100"
-                  selectedobject="biologicalName"
-                  localdata="availableNames"
-                  searchfields="name"
-                  titlefield="name"
-                  minlength="1"
-                  inputclass="form-control form-control-small"></div>
-
-
-
-    <p>Simple test</p>
-    <input ng-model="biologicalName"/>
-
-
-    <p>result</p>
-    {{biologicalName}}
 </div>
