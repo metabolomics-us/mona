@@ -7,6 +7,9 @@ class Compound {
         inchiKey unique: true,nullable: false
     }
 
+    static mapping = {
+        inchiKey index: true, indexAttributes: [unique: true]
+    }
 	/**
 	 * this compound belongs to one spectrum
 	 */
@@ -20,7 +23,7 @@ class Compound {
 	/**
 	 * names associated to this compound
 	 */
-	Set<String> names
+	Set<String> names = [] as Set<String>
 
     /**
      * associated spectra

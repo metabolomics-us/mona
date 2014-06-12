@@ -7,6 +7,7 @@ import moa.Tag
 
 class SpectrumController extends RestfulController<Spectrum> {
 
+
     static responseFormats = ['json']
 
     def index() {}
@@ -20,8 +21,24 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         Spectrum spectrum = super.createResource(params)
 
-        spectrum.biologicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.biologicalCompound.inchiKey).save()
-        spectrum.chemicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.chemicalCompound.inchiKey).save()
+        def biologicalNames = spectrum.biologicalCompound.names
+        def chemicalNames = spectrum.chemicalCompound.names
+
+        spectrum.biologicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.biologicalCompound.inchiKey).save(flush: true)
+
+        if (spectrum.biologicalCompound.names == null) {
+            spectrum.biologicalCompound.names = [] as Set<String>
+        }
+
+        biologicalNames.each { spectrum.biologicalCompound.names.add(it) }
+
+        spectrum.chemicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.chemicalCompound.inchiKey).save(flush: true)
+
+        if (spectrum.chemicalCompound.names == null) {
+            spectrum.chemicalCompound.names = [] as Set<String>
+        }
+
+        chemicalNames.each { spectrum.chemicalCompound.names.add(it) }
 
 
         def tags = []
@@ -31,6 +48,9 @@ class SpectrumController extends RestfulController<Spectrum> {
         }
         spectrum.tags = tags;
 
+
+        println(spectrum.biologicalCompound.inchiKey)
+        println(spectrum.chemicalCompound.inchiKey)
 
         return spectrum;
     }

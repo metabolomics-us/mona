@@ -8,7 +8,7 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, $http) {
     $http.defaults.useXDomain = true;
 
     return $resource(
-            REST_BACKEND_SERVER + '/rest/spectrum/:id',
+            REST_BACKEND_SERVER + '/rest/spectra/:id',
         {id: "@id"},
         {
             'update': {
