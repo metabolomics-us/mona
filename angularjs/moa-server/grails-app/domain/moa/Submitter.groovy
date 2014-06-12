@@ -3,7 +3,7 @@ package moa
  * who submitted this spectra
  */
 class Submitter {
-    def mongo
+    static mapWith = "mongo"
 
     static constraints = {
         emailAddress(unique: true, blank: false)
@@ -11,6 +11,8 @@ class Submitter {
         lastName(blank: false)
         password(blank: false)
     }
+
+    static hasMany = [spectra: Spectrum]
 
     /**
      * first name of the submitter
@@ -31,4 +33,9 @@ class Submitter {
      * our password
      */
     String password
+
+    /**
+     * owned spectra
+     */
+    Set<Spectrum> spectra
 }

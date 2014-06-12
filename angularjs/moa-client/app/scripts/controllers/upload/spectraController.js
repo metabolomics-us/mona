@@ -29,6 +29,9 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
     };
 
 
+    /**
+     * uploads an existing spectrum to the system
+     */
     $scope.uploadDummySpectrum = function(){
         var spectrum = angular.fromJson($scope.jsonData);
 

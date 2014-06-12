@@ -1,7 +1,7 @@
 package moa
 
 class Tag {
-    def mongo
+    static mapWith = "mongo"
 
     static constraints = {
         text(blank: false, unique: true)

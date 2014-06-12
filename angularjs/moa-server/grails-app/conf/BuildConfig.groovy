@@ -61,6 +61,7 @@ grails.project.dependency.resolution = {
 
         // plugins for the compile step
         compile ":mongodb:3.0.1"
+        compile ":hibernate:3.6.10.15"
 
         // plugins needed at runtime but not for compilation
         runtime ":database-migration:1.3.8"

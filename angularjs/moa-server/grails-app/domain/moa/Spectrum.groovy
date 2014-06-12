@@ -1,15 +1,13 @@
 package moa
 
 class Spectrum {
-    // mongo injection
-    def mongo
+    static mapWith = "mongo"
+
     /**
      * contains one biological compound and one chemical compound
      */
     static hasOne = [
-            chemicalCompound  : Compound,
-            biologicalCompound: Compound,
-            submitter         : Submitter
+            submitter: Submitter
     ]
 
     /**
@@ -21,8 +19,6 @@ class Spectrum {
      * we belong to these
      */
     static belongsTo = [
-            chemicalCompound: Compound,
-            biologicalCompound: Compound,
             submitter: Submitter
     ]
 

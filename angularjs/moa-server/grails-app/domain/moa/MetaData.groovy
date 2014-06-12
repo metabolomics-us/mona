@@ -1,8 +1,7 @@
 package moa
 
 class MetaData {
-	// mongo injection
-	def mongo
+    static mapWith = "mongo"
 
     static constraints = {
     }
