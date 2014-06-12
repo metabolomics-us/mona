@@ -1,7 +1,9 @@
+import grails.converters.JSON
 import moa.Compound
 import moa.Spectrum
 import moa.Submitter
 import moa.Tag
+import util.DomainClassMarshaller
 
 class BootStrap {
 
@@ -19,6 +21,36 @@ class BootStrap {
         Tag.findOrCreateWhere(text: "standard").save()
         Tag.findOrCreateWhere(text: "injected").save()
         Tag.findOrCreateWhere(text: "experimental").save()
+
+        JSON.registerObjectMarshaller(Tag,
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class"])
+        )
+
+        JSON.registerObjectMarshaller(Compound,
+                DomainClassMarshaller.createExcludeMarshaller(Compound, ["class","spectra"])
+        )
+
+        JSON.registerObjectMarshaller(Submitter,
+                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class","spectra"])
+        )
+
+        JSON.registerObjectMarshaller(Spectrum,
+                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class"])
+        )
+
+/*
+        JSON.registerObjectMarshaller(Spectrum) { Spectrum t ->
+            return [
+                    id: t.id,
+                    chemicalCompound: t.chemicalCompound,
+                    biologicalCompound: t.biologicalCompound,
+                    comments: t.comments,
+                    spectrum: t.spectrum,
+                    submitter: t.submitter
+
+            ]
+        }
+*/
 
     }
 

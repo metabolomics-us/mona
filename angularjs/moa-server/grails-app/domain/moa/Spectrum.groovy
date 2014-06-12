@@ -19,7 +19,9 @@ class Spectrum {
      * we belong to these
      */
     static belongsTo = [
-            submitter: Submitter
+            submitter: Submitter,
+            chemicalCompound: Compound,
+            biologicalCompound: Compound
     ]
 
     static constraints = {

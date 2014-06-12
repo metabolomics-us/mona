@@ -53,7 +53,11 @@ grails {
         }
     }
 }
- 
+grails.mongo.default.mapping = {
+    version false
+    '*'(reference:true)
+}
+
 grails.converters.encoding = "UTF-8"
 // scaffolding templates configuration
 grails.scaffolding.templates.domainSuffix = 'Instance'
@@ -103,7 +107,4 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
-grails.mongo.default.mapping = {
-    version false
-    '*'(reference:true)
-}
+grails.converters.default.pretty.print = true
