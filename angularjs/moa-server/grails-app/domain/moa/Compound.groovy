@@ -20,7 +20,7 @@ class Compound {
 	/**
 	 * names associated to this compound
 	 */
-	List<String> names
+	Set<String> names
 
     /**
      * associated spectra

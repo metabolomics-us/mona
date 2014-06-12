@@ -21,4 +21,14 @@ class TagController extends RestfulController {
         }
         params
     }
+
+    @Override
+    protected Tag createResource(Map params) {
+
+        Tag t = super.createResource(params)
+
+        t = Tag.findOrCreateWhere(text: t.text)
+
+        return t;
+    }
 }
