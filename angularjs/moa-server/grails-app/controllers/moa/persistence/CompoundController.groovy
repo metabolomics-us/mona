@@ -23,7 +23,20 @@ class CompoundController extends RestfulController {
                     request.JSON)
         }
 
-        println "modified params: ${params}"
         params
+    }
+
+    @Override
+    protected Compound createResource(Map params) {
+        Compound c = super.createResource(params)
+
+        Set<String> names = c.names
+        c = Compound.findOrCreateWhere(inchiKey: c.inchiKey)
+
+        for (String s : names) {
+            c.names.add(s)
+        }
+
+        return c;
     }
 }

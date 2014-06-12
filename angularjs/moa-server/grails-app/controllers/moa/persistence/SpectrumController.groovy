@@ -20,8 +20,8 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         Spectrum spectrum = super.createResource(params)
 
-        spectrum.biologicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.biologicalCompound.inchiKey)
-        spectrum.chemicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.chemicalCompound.inchiKey)
+        spectrum.biologicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.biologicalCompound.inchiKey).save()
+        spectrum.chemicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.chemicalCompound.inchiKey).save()
 
 
         def tags = []

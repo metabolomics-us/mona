@@ -20,8 +20,6 @@ class SubmitterController extends RestfulController {
             params.putAll(
                     request.JSON)
         }
-
-        println "modified params: ${params}"
         params
     }
 }
