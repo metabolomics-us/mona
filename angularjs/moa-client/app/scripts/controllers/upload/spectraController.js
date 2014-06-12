@@ -43,7 +43,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
             resolve: {
                 newSpectrum : function(){
 
-                    return spectrum;
+                    return new Spectrum(spectrum);
                 }
             }
         });
@@ -52,7 +52,6 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
         modalInstance.result.then(function (spectra) {
             spectra.$save();
         });
-
 
     };
 

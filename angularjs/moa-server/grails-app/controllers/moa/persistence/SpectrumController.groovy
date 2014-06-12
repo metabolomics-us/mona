@@ -23,20 +23,20 @@ class SpectrumController extends RestfulController<Spectrum> {
         def biologicalNames = spectrum.biologicalCompound.names
         def chemicalNames = spectrum.chemicalCompound.names
 
-        spectrum.biologicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.biologicalCompound.inchiKey).save(flush: true)
-
+        spectrum.biologicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.biologicalCompound.inchiKey)
+        /*
         if (spectrum.biologicalCompound.names == null) {
             spectrum.biologicalCompound.names = [] as Set<String>
         }
-
+          */
         biologicalNames.each { spectrum.biologicalCompound.names.add(it) }
 
-        spectrum.chemicalCompound = Compound.findOrCreateWhere(inchiKey: spectrum.chemicalCompound.inchiKey).save(flush: true)
-
+        spectrum.chemicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.chemicalCompound.inchiKey)
+    /*
         if (spectrum.chemicalCompound.names == null) {
             spectrum.chemicalCompound.names = [] as Set<String>
         }
-
+      */
         chemicalNames.each { spectrum.chemicalCompound.names.add(it) }
 
 
