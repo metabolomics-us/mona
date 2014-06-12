@@ -35,7 +35,23 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
     $scope.uploadDummySpectrum = function(){
         var spectrum = angular.fromJson($scope.jsonData);
 
-        new Spectrum(spectrum).$save();
+        var modalInstance = $modal.open({
+            templateUrl: '/views/upload/dialog/wizard.html',
+            controller: moaControllers.SpectraWizardController,
+            size: 'lg',
+            backdrop: 'static',
+            resolve: {
+                newSpectrum : function(){
+
+                    return spectrum;
+                }
+            }
+        });
+
+        //retrieve the result from the dialog and save it
+        modalInstance.result.then(function (spectra) {
+            spectra.$save();
+        });
 
 
     };

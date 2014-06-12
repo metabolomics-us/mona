@@ -3,6 +3,18 @@
  */
 'use strict';
 
+/**
+ * provides us with a spectra wizard controller to populate our database
+ * @param $scope
+ * @param $modalInstance
+ * @param $window
+ * @param $http
+ * @param CTSService
+ * @param TaggingService
+ * @param AuthentificationService
+ * @param newSpectrum
+ * @constructor
+ */
 moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, $http, CTSService, TaggingService, AuthentificationService, newSpectrum) {
 
     /**
@@ -37,7 +49,7 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     /**
      * assign our submitter
      */
-    AuthentificationService.getCurrentUser().then(function(data){
+    AuthentificationService.getCurrentUser().then(function (data) {
         $scope.spectra.submitter = data;
     });
 
@@ -102,22 +114,39 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * @param uploadWizard
      * @returns {boolean}
      */
-    $scope.isStepComplete = function (uploadWizard) {
+    $scope.isStepComplete = function (form) {
 
         //is the spectrum field valid
-        if ($scope.getCurrentStep() === 'spectra' && uploadWizard.spectrum.$valid) {
-            return true;
+        if ($scope.getCurrentStep() === 'spectra') {
+            if (form.spectrum.$valid) {
+                if( !form.spectrum.$pristine){
+                    return true;
+                }
+                //check our object if something is assigned
+                else if(angular.isDefined($scope.spectra.spectrum)){
+                    return true;
+                }
+            }
         }
 
         //the biological inchi key field is valid
-        if ($scope.getCurrentStep() === 'bioLogicalInchi' && uploadWizard.biologicalInchi.$valid /*&& uploadWizard.biologicalInChIName.$valid*/) {
-
-            return true;
+        if ($scope.getCurrentStep() === 'bioLogicalInchi'){
+            if( form.biologicalInchi.$valid && !form.biologicalInchi.$pristine) {
+                return true;
+            }
+            else if(angular.isDefined($scope.spectra.biologicalCompound.names)){
+                return true;
+            }
         }
 
         //the chemical inchi page is complete
-        if ($scope.getCurrentStep() === 'chemicalInChI' && uploadWizard.chemicalInChI.$valid /*&& uploadWizard.chemicalInChIName.$valid*/) {
-            return true;
+        if ($scope.getCurrentStep() === 'chemicalInChI') {
+            if( form.chemicalInChI.$valid && !form.chemicalInChI.$pristine) {
+                return true;
+            }
+            else if(angular.isDefined($scope.spectra.chemicalCompound.names)){
+                return true;
+            }
         }
 
         if ($scope.getCurrentStep() === 'meta') {
@@ -137,8 +166,8 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
         }
 
 
-        //nope we are done
-        return false;
+        //we can only return when our wizard is valid
+        return false
     };
     /**
      * next step
@@ -195,7 +224,6 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
 
     });
 
-
     /**
      * provides us with an overview of all our tags
      * @param query
@@ -207,4 +235,5 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
             alert('failed: ' + error);
         }).$promise
     };
+
 };
