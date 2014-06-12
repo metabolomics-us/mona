@@ -1,11 +1,14 @@
 package moa
 
 class Tag {
-	// mongo injection
-	def mongo
+    def mongo
 
     static constraints = {
-        text(blank: false)
+        text(blank: false, unique: true)
+    }
+
+    static mapping = {
+        text index: true, indexAttributes: [unique: true]
     }
 
     /**

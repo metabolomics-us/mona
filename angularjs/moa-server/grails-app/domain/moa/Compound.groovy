@@ -1,32 +1,29 @@
 package moa
 
-import grails.rest.Resource
-
-@Resource()
 class Compound {
     def mongo
 
-
     static constraints = {
+        inchiKey unique: true,nullable: false
     }
 
 	/**
 	 * this compound belongs to one spectrum
 	 */
-	static belongsTo = [spectrum: Spectrum]
+//	static hasMany = [spectra: Spectrum]
 
     /**
      * inchiKey of this compound
      */
     String inchiKey
 
-    /**
-     * inchiCode of this compound
-     */
-    String inchiCode
-
 	/**
 	 * names associated to this compound
 	 */
 	List<String> names
+
+    /**
+     * associated spectra
+     */
+    List<Spectrum> spectra;
 }

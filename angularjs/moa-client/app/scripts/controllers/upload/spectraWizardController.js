@@ -3,14 +3,13 @@
  */
 'use strict';
 
-moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, $http, CTSService, TaggingService,AuthentificationService) {
-
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, $http, CTSService, TaggingService, AuthentificationService, newSpectrum) {
 
     /**
      * definition of all our steps
      * @type {string[]}
      */
-    $scope.steps = ['spectra', 'bioLogicalInchi', 'chemicalInChI','meta', 'tags', 'comment', 'summary'];
+    $scope.steps = ['spectra', 'bioLogicalInchi', 'chemicalInChI', 'meta', 'tags', 'comment', 'summary'];
 
     /**
      * contains all possible chemical names
@@ -33,10 +32,10 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * this object contains all our generated data
      * @type {{}}
      */
-    $scope.spectra = {biologicalCompound: {}, chemicalCompound: {}, tags: [], metadata: []};
+    $scope.spectra = newSpectrum;
 
     /**
-     * assign the currently logged in user as submitter
+     * assign our submitter
      */
     AuthentificationService.getCurrentUser().then(function(data){
         $scope.spectra.submitter = data;
@@ -105,8 +104,8 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      */
     $scope.isStepComplete = function (uploadWizard) {
 
-        //is the rawdata field valid
-        if ($scope.getCurrentStep() === 'spectra' && uploadWizard.rawdata.$valid) {
+        //is the spectrum field valid
+        if ($scope.getCurrentStep() === 'spectra' && uploadWizard.spectrum.$valid) {
             return true;
         }
 
@@ -138,7 +137,6 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
         }
 
 
-
         //nope we are done
         return false;
     };
@@ -158,15 +156,15 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     /**
      * popluate the biological inchi names field
      */
-    $scope.$watch('spectra.biologicalCompound.inchi', function () {
+    $scope.$watch('spectra.biologicalCompound.inchiKey', function () {
 
         //get all names for the inchi key
 
         //only if it's a valid inchi key we will query the server for valid names
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
-        if (angular.isDefined($scope.spectra.biologicalCompound.inchi)) {
+        if (angular.isDefined($scope.spectra.biologicalCompound.inchiKey)) {
 
-            CTSService.getNamesForInChIKey($scope.spectra.biologicalCompound.inchi).then(function (result) {
+            CTSService.getNamesForInChIKey($scope.spectra.biologicalCompound.inchiKey).then(function (result) {
                 $scope.possibleBiologicalNames = result;
 
             });
@@ -179,15 +177,15 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     /**
      * populate the chemical inchi name field
      */
-    $scope.$watch('spectra.chemicalCompound.inchi', function () {
+    $scope.$watch('spectra.chemicalCompound.inchiKey', function () {
 
         //get all names for the inchi key
 
         //only if it's a valid inchi key we will query the server for valid names
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
 
-        if (angular.isDefined($scope.spectra.chemicalCompound.inchi)) {
-            CTSService.getNamesForInChIKey($scope.spectra.chemicalCompound.inchi).then(function (result) {
+        if (angular.isDefined($scope.spectra.chemicalCompound.inchiKey)) {
+            CTSService.getNamesForInChIKey($scope.spectra.chemicalCompound.inchiKey).then(function (result) {
                 $scope.possibleChemicalNames = result;
 
             });
@@ -203,7 +201,7 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * @param query
      * @returns {*}
      */
-    $scope.loadTags = function(query) {
+    $scope.loadTags = function (query) {
         return TaggingService.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);

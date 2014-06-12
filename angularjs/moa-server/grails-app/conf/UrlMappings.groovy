@@ -12,6 +12,9 @@ class UrlMappings {
          */
         "/rest/tags"(resources: 'Tag')
 
+        "/rest/spectrum"(resources: 'Spectrum' ){
+            "/submitter"(resources: 'Submitter')
+        }
         /**
          * converts a mol file to inchi
          */
