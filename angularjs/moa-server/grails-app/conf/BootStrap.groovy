@@ -13,12 +13,12 @@ class BootStrap {
         new Submitter(firstName: "Oliver", lastName: "Fiehn", emailAddress: "ofiehn@ucdavis.edu", password: "sdsadsad").save()
 
 
-        Tag.findOrCreateWhere(text: "dirty")
-        Tag.findOrCreateWhere(text: "clean")
-        Tag.findOrCreateWhere(text: "mixed")
-        Tag.findOrCreateWhere(text: "standard")
-        Tag.findOrCreateWhere(text: "injected")
-        Tag.findOrCreateWhere(text: "experimental")
+        Tag.findOrCreateWhere(text: "dirty").save()
+        Tag.findOrCreateWhere(text: "clean").save()
+        Tag.findOrCreateWhere(text: "mixed").save()
+        Tag.findOrCreateWhere(text: "standard").save()
+        Tag.findOrCreateWhere(text: "injected").save()
+        Tag.findOrCreateWhere(text: "experimental").save()
 
     }
 
