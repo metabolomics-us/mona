@@ -14,7 +14,12 @@ app.config(function ($routeProvider) {
         .when('/', {
             templateUrl: 'views/main.html',
             controller: 'MainCtrl'
-        }).when('/submitters', {
+        }).when('/compounds', {
+            templateUrl: 'views/compounds/list.html',
+            controller: 'CompoundsController'
+        }
+    ).
+        when('/submitters', {
             templateUrl: 'views/submitters/list.html',
             controller: 'SubmitterController'
         }
@@ -32,7 +37,7 @@ app.config(function ($routeProvider) {
 /**
  * location of our backend server
  */
-app.constant('REST_BACKEND_SERVER', 'http://localhost:9090');
+app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
 
 /**
  * enable cross domain stuff

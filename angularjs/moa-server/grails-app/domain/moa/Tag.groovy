@@ -5,7 +5,7 @@ class Tag {
 	def mongo
 
     static constraints = {
-        text(blank: false)
+        text(blank: false, unique: true)
     }
 
     /**

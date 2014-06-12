@@ -38,9 +38,9 @@
                     </div>
 
                     <ul class="nav navbar-nav" ng-controller="NavigationController">
-                        <li ng-class="navClass('home')"><a href='#/home'>Compounds</a></li>
-                        <li ng-class="navClass('about')"><a href='#/submitters'>Submitters</a></li>
-                        <li ng-class="navClass('contact')"><a href='#/upload'>Upload</a></li>
+                        <li ng-class="navClass('compounds')"><a href='#/compounds'>Compounds</a></li>
+                        <li ng-class="navClass('submitters')"><a href='#/submitters'>Submitters</a></li>
+                        <li ng-class="navClass('upload')"><a href='#/upload'>Upload</a></li>
                     </ul>
                 </div>
             </div>
@@ -104,12 +104,14 @@
     <script src="scripts/services/ctsService.js"></script>
     <script src="scripts/services/taggingService.js"></script>
     <script src="scripts/services/authentificationService.js"></script>
+    <script src="scripts/services/spectrumService.js"></script>
 
 
 
     <!-- controllers -->
         <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/navigation/NavigationController.js"></script>
+    <script src="scripts/controllers/compounds/compoundsController.js"></script>
     <script src="scripts/controllers/submitter/submitterController.js"></script>
     <script src="scripts/controllers/submitter/submitterModalController.js"></script>
     <script src="scripts/controllers/upload/spectraWizardController.js"></script>

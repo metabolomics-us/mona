@@ -4,13 +4,8 @@
     <facet type="web" name="GrailsWeb">
       <configuration>
         <webroots>
-          <root url="file://$MODULE_DIR$/target/work/plugins/angularjs-resources-1.2.15/web-app" relative="/" />
-          <root url="file://$MODULE_DIR$/target/work/plugins/angularjs-resources-1.2.15/grails-app/views" relative="/" />
-          <root url="file://$MODULE_DIR$/target/work/plugins/font-awesome-resources-4.0.3.0/web-app" relative="/" />
           <root url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1/web-app" relative="/" />
-          <root url="file://$MODULE_DIR$/target/work/plugins/twitter-bootstrap-3.0.3/web-app" relative="/" />
           <root url="file://$MODULE_DIR$/target/work/plugins/cors-1.1.4/web-app" relative="/" />
-          <root url="file://$MODULE_DIR$/target/work/plugins/jquery-1.10.2.2/web-app" relative="/" />
           <root url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.3.8/grails-app/views" relative="/" />
         </webroots>
         <sourceRoots />
@@ -25,15 +20,6 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/target/work/plugins/angularjs-resources-1.2.15">
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/angularjs-resources-1.2.15/grails-app/controllers" isTestSource="false" />
-    </content>
-    <content url="file://$MODULE_DIR$/target/work/plugins/cache-1.1.1">
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/cache-1.1.1/src/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/cache-1.1.1/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/cache-1.1.1/grails-app/services" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/cache-1.1.1/grails-app/taglib" isTestSource="false" />
-    </content>
     <content url="file://$MODULE_DIR$/target/work/plugins/cors-1.1.4">
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/cors-1.1.4/src/java" isTestSource="false" />
     </content>
@@ -41,17 +27,7 @@
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.3.8/src/groovy" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.3.8/grails-app/controllers" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/target/work/plugins/font-awesome-resources-4.0.3.0" />
-    <content url="file://$MODULE_DIR$/target/work/plugins/hibernate-3.6.10.7">
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/hibernate-3.6.10.7/src/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/hibernate-3.6.10.7/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/hibernate-3.6.10.7/grails-app/i18n" isTestSource="false" />
-    </content>
-    <content url="file://$MODULE_DIR$/target/work/plugins/jquery-1.10.2.2">
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/jquery-1.10.2.2/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/jquery-1.10.2.2/grails-app/services" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/jquery-1.10.2.2/grails-app/taglib" isTestSource="false" />
-    </content>
+    <content url="file://$MODULE_DIR$/target/work/plugins/mongodb-3.0.1" />
     <content url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1">
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1/src/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1/src/groovy" isTestSource="false" />
@@ -63,10 +39,6 @@
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/tomcat-7.0.50/src/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/tomcat-7.0.50/src/groovy" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/target/work/plugins/twitter-bootstrap-3.0.3">
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/twitter-bootstrap-3.0.3/grails-app/i18n" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/twitter-bootstrap-3.0.3/grails-app/taglib" isTestSource="false" />
-    </content>
     <content url="file://$MODULE_DIR$/target/work/plugins/webxml-1.4.1">
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/webxml-1.4.1/src/groovy" isTestSource="false" />
     </content>
@@ -76,57 +48,26 @@
     <orderEntry type="module-library" exported="">
       <library name="Grails User Library (Moa-grailsPlugins)">
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-valencycheck/1.4.16/cdk-valencycheck-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-data/1.4.16/cdk-data-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/jgrapht/jgrapht/0.6.0/jgrapht-0.6.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-isomorphism/1.4.16/cdk-isomorphism-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-atomtype/1.4.16/cdk-atomtype-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-ioformats/1.4.16/cdk-ioformats-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-io/1.4.16/cdk-io-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/jdom/jdom/1.0/jdom-1.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/jaxen/jaxen/1.1-beta-8/jaxen-1.1-beta-8.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/xalan/xalan/2.7.0/xalan-2.7.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/xerces/xmlParserAPIs/2.6.2/xmlParserAPIs-2.6.2.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/xom/xom/1.1/xom-1.1.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/net/sf/jnati/jnati-core/0.3/jnati-core-0.3.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/net/sf/jnati/jnati-deploy/0.3/jnati-deploy-0.3.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/net/sf/jni-inchi/jni-inchi/0.7/jni-inchi-0.7.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-annotation/1.4.16/cdk-annotation-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/java3d/vecmath/1.3.1/vecmath-1.3.1.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-interfaces/1.4.16/cdk-interfaces-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-core/1.4.16/cdk-core-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-standard/1.4.16/cdk-standard-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/openscience/cdk/cdk-inchi/1.4.16/cdk-inchi-1.4.16.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm-hibernate/2.0.7.RELEASE/grails-datastore-gorm-hibernate-2.0.7.RELEASE.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-web/3.0.7.RELEASE/spring-security-web-3.0.7.RELEASE.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/3.0.7.RELEASE/spring-security-core-3.0.7.RELEASE.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/liquibase/liquibase-core/2.0.5/liquibase-core-2.0.5.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-commons-annotations/3.2.0.Final/hibernate-commons-annotations-3.2.0.Final.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-ehcache/3.6.10.Final/hibernate-ehcache-3.6.10.Final.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-entitymanager/3.6.10.Final/hibernate-entitymanager-3.6.10.Final.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm-hibernate-core/2.0.7.RELEASE/grails-datastore-gorm-hibernate-core-2.0.7.RELEASE.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-validator/4.1.0.Final/hibernate-validator-4.1.0.Final.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache-core/2.4.6/ehcache-core-2.4.6.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-core/3.6.10.Final/hibernate-core-3.6.10.Final.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-orm/3.2.6.RELEASE/spring-orm-3.2.6.RELEASE.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-web/2.0.7.RELEASE/grails-datastore-web-2.0.7.RELEASE.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm-plugin-support/2.0.7.RELEASE/grails-datastore-gorm-plugin-support-2.0.7.RELEASE.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/javax/validation/validation-api/1.0.0.GA/validation-api-1.0.0.GA.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/antlr/antlr/2.7.7/antlr-2.7.7.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-core/7.0.50/tomcat-embed-core-7.0.50.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/core/compiler/ecj/3.7.2/ecj-3.7.2.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-logging-log4j/7.0.50/tomcat-embed-logging-log4j-7.0.50.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-jasper/7.0.50/tomcat-embed-jasper-7.0.50.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina-ant/7.0.50/tomcat-catalina-ant-7.0.50.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-rest-client/1.0.0.RELEASE/grails-datastore-rest-client-1.0.0.RELEASE.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-simple/2.0.7.RELEASE/grails-datastore-simple-2.0.7.RELEASE.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm/2.0.7.RELEASE/grails-datastore-gorm-2.0.7.RELEASE.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final/hibernate-jpa-2.0-api-1.0.1.Final.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/javassist/javassist/3.17.1-GA/javassist-3.17.1-GA.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-core/2.0.7.RELEASE/grails-datastore-core-2.0.7.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-web/3.1.0.RELEASE/grails-datastore-web-3.1.0.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-simple/3.1.0.RELEASE/grails-datastore-simple-3.1.0.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-core/3.1.0.RELEASE/grails-datastore-core-3.1.0.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm/3.1.0.RELEASE/grails-datastore-gorm-3.1.0.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm-plugin-support/3.1.0.RELEASE/grails-datastore-gorm-plugin-support-3.1.0.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/mongodb/mongo-java-driver/2.12.0/mongo-java-driver-2.12.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/gmongo/gmongo/1.2/gmongo-1.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-commons/1.7.1.RELEASE/spring-data-commons-1.7.1.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-mongodb/1.4.1.RELEASE/spring-data-mongodb-1.4.1.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm-mongodb/3.0.1.RELEASE/grails-datastore-gorm-mongodb-3.0.1.RELEASE.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
