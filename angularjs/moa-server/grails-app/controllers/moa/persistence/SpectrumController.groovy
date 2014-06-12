@@ -10,8 +10,6 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     static responseFormats = ['json']
 
-    def index() {}
-
     public SpectrumController() {
         super(Spectrum)
     }

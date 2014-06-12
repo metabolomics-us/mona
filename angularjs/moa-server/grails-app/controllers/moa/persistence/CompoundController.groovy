@@ -7,8 +7,6 @@ class CompoundController extends RestfulController {
 
     static responseFormats = ['json']
 
-    def index() {}
-
     public CompoundController() {
         super(Compound)
     }
