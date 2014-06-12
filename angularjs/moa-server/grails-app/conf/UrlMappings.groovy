@@ -5,6 +5,7 @@ class UrlMappings {
         "/rest/submitters"(resources: 'Submitter')
         "/rest/tags"(resources: 'Tag')
         "/rest/compounds"(resources: 'Compound'){
+            "/spectra"(resources: 'Spectrum')
         }
         "/rest/spectra"(resources: 'Spectrum')
 

@@ -42,6 +42,7 @@ app.config(['$httpProvider', function ($httpProvider) {
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }
 ]);
+
 /**
  * holder for all our controllers
  * @type {{}}

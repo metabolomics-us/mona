@@ -16,6 +16,7 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     @Override
     protected Spectrum createResource(Map params) {
+        log.info "building spectrum params: ${params}"
 
         Spectrum spectrum = super.createResource(params)
 
@@ -47,9 +48,6 @@ class SpectrumController extends RestfulController<Spectrum> {
         spectrum.tags = tags;
 
 
-        println(spectrum.biologicalCompound.inchiKey)
-        println(spectrum.chemicalCompound.inchiKey)
-
         return spectrum;
     }
 /**
@@ -61,8 +59,6 @@ class SpectrumController extends RestfulController<Spectrum> {
             params.putAll(
                     request.JSON)
         }
-
-        println "modified params: ${params}"
         params
     }
 }
