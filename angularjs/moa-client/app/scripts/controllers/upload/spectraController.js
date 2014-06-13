@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum,AuthentificationService,$filter) {
+moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter) {
 
     /**
      * initializes our spectra upload dialog
@@ -15,7 +15,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
             size: 'lg',
             backdrop: 'static',
             resolve: {
-                newSpectrum : function(){
+                newSpectrum: function () {
 
                     return $scope.buildSpectrum();
                 }
@@ -32,24 +32,39 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
     /**
      * uploads an existing spectrum to the system
      */
-    $scope.uploadDummySpectrum = function(){
+    $scope.uploadDummySpectrum = function () {
         var spectrum = angular.fromJson($scope.jsonData);
 
-        new Spectrum(spectrum).$save();
+        var modalInstance = $modal.open({
+            templateUrl: '/views/upload/dialog/wizard.html',
+            controller: moaControllers.SpectraWizardController,
+            size: 'lg',
+            backdrop: 'static',
+            resolve: {
+                newSpectrum : function(){
 
+                    return new Spectrum(spectrum);
+                }
+            }
+        });
+
+        //retrieve the result from the dialog and save it
+        modalInstance.result.then(function (spectra) {
+            spectra.$save();
+        });
 
     };
 
     /**
      * builds a spectrum object for us to use
      */
-    $scope.buildSpectrum = function(){
+    $scope.buildSpectrum = function () {
 
         var spectrum = new Spectrum();
-        spectrum.biologicalCompound =  {};
+        spectrum.biologicalCompound = {};
         spectrum.chemicalCompound = {};
         spectrum.tags = [];
-        spectrum.metadata= [];
+        spectrum.metadata = [];
 
         return spectrum;
     }
