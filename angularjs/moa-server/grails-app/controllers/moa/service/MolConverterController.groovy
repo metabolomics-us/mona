@@ -6,7 +6,7 @@ import org.springframework.util.MultiValueMap
 class MolConverterController {
     static responseFormats = ['json']
 
-    def ctsUrl = "http://127.0.0.1:9999/cts"
+    def ctsUrl = "http://cts.fiehnlab.ucdavis.edu"
     def rest
 
     /**
