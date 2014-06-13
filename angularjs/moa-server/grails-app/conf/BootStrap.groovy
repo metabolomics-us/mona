@@ -37,21 +37,6 @@ class BootStrap {
         JSON.registerObjectMarshaller(Spectrum,
                 DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class"])
         )
-
-/*
-        JSON.registerObjectMarshaller(Spectrum) { Spectrum t ->
-            return [
-                    id: t.id,
-                    chemicalCompound: t.chemicalCompound,
-                    biologicalCompound: t.biologicalCompound,
-                    comments: t.comments,
-                    spectrum: t.spectrum,
-                    submitter: t.submitter
-
-            ]
-        }
-*/
-
     }
 
     def destroy = {

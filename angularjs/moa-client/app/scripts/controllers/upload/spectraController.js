@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum,AuthentificationService,$filter) {
+moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter) {
 
     /**
      * initializes our spectra upload dialog
@@ -15,7 +15,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
             size: 'lg',
             backdrop: 'static',
             resolve: {
-                newSpectrum : function(){
+                newSpectrum: function () {
 
                     return $scope.buildSpectrum();
                 }
@@ -32,7 +32,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
     /**
      * uploads an existing spectrum to the system
      */
-    $scope.uploadDummySpectrum = function(){
+    $scope.uploadDummySpectrum = function () {
         var spectrum = angular.fromJson($scope.jsonData);
 
         new Spectrum(spectrum).$save();
@@ -43,13 +43,13 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
     /**
      * builds a spectrum object for us to use
      */
-    $scope.buildSpectrum = function(){
+    $scope.buildSpectrum = function () {
 
         var spectrum = new Spectrum();
-        spectrum.biologicalCompound =  {};
+        spectrum.biologicalCompound = {};
         spectrum.chemicalCompound = {};
         spectrum.tags = [];
-        spectrum.metadata= [];
+        spectrum.metadata = [];
 
         return spectrum;
     }
