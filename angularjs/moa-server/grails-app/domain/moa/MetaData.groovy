@@ -1,11 +1,7 @@
 package moa
 
-import grails.rest.Resource
-
-@Resource()
 class MetaData {
-	// mongo injection
-	def mongo
+    static mapWith = "mongo"
 
     static constraints = {
     }

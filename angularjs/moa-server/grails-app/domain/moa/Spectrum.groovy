@@ -1,40 +1,58 @@
 package moa
 
-import grails.rest.Resource
-
-@Resource()
 class Spectrum {
-	// mongo injection
-	def mongo
+    static mapWith = "mongo"
+
     /**
      * contains one biological compound and one chemical compound
      */
-    static hasOne = [compoundBio:Compound, compoundChem:Compound]
+    static hasOne = [
+            submitter: Submitter
+    ]
 
-	/**
-	 * contains many metadata
-	 */
-	static hasMany = [metaData:MetaData, tags:Tag]
+    /**
+     * contains many metadata
+     */
+    static hasMany = [metaData: MetaData, tags: Tag]
 
-	/**
-	 * mapping of foreign keys
-	 */
-	static mappedBy = [compoundBio:"none", compoundChem:"none"]
+    /**
+     * we belong to these
+     */
+    static belongsTo = [
+            submitter: Submitter
+    ]
 
     static constraints = {
+        comments nullable: true
+        spectrum nullable: false, unique: true
     }
 
-	static mapping = {
-		comments sqlType: "text"
-	}
+    static mapping = {
+        comments sqlType: "text"
+    }
 
-	/**
-	 * raw data: (m/z, intensity) pairs
-	 */
-	String spectrum
+    /**
+     * raw data: (m/z, intensity) pairs
+     */
+    String spectrum
 
-	/**
-	 * comments
-	 */
-	String comments
+    /**
+     * comments
+     */
+    String comments
+
+    /**
+     * who submitted this
+     */
+    Submitter submitter
+
+    /**
+     * bio logical compound
+     */
+    Compound chemicalCompound
+
+    /**
+     * chemical compound
+     */
+    Compound biologicalCompound
 }

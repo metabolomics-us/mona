@@ -19,8 +19,16 @@ class TagController extends RestfulController {
             params.putAll(
                     request.JSON)
         }
-
-        println "modified params: ${params}"
         params
+    }
+
+    @Override
+    protected Tag createResource(Map params) {
+
+        Tag t = super.createResource(params)
+
+        t = Tag.findOrCreateWhere(text: t.text)
+
+        return t;
     }
 }

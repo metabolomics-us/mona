@@ -17,19 +17,19 @@
 
                     <fieldset>
                         <div class="form-group"
-                             ng-class="{'has-error' : uploadWizard.rawdata.$invalid && !uploadWizard.rawdata.$pristine}">
-                            <label for="rawdata" class="control-label">Please paste your spectra into the text
+                             ng-class="{'has-error' : uploadWizard.spectrum.$invalid && !uploadWizard.spectrum.$pristine}">
+                            <label for="spectrum" class="control-label">Please paste your spectra into the text
                                 area</label>
 
-                            <textarea class="form-control" rows="3" ng-model="spectra.rawData" name="rawdata"
-                                      id="rawdata"
+                            <textarea class="form-control" rows="3" ng-model="spectra.spectrum" name="spectrum"
+                                      id="spectrum"
                                       ng-required
                                       ng-pattern="/^(\d+:\d+\s*)+$/">
 
                             </textarea>
                         </div>
 
-                        <p ng-show="uploadWizard.rawdata.$invalid && !uploadWizard.rawdata.$pristine"
+                        <p ng-show="uploadWizard.spectrum.$invalid && !uploadWizard.spectrum.$pristine"
                            class="help-block">
                             please make sure that the spectra is formatted the following way: ion:intensity
                             ion:intensity...
@@ -44,7 +44,7 @@
                              ng-class="{'has-error' : uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine}">
                             <label for="bioLogicalInChi">please add your biological InChI key or draw the structure
                                 with the editor</label>
-                            <input class="form-control" type="text" ng-model="spectra.biologicalCompound.inchi"
+                            <input class="form-control" type="text" ng-model="spectra.biologicalCompound.inchiKey"
                                    name="biologicalInchi"
                                    id="bioLogicalInChi"
                                    ng-required
@@ -71,7 +71,7 @@
                                  inputName="biologicalInChIName"
                                  placeholder="Search for a valid Name"
                                  pause="100"
-                                 selectedobject="spectra.biologicalCompound.name"
+                                 selectedobject="spectra.biologicalCompound.names"
                                  localdata="possibleBiologicalNames"
                                  searchfields="name"
                                  titlefield="name"
@@ -84,7 +84,7 @@
                             </p>
                         </div>
 
-                        <div chemical-sketcher id="bioLogicalInChiSketcher" ng-model="spectra.biologicalCompound.inchi"></div>
+                        <div chemical-sketcher id="bioLogicalInChiSketcher" ng-model="spectra.biologicalCompound.inchiKey"></div>
 
                     </fieldset>
 
@@ -97,7 +97,7 @@
                              ng-class="{'has-error' : uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine}">
                             <label for="chemicalInChI">please add your chemical InChI key or draw the structure
                                 with the editor</label>
-                            <input class="form-control" type="text" ng-model="spectra.chemicalCompound.inchi"
+                            <input class="form-control" type="text" ng-model="spectra.chemicalCompound.inchiKey"
                                    name="chemicalInChI"
                                    ng-required
                                    id="chemicalInChI"
@@ -122,14 +122,14 @@
                                  inputName="chemicalInChIName"
                                  placeholder="Search for a valid Name"
                                  pause="100"
-                                 selectedobject="spectra.chemicalCompound.name"
+                                 selectedobject="spectra.chemicalCompound.names"
                                  localdata="possibleChemicalNames"
                                  searchfields="name"
                                  titlefield="name"
                                  inputclass="form-control form-control-small"></div>
 
                         </div>
-                        <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalCompound.inchi"></div>
+                        <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalCompound.inchiKey"></div>
 
 
                     </fieldset>
@@ -158,7 +158,7 @@
                              ng-class="{'has-error' : uploadWizard.comment.$invalid && !uploadWizard.comment.$pristine}">
                             <label for="comment">Please add any comments to this spectra you consider of importance. These comments will be indexed and we will try to extract all useful information</label>
 
-                            <textarea ng-model="spectra.comment" id="comment" class="form-control" rows="6"></textarea>
+                            <textarea ng-model="spectra.comments" id="comment" class="form-control" rows="6"></textarea>
                         </div>
                     </fieldset>
                 </div>
@@ -177,19 +177,19 @@
                         <tbody>
                         <tr>
                             <td>Biological InChI Key</td>
-                            <td>{{spectra.biologicalCompound.inchi}}</td>
+                            <td>{{spectra.biologicalCompound.inchiKey}}</td>
                         </tr>
                         <tr>
                             <td>Chemical InChI Key</td>
-                            <td>{{spectra.chemicalCompound.inchi}}</td>
+                            <td>{{spectra.chemicalCompound.inchiKey}}</td>
                         </tr>
                         <tr>
                             <td>Biological Name</td>
-                            <td>{{spectra.biologicalCompound.name}}</td>
+                            <td>{{spectra.biologicalCompound.names}}</td>
                         </tr>
                         <tr>
                             <td>Chemical Name</td>
-                            <td>{{spectra.chemicalCompound.name}}</td>
+                            <td>{{spectra.chemicalCompound.names}}</td>
                         </tr>
 
                         </tbody>

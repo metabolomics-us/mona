@@ -2,15 +2,10 @@ class UrlMappings {
 
     static mappings = {
 
-        /**
-         * provides us with the submiter resource to persist it
-         */
         "/rest/submitters"(resources: 'Submitter')
-
-        /**
-         * provides us with the tag resource to persist it
-         */
         "/rest/tags"(resources: 'Tag')
+        "/rest/compounds"(resources: 'Compound')
+        "/rest/spectra"(resources: 'Spectrum')
 
         /**
          * converts a mol file to inchi
@@ -21,7 +16,6 @@ class UrlMappings {
          * converts an inchi key to a mol file
          */
         "/rest/util/converter/inchiKeyToMol"(controller: "molConverter", action: "inchiKeyToMol")
-
 
         /**
          * simples access to the cts service

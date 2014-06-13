@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraController = function ($scope, $modal, CTSService) {
+moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum,AuthentificationService,$filter) {
 
     /**
      * initializes our spectra upload dialog
@@ -15,37 +15,43 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService) {
             size: 'lg',
             backdrop: 'static',
             resolve: {
+                newSpectrum : function(){
 
+                    return $scope.buildSpectrum();
+                }
             }
         });
 
         //retrieve the result from the dialog and save it
         modalInstance.result.then(function (spectra) {
-            alert(spectra);
+            spectra.$save();
         });
     };
 
-    $scope.availableNames = [
-        {name: 'test'},
-        {name: 'test-2'}
-    ];
 
-    $scope.biologicalName = 1;
+    /**
+     * uploads an existing spectrum to the system
+     */
+    $scope.uploadDummySpectrum = function(){
+        var spectrum = angular.fromJson($scope.jsonData);
 
-    $scope.$watch('biologicalName', function () {
+        new Spectrum(spectrum).$save();
 
-        //get all names for the inchi key
-        var key = "QNAYBMKLOCPYGJ-UWTATZPHSA-N";
 
-        //only if it's a valid inchi key we will query the server for valid names
-        //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
-            CTSService.getNamesForInChIKey(key).then(function (result) {
-                $scope.availableNames = result;
+    };
 
-            });
-        //}
+    /**
+     * builds a spectrum object for us to use
+     */
+    $scope.buildSpectrum = function(){
 
-    });
+        var spectrum = new Spectrum();
+        spectrum.biologicalCompound =  {};
+        spectrum.chemicalCompound = {};
+        spectrum.tags = [];
+        spectrum.metadata= [];
 
+        return spectrum;
+    }
 };
 
