@@ -1,24 +1,23 @@
-// locations to search for config files that get merged into the main config;
-// config files can be ConfigSlurper scripts, Java properties files, or classes
-// in the classpath in ConfigSlurper format
 
-// grails.config.locations = [ "classpath:${appName}-config.properties",
-//                             "classpath:${appName}-config.groovy",
-//                             "file:${userHome}/.grails/${appName}-config.properties",
-//                             "file:${userHome}/.grails/${appName}-config.groovy"]
-
-// if (System.properties["${appName}.config.location"]) {
-//    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
-// }
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.app.context = "/";
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']
 grails.mime.types = [ // the first one is the default format
-    all:           '*/*', // 'all' maps to '*' or the first available format in withFormat
-
-    json:          ['application/json', 'text/json']
+        all:           '*/*', // 'all' maps to '*' or the first available format in withFormat
+        atom:          'application/atom+xml',
+        css:           'text/css',
+        csv:           'text/csv',
+        form:          'application/x-www-form-urlencoded',
+        html:          ['text/html','application/xhtml+xml'],
+        js:            'text/javascript',
+        json:          ['application/json', 'text/json'],
+        multipartForm: 'multipart/form-data',
+        rss:           'application/rss+xml',
+        text:          'text/plain',
+        hal:           ['application/hal+json','application/hal+xml'],
+        xml:           ['text/xml', 'application/xml']
 ]
 grails.mime.use.accept.header = true
 // URL Mapping Cache Max Size, defaults to 5000
@@ -53,7 +52,7 @@ grails {
         }
     }
 }
- 
+
 grails.converters.encoding = "UTF-8"
 // scaffolding templates configuration
 grails.scaffolding.templates.domainSuffix = 'Instance'
@@ -76,6 +75,8 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+        grails.converters.default.pretty.print = true
+
     }
     production {
         grails.logging.jul.usebridge = false
@@ -92,18 +93,14 @@ log4j = {
     //}
 
     info  'org.codehaus.groovy.grails.web.servlet',        // controllers
-           'org.codehaus.groovy.grails.web.pages',          // GSP
-           'org.codehaus.groovy.grails.web.sitemesh',       // layouts
-           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-           'org.codehaus.groovy.grails.web.mapping',        // URL mapping
-           'org.codehaus.groovy.grails.commons',            // core / classloading
-           'org.codehaus.groovy.grails.plugins',            // plugins
-           'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
-           'org.springframework',
-           'org.hibernate',
-           'net.sf.ehcache.hibernate'
-}
-grails.mongo.default.mapping = {
-    version false
-    '*'(reference:true)
+            'org.codehaus.groovy.grails.web.pages',          // GSP
+            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
+            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+            'org.codehaus.groovy.grails.web.mapping',        // URL mapping
+            'org.codehaus.groovy.grails.commons',            // core / classloading
+            'org.codehaus.groovy.grails.plugins',            // plugins
+            'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
+            'org.springframework',
+            'org.hibernate',
+            'net.sf.ehcache.hibernate'
 }
