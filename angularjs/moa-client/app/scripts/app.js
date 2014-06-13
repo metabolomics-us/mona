@@ -37,8 +37,8 @@ app.config(function ($routeProvider) {
 /**
  * location of our backend server
  */
-app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
-//app.constant('REST_BACKEND_SERVER', 'http://trashcan.fiehnlab.ucdavis.edu:9090')
+//app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
+app.constant('REST_BACKEND_SERVER', 'http://trashcan.fiehnlab.ucdavis.edu:9090')
 
 /**
  * enable cross domain stuff
@@ -46,9 +46,7 @@ app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
 app.config(function ($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
-}
-);
+});
 
 /**
  * holder for all our controllers
