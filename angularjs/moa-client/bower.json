@@ -17,7 +17,8 @@
         "angular-touch": "~1.2.16",
         "bootstrap-sass-official": "3.1.1+2",
         "bootstrap": "3.1.1",
-        "ng-tags-input": "~2.0.1"
+        "ng-tags-input": "~2.0.1",
+        "angular-flot": "0.0.4"
     },
     "devDependencies": {
         "angular-mocks": "1.2.15",
