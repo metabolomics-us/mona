@@ -13,7 +13,6 @@ app.run(function ($rootScope) {
      * @param error
      */
     $rootScope.addError = function (error) {
-        alert('error reported: ' + error);
         $rootScope.errors.push(error);
     };
 

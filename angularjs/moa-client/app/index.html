@@ -38,9 +38,9 @@
                     </div>
 
                     <ul class="nav navbar-nav" ng-controller="NavigationController">
-                        <li ng-class="navClass('home')"><a href='#/home'>Compounds</a></li>
-                        <li ng-class="navClass('about')"><a href='#/submitters'>Submitters</a></li>
-                        <li ng-class="navClass('contact')"><a href='#/upload'>Upload</a></li>
+                        <li ng-class="navClass('compounds')"><a href='#/compounds'>Compounds</a></li>
+                        <li ng-class="navClass('submitters')"><a href='#/submitters'>Submitters</a></li>
+                        <li ng-class="navClass('upload')"><a href='#/upload'>Upload</a></li>
                     </ul>
                 </div>
             </div>
@@ -93,6 +93,7 @@
     <script src="bower_components/bootstrap-sass-official/vendor/assets/javascripts/bootstrap/popover.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
+    <script src="bower_components/angular-flot/angular-flot.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -102,17 +103,18 @@
 
     <!-- services -->
     <script src="scripts/services/persistence/submitterService.js"></script>
-    <script src="scripts/services/ctsService.js"></script>
     <script src="scripts/services/persistence/taggingService.js"></script>
-    <script src="scripts/services/authentificationService.js"></script>
     <script src="scripts/services/persistence/spectrumService.js"></script>
-
-
+    <script src="scripts/services/persistence/compoundsService.js"></script>
+    <script src="scripts/services/ctsService.js"></script>
+    <script src="scripts/services/authentificationService.js"></script>
 
 
     <!-- controllers -->
         <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/navigation/NavigationController.js"></script>
+    <script src="scripts/controllers/compounds/compoundsController.js"></script>
+    <script src="scripts/controllers/compounds/viewCompoundModalController.js"></script>
     <script src="scripts/controllers/submitter/submitterController.js"></script>
     <script src="scripts/controllers/submitter/submitterModalController.js"></script>
     <script src="scripts/controllers/upload/spectraWizardController.js"></script>
@@ -122,6 +124,8 @@
     <script src="scripts/directives/submitterFormDirective.js"></script>
     <script src="scripts/directives/sketcherDirective.js"></script>
     <script src="scripts/directives/autocompleteDirective.js"></script>
+    <script src="scripts/directives/disableEnterEventDirective.js"></script>
+
 
 
     <!-- none bower js -->
