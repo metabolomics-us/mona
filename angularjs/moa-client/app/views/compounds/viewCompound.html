@@ -7,39 +7,48 @@
 <div class="modal-body">
     <div class="row">
         <div class="col-md-6">
-            <h4>Biological Compound Properties</h4>
-            <ul class="list-unstyled">
-                <li><em>ID:</em> {{compound.biologicalCompound.id}}</li>
-                <li><em>InChIKey:</em> {{compound.biologicalCompound.inchiKey}}</li>
-                <li ng-show="compound.biologicalCompound.names.length"><em>Names:</em>
-                    <ul>
-                        <li ng-repeat="name in compound.biologicalCompound.names">{{name}}</li>
-                    </ul>
-                </li>
-            </ul>
+            <div>
+                <h5>Biological Compound Properties</h5>
+                <ul class="list-unstyled">
+                    <li><em>ID:</em> {{compound.biologicalCompound.id}}</li>
+                    <li><em>InChIKey:</em> {{compound.biologicalCompound.inchiKey}}</li>
+                    <li ng-show="compound.biologicalCompound.names.length"><em>Names:</em>
+                        <ul>
+                            <li ng-repeat="name in compound.biologicalCompound.names">{{name}}</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-            <h4>Chemical Compound Properties</h4>
-            <ul class="list-unstyled">
-                <li><em>ID:</em> {{compound.chemicalCompound.id}}</li>
-                <li><em>InChIKey:</em> {{compound.chemicalCompound.inchiKey}}</li>
-                <li ng-show="compound.chemicalCompound.names.length"><em>Names:</em>
-                    <ul>
-                        <li ng-repeat="name in compound.chemicalCompound.names">{{name}}</li>
-                    </ul>
-                </li>
-            </ul>
+            <div>
+                <h5>Chemical Compound Properties</h5>
+                <ul class="list-unstyled">
+                    <li><em>ID:</em> {{compound.chemicalCompound.id}}</li>
+                    <li><em>InChIKey:</em> {{compound.chemicalCompound.inchiKey}}</li>
+                    <li ng-show="compound.chemicalCompound.names.length"><em>Names:</em>
+                        <ul>
+                            <li ng-repeat="name in compound.chemicalCompound.names">{{name}}</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-            <h4 ng-show="compound.metadata.length">Metadata</h4>
-            <ul ng-show="compound.metadata.length">
-                <li ng-repeat="key in compound.metadata">{{key}}: {{compound.metadata[key]}}</li>
-            </ul>
+            <div ng-show="compound.metadata.length">
+                <h5>Metadata</h5>
+                <ul>
+                    <li ng-repeat="key in compound.metadata">{{key}}: {{compound.metadata[key]}}</li>
+                </ul>
+            </div>
 
-            <h4 ng-show="compound.tags.length">Tags</h4>
-            <ul ng-show="compound.tags.length">
-                <li ng-repeat="tag in compound.tags">{{tag}}</li>
-            </ul>
+            <div ng-show="compound.tags.length">
+                <h5>Tags</h5>
+                <ul>
+                    <li ng-repeat="tag in compound.tags">{{tag.text}}</li>
+                </ul>
+            </div>
         </div>
         <div class="col-md-6">
+            <!--<chart ng-model="data"></chart>-->
             <div chemical-sketcher readonly="true" width="400" height="300" id="bigCompoundViewer_{{compound.id}}" ng-model="compound.chemicalCompound.inchiKey"></div>
         </div>
     </div>
