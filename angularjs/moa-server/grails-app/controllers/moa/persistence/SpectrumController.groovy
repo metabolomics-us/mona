@@ -78,11 +78,9 @@ class SpectrumController extends RestfulController<Spectrum> {
         if (params.CompoundId) {
             println "returning all spectra for compound: ${params.CompoundId}"
             Compound compound = Compound.get(params.CompoundId)
-            println "used compound: ${compound}"
-            def result = Spectrum.findAllByBiologicalCompound(compound)
 
-            println "found: ${result}"
-            return result
+            println(compound)
+            return compound.spectra
         } else {
             return resource.list(params)
 

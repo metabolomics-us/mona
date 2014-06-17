@@ -1,7 +1,7 @@
 package moa
 
 class Spectrum {
-    static mapWith = "mongo"
+    //static mapWith = "mongo"
 
     /**
      * contains one biological compound and one chemical compound

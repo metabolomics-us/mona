@@ -1,14 +1,11 @@
-package moa.server
-
+package moa.persistence
 import grails.test.mixin.TestFor
-import moa.SpectrumController
 import spock.lang.Specification
-
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
-@TestFor(SpectrumController)
-class SpectrumControllerSpec extends Specification {
+@TestFor(CompoundController)
+class CompoundControllerSpec extends Specification {
 
     def setup() {
     }

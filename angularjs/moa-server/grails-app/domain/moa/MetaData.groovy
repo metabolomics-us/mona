@@ -1,7 +1,7 @@
 package moa
 
 class MetaData {
-    static mapWith = "mongo"
+    //static mapWith = "mongo"
 
     static constraints = {
     }
@@ -20,5 +20,10 @@ class MetaData {
 	 * the actual value of this metadata
 	 */
 	String value
+
+    /**
+     * the used type. This should be a
+     */
+    String type
 
 }

@@ -15,6 +15,6 @@ class TagSpec extends Specification {
 	def cleanup() {
 	}
 
-	void "test something"() {
+	void "create a tag"() {
 	}
 }
