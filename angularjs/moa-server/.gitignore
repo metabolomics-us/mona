@@ -1,3 +1,6 @@
+*.iws
+*.ipr
 *.iml
+out/
 target/
 .idea/
