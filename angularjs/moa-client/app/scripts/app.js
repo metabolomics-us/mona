@@ -46,9 +46,7 @@ app.constant('REST_BACKEND_SERVER', 'http://trashcan.fiehnlab.ucdavis.edu:9090')
 app.config(function ($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
-}
-);
+});
 
 /**
  * holder for all our controllers

@@ -26,11 +26,8 @@ app.directive('chart', function () {
                     }
                 };
 
-            var x = scope[attrs.ngModel];
-            console.log('hi')
-            console.log(x)
-            var data = [[0, 1], [1,2], [2,5], [3,1]];//scope[attrs.ngModel];
-            $.plot(elem, [data], options);
+            var data = scope[attrs.ngModel].split(' ').map(function(x) { return x.split(':').map(Number)});
+            $.plot(elem, [q], options);
             elem.show();
 
             /*

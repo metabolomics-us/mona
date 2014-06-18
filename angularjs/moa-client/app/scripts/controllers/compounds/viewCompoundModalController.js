@@ -13,20 +13,6 @@ moaControllers.ViewCompoundModalController = function ($scope, Submitter, $modal
         console.log($scope.compound)
     };
 
-    $scope.data = [[0, 1], [1,2], [2,5], [3,1]];
-    /*[
-        {
-            data: [[0, 4]],
-            color: '#00f',
-            bars: {show: true, barWidth:0.001, fillColor: '#00f', order: 1, align: "center" }
-        },
-        {
-            data: [[1, 5]],
-            color: '#00f',
-            bars: {show: true, barWidth:0.001, fillColor: '#00f', order: 2, align: "center" }
-        }
-    ];*/
-
 //
 //	/**
 //	 * contains our results
@@ -84,5 +70,4 @@ moaControllers.ViewCompoundModalController = function ($scope, Submitter, $modal
 //		}
 //		return submitter;
 //	}
-
 };
