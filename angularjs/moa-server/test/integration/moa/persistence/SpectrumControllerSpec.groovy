@@ -18,6 +18,9 @@ class SpectrumControllerSpec extends Specification {
     }
 
     def cleanup() {
+        Spectrum.list().each {
+            it.delete()
+        }
     }
 
     void "define a new spectrum"() {
@@ -28,6 +31,18 @@ class SpectrumControllerSpec extends Specification {
 
         then:
         Spectrum.list().size() == 1
+
+        Spectrum spec = Spectrum.list().get(0)
+
+        spec.chemicalCompound.inchiKey ==  "OTMSDBZUPAUEDD-UHFFFAOYSA-N"
+        spec.biologicalCompound.inchiKey ==  "OTMSDBZUPAUEDD-UHFFFAOYSA-N"
+
+        spec.chemicalCompound.names.contains("Alkanes, C1-2")
+        spec.biologicalCompound.names.contains("ethan")
+
+        spec.biologicalCompound.names.contains("Alkanes, C1-2")
+        spec.chemicalCompound.names.contains("ethan")
+
 
     }
 }

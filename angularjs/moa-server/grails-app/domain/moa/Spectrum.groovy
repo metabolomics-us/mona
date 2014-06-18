@@ -27,6 +27,9 @@ class Spectrum {
     static constraints = {
         comments nullable: true
         spectrum nullable: false, unique: true
+        chemicalCompound nullable: true
+        biologicalCompound nullable: true
+        submitter nullable: true
     }
 
     static mapping = {
