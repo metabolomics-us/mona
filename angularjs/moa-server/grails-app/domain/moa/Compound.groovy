@@ -1,7 +1,7 @@
 package moa
 
 class Compound {
-    static mapWith = "mongo"
+    //static mapWith = "mongo"
 
     static constraints = {
         inchiKey unique: true,nullable: false

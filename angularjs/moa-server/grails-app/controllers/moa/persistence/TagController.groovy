@@ -15,10 +15,12 @@ class TagController extends RestfulController {
      * @return
      */
     protected Map getParametersToBind() {
+        System.err.println("json: " + request.getJSON())
         if (request.JSON) {
             params.putAll(
                     request.JSON)
         }
+
         params
     }
 

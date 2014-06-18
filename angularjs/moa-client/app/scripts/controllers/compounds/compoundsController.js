@@ -4,7 +4,7 @@
 
 'use strict';
 
-moaControllers.CompoundsController = function ($scope, Compound, $modal) {
+moaControllers.CompoundsController = function ($scope, Spectrum, $modal) {
     /**
      * contains all local objects
      * @type {Array}
@@ -36,7 +36,7 @@ moaControllers.CompoundsController = function ($scope, Compound, $modal) {
      * helper function
      */
     function list() {
-        $scope.compounds = Compound.query(function (data) {
+        $scope.compounds = Spectrum.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         })

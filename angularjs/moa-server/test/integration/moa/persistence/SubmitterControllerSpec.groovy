@@ -1,14 +1,14 @@
-package moa
+package moa.persistence
 
 import grails.test.mixin.TestFor
-import moa.persistence.CompoundController
+import moa.persistence.SubmitterController
 import spock.lang.Specification
 
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
-@TestFor(CompoundController)
-class CompoundControllerSpec extends Specification {
+@TestFor(SubmitterController)
+class SubmitterControllerSpec extends Specification {
 
     def setup() {
     }

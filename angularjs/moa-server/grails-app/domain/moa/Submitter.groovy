@@ -3,7 +3,7 @@ package moa
  * who submitted this spectra
  */
 class Submitter {
-    static mapWith = "mongo"
+    //static mapWith = "mongo"
 
     static constraints = {
         emailAddress(unique: true, blank: false)
