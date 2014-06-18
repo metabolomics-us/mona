@@ -1,5 +1,4 @@
 package moa.persistence
-
 import grails.rest.RestfulController
 import moa.Compound
 import moa.Spectrum
@@ -26,14 +25,14 @@ class SpectrumController extends RestfulController<Spectrum> {
         def biologicalNames = spectrum.biologicalCompound.names
         def chemicalNames = spectrum.chemicalCompound.names
 
-        spectrum.biologicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.biologicalCompound.inchiKey)
+        spectrum.biologicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.biologicalCompound.inchiKey).save(flush:true)
 
         if (spectrum.biologicalCompound.names == null) {
             spectrum.biologicalCompound.names = [] as Set<String>
         }
         biologicalNames.each { spectrum.biologicalCompound.names.add(it) }
 
-        spectrum.chemicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.chemicalCompound.inchiKey)
+        spectrum.chemicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.chemicalCompound.inchiKey).save(flush:true)
 
         if (spectrum.chemicalCompound.names == null) {
             spectrum.chemicalCompound.names = [] as Set<String>
@@ -50,6 +49,7 @@ class SpectrumController extends RestfulController<Spectrum> {
         spectrum.tags = tags;
 
 
+        System.err.println("created spectra: ${spectrum} -  ${spectrum.validate()}")
         return spectrum;
     }
 /**
@@ -61,6 +61,8 @@ class SpectrumController extends RestfulController<Spectrum> {
             params.putAll(
                     request.JSON)
         }
+
+        System.err.println("params: ${params}")
         params
     }
 
