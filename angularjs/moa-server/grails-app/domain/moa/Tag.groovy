@@ -1,7 +1,7 @@
 package moa
 
 class Tag {
-    static mapWith = "mongo"
+    //static mapWith = "mongo"
 
     static constraints = {
         text(blank: false, unique: true)

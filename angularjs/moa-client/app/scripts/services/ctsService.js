@@ -58,6 +58,7 @@ app.service('CTSService', function ($http, $q, REST_BACKEND_SERVER, ApplicationE
          * @returns {*}
          */
         this.convertInchiKeyToMol = function (inchiKey) {
+            console.log(inchiKey)
 
             var deferred = $q.defer();
 

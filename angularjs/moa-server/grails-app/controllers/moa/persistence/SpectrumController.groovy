@@ -3,6 +3,7 @@ package moa.persistence
 import grails.rest.RestfulController
 import moa.Compound
 import moa.Spectrum
+import moa.Submitter
 import moa.Tag
 
 class SpectrumController extends RestfulController<Spectrum> {
@@ -14,7 +15,6 @@ class SpectrumController extends RestfulController<Spectrum> {
         super(Spectrum)
     }
     def beforeInterceptor = {
-        println "Tracing action ${actionUri} - params: ${params}"
     }
 
     @Override
@@ -26,30 +26,40 @@ class SpectrumController extends RestfulController<Spectrum> {
         def biologicalNames = spectrum.biologicalCompound.names
         def chemicalNames = spectrum.chemicalCompound.names
 
+        //we only care about refreshing the submitter by it's email address since it's unique
+        spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
+
+        //we need to ensure we don't double generate compound
         spectrum.biologicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.biologicalCompound.inchiKey)
 
         if (spectrum.biologicalCompound.names == null) {
             spectrum.biologicalCompound.names = [] as Set<String>
         }
+
+        //merge new names
         biologicalNames.each { spectrum.biologicalCompound.names.add(it) }
 
+
+        //we need to ensure we don't double generate compound
         spectrum.chemicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.chemicalCompound.inchiKey)
 
         if (spectrum.chemicalCompound.names == null) {
             spectrum.chemicalCompound.names = [] as Set<String>
         }
 
+        //merge new names
         chemicalNames.each { spectrum.chemicalCompound.names.add(it) }
 
 
         def tags = []
 
+        //adding our tags
         spectrum.tags.each {
-            tags.add(Tag.findOrCreateWhere(text: it.text))
+            tags.add(Tag.findOrSaveWhere(text: it.text))
         }
         spectrum.tags = tags;
 
-
+        //spectrum is now ready to work on
         return spectrum;
     }
 /**
@@ -61,12 +71,12 @@ class SpectrumController extends RestfulController<Spectrum> {
             params.putAll(
                     request.JSON)
         }
+
         params
     }
 
     protected Spectrum queryForResource(Serializable id) {
         if (params.CompoundId) {
-            println "returning spectra for compound: ${params.CompoundId}"
             return Spectrum.findByBiologicalCompoundOrChemicalCompound(Compound.get(params.CompoundId)
                     , Compound.get(params.CompoundId))
         } else {
@@ -76,13 +86,10 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     protected List<Spectrum> listAllResources(Map params) {
         if (params.CompoundId) {
-            println "returning all spectra for compound: ${params.CompoundId}"
             Compound compound = Compound.get(params.CompoundId)
-            println "used compound: ${compound}"
-            def result = Spectrum.findAllByBiologicalCompound(compound)
 
-            println "found: ${result}"
-            return result
+            println(compound)
+            return compound.spectra
         } else {
             return resource.list(params)
 

@@ -6,10 +6,13 @@
 moaControllers.ViewCompoundModalController = function ($scope, Submitter, $modalInstance, compound) {
     $scope.compound = compound;
 
+    $scope.data = $scope.compound.spectrum;
+
     $scope.cancelDialog = function() {
         $modalInstance.dismiss('cancel');
         console.log($scope.compound)
     };
+
 //
 //	/**
 //	 * contains our results
@@ -67,5 +70,4 @@ moaControllers.ViewCompoundModalController = function ($scope, Submitter, $modal
 //		}
 //		return submitter;
 //	}
-
 };

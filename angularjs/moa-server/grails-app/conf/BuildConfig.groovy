@@ -61,7 +61,6 @@ grails.project.dependency.resolution = {
         build ":tomcat:7.0.50"
 
         // plugins for the compile step
-        compile ":mongodb:3.0.1"
         compile ":hibernate:3.6.10.15"
 
         // plugins needed at runtime but not for compilation

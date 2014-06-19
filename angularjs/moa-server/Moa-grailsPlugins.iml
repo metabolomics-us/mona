@@ -27,6 +27,9 @@
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.3.8/src/groovy" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.3.8/grails-app/controllers" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/target/work/plugins/hibernate-3.6.10.15">
+      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/hibernate-3.6.10.15/src/java" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/target/work/plugins/mongodb-3.0.1" />
     <content url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1">
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/resources-1.2.1/src/java" isTestSource="false" />
