@@ -1,14 +1,12 @@
 package moa.persistence
-
-import grails.test.mixin.TestFor
+import grails.test.spock.IntegrationSpec
 import moa.Tag
-import spock.lang.Specification
-
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
-@TestFor(TagController)
-class TagControllerSpec extends Specification {
+class TagControllerSpec  extends IntegrationSpec  {
+
+    TagController controller = new TagController()
 
     def setup() {
 
@@ -39,7 +37,6 @@ class TagControllerSpec extends Specification {
 
         when:
 
-        params.id= tag.id
         controller.request.json = tag
 
         System.err.println("request: " + controller.request.getJSON())
