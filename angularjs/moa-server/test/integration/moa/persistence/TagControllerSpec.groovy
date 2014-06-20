@@ -1,75 +1,101 @@
 package moa.persistence
+
 import grails.test.spock.IntegrationSpec
 import moa.Tag
+import org.apache.log4j.Logger
+import org.codehaus.groovy.grails.web.json.JSONArray
+
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
-class TagControllerSpec  extends IntegrationSpec  {
+class TagControllerSpec extends IntegrationSpec {
+	Logger logger = Logger.getLogger(this.class)
+	TagController controller = new TagController()
+	Tag tag
 
-    TagController controller = new TagController()
+	def setup() {
+		controller.request.contentType = "text/json"
+		controller.response.format = "json"
+	}
 
-    def setup() {
+	def cleanup() {
+		Tag.deleteAll(Tag.list())
+	}
 
-        controller.request.contentType = "text/json"
+	void "create a tag"() {
 
-    }
+		when:
+		controller.request.json = new Tag(text: "this is a simple tag")
+		controller.save()
 
-    def cleanup() {
-        Tag.findAll().each { it.delete() }
-    }
+		then:
+		controller.response.status == 201
+		Tag.count() == 1
+	}
 
-    void "create a tag"() {
+	void "delete the tag"() {
 
-        when:
+		given:
+		def t = new Tag(text:'bye')
+		t.save(flush: true)
 
-        controller.request.json = new Tag(text: "this is a simple tag")
+		when:
+		controller.request.method = 'DELETE'
+		controller.request.json = t
+		logger.error("request: " + controller.request.JSON)
+		logger.error("request: " + controller.request.method)
+		controller.delete()
+		controller.request.each {
+			logger.error(it)
+		}
+		logger.error("response: " + controller.response.status)
 
-        controller.save()
+		then:
+		Tag.count() == 0
 
-        then:
-        Tag.list().size() == 1
-    }
+	}
 
-    void "delete a tag"() {
-        given:
+	void "update a tag"() {
+		given:
+		Tag t = Tag.findOrCreateWhere(text: 'bad tug').save(flush:true)
 
-        Tag tag = new Tag(text: "1").save(flush: true)
+		when: 'updating the tag'
+		t.text = 'good tag'
+		controller.request.method = 'PUT'
+		controller.request.json = t
+		controller.update()
+		controller.request.each {
+			logger.error(it)
+		}
+		controller.response.each {
+			logger.error(it)
+		}
 
-        when:
+		// response.status is coming back 404, but object seems updated --- o.O
+		then: 'it return the updated object in response.json and status should be 200'
+		controller.response.status == 200
+		Tag.findByText('good tag') != null
+		Tag.findByText('bad tug') == null
+	}
 
-        controller.request.json = tag
+	void "list all tags"() {
 
-        System.err.println("request: " + controller.request.getJSON())
+		given:
+		final int precount = Tag.list().size()
+		new Tag(text: "1").save(flush: true)
+		new Tag(text: "2").save(flush: true)
 
-        controller.delete()
+		when:
+		controller.index()
 
-        then:
-        System.err.println("result: " + controller.response.properties)
-
-        Tag.list().size() == 0
-
-    }
-
-    void "update a tag"() {
-
-    }
-
-    void "list all tags"() {
-
-        given:
-
-        new Tag(text: "1").save(flush: true)
-        new Tag(text: "2").save(flush: true)
-
-        when:
-
-        controller.index()
-
-        then:
-
-
-        Tag.list().size() == 2
-
-
-    }
+		then: 'there should be 2 items in the json array and response status should be 200(OK)'
+		// before WE added items the table was empty
+		precount == 0
+		// check the response status
+		controller.response.status == 200
+		// right way -- this is testing the content of the response.json object created by the controller
+		((JSONArray)controller.response.json).size() == 2
+		// indirect way -- this is testing the domain class not the controller action
+		Tag.list().size() == 2
+	}
 }

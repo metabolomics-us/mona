@@ -4,33 +4,32 @@ import grails.rest.RestfulController
 import moa.Tag
 
 class TagController extends RestfulController {
-    static responseFormats = ['json']
+	static responseFormats = ['json']
 
-    public TagController() {
-        super(Tag)
-    }
+	public TagController() {
+		super(Tag)
+	}
 
-    /**
-     * otherwise grails won't populate the json fields
-     * @return
-     */
-    protected Map getParametersToBind() {
-        System.err.println("json: " + request.getJSON())
-        if (request.JSON) {
-            params.putAll(
-                    request.JSON)
-        }
+	/**
+	 * otherwise grails won't populate the json fields
+	 * @return
+	 */
+	protected Map getParametersToBind() {
+		log.debug("===>json: " + request.getJSON())
+		if (request.JSON) {
+			params.putAll(request.JSON)
+		}
 
-        params
-    }
+		params
+	}
 
-    @Override
-    protected Tag createResource(Map params) {
+	@Override
+	protected Tag createResource(Map params) {
 
-        Tag t = super.createResource(params)
+		Tag t = super.createResource(params)
 
-        t = Tag.findOrCreateWhere(text: t.text)
+		t = Tag.findOrCreateWhere(text: t.text)
 
-        return t;
-    }
+		return t;
+	}
 }

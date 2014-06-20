@@ -9,12 +9,15 @@ import spock.lang.Specification
 @TestFor(Submitter)
 class SubmitterSpec extends Specification {
 
-    def setup() {
-    }
+	def setup() {
+	}
 
-    def cleanup() {
-    }
+	def cleanup() {
+	}
 
-    void "test something"() {
-    }
+	void "create a submitter"() {
+	}
+
+	void "verify uniqueness"() {
+	}
 }
