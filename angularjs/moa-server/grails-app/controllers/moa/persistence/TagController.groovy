@@ -15,7 +15,7 @@ class TagController extends RestfulController {
 	 * @return
 	 */
 	protected Map getParametersToBind() {
-		log.debug("===>json: " + request.getJSON())
+		log.debug("===>json: ${request.getJSON()}  ==  method: '${request.getMethod()}'")
 		if (request.JSON) {
 			params.putAll(request.JSON)
 		}
