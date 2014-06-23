@@ -1,0 +1,25 @@
+// http://gmd.mpimp-golm.mpg.de/Metabolites/0c9a2dc0-fea2-4864-b98b-0597cdd0ad06.aspx
+// http://gmd.mpimp-golm.mpg.de/Analytes/607DBF7C-9714-402B-B03A-2CC96DC5CE02.aspx
+// http://gmd.mpimp-golm.mpg.de/webservices/SpectrumJcampDx.ashx?id=36c7dfd3-4097-40d7-85cd-031299cbea66
+{
+	"biologicalCompound": { "inchiKey": "BJEPYKJPYRNKOW-UHFFFAOYSA-N", "names": ["malic acid"] },
+	"chemicalCompound": { "inchiKey": "QCOBWZRPFJZHGU-UHFFFAOYSA-N", "names": ["malic acid (3TMS)"] },
+
+	"tags": [
+		{ "id": 20,"text": "clean" },
+		{ "id": 24, "text": "experimental" }
+	],
+	
+	"metadata": [],
+
+	"submitter": {
+		"id": 1,
+		"emailAddress": "wohlgemuth@ucdavis.edu",
+		"firstName": "Gert",
+		"lastName": "Wohlgemuth",
+		"password": "dasdsa" },
+	
+	"comments": "Malic Acid (3TMS)",
+
+	"spectrum": "70:7 72:30 73:999 74:84 75:145 76:13 77:12 78:3 82:5 83:3 84:47 87:6 93:5 99:6 101:77 102:8 103:13 105:5 111:3 115:10 116:12 117:53 118:6 119:9 129:10 131:35 132:6 133:125 134:17 135:12 143:21 144:5 145:5 146:3 147:504 148:76 149:48 150:4 151:6 171:24 172:4 173:4 175:48 176:8 177:13 185:3 189:63 190:48 191:40 192:9 193:3 203:5 205:3 217:25 218:6 219:3 221:12 222:3 233:111 234:22 235:8 245:66 246:12 247:8 260:3 263:14 264:4 265:20 266:4 305:4 306:7 307:21 308:9 309:4 319:5 320:3 335:26 336:6 337:4"
+}
