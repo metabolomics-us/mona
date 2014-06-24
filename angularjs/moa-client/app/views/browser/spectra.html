@@ -1,0 +1,50 @@
+<div class="container">
+    <div ng-value="error"></div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <form class="form-vertical">
+            <fieldset>
+                <legend>Filter</legend>
+
+                <div class="input-group">
+
+                </div>
+                    <div class="form-group">
+                    </div>
+            </fieldset>
+            </form>
+        </div>
+
+        <div class="col-md-9">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="text-center">Bio. Structure</th>
+                        <th class="text-center">Chem. Structure</th>
+                        <th class="text-center">Spectrum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="spectrum in spectra">
+                        <td>
+                            <ul class="list-unstyled">
+                                <li ng-repeat="name in spectrum.chemicalCompound.names">{{name}}</li>
+                            </ul>
+                        </td>
+                        <td class="text-center">
+                            <div chemical-sketcher readonly="true" width="100" height="100" id="bioSketch_{{spectrum.id}}" ng-model="spectrum.biologicalCompound.inchiKey"></div>
+                        </td>
+                        <td class="text-center">
+                            <div chemical-sketcher readonly="true" width="100" height="100" id="chemSketch_{{spectrum.id}}" ng-model="spectrum.chemicalCompound.inchiKey"></div>
+                        </td>
+                        <td class="text-center">
+                            <chart id="massSpec_{{spectrum.id}}" no-labels style="width:100px; height:100px; display:block" ng-model="spectrum"></chart>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
