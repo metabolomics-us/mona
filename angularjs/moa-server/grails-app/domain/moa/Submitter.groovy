@@ -1,15 +1,19 @@
 package moa
+
+import grails.rest.Resource
+
 /**
  * who submitted this spectra
  */
+@Resource(formats=['json'])
 class Submitter {
-    //static mapWith = "mongo"
 
     static constraints = {
-        emailAddress(unique: true, blank: false)
-        firstName(blank: false)
-        lastName(blank: false)
-        password(blank: false)
+	    emailAddress unique: true, blank: false
+	    firstName blank: false
+	    lastName blank: false
+	    password blank: false
+	    spectra nullable: true
     }
 
     static hasMany = [spectra: Spectrum]

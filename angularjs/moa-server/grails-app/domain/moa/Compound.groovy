@@ -4,7 +4,7 @@ class Compound {
     //static mapWith = "mongo"
 
     static constraints = {
-        inchiKey unique: true,nullable: false
+	    inchiKey unique: true, nullable: false
     }
 
     static mapping = {

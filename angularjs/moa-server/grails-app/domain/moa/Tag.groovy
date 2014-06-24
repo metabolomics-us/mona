@@ -1,10 +1,9 @@
 package moa
 
 class Tag {
-    //static mapWith = "mongo"
 
     static constraints = {
-        text(blank: false, unique: true)
+	    text blank: false, unique: true, nullable: false
     }
 
     static mapping = {

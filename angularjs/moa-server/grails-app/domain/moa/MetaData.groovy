@@ -1,15 +1,19 @@
 package moa
 
 class MetaData {
-    //static mapWith = "mongo"
+	//static mapWith = "mongo"
 
-    static constraints = {
-    }
+	static constraints = {
+		key blank: false
+		value blank: false
+		spectrum nullable: true
+		type blank: false, nullable: false
+	}
 
 	/**
 	 * the spectrum this metadata belongs to
 	 */
-	static belongsTo = [spectrum:Spectrum]
+	static belongsTo = [spectrum: Spectrum]
 
 	/**
 	 * the key for this metadata
@@ -21,9 +25,9 @@ class MetaData {
 	 */
 	String value
 
-    /**
-     * the used type. This should be a
-     */
-    String type
+	/**
+	 * the used type. This should be a
+	 */
+	String type
 
 }

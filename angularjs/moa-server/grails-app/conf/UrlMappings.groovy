@@ -1,7 +1,8 @@
 class UrlMappings {
 
     static mappings = {
-
+	    "/"(view: 'index')
+		"/rest"(redirect: '/')
         "/rest/submitters"(resources: 'Submitter')
         "/rest/tags"(resources: 'Tag')
         "/rest/compounds"(resources: 'Compound'){
