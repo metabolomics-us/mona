@@ -4,12 +4,13 @@
         <button ng-click="uploadSpectraDialog()">Add a new spectra</button>
         <button ng-click="uploadLibraryDialog()">Upload a spectra library</button>
 
-        <button ng-click="uploadDummySpectrum()">Adds a new dummy spectra</button>
-
         <button ng-click="inchiKeyToMol()">inchiKeyToMol</button>
 
 
-        <textarea ng-model="jsonData" class="form-control"/>
+
+        <form name="myForm">
+            <input ng-model='file' type="file" ng-file-select="uploadLibrary($files)"/>
+        </form>
 
     </div>
 

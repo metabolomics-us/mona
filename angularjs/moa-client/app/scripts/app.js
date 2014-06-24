@@ -5,7 +5,9 @@ var app = angular
         'ngRoute',
         'ngResource',
         'ui.bootstrap',
-        'ngTagsInput'
+        'ngTagsInput',
+        'wohlgemuth.msp.parser',
+        'angularFileUpload'
     ]);
 
 
