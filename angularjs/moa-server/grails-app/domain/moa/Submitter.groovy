@@ -9,10 +9,10 @@ import grails.rest.Resource
 class Submitter {
 
     static constraints = {
-        emailAddress(unique: true, blank: false)
-        firstName(blank: false)
-        lastName(blank: false)
-        password(blank: false)
+	    emailAddress unique: true, blank: false
+	    firstName blank: false
+	    lastName blank: false
+	    password blank: false
 	    spectra nullable: true
     }
 

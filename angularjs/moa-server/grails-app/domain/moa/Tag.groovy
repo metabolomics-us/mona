@@ -3,7 +3,7 @@ package moa
 class Tag {
 
     static constraints = {
-        text(blank: false, unique: true)
+	    text blank: false, unique: true, nullable: false
     }
 
     static mapping = {
