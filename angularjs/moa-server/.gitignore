@@ -1,6 +1,7 @@
 *.iws
 *.ipr
 *.iml
+**/*.db
 out/
 target/
 .idea/

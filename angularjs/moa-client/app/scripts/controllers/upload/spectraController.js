@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter) {
+moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter, $upload,UploadLibraryService) {
 
     /**
      * initializes our spectra upload dialog
@@ -30,7 +30,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
 
 
     /**
-     * uploads an existing spectrum to the system
+     * uploads an existing spectrum to the system should be a modal dialog
      */
     $scope.uploadDummySpectrum = function () {
         var spectrum = angular.fromJson($scope.jsonData);
@@ -41,7 +41,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
             size: 'lg',
             backdrop: 'static',
             resolve: {
-                newSpectrum : function(){
+                newSpectrum: function () {
 
                     return new Spectrum(spectrum);
                 }
@@ -67,6 +67,13 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
         spectrum.metadata = [];
 
         return spectrum;
+    };
+
+    /**
+     * uploads a msp library to the system
+     */
+    $scope.uploadLibrary = function (files) {
+        UploadLibraryService.uploadMSP(files,$scope.buildSpectrum());
     }
 };
 

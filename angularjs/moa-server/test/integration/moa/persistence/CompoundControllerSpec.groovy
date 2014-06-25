@@ -1,11 +1,9 @@
 package moa.persistence
-import grails.test.mixin.TestFor
-import spock.lang.Specification
+import grails.test.spock.IntegrationSpec
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
-@TestFor(CompoundController)
-class CompoundControllerSpec extends Specification {
+class CompoundControllerSpec  extends IntegrationSpec {
 
     def setup() {
     }

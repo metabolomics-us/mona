@@ -7,6 +7,7 @@ grails.project.target.level = 1.6
 grails.project.source.level = 1.6
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
+//grails.server.port.http = 9090
 grails.project.fork = [
         // configure settings for compilation JVM, note that if you alter the Groovy version forked compilation is required
         //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
@@ -60,7 +61,6 @@ grails.project.dependency.resolution = {
         build ":tomcat:7.0.50"
 
         // plugins for the compile step
-        compile ":mongodb:3.0.1"
         compile ":hibernate:3.6.10.15"
 
         // plugins needed at runtime but not for compilation

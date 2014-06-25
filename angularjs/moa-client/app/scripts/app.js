@@ -6,6 +6,9 @@ var app = angular
         'ngResource',
         'ui.bootstrap',
         'ngTagsInput',
+        'wohlgemuth.msp.parser',
+        'wohlgemuth.cts',
+        'angularFileUpload',
         'infinite-scroll'
     ]);
 

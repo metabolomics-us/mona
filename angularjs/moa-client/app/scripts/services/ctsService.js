@@ -18,12 +18,11 @@ app.service('CTSService', function ($http, $q, REST_BACKEND_SERVER, ApplicationE
             var deferred = $q.defer();
             $http.defaults.useXDomain = true;
 
-            $http.get(REST_BACKEND_SERVER + '/rest/util/cts/inchiToName/' + inchiKey
-            ).success(function (result) {
+            $http.get(REST_BACKEND_SERVER + '/rest/util/cts/inchiToName/' + inchiKey)
+                .success(function (result) {
                     deferred.resolve(result);
                 }).catch(function (error) {
                     ApplicationError.handleError("sorry we encountered an error: " + error);
-
                 });
 
             return deferred.promise;

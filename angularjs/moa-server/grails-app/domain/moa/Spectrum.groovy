@@ -19,14 +19,14 @@ class Spectrum {
      * we belong to these
      */
     static belongsTo = [
-            submitter: Submitter,
-            chemicalCompound: Compound,
+            submitter         : Submitter,
+            chemicalCompound  : Compound,
             biologicalCompound: Compound
     ]
 
     static constraints = {
-        comments nullable: true
-        spectrum nullable: false, unique: true
+	    comments nullable: true, blank: true
+	    spectrum nullable: false, unique: true
         chemicalCompound nullable: true
         biologicalCompound nullable: true
         submitter nullable: true
@@ -60,4 +60,11 @@ class Spectrum {
      * chemical compound
      */
     Compound biologicalCompound
+
+    /**
+     * has this spectrum being curated
+     */
+    boolean curated = false
+
+
 }
