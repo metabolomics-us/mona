@@ -34,6 +34,8 @@ class Spectrum {
 
     static mapping = {
         comments sqlType: "text"
+        spectrum sqlType: "varchar", length: 8000
+        version false
     }
 
     /**

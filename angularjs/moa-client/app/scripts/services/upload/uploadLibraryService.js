@@ -28,15 +28,19 @@ app.service('UploadLibraryService', function (ApplicationError,gwMspService, gwC
                         var s = buildSpectrum();
 
                         s.biologicalCompound.inchiKey = key;
+                        s.biologicalCompound.names = spectra.name;
+                        s.biologicalCompound.molFile = spectra.name;
+
                         s.chemicalCompound.inchiKey = key;
-                        s.biologicalCompound.name = spectra.name;
-                        s.chemicalCompound.name = spectra.name;
+                        s.chemicalCompound.names = spectra.name;
+                        s.chemicalCompound.molFile = spectra.name;
 
                         s.spectrum = spectra.spectrum;
                         s.tags.push({'text': 'imported'});
                         s.tags.push({'text': 'library'});
                         s.tags.push({'text': 'msp'});
 
+                        s.comment = "uploaded using the MSP Service";
                         spectra.meta.forEach(function (e) {
                             s.metadata.push(e);
                         });
