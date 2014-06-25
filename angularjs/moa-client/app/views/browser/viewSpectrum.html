@@ -1,0 +1,59 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true">×</button>
+    <h3 class="modal-title">Spectrum Viewer</h3>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <chart id="massSpec_{{spectrum.id}}" class="modal-masspec" ng-model="spectrum"></chart>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div>
+                <h4>Biological Compound Properties</h4>
+                <dl class="dl-horizontal compound-properties">
+                    <dt>ID:</dt>
+                    <dd>{{spectrum.biologicalCompound.id}}</dd>
+                    <dt>InChIKey:</dt>
+                    <dd>{{spectrum.biologicalCompound.inchiKey}}</dd>
+                    <dt ng-show="spectrum.biologicalCompound.names.length">Name(s):</dt>
+                    <dd ng-repeat="name in spectrum.biologicalCompound.names">{{name}}</dd>
+                </dl>
+            </div>
+
+            <div>
+                <h4>Chemical Compound Properties</h4>
+                <dl class="dl-horizontal compound-properties">
+                    <dt>ID:</dt>
+                    <dd>{{spectrum.chemicalCompound.id}}</dd>
+                    <dt>InChIKey:</dt>
+                    <dd>{{spectrum.chemicalCompound.inchiKey}}</dd>
+                    <dt ng-show="spectrum.chemicalCompound.names.length">Name(s):</dt>
+                    <dd ng-repeat="name in spectrum.chemicalCompound.names">{{name}}</dd>
+                </dl>
+            </div>
+
+            <div ng-show="spectrum.metadata.length">
+                <h4>Metadata</h4>
+                <ul>
+                    <li ng-repeat="key in spectrum.metadata">{{key}}: {{spectrum.metadata[key]}}</li>
+                </ul>
+            </div>
+
+            <div ng-show="spectrum.tags.length">
+                <h4>Tags</h4>
+                <ul class="list-inline">
+                    <li ng-repeat="tag in spectrum.tags"><span class="label label-primary">{{tag.text}}</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div style="display:block" chemical-sketcher readonly="true" width="400" height="300" id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound.inchiKey"></div>
+            <div style="display:block" chemical-sketcher readonly="true" width="400" height="300" id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound.inchiKey"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="updateSubmitter()">Edit</button>
+        <button class="btn btn-warning" ng-click="cancelDialog()">Close</button>
+    </div>
+</div>
