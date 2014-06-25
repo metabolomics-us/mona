@@ -18,7 +18,7 @@ app.config(function ($routeProvider) {
     }).when('/compounds', {
         templateUrl: 'views/browser/compounds.html',
         controller: 'CompoundBrowserController'
-    }).when('/spectra', {
+    }).when('/spectra/:inchikey?', {
         templateUrl: 'views/browser/spectra.html',
         controller: 'SpectraBrowserController'
     }).when('/submitters', {

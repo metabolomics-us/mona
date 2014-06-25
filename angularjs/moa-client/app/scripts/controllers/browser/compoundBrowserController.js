@@ -4,7 +4,7 @@
 
 'use strict';
 
-moaControllers.CompoundBrowserController = function($scope, Compound, $modal) {
+moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $location) {
     /**
      * contains all local objects
      * @type {Array}
@@ -17,19 +17,10 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal) {
     $scope.listCompounds = list();
 
 
-    $scope.viewCompound = function(id) {
-        var modalInstance = $modal.open({
-            templateUrl: '/views/compounds/viewCompound.html',
-            controller: moaControllers.ViewCompoundModalController,
-            size: 'lg',
-            backdrop: 'true',
-            resolve: {
-                compound: function () {
-                    return $scope.compounds[id];
-                }
-            }
-        });
-    }
+    $scope.viewSpectra = function(inchikey) {
+        console.log("#/spectra/"+ inchikey);
+        $location.path("/spectra/"+ inchikey);
+    };
 
 
     /**
@@ -39,7 +30,7 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal) {
         $scope.compounds = Compound.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
-        })
+        });
         console.log($scope.compounds)
     }
-}
+};

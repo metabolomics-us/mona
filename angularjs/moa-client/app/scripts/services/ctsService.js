@@ -15,7 +15,6 @@ app.service('CTSService', function ($http, $q, REST_BACKEND_SERVER, ApplicationE
          * @returns {promise}
          */
         this.getNamesForInChIKey = function (inchiKey) {
-
             var deferred = $q.defer();
             $http.defaults.useXDomain = true;
 
@@ -36,7 +35,6 @@ app.service('CTSService', function ($http, $q, REST_BACKEND_SERVER, ApplicationE
          * @returns {*}
          */
         this.convertToInchiKey = function (molecule) {
-
             var deferred = $q.defer();
 
             $http.post(REST_BACKEND_SERVER + '/rest/util/converter/molToInchi', {
@@ -59,8 +57,6 @@ app.service('CTSService', function ($http, $q, REST_BACKEND_SERVER, ApplicationE
          * @returns {*}
          */
         this.convertInchiKeyToMol = function (inchiKey) {
-            console.log(inchiKey)
-
             var deferred = $q.defer();
 
             $http.post(REST_BACKEND_SERVER + '/rest/util/converter/inchiKeyToMol', {
