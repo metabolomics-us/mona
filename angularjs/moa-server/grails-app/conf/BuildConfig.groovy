@@ -7,7 +7,7 @@ grails.project.target.level = 1.6
 grails.project.source.level = 1.6
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
-grails.server.port.http = 9090
+//grails.server.port.http = 9090
 grails.project.fork = [
         // configure settings for compilation JVM, note that if you alter the Groovy version forked compilation is required
         //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
