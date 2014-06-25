@@ -4,7 +4,7 @@
 
 'use strict';
 
-moaControllers.CompoundsController = function ($scope, Spectrum, $modal) {
+moaControllers.CompoundBrowserController = function($scope, Compound, $modal) {
     /**
      * contains all local objects
      * @type {Array}
@@ -17,7 +17,7 @@ moaControllers.CompoundsController = function ($scope, Spectrum, $modal) {
     $scope.listCompounds = list();
 
 
-    $scope.viewSpectrum = function(id) {
+    $scope.viewCompound = function(id) {
         var modalInstance = $modal.open({
             templateUrl: '/views/compounds/viewCompound.html',
             controller: moaControllers.ViewCompoundModalController,
@@ -36,9 +36,10 @@ moaControllers.CompoundsController = function ($scope, Spectrum, $modal) {
      * helper function
      */
     function list() {
-        $scope.compounds = Spectrum.query(function (data) {
+        $scope.compounds = Compound.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         })
+        console.log($scope.compounds)
     }
 }

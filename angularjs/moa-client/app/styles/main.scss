@@ -95,8 +95,15 @@ body {
 }
 
 /* Mass Spec */
-chart {
-  display: block;
-  width: 400px;
-  height: 300px;
+chart.modal-masspec {
+    display: block;
+    width: 750px;
+    height: 350px;
+    margin: auto;
+    margin-bottom: 20px;
 }
+
+
+.compound-properties { width: 100%; }
+.compound-properties dt { width: 20%; }
+.compound-properties dd { width: 80%; }

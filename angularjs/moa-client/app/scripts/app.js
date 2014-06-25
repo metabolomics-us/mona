@@ -16,8 +16,8 @@ app.config(function ($routeProvider) {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
     }).when('/compounds', {
-        templateUrl: 'views/compounds/list.html',
-        controller: 'CompoundsController'
+        templateUrl: 'views/browser/compounds.html',
+        controller: 'CompoundBrowserController'
     }).when('/spectra', {
         templateUrl: 'views/browser/spectra.html',
         controller: 'SpectraBrowserController'

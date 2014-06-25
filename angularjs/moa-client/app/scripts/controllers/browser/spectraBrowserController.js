@@ -13,7 +13,8 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, TaggingServ
 
 
     $scope.tags = [];
-    $scope.tagsSelection = '';
+    $scope.tagsSelection = [];
+
     /**
      * list all our submitters in the system
      */
@@ -22,13 +23,13 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, TaggingServ
 
     $scope.viewSpectrum = function(id) {
         var modalInstance = $modal.open({
-            templateUrl: '/views/compounds/viewCompound.html',
-            controller: moaControllers.ViewCompoundModalController,
+            templateUrl: '/views/browser/viewSpectrum.html',
+            controller: moaControllers.ViewSpectrumModalController,
             size: 'lg',
             backdrop: 'true',
             resolve: {
-                compound: function () {
-                    return $scope.compounds[id];
+                spectrum: function () {
+                    return $scope.spectra[id];
                 }
             }
         });
@@ -45,71 +46,24 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, TaggingServ
         })
 
 
-        $scope.tags = TaggingService.query(function (data) {
+        $scope.tagsSelection = $scope.tags = TaggingService.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         })
     }
 }
 
-/*
-app.directive('multiselectDropdown', function() {
-    return function(scope, element, attributes) {
-        // http://stackoverflow.com/questions/16933324
-        element = $(element[0]);
 
-        element.multiselect({
-            buttonClass: 'btn btn-mini btn-primary',
-            buttonWidth: '150px',
-            buttonContainer: '<div class="btn-group" />',
-            maxHeight: 250,
-            enableFiltering: true,
-            enableCaseInsensitiveFiltering: true,
-            includeSelectAllOption: true,
-            selectAllText: true,
+moaControllers.ViewSpectrumModalController = function ($scope, $modalInstance, spectrum) {
+    $scope.spectrum = spectrum;
 
-            buttonText: function(options) {
-                if (options.length == 0) {
-                    return element.data()['placeholder'] + ' <b class="caret"></b>';
-                } else if (options.length > 1) {
-                    return _.first(options).text 
-                    + ' + ' + (options.length - 1)
-                    + ' more selected <b class="caret"></b>';
-                } else {
-                    return _.first(options).text
-                    + ' <b class="caret"></b>';
-                }
-            },
+    $scope.data = $scope.spectrum.spectrum;
 
+    $scope.cancelDialog = function() {
+        $modalInstance.dismiss('cancel');
+    };
+};
 
-            // Replicate the native functionality on the elements so
-            // that angular can handle the changes for us.
-            onChange: function (optionElement, checked) {
-                optionElement.removeAttr('selected');
-                if (checked) {
-                    optionElement.attr('selected', 'selected');
-                }
-                element.change();
-            }
-
-        });
-
-        element.multiselect('rebuild');
-
-        // Watch for any changes to the length of our select element
-        scope.$watch(function () {
-            return element[0].length;
-        }, function () {
-            element.multiselect('rebuild');
-        });
-        
-        // Watch for any changes from outside the directive and refresh
-        scope.$watch(attributes.ngModel, function () {
-            element.multiselect('refresh');
-        });
-    }
-});
-*/
 
 app.filter('spectraFilter', function() {
 
