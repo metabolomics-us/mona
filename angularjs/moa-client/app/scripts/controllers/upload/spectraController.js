@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter, gwMspService, $upload) {
+moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter, $upload,UploadLibraryService) {
 
     /**
      * initializes our spectra upload dialog
@@ -73,11 +73,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
      * uploads a msp library to the system
      */
     $scope.uploadLibrary = function (files) {
-
-        gwMspService.convertFromFile(files, function (spectra) {
-            //push it to the rest service
-            new Spectrum(spectra).$save();
-        });
+        UploadLibraryService.uploadMSP(files,$scope.buildSpectrum());
     }
 };
 
