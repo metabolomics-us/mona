@@ -21,43 +21,45 @@ class SpectrumController extends RestfulController<Spectrum> {
     protected Spectrum createResource(Map params) {
         log.info "building spectrum params: ${params}"
 
-        Spectrum spectrum = super.createResource(params)
+        Spectrum spectrum = null;
+        Spectrum.withTransaction {
+            spectrum = super.createResource(params)
 
-        def biologicalNames = spectrum.biologicalCompound.names
-        def chemicalNames = spectrum.chemicalCompound.names
+            def biologicalNames = spectrum.biologicalCompound.names
+            def chemicalNames = spectrum.chemicalCompound.names
 
-        //we only care about refreshing the submitter by it's email address since it's unique
-        spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
+            //we only care about refreshing the submitter by it's email address since it's unique
+            spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
 
-        //we need to ensure we don't double generate compound
-        spectrum.biologicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.biologicalCompound.inchiKey)
+            //we need to ensure we don't double generate compound
+            spectrum.biologicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.biologicalCompound.inchiKey)
 
-        if (spectrum.biologicalCompound.names == null) {
-            spectrum.biologicalCompound.names = [] as Set<String>
+            if (spectrum.biologicalCompound.names == null) {
+                spectrum.biologicalCompound.names = [] as Set<String>
+            }
+
+            //merge new names
+            biologicalNames.each { spectrum.biologicalCompound.names.add(it) }
+
+            //we need to ensure we don't double generate compound
+            spectrum.chemicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.chemicalCompound.inchiKey)
+
+            if (spectrum.chemicalCompound.names == null) {
+                spectrum.chemicalCompound.names = [] as Set<String>
+            }
+
+            //merge new names
+            chemicalNames.each { spectrum.chemicalCompound.names.add(it) }
+
+
+            def tags = []
+
+            //adding our tags
+            spectrum.tags.each {
+                tags.add(Tag.findOrSaveWhere(text: it.text))
+            }
+            spectrum.tags = tags;
         }
-
-        //merge new names
-        biologicalNames.each { spectrum.biologicalCompound.names.add(it) }
-
-
-        //we need to ensure we don't double generate compound
-        spectrum.chemicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.chemicalCompound.inchiKey)
-
-        if (spectrum.chemicalCompound.names == null) {
-            spectrum.chemicalCompound.names = [] as Set<String>
-        }
-
-        //merge new names
-        chemicalNames.each { spectrum.chemicalCompound.names.add(it) }
-
-
-        def tags = []
-
-        //adding our tags
-        spectrum.tags.each {
-            tags.add(Tag.findOrSaveWhere(text: it.text))
-        }
-        spectrum.tags = tags;
 
         //spectrum is now ready to work on
         return spectrum;

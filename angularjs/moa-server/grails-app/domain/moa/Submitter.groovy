@@ -18,6 +18,10 @@ class Submitter {
 
     static hasMany = [spectra: Spectrum]
 
+    static mapping = {
+        version false
+    }
+
     /**
      * first name of the submitter
      */
