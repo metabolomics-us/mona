@@ -15,6 +15,10 @@ class MetaData {
 	 */
 	static belongsTo = [spectrum: Spectrum]
 
+    static mapping = {
+        version false
+    }
+
 	/**
 	 * the key for this metadata
 	 */

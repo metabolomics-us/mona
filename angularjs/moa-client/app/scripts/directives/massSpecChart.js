@@ -16,8 +16,6 @@ app.directive('chart', function () {
             var mz_max = Math.max.apply(Math, data.map(function(x) { return x[0]; }));
             var intensity_max = Math.max.apply(Math, data.map(function(x) { return x[1]; }));
 
-            // Filter low intensity peaks
-            data = data.filter(function(x) { return x[1] > 0.01 * intensity_max });
 
             // Define options
             var options = {
@@ -37,9 +35,12 @@ app.directive('chart', function () {
                     }
                 };
 
-            if('noLabels' in attrs) {
+            if('mini' in attrs) {
                 options.xaxis = { ticks: false } 
                 options.yaxis = { ticks: false } 
+
+                // Filter low intensity peaks
+                data = data.filter(function(x) { return x[1] > 0.01 * intensity_max });
             }
 
             $.plot(element, [data], options);

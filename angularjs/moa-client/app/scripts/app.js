@@ -7,6 +7,7 @@ var app = angular
         'ui.bootstrap',
         'ngTagsInput',
         'wohlgemuth.msp.parser',
+        'wohlgemuth.cts',
         'angularFileUpload',
         'infinite-scroll'
     ]);
@@ -20,7 +21,7 @@ app.config(function ($routeProvider) {
     }).when('/compounds', {
         templateUrl: 'views/browser/compounds.html',
         controller: 'CompoundBrowserController'
-    }).when('/spectra', {
+    }).when('/spectra/:inchikey?', {
         templateUrl: 'views/browser/spectra.html',
         controller: 'SpectraBrowserController'
     }).when('/submitters', {

@@ -2,6 +2,7 @@ package moa.persistence
 
 import grails.rest.RestfulController
 import moa.Compound
+import moa.Name
 import moa.Spectrum
 import moa.Submitter
 import moa.Tag
@@ -19,36 +20,18 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     @Override
     protected Spectrum createResource(Map params) {
-        log.info "building spectrum params: ${params}"
 
         Spectrum spectrum = super.createResource(params)
 
-        def biologicalNames = spectrum.biologicalCompound.names
         def chemicalNames = spectrum.chemicalCompound.names
 
         //we only care about refreshing the submitter by it's email address since it's unique
         spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
 
         //we need to ensure we don't double generate compound
-        spectrum.biologicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.biologicalCompound.inchiKey)
+        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
 
-        if (spectrum.biologicalCompound.names == null) {
-            spectrum.biologicalCompound.names = [] as Set<String>
-        }
-
-        //merge new names
-        biologicalNames.each { spectrum.biologicalCompound.names.add(it) }
-
-
-        //we need to ensure we don't double generate compound
-        spectrum.chemicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.chemicalCompound.inchiKey)
-
-        if (spectrum.chemicalCompound.names == null) {
-            spectrum.chemicalCompound.names = [] as Set<String>
-        }
-
-        //merge new names
-        chemicalNames.each { spectrum.chemicalCompound.names.add(it) }
+        spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
 
 
         def tags = []
@@ -61,6 +44,31 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         //spectrum is now ready to work on
         return spectrum;
+    }
+
+    /**
+     * builds our internal compound object
+     * @param compound
+     * @return
+     */
+    private Compound buildCompound(Compound compound) {
+        def names = compound.names
+
+        def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey)
+
+        myCompound.save(flush:true)
+
+        if (myCompound.names == null) {
+            myCompound.names = new HashSet<Name>();
+        }
+        //merge new names
+        names.each { name ->
+            myCompound.addToNames(Name.findOrSaveByName(name.name))
+        }
+
+        myCompound.save(flush:true)
+
+        return myCompound;
     }
 /**
  * otherwise grails won't populate the json fields
@@ -88,8 +96,7 @@ class SpectrumController extends RestfulController<Spectrum> {
         if (params.CompoundId) {
             Compound compound = Compound.get(params.CompoundId)
 
-            println(compound)
-            return compound.spectra
+            return Spectrum.findAllByBiologicalCompoundOrChemicalCompound(compound,compound)
         } else {
             return resource.list(params)
 

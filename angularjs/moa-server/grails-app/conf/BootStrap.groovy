@@ -1,6 +1,7 @@
 import grails.converters.JSON
 import grails.util.Environment
 import moa.Compound
+import moa.Name
 import moa.Spectrum
 import moa.Submitter
 import moa.Tag
@@ -34,12 +35,16 @@ class BootStrap {
         )
 
         JSON.registerObjectMarshaller(Submitter,
-                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra"])
+                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra","password"])
         )
 
         JSON.registerObjectMarshaller(Spectrum,
                 DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class"])
         )
+        JSON.registerObjectMarshaller(Name,
+                DomainClassMarshaller.createExcludeMarshaller(Name, ["class"])
+        )
+
     }
 
     def destroy = {

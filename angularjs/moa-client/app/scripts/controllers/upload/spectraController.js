@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter, gwMspService, $upload) {
+moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter, $upload, UploadLibraryService) {
 
     /**
      * initializes our spectra upload dialog
@@ -24,35 +24,17 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
 
         //retrieve the result from the dialog and save it
         modalInstance.result.then(function (spectra) {
+
+            //uggly hack for now
+            spectra.biologicalCompound.names = [
+                {name: spectra.biologicalCompound.names}
+            ];
+            spectra.chemicalCompound.names = [
+                {name: spectra.chemicalCompound.names}
+            ];
+
             spectra.$save();
         });
-    };
-
-
-    /**
-     * uploads an existing spectrum to the system should be a modal dialog
-     */
-    $scope.uploadDummySpectrum = function () {
-        var spectrum = angular.fromJson($scope.jsonData);
-
-        var modalInstance = $modal.open({
-            templateUrl: '/views/upload/dialog/wizard.html',
-            controller: moaControllers.SpectraWizardController,
-            size: 'lg',
-            backdrop: 'static',
-            resolve: {
-                newSpectrum: function () {
-
-                    return new Spectrum(spectrum);
-                }
-            }
-        });
-
-        //retrieve the result from the dialog and save it
-        modalInstance.result.then(function (spectra) {
-            spectra.$save();
-        });
-
     };
 
     /**
@@ -61,8 +43,8 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
     $scope.buildSpectrum = function () {
 
         var spectrum = new Spectrum();
-        spectrum.biologicalCompound = {};
-        spectrum.chemicalCompound = {};
+        spectrum.biologicalCompound = {names: []};
+        spectrum.chemicalCompound = {names: []};
         spectrum.tags = [];
         spectrum.metadata = [];
 
@@ -73,10 +55,8 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
      * uploads a msp library to the system
      */
     $scope.uploadLibrary = function (files) {
-
-        gwMspService.convertFromFile(files, function (spectra) {
-            //push it to the rest service
-            new Spectrum(spectra).$save();
+        UploadLibraryService.uploadMSP(files, function () {
+            return $scope.buildSpectrum()
         });
     }
 };
