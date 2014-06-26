@@ -5,6 +5,7 @@ class Compound {
 
     static constraints = {
 	    inchiKey unique: true, nullable: false
+        molFile nullable: true
     }
 
     static mapping = {
@@ -14,7 +15,7 @@ class Compound {
 	/**
 	 * this compound belongs to one spectrum
 	 */
-	static hasMany = [spectra: Spectrum]
+	static hasMany = [spectra: Spectrum, names:Name]
 
     static  mappedBy = [spectra:'biologicalCompound']
 
@@ -31,7 +32,7 @@ class Compound {
 	/**
 	 * names associated to this compound
 	 */
-	Set<String> names = [] as Set<String>
+	Set<Name> names
 
     /**
      * associated spectra
