@@ -2,6 +2,7 @@ package moa.persistence
 
 import grails.rest.RestfulController
 import moa.Compound
+import moa.Name
 
 class CompoundController extends RestfulController {
 
@@ -28,11 +29,14 @@ class CompoundController extends RestfulController {
     protected Compound createResource(Map params) {
         Compound c = super.createResource(params)
 
-        Set<String> names = c.names
-        c = Compound.findOrCreateWhere(inchiKey: c.inchiKey)
+        Set<Name> names = c.names
+        c = Compound.findOrSaveByInchiKey(c.inchiKey)
 
-        for (String s : names) {
-            c.names.add(s)
+        if(c.names == null){
+            c.names = new HashSet<>();
+        }
+        for (Name s : names) {
+            c.names.add(Name.findOrSaveByName(s.name))
         }
 
         return c;

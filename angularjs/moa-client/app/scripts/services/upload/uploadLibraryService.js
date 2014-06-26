@@ -40,7 +40,7 @@ app.service('UploadLibraryService', function (ApplicationError,gwMspService, gwC
                         s.tags.push({'text': 'library'});
                         s.tags.push({'text': 'msp'});
 
-                        s.comment = "uploaded using the MSP Service";
+                        s.comments = "uploaded using the MSP Service";
                         spectra.meta.forEach(function (e) {
                             s.metadata.push(e);
                         });

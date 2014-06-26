@@ -20,7 +20,6 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     @Override
     protected Spectrum createResource(Map params) {
-        log.info "building spectrum params: ${params}"
 
         Spectrum spectrum = super.createResource(params)
 
@@ -30,9 +29,9 @@ class SpectrumController extends RestfulController<Spectrum> {
         spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
 
         //we need to ensure we don't double generate compound
+        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
 
         spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
-        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
 
 
         def tags = []
@@ -55,21 +54,20 @@ class SpectrumController extends RestfulController<Spectrum> {
     private Compound buildCompound(Compound compound) {
         def names = compound.names
 
-        def myCompound = Compound.findOrSaveWhere(inchiKey: compound.inchiKey)
+        def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey)
+
+        myCompound.save(flush:true)
 
         if (myCompound.names == null) {
             myCompound.names = new HashSet<Name>();
         }
-        log.info("received: ${names}")
         //merge new names
         names.each { name ->
-
-
-            myCompound.addToNames(Name.findOrSaveWhere(name: name.name))
+            myCompound.addToNames(Name.findOrSaveByName(name.name))
         }
 
+        myCompound.save(flush:true)
 
-        log.info(myCompound.names)
         return myCompound;
     }
 /**
@@ -98,8 +96,7 @@ class SpectrumController extends RestfulController<Spectrum> {
         if (params.CompoundId) {
             Compound compound = Compound.get(params.CompoundId)
 
-            println(compound)
-            return compound.spectra
+            return Spectrum.findAllByBiologicalCompoundOrChemicalCompound(compound,compound)
         } else {
             return resource.list(params)
 
