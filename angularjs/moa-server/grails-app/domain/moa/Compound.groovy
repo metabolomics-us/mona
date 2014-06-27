@@ -1,7 +1,6 @@
 package moa
 
 class Compound {
-    //static mapWith = "mongo"
 
     static constraints = {
 	    inchiKey unique: true, nullable: false
@@ -17,7 +16,6 @@ class Compound {
 	 */
 	static hasMany = [ names:Name,metaData: MetaData]
 
-    //static  mappedBy = [spectra:'biologicalCompound']
 
     /**
      * inchiKey of this compound
