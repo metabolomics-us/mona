@@ -28,11 +28,11 @@ app.service('UploadLibraryService', function (ApplicationError,gwMspService, gwC
                         var s = buildSpectrum();
 
                         s.biologicalCompound.inchiKey = key;
-                        s.biologicalCompound.names = spectra.name;
+                        s.biologicalCompound.names = [{name:spectra.name}];
                         s.biologicalCompound.molFile = spectra.name;
 
                         s.chemicalCompound.inchiKey = key;
-                        s.chemicalCompound.names = spectra.name;
+                        s.chemicalCompound.names = [{name:spectra.name}];
                         s.chemicalCompound.molFile = spectra.name;
 
                         s.spectrum = spectra.spectrum;

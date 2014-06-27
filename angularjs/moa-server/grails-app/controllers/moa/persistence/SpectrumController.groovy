@@ -2,6 +2,7 @@ package moa.persistence
 
 import grails.rest.RestfulController
 import moa.Compound
+import moa.Name
 import moa.Spectrum
 import moa.Submitter
 import moa.Tag
@@ -21,48 +22,55 @@ class SpectrumController extends RestfulController<Spectrum> {
     protected Spectrum createResource(Map params) {
         log.info "building spectrum params: ${params}"
 
-        Spectrum spectrum = null;
-        Spectrum.withTransaction {
-            spectrum = super.createResource(params)
+        Spectrum spectrum = super.createResource(params)
 
-            def biologicalNames = spectrum.biologicalCompound.names
-            def chemicalNames = spectrum.chemicalCompound.names
+        def chemicalNames = spectrum.chemicalCompound.names
 
-            //we only care about refreshing the submitter by it's email address since it's unique
-            spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
+        //we only care about refreshing the submitter by it's email address since it's unique
+        spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
 
-            //we need to ensure we don't double generate compound
-            spectrum.biologicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.biologicalCompound.inchiKey)
+        //we need to ensure we don't double generate compound
 
-            if (spectrum.biologicalCompound.names == null) {
-                spectrum.biologicalCompound.names = [] as Set<String>
-            }
-
-            //merge new names
-            biologicalNames.each { spectrum.biologicalCompound.names.add(it) }
-
-            //we need to ensure we don't double generate compound
-            spectrum.chemicalCompound = Compound.findOrSaveWhere(inchiKey: spectrum.chemicalCompound.inchiKey)
-
-            if (spectrum.chemicalCompound.names == null) {
-                spectrum.chemicalCompound.names = [] as Set<String>
-            }
-
-            //merge new names
-            chemicalNames.each { spectrum.chemicalCompound.names.add(it) }
+        spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
+        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
 
 
-            def tags = []
+        def tags = []
 
-            //adding our tags
-            spectrum.tags.each {
-                tags.add(Tag.findOrSaveWhere(text: it.text))
-            }
-            spectrum.tags = tags;
+        //adding our tags
+        spectrum.tags.each {
+            tags.add(Tag.findOrSaveWhere(text: it.text))
         }
+        spectrum.tags = tags;
 
         //spectrum is now ready to work on
         return spectrum;
+    }
+
+    /**
+     * builds our internal compound object
+     * @param compound
+     * @return
+     */
+    private Compound buildCompound(Compound compound) {
+        def names = compound.names
+
+        def myCompound = Compound.findOrSaveWhere(inchiKey: compound.inchiKey)
+
+        if (myCompound.names == null) {
+            myCompound.names = new HashSet<Name>();
+        }
+        log.info("received: ${names}")
+        //merge new names
+        names.each { name ->
+
+
+            myCompound.addToNames(Name.findOrSaveWhere(name: name.name))
+        }
+
+
+        log.info(myCompound.names)
+        return myCompound;
     }
 /**
  * otherwise grails won't populate the json fields

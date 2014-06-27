@@ -23,7 +23,7 @@
                     <tr ng-repeat="compound in compounds" ng-click="viewSpectra(compound.inchiKey)">
                         <td>
                             <ul>
-                                <li ng-repeat="name in compound.names">{{name}}</li>
+                                <li ng-repeat="name in compound.names">{{name.name}}</li>
                             </ul>
                         </td>
                         <td><code>{{compound.inchiKey}}</code></td>
