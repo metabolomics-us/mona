@@ -15,9 +15,9 @@ class Compound {
 	/**
 	 * this compound belongs to one spectrum
 	 */
-	static hasMany = [spectra: Spectrum, names:Name]
+	static hasMany = [ names:Name]
 
-    static  mappedBy = [spectra:'biologicalCompound']
+    //static  mappedBy = [spectra:'biologicalCompound']
 
     /**
      * inchiKey of this compound
@@ -34,8 +34,4 @@ class Compound {
 	 */
 	Set<Name> names
 
-    /**
-     * associated spectra
-     */
-    List<Spectrum> spectra;
 }

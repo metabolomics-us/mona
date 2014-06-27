@@ -19,7 +19,7 @@
                     <dt>InChIKey:</dt>
                     <dd>{{spectrum.biologicalCompound.inchiKey}}</dd>
                     <dt ng-show="spectrum.biologicalCompound.names.length">Name(s):</dt>
-                    <dd ng-repeat="name in spectrum.biologicalCompound.names">{{name}}</dd>
+                    <dd ng-repeat="name in spectrum.biologicalCompound.names">{{name.name}}</dd>
                 </dl>
             </div>
 
@@ -31,7 +31,7 @@
                     <dt>InChIKey:</dt>
                     <dd>{{spectrum.chemicalCompound.inchiKey}}</dd>
                     <dt ng-show="spectrum.chemicalCompound.names.length">Name(s):</dt>
-                    <dd ng-repeat="name in spectrum.chemicalCompound.names">{{name}}</dd>
+                    <dd ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</dd>
                 </dl>
             </div>
 
