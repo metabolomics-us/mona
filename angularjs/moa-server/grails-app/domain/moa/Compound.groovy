@@ -15,7 +15,7 @@ class Compound {
 	/**
 	 * this compound belongs to one spectrum
 	 */
-	static hasMany = [ names:Name]
+	static hasMany = [ names:Name,metaData: MetaData]
 
     //static  mappedBy = [spectra:'biologicalCompound']
 
