@@ -25,7 +25,7 @@ class SpectrumControllerSpec extends IntegrationSpec {
     void "define a new spectrum"() {
 
         when:
-        spectrumController.request.json = '{"biologicalCompound":{"inchiKey":"OTMSDBZUPAUEDD-UHFFFAOYSA-N","names":"ethan"},"chemicalCompound":{"inchiKey":"OTMSDBZUPAUEDD-UHFFFAOYSA-N","names":"Alkanes, C1-2"},"tags":[{"id":1,"text":"dirty"},{"id":3,"text":"mixed"},{"id":6,"text":"experimental"}],"metadata":[],"submitter":{"emailAddress":"wohlgemuth@ucdavis.edu","firstName":"Gert","id":1,"lastName":"Wohlgemuth","password":"dasdsa"},"spectrum":"123:1234","comments":"this is a comment"}'
+        spectrumController.request.json = '{"biologicalCompound":{"inchiKey":"OTMSDBZUPAUEDD-UHFFFAOYSA-N","names":[{"name:"ethan"}]},"chemicalCompound":{"inchiKey":"OTMSDBZUPAUEDD-UHFFFAOYSA-N","names":[{"name":"Alkanes, C1-2"}]},"tags":[{"id":1,"text":"dirty"},{"id":3,"text":"mixed"},{"id":6,"text":"experimental"}],"metadata":[],"submitter":{"emailAddress":"wohlgemuth@ucdavis.edu","firstName":"Gert","id":1,"lastName":"Wohlgemuth","password":"dasdsa"},"spectrum":"123:1234","comments":"this is a comment"}'
         spectrumController.save()
 
         then:

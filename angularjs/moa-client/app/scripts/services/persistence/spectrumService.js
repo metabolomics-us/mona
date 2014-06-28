@@ -5,7 +5,7 @@
 
 app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, $http) {
 
-    $http.defaults.useXDomain = true;
+    //$http.defaults.useXDomain = true;
 
     return $resource(
             REST_BACKEND_SERVER + '/rest/spectra/:id?max=50',

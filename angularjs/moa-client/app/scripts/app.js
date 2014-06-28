@@ -40,7 +40,7 @@ app.config(function ($routeProvider) {
  */
 
 //app.constant('REST_BACKEND_SERVER', 'http://trashcan.fiehnlab.ucdavis.edu:8080');
-app.constant('REST_BACKEND_SERVER', 'http://localhost:9090');
+app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
 
 /**
  * enable cross domain stuff

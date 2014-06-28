@@ -31,6 +31,5 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
         }, function (error) {
             alert('failed: ' + error);
         });
-        console.log($scope.compounds)
     }
 };

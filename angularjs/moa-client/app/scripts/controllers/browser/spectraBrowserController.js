@@ -4,7 +4,7 @@
 
 'use strict';
 
-moaControllers.SpectraBrowserController = function($scope, Spectrum, TaggingService, $modal, $routeParams) {
+moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, TaggingService, $modal, $routeParams) {
     /**
      * contains all local objects
      * @type {Array}
@@ -21,6 +21,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, TaggingServ
     // Add inchikey to filter if given in route
     if($routeParams.inchikey)
         $scope.inchiFilters[$routeParams.inchikey] = true;
+
 
     $scope.addInchiFilter = function() {
         if($scope.spectraQuery.newInchiFilter.$valid) {
@@ -96,15 +97,23 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, TaggingServ
      * helper function
      */
     function list() {
-        $scope.spectra = Spectrum.query(function (data) {
-        }, function (error) {
-            alert('failed: ' + error);
-        });
+        if($routeParams.inchikey) {
+            $scope.spectra = Spectrum.query(function (data) {
+            }, function (error) {
+                alert('failed: ' + error);
+            });
+        } else {
+            $scope.spectra = Spectrum.query(function (data) {
+            }, function (error) {
+                alert('failed: ' + error);
+            });
+        }
 
         $scope.tagsSelection = $scope.tags = TaggingService.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         });
+
     }
 };
 
