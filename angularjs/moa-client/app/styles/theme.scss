@@ -7,7 +7,7 @@ body {
   background-color: #f8f8f8;
 }
 
-@media(min-width:768px) {
+@media(min-width: 768px) {
   body {
     padding-top: 50px;
   }
@@ -27,7 +27,7 @@ body {
   background-color: #fff;
 }
 
-@media(min-width:768px) {
+@media(min-width: 768px) {
   #page-wrapper {
     position: inherit;
     margin: 0 0 0 250px;
@@ -132,7 +132,7 @@ body {
   padding-left: 52px;
 }
 
-@media(min-width:768px) {
+@media(min-width: 768px) {
   .navbar-static-side {
     z-index: 1;
     position: absolute;
@@ -147,14 +147,14 @@ body {
   }
 }
 
-@media(max-height:600px) and (max-width:767px) {
+@media(max-height: 600px) and (max-width: 767px) {
   .sidebar-collapse {
     max-height: 300px;
     overflow-y: scroll;
   }
 }
 
-@media(max-height:400px) and (max-width:767px) {
+@media(max-height: 400px) and (max-width: 767px) {
   .sidebar-collapse {
     max-height: 200px;
     overflow-y: scroll;
@@ -284,7 +284,7 @@ table.dataTable thead .sorting:after {
   content: "\f0dc";
   float: right;
   font-family: fontawesome;
-  color: rgba(50,50,50,.5);
+  color: rgba(50, 50, 50, .5);
 }
 
 /* Circle Buttons */

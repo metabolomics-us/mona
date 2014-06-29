@@ -10,7 +10,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
      */
     $scope.uploadSpectraDialog = function () {
         var modalInstance = $modal.open({
-            templateUrl: '/views/upload/dialog/wizard.html',
+            templateUrl: '/views/spectra/upload/wizards/uploadNewSpectraWizard.html',
             controller: moaControllers.SpectraWizardController,
             size: 'lg',
             backdrop: 'static',

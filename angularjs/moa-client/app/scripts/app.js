@@ -13,28 +13,6 @@ var app = angular
     ]);
 
 
-app.config(function ($routeProvider) {
-    $routeProvider
-    .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-    }).when('/compounds', {
-        templateUrl: 'views/browser/compounds.html',
-        controller: 'CompoundBrowserController'
-    }).when('/spectra/:inchikey?', {
-        templateUrl: 'views/browser/spectra.html',
-        controller: 'SpectraBrowserController'
-    }).when('/submitters', {
-        templateUrl: 'views/submitters/list.html',
-        controller: 'SubmitterController'
-    }).when('/upload', {
-        templateUrl: 'views/upload/single.html',
-        controller: 'SpectraController'
-    }).otherwise({
-        redirectTo: '/'
-    });
-});
-
 /**
  * location of our backend server
  */

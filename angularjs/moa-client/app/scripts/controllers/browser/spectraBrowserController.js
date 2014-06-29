@@ -73,9 +73,13 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
     };
 
 
+    /**
+     * displays the spectrum for the given index
+     * @param index
+     */
     $scope.viewSpectrum = function(index) {
         var modalInstance = $modal.open({
-            templateUrl: '/views/browser/viewSpectrum.html',
+            templateUrl: '/views/spectra/display/viewSpectrum.html',
             controller: moaControllers.ViewSpectrumModalController,
             size: 'lg',
             backdrop: 'true',

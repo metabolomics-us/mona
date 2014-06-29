@@ -4,7 +4,7 @@
 
 'use strict';
 
-moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $location) {
+moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $location,$log) {
     /**
      * contains all local objects
      * @type {Array}
@@ -12,14 +12,17 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
     $scope.compounds = [];
 
     /**
-     * list all our submitters in the system
+     * display all our compounds
      */
     $scope.listCompounds = list();
 
-
+    /**
+     * show the currently selected sprectra
+     * @param inchikey
+     */
     $scope.viewSpectra = function(inchikey) {
-        console.log("#/spectra/"+ inchikey);
-        $location.path("/spectra/"+ inchikey);
+        $log.debug("#/spectra/"+ inchikey);
+        $location.path("/spectra/browse/"+ inchikey);
     };
 
 
