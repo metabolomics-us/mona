@@ -1,0 +1,229 @@
+<form role="form" name="uploadWizard" novalidate>
+
+
+<div class="modal-header">
+    <h4 class="modal-title">Upload a spectra to the system</h4>
+
+    <h5>
+        Please fill out all the properties to define a new spectra. This wizard should guide you
+    </h5>
+
+</div>
+<div class="modal-body">
+<div>
+
+<div ng-switch="getCurrentStep()" ng-animate="'slide'" class="slide-frame">
+
+<!-- here we define the spectra -->
+<div ng-switch-when="spectra">
+
+    <fieldset>
+        <div class="form-group"
+             ng-class="{'has-error' : uploadWizard.spectrum.$invalid && !uploadWizard.spectrum.$pristine}">
+            <label for="spectrum" class="control-label">Please paste your spectra into the text
+                area</label>
+
+            <textarea class="form-control" rows="3" ng-model="spectra.spectrum" name="spectrum"
+                      id="spectrum"
+                      ng-required
+
+                      ng-pattern="/^(\d+:\d+\s*)+$/">
+
+            </textarea>
+        </div>
+
+        <p ng-show="uploadWizard.spectrum.$invalid && !uploadWizard.spectrum.$pristine"
+           class="help-block">
+            please make sure that the spectra is formatted the following way: ion:intensity
+            ion:intensity...
+        </p>
+
+    </fieldset>
+</div>
+<!-- defines the biological inchi and it's name -->
+<div ng-switch-when="bioLogicalInchi">
+    <fieldset>
+        <div class="form-group"
+             ng-class="{'has-error' : uploadWizard.biologicalInchi.$invalid && !uploadWizard.biologicalInchi.$pristine}">
+            <label for="bioLogicalInChi">please add your biological InChI key or draw the structure
+                with the editor</label>
+            <input class="form-control" type="text" ng-model="spectra.biologicalCompound.inchiKey"
+                   name="biologicalInchi"
+                   id="bioLogicalInChi"
+                   ng-required
+                   ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/" fl-no-submit/>
+
+            <p>The biological InChI Key is the key, which reflects the actual substance, prior to
+                modifications due to adducts, dehydration or derivatisation. You will be able to define
+                the actual chemical InChI Key in the next step</p>
+
+            <p ng-show="bio.biologicalInchi.$invalid && !bio.biologicalInchi.$pristine"
+               class="help-block">
+                please make sure that the value is a valid InChI Key. It needs to look something like
+                'RYGMFSIKBFXOCR-UHFFFAOYSA-N'
+            </p>
+
+        </div>
+
+        <div class="form-group"
+             ng-class="{'has-error' : uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine}">
+            <label for="biologicalInChIName">Please provide us with a name for this chemical</label>
+
+
+            <div fl-angucomplete inputid="biologicalInChIName"
+                 inputName="biologicalInChIName"
+                 placeholder="Search for a Name for this InChI Key"
+                 pause="100"
+                 selectedobject="spectra.biologicalCompound.names"
+                 localdata="possibleBiologicalNames"
+                 searchfields="name"
+                 titlefield="name"
+                 isrequired="true"
+                 inputclass="form-control form-control-small"></div>
+
+
+            <p ng-show="uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine"
+               class="help-block">
+                please make sure you provide a valid name
+            </p>
+        </div>
+
+        <div chemical-sketcher id="bioLogicalInChiSketcher" ng-model="spectra.biologicalCompound.inchiKey"></div>
+
+    </fieldset>
+
+</div>
+
+<!-- defines the chemical inchi and it's name -->
+<div ng-switch-when="chemicalInChI">
+    <fieldset>
+        <div class="form-group"
+             ng-class="{'has-error' : uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine}">
+            <label for="chemicalInChI">please add your chemical InChI key or draw the structure
+                with the editor</label>
+            <input class="form-control" type="text" ng-model="spectra.chemicalCompound.inchiKey"
+                   name="chemicalInChI"
+                   isrequired="true"
+                   id="chemicalInChI"
+                   ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/"
+                   fl-no-submit
+                    />
+
+            <p>The chemical InChI Key is the key, which reflects your measured substance,including
+                modifications due to aducts, dehydration or derivatisation.</p>
+
+            <p ng-show="uploadWizard.chemicalInChI.$invalid && !uploadWizard.chemicalInChI.$pristine"
+               class="help-block">
+                please make sure that the value is a valid InChI Key. It needs to look something like
+                'RYGMFSIKBFXOCR-UHFFFAOYSA-N'
+            </p>
+
+        </div>
+        <div class="form-group"
+             ng-class="{'has-error' : uploadWizard.chemicalInChIName.$invalid && !uploadWizard.chemicalInChIName.$pristine}">
+            <label for="chemicalInChIName">Please provide us with a name for this chemical</label>
+
+            <div fl-angucomplete inputid="chemicalInChIName"
+                 inputName="chemicalInChIName"
+                 placeholder="Search for a Name for this InChI Key"
+                 pause="100"
+                 selectedobject="spectra.chemicalCompound.names"
+                 localdata="possibleChemicalNames"
+                 searchfields="name"
+                 titlefield="name"
+                 ng-required
+                 inputclass="form-control form-control-small"></div>
+
+        </div>
+        <div chemical-sketcher id="chemicalInChISketcher" ng-model="spectra.chemicalCompound.inchiKey"></div>
+
+
+    </fieldset>
+</div>
+
+<!-- defines our meta informations -->
+<div ng-switch-when="meta">
+    <fieldset>
+        <p>
+            here we are should adding some meta data
+        </p>
+    </fieldset>
+</div>
+
+<div ng-switch-when="tags">
+    <p>Please add any 'tags' here, you consider useful for other people. Tags are providing an easy way to find and
+        label spectra.</p>
+
+    <tags-input ng-model="spectra.tags">
+        <auto-complete source="loadTags($query)"></auto-complete>
+    </tags-input>
+
+</div>
+
+<!-- allows us to procide some comments to this spectra -->
+
+<div ng-switch-when="comment">
+    <fieldset>
+        <div class="form-group"
+             ng-class="{'has-error' : uploadWizard.comment.$invalid && !uploadWizard.comment.$pristine}">
+            <label for="comment">Please add any comments to this spectra you consider of importance. These comments
+                will be indexed and we will try to extract all useful information</label>
+
+            <textarea ng-model="spectra.comments" id="comment" class="form-control" rows="6"></textarea>
+        </div>
+    </fieldset>
+</div>
+
+<div ng-switch-when="summary">
+    <p>This is the summary of your provided information, please press submit to persist this to the
+        server</p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Biological InChI Key</td>
+            <td>{{spectra.biologicalCompound.inchiKey}}</td>
+        </tr>
+        <tr>
+            <td>Chemical InChI Key</td>
+            <td>{{spectra.chemicalCompound.inchiKey}}</td>
+        </tr>
+        <tr>
+            <td>Biological Name</td>
+            <td>{{spectra.biologicalCompound.names}}</td>
+        </tr>
+        <tr>
+            <td>Chemical Name</td>
+            <td>{{spectra.chemicalCompound.names}}</td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <p>Provided comments</p>
+
+    <div>
+        {{spectra.comments}}
+    </div>
+
+</div>
+</div>
+
+<p>
+    generated object for the upload:
+</p>
+<div>{{spectra | json}}</div>
+
+</div>
+</div>
+<div class="modal-footer">
+    <a class="btn" ng-click="handlePrevious()" ng-show="!isFirstStep()">Back</a>
+    <a class="btn btn-primary" ng-click="handleNext(dismiss)" ng-disabled="!isStepComplete(uploadWizard)">{{getNextLabel()}}</a>
+</div>
+</form>
