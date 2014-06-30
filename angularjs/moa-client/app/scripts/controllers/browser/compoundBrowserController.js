@@ -23,7 +23,7 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
     $scope.addNameFilter = function() {
         if($scope.compoundsQuery.newNameFilter.$valid) {
             $scope.nameFilters[$scope.newNameFilter] = true;
-            $scope.newNameFilter = ''
+            $scope.newNameFilter = '';
         }
     };
 
@@ -40,7 +40,7 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
     $scope.addInchiFilter = function() {
         if($scope.compoundsQuery.newInchiFilter.$valid) {
             $scope.inchiFilters[$scope.newInchiFilter] = true;
-            $scope.newInchiFilter = ''
+            $scope.newInchiFilter = '';
         }
     };
 
@@ -53,7 +53,7 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
     $scope.addPartialInchiFilter = function() {
         if($scope.compoundsQuery.newInchiPartialFilter.$valid) {
             $scope.partialInchiFilters[$scope.newInchiPartialFilter] = true;
-            $scope.newInchiPartialFilter = ''
+            $scope.newInchiPartialFilter = '';
         }
     };
 

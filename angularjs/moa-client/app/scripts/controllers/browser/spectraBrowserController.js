@@ -25,7 +25,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
     $scope.addNameFilter = function() {
         if($scope.spectraQuery.newNameFilter.$valid) {
             $scope.nameFilters[$scope.newNameFilter] = true;
-            $scope.newNameFilter = ''
+            $scope.newNameFilter = '';
         }
     };
 
@@ -42,7 +42,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
     $scope.addInchiFilter = function() {
         if($scope.spectraQuery.newInchiFilter.$valid) {
             $scope.inchiFilters[$scope.newInchiFilter] = true;
-            $scope.newInchiFilter = ''
+            $scope.newInchiFilter = '';
         }
     };
 
@@ -55,7 +55,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
     $scope.addPartialInchiFilter = function() {
         if($scope.spectraQuery.newInchiPartialFilter.$valid) {
             $scope.partialInchiFilters[$scope.newInchiPartialFilter] = true;
-            $scope.newInchiPartialFilter = ''
+            $scope.newInchiPartialFilter = '';
         }
     };
 
