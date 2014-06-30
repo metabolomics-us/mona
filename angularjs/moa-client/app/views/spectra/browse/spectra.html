@@ -42,7 +42,7 @@
                 <legend>Filter</legend>
 
                 <div class="form-group" ng-class="{ 'has-error': spectraQuery.newInchiFilter.$invalid }">
-                    <label class=" control-label" for="newInchiFilter">Filter By InChI Key</label>
+                    <label class=" control-label" for="newInchiFilter">Filter by InChI Key</label>
 
                     <input id="newInchiFilter" name="newInchiFilter" ng-model="newInchiFilter"
                            placeholder="InChIKey"
@@ -56,17 +56,17 @@
                     </ul>
                 </div>
 
-                <div class="form-group" ng-class="{ 'has-error': spectraQuery.newInchiFilter.$invalid }">
-                    <label class=" control-label" for="newInchiFilterBlock">Filter By InChI Key First Block</label>
+                <div class="form-group" ng-class="{ 'has-error': spectraQuery.newInchiPartialFilter.$invalid }">
+                    <label class=" control-label" for="newInchiPartialFilter">Filter by Partial InChI Key</label>
 
-                    <input id="newInchiFilterBlock" name="newInchiFilter" ng-model="newInchiFilter"
+                    <input id="newInchiPartialFilter" name="newInchiPartialFilter" ng-model="newInchiPartialFilter"
                            placeholder="InChIKey"
-                           class="form-control" ng-keyup="$event.keyCode == 13 ? addInchiFilter() : null"
-                           ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/">
+                           class="form-control" ng-keyup="$event.keyCode == 13 ? addPartialInchiFilter() : null"
+                           ng-pattern="/^[A-Z,0-9,-]+$/">
 
                     <ul class="list-unstyled">
-                        <li ng-repeat="(inchi, _) in inchiFilters">
-                            <span class="label label-primary" ng-click="removeInchiFilder(inchi)">{{inchi}}</span>
+                        <li ng-repeat="(inchi, _) in partialInchiFilters">
+                            <span class="label label-primary" ng-click="removePartialInchiFilder(inchi)">{{inchi}}</span>
                         </li>
                     </ul>
                 </div>

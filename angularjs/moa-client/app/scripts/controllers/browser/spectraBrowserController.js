@@ -15,7 +15,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
 
 
 
-    // Inchi Filter
+    // Full inchi filter
     $scope.inchiFilters = {};
 
     // Add inchikey to filter if given in route
@@ -32,6 +32,21 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
 
     $scope.removeInchiFilder = function(inchikey) {
         delete $scope.inchiFilters[inchikey];
+    }
+
+
+    // Partial inchi filter
+    $scope.partialInchiFilters = {};
+
+    $scope.addPartialInchiFilter = function() {
+        if($scope.spectraQuery.newInchiPartialFilter.$valid) {
+            $scope.partialInchiFilters[$scope.newInchiPartialFilter] = true;
+            $scope.newInchiPartialFilter = ''
+        }
+    };
+
+    $scope.removePartialInchiFilder = function(inchikey) {
+        delete $scope.partialInchiFilters[inchikey];
     }
 
 
@@ -54,13 +69,28 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
     }
 
     $scope.query = function(spectrum) {
-        // InChIKey filter
+        // Full InChIKey filter
         var inchikeys = Object.keys($scope.inchiFilters);
 
         if(inchikeys.length > 0 &&
-                inchikeys.indexOf(spectrum.biologicalCompound.inchiKey) == -1 &&
-                inchikeys.indexOf(spectrum.chemicalCompound.inchiKey) == -1)
+            inchikeys.indexOf(spectrum.biologicalCompound.inchiKey) == -1 &&
+            inchikeys.indexOf(spectrum.chemicalCompound.inchiKey) == -1)
             return false;
+
+
+        // Partial InChIKey filter
+        inchikeys = Object.keys($scope.partialInchiFilters);
+
+        var matchedAny = inchikeys.some(function(element, index, array) {
+            if(spectrum.biologicalCompound.inchiKey.indexOf(element) > -1 ||
+                spectrum.chemicalCompound.inchiKey.indexOf(element) > -1)
+                return true;
+            return false;
+        });
+
+        if(inchikeys.length > 0 && !matchedAny)
+            return false;
+
 
         // Tags filter
         var tags = spectrum.tags.map(function(tag) { return tag.text; });
@@ -68,6 +98,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
 
         if(intersect(tags, selected_tags).length == 0)
             return false;
+
 
         return true;
     };
