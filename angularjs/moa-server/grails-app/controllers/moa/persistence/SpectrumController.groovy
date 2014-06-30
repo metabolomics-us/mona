@@ -1,11 +1,9 @@
 package moa.persistence
 
 import grails.rest.RestfulController
-import moa.Compound
-import moa.Name
-import moa.Spectrum
-import moa.Submitter
-import moa.Tag
+import moa.*
+import moa.meta.DoubleValue
+import moa.meta.IntegerValue
 
 class SpectrumController extends RestfulController<Spectrum> {
 
@@ -42,10 +40,53 @@ class SpectrumController extends RestfulController<Spectrum> {
         }
         spectrum.tags = tags;
 
+        spectrum.metaData = buildMetaData(spectrum.metaData)
+
         //spectrum is now ready to work on
         return spectrum;
     }
 
+    /**
+     * generates a correctly implemted metadata set
+     * @param metaData
+     * @return
+     */
+    private Set<MetaData> buildMetaData(Set<MetaData> metaData) {
+
+        Set<MetaData> result = new HashSet<>()
+
+        for (MetaData m : metaData) {
+            MetaData c = new MetaData()
+            c.name = m.name
+
+            String value = m.content.value.toString();
+
+            //try catch approach is the fastest, even if it's ugglier than regex
+            try {
+                c.content = new IntegerValue(value:Integer.parseInt(value))
+                log.info("it's an integer value: ${value}")
+            }
+            catch (NumberFormatException e) {
+                try {
+                    c.content = new DoubleValue(value:  Double.parseDouble(value))
+                    log.info("it's a double value: ${value}")
+                }
+                catch (NumberFormatException x){
+
+                    c.content = new moa.meta.StringValue(value:value)
+                    log.info("it's a string value: ${value}")
+                }
+            }
+
+            c.content.save()
+            c.save()
+
+            result.add(c)
+
+        }
+        return result
+
+    }
     /**
      * builds our internal compound object
      * @param compound
@@ -56,7 +97,7 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey)
 
-        myCompound.save(flush:true)
+        myCompound.save(flush: true)
 
         if (myCompound.names == null) {
             myCompound.names = new HashSet<Name>();
@@ -66,7 +107,7 @@ class SpectrumController extends RestfulController<Spectrum> {
             myCompound.addToNames(Name.findOrSaveByName(name.name))
         }
 
-        myCompound.save(flush:true)
+        myCompound.save(flush: true)
 
         return myCompound;
     }
@@ -96,7 +137,7 @@ class SpectrumController extends RestfulController<Spectrum> {
         if (params.CompoundId) {
             Compound compound = Compound.get(params.CompoundId)
 
-            return Spectrum.findAllByBiologicalCompoundOrChemicalCompound(compound,compound)
+            return Spectrum.findAllByBiologicalCompoundOrChemicalCompound(compound, compound)
         } else {
             return resource.list(params)
 

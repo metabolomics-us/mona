@@ -3,14 +3,14 @@
  */
 'use strict';
 
-moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter, $upload, UploadLibraryService) {
+moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter, $upload, UploadLibraryService,$log) {
 
     /**
      * initializes our spectra upload dialog
      */
     $scope.uploadSpectraDialog = function () {
         var modalInstance = $modal.open({
-            templateUrl: '/views/upload/dialog/wizard.html',
+            templateUrl: '/views/spectra/upload/wizards/uploadNewSpectraWizard.html',
             controller: moaControllers.SpectraWizardController,
             size: 'lg',
             backdrop: 'static',
@@ -46,7 +46,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
         spectrum.biologicalCompound = {names: []};
         spectrum.chemicalCompound = {names: []};
         spectrum.tags = [];
-        spectrum.metadata = [];
+        spectrum.metaData = [];
 
         return spectrum;
     };
@@ -57,6 +57,9 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
     $scope.uploadLibrary = function (files) {
         UploadLibraryService.uploadMSP(files, function () {
             return $scope.buildSpectrum()
+        }, function (spectra) {
+            $log.debug("storing spectra: \n\n" + $filter('json')(spectra));
+            spectra.$save();
         });
     }
 };

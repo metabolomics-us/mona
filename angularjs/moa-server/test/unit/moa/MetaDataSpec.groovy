@@ -18,7 +18,7 @@ class MetaDataSpec extends ConstraintUnitSpec {
 
 	void "create a MetaData (object)"() {
 		when: 'creating a MetaData'
-		MetaData t = new MetaData(key: 'instrument', value: 'q-crap', type: 'java.lang.String')
+		MetaData t = new MetaData(name: 'instrument', value: 'q-crap', type: 'java.lang.String')
 
 		then: 'it should be defined'
 		t != null
@@ -32,7 +32,7 @@ class MetaDataSpec extends ConstraintUnitSpec {
 	void "save a MetaData (persist)"() {
 		given:
 		def pre_count = MetaData.count
-		MetaData t = new MetaData(key: 'instrument', value: 'q-crap', type: 'java.lang.String')
+		MetaData t = new MetaData(name: 'instrument', value: 'q-crap', type: 'java.lang.String')
 
 		when: 'saving a MetaData'
 		t.save(flush: true)
@@ -46,7 +46,7 @@ class MetaDataSpec extends ConstraintUnitSpec {
 
 	void "test MetaData modification"() {
 		given:
-		MetaData t = new MetaData(key: 'instrument', value: 'q-crap', type: 'java.lang.String').save()
+		MetaData t = new MetaData(name: 'instrument', value: 'q-crap', type: 'java.lang.String').save()
 		def pre_firstName = MetaData.findByKeyAndValue('instrument', 'q-crap').value
 
 		when: 'MetaData gets modified'

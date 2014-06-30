@@ -1,10 +1,12 @@
 import grails.converters.JSON
 import grails.util.Environment
 import moa.Compound
+import moa.MetaData
 import moa.Name
 import moa.Spectrum
 import moa.Submitter
 import moa.Tag
+import moa.Value
 import util.DomainClassMarshaller
 
 class BootStrap {
@@ -44,6 +46,13 @@ class BootStrap {
         JSON.registerObjectMarshaller(Name,
                 DomainClassMarshaller.createExcludeMarshaller(Name, ["class"])
         )
+        JSON.registerObjectMarshaller(MetaData,
+                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class"])
+        )
+        JSON.registerObjectMarshaller(Value,
+                DomainClassMarshaller.createExcludeMarshaller(Value, ["class","metaData"])
+        )
+
 
     }
 

@@ -50,12 +50,12 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div style="display:block" chemical-sketcher readonly="true" width="400" height="300" id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound.inchiKey"></div>
-            <div style="display:block" chemical-sketcher readonly="true" width="400" height="300" id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound.inchiKey"></div>
+            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250" id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound.inchiKey"></div>
+            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250" id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound.inchiKey"></div>
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="updateSubmitter()">Edit</button>
+        <button class="btn btn-primary" ng-click="updateSubmitter()">Edit</button>
         <button class="btn btn-warning" ng-click="cancelDialog()">Close</button>
     </div>
 </div>
