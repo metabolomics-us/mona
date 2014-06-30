@@ -14,6 +14,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
     $scope.tagsSelection = [];
 
 
+
     // Name filter
     $scope.nameFilters = {};
 
@@ -28,9 +29,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
         }
     };
 
-    $scope.removeNameFilter = function(name) {
-        delete $scope.nameFilters[name];
-    };
+    $scope.removeNameFilter = function(name) { delete $scope.nameFilters[name]; };
 
 
     // Full inchi filter
@@ -47,9 +46,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
         }
     };
 
-    $scope.removeInchiFilter = function(inchikey) {
-        delete $scope.inchiFilters[inchikey];
-    };
+    $scope.removeInchiFilter = function(inchikey) { delete $scope.inchiFilters[inchikey]; };
 
 
     // Partial inchi filter
@@ -62,9 +59,8 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
         }
     };
 
-    $scope.removePartialInchiFilter = function(inchikey) {
-        delete $scope.partialInchiFilters[inchikey];
-    };
+    $scope.removePartialInchiFilter = function(inchikey) { delete $scope.partialInchiFilters[inchikey]; };
+
 
 
     /**
@@ -84,6 +80,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
             }
         });
     };
+
 
 
     /**
@@ -113,13 +110,4 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
         });
 
     }
-};
-
-
-moaControllers.ViewSpectrumModalController = function ($scope, $modalInstance, spectrum) {
-    $scope.spectrum = spectrum;
-
-    $scope.cancelDialog = function() {
-        $modalInstance.dismiss('cancel');
-    };
 };

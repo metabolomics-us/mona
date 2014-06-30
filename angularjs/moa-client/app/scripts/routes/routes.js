@@ -12,6 +12,7 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/main.html',
             controller: 'MainCtrl'
         })
+
         //browsing compounds
         .when('/compounds', {
             templateUrl: 'views/compounds/browse/compounds.html',
@@ -29,6 +30,7 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/submitters/list.html',
             controller: 'SubmitterController'
         })
+
         //uploading a massspec
         .when('/spectra/upload', {
             templateUrl: 'views/spectra/upload/single.html',
@@ -42,7 +44,6 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/spectra/upload/moa.html',
             controller: 'SpectraController'
         })
-
 
         //any other page is redirected to the root page
         .otherwise({
