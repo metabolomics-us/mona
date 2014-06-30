@@ -1,14 +1,36 @@
 package moa
 
- class Value {
+class Value {
 
     static constraints = {
     }
 
-     /**
-      * default value is always serializeable
-      */
+    static mapping = {
+        tablePerHierarchy false
+        version false
+
+    }
+
+    /**
+     * value we return
+     * @return
+     */
+    Serializable getValue() {
+        value
+    }
+
+    /**
+     * value we can set
+     * @param o
+     */
+    void setValue(Serializable o) {
+
+        value = o
+    }
+
     Serializable value
 
-     MetaData metaData
+    static transients = ["value"]
+
+    static belongsTo = [metaData : MetaData]
 }

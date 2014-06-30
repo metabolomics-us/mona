@@ -7,5 +7,20 @@ class StringValue extends Value {
     static constraints = {
     }
 
-    String value
+    static mapping = {
+        version false
+    }
+
+    String actualValue
+
+    public String getValue() {
+        this.actualValue
+    }
+
+    @Override
+    void setValue(Serializable o) {
+        this.actualValue = (Double) o
+    }
+
+
 }

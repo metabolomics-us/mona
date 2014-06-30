@@ -29,7 +29,7 @@ class BootStrap {
 
         }
         JSON.registerObjectMarshaller(Tag,
-                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class"])
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class","id"])
         )
 
         JSON.registerObjectMarshaller(Compound,
@@ -44,13 +44,13 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class"])
         )
         JSON.registerObjectMarshaller(Name,
-                DomainClassMarshaller.createExcludeMarshaller(Name, ["class"])
+                DomainClassMarshaller.createExcludeMarshaller(Name, ["class","id"])
         )
         JSON.registerObjectMarshaller(MetaData,
-                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class","id"])
         )
         JSON.registerObjectMarshaller(Value,
-                DomainClassMarshaller.createExcludeMarshaller(Value, ["class","metaData"])
+                DomainClassMarshaller.createExcludeMarshaller(Value, ["class","metaData","id"])
         )
 
 

@@ -40,7 +40,7 @@ class SpectrumController extends RestfulController<Spectrum> {
         }
         spectrum.tags = tags;
 
-        spectrum.metaData = buildMetaData(spectrum.metaData)
+        buildMetaData(spectrum.metaData, spectrum)
 
         //spectrum is now ready to work on
         return spectrum;
@@ -51,47 +51,60 @@ class SpectrumController extends RestfulController<Spectrum> {
      * @param metaData
      * @return
      */
-    private Set<MetaData> buildMetaData(Set<MetaData> metaData) {
+    private void buildMetaData(Set<MetaData> metaData, Spectrum spectrum) {
 
         Set<MetaData> result = new HashSet<>()
 
         for (MetaData m : metaData) {
-            MetaData c = new MetaData()
+            MetaData c = MetaData.findOrSaveByName(m.name)
+
+            log.info(m)
+
             c.name = m.name
 
-            String value = m.content.value.toString();
 
-            //try catch approach is the fastest, even if it's ugglier than regex
-            try {
-                c.content = new IntegerValue(value:Integer.parseInt(value))
-                log.info("it's an integer value: ${value}")
-            }
-            catch (NumberFormatException e) {
+            m.values.each { Value v ->
+
+                String value = v.value.toString()
+
+                //try catch approach is the fastest, even if it's uglier than regex
                 try {
-                    c.content = new DoubleValue(value:  Double.parseDouble(value))
-                    log.info("it's a double value: ${value}")
+                    c.addToValues(new IntegerValue(value: Integer.parseInt(value)))
+                    log.info("it's an integer value: ${value}")
                 }
-                catch (NumberFormatException x){
+                catch (NumberFormatException e) {
+                    try {
+                        c.addToValues(new DoubleValue(value: Double.parseDouble(value)))
+                        log.info("it's a double value: ${value}")
+                    }
+                    catch (NumberFormatException x) {
 
-                    c.content = new moa.meta.StringValue(value:value)
-                    log.info("it's a string value: ${value}")
+                        c.addToValues(new moa.meta.StringValue(value: value))
+                        log.info("it's a string value: ${value}")
+                    }
                 }
-            }
 
-            c.content.save()
-            c.save()
 
+            };
+
+
+
+            log.info("trying to save value: " + c + " with content ${c.values}");
             result.add(c)
-
         }
-        return result
+
+        spectrum.metaData.clear();
+
+        result.each {
+            spectrum.addToMetaData(it)
+        }
 
     }
-    /**
-     * builds our internal compound object
-     * @param compound
-     * @return
-     */
+/**
+ * builds our internal compound object
+ * @param compound
+ * @return
+ */
     private Compound buildCompound(Compound compound) {
         def names = compound.names
 
@@ -143,4 +156,5 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         }
     }
+
 }

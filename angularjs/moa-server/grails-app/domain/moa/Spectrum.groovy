@@ -62,10 +62,4 @@ class Spectrum {
      */
     Compound biologicalCompound
 
-    /**
-     * has this spectrum being curated
-     */
-    boolean curated = false
-
-
 }

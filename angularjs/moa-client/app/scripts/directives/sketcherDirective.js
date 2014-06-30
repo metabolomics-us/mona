@@ -6,7 +6,7 @@
 /**
  * a directive to draw or display chemical formulas
  */
-app.directive('chemicalSketcher', function (CTSService) {
+app.directive('chemicalSketcher', function (gwCtsService) {
     return {
         restrict: "A",
         replace: false,
@@ -68,13 +68,12 @@ app.directive('chemicalSketcher', function (CTSService) {
                  * @param key
                  */
                 var getMoleculeForInchiKey = function (key) {
-                    CTSService.convertInchiKeyToMol(key).then(function (data) {
-                        if (angular.isDefined(data.molecule) && data.molecule != '') {
+                    gwCtsService.convertInchiKeyToMol(key,function (molecule) {
 
-                            var mol = ChemDoodle.readMOL(data.molecule);
+                            var mol = ChemDoodle.readMOL(molecule);
                             sketcher.loadMolecule(mol);
 
-                        }
+
                     });
                 };
 
@@ -99,9 +98,9 @@ app.directive('chemicalSketcher', function (CTSService) {
                                 var mol = sketcher.getMolecule();
                                 var molFile = ChemDoodle.writeMOL(mol);
 
-                                CTSService.convertToInchiKey(molFile).then(function (data) {
+                                gwCtsService.convertToInchiKey(molFile,function (key) {
 
-                                    $scope.bindModel = data.key;
+                                    $scope.bindModel = key;
 
                                 });
                             }
