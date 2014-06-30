@@ -14,7 +14,7 @@
             <tbody>
             <tr ng-show="spectra.length == 0">
             </tr>
-            <tr ng-repeat="spectrum in spectra | filter:query" ng-click="viewSpectrum($index)">
+            <tr ng-repeat="spectrum in spectra | spectraQuery:this" ng-click="viewSpectrum($index)">
                 <td>
                     <ul class="list-unstyled">
                         <li ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</li>

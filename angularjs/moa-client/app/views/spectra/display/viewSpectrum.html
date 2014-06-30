@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div>
                 <h4>Biological Compound Properties</h4>
                 <dl class="dl-horizontal compound-properties">
@@ -48,9 +48,16 @@
                     <li ng-repeat="tag in spectrum.tags"><span class="label label-primary">{{tag.text}}</span></li>
                 </ul>
             </div>
+
+            <div ng-show="spectrum.comments.length">
+                <h4>Comments</h4>
+                <blockquote><p style="font-size: 75%">{{spectrum.comments}}</p></blockquote>
+            </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <label>Biological Compound</label>
             <div style="display:block" chemical-sketcher readonly="true" width="250" height="250" id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound.inchiKey"></div>
+            <label>Chemical Compound</label>
             <div style="display:block" chemical-sketcher readonly="true" width="250" height="250" id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound.inchiKey"></div>
         </div>
     </div>

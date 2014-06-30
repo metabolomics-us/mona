@@ -12,11 +12,6 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
     $scope.compounds = [];
 
     /**
-     * display all our compounds
-     */
-    $scope.listCompounds = list();
-
-    /**
      * show the currently selected sprectra
      * @param inchikey
      */
@@ -25,6 +20,11 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
         $location.path("/spectra/browse/"+ inchikey);
     };
 
+
+    /**
+     * display all our compounds
+     */
+    $scope.listCompounds = list();
 
     /**
      * helper function
