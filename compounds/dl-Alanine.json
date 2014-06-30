@@ -1,0 +1,23 @@
+// http://www.chemspider.com/Chemical-Structure.582.html
+// http://webbook.nist.gov/cgi/cbook.cgi?ID=C302727&Mask=200#Mass-Spec
+{
+	"biologicalCompound": { "inchiKey": "QNAYBMKLOCPYGJ-REOHCLBHSA-N", "names": ["alanine"] },
+	"chemicalCompound": { "inchiKey": "QNAYBMKLOCPYGJ-UHFFFAOYSA-N", "names": ["dl-Alanine"] },
+
+	"tags": [
+		{ "id": 19, "text": "dirty" }
+	],
+	
+	"metadata": [],
+
+	"submitter": {
+		"id": 1,
+		"emailAddress": "wohlgemuth@ucdavis.edu",
+		"firstName": "Gert",
+		"lastName": "Wohlgemuth",
+		"password": "dasdsa" },
+	
+	"comments": "Test",
+
+	"spectrum": "14:40 15:259 17:10 18:30 25:20 26:90 27:379 28:1229 29:129 30:60 38:40 39:60 40:169 41:289 42:1119 43:369 44:9999 45:319 46:169 53:20 54:20 55:80 56:40 57:60 60:10 73:40 74:239 75:10 89:20"
+}

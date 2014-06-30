@@ -15,62 +15,52 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
 
 
 
-    // Inchi Filter
+    // Name filter
+    $scope.nameFilters = {};
+
+    // Add name to filter if given in route
+    if($routeParams.name)
+        $scope.nameFilters[$routeParams.name] = true;
+
+    $scope.addNameFilter = function() {
+        if($scope.spectraQuery.newNameFilter.$valid) {
+            $scope.nameFilters[$scope.newNameFilter] = true;
+            $scope.newNameFilter = '';
+        }
+    };
+
+    $scope.removeNameFilter = function(name) { delete $scope.nameFilters[name]; };
+
+
+    // Full inchi filter
     $scope.inchiFilters = {};
 
     // Add inchikey to filter if given in route
     if($routeParams.inchikey)
         $scope.inchiFilters[$routeParams.inchikey] = true;
 
-
     $scope.addInchiFilter = function() {
         if($scope.spectraQuery.newInchiFilter.$valid) {
             $scope.inchiFilters[$scope.newInchiFilter] = true;
-            $scope.newInchiFilter = ''
+            $scope.newInchiFilter = '';
         }
     };
 
-    $scope.removeInchiFilder = function(inchikey) {
-        delete $scope.inchiFilters[inchikey];
-    }
+    $scope.removeInchiFilter = function(inchikey) { delete $scope.inchiFilters[inchikey]; };
 
 
+    // Partial inchi filter
+    $scope.partialInchiFilters = {};
 
-    // Query methods
-    function intersect(arr1, arr2) {
-        var r = [], o = {}, l = arr2.length, i, v;
-
-        for (i = 0; i < l; i++)
-            o[arr2[i]] = true;
-
-        l = arr1.length;
-
-        for (i = 0; i < l; i++) {
-            v = arr1[i];
-            if (v in o)
-                r.push(v);
+    $scope.addPartialInchiFilter = function() {
+        if($scope.spectraQuery.newInchiPartialFilter.$valid) {
+            $scope.partialInchiFilters[$scope.newInchiPartialFilter] = true;
+            $scope.newInchiPartialFilter = '';
         }
-        return r;
-    }
-
-    $scope.query = function(spectrum) {
-        // InChIKey filter
-        var inchikeys = Object.keys($scope.inchiFilters);
-
-        if(inchikeys.length > 0 &&
-                inchikeys.indexOf(spectrum.biologicalCompound.inchiKey) == -1 &&
-                inchikeys.indexOf(spectrum.chemicalCompound.inchiKey) == -1)
-            return false;
-
-        // Tags filter
-        var tags = spectrum.tags.map(function(tag) { return tag.text; });
-        var selected_tags = $scope.tagsSelection.map(function(tag) { return tag.text; });
-
-        if(intersect(tags, selected_tags).length == 0)
-            return false;
-
-        return true;
     };
+
+    $scope.removePartialInchiFilter = function(inchikey) { delete $scope.partialInchiFilters[inchikey]; };
+
 
 
     /**
@@ -90,6 +80,7 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
             }
         });
     };
+
 
 
     /**
@@ -119,13 +110,4 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
         });
 
     }
-};
-
-
-moaControllers.ViewSpectrumModalController = function ($scope, $modalInstance, spectrum) {
-    $scope.spectrum = spectrum;
-
-    $scope.cancelDialog = function() {
-        $modalInstance.dismiss('cancel');
-    };
 };

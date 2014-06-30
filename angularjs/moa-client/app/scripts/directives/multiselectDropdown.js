@@ -1,7 +1,6 @@
 app.directive('multiselectDropdown', function() {
     return function(scope, element, attributes) {
-        // http://stackoverflow.com/questions/16933324
-        element = $(element[0]);
+        // http://stackoverflow.com/a/21631193
 
         element.multiselect({
             buttonClass: 'btn btn-mini btn-primary',
@@ -21,7 +20,7 @@ app.directive('multiselectDropdown', function() {
             onChange: function (optionElement, checked) {
                 optionElement.removeAttr('selected');
                 if (checked)
-                    optionElement.attr('selected', 'selected');
+                    optionElement.prop('selected', 'selected');
                 element.change();
             }
 
