@@ -1,17 +1,18 @@
 package moa
 
+
 class MetaData {
 
     static constraints = {
         name blank: false
-        values nullable: true
+        value nullable: true
     }
 
     static mapping = {
         version false
     }
 
-    static hasMany = [values:Value]
+    static hasMany = [value:Value]
     /**
      * the key for this metadata
      */
@@ -20,6 +21,6 @@ class MetaData {
     /**
      * associated content
      */
-    Set<Value> values
+    Set<Value> value
 
 }

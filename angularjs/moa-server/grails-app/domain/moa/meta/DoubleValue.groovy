@@ -2,6 +2,7 @@ package moa.meta
 
 import moa.Value
 
+
 class DoubleValue extends Value {
 
     static constraints = {
@@ -12,16 +13,22 @@ class DoubleValue extends Value {
     }
 
 
-    Double actualValue
+    Double doubleValue
 
     public Double getValue() {
-        this.actualValue
+        this.doubleValue
     }
 
     @Override
     void setValue(Serializable o) {
-        this.actualValue = (Double) o
+        this.doubleValue = (Double) o
     }
+
+    @Override
+    public String getType(){
+        return "double"
+    }
+
 
 
 }

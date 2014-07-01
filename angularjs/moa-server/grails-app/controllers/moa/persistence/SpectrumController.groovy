@@ -2,6 +2,7 @@ package moa.persistence
 
 import grails.rest.RestfulController
 import moa.*
+import moa.meta.BooleanValue
 import moa.meta.DoubleValue
 import moa.meta.IntegerValue
 
@@ -40,7 +41,7 @@ class SpectrumController extends RestfulController<Spectrum> {
         }
         spectrum.tags = tags;
 
-        buildMetaData(spectrum.metaData, spectrum)
+        buildMetaData(spectrum, request.JSON.metaData)
 
         //spectrum is now ready to work on
         return spectrum;
@@ -48,55 +49,47 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     /**
      * generates a correctly implemted metadata set
-     * @param metaData
+     * @param object - object to modify
+     * @parm json - json definition of the metadata
      * @return
      */
-    private void buildMetaData(Set<MetaData> metaData, Spectrum spectrum) {
+    private void buildMetaData(def object, def json) {
 
         Set<MetaData> result = new HashSet<>()
 
-        for (MetaData m : metaData) {
-            MetaData c = MetaData.findOrSaveByName(m.name)
+        json.each { current ->
+            log.info("${current.name} - ${current.value}")
+            MetaData metaData = MetaData.findOrSaveByName(current.name);
 
-            log.info(m)
+            try {
 
-            c.name = m.name
+                Integer value = Integer.parseInt(current.value)
+                metaData.addToValue(new IntegerValue(integerValue: value))
 
-
-            m.values.each { Value v ->
-
-                String value = v.value.toString()
-
-                //try catch approach is the fastest, even if it's uglier than regex
+            } catch (NumberFormatException e) {
                 try {
-                    c.addToValues(new IntegerValue(value: Integer.parseInt(value)))
-                    log.info("it's an integer value: ${value}")
-                }
-                catch (NumberFormatException e) {
-                    try {
-                        c.addToValues(new DoubleValue(value: Double.parseDouble(value)))
-                        log.info("it's a double value: ${value}")
+                    Double value = Double.parseDouble(current.value)
+                    metaData.addToValue(new DoubleValue(doubleValue: value))
+
+                } catch (NumberFormatException ex) {
+                    if (current.value.toString().toLowerCase().trim() == "true") {
+                        metaData.addToValue(new BooleanValue(booleanValue: true))
+
+                    } else if (current.value.toString().toLowerCase().trim() == "false") {
+                        metaData.addToValue(new BooleanValue(booleanValue: false))
+
+                    } else {
+                        metaData.addToValue(new moa.meta.StringValue(stringValue: current.value))
+
                     }
-                    catch (NumberFormatException x) {
-
-                        c.addToValues(new moa.meta.StringValue(value: value))
-                        log.info("it's a string value: ${value}")
-                    }
                 }
-
-
-            };
-
-
-
-            log.info("trying to save value: " + c + " with content ${c.values}");
-            result.add(c)
+            }
+            result.add(metaData)
         }
-
-        spectrum.metaData.clear();
+        object.metaData.clear();
 
         result.each {
-            spectrum.addToMetaData(it)
+            object.addToMetaData(it)
         }
 
     }

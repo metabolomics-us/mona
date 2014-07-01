@@ -2,6 +2,7 @@ package moa.meta
 
 import moa.Value
 
+
 class IntegerValue extends Value{
 
     static constraints = {
@@ -12,15 +13,20 @@ class IntegerValue extends Value{
     }
 
 
-    Integer actualValue
+    Integer integerValue
 
     public Integer getValue() {
-        this.actualValue
+        this.integerValue
     }
 
     @Override
     void setValue(Serializable o) {
-        this.actualValue = (Double)o
+        this.integerValue = (Integer)o
+    }
+
+    @Override
+    public String getType(){
+        return "int"
     }
 
 

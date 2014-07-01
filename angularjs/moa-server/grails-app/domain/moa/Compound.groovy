@@ -3,19 +3,19 @@ package moa
 class Compound {
 
     static constraints = {
-	    inchiKey unique: true, nullable: false
+        inchiKey unique: true, nullable: false
         molFile nullable: true
     }
 
     static mapping = {
         inchiKey index: true, indexAttributes: [unique: true]
         version false
+        molFile sqlType: "text"
     }
-	/**
-	 * this compound belongs to one spectrum
-	 */
-	static hasMany = [ names:Name,metaData: MetaData]
-
+    /**
+     * this compound belongs to one spectrum
+     */
+    static hasMany = [names: Name, metaData: MetaData]
 
     /**
      * inchiKey of this compound
@@ -27,9 +27,9 @@ class Compound {
      */
     String molFile
 
-	/**
-	 * names associated to this compound
-	 */
-	Set<Name> names
+    /**
+     * names associated to this compound
+     */
+    Set<Name> names
 
 }
