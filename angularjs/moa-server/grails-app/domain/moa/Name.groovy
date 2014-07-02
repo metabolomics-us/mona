@@ -6,5 +6,6 @@ class Name {
     }
 
     static belongsTo = [compound:Compound]
+
     String name
 }

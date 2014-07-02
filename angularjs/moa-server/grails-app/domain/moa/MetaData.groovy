@@ -12,7 +12,7 @@ class MetaData {
         version false
     }
 
-    static hasMany = [value:Value]
+    static hasMany = [value:MetaDataValue]
     /**
      * the key for this metadata
      */
@@ -21,6 +21,6 @@ class MetaData {
     /**
      * associated content
      */
-    Set<Value> value
+    Set<MetaDataValue> value
 
 }

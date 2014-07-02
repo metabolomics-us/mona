@@ -12,7 +12,7 @@ class Spectrum {
     /**
      * contains many metadata
      */
-    static hasMany = [metaData: MetaData, tags: Tag]
+    static hasMany = [metaData: MetaDataValue, tags: Tag]
 
     /**
      * we belong to these

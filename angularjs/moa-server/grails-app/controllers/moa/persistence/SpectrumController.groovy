@@ -2,9 +2,10 @@ package moa.persistence
 
 import grails.rest.RestfulController
 import moa.*
-import moa.meta.BooleanValue
-import moa.meta.DoubleValue
-import moa.meta.IntegerValue
+import moa.meta.BooleanMetaDataValue
+import moa.meta.DoubleMetaDataValue
+import moa.meta.IntegerMetaDataValue
+import moa.meta.StringMetaDataValue
 
 class SpectrumController extends RestfulController<Spectrum> {
 
@@ -53,43 +54,43 @@ class SpectrumController extends RestfulController<Spectrum> {
      * @parm json - json definition of the metadata
      * @return
      */
-    private void buildMetaData(def object, def json) {
+    private void buildMetaData(Spectrum object, def json) {
 
-        Set<MetaData> result = new HashSet<>()
+        //remove existing metadata from the object
+        object.metaData.clear()
 
         json.each { current ->
             log.info("${current.name} - ${current.value}")
             MetaData metaData = MetaData.findOrSaveByName(current.name);
 
+            MetaDataValue metaDataValue = null
             try {
 
                 Integer value = Integer.parseInt(current.value)
-                metaData.addToValue(new IntegerValue(integerValue: value))
+                metaDataValue = (new IntegerMetaDataValue(integerValue: value))
 
             } catch (NumberFormatException e) {
                 try {
                     Double value = Double.parseDouble(current.value)
-                    metaData.addToValue(new DoubleValue(doubleValue: value))
+                    metaDataValue = (new DoubleMetaDataValue(doubleValue: value))
 
                 } catch (NumberFormatException ex) {
                     if (current.value.toString().toLowerCase().trim() == "true") {
-                        metaData.addToValue(new BooleanValue(booleanValue: true))
+                        metaDataValue = (new BooleanMetaDataValue(booleanValue: true))
 
                     } else if (current.value.toString().toLowerCase().trim() == "false") {
-                        metaData.addToValue(new BooleanValue(booleanValue: false))
+                        metaDataValue = (new BooleanMetaDataValue(booleanValue: false))
 
                     } else {
-                        metaData.addToValue(new moa.meta.StringValue(stringValue: current.value))
+                        metaDataValue = (new StringMetaDataValue(stringValue: current.value))
 
                     }
                 }
             }
-            result.add(metaData)
-        }
-        object.metaData.clear();
 
-        result.each {
-            object.addToMetaData(it)
+            metaData.addToValue(metaDataValue)
+            metaDataValue.spectrum = object
+            object.addToMetaData(metaDataValue)
         }
 
     }
@@ -113,6 +114,7 @@ class SpectrumController extends RestfulController<Spectrum> {
             myCompound.addToNames(Name.findOrSaveByName(name.name))
         }
 
+        myCompound.molFile = compound.molFile
         myCompound.save(flush: true)
 
         return myCompound;
