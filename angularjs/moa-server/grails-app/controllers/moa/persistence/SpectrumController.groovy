@@ -60,9 +60,15 @@ class SpectrumController extends RestfulController<Spectrum> {
         object.metaData.clear()
 
         json.each { current ->
-            log.info("${current.name} - ${current.value}")
             MetaData metaData = MetaData.findOrSaveByName(current.name);
 
+            //associated our default category, if none exist
+            if(metaData.category == null){
+                MetaDataCategory category = MetaDataCategory.findOrSaveByName('none associated')
+                category.addToMetaDatas(metaData)
+                metaData.category = category
+
+            }
             MetaDataValue metaDataValue = null
             try {
 

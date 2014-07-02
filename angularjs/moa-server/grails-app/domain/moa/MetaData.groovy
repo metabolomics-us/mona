@@ -12,6 +12,8 @@ class MetaData {
         version false
     }
 
+    static  belongsTo = [category:MetaDataCategory]
+
     static hasMany = [value:MetaDataValue]
     /**
      * the key for this metadata
