@@ -6,7 +6,12 @@ import moa.Tag
 class TagController extends RestfulController {
 	static responseFormats = ['json']
 
-	public TagController() {
+
+    def beforeInterceptor = {
+        log.info(params)
+    }
+
+    public TagController() {
 		super(Tag)
 	}
 

@@ -23,10 +23,4 @@ class StringMetaDataValue extends MetaDataValue {
         this.stringValue = (String) o
     }
 
-    @Override
-    public String getType(){
-        return "string"
-    }
-
-
 }

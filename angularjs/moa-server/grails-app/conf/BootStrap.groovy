@@ -2,6 +2,7 @@ import grails.converters.JSON
 import grails.util.Environment
 import moa.Compound
 import moa.MetaData
+import moa.MetaDataCategory
 import moa.MetaDataValue
 import moa.Name
 import moa.Spectrum
@@ -28,6 +29,8 @@ class BootStrap {
             Tag.findOrCreateWhere(text: "injected").save()
             Tag.findOrCreateWhere(text: "experimental").save()
 
+            MetaDataCategory.findOrCreateByName("computed").save()
+
         }
         JSON.registerObjectMarshaller(Tag,
                 DomainClassMarshaller.createExcludeMarshaller(Tag, ["class","id"])
@@ -48,11 +51,15 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(Name, ["class","id","compound"])
         )
         JSON.registerObjectMarshaller(MetaData,
-                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class","id"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class","category","value"])
         )
         JSON.registerObjectMarshaller(MetaDataValue,
-                DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class","metaData","id","spectrum"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class","id","spectrum"])
         )
+        JSON.registerObjectMarshaller(MetaDataCategory,
+                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class","metaDatas"])
+        )
+
 
 
     }

@@ -24,10 +24,4 @@ class IntegerMetaDataValue extends MetaDataValue{
         this.integerValue = (Integer)o
     }
 
-    @Override
-    public String getType(){
-        return "int"
-    }
-
-
 }

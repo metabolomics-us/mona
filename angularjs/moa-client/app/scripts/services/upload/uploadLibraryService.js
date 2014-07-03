@@ -5,7 +5,7 @@
 /**
  * handles the upload of library spectra to the system
  */
-app.service('UploadLibraryService', function (ApplicationError, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log) {
+app.service('UploadLibraryService', function (ApplicationError, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q) {
 
     /**
      * uploads an msp file to the system
@@ -13,15 +13,16 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
      * @param buildSpectrum a function to build our spectrum object
      * @param saveSpectrumCallback a function to call to save our generated spectra object
      */
-    this.uploadMSP = function (files, buildSpectrum,saveSpectrumCallback) {
+    this.uploadMSP = function (files, buildSpectrum, saveSpectrumCallback) {
 
         //get the current user
         AuthentificationService.getCurrentUser().then(function (submitter) {
 
+
             //convert our files
             gwMspService.convertFromFile(files, function (spectra) {
 
-                //generate the related inchi key
+                //find the inchi key for the given name
                 gwChemifyService.nameToInChIKey(spectra.name, function (key) {
 
                     //if a key was found
@@ -52,7 +53,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                                 s.tags.push({'text': 'library'});
                                 s.tags.push({'text': 'msp'});
 
-                                s.comments = "uploaded using the MSP Service";
+                                s.comments = "this spectra was generated using the MSP Service, with an existing uploaded files";
                                 spectra.meta.forEach(function (e) {
                                     s.metaData.push(e);
                                 });
@@ -70,8 +71,10 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                         $log.debug('was no able to find an InChI Key for: ' + spectra.name);
                     }
                 });
+
             });
         });
-    }
+
+    };
 
 });

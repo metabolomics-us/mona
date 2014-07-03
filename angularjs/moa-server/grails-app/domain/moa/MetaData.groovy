@@ -21,6 +21,11 @@ class MetaData {
     String name
 
     /**
+     * what kind of type we support
+     */
+    String type
+
+    /**
      * associated content
      */
     Set<MetaDataValue> value

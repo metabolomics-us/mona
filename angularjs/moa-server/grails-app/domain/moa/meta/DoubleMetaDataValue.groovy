@@ -23,12 +23,4 @@ class DoubleMetaDataValue extends MetaDataValue {
     void setValue(Serializable o) {
         this.doubleValue = (Double) o
     }
-
-    @Override
-    public String getType(){
-        return "double"
-    }
-
-
-
 }

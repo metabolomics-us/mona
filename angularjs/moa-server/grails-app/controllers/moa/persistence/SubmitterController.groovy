@@ -7,7 +7,11 @@ class SubmitterController extends RestfulController {
 
 	static responseFormats = ['json']
 
-	public SubmitterController() {
+    def beforeInterceptor = {
+        log.info(params)
+    }
+
+    public SubmitterController() {
 		super(Submitter)
 	}
 

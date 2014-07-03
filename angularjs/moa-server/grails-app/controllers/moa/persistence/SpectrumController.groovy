@@ -9,14 +9,16 @@ import moa.meta.StringMetaDataValue
 
 class SpectrumController extends RestfulController<Spectrum> {
 
-
     static responseFormats = ['json']
+
+    def beforeInterceptor = {
+        log.info(params)
+    }
 
     public SpectrumController() {
         super(Spectrum)
     }
-    def beforeInterceptor = {
-    }
+
 
     @Override
     protected Spectrum createResource(Map params) {
@@ -63,7 +65,7 @@ class SpectrumController extends RestfulController<Spectrum> {
             MetaData metaData = MetaData.findOrSaveByName(current.name);
 
             //associated our default category, if none exist
-            if(metaData.category == null){
+            if (metaData.category == null) {
                 MetaDataCategory category = MetaDataCategory.findOrSaveByName('none associated')
                 category.addToMetaDatas(metaData)
                 metaData.category = category
@@ -75,21 +77,56 @@ class SpectrumController extends RestfulController<Spectrum> {
                 Integer value = Integer.parseInt(current.value)
                 metaDataValue = (new IntegerMetaDataValue(integerValue: value))
 
+                if (metaData.type == null) {
+                    metaData.type = "int";
+                } else {
+                    if (!metaData.type.equals("int")) {
+                        throw new Exception("metaData needs to be of type 'int'");
+                    }
+                }
             } catch (NumberFormatException e) {
                 try {
                     Double value = Double.parseDouble(current.value)
                     metaDataValue = (new DoubleMetaDataValue(doubleValue: value))
 
+
+                    if (metaData.type == null) {
+                        metaData.type = "double";
+                    } else {
+                        if (!metaData.type.equals("double")) {
+                            throw new Exception("metaData needs to be of type 'double'");
+                        }
+                    }
                 } catch (NumberFormatException ex) {
                     if (current.value.toString().toLowerCase().trim() == "true") {
                         metaDataValue = (new BooleanMetaDataValue(booleanValue: true))
 
+                        if (metaData.type == null) {
+                            metaData.type = "boolean";
+                        } else {
+                            if (!metaData.type.equals("boolean")) {
+                                throw new Exception("metaData needs to be of type 'boolean'");
+                            }
+                        }
                     } else if (current.value.toString().toLowerCase().trim() == "false") {
                         metaDataValue = (new BooleanMetaDataValue(booleanValue: false))
-
+                        if (metaData.type == null) {
+                            metaData.type = "boolean";
+                        } else {
+                            if (!metaData.type.equals("boolean")) {
+                                throw new Exception("metaData needs to be of type 'boolean'");
+                            }
+                        }
                     } else {
                         metaDataValue = (new StringMetaDataValue(stringValue: current.value))
 
+                        if (metaData.type == null) {
+                            metaData.type = "string";
+                        } else {
+                            if (!metaData.type.equals("string")) {
+                                throw new Exception("metaData needs to be of type 'string'");
+                            }
+                        }
                     }
                 }
             }
@@ -139,22 +176,35 @@ class SpectrumController extends RestfulController<Spectrum> {
     }
 
     protected Spectrum queryForResource(Serializable id) {
-        if (params.CompoundId) {
-            return Spectrum.findByBiologicalCompoundOrChemicalCompound(Compound.get(params.CompoundId)
-                    , Compound.get(params.CompoundId))
-        } else {
-            return resource.get(id)
+
+        def criteria = Spectrum.createCriteria()
+
+        return criteria.get {
+            if (params.CompoundId) {
+                eq("id",Long.parseLong(id.toString()))
+            }
         }
     }
 
+    /**
+     * dynamic query methods to deal with different url mappings based on mapping ids
+     * @param params
+     * @return
+     */
     protected List<Spectrum> listAllResources(Map params) {
-        if (params.CompoundId) {
-            Compound compound = Compound.get(params.CompoundId)
 
-            return Spectrum.findAllByBiologicalCompoundOrChemicalCompound(compound, compound)
-        } else {
-            return resource.list(params)
+        return Spectrum.createCriteria().list {
+            if (params.CompoundId) {
+                biologicalCompound {
+                    eq("id",Long.parseLong(params.CompoundId))
+                }
 
+                or{
+                    chemicalCompound{
+                        eq("id",Long.parseLong(params.CompoundId))
+                    }
+                }
+            }
         }
     }
 

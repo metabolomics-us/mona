@@ -8,6 +8,11 @@ class CompoundController extends RestfulController {
 
     static responseFormats = ['json']
 
+
+    def beforeInterceptor = {
+        log.info(params)
+    }
+
     public CompoundController() {
         super(Compound)
     }

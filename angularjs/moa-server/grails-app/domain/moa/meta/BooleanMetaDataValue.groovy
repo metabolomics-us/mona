@@ -22,10 +22,4 @@ class BooleanMetaDataValue extends MetaDataValue{
         this.booleanValue = (Boolean) o
     }
 
-    @Override
-    public String getType(){
-        return "boolean"
-    }
-
-
 }

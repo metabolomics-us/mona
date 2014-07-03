@@ -8,8 +8,6 @@ package moa
  */
 class MetaDataValue {
 
-    String type
-
     Serializable value
 
     static belongsTo = [metaData: MetaData, spectrum:Spectrum]
@@ -29,6 +27,14 @@ class MetaDataValue {
     public String getName(){
         return metaData?.name
 
+    }
+
+    /**
+     * which type we are
+     * @return
+     */
+    public String getType(){
+        return metaData?.type
     }
 
     /**
