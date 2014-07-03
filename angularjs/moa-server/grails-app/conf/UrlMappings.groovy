@@ -18,6 +18,7 @@ class UrlMappings {
             "/data"(resources: 'MetaData'){
                 "/spectra"(resources: 'Spectrum')
                 "/compounds"(resources: 'Compound')
+                "/value"(resources: 'MetaDataValue')
             }
         }
     }

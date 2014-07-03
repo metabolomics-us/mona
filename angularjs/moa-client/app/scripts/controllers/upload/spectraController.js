@@ -52,12 +52,53 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
      * uploads a msp library to the system
      */
     $scope.uploadLibrary = function (files) {
-        UploadLibraryService.uploadMSP(files, function () {
-            return $scope.buildSpectrum()
-        }, function (spectra) {
-            $log.debug("storing spectra: \n\n" + $filter('json')(spectra));
-            spectra.$save();
-        });
+
+
+        for (var i in files) {
+            var fileReader = new FileReader();
+
+            /**
+             * once the data is actually loaded
+             * @param e
+             */
+            fileReader.onload = function (e) {
+
+                var data = e.target.result;
+
+                UploadLibraryService.uploadMSP(data, function () {
+                    return $scope.buildSpectrum()
+                }, function (spectra) {
+                    $log.debug("storing spectra: \n\n" + $filter('json')(spectra));
+                    spectra.$save();
+                });
+
+                fireUploadProgress(100);
+            };
+
+            /**
+             * progress notification
+             * @param event
+             */
+            fileReader.onprogress = function (event) {
+                if (event.lengthComputable) {
+                    var progress = parseInt(((event.loaded / event.total) * 100), 10);
+                    fireUploadProgress(progress);
+                }
+            };
+
+            //start the reading
+            fileReader.readAsText(files[i]);
+
+        }
+
+        /**
+         * handles feedback for progress bars
+         * @param progress
+         */
+        var fireUploadProgress = function (progress) {
+            console.log('progress: ' + progress);
+        };
+
     };
 };
 

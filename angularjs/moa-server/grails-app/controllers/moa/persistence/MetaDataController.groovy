@@ -1,9 +1,9 @@
 package moa.persistence
+
 import grails.rest.RestfulController
 import moa.MetaData
-import moa.MetaDataCategory
 
-class MetaDataController extends RestfulController<MetaData>{
+class MetaDataController extends RestfulController<MetaData> {
 
     static responseFormats = ['json']
 
@@ -42,13 +42,14 @@ class MetaDataController extends RestfulController<MetaData>{
 
     protected List<MetaData> listAllResources(Map params) {
 
-        if (params.MetaDataCategoryId) {
-            MetaDataCategory metaData = MetaDataCategory.get(params.MetaDataCategoryId)
+        return MetaData.createCriteria().list {
 
-            return MetaData.findAllByCategory(metaData)
-        } else {
-            return resource.list(params)
+            if (params.MetaDataCategoryId) {
+                category {
+                    eq("id", Long.parseLong(params.MetaDataCategoryId))
+                }
 
+            }
         }
     }
 
