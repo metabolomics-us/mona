@@ -25,12 +25,14 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                 //find the inchi key for the given name
                 gwChemifyService.nameToInChIKey(spectra.name, function (key) {
 
+                    $log.debug('received key: ' + key);
                     //if a key was found
                     if (key != null) {
 
                         //let's get the correct mol file for this key
                         gwCtsService.convertInchiKeyToMol(key, function (molFile) {
 
+                            $log.debug('received mol: ' + molFile);
                             if (molFile != null) {
                                 var s = buildSpectrum();
 
@@ -60,6 +62,8 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
                                 s.submitter = submitter;
 
+
+                                $log.debug('saving spectra: ' + s);
                                 saveSpectrumCallback(s);
                             }
                             else {

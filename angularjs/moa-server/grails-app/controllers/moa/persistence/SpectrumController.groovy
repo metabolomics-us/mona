@@ -81,7 +81,7 @@ class SpectrumController extends RestfulController<Spectrum> {
                     metaData.type = "int";
                 } else {
                     if (!metaData.type.equals("int")) {
-                        throw new Exception("metaData needs to be of type 'int'");
+                        throw new Exception("metaData '${metaData.name}' needs to be of type 'int'");
                     }
                 }
             } catch (NumberFormatException e) {
@@ -94,7 +94,7 @@ class SpectrumController extends RestfulController<Spectrum> {
                         metaData.type = "double";
                     } else {
                         if (!metaData.type.equals("double")) {
-                            throw new Exception("metaData needs to be of type 'double'");
+                            throw new Exception("metaData '${metaData.name}' needs to be of type 'double'");
                         }
                     }
                 } catch (NumberFormatException ex) {
@@ -105,7 +105,7 @@ class SpectrumController extends RestfulController<Spectrum> {
                             metaData.type = "boolean";
                         } else {
                             if (!metaData.type.equals("boolean")) {
-                                throw new Exception("metaData needs to be of type 'boolean'");
+                                throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean'");
                             }
                         }
                     } else if (current.value.toString().toLowerCase().trim() == "false") {
@@ -114,7 +114,7 @@ class SpectrumController extends RestfulController<Spectrum> {
                             metaData.type = "boolean";
                         } else {
                             if (!metaData.type.equals("boolean")) {
-                                throw new Exception("metaData needs to be of type 'boolean'");
+                                throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean'");
                             }
                         }
                     } else {
@@ -124,7 +124,7 @@ class SpectrumController extends RestfulController<Spectrum> {
                             metaData.type = "string";
                         } else {
                             if (!metaData.type.equals("string")) {
-                                throw new Exception("metaData needs to be of type 'string'");
+                                throw new Exception("metaData '${metaData.name}' needs to be of type 'string'");
                             }
                         }
                     }
@@ -193,8 +193,14 @@ class SpectrumController extends RestfulController<Spectrum> {
      */
     protected List<Spectrum> listAllResources(Map params) {
 
+        log.info("params: ${params}")
+
         return Spectrum.createCriteria().list {
+
+            //if a compound is specified
             if (params.CompoundId) {
+                log.info("query by compounds: ${params.CompoundId}")
+
                 biologicalCompound {
                     eq("id",Long.parseLong(params.CompoundId))
                 }
@@ -203,6 +209,16 @@ class SpectrumController extends RestfulController<Spectrum> {
                     chemicalCompound{
                         eq("id",Long.parseLong(params.CompoundId))
                     }
+                }
+            }
+            //if a category is specified
+            if(params.MetaDataId){
+
+                log.info("query by meta data: ${params.MetaDataId}")
+                metaData{
+                    eq("id",Long.parseLong(params.MetaDataId))
+
+                    //if we got a category as well
                 }
             }
         }
