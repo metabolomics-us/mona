@@ -15,7 +15,7 @@
  * @param newSpectrum
  * @constructor
  */
-moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, $http, CTSService, TaggingService, AuthentificationService, newSpectrum) {
+moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, $http, TaggingService, AuthentificationService,gwCtsService, newSpectrum,$log) {
 
     /**
      * definition of all our steps
@@ -193,7 +193,9 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
         if (angular.isDefined($scope.spectra.biologicalCompound.inchiKey)) {
 
-            CTSService.getNamesForInChIKey($scope.spectra.biologicalCompound.inchiKey).then(function (result) {
+            gwCtsService.getNamesForInChIKey($scope.spectra.biologicalCompound.inchiKey,function (result) {
+                //$log.debug('recevied names: ' + result);
+
                 $scope.possibleBiologicalNames = result;
 
             });
@@ -214,7 +216,8 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
         //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
 
         if (angular.isDefined($scope.spectra.chemicalCompound.inchiKey)) {
-            CTSService.getNamesForInChIKey($scope.spectra.chemicalCompound.inchiKey).then(function (result) {
+            gwCtsService.getNamesForInChIKey($scope.spectra.chemicalCompound.inchiKey,function (result) {
+                $log.debug('recevied names: ' + result);
                 $scope.possibleChemicalNames = result;
 
             });

@@ -35,11 +35,32 @@
                 </dl>
             </div>
 
-            <div ng-show="spectrum.metadata.length">
+            <div ng-show="spectrum.metaData.length">
                 <h4>Metadata</h4>
-                <ul>
-                    <li ng-repeat="key in spectrum.metadata">{{key}}: {{spectrum.metadata[key]}}</li>
-                </ul>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>category</th>
+                        <th>name</th>
+                        <th>value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="meta in spectrum.metaData">
+                        <td>
+                            {{meta.category}}
+                        </td>
+                        <td>
+                            {{meta.name}}
+                        </td>
+                        <td>
+                            {{meta.value}}
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+                </table>
             </div>
 
             <div ng-show="spectrum.tags.length">
@@ -56,9 +77,13 @@
         </div>
         <div class="col-md-4">
             <label>Biological Compound</label>
-            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250" id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound.inchiKey"></div>
+
+            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
+                 id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound"></div>
             <label>Chemical Compound</label>
-            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250" id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound.inchiKey"></div>
+
+            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
+                 id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound"></div>
         </div>
     </div>
     <div class="modal-footer">

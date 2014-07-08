@@ -40,7 +40,7 @@ class MetaDataValueController extends RestfulController<MetaDataValue> {
 
     protected List<MetaDataValue> listAllResources(Map params) {
 
-        return MetaDataValue.createCriteria().list {
+        return MetaDataValue.createCriteria().list(params) {
 
             //if we have a metadata id
             if (params.MetaDataId) {
