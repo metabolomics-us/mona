@@ -13,7 +13,7 @@ class MetaDataController extends RestfulController<MetaData> {
     }
 
     public MetaDataController() {
-        super(MetaData)
+        super(MetaData,true)
     }
 
     /**

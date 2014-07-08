@@ -16,7 +16,7 @@ class MetaDataValueController extends RestfulController<MetaDataValue> {
     }
 
     public MetaDataValueController() {
-        super(MetaDataValue)
+        super(MetaDataValue,true)
     }
 
     /**

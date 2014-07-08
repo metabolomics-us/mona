@@ -12,7 +12,7 @@ class TagController extends RestfulController {
     }
 
     public TagController() {
-		super(Tag)
+		super(Tag,true)
 	}
 
 	/**
