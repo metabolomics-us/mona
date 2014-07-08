@@ -66,7 +66,13 @@ class SpectrumController extends RestfulController<Spectrum> {
 
             //associated our default category, if none exist
             if (metaData.category == null) {
-                MetaDataCategory category = MetaDataCategory.findOrSaveByName('none associated')
+                MetaDataCategory category = null
+                if (current.category == null) {
+                    category = MetaDataCategory.findOrSaveByName(current.category)
+                } else {
+                    category = MetaDataCategory.findOrSaveByName('none')
+                }
+
                 category.addToMetaDatas(metaData)
                 metaData.category = category
 
@@ -181,7 +187,7 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         return criteria.get {
             if (params.CompoundId) {
-                eq("id",Long.parseLong(id.toString()))
+                eq("id", Long.parseLong(id.toString()))
             }
         }
     }
@@ -195,28 +201,28 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         log.info("params: ${params}")
 
-        return Spectrum.createCriteria().list (params){
+        return Spectrum.createCriteria().list(params) {
 
             //if a compound is specified
             if (params.CompoundId) {
                 log.info("query by compounds: ${params.CompoundId}")
 
                 biologicalCompound {
-                    eq("id",Long.parseLong(params.CompoundId))
+                    eq("id", Long.parseLong(params.CompoundId))
                 }
 
-                or{
-                    chemicalCompound{
-                        eq("id",Long.parseLong(params.CompoundId))
+                or {
+                    chemicalCompound {
+                        eq("id", Long.parseLong(params.CompoundId))
                     }
                 }
             }
             //if a category is specified
-            if(params.MetaDataId){
+            if (params.MetaDataId) {
 
                 log.info("query by meta data: ${params.MetaDataId}")
-                metaData{
-                    eq("id",Long.parseLong(params.MetaDataId))
+                metaData {
+                    eq("id", Long.parseLong(params.MetaDataId))
 
                     //if we got a category as well
                 }
