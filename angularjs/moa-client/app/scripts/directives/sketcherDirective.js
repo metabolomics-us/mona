@@ -72,13 +72,13 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                     if (angular.isDefined(model)) {
                         if (angular.isDefined(model.molFile)) {
 
-                            $log.debug('rendering mol file: \n' + model.molFile);
+                            //$log.debug('rendering mol file: \n' + model.molFile);
                             var mol = ChemDoodle.readMOL('\n'+model.molFile+'\n');
                             sketcher.loadMolecule(mol);
                         }
 
                         else {
-                            $log.debug('converting from inchi: ' + model);
+                            //$log.debug('converting from inchi: ' + model);
                             gwCtsService.convertInchiKeyToMol(model, function (molecule) {
 
                                 var mol = ChemDoodle.readMOL(molecule);

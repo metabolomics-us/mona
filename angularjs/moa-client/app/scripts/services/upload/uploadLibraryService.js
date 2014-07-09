@@ -56,6 +56,10 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                         s.biologicalCompound.metaData = [];
 
                         s.spectrum = spectra.spectrum;
+
+                        if(spectra.accurate){
+                            s.tags.push({'text': 'accurate'});
+                        }
                         s.tags.push({'text': 'imported'});
                         s.tags.push({'text': 'library'});
                         s.tags.push({'text': 'msp'});
