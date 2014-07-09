@@ -12,7 +12,7 @@ class MetaDataCategoryController  extends RestfulController<MetaDataCategory> {
     }
 
     public MetaDataCategoryController() {
-        super(MetaDataCategory)
+        super(MetaDataCategory,true)
     }
 
     /**

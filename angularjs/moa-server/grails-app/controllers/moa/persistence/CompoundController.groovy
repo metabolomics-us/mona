@@ -14,7 +14,7 @@ class CompoundController extends RestfulController {
     }
 
     public CompoundController() {
-        super(Compound)
+        super(Compound,true)
     }
 
     /**
