@@ -6,7 +6,7 @@
 /**
  * a directive to draw or display chemical formulas
  */
-app.directive('chemicalSketcher', function (gwCtsService) {
+app.directive('chemicalSketcher', function (gwCtsService, $log) {
     return {
         restrict: "A",
         replace: false,
@@ -64,24 +64,37 @@ app.directive('chemicalSketcher', function (gwCtsService) {
                 sketcher.specs.bonds_clearOverlaps_2D = true;
 
                 /**
-                 * loads the molecule for the given key
-                 * @param key
+                 * checks if our model has a molFile attribute or assumes that it's an inchiKey
+                 * @param model spectrum object or inchi key
                  */
-                var getMoleculeForInchiKey = function (key) {
-                    gwCtsService.convertInchiKeyToMol(key,function (molecule) {
+                var getMoleculeForModel = function (model) {
 
-                            var mol = ChemDoodle.readMOL(molecule);
+                    if (angular.isDefined(model)) {
+                        if (angular.isDefined(model.molFile)) {
+
+                            $log.debug('rendering mol file: \n' + model.molFile);
+                            var mol = ChemDoodle.readMOL('\n'+model.molFile+'\n');
                             sketcher.loadMolecule(mol);
+                        }
+
+                        else {
+                            $log.debug('converting from inchi: ' + model);
+                            gwCtsService.convertInchiKeyToMol(model, function (molecule) {
+
+                                var mol = ChemDoodle.readMOL(molecule);
+                                sketcher.loadMolecule(mol);
 
 
-                    });
+                            });
+                        }
+                    }
                 };
 
                 /**
                  * get an intial value, which was set in our model.
                  */
                 if (angular.isDefined($scope.bindModel)) {
-                    getMoleculeForInchiKey($scope.bindModel);
+                    getMoleculeForModel($scope.bindModel);
                 }
 
                 /**
@@ -98,9 +111,11 @@ app.directive('chemicalSketcher', function (gwCtsService) {
                                 var mol = sketcher.getMolecule();
                                 var molFile = ChemDoodle.writeMOL(mol);
 
-                                gwCtsService.convertToInchiKey(molFile,function (key) {
+                                //$log.debug('received click event and trying to generate inchi for: ' + molFile);
+                                gwCtsService.convertToInchiKey(molFile, function (result) {
 
-                                    $scope.bindModel = key;
+                                    //$log.debug('received result: ' + result);
+                                    $scope.bindModel = result.inchikey;
 
                                 });
                             }
@@ -116,10 +131,12 @@ app.directive('chemicalSketcher', function (gwCtsService) {
                 $scope.$watch(function () {
                     return ngModel.$modelValue;
                 }, function (newValue, oldValue) {
+                    if ($scope.readonly == false) {
 
-                    if (newValue != oldValue) {
-                        getMoleculeForInchiKey(newValue);
-
+                        $log.debug(newValue + ' vs ' + oldValue);
+                        if (newValue != oldValue) {
+                            getMoleculeForModel(newValue);
+                        }
                     }
                 });
 
