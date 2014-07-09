@@ -25,6 +25,12 @@ app.config(function ($routeProvider) {
             controller: 'SpectraBrowserController'
         })
 
+        //query spectra
+        .when('/spectra/query', {
+            templateUrl: 'views/spectra/query/query.html',
+            controller: 'SpectraQueryController'
+        })
+
         //displaying all submitters
         .when('/submitters', {
             templateUrl: 'views/submitters/list.html',
@@ -32,7 +38,7 @@ app.config(function ($routeProvider) {
         })
 
         //uploading a massspec
-        .when('/spectra/upload', {
+        .when('/spectra/upload/single', {
             templateUrl: 'views/spectra/upload/single.html',
             controller: 'SpectraController'
         })
