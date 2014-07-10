@@ -171,9 +171,11 @@
                         <li>
                             <a href="#/spectra/browse"><i class="fa fa-table fa-fw"></i>Browse Spectra</a>
                         </li>
-
                         <li>
-                            <a href="#/spectra/upload"><i class="fa fa-file-o fa-fw"></i>Upload single spectra</a>
+                            <a href="#/spectra/query"><i class="fa fa-search fa-fw"></i>Query Spectra</a>
+                        </li>
+                        <li>
+                            <a href="#/spectra/upload/single"><i class="fa fa-file-o fa-fw"></i>Upload single spectra</a>
                         </li>
                         <li>
                             <a href="#/spectra/upload/library"><i class="fa fa-files-o fa-fw"></i>Upload Library</a>
@@ -216,7 +218,7 @@
                     <a href="#"><i class="fa  fa-file-text-o fa-fw"></i>Documentation<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="#/documentation/webserivces">Webservices</a>
+                            <a href="#/documentation/webserivces">Web Services</a>
                         </li>
                         <li>
                             <a href="#/documentation/license">License</a>
@@ -270,6 +272,7 @@
 <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
 <script src="bower_components/angular-flot/angular-flot.js"></script>
 <script src="bower_components/angular-msp-parser/service.js"></script>
+<script src="bower_components/angular-massbank-parser/service.js"></script>
 <script src="bower_components/angular-cts-service/service.js"></script>
 <script src="bower_components/ng-file-upload/angular-file-upload.js"></script>
 <script src="bower_components/ng-file-upload-shim/angular-file-upload-shim.js"></script>
@@ -289,6 +292,7 @@
 <script src="scripts/services/persistence/taggingService.js"></script>
 <script src="scripts/services/persistence/spectrumService.js"></script>
 <script src="scripts/services/persistence/compoundsService.js"></script>
+<script src="scripts/services/metadataService.js"></script>
 <script src="scripts/services/ctsService.js"></script>
 <script src="scripts/services/authentificationService.js"></script>
 <script src="scripts/services/upload/uploadLibraryService.js"></script>
@@ -299,9 +303,9 @@
 
 <!-- controllers -->
 <script src="scripts/controllers/main.js"></script>
-<script src="scripts/controllers/navigation/NavigationController.js"></script>
 <script src="scripts/controllers/browser/spectraBrowserController.js"></script>
 <script src="scripts/controllers/browser/spectraBrowserModalController.js"></script>
+<script src="scripts/controllers/query/spectraQueryController.js"></script>
 <script src="scripts/controllers/browser/compoundBrowserController.js"></script>
 <script src="scripts/controllers/submitter/submitterController.js"></script>
 <script src="scripts/controllers/submitter/submitterModalController.js"></script>

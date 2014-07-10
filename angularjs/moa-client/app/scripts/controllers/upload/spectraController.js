@@ -22,8 +22,7 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
 
         //retrieve the result from the dialog and save it
         modalInstance.result.then(function (spectra) {
-
-            //uggly hack for now
+            //ugly hack for now
             spectra.biologicalCompound.names = [
                 {name: spectra.biologicalCompound.names}
             ];
@@ -97,7 +96,6 @@ moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectru
         var fireUploadProgress = function (progress) {
             console.log('progress upload: ' + progress);
         };
-
     };
 };
 

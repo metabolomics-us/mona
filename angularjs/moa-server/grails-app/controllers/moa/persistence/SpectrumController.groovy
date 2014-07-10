@@ -4,7 +4,7 @@ import grails.rest.RestfulController
 import moa.*
 import moa.meta.BooleanMetaDataValue
 import moa.meta.DoubleMetaDataValue
-import moa.meta.StringMetaDataValue
+import util.MetaDataValueHelper
 
 class SpectrumController extends RestfulController<Spectrum> {
 
@@ -75,13 +75,9 @@ class SpectrumController extends RestfulController<Spectrum> {
                 metaData.category = category
 
             }
-            MetaDataValue metaDataValue = null
+            MetaDataValue metaDataValue = MetaDataValueHelper.getValueObject(current.value)
 
-            try {
-                Double value = Double.parseDouble(current.value)
-                metaDataValue = (new DoubleMetaDataValue(doubleValue: value))
-
-
+            if (metaDataValue instanceof DoubleMetaDataValue) {
                 if (metaData.type == null) {
                     metaData.type = "double";
                 } else {
@@ -89,37 +85,21 @@ class SpectrumController extends RestfulController<Spectrum> {
                         throw new Exception("metaData '${metaData.name}' needs to be of type 'double'");
                     }
                 }
-            } catch (NumberFormatException ex) {
-                if (current.value.toString().toLowerCase().trim() == "true") {
-                    metaDataValue = (new BooleanMetaDataValue(booleanValue: true))
-
-                    if (metaData.type == null) {
-                        metaData.type = "boolean";
-                    } else {
-                        if (!metaData.type.equals("boolean")) {
-                            throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean'");
-                        }
-                    }
-                } else if (current.value.toString().toLowerCase().trim() == "false") {
-                    metaDataValue = (new BooleanMetaDataValue(booleanValue: false))
-                    if (metaData.type == null) {
-                        metaData.type = "boolean";
-                    } else {
-                        if (!metaData.type.equals("boolean")) {
-                            throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean'");
-                        }
-                    }
+            } else if (metaDataValue instanceof BooleanMetaDataValue) {
+                if (metaData.type == null) {
+                    metaData.type = "boolean";
                 } else {
-                    metaDataValue = (new StringMetaDataValue(stringValue: current.value))
-
-                    if (metaData.type == null) {
-                        metaData.type = "string";
-                    } else {
-                        if (!metaData.type.equals("string")) {
-                            throw new Exception("metaData '${metaData.name}' needs to be of type 'string'");
-                        }
+                    if (!metaData.type.equals("boolean")) {
+                        throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean'");
                     }
-
+                }
+            } else {
+                if (metaData.type == null) {
+                    metaData.type = "string";
+                } else {
+                    if (!metaData.type.equals("string")) {
+                        throw new Exception("metaData '${metaData.name}' needs to be of type 'string'");
+                    }
                 }
             }
 

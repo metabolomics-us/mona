@@ -1,7 +1,10 @@
 <div ng-init="uploadSpectraDialog()">
-    <p>Please use the following wizard to upload a new mass spectrum to the system.</p>
-    <p>It should guide you and provide you with all the help you need.</p>
-    <p>If you like to upload more than a single spectra, please consider using the <a href="#/spectra/upload/library">Library Upload</a>.</p>
+    <h3>Upload Single Spectrum</h3>
 
-    <button type="button" class="btn btn-primary btn-lg" ng-click="uploadSpectraDialog()">Upload a New Spectrum</button>
+    <p>Please use the following wizard to upload a new mass spectrum to the system.<br /> It should guide you and provide you with all the help you need.</p>
+    <p>If you like to upload multiple spectra, please consider using the <a href="#/spectra/upload/library">Library Upload</a>.</p>
+
+    <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload a New Spectrum</button>
+
+    <input ng-model="file" type="file" ng-file-select="uploadLibrary($files)">
 </div>

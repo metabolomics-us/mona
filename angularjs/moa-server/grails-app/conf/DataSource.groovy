@@ -7,8 +7,10 @@ dataSource {
 hibernate {
     cache.use_second_level_cache = true
     cache.use_query_cache = false
-    cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
-//    cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory' // Hibernate 4
+//    cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
+    cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory' // Hibernate 4
+    format_sql = true
+    use_sql_comments = true
 }
 
 environments {
@@ -16,7 +18,7 @@ environments {
     development {
 
         dataSource {
-            dbCreate = "create-drop"
+            dbCreate = "update"//"create-drop"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
             driverClassName="org.postgresql.Driver"
             username="compound"
@@ -25,7 +27,7 @@ environments {
 
             cache.use_second_level_cache = false
             cache.use_query_cache = false
-            //logSql = true
+            logSql = true
         }
         /*
 
