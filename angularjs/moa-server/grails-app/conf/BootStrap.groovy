@@ -51,7 +51,7 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(Name, ["class","id","compound"])
         )
         JSON.registerObjectMarshaller(MetaData,
-                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class","category","value"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class","value"])
         )
         JSON.registerObjectMarshaller(MetaDataValue,
                 DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class","id","spectrum","metaData"])
