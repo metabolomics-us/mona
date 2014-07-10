@@ -25,75 +25,6 @@ class SpectraQueryController {
 
         def json = request.JSON
 
-        /*
-        def result = Spectrum.createCriteria().list() {
-
-            //we have compound information available
-            if (json.compound) {
-                or {
-                    biologicalCompound {
-
-                        if (json.compound.name) {
-                            names {
-
-                                if (json.compound.name.like) {
-                                    like('name', json.compound.name.like)
-                                } else if (json.compound.name.eq) {
-                                    eq('name', json.compound.name.eq)
-                                } else {
-                                    throw new QueryException("invalid query term: ${json.compound.name.eq}")
-                                }
-                            }
-                        }
-                    }
-                    chemicalCompound {
-
-                        if (json.compound.name) {
-                            names {
-
-                                if (json.compound.name.like) {
-                                    like('name', json.compound.name.like)
-                                } else if (json.compound.name.eq) {
-                                    eq('name', json.compound.name.eq)
-                                } else {
-                                    throw new QueryException("invalid query term: ${json.compound.name.eq}")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            //we have metaData queries
-            if (json.metaData) {
-
-                //go over each metadata definition
-                json.metaData.eachWithIndex { current, index ->
-
-                    metaData {
-
-                        //our metadata values
-
-                        //our meta data parent object which has to have a specific name
-                        metaData {
-                            eq("name", current.name)
-                        }
-
-                        //equals condition and calculate the actual implementation
-                        if (current.value.eq) {
-                            def impl = estimateMetaDataValueImpl(current.value.eq.toString())
-                            //our actual value
-                            eq(impl.name, impl.value)
-                        } else {
-                            throw new QueryException("invalid query term: ${current.value.eq}")
-                        }
-                    }
-                }
-            }
-        }
-
-*/
-
         //completed query string
         String queryOfDoom = "select s from Spectrum s "
 
@@ -118,7 +49,7 @@ class SpectraQueryController {
                 //if we have a like condition specified
                 if (json.compound.name.like) {
                     queryOfDoomWhere += "(bcn.name like :compoundName or ccn.name like :compoundName)"
-                    executionParams.compoundName = json.compound.name.like
+                    executionParams.compoundName = "%${json.compound.name.like}%"
                 }
 
                 //if we have an equals condition specified
@@ -134,33 +65,30 @@ class SpectraQueryController {
             }
 
             //if we have an inchi key
-            if(json.compound.inchiKey){
+            if (json.compound.inchiKey) {
 
                 //we have alreay another term, so let's add an and
-                if(!queryOfDoomWhere.equals(" where ")){
-                    queryOfDoomWhere+=" and "
+                if (!queryOfDoomWhere.equals(" where ")) {
+                    queryOfDoomWhere += " and "
                 }
 
                 queryOfDoomJoins += " left join s.biologicalCompound as bc"
                 queryOfDoomJoins += " left join s.chemicalCompound as cc"
 
-                if(json.compound.inchiKey.eq){
+                if (json.compound.inchiKey.eq) {
 
                     queryOfDoomWhere += "(bc.inchiKey = :inchiKey or cc.inchiKey = :inchiKey)"
                     executionParams.inchiKey = json.compound.inchiKey.eq
-                }
-                else if(json.compound.inchiKey.like){
+                } else if (json.compound.inchiKey.like) {
 
                     queryOfDoomWhere += "(bc.inchiKey like :inchiKey or cc.inchiKey like :inchiKey)"
-                    executionParams.inchiKey = json.compound.inchiKey.like
-                }
-                else{
+                    executionParams.inchiKey = "%${json.compound.inchiKey.like}%"
+                } else {
                     throw new QueryException("invalid query term: ${json.compound.inchiKey}")
                 }
 
             }
         }
-
 
         //if we have a metadata object specified
         if (json.metaData) {
@@ -169,17 +97,14 @@ class SpectraQueryController {
             json.metaData.eachWithIndex { current, index ->
                 def impl = [:];
 
-
                 //if there is something in the where clause we need an and
-                if(!queryOfDoomWhere.equals(" where ")){
-                    queryOfDoomWhere+=" and "
+                if (!queryOfDoomWhere.equals(" where ")) {
+                    queryOfDoomWhere += " and "
                 }
-
 
                 //build the join for each metadata object link
                 queryOfDoomJoins += " left join s.metaData as mdv_${index}"
                 queryOfDoomJoins += " left join mdv_${index}.metaData as md_${index}"
-
 
                 //part of searching by name of metadata object
                 queryOfDoomWhere += "("
@@ -199,9 +124,20 @@ class SpectraQueryController {
 
                 }
 
+                //figure out the correct value for equals
+                else if (current.value.like) {
+                    impl = estimateMetaDataValueImpl(current.value.like.toString())
+
+                    //equality search
+                    queryOfDoomWhere += " mdv_${index}.${impl.name} = :metaDataImplValue_${index}"
+
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+
+                }
+
                 //searching for a value between min and max
                 else if (current.value.between) {
-                    if(current.value.between.length() == 2) {
+                    if (current.value.between.length() == 2) {
                         def min = current.value.between[0].toString()
                         def max = current.value.between[1].toString()
 
@@ -212,13 +148,11 @@ class SpectraQueryController {
                         executionParams.put("metaDataImplValue_min_${index}".toString(), estimateMetaDataValueImpl(min).value);
                         executionParams.put("metaDataImplValue_max_${index}".toString(), estimateMetaDataValueImpl(max).value);
 
-                    }
-                    else{
+                    } else {
                         throw new QueryException("invalid query term: ${current.value.between}, we need exactly 2 values")
                     }
 
-                }
-                else {
+                } else {
                     throw new QueryException("invalid query term: ${current.value}")
                 }
 
@@ -234,7 +168,7 @@ class SpectraQueryController {
         log.info("generated doom query: \n\n${queryOfDoom}\n\n")
         log.info("parameter matrix:\n\n ${executionParams}")
 
-        def result = Spectrum.executeQuery(queryOfDoom, executionParams)
+        def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
 
         log.info("received results from query: ${result.size()}")
         render(result as JSON)
