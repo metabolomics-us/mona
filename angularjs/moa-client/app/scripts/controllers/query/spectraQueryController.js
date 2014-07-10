@@ -8,13 +8,6 @@ moaControllers.SpectraQueryController = function ($scope, $modal, MetadataServic
     $scope.query = {};
     $scope.query.accurateMassTolerance = 0.5;
 
-    $scope.query.accurateMass =322;
-    $scope.query.nameFilter = '1234'
-
-    /* Get metadata categories and types */
-    $scope.metadataCategories = [];
-    $scope.metadata = {};
-
 
     $scope.submitQuery = function() {
         // Build individual criteria
@@ -24,10 +17,10 @@ moaControllers.SpectraQueryController = function ($scope, $modal, MetadataServic
             if(element === "accurateMassTolerance")
                 return;
 
-            else if(element === "accurateMass") {
-                if($scope.query.accurateMass) {
-                    var min = $scope.query.accurateMass - $scope.query.accurateMassTolerance;
-                    var max = $scope.query.accurateMass + $scope.query.accurateMassTolerance;
+            else if(element === "Mz_exact") {
+                if($scope.query[element]) {
+                    var min = parseFloat($scope.query[element]) - parseFloat($scope.query.Mz_exact);
+                    var max = parseFloat($scope.query[element]) + parseFloat($scope.query.Mz_exact);
                     criteria.push({between: ["accurateMass", min, max]});
                 }
             }
@@ -40,34 +33,74 @@ moaControllers.SpectraQueryController = function ($scope, $modal, MetadataServic
 
         // Build criteria query
         var criteriaQuery = criteria[0];
-
+        /*
         for(var i = 1; i < criteria.length; i++) {
-            var temp = criteriaQuery
+            var temp = criteriaQuery;
             criteriaQuery = criteria[i];
-            criteriaQuery.or = temp;
+            criteriaQuery.and = temp;
         }
+        */
+        $scope.criteriaQuery = criteriaQuery;
 
-        console.log(criteriaQuery);
-
+        console.log($scope.metadataValues);
 
         // Do something with it and redirect
     };
 
 
+
+    /* Metadata */
+    $scope.metadataCategories = [];
+    $scope.metadata = {};
+    $scope.metadataValues = {};
+
+    var metadataValuesQuery = function(data) {
+        data.forEach(function(element, index, array) {
+            if(element.type === "string") {
+                var values = {};
+
+                MetadataService.dataValues(
+                    {id: element.id},
+                    function (data) {
+                        data.forEach(function(element, index, array) {
+                            values[element.value] = true;
+                        });
+
+                        $scope.metadataValues[element.name] = [];
+                        Object.keys(values).forEach(function(key, index, array) {
+                            $scope.metadataValues[element.name].push({value: key});
+                        });
+                        console.log($scope.metadataValues[element.name]);
+                    },
+                    function (error) {
+                        $log.error('metadata values failed: ' + error);
+                    }
+                );
+            }
+        });
+    };
+
+    var metadataQuery = function(data) {
+        // Query each metdata category and store the data
+        data.forEach(function(element, index, array) {
+            $scope.metadata[element.name] = MetadataService.categoryData(
+                {id: element.id},
+                metadataValuesQuery,
+                function(error) {
+                    $log.error('metadata category data failed: ' + error);
+                }
+            );
+        });
+    };
+
     // Get metadata values
     (function list() {
-        $scope.metadataCategories = MetadataService.query(
-            function (data) {
-                // Query each metdata category and store the data
-                data.forEach(function(element, index, array) {
-                    $scope.metadata[element.name] = MetadataService.query(
-                        {id: element.id, categoryController: "data"},
-                        function(data) {},
-                        function(error) { $log.error('failed: ' + error); }
-                    );
-                });
-            },
-            function (error) { $log.error('failed: ' + error); }
+        // Retrieve metadata categories
+        $scope.metadataCategories = MetadataService.categories(
+            metadataQuery,
+            function (error) {
+                $log.error('metadata categories failed: ' + error);
+            }
         );
     })();
 };

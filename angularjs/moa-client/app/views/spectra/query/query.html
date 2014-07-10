@@ -14,7 +14,11 @@
                 <div class="panel-body">
                     <div class="form-group">
                         <label class="control-label" for="nameFilter">Partial filtering by compound name:</label>
-                        <input id="nameFilter" name="nameFilter" ng-model="query.nameFilter" placeholder="Name" class="form-control" />
+                        <input id="nameFilter"
+                               name="nameFilter"
+                               ng-model="query.nameFilter"
+                               placeholder="Name"
+                               class="form-control" />
                     </div>
                 </div>
             </div>
@@ -28,7 +32,12 @@
                 <div class="panel-body">
                     <div class="form-group">
                         <label class="control-label" for="inchiFilter">Partial filtering by biological or compound InChIKey:</label>
-                        <input id="inchiFilter" name="inchiFilter" ng-model="query.inchiFilter" placeholder="InChIKey" ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/" class="form-control" />
+                        <input id="inchiFilter"
+                               name="inchiFilter"
+                               ng-model="query.inchiFilter"
+                               placeholder="InChIKey"
+                               ng-pattern="/^([A-Z,0-9,\-]+)+$/"
+                               class="form-control" />
                     </div>
                 </div>
             </div>
@@ -43,14 +52,22 @@
                     <div class="form-group">
                         <label class="control-label col-sm-4" for="accurateMass">Mass:</label>
                         <div class="col-sm-8">
-                            <input id="accurateMass" name="accurateMass" ng-model="query.accurateMass" placeholder="Accurate Mass" ng-pattern="/^\d*\.?\d+$/" class="form-control" />
+                            <input id="accurateMass"
+                                   name="accurateMass"
+                                   ng-model="query['Mz_exact']"
+                                   placeholder="Accurate Mass"
+                                   class="form-control" />
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-sm-4" for="accurateMassTolerance">Tolerance (&pm;):</label>
                         <div class="col-sm-8">
-                            <input id="accurateMassTolerance" name="accurateMassTolerance" ng-model="query.accurateMassTolerance" placeholder="Accurate Mass Tolerance" min="0.0" type="number" class="form-control" />
+                            <input id="accurateMassTolerance"
+                                   name="accurateMassTolerance"
+                                   ng-model="query['Mz_exact_tolerance']"
+                                   placeholder="Accurate Mass Tolerance"
+                                   class="form-control" />
                         </div>
                     </div>
                 </div>
@@ -68,9 +85,53 @@
                         <legend>{{category.name == "none" ? "General" : category.name}}</legend>
 
                         <div class="form-group" ng-repeat="meta in metadata[category.name]">
-                            <label class="control-label col-sm-4" for="{{meta.name}}">{{meta.name}}</label>
-                            <div class="col-sm-8">
-                                <input id="{{meta.name}}" name="{{meta.name}}" ng-model="query[meta.name]" class="form-control" />
+                            <div ng-if="meta.type == 'double'">
+                                <label class="control-label col-sm-4" for="{{meta.name}}">{{meta.name}}</label>
+                                <div class="col-sm-5">
+                                    <input id="{{meta.name}}"
+                                           name="{{meta.name}}"
+                                           ng-model="query[meta.name]"
+                                           class="form-control" />
+                                </div>
+                                <label class="control-label col-sm-1" for="{{meta.name}}_tolerance">&pm;</label>
+                                <div class="col-sm-2">
+                                    <input id="{{meta.name}}_tolerance"
+                                           name="{{meta.name}}_tolerance"
+                                           ng-model="query[meta.name +'_tolerance']"
+                                           class="form-control" />
+                                </div>
+                            </div>
+
+                            <div ng-if="meta.type == 'string'">
+                                <label class="control-label col-sm-4" for="{{meta.name}}">{{meta.name}}</label>
+                                <div class="col-sm-8">
+                                    <!--
+                                    <input id="{{meta.name}}"
+                                           name="{{meta.name}}"
+                                           ng-model="query[meta.name]"
+                                           class="form-control" />
+                                   -->
+                                    <div fl-angucomplete inputid="meta.name"
+                                         inputName="meta.name"
+                                         placeholder=""
+                                         pause="50"
+                                         selectedobject="query[meta.name]"
+                                         localdata="metadataValues[meta.name]"
+                                         searchfields="value"
+                                         titlefield="value"
+                                         isrequired="true"
+                                         inputclass="form-control form-control-small"></div>
+                                </div>
+                            </div>
+
+                            <div ng-if="meta.type == 'boolean'">
+                                <label class="control-label col-sm-4" for="{{meta.name}}">{{meta.name}}</label>
+                                <div class="col-sm-8">
+                                    <input id="{{meta.name}}"
+                                           name="{{meta.name}}"
+                                           ng-model="query[meta.name]"
+                                           class="form-control" />
+                                </div>
                             </div>
                         </div>
                     </fieldset>
@@ -83,6 +144,9 @@
 
         <div style="display:block;">
             <pre>{{query}}</pre>
+        </div>
+        <div style="display:block;">
+            <pre>{{criteriaQuery}}</pre>
         </div>
     </div>
 </div>
