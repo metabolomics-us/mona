@@ -112,18 +112,18 @@ class SpectraQueryController {
             //if we have a compound name
             if (json.compound.name) {
 
-                queryOfDoomJoins += " left join s.biologicalCompound.names as bc"
-                queryOfDoomJoins += " left join s.chemicalCompound.names as cc"
+                queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
+                queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
 
                 //if we have a like condition specified
                 if (json.compound.name.like) {
-                    queryOfDoomWhere += "(bc.name like :compoundName or cc.name like :compoundName)"
+                    queryOfDoomWhere += "(bcn.name like :compoundName or ccn.name like :compoundName)"
                     executionParams.compoundName = json.compound.name.like
                 }
 
                 //if we have an equals condition specified
                 else if (json.compound.name.eq) {
-                    queryOfDoomWhere += "(bc.name = :compoundName or cc.name = :compoundName)"
+                    queryOfDoomWhere += "(bcn.name = :compoundName or ccn.name = :compoundName)"
                     executionParams.compoundName = json.compound.name.eq
 
                 }
@@ -131,6 +131,33 @@ class SpectraQueryController {
                 else {
                     throw new QueryException("invalid query term: ${json.compound.name}")
                 }
+            }
+
+            //if we have an inchi key
+            if(json.compound.inchiKey){
+
+                //we have alreay another term, so let's add an and
+                if(!queryOfDoomWhere.equals(" where ")){
+                    queryOfDoomWhere+=" and "
+                }
+
+                queryOfDoomJoins += " left join s.biologicalCompound as bc"
+                queryOfDoomJoins += " left join s.chemicalCompound as cc"
+
+                if(json.compound.inchiKey.eq){
+
+                    queryOfDoomWhere += "(bc.inchiKey = :inchiKey or cc.inchiKey = :inchiKey)"
+                    executionParams.inchiKey = json.compound.inchiKey.eq
+                }
+                else if(json.compound.inchiKey.like){
+
+                    queryOfDoomWhere += "(bc.inchiKey like :inchiKey or cc.inchiKey like :inchiKey)"
+                    executionParams.inchiKey = json.compound.inchiKey.like
+                }
+                else{
+                    throw new QueryException("invalid query term: ${json.compound.inchiKey}")
+                }
+
             }
         }
 
@@ -142,31 +169,61 @@ class SpectraQueryController {
             json.metaData.eachWithIndex { current, index ->
                 def impl = [:];
 
-                //figure out the correct value for equals
-                if (current.value.eq) {
-                    impl = estimateMetaDataValueImpl(current.value.eq.toString())
-                } else {
-                    throw new QueryException("invalid query term: ${current.value.eq}")
-                }
-
-                //build the join for each metadata object link
-                queryOfDoomJoins += " left join s.metaData as mdv_${index}"
-                queryOfDoomJoins += " left join mdv_${index}.metaData as md_${index}"
 
                 //if there is something in the where clause we need an and
                 if(!queryOfDoomWhere.equals(" where ")){
                     queryOfDoomWhere+=" and "
                 }
 
-                //add the where clause
+
+                //build the join for each metadata object link
+                queryOfDoomJoins += " left join s.metaData as mdv_${index}"
+                queryOfDoomJoins += " left join mdv_${index}.metaData as md_${index}"
+
+
+                //part of searching by name of metadata object
                 queryOfDoomWhere += "("
                 queryOfDoomWhere += " md_${index}.name = :metaDataName_${index}"
                 queryOfDoomWhere += " and "
-                queryOfDoomWhere += " mdv_${index}.${impl.name} = :metaDataImplValue_${index}"
-                queryOfDoomWhere += ")"
 
                 executionParams.put("metaDataName_${index}".toString(), current.name);
-                executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
+
+                //figure out the correct value for equals
+                if (current.value.eq) {
+                    impl = estimateMetaDataValueImpl(current.value.eq.toString())
+
+                    //equality search
+                    queryOfDoomWhere += " mdv_${index}.${impl.name} = :metaDataImplValue_${index}"
+
+                    executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
+
+                }
+
+                //searching for a value between min and max
+                else if (current.value.between) {
+                    if(current.value.between.length() == 2) {
+                        def min = current.value.between[0].toString()
+                        def max = current.value.between[1].toString()
+
+                        impl = estimateMetaDataValueImpl(min)
+
+                        queryOfDoomWhere += " mdv_${index}.${impl.name} between :metaDataImplValue_min_${index} and :metaDataImplValue_max_${index} "
+
+                        executionParams.put("metaDataImplValue_min_${index}".toString(), estimateMetaDataValueImpl(min).value);
+                        executionParams.put("metaDataImplValue_max_${index}".toString(), estimateMetaDataValueImpl(max).value);
+
+                    }
+                    else{
+                        throw new QueryException("invalid query term: ${current.value.between}, we need exactly 2 values")
+                    }
+
+                }
+                else {
+                    throw new QueryException("invalid query term: ${current.value}")
+                }
+
+                queryOfDoomWhere += ")"
+
 
             }
         }
