@@ -132,6 +132,7 @@ class SpectraQueryController {
                     queryOfDoomWhere += " mdv_${index}.${impl.name} = :metaDataImplValue_${index}"
 
                     executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
 
                 }
 
@@ -157,6 +158,32 @@ class SpectraQueryController {
                 }
 
                 queryOfDoomWhere += ")"
+
+
+            }
+        }
+
+        //handling tags
+        if(json.tags){
+
+            if(json.tags.length() > 0 ) {
+
+                json.tags.eachWithIndex{ current, index ->
+
+                    //add our tag join
+                    queryOfDoomJoins += " left join s.tags as t_${index}"
+
+                    //if there is something in the where clause we need an and
+                    if (!queryOfDoomWhere.equals(" where ")) {
+                        queryOfDoomWhere += " and "
+                    }
+
+                    //build our specific query
+                    queryOfDoomWhere += " t_${index}.text = :tag_${index}"
+
+                    executionParams.put("tag_${index}".toString(), current.toString());
+
+                }
 
 
             }
