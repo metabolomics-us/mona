@@ -12,30 +12,38 @@ app.factory('MetadataService', function ($resource, REST_BACKEND_SERVER, $http) 
     $http.defaults.useXDomain = true;
 
     return $resource(
-        REST_BACKEND_SERVER + '/rest/meta/category/:id/:categoryController/:dataID/:dataController',
+        REST_BACKEND_SERVER + '/rest/meta/:controller/:id/:subController/:subID/:subSubController',
         {
+            controller: "@controller",
             id: "@id",
-            categoryController: "@categoryController",
-            dataID: "@dataID",
-            dataController: "@dataController"
-        }
-        /*,
+            categoryController: "@subController",
+            dataID: "@subID",
+            dataController: "@subSubController"
+        },
         {
-            names: {
+            categories: {
                 method: "GET",
+                isArray: true,
                 params: {
-                    categoryController: "data"
+                    controller: "category"
                 }
             },
-            spectra: {
+            categoryData: {
                 method: "GET",
+                isArray: true,
                 params: {
-                    categoryController: "data",
-                    dataController: "spectra"
+                    controller: "category",
+                    subController: "data"
                 }
-
+            },
+            dataValues: {
+                method: "GET",
+                isArray: true,
+                params: {
+                    controller: "data",
+                    subController: "value"
+                }
             }
         }
-        */
     );
 });
