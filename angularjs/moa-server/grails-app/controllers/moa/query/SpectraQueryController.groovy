@@ -72,21 +72,20 @@ class SpectraQueryController {
 
                     metaData {
 
-                            //our metadata values
+                        //our metadata values
 
-                            //our meta data parent object which has to have a specific name
-                            metaData {
-                                eq("name", current.name)
-                            }
+                        //our meta data parent object which has to have a specific name
+                        metaData {
+                            eq("name", current.name)
+                        }
 
-                            //equals condition and calculate the actual implementation
-                            if (current.value.eq) {
-                                def impl = estimateMetaDataValueImpl(current.value.eq.toString())
-                                //our actual value
-                                eq(impl.name, impl.value)
-                            } else {
-                                throw new QueryException("invalid query term: ${current.value.eq}")
-                            }
+                        //equals condition and calculate the actual implementation
+                        if (current.value.eq) {
+                            def impl = estimateMetaDataValueImpl(current.value.eq.toString())
+                            //our actual value
+                            eq(impl.name, impl.value)
+                        } else {
+                            throw new QueryException("invalid query term: ${current.value.eq}")
                         }
                     }
                 }
