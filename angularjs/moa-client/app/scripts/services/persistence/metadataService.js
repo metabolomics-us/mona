@@ -12,7 +12,7 @@ app.factory('MetadataService', function ($resource, REST_BACKEND_SERVER, $http) 
     $http.defaults.useXDomain = true;
 
     return $resource(
-        REST_BACKEND_SERVER + '/rest/meta/:controller/:id/:subController/:subID/:subSubController',
+        REST_BACKEND_SERVER + '/rest/meta/:controller/:id/:subController/:subID/:subSubController?max=100',
         {
             controller: "@controller",
             id: "@id",

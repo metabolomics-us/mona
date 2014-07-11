@@ -74,12 +74,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.inchiFilters = {};
 
-    /*
-     * Add inchikey to filter if given in route
-     */
-    if ($routeParams.inchikey)
-        $scope.inchiFilters[$routeParams.inchikey] = true;
-
     /**
      * applies the inchi key filter to our model
      */
@@ -119,6 +113,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.removePartialInchiFilter = function (inchikey) {
         delete $scope.partialInchiFilters[inchikey];
     };
+
 
     /**
      * opens our modal dialog to query spectra against the system
@@ -195,6 +190,14 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         });
     };
 
+
+    /*
+     * Add inchikey to query if given in route
+     */
+    if ($routeParams.inchikey)
+        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({inchiFilter: $routeParams.inchikey}, {}));
+
+    
     /**
      * loads more spectra into the view using our query object
      */

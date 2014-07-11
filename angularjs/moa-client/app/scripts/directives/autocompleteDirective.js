@@ -231,8 +231,6 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
                  * @param result
                  */
 				$scope.selectResult = function (result) {
-
-
 					if ($scope.matchClass) {
 						result.title = result.title.toString().replace(/(<([^>]+)>)/ig, '');
 					}
@@ -245,6 +243,24 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 				var inputField = elem.find('input');
 
 				inputField.on('keyup', $scope.keyPressed);
+
+                elem.on("click", function(event) {
+                    $scope.showDropdown = true;
+
+                    if(!$scope.searchStr || $scope.searchStr === "") {
+                        var max = $scope.localData.length <= 10 ? $scope.localData.length : 10;
+                        var results = [];
+
+                        for(var i = 0; i < max; i++)
+                            results.push($scope.localData[i]);
+
+                        $scope.processResults(results, "");
+                    }
+
+                    $scope.$apply();
+                    event.preventDefault;
+                    event.stopPropagation();
+                });
 
 				elem.on("keyup", function (event) {
 					if (event.which === 40) {

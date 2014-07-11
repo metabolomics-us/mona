@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraController = function ($scope, $modal, CTSService, Spectrum, AuthentificationService, $filter, $upload, UploadLibraryService, $log, $location) {
+moaControllers.SpectraController = function ($scope, $modal, Spectrum, AuthentificationService, $filter, $upload, UploadLibraryService, $log, $location) {
     /**
      * initializes our spectra upload dialog
      */
