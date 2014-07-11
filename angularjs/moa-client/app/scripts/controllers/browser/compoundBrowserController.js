@@ -72,17 +72,20 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
 
 
     /**
-     * display all our compounds
+     * loads more compounds into the view using our query object
      */
-    $scope.listCompounds = list();
+    $scope.compoundLoadLength = -1;
 
-    /**
-     * helper function
-     */
-    function list() {
-        $scope.compounds = Compound.query(function (data) {
-        }, function (error) {
-            alert('failed: ' + error);
-        });
-    }
+    $scope.loadMoreCompounds = function () {
+        if ($scope.compoundLoadLength != $scope.compounds.length) {
+            $scope.compoundLoadLength = $scope.compounds.length;
+
+            Compound.query(
+                {offset: '&offset='+ $scope.compounds.length},
+                function (data) {
+                    $scope.compounds.push.apply($scope.compounds, data);
+                }
+            );
+        }
+    };
 };
