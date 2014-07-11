@@ -1,10 +1,19 @@
 <div ng-value="error"></div>
 
 <div class="row">
-    <li>
-        <a ng-click="querySpectraDialog()"><i class="fa fa-search fa-fw"></i>Query Spectra</a>
-    </li>
+    <div class="col-md-12">
+
+        <div class="navbar">
+            <ul class="nav">
+                <li class="">
+                    <button ng-click="querySpectraDialog()"><i class="fa fa-search fa-fw"></i>Query Spectra</button>
+
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
+
 <div class="row">
     <div class="col-md-9">
         <table class="table table-hover" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()">
