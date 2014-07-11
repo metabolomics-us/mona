@@ -19,18 +19,6 @@ app.config(function ($routeProvider) {
             controller: 'CompoundBrowserController'
         })
 
-        //displaying a single spectra
-        .when('/spectra/browse/:inchikey?', {
-            templateUrl: 'views/spectra/browse/spectra.html',
-            controller: 'SpectraBrowserController'
-        })
-
-        //query spectra
-        .when('/spectra/query', {
-            templateUrl: 'views/spectra/query/query.html',
-            controller: 'SpectraQueryController'
-        })
-
         //displaying all submitters
         .when('/submitters', {
             templateUrl: 'views/submitters/list.html',
@@ -49,6 +37,18 @@ app.config(function ($routeProvider) {
         .when('/spectra/upload/moa', {
             templateUrl: 'views/spectra/upload/moa.html',
             controller: 'SpectraController'
+        })
+
+        //displaying a single spectra
+        .when('/spectra/browse/:inchikey?', {
+            templateUrl: 'views/spectra/browse/spectra.html',
+            controller: 'SpectraBrowserController'
+        })
+
+        //query spectra
+        .when('/spectra/query', {
+            templateUrl: 'views/spectra/query/query.html',
+            controller: 'SpectraBrowserController'
         })
 
         //any other page is redirected to the root page
