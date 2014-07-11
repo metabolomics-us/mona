@@ -220,7 +220,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads all our tags into the associated variables
      */
     $scope.loadTags = function () {
-        $scope.tagsSelection = $scope.tags = TaggingService.query(function (data) {
+        $scope.tags = TaggingService.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         });

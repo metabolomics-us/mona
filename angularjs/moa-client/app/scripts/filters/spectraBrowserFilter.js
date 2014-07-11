@@ -62,9 +62,8 @@ app.filter('spectraQuery', function() {
         var tags = spectrum.tags.map(function(tag) { return tag.text; });
         var selected_tags = scope.tagsSelection.map(function(tag) { return tag.text; });
 
-        if(intersect(tags, selected_tags).length == 0)
+        if(intersect(tags, selected_tags).length != selected_tags.length)
             return false;
-
 
         return true;
     };
