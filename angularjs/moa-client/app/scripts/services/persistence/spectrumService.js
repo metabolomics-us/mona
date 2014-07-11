@@ -3,16 +3,17 @@
  */
 'use strict';
 
-app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS, $http) {
+app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
 
-    //$http.defaults.useXDomain = true;
-
+    /**
+     * creates a new resources, we can work with
+     */
     return $resource(
             REST_BACKEND_SERVER + '/rest/spectra/:id?max='+ MAX_OBJECTS +':offset',
         {id: "@id", offset: "@offset"},
         {
             /**
-             * update matehod
+             * update method
              */
             'update': {
                 method: 'PUT'
@@ -23,7 +24,7 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS, $
              * connects to our service and executes a query
              */
             'searchSpectra': {
-                url: REST_BACKEND_SERVER + '/rest/spectra/search',
+                url: REST_BACKEND_SERVER + '/rest/spectra/search?max='+ MAX_OBJECTS,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

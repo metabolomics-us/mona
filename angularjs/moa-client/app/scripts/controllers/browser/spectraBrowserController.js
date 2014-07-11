@@ -17,9 +17,10 @@
  * @param SpectraQueryBuilderService
  * @param MetadataService
  * @param $log
+ * @param $location
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, TaggingService, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, TaggingService, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location) {
     /**
      * contains all local objects and is our model
      * @type {Array}
@@ -143,26 +144,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.spectraLoadLength = -1;
 
-    /**
-     * loads more spectra into the view
-     */
-    $scope.loadMoreSpectra = function () {
-        if ($scope.spectraLoadLength != $scope.spectra.length) {
-            $scope.spectraLoadLength = $scope.spectra.length;
-
-            Spectrum.query(
-                {offset: '&offset=' + $scope.spectra.length},
-                function (data) {
-                    $scope.spectra.push.apply($scope.spectra, data);
-                },
-                function (error) {
-                    alert('failed: ' + error);
-                }
-            );
-        }
-    };
-
-
     /* Metadata */
     $scope.metadataCategories = [];
     $scope.metadata = {};
@@ -217,42 +198,84 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.query = {};
 
     /**
+     * compiled query which is supposed to be executed or refiened
+     * @type {{}}
+     */
+    $scope.compiledQuery = {};
+
+    /**
+     * calculates our offsets for us
+     */
+    $scope.calculateOffsets = function () {
+        $scope.spectraLoadLength = $scope.spectra.length;
+
+        //assign the offset
+        $scope.compiledQuery.offset = $scope.spectra.length;
+
+    };
+
+    /**
      * submits our build query to the backend
      */
     $scope.submitQuery = function () {
 
         $scope.compiledQuery = SpectraQueryBuilderService.compileQuery($scope.query, $scope.metadata);
 
+        $scope.calculateOffsets();
+
         Spectrum.searchSpectra($scope.compiledQuery, function (data) {
 
             $log.info(data.length);
-            $scope.result = data;
+
+            $scope.spectra.length = 0;
+            $scope.spectra.push.apply($scope.spectra, data);
+
+            $location.path("/spectra/browse");
         });
     };
 
+    /**
+     * loads more spectra into the view using our query object
+     */
+    $scope.loadMoreSpectra = function () {
+        if ($scope.spectraLoadLength != $scope.spectra.length) {
+
+            $scope.calculateOffsets();
+
+            //search utilizing our compiled query so that it can be easily refined over time
+            Spectrum.searchSpectra($scope.compiledQuery, function (data) {
+                $scope.spectra.push.apply($scope.spectra, data);
+            });
+        }
+    };
 
     /**
-     * initialization and population of default values
+     * loads all our tags into the associated variables
      */
-    (function list() {
-
-        /**
-         * intialize all the tags
-         */
+    $scope.loadTags = function () {
         $scope.tagsSelection = $scope.tags = TaggingService.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         });
+    };
 
-        /**
-         * initialize our metadata categories
-         */
+    /**
+     * load categories
+     */
+    $scope.loadCategories = function () {
         $scope.metadataCategories = MetadataService.categories(
             metadataQuery,
             function (error) {
                 $log.error('metadata categories failed: ' + error);
             }
         );
+    };
+    /**
+     * initialization and population of default values
+     */
+    (function list() {
+        $scope.loadTags();
+        $scope.loadCategories();
     })();
 
 };
