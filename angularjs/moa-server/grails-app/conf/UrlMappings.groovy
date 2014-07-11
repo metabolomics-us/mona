@@ -71,6 +71,6 @@ class UrlMappings {
         /**
          * provides us with access to simple queries
          */
-        "/rest/query/spectra"(controller: 'spectraQuery', action: 'search')
+        "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
     }
 }

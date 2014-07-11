@@ -32,7 +32,7 @@ class SpectraQueryController {
         String queryOfDoomJoins = ""
 
         //defines our where clause
-        String queryOfDoomWhere = " where "
+        String queryOfDoomWhere = ""
 
         //our defined execution parameters
         def executionParams = [:]
@@ -42,6 +42,10 @@ class SpectraQueryController {
 
             //if we have a compound name
             if (json.compound.name) {
+
+                if(queryOfDoomWhere.empty){
+                    queryOfDoomWhere = " where "
+                }
 
                 queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
                 queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
@@ -67,6 +71,10 @@ class SpectraQueryController {
             //if we have an inchi key
             if (json.compound.inchiKey) {
 
+                if(queryOfDoomWhere.empty){
+                    queryOfDoomWhere = " where "
+                }
+
                 //we have alreay another term, so let's add an and
                 if (!queryOfDoomWhere.equals(" where ")) {
                     queryOfDoomWhere += " and "
@@ -91,10 +99,16 @@ class SpectraQueryController {
         }
 
         //if we have a metadata object specified
-        if (json.metaData) {
+        if (json.metadata) {
+
+            if(json.metadata.length() > 0) {
+                if(queryOfDoomWhere.empty){
+                    queryOfDoomWhere = " where "
+                }
+            }
 
             //go over each metadata definition
-            json.metaData.eachWithIndex { current, index ->
+            json.metadata.eachWithIndex { current, index ->
                 def impl = [:];
 
                 //if there is something in the where clause we need an and
@@ -167,6 +181,10 @@ class SpectraQueryController {
         if(json.tags){
 
             if(json.tags.length() > 0 ) {
+
+                if(queryOfDoomWhere.empty){
+                    queryOfDoomWhere = " where "
+                }
 
                 json.tags.eachWithIndex{ current, index ->
 

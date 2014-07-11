@@ -167,7 +167,7 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         log.info("params: ${params}")
 
-        return Spectrum.createCriteria().list {
+        return Spectrum.createCriteria().list(params) {
 
             //if a compound is specified
             if (params.CompoundId) {
@@ -195,5 +195,6 @@ class SpectrumController extends RestfulController<Spectrum> {
             }
         }
     }
+
 
 }
