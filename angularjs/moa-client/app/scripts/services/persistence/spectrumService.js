@@ -3,13 +3,13 @@
  */
 'use strict';
 
-app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, $http) {
+app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS, $http) {
 
     //$http.defaults.useXDomain = true;
 
     return $resource(
-            REST_BACKEND_SERVER + '/rest/spectra/:id',
-        {id: "@id"},
+            REST_BACKEND_SERVER + '/rest/spectra/:id?max='+ MAX_OBJECTS +':offset',
+        {id: "@id", offset: "@offset"},
         {
             /**
              * update matehod

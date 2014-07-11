@@ -84,30 +84,56 @@ moaControllers.SpectraBrowserController = function($scope, Spectrum, Compound, T
 
 
     /**
-     * list all our submitters in the system
+     * get all spectra
      */
-    $scope.listCompounds = list();
-
-    /**
-     * helper function
-     */
-    function list() {
+    (function list() {
+        /*
         if($routeParams.inchikey) {
-            $scope.spectra = Spectrum.query(function (data) {
-            }, function (error) {
-                alert('failed: ' + error);
-            });
+            // CHANGE ME when spectra queries are implemented
+            Spectrum.query(
+                function(data) {
+                    $scope.spectra = data;
+                },
+                function (error) {
+                    alert('failed: ' + error);
+                }
+            );
         } else {
-            $scope.spectra = Spectrum.query(function (data) {
-            }, function (error) {
-                alert('failed: ' + error);
-            });
+            Spectrum.query(
+                function(data) {
+                    $scope.spectra = data;
+                },
+                function (error) {
+                    alert('failed: ' + error);
+                }
+            );
         }
+        */
 
         $scope.tagsSelection = $scope.tags = TaggingService.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         });
+    })();
 
+    /**
+     * load more spectra
+     */
+    $scope.spectraLoadLength = -1;
+
+    $scope.loadMoreSpectra = function() {
+        if($scope.spectraLoadLength != $scope.spectra.length) {
+            $scope.spectraLoadLength = $scope.spectra.length;
+
+            Spectrum.query(
+                {offset: '&offset=' + $scope.spectra.length},
+                function (data) {
+                    $scope.spectra.push.apply($scope.spectra, data);
+                },
+                function (error) {
+                    alert('failed: ' + error);
+                }
+            );
+        }
     }
 };
