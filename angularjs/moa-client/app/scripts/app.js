@@ -21,6 +21,13 @@ app.constant('REST_BACKEND_SERVER', 'http://trashcan.fiehnlab.ucdavis.edu:8080')
 //app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
 //app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
 
+
+/**
+ * Number of spectra/compounds to view
+ */
+app.constant('MAX_OBJECTS', 10);
+
+
 /**
  * enable cross domain stuff
  */
