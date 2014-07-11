@@ -115,8 +115,8 @@ log4j = {
 
         development {
             debug 'grails.app'
-            debug 'org.hibernate.SQL'
-            trace 'org.hibernate.type.descriptor.sql.BasicBinder'
+    //        debug 'org.hibernate.SQL'
+    //        trace 'org.hibernate.type.descriptor.sql.BasicBinder'
         }
 
         production {

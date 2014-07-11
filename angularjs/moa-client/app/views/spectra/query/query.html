@@ -1,9 +1,17 @@
-<form role="form" name="uploadWizard" novalidate>
-    <div>
-        <h3>Query Spectra</h3>
+<form role="form" name="querySpectraDialog" novalidate>
 
-        <div><p>Below are all querieable options for our mass spectral database. You may fill in as many or as few fields
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true">×</button>
+        <h3 class="modal-title">Query Spectra</h3>
+
+        <div><p>Below are all querieable options for our mass spectral database. You may fill in as many or as few
+            fields
             as desired.</p></div>
+
+    </div>
+
+    <div class="modal-body">
+
 
         <div class="panel-group" id="accordion">
 
@@ -149,17 +157,12 @@
             </div>
 
             <div style="margin-top: 10px;" class="form-group">
-                <button class="btn btn-primary" ng-click="submitQuery()">Submit</button>
             </div>
-
-            <div style="display:block;">
-                <pre>{{query}}</pre>
-            </div>
-            <div style="display:block;">
-                <pre>{{compiledQuery}}</pre>
-            </div>
-
-
         </div>
     </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="submitQuery()">Submit query to system</button>
+        <button class="btn btn-warning" ng-click="cancelDialog()">Close</button>
+    </div>
 </form>
+

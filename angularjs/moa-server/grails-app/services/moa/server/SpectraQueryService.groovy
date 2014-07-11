@@ -18,7 +18,9 @@ class SpectraQueryService {
      * @param json
      */
     def query(def json,def params = [:]) {
-
+        if(json == null){
+            throw new Exception("your query needs to contain some parameters!")
+        }
         //completed query string
         String queryOfDoom = "select s from Spectrum s "
 
@@ -215,8 +217,8 @@ class SpectraQueryService {
      * queries the system and updates all the values, based on the payload
      * @param json
      */
-    def update(query, update) {
-        def result = query(query);
+    def update(queryContent, update) {
+        def result = query(queryContent);
 
         //build update object
 
