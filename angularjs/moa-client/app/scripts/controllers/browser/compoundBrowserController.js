@@ -76,14 +76,18 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $modal, $l
      */
     $scope.compoundLoadLength = -1;
 
+    $scope.loadingMore = false;
+
     $scope.loadMoreCompounds = function () {
         if ($scope.compoundLoadLength != $scope.compounds.length) {
             $scope.compoundLoadLength = $scope.compounds.length;
+            $scope.loadingMore = true;
 
             Compound.query(
                 {offset: '&offset='+ $scope.compounds.length},
                 function (data) {
                     $scope.compounds.push.apply($scope.compounds, data);
+                    $scope.loadingMore = false;
                 }
             );
         }

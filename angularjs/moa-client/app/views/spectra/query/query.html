@@ -96,7 +96,7 @@
                         <fieldset ng-repeat="category in metadataCategories" ng-show="metadata[category.name].length">
                             <legend>{{category.name == "none" ? "General" : category.name}}</legend>
 
-                            <div class="form-group" ng-repeat="meta in metadata[category.name]">
+                            <div class="form-group" ng-repeat="meta in metadata[category.name] | unique:'name'">
                                 <div ng-if="meta.type == 'double'">
                                     <label class="control-label col-sm-4" for="{{meta.name}}">{{meta.name}}</label>
 
