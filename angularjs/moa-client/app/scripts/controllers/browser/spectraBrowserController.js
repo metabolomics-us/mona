@@ -182,8 +182,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.submitQuery = function (query) {
 
-        $scope.compiledQuery = SpectraQueryBuilderService.compileQuery(query, $scope.metadata);
-
+        $scope.compiledQuery = query;
         $scope.calculateOffsets();
 
         Spectrum.searchSpectra($scope.compiledQuery, function (data) {

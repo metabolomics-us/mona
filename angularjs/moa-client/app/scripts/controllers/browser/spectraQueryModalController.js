@@ -20,25 +20,16 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
         $modalInstance.dismiss('cancel');
     };
 
-
     /**
-     * load categories
+     * closes the dialog and finishes and builds the query
      */
-    $scope.loadCategories = function () {
-        $scope.metadataCategories = MetadataService.categories(
-            metadataQuery,
-            function (error) {
-                $log.error('metadata categories failed: ' + error);
-            }
-        );
+    $scope.submitQuery = function(){
+
+        var result = SpectraQueryBuilderService.compileQuery($scope.query, $scope.metadata);
+
+        $modalInstance.close(result);
+
     };
-    /**
-     * initialization and population of default values
-     */
-    (function list() {
-        $scope.loadCategories();
-    })();
-
 
     /**
      * builds our metadata values for the given query
@@ -81,5 +72,25 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
             );
         });
     };
+
+
+    /**
+     * load categories
+     */
+    $scope.loadCategories = function () {
+        $scope.metadataCategories = MetadataService.categories(
+            metadataQuery,
+            function (error) {
+                $log.error('metadata categories failed: ' + error);
+            }
+        );
+    };
+    /**
+     * initialization and population of default values
+     */
+    (function list() {
+        $scope.loadCategories();
+    })();
+
 
 };
