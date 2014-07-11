@@ -120,6 +120,22 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         delete $scope.partialInchiFilters[inchikey];
     };
 
+    /**
+     * opens our modal dialog to query spectra against the system
+     */
+    $scope.querySpectraDialog = function(){
+        var modalInstance = $modal.open({
+            templateUrl: '/views/spectra/query/query.html',
+            controller: moaControllers.QuerySpectrumModalController,
+            size: 'lg',
+            backdrop: 'true'
+
+        });
+
+        modalInstance.result.then(function (query) {
+            $scope.submitQuery(query);
+        });
+    };
 
     /**
      * displays the spectrum for the given index
@@ -144,59 +160,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.spectraLoadLength = -1;
 
-    /* Metadata */
-    $scope.metadataCategories = [];
-    $scope.metadata = {};
-    $scope.metadataValues = {};
-
-    /**
-     * builds our metadata values for the given query
-     * @param data
-     */
-    var metadataValuesQuery = function (data) {
-        data.forEach(function (element, index, array) {
-            if (element.type === "string") {
-                var values = {};
-
-                MetadataService.dataValues(
-                    {id: element.id},
-                    function (data) {
-                        data.forEach(function (element, index, array) {
-                            values[element.value] = true;
-                        });
-
-                        $scope.metadataValues[element.name] = [];
-                        Object.keys(values).forEach(function (key, index, array) {
-                            $scope.metadataValues[element.name].push({value: key});
-                        });
-                    },
-                    function (error) {
-                        $log.error('metadata values failed: ' + error);
-                    }
-                );
-            }
-        });
-    };
-
-    var metadataQuery = function (data) {
-        // Query each metdata category and store the data
-        data.forEach(function (element, index, array) {
-            $scope.metadata[element.name] = MetadataService.categoryData(
-                {id: element.id},
-                metadataValuesQuery,
-                function (error) {
-                    $log.error('metadata category data failed: ' + error);
-                }
-            );
-        });
-    };
-
-    /**
-     * contains our build query object
-     * @type {{}}
-     */
-    $scope.query = {};
-
     /**
      * compiled query which is supposed to be executed or refiened
      * @type {{}}
@@ -217,10 +180,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     /**
      * submits our build query to the backend
      */
-    $scope.submitQuery = function () {
+    $scope.submitQuery = function (query) {
 
-        $scope.compiledQuery = SpectraQueryBuilderService.compileQuery($scope.query, $scope.metadata);
-
+        $scope.compiledQuery = query;
         $scope.calculateOffsets();
 
         Spectrum.searchSpectra($scope.compiledQuery, function (data) {
@@ -230,7 +192,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             $scope.spectra.length = 0;
             $scope.spectra.push.apply($scope.spectra, data);
 
-            $location.path("/spectra/browse");
         });
     };
 
@@ -260,22 +221,10 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     };
 
     /**
-     * load categories
-     */
-    $scope.loadCategories = function () {
-        $scope.metadataCategories = MetadataService.categories(
-            metadataQuery,
-            function (error) {
-                $log.error('metadata categories failed: ' + error);
-            }
-        );
-    };
-    /**
      * initialization and population of default values
      */
     (function list() {
         $scope.loadTags();
-        $scope.loadCategories();
     })();
 
 };
