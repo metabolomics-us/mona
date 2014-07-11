@@ -248,7 +248,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
                     $scope.showDropdown = true;
 
                     if(!$scope.searchStr || $scope.searchStr === "") {
-                        var max = $scope.localData.length <= 5 ? $scope.localData.length : 5;
+                        var max = $scope.localData.length <= 10 ? $scope.localData.length : 10;
                         var results = [];
 
                         for(var i = 0; i < max; i++)

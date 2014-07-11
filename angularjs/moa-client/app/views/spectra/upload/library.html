@@ -1,9 +1,22 @@
 <div>
-    <p>Dear User, please use the following wizard, to upload a new MassSpec library to the system. It should guide you
-        and
-        provide you with all the help you need</p>
+    <h3>Upload Spectra Library</h3>
 
-    <form name="myForm">
-        <input ng-model='file' type="file" ng-file-select="uploadLibrary($files)" multiple/>
+    <form role="form" name="upload">
+        <div class="input-group">
+            <input ng-model="file" type="file" ng-file-select="uploadLibrary($files)"/>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-btn">
+                <span class="btn btn-primary btn-file">
+                    Browse&hellip; <input type="file" ng-model="file" multiple />
+                </span>
+            </span>
+            <input type="text" class="form-control" readonly>
+        </div>
+        <span class="help-block">
+            Select one or more spectra library files (e.g., an MSP file).
+        </span>
+        <button type="button" class="btn btn-primary" ng-file-select="uploadLibrary($files)">Upload a Spectra Library</button>
     </form>
 </div>
