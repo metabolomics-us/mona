@@ -125,7 +125,7 @@ class SpectraQueryService {
 
                 executionParams.put("metaDataName_${index}".toString(), current.name);
 
-                //figure out the correct value for equals
+                //equals
                 if (current.value.eq) {
                     impl = estimateMetaDataValueImpl(current.value.eq.toString())
 
@@ -136,19 +136,79 @@ class SpectraQueryService {
 
                 }
 
-                //figure out the correct value for equals
+                //like
                 else if (current.value.like) {
                     impl = estimateMetaDataValueImpl(current.value.like.toString())
 
                     //equality search
-                    queryOfDoomWhere += " mdv_${index}.${impl.name} = :metaDataImplValue_${index}"
+                    queryOfDoomWhere += " mdv_${index}.${impl.name} like :metaDataImplValue_${index}"
 
                     executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
                     executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
 
                 }
 
-                //searching for a value between min and max
+                //greater than
+                else if (current.value.gt) {
+                    impl = estimateMetaDataValueImpl(current.value.gt.toString())
+
+                    //equality search
+                    queryOfDoomWhere += " mdv_${index}.${impl.name} > :metaDataImplValue_${index}"
+
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+
+                }
+
+                //less than
+                else if (current.value.lt) {
+                    impl = estimateMetaDataValueImpl(current.value.lt.toString())
+
+                    //equality search
+                    queryOfDoomWhere += " mdv_${index}.${impl.name} < :metaDataImplValue_${index}"
+
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+
+                }
+
+                //greate equals
+                else if (current.value.ge) {
+                    impl = estimateMetaDataValueImpl(current.value.ge.toString())
+
+                    //equality search
+                    queryOfDoomWhere += " mdv_${index}.${impl.name} >= :metaDataImplValue_${index}"
+
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+
+                }
+
+                //less equals
+                else if (current.value.le) {
+                    impl = estimateMetaDataValueImpl(current.value.le.toString())
+
+                    //equality search
+                    queryOfDoomWhere += " mdv_${index}.${impl.name} <= :metaDataImplValue_${index}"
+
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+
+                }
+
+                //not equals
+                else if (current.value.ne) {
+                    impl = estimateMetaDataValueImpl(current.value.ne.toString())
+
+                    //equality search
+                    queryOfDoomWhere += " mdv_${index}.${impl.name} != :metaDataImplValue_${index}"
+
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+
+                }
+
+                //between
                 else if (current.value.between) {
                     if (current.value.between.length() == 2) {
                         def min = current.value.between[0].toString()
@@ -165,7 +225,9 @@ class SpectraQueryService {
                         throw new QueryException("invalid query term: ${current.value.between}, we need exactly 2 values")
                     }
 
-                } else {
+                }
+                //unsupported term
+                else {
                     throw new QueryException("invalid query term: ${current.value}")
                 }
 
@@ -231,6 +293,9 @@ class SpectraQueryService {
                 Tag tag = Tag.findOrSaveByText(t);
                 tagsToUpdate.add(tag)
             }
+        }
+        else{
+            throw new Exception("please provide an array of tags, this is all we currently support to update")
         }
         //apply object
         result.each { Spectrum spectrum ->
