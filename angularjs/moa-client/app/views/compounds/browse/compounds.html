@@ -12,7 +12,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="compound in compounds | compoundsQuery:this" ng-click="viewSpectra(compound.inchiKey)">
+            <tr ng-repeat="compound in filteredCompounds = (compounds | compoundsQuery:this)" ng-click="viewSpectra(compound.inchiKey)">
                 <td>
                     <ul>
                         <li ng-repeat="name in compound.names">{{name.name}}</li>
@@ -27,6 +27,8 @@
             </tbody>
         </table>
         <div class="text-center" ng-show="loadingMore"><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span></div>
+        <div class="text-center" ng-show="filteredCompounds.length == 0 && !loadingMore"><h4>No results found!</h4></div>
+
     </div>
     <div class="col-md-3">
         <form name="compoundsQuery" role="form" class="form-vertical">

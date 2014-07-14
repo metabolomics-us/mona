@@ -9,7 +9,7 @@ app.directive('multiselectDropdown', function() {
             maxHeight: 250,
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
-            includeSelectAllOption: true,
+            //includeSelectAllOption: true,
 
             buttonText: function(options) {
                 return element.data()['placeholder'] + ' <b class="caret"></b>';

@@ -181,12 +181,10 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         $scope.calculateOffsets();
 
         Spectrum.searchSpectra($scope.compiledQuery, function (data) {
-
             $log.info(data.length);
 
             $scope.spectra.length = 0;
             $scope.spectra.push.apply($scope.spectra, data);
-
         });
     };
 
@@ -220,7 +218,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads all our tags into the associated variables
      */
     $scope.loadTags = function () {
-        $scope.tagsSelection = $scope.tags = TaggingService.query(function (data) {
+        $scope.tags = TaggingService.query(function (data) {
         }, function (error) {
             alert('failed: ' + error);
         });
