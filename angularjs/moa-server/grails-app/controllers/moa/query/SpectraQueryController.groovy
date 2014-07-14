@@ -25,6 +25,7 @@ class SpectraQueryController {
 
         def result = []
         if (json.query) {
+            log.info("received query: " + json.query)
             result = spectraQueryService.query(json.query, params);
         } else {
             result = spectraQueryService.query(json, params);
@@ -48,6 +49,8 @@ class SpectraQueryController {
 
         } else {
 
+            log.info("received query: " + json.query)
+            log.info("received update payload: " + json.update)
             def result = spectraQueryService.update(json.query, json.update);
 
             render(result as JSON)
