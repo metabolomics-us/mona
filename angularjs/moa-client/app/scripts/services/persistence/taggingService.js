@@ -13,7 +13,7 @@ app.factory('TaggingService', function ($resource, REST_BACKEND_SERVER, $http) {
     $http.defaults.useXDomain = true;
 
     return $resource(
-            REST_BACKEND_SERVER + '/rest/tags/:id',
+            REST_BACKEND_SERVER + '/rest/tags/:id?max=100',
         {id: "@id"},
         {
             'update': {

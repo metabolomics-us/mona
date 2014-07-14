@@ -181,12 +181,10 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         $scope.calculateOffsets();
 
         Spectrum.searchSpectra($scope.compiledQuery, function (data) {
-
             $log.info(data.length);
 
             $scope.spectra.length = 0;
             $scope.spectra.push.apply($scope.spectra, data);
-
         });
     };
 
