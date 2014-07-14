@@ -17,8 +17,10 @@ class SpectraQueryService {
      * returns a list of spectra data based on the given query
      * @param json
      */
-    def query(def json,def params = [:]) {
-        if(json == null){
+    def query(def json, def params = [:]) {
+        log.info("received query: ${json}")
+
+        if (json == null) {
             throw new Exception("your query needs to contain some parameters!")
         }
         //completed query string
@@ -241,6 +243,7 @@ class SpectraQueryService {
         }
 
 
+        return [count:result.size(), tags:tagsToUpdate]
     }
 
     /**

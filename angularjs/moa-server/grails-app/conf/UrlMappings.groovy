@@ -72,7 +72,10 @@ class UrlMappings {
          * provides us with access to simple queries
          */
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
-        "/rest/spectra/searchAndUpdate"(controller: 'spectraQuery', action: 'searchAndUpdate')
+        /**
+         * batch updates based on queries
+         */
+        "/rest/spectra/batch/update"(controller: 'spectraQuery', action: 'searchAndUpdate')
 
     }
 }
