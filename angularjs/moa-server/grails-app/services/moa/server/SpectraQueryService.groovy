@@ -126,7 +126,7 @@ class SpectraQueryService {
                 executionParams.put("metaDataName_${index}".toString(), current.name);
 
                 //equals
-                if (current.value.eq) {
+                if (current.value.eq != null) {
                     impl = estimateMetaDataValueImpl(current.value.eq.toString())
 
                     //equality search
@@ -135,9 +135,8 @@ class SpectraQueryService {
                     executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
 
                 }
-
                 //like
-                else if (current.value.like) {
+                else if (current.value.like != null) {
                     impl = estimateMetaDataValueImpl(current.value.like.toString())
 
                     //equality search
@@ -147,69 +146,57 @@ class SpectraQueryService {
                     executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
 
                 }
-
                 //greater than
-                else if (current.value.gt) {
+                else if (current.value.gt != null) {
                     impl = estimateMetaDataValueImpl(current.value.gt.toString())
 
                     //equality search
                     queryOfDoomWhere += " mdv_${index}.${impl.name} > :metaDataImplValue_${index}"
-
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
 
                 }
-
                 //less than
-                else if (current.value.lt) {
+                else if (current.value.lt != null) {
                     impl = estimateMetaDataValueImpl(current.value.lt.toString())
 
                     //equality search
                     queryOfDoomWhere += " mdv_${index}.${impl.name} < :metaDataImplValue_${index}"
-
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
 
                 }
 
                 //greate equals
-                else if (current.value.ge) {
+                else if (current.value.ge != null) {
                     impl = estimateMetaDataValueImpl(current.value.ge.toString())
 
                     //equality search
                     queryOfDoomWhere += " mdv_${index}.${impl.name} >= :metaDataImplValue_${index}"
-
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
 
                 }
 
                 //less equals
-                else if (current.value.le) {
+                else if (current.value.le != null) {
                     impl = estimateMetaDataValueImpl(current.value.le.toString())
 
                     //equality search
                     queryOfDoomWhere += " mdv_${index}.${impl.name} <= :metaDataImplValue_${index}"
-
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
 
                 }
 
                 //not equals
-                else if (current.value.ne) {
+                else if (current.value.ne != null) {
                     impl = estimateMetaDataValueImpl(current.value.ne.toString())
 
                     //equality search
                     queryOfDoomWhere += " mdv_${index}.${impl.name} != :metaDataImplValue_${index}"
-
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
-                    executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+                    executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
 
                 }
 
                 //between
-                else if (current.value.between) {
+                else if (current.value.between != null) {
                     if (current.value.between.length() == 2) {
                         def min = current.value.between[0].toString()
                         def max = current.value.between[1].toString()
@@ -284,31 +271,45 @@ class SpectraQueryService {
     def update(queryContent, update) {
         def result = query(queryContent);
 
-        //build update object
-
-        def tagsToUpdate = []
-
-        if (update.tags) {
-            update.tags.each { t ->
-                Tag tag = Tag.findOrSaveByText(t);
-                tagsToUpdate.add(tag)
-            }
-        }
-        else{
-            throw new Exception("please provide an array of tags, this is all we currently support to update")
-        }
-        //apply object
+        //go over all spectra
         result.each { Spectrum spectrum ->
 
-            tagsToUpdate.each { Tag tag ->
-                spectrum.addToTags(tag)
+            //if we have tags specified
+            if (update.tags) {
+                update.tags.each { String t ->
+
+                    //if a tag starts with minus we want to remove it
+                    if (t.startsWith("-")) {
+
+                        String nameToDelete = t.substring(1, t.length())
+                        def deleteMe = []
+                        spectrum.tags.each {
+
+                            if (it.text == nameToDelete) {
+                                deleteMe.add(it)
+                            }
+                        }
+
+                        deleteMe.each { Tag tag ->
+                            log.info("removing tag from spectra: ${tag}")
+                            spectrum.removeFromTags(tag)
+                        }
+                    }
+                    //else we want to add it
+                    else {
+                        Tag tag = Tag.findOrSaveByText(t);
+
+
+                        spectrum.addToTags(tag)
+                    }
+                }
             }
 
+            //save the now modified spectra
             spectrum.save(flush: true)
         }
 
-
-        return [count:result.size(), tags:tagsToUpdate]
+        return [updated: result.size()]
     }
 
     /**
