@@ -53,25 +53,29 @@ moaControllers.SpectraController = function ($scope, $modal, Spectrum, Authentif
     $scope.uploadLibrary = function (files) {
 
         for (var i in files) {
+
             var fileReader = new FileReader();
 
             /**
              * once the data is actually loaded
              * @param e
              */
-            fileReader.onload = function (e) {
+            fileReader.onload = (function (file) {
 
-                var data = e.target.result;
+                return function (e) {
 
-                UploadLibraryService.uploadMSP(data, function () {
-                    return $scope.buildSpectrum()
-                }, function (spectra) {
-                    //$log.debug("storing spectra: \n\n" + $filter('json')(spectra));
-                    spectra.$save();
-                });
+                    var data = e.target.result;
 
-                fireUploadProgress(100);
-            };
+                    UploadLibraryService.upload(data, function () {
+                        return $scope.buildSpectrum()
+                    }, function (spectra) {
+                        //$log.debug("storing spectra: \n\n" + $filter('json')(spectra));
+                        spectra.$save();
+                    },file.name);
+
+                    fireUploadProgress(100);
+                }
+            })(files[i]);
 
             /**
              * progress notification

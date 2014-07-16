@@ -4,11 +4,16 @@ import grails.rest.RestfulController
 import moa.*
 import moa.meta.BooleanMetaDataValue
 import moa.meta.DoubleMetaDataValue
+import moa.server.CategoryNameFinderService
+import moa.server.MetaDataDictionaryService
 import util.MetaDataValueHelper
 
 class SpectrumController extends RestfulController<Spectrum> {
-
     static responseFormats = ['json']
+
+    MetaDataDictionaryService metaDataDictionaryService
+
+    CategoryNameFinderService categoryNameFinderService
 
     def beforeInterceptor = {
         log.info(params)
@@ -18,6 +23,16 @@ class SpectrumController extends RestfulController<Spectrum> {
         super(Spectrum)
     }
 
+    protected Map getParametersToBind() {
+        log.info(params)
+
+        if (request.JSON) {
+            params.putAll(
+                    request.JSON)
+        }
+
+        params
+    }
 
     @Override
     protected Spectrum createResource(Map params) {
@@ -43,6 +58,11 @@ class SpectrumController extends RestfulController<Spectrum> {
         }
         spectrum.tags = tags;
 
+
+        //we build the metadata rather our self
+        spectrum.metaData = [];
+
+        //actually assemble them
         buildMetaData(spectrum, request.JSON.metaData)
 
         //spectrum is now ready to work on
@@ -58,18 +78,26 @@ class SpectrumController extends RestfulController<Spectrum> {
     private void buildMetaData(Spectrum object, def json) {
 
         //remove existing metadata from the object
-        object.metaData.clear()
 
         json.each { current ->
-            MetaData metaData = MetaData.findOrSaveByName(current.name);
-            println("current: ${current}")
+
+            String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
+
+            MetaData metaData = MetaData.findOrSaveByName(metaDataName);
 
             //associated our default category, if none exist
             if (metaData.category == null) {
+
                 String name = current.category
+
+                //check if no explicit category was provided
                 if (name == null || name.length() == "") {
-                    name = "none"
+
+                    //check if we alreay have a preferred category name for this metadata key
+                    name = categoryNameFinderService.findCategoryNameForMetaDataKey(metaData.name)
+
                 }
+
                 MetaDataCategory category = MetaDataCategory.findOrSaveByName(name)
                 category.addToMetaDatas(metaData)
                 metaData.category = category
@@ -133,18 +161,6 @@ class SpectrumController extends RestfulController<Spectrum> {
         myCompound.save(flush: true)
 
         return myCompound;
-    }
-/**
- * otherwise grails won't populate the json fields
- * @return
- */
-    protected Map getParametersToBind() {
-        if (request.JSON) {
-            params.putAll(
-                    request.JSON)
-        }
-
-        params
     }
 
     protected Spectrum queryForResource(Serializable id) {
