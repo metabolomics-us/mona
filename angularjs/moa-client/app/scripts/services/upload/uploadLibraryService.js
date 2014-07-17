@@ -215,7 +215,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                 uploadMassBank(data, buildSpectrum, saveSpectrumCallback, origin);
             }
             else {
-                alert('not suppored file format!');
+                alert('not supported file format!');
             }
         } else {
             uploadMSP(data, buildSpectrum, saveSpectrumCallback, orign);
