@@ -9,7 +9,6 @@ class IntegerMetaDataValue extends MetaDataValue{
     }
 
     static mapping = {
-        version false
     }
 
 

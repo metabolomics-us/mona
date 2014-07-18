@@ -9,7 +9,6 @@ class Compound {
 
     static mapping = {
         inchiKey index: true, indexAttributes: [unique: true]
-        version false
         molFile sqlType: "text"
     }
     /**

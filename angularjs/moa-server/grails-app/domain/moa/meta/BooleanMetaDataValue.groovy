@@ -8,7 +8,6 @@ class BooleanMetaDataValue extends MetaDataValue{
     }
 
     static mapping = {
-        version false
     }
 
     String booleanValue

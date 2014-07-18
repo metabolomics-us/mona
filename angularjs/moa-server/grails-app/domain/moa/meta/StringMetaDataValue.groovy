@@ -9,7 +9,8 @@ class StringMetaDataValue extends MetaDataValue {
     }
 
     static mapping = {
-        version false
+        stringValue sqlType: "varchar(5000)"
+
     }
 
     String stringValue

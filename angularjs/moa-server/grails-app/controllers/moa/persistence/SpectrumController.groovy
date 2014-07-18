@@ -1,12 +1,13 @@
 package moa.persistence
 
 import grails.rest.RestfulController
+import grails.transaction.Transactional
 import moa.*
 import moa.meta.BooleanMetaDataValue
 import moa.meta.DoubleMetaDataValue
+import moa.meta.StringMetaDataValue
 import moa.server.CategoryNameFinderService
 import moa.server.MetaDataDictionaryService
-import util.MetaDataValueHelper
 
 class SpectrumController extends RestfulController<Spectrum> {
     static responseFormats = ['json']
@@ -39,7 +40,11 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         Spectrum spectrum = super.createResource(params)
 
-        def chemicalNames = spectrum.chemicalCompound.names
+        //we build the metadata rather our self
+        spectrum.metaData = [];
+
+        //we build the tags our self
+        spectrum.tags = [];
 
         //we only care about refreshing the submitter by it's email address since it's unique
         spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
@@ -50,20 +55,23 @@ class SpectrumController extends RestfulController<Spectrum> {
         spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
 
 
-        def tags = []
 
-        //adding our tags
-        spectrum.tags.each {
-            tags.add(Tag.findOrSaveWhere(text: it.text))
+        if(spectrum.validate()) {
+            spectrum.save(flush: true)
+
+            def tags = request.JSON.tags
+
+            //adding our tags
+            tags.each {
+                spectrum.addToTags(Tag.findOrCreateByText(it.text))
+            }
+
+            //actually assemble them
+            buildMetaData(spectrum, request.JSON.metaData)
         }
-        spectrum.tags = tags;
-
-
-        //we build the metadata rather our self
-        spectrum.metaData = [];
-
-        //actually assemble them
-        buildMetaData(spectrum, request.JSON.metaData)
+        else{
+            log.warn(spectrum.errors)
+        }
 
         //spectrum is now ready to work on
         return spectrum;
@@ -75,6 +83,7 @@ class SpectrumController extends RestfulController<Spectrum> {
      * @parm json - json definition of the metadata
      * @return
      */
+    @Transactional
     private void buildMetaData(Spectrum object, def json) {
 
         //remove existing metadata from the object
@@ -83,7 +92,7 @@ class SpectrumController extends RestfulController<Spectrum> {
 
             String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
 
-            MetaData metaData = MetaData.findOrSaveByName(metaDataName);
+            MetaData metaData = MetaData.findOrCreateByName(metaDataName);
 
             //associated our default category, if none exist
             if (metaData.category == null) {
@@ -99,41 +108,54 @@ class SpectrumController extends RestfulController<Spectrum> {
                 }
 
                 MetaDataCategory category = MetaDataCategory.findOrSaveByName(name)
+
+                try {
+                    category.lock()
+                }
+                catch (Exception e) {
+
+                    def newCat = MetaDataCategory.lock(category.id);
+                    category = newCat
+                }
+
                 category.addToMetaDatas(metaData)
-                metaData.category = category
 
             }
-            MetaDataValue metaDataValue = MetaDataValueHelper.getValueObject(current.value)
+            MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())//MetaDataValueHelper.getValueObject(current.value)
 
-            if (metaDataValue instanceof DoubleMetaDataValue) {
-                if (metaData.type == null) {
-                    metaData.type = "double";
+            try {
+                if (metaDataValue instanceof DoubleMetaDataValue) {
+                    if (metaData.type == null) {
+                        metaData.type = "double";
+                    } else {
+                        if (!metaData.type.equals("double")) {
+                            throw new Exception("metaData '${metaData.name}' needs to be of type 'double', but is of type: ${metaData.type}");
+                        }
+                    }
+                } else if (metaDataValue instanceof BooleanMetaDataValue) {
+                    if (metaData.type == null) {
+                        metaData.type = "boolean";
+                    } else {
+                        if (!metaData.type.equals("boolean")) {
+                            throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean', but is of type: ${metaData.type}");
+                        }
+                    }
                 } else {
-                    if (!metaData.type.equals("double")) {
-                        throw new Exception("metaData '${metaData.name}' needs to be of type 'double'");
+                    if (metaData.type == null) {
+                        metaData.type = "string";
+                    } else {
+                        if (!metaData.type.equals("string")) {
+                            throw new Exception("metaData '${metaData.name}' needs to be of type 'string', but is of type: ${metaData.type}");
+                        }
                     }
                 }
-            } else if (metaDataValue instanceof BooleanMetaDataValue) {
-                if (metaData.type == null) {
-                    metaData.type = "boolean";
-                } else {
-                    if (!metaData.type.equals("boolean")) {
-                        throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean'");
-                    }
-                }
-            } else {
-                if (metaData.type == null) {
-                    metaData.type = "string";
-                } else {
-                    if (!metaData.type.equals("string")) {
-                        throw new Exception("metaData '${metaData.name}' needs to be of type 'string'");
-                    }
-                }
+
+                metaData.addToValue(metaDataValue)
+                object.addToMetaData(metaDataValue)
+
+            } catch (Exception e) {
+                log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
             }
-
-            metaData.addToValue(metaDataValue)
-            metaDataValue.spectrum = object
-            object.addToMetaData(metaDataValue)
         }
 
     }
@@ -142,19 +164,22 @@ class SpectrumController extends RestfulController<Spectrum> {
  * @param compound
  * @return
  */
+    @Transactional
     private Compound buildCompound(Compound compound) {
         def names = compound.names
 
-        def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey)
+        //first get the compound we want
+        def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey, [lock: true])
 
-        myCompound.save(flush: true)
+        //lets lock it
+        myCompound = Compound.lock(myCompound.id)
 
-        if (myCompound.names == null) {
-            myCompound.names = new HashSet<Name>();
-        }
         //merge new names
         names.each { name ->
-            myCompound.addToNames(Name.findOrSaveByName(name.name))
+            Name n = Name.findByNameAndCompound(name.name, myCompound)
+            if (n != null) {
+                myCompound.addToNames(new Name(name: name))
+            }
         }
 
         myCompound.molFile = compound.molFile

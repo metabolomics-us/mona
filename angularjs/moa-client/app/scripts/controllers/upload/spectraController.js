@@ -62,6 +62,9 @@ moaControllers.SpectraController = function ($scope, $modal, Spectrum, Authentif
              */
             fileReader.onload = (function (file) {
 
+                /**
+                 * handles an event
+                 */
                 return function (e) {
 
                     var data = e.target.result;
@@ -94,11 +97,10 @@ moaControllers.SpectraController = function ($scope, $modal, Spectrum, Authentif
         }
 
         /**
-         * handles feedback for progress bars
+         * handles feedback for progress bars only during the upload!
          * @param progress
          */
         var fireUploadProgress = function (progress) {
-            console.log('progress upload: ' + progress);
         };
     };
 };

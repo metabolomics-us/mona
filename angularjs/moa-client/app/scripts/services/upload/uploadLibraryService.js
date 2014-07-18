@@ -5,7 +5,99 @@
 /**
  * handles the upload of library spectra to the system
  */
-app.service('UploadLibraryService', function (ApplicationError, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService,$filter) {
+app.service('UploadLibraryService', function (ApplicationError, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService) {
+
+    /**
+     * obtains a promise for us to get to the an inchi key for a spectra object
+     * @param spectra
+     * @returns {Deferred}
+     */
+    function obtainKey(spectra) {
+        var deferred = $q.defer();
+
+        //if we got an inchi code
+        if (spectra.inchi) {
+            gwCtsService.convertInChICodeToKey(spectra.inchi, function (key) {
+                if (key == null) {
+                    deferred.reject("sorry no key found!");
+                }
+                else {
+                    spectra.inchiKey = key;
+                    deferred.resolve(spectra);
+                }
+            });
+        }
+        //if we just have a name
+        else if (spectra.name) {
+            gwChemifyService.nameToInChIKey(spectra.name, function (key) {
+                if (key == null) {
+                    deferred.reject("sorry no key found!");
+                }
+                else {
+                    spectra.inchiKey = key;
+                    deferred.resolve(spectra);
+                }
+            });
+        }
+
+        //if we have a bunch of names
+        else if (spectra.names && spectra.names.length > 0) {
+            gwChemifyService.nameToInChIKey(spectra.names[0], function (key) {
+                if (key == null) {
+                    deferred.reject("sorry no key found!");
+                }
+                else {
+                    spectra.inchiKey = key;
+                    deferred.resolve(spectra);
+                }
+            });
+        }
+
+        //we got nothing so we give up
+        else {
+            deferred.reject("sorry given object was invalid, we need a name, or an inchi code (inchi) or an array with names for this to work!")
+        }
+
+        return deferred.promise;
+    }
+
+    /**
+     * obtains a mol file for the spectra
+     * @param spectra
+     */
+    function obtainMolFile(spectra) {
+
+        var deferred = $q.defer();
+
+        //we have an inchi, which is the best
+        if (spectra.inchi) {
+            gwCtsService.convertInChICodeToMol(spectra.inchi, function (molFile) {
+                    spectra.molFile = molFile;
+                    deferred.resolve(spectra);
+                },
+                function (backup) {
+                    $log.warn('utilizing backup service...');
+                    gwCtsService.convertInChICodeToMolUsingBabel(spectra.inchi, function (molFile) {
+                        spectra.molFile = molFile;
+                        deferred.resolve(spectra);
+                    });
+                });
+        }
+        //we have an inchi key
+        else if (spectra.inchiKey) {
+            gwCtsService.convertInchiKeyToMol(spectra.inchiKey, function (molFile) {
+                spectra.molFile = molFile;
+                deferred.resolve(spectra);
+            });
+        }
+        //we are screwed
+        else {
+            deferred.reject("sorry given object was invalid, we need an inchi code (inchi) or inchi key (key) as property!")
+        }
+
+        return deferred.promise;
+    }
+
 
     /**
      * assembles a spectra and prepares it for upload
@@ -15,128 +107,75 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
      * @param buildSpectrum
      * @param saveSpectrumCallback
      */
-    function workOnSpectra(origin, submitter, buildSpectrum, saveSpectrumCallback, spectra) {
+    function workOnSpectra(origin, submitter, buildSpectrum, saveSpectrumCallback, spectraObject) {
 
-        $log.info('converting object:\n\n' + $filter('json')(spectra));
-        //find the inchi key for the given name
-        gwChemifyService.nameToInChIKey(spectra.name, function (key) {
+        //$log.debug('converting object:\n\n' + $filter('json')(spectra));
 
-            //if a key was found
-            if (key != null) {
+        //get the key
+        obtainKey(spectraObject).then(function (spectraWithKey) {
 
-                //let's get the correct mol file for this key
-                gwCtsService.convertInchiKeyToMol(key, function (molFile) {
+            //get the mol file
+            obtainMolFile(spectraWithKey).then(function (spectra) {
 
-                    if (molFile != null) {
-                        var s = buildSpectrum();
+                var s = buildSpectrum();
 
-                        s.biologicalCompound.inchiKey = key;
+                s.biologicalCompound.inchiKey = spectra.inchiKey;
 
-                        //assign all the defined name of the spectra
-                        if (angular.isDefined(spectra.name)) {
-                            s.biologicalCompound.names = [
+                //assign all the defined name of the spectra
+                if (angular.isDefined(spectra.name)) {
+                    s.biologicalCompound.names = [
 
-                                {name: spectra.name}
-                            ];
-                            s.chemicalCompound.names = [
-                                {name: spectra.name}
-                            ];
+                        {name: spectra.name}
+                    ];
+                    s.chemicalCompound.names = [
+                        {name: spectra.name}
+                    ];
 
-                        }
-                        //assign all names of the spectra
-                        else if (angular.isDefined(spectra.names)) {
-                            for (var i = 0; i < spectra.names.length; i++) {
-                                s.biologicalCompound.names.push({name: spectra.names[i]})
-                                s.chemicalCompound.names.push({name: spectra.names[i]})
-                            }
-                        }
-                        s.biologicalCompound.metaData = [];
-                        s.biologicalCompound.molFile = molFile;
-
-                        s.chemicalCompound.inchiKey = key;
-                        s.chemicalCompound.molFile = molFile;
-                        s.biologicalCompound.metaData = [];
-
-                        s.spectrum = spectra.spectrum;
-
-                        if (spectra.accurate) {
-                            s.tags.push({'text': 'accurate'});
-                        }
-                        s.tags.push({'text': 'imported'});
-                        s.tags.push({'text': 'library'});
-                        s.tags.push({'text': 'msp'});
-
-                        s.comments = "this spectra was generated using the MSP Service, with an existing uploaded files";
-                        spectra.meta.forEach(function (e) {
-                            s.metaData.push(e);
-                        });
-
-                        //adds a metadata field
-                        if (angular.isDefined(origin)) {
-                            s.metaData.push({name: 'origin', value: origin});
-                        }
-
-                        s.submitter = submitter;
-
-                        saveSpectrumCallback(s);
+                }
+                //assign all names of the spectra
+                else if (angular.isDefined(spectra.names)) {
+                    for (var i = 0; i < spectra.names.length; i++) {
+                        s.biologicalCompound.names.push({name: spectra.names[i]})
+                        s.chemicalCompound.names.push({name: spectra.names[i]})
                     }
-                    else {
-                        $log.debug('was no able to find a mol file for: ' + key);
-                    }
+                }
+                s.biologicalCompound.metaData = [];
+                s.biologicalCompound.molFile = spectra.molFile;
+
+                s.chemicalCompound.inchiKey = spectra.inchiKey;
+                s.chemicalCompound.molFile = spectra.molFile;
+                s.biologicalCompound.metaData = [];
+
+                s.spectrum = spectra.spectrum;
+
+                if (spectra.accurate) {
+                    s.tags.push({'text': 'accurate'});
+                }
+                s.tags.push({'text': 'imported'});
+                s.tags.push({'text': 'library'});
+                s.tags.push({'text': 'msp'});
+
+                s.comments = "this spectra was added to the system, by utilizing a library upload.";
+                spectra.meta.forEach(function (e) {
+                    s.metaData.push(e);
                 });
-            }
-            else {
-                $log.debug('was no able to find an InChI Key for: ' + spectra.name);
-            }
+
+                //adds a metadata field
+                if (angular.isDefined(origin)) {
+                    s.metaData.push({name: 'origin', value: origin});
+                }
+
+                s.submitter = submitter;
+
+                saveSpectrumCallback(s);
+
+            });
+
+        }, function (reason) {
+            $log.error(reason);
         });
     }
 
-    /**
-     * a simple pool to ensure we are not using more than 'executionLimit' ajax calls while
-     * uploading data to the server
-     *
-     * @param pool
-     * @param executeFunction
-     * @param executionLimit
-     * @param poolRate
-     */
-    function asyncPool(pool, executeFunction, executionLimit, poolRate) {
-        if (angular.isUndefined(executionLimit)) {
-            executionLimit = 4;
-        }
-        if (angular.isUndefined(poolRate)) {
-            poolRate = 1500;
-        }
-
-        //keeps track of our pool
-        var poolRunning = false;
-
-        //how many parallel processes do we want
-        var poolLimit = executionLimit;
-
-        //works over the pool
-        var handlePool = function () {
-            if (poolRunning == false) {
-                try {
-                    poolRunning = true;
-                    for (var i = 0; i < poolLimit; i++) {
-                        if (pool.length > 0) {
-
-                            var object = pool[0];
-                            pool.splice(0, 1);
-                            executeFunction(object);
-                        }
-                    }
-                }
-                finally {
-                    poolRunning = false;
-                    $timeout(handlePool, poolRate);
-                }
-            }
-        };
-
-        $timeout(handlePool, poolRate);
-    }
 
     /**
      * uploads an msp file to the system
@@ -145,7 +184,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
      * @param saveSpectrumCallback a function to call to save our generated spectra object
      */
     function uploadMSP(data, buildSpectrum, saveSpectrumCallback, origin) {
-        $log.info("uploading msp file: " + origin);
+        //$log.info("uploading msp file: " + origin);
 
         var pool = [];
 
@@ -159,11 +198,8 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
             //convert our files
             var content = gwMspService.convertFromData(data, function (spectra) {
-                pool.push(spectra);
+                AsyncService.addToPool(spectra, toWork);
             });
-
-            //start the pool
-            asyncPool(pool, toWork);
 
         });
     }
@@ -176,8 +212,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
      * @param origin
      */
     function uploadMassBank(data, buildSpectrum, saveSpectrumCallback, origin) {
-        $log.info("uploading mass bank file: " + origin);
-        var pool = [];
+        //$log.info("uploading mass bank file: " + origin);
 
         //get the current user
         AuthentificationService.getCurrentUser().then(function (submitter) {
@@ -189,11 +224,8 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
             //convert our files
             var content = gwMassbankService.convertFromData(data, function (spectra) {
-                pool.push(spectra);
+                AsyncService.addToPool(spectra, toWork);
             });
-
-            //start the pool
-            asyncPool(pool, toWork);
 
         });
     }

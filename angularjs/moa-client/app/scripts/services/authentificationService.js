@@ -5,13 +5,20 @@
 /**
  * a service to handle authentifications and provides us with the currently logged in user
  */
-app.service('AuthentificationService', function (Submitter, $q) {
+app.service('AuthentificationService', function (Submitter, $q,$rootScope) {
 
     /**
      * log us in
      */
     this.login = function () {
-        //doesn't do anything yet
+
+        $rootScope.currentUser = null;
+
+
+        Submitter.get({id: 1}, function (data) {
+            $rootScope.currentUser = data;
+        });
+
     };
 
     /**
@@ -27,14 +34,15 @@ app.service('AuthentificationService', function (Submitter, $q) {
      */
     this.getCurrentUser = function () {
 
-        //dummy function to return user number 1
         var deferred = $q.defer();
 
-        Submitter.get({id: 1}, function (data) {
-            deferred.resolve(data);
-        });
+        deferred.resolve($rootScope.currentUser);
 
-        return deferred.promise;
+        return deferred.promise
+    };
 
-    }
+    /**
+     * just auto login our user
+     */
+    this.login();
 });

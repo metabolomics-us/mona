@@ -9,7 +9,6 @@ class DoubleMetaDataValue extends MetaDataValue {
 
     }
     static mapping = {
-        version false
     }
 
 

@@ -19,7 +19,6 @@ class Submitter {
     static hasMany = [spectra: Spectrum]
 
     static mapping = {
-        version false
     }
 
     /**

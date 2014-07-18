@@ -8,7 +8,6 @@ class Tag {
 
     static mapping = {
         text index: true, indexAttributes: [unique: true]
-        version false
     }
 
     /**

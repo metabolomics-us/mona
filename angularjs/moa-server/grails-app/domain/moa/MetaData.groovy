@@ -9,7 +9,8 @@ class MetaData {
     }
 
     static mapping = {
-        version false
+        name sqlType: "varchar(100)"
+
     }
 
     static  belongsTo = [category:MetaDataCategory]

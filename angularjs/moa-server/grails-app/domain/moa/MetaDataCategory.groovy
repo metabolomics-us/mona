@@ -10,7 +10,6 @@ class MetaDataCategory {
     }
 
     static mapping = {
-        version false
     }
 
     static hasMany = [metaDatas:MetaData]
