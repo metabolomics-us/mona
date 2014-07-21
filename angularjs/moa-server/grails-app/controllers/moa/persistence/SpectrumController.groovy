@@ -8,7 +8,7 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     SpectraPersistenceService spectraPersistenceService
     def beforeInterceptor = {
-        log.info(params)
+        //log.info(params)
     }
 
     public SpectrumController() {
