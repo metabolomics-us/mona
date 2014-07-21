@@ -5,7 +5,7 @@
 /**
  * handles the upload of library spectra to the system
  */
-app.service('UploadLibraryService', function (ApplicationError, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService) {
+app.service('UploadLibraryService', function (ApplicationError, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
 
     /**
      * obtains a promise for us to get to the an inchi key for a spectra object
@@ -79,6 +79,13 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                     $log.warn('utilizing backup service...');
                     gwCtsService.convertInChICodeToMolUsingBabel(spectra.inchi, function (molFile) {
                         spectra.molFile = molFile;
+
+                        //add a tag to it
+                        if (angular.isUndefined(spectra.tags)) {
+                            spectra.tags = [];
+                        }
+
+                        spectra.tags.push({text: 'not confirmed identification!'});
                         deferred.resolve(spectra);
                     });
                 });
@@ -102,10 +109,10 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
     /**
      * assembles a spectra and prepares it for upload
      * @param origin - where did the object actually come from
-     * @param spectra
      * @param submitter
      * @param buildSpectrum
      * @param saveSpectrumCallback
+     * @param spectraObject
      */
     function workOnSpectra(origin, submitter, buildSpectrum, saveSpectrumCallback, spectraObject) {
 
@@ -117,57 +124,65 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
             //get the mol file
             obtainMolFile(spectraWithKey).then(function (spectra) {
 
-                var s = buildSpectrum();
+                //optimize all our metadata
+                MetaDataOptimizationService.optimizeMetaData(spectra.meta).then(function (metaData) {
 
-                s.biologicalCompound.inchiKey = spectra.inchiKey;
+                    var s = buildSpectrum();
 
-                //assign all the defined name of the spectra
-                if (angular.isDefined(spectra.name)) {
-                    s.biologicalCompound.names = [
+                    s.biologicalCompound.inchiKey = spectra.inchiKey;
 
-                        {name: spectra.name}
-                    ];
-                    s.chemicalCompound.names = [
-                        {name: spectra.name}
-                    ];
+                    //assign all the defined name of the spectra
+                    if (angular.isDefined(spectra.name)) {
+                        s.biologicalCompound.names = [
 
-                }
-                //assign all names of the spectra
-                else if (angular.isDefined(spectra.names)) {
-                    for (var i = 0; i < spectra.names.length; i++) {
-                        s.biologicalCompound.names.push({name: spectra.names[i]})
-                        s.chemicalCompound.names.push({name: spectra.names[i]})
+                            {name: spectra.name}
+                        ];
+                        s.chemicalCompound.names = [
+                            {name: spectra.name}
+                        ];
+
                     }
-                }
-                s.biologicalCompound.metaData = [];
-                s.biologicalCompound.molFile = spectra.molFile;
+                    //assign all names of the spectra
+                    else if (angular.isDefined(spectra.names)) {
+                        for (var i = 0; i < spectra.names.length; i++) {
+                            s.biologicalCompound.names.push({name: spectra.names[i]})
+                            s.chemicalCompound.names.push({name: spectra.names[i]})
+                        }
+                    }
+                    s.biologicalCompound.metaData = [];
+                    s.biologicalCompound.molFile = spectra.molFile;
 
-                s.chemicalCompound.inchiKey = spectra.inchiKey;
-                s.chemicalCompound.molFile = spectra.molFile;
-                s.biologicalCompound.metaData = [];
+                    s.chemicalCompound.inchiKey = spectra.inchiKey;
+                    s.chemicalCompound.molFile = spectra.molFile;
+                    s.biologicalCompound.metaData = [];
 
-                s.spectrum = spectra.spectrum;
+                    s.spectrum = spectra.spectrum;
 
-                if (spectra.accurate) {
-                    s.tags.push({'text': 'accurate'});
-                }
-                s.tags.push({'text': 'imported'});
-                s.tags.push({'text': 'library'});
-                s.tags.push({'text': 'msp'});
+                    spectra.tags.forEach(function(e){
+                        s.tags.push(e);
+                    });
 
-                s.comments = "this spectra was added to the system, by utilizing a library upload.";
-                spectra.meta.forEach(function (e) {
-                    s.metaData.push(e);
+                    if (spectra.accurate) {
+                        s.tags.push({'text': 'accurate'});
+                    }
+                    s.tags.push({'text': 'imported'});
+                    s.tags.push({'text': 'library'});
+
+                    s.comments = "this spectra was added to the system, by utilizing a library upload.";
+                    metaData.forEach(function (e) {
+                        s.metaData.push(e);
+                    });
+
+                    //adds a metadata field
+                    if (angular.isDefined(origin)) {
+                        s.metaData.push({name: 'origin', value: origin});
+                    }
+
+                    s.submitter = submitter;
+
+                    saveSpectrumCallback(s);
+
                 });
-
-                //adds a metadata field
-                if (angular.isDefined(origin)) {
-                    s.metaData.push({name: 'origin', value: origin});
-                }
-
-                s.submitter = submitter;
-
-                saveSpectrumCallback(s);
 
             });
 
@@ -240,10 +255,10 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
     this.upload = function (data, buildSpectrum, saveSpectrumCallback, origin) {
         if (angular.isDefined(origin)) {
 
-            if (origin.toLowerCase().endsWith(".msp")) {
+            if (origin.toLowerCase().indexOf(".msp") > 0) {
                 uploadMSP(data, buildSpectrum, saveSpectrumCallback, origin);
             }
-            else if (origin.toLowerCase().endsWith(".txt")) {
+            else if (origin.toLowerCase().indexOf(".txt") > 0) {
                 uploadMassBank(data, buildSpectrum, saveSpectrumCallback, origin);
             }
             else {

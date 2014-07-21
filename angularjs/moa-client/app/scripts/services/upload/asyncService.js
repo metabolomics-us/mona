@@ -10,7 +10,7 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $timeout, $fil
      */
     var pool = [];
 
-    var executionLimit = 1;
+    var executionLimit = 4;
 
     var poolRate = 1500;
 

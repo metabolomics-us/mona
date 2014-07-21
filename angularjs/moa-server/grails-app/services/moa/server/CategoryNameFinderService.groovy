@@ -1,6 +1,5 @@
 package moa.server
 
-import moa.MetaData
 import moa.MetaDataCategory
 
 class CategoryNameFinderService {
@@ -10,13 +9,7 @@ class CategoryNameFinderService {
      * @param metaDataKey
      * @return
      */
-    def findCategoryNameForMetaDataKey(String metaDataKey) {
-        MetaData data = MetaData.findByName(metaDataKey)
-
-        if (data) {
-            return data.category.name
-        } else {
-            return MetaDataCategory.DEFAULT_CATEGORY_NAME
-        }
+    def synchronized findCategoryNameForMetaDataKey(String metaDataKey) {
+       return MetaDataCategory.DEFAULT_CATEGORY_NAME
     }
 }
