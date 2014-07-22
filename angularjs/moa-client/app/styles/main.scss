@@ -175,3 +175,19 @@ input[readonly] {
 .top30 { margin-top:30px; }
 
 
+
+.affix-top,.affix{
+  position: static;
+}
+
+@media (min-width: 992px) {
+
+  #filterBar.affix-top {
+    position: static;
+  }
+
+  #filterBar.affix {
+    position: fixed;
+    top: 100px;
+  }
+}
