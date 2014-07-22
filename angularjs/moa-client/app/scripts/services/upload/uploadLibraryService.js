@@ -105,7 +105,6 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
         return deferred.promise;
     }
 
-
     /**
      * assembles a spectra and prepares it for upload
      * @param origin - where did the object actually come from

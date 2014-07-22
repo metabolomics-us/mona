@@ -56,7 +56,7 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                 }
             }
 
-            if(ignored === false){
+                if(ignored === false){
                 result.push(object);
             }
             else{
@@ -70,5 +70,6 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
 
 
         return deferred.promise;
-    }
+    };
+
 });
