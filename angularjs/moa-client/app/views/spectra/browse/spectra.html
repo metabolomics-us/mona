@@ -1,63 +1,62 @@
 <div ng-value="error"></div>
-
 <div class="row">
-    <div class="col-md-12">
-
-        <div class="navbar">
-            <ul class="nav">
-                <li class="">
-                    <button class="btn btn-primary" ng-click="querySpectraDialog()"><i class="fa fa-search fa-fw"></i>Query
-                        Spectra
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-9">
+    <div class="col-md-7 col-sm-6 col-lg-7">
         <table class="table table-hover" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()">
             <thead>
             <tr>
-                <th>Name</th>
-                <th class="text-center">Bio. Structure</th>
-                <th class="text-center">Chem. Structure</th>
-                <th class="text-center">Spectrum</th>
+                <th class="text-center">Name</th>
+                <th class="text-right">Bio. Structure</th>
+                <th class="text-right">Chem. Structure</th>
+                <th class="text-right">Spectrum</th>
+                <th class="text-center">Accurate Mass</th>
+
             </tr>
             </thead>
             <tbody>
             <tr ng-show="spectra.length == 0">
             </tr>
-            <tr ng-repeat="spectrum in filteredSpectra = (spectra | spectraQuery:this)" ng-click="viewSpectrum($index)">
-                <td>
+            <tr ng-repeat="spectrum in filteredSpectra = (spectra | spectraQuery:this)"
+                ng-click="viewSpectrum($index)">
+                <td class="text-center">
                     <ul class="list-unstyled">
                         <li ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</li>
                     </ul>
                 </td>
-                <td class="text-center">
+                <td class="text-right">
                     <div chemical-sketcher readonly="true" width="100" height="100" id="bioSketch_{{spectrum.id}}"
                          ng-model="spectrum.biologicalCompound"></div>
                 </td>
-                <td class="text-center">
+                <td class="text-right">
                     <div chemical-sketcher readonly="true" width="100" height="100" id="chemSketch_{{spectrum.id}}"
                          ng-model="spectrum.chemicalCompound"></div>
                 </td>
-                <td class="text-center">
-                    <div class="masspec-mini"><mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec></div>
+                <td class="text-right">
+                    <div class="masspec-mini">
+                        <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
+                    </div>
+                </td>
+                <td>
+
                 </td>
             </tr>
             </tbody>
         </table>
         <div class="text-center" ng-show="loadingMore"><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
         </div>
-        <div class="text-center" ng-show="filteredSpectra.length == 0 && !loadingMore"><h4>No results found!</h4></div>
-
+        <div class="text-center" ng-show="filteredSpectra.length == 0 && !loadingMore"><h4>No results found!</h4>
+        </div>
     </div>
 
 
-    <div class="col-md-3">
+    <div class="col-md-5 col-sm-6 col-lg-5">
         <div id="filterBar" bs-affix data-offset-top="200" data-offset-bottom="300">
+
+            <!-- search bar -->
+            <button class="btn btn-primary" ng-click="querySpectraDialog()"><i
+                    class="fa fa-search fa-fw"></i>Open Query Dialog
+            </button>
+
+            <!-- filter by tags -->
             <form name="spectraQuery" role="form" class="form-vertical">
                 <fieldset>
                     <legend>Filter</legend>
@@ -67,36 +66,45 @@
 
                         <input id="newNameFilter" name="newNameFilter" ng-model="newNameFilter"
                                placeholder="Compound Name"
-                               class="form-control" ng-keyup="$event.keyCode == 13 ? addNameFilter() : null">
+                               class="form-control"
+                               ng-keyup="$event.keyCode == 13 ? addNameFilter() : null">
 
                         <ul class="list-unstyled">
                             <li ng-repeat="(name, _) in nameFilters">
-                                <span class="label label-primary" ng-click="removeNameFilter(name)">{{name}}</span>
+                                        <span class="label label-primary"
+                                              ng-click="removeNameFilter(name)">{{name}}</span>
                             </li>
                         </ul>
                     </div>
 
-                    <div class="form-group" ng-class="{ 'has-error': spectraQuery.newInchiFilter.$invalid }">
+                    <div class="form-group"
+                         ng-class="{ 'has-error': spectraQuery.newInchiFilter.$invalid }">
                         <label class="control-label" for="newInchiFilter">Filter by InChI Key</label>
 
                         <input id="newInchiFilter" name="newInchiFilter" ng-model="newInchiFilter"
                                placeholder="InChIKey"
-                               class="form-control" ng-keyup="$event.keyCode == 13 ? addInchiFilter() : null"
+                               class="form-control"
+                               ng-keyup="$event.keyCode == 13 ? addInchiFilter() : null"
                                ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/">
 
                         <ul class="list-unstyled">
                             <li ng-repeat="(inchi, _) in inchiFilters">
-                                <span class="label label-primary" ng-click="removeInchiFilter(inchi)">{{inchi}}</span>
+                                    <span class="label label-primary"
+                                          ng-click="removeInchiFilter(inchi)">{{inchi}}</span>
                             </li>
                         </ul>
                     </div>
 
-                    <div class="form-group" ng-class="{ 'has-error': spectraQuery.newInchiPartialFilter.$invalid }">
-                        <label class="control-label" for="newInchiPartialFilter">Filter by Partial InChI Key</label>
+                    <div class="form-group"
+                         ng-class="{ 'has-error': spectraQuery.newInchiPartialFilter.$invalid }">
+                        <label class="control-label" for="newInchiPartialFilter">Filter by Partial InChI
+                            Key</label>
 
-                        <input id="newInchiPartialFilter" name="newInchiPartialFilter" ng-model="newInchiPartialFilter"
+                        <input id="newInchiPartialFilter" name="newInchiPartialFilter"
+                               ng-model="newInchiPartialFilter"
                                placeholder="InChIKey"
-                               class="form-control" ng-keyup="$event.keyCode == 13 ? addPartialInchiFilter() : null"
+                               class="form-control"
+                               ng-keyup="$event.keyCode == 13 ? addPartialInchiFilter() : null"
                                ng-pattern="/^[A-Z,0-9,-]+$/">
 
                         <ul class="list-unstyled">
