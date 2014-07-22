@@ -158,9 +158,11 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
                     s.spectrum = spectra.spectrum;
 
-                    spectra.tags.forEach(function(e){
-                        s.tags.push(e);
-                    });
+                    if(angular.isDefined(spectra.tags)) {
+                        spectra.tags.forEach(function (e) {
+                            s.tags.push(e);
+                        });
+                    }
 
                     if (spectra.accurate) {
                         s.tags.push({'text': 'accurate'});
