@@ -9,8 +9,10 @@ var app = angular
         'wohlgemuth.msp.parser',
         'wohlgemuth.massbank.parser',
         'wohlgemuth.cts',
+        'angularMasspecPlotter',
         'angularFileUpload',
-        'infinite-scroll'
+        'infinite-scroll',
+        'mgcrea.bootstrap.affix'
     ]);
 
 
@@ -19,8 +21,8 @@ var app = angular
  */
 
 //app.constant('REST_BACKEND_SERVER', 'http://trashcan.fiehnlab.ucdavis.edu:8080');
-app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
-//app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
+//app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
+app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
 
 
 /**
