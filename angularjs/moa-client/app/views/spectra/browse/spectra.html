@@ -42,7 +42,7 @@
                          ng-model="spectrum.chemicalCompound"></div>
                 </td>
                 <td class="text-center">
-                    <chart id="massSpec_{{spectrum.id}}" mini class="mini" ng-model="spectrum"></chart>
+                    <div class="masspec-mini"><mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec></div>
                 </td>
             </tr>
             </tbody>
