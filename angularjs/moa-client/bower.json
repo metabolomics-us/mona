@@ -28,7 +28,8 @@
     "ng-file-upload": "~1.4.0",
     "ng-file-upload-shim": "~1.4.0",
     "metisMenu": "~1.0.1",
-    "angular-bootstrap-affix": "https://github.com/maxisam/angular-bootstrap-affix.git#0.2.1"
+    "angular-bootstrap-affix": "https://github.com/passy/angular-bootstrap-affix.git",
+    "angular-jquery": "~0.2.1"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",
