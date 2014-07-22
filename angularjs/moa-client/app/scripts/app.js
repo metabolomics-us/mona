@@ -9,6 +9,7 @@ var app = angular
         'wohlgemuth.msp.parser',
         'wohlgemuth.massbank.parser',
         'wohlgemuth.cts',
+        'angularMasspecPlotter',
         'angularFileUpload',
         'infinite-scroll',
         'mgcrea.bootstrap.affix'
