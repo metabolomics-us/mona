@@ -181,7 +181,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
                     s.submitter = submitter;
 
-//                    saveSpectrumCallback(s);
+                    saveSpectrumCallback(s);
 
                 });
 
