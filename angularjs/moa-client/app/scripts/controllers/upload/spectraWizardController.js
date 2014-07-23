@@ -38,7 +38,7 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * our current step where we are at
      * @type {number}
      */
-    $scope.step = 0;
+    $scope.step = 1;
 
     /**
      * this object contains all our generated data

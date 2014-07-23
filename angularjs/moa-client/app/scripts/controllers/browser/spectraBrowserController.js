@@ -201,6 +201,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.loadingMore = false;
 
+    /**
+     * loads more spectra into the given view
+     */
     $scope.loadMoreSpectra = function () {
         if ($scope.spectraLoadLength != $scope.spectra.length) {
             $scope.loadingMore = true;
@@ -228,6 +231,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * initialization and population of default values
      */
     (function list() {
+        $scope.spectra = [];
         $scope.loadTags();
     })();
 
