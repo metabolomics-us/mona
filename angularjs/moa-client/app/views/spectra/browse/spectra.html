@@ -1,13 +1,13 @@
 <div ng-value="error"></div>
 <div class="row">
-    <div class="col-md-7 col-sm-6 col-lg-7">
+    <div class="col-md-9 col-sm-6 col-lg-9">
         <table class="table table-hover" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()">
             <thead>
             <tr>
                 <th class="text-center">Name</th>
-                <th class="text-right">Bio. Structure</th>
-                <th class="text-right">Chem. Structure</th>
-                <th class="text-right">Spectrum</th>
+                <th class="text-right" style="width: 110px">Bio. Structure</th>
+                <th class="text-right" style="width: 110px">Chem. Structure</th>
+                <th class="text-right" style="width: 110px">Spectrum</th>
                 <th class="text-center">Accurate Mass</th>
 
             </tr>
@@ -17,20 +17,22 @@
             </tr>
             <tr ng-repeat="spectrum in filteredSpectra = (spectra | spectraQuery:this)"
                 ng-click="viewSpectrum($index)">
-                <td class="text-center">
+                <td>
                     <ul class="list-unstyled">
                         <li ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</li>
                     </ul>
                 </td>
-                <td class="text-right">
-                    <div chemical-sketcher readonly="true" width="100" height="100" id="bioSketch_{{spectrum.id}}"
+                <td>
+                    <div class="center-block" chemical-sketcher readonly="true" width="100" height="100"
+                         id="bioSketch_{{spectrum.id}}"
                          ng-model="spectrum.biologicalCompound"></div>
                 </td>
-                <td class="text-right">
-                    <div chemical-sketcher readonly="true" width="100" height="100" id="chemSketch_{{spectrum.id}}"
+                <td>
+                    <div class="center-block" chemical-sketcher readonly="true" width="100" height="100"
+                         id="chemSketch_{{spectrum.id}}"
                          ng-model="spectrum.chemicalCompound"></div>
                 </td>
-                <td class="text-right">
+                <td>
                     <div class="masspec-mini">
                         <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
                     </div>
@@ -48,18 +50,19 @@
     </div>
 
 
-    <div class="col-md-5 col-sm-6 col-lg-5">
-        <div id="filterBar" class='affix' data-offset-top="200" data-offset-bottom="300">
+    <div class="col-md-3 col-sm-6 col-lg-3">
+        <div id="filterBar" bs-affix data-offset-top="200" data-offset-bottom="300">
 
             <!-- search bar -->
             <button class="btn btn-primary" ng-click="querySpectraDialog()"><i
                     class="fa fa-search fa-fw"></i>Open Query Dialog
             </button>
 
+            <div class="top17"></div>
             <!-- filter by tags -->
             <form name="spectraQuery" role="form" class="form-vertical">
                 <fieldset>
-                    <legend>Filter</legend>
+                    <legend>refine result</legend>
 
                     <div class="form-group" ng-class="{ 'has-error': spectraQuery.newNameFilter.$invalid }">
                         <label class="control-label" for="newNameFilter">Filter by Name</label>

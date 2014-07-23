@@ -132,8 +132,6 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                     return ngModel.$modelValue;
                 }, function (newValue, oldValue) {
                     if ($scope.readonly == false) {
-
-                        $log.debug(newValue + ' vs ' + oldValue);
                         if (newValue != oldValue) {
                             getMoleculeForModel(newValue);
                         }

@@ -185,26 +185,47 @@ input[readonly] {
 //our used theme
 @import 'theme';
 
+/**
+ *5px top margin
+ */
 .top5 {
   margin-top: 5px;
 }
 
+/**
+ *7px top margin
+ */
 .top7 {
   margin-top: 7px;
 }
+
+/**
+ *10px top margin
+ */
 
 .top10 {
   margin-top: 10px;
 }
 
+/**
+ *15px top margin
+ */
+
 .top15 {
   margin-top: 15px;
 }
+
+/**
+ *17px top margin
+ */
 
 .top17 {
   margin-top: 17px;
 }
 
+/**
+ * 30px top margin
+ */
 .top30 {
   margin-top: 30px;
 }
@@ -216,6 +237,9 @@ input[readonly] {
   position: static;
 }
 
+/**
+ * configure our affix properties
+ */
 @media (min-width: 992px) {
 
   #filterBar.affix-top {
@@ -227,4 +251,11 @@ input[readonly] {
     top: 100px;
   }
 
+}
+
+/**
+ * override the web component and disable the border
+ */
+canvas.ChemDoodleWebComponent {
+  border: none;
 }

@@ -4,36 +4,78 @@
 </div>
 
 <div class="modal-body">
+
+    <!-- massspectral properties -->
     <div class="row">
-        <div class="masspec-modal">
-            <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
-        </div>
+        <tabset justified="true">
+            <tab heading="Massspec">
+
+                <div class="masspec-modal">
+                    <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
+                </div>
+            </tab>
+            <tab heading="Ion Table">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Ion</th>
+                        <th>Intensities</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr></tr>
+                    </tbody>
+                </table>
+            </tab>
+        </tabset>
     </div>
     <div class="row">
-        <div class="col-md-8">
-            <div>
-                <h4>Biological Compound Properties</h4>
-                <dl class="dl-horizontal compound-properties">
-                    <dt>ID:</dt>
-                    <dd>{{spectrum.biologicalCompound.id}}</dd>
-                    <dt>InChIKey:</dt>
-                    <dd>{{spectrum.biologicalCompound.inchiKey}}</dd>
-                    <dt ng-show="spectrum.biologicalCompound.names.length">Name(s):</dt>
-                    <dd ng-repeat="name in spectrum.biologicalCompound.names">{{name.name}}</dd>
-                </dl>
-            </div>
+        <dic class="col-md-12">
+            <tabset justified="true">
+                <tab heading="Biological Compound Properties">
 
-            <div>
-                <h4>Chemical Compound Properties</h4>
-                <dl class="dl-horizontal compound-properties">
-                    <dt>ID:</dt>
-                    <dd>{{spectrum.chemicalCompound.id}}</dd>
-                    <dt>InChIKey:</dt>
-                    <dd>{{spectrum.chemicalCompound.inchiKey}}</dd>
-                    <dt ng-show="spectrum.chemicalCompound.names.length">Name(s):</dt>
-                    <dd ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</dd>
-                </dl>
-            </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal compound-properties">
+                                <dt>ID:</dt>
+                                <dd>{{spectrum.biologicalCompound.id}}</dd>
+                                <dt>InChIKey:</dt>
+                                <dd>{{spectrum.biologicalCompound.inchiKey}}</dd>
+                                <dt ng-show="spectrum.biologicalCompound.names.length">Name(s):</dt>
+                                <dd ng-repeat="name in spectrum.biologicalCompound.names">{{name.name}}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
+                                 id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound"></div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="Chemical Compound Properties">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal compound-properties">
+                                <dt>ID:</dt>
+                                <dd>{{spectrum.chemicalCompound.id}}</dd>
+                                <dt>InChIKey:</dt>
+                                <dd>{{spectrum.chemicalCompound.inchiKey}}</dd>
+                                <dt ng-show="spectrum.chemicalCompound.names.length">Name(s):</dt>
+                                <dd ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
+                                 id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound"></div>
+                        </div>
+
+                    </div>
+
+                </tab>
+            </tabset>
+        </dic>
+        <div class="col-md-12">
 
             <div ng-show="spectrum.metaData.length">
                 <h4>Metadata</h4>
@@ -74,16 +116,6 @@
                 <h4>Comments</h4>
                 <blockquote><p style="font-size: 75%">{{spectrum.comments}}</p></blockquote>
             </div>
-        </div>
-        <div class="col-md-4">
-            <label>Biological Compound</label>
-
-            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
-                 id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound"></div>
-            <label>Chemical Compound</label>
-
-            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
-                 id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound"></div>
         </div>
     </div>
     <div class="modal-footer">
