@@ -14,18 +14,20 @@
                     <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
                 </div>
             </tab>
-            <tab heading="Ion Table">
-
+            <tab heading="Table of Ions">
                 <table class="table">
                     <thead>
                     <tr>
                         <th>Ion</th>
-                        <th>Intensities</th>
+                        <th>Intensity</th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    <tr></tr>
+                    <tr ng-repeat="ion in massSpec">
+                        <td>{{ion.ion}}</td>
+                        <td>{{ion.intensity}}</td>
+                    </tr>
                     </tbody>
                 </table>
             </tab>

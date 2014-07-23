@@ -17944,6 +17944,10 @@ ChemDoodle.RESIDUE = (function() {
 				break;
 			}
 		}
+
+        var highestRight = null;
+        var maxRight = null;
+
 		var highestLeft = highestRight = closest;
 		var maxLeft = maxRight = this.data[closest].y;
 		for ( var i = closest + 1, ii = this.data.length; i < ii; i++) {
@@ -21135,12 +21139,14 @@ ChemDoodle.RESIDUE = (function() {
 	'use strict';
 	structures.Plate = function(lanes) {
 		this.lanes = new Array(lanes);
+        var ii;
 		for (i = 0, ii = lanes; i < ii; i++) {
 			this.lanes[i] = [];
 		}
 	};
 	var _ = structures.Plate.prototype;
 	_.sort = function() {
+        var ii;
 		for (i = 0, ii = this.lanes.length; i < ii; i++) {
 			this.lanes[i].sort(function(a, b) {
 				return a - b;
@@ -21166,6 +21172,7 @@ ChemDoodle.RESIDUE = (function() {
 		ctx.closePath();
 		ctx.stroke();
 		// Lanes
+        var ii;
 		for (i = 0, ii = this.lanes.length; i < ii; i++) {
 			var laneX = (i + 1) * width / (ii + 1);
 			ctx.beginPath();

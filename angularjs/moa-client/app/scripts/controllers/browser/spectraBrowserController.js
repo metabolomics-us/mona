@@ -118,7 +118,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     /**
      * opens our modal dialog to query spectra against the system
      */
-    $scope.querySpectraDialog = function(){
+    $scope.querySpectraDialog = function () {
         var modalInstance = $modal.open({
             templateUrl: '/views/spectra/query/query.html',
             controller: moaControllers.QuerySpectrumModalController,
@@ -143,8 +143,32 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             size: 'lg',
             backdrop: 'true',
             resolve: {
+                /**
+                 * assign the spectra object
+                 * @returns {*}
+                 */
                 spectrum: function () {
                     return $scope.spectra[index];
+                },
+                /**
+                 * build a simple representaion of the massspectra
+                 */
+                massSpec: function () {
+                    var spec = $scope.spectra[index];
+
+                    var regex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
+
+                    var match = regex.exec(spec.spectrum);
+
+                    var result = [];
+
+                    while (match != null) {
+
+                        result.push({ion: match[1], intensity: match[2]});
+                        match = regex.exec(spec.spectrum);
+                    }
+
+                    return result;
                 }
             }
         });
@@ -195,7 +219,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     if ($routeParams.inchikey)
         $scope.submitQuery(SpectraQueryBuilderService.compileQuery({inchiFilter: $routeParams.inchikey}, {}));
 
-    
+
     /**
      * loads more spectra into the view using our query object
      */
