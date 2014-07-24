@@ -108,43 +108,6 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
             return metadata;
         }
 
-        /**
-         * converts all the flow rates
-         * @param metadata
-         * @returns {*}
-         */
-        function convertFlowRate(metadata) {
-
-            /**
-             * regular expression to find regex metadata field
-             * @type {number}
-             */
-            var regex = /flow[ -_]?rate/i;
-
-            /**
-             * retetnion with minutes
-             * @type {RegExp}
-             */
-            var regexMinutes = /^(?:add.*)?([0-9]+\.?[0-9]+).*ml\/min$/i;
-
-            var regexMicroMinutes = /^(?:add.*)?([0-9]+\.?[0-9]+).*ul\/min$/i;
-
-            if (regex.test(metadata.name)) {
-                if (regexMinutes.test(metadata.value)) {
-                    metadata.value = regexMinutes.exec(metadata.value)[1];
-                }
-                else if (regexMicroMinutes.test(metadata.value)) {
-                    metadata.value = regexMicroMinutes.exec(metadata.value)[1] / 1000;
-                }
-
-                else {
-                    $log.warn("invalid pattern, skipped: " + $filter('json')(metadata));
-                }
-
-                metadata.unit = "ml/min";
-            }
-            return metadata;
-        }
 
         /**
          * checks for collision energy and converts it
@@ -153,11 +116,17 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
          */
         function convertUnits(metadata) {
 
-            var regexEv = /^([0-9]+\.?[0-9]+).*ev$/i;
-            var regexPercent = /^([0-9]+\.?[0-9]+).*\%(?:.*\(nominal\))?/i;
-            var regexV = /^([0-9]+\.?[0-9]+).*v$/i;
-            var regexC = /^([0-9]+\.?[0-9]+).*c$/i;
-            var regexKpa = /^([0-9]+\.?[0-9]+).*kpa$/i;
+            var regexEv = /^\+?(-?[0-9]+\.?[0-9]+).*ev$/i;
+            var regexPercent = /^\+?(-?[0-9]+\.?[0-9]*)\s*\%(?:\s\(nominal\)$)?/i;
+            var regexV = /^\+?(-?[0-9]+\.?[0-9]*).*v$/i;
+            var regexC = /^\+?(-?[0-9]+\.?[0-9]*).*c$/i;
+            var regexKpa = /^\+?(-?[0-9]+\.?[0-9]*).*kpa$/i;
+            var regexMa = /^\+?(-?[0-9]+\.?[0-9]*).*mA$/i;
+            var regexKv = /^\+?(-?[0-9]+\.?[0-9]*).*kv$/i;
+            var regexFlowMinutes = /^(?:add.*)?\+?(-?[0-9]+\.?[0-9]*).*ml\/min$/i;
+            var regexFlowMicroMinutes = /^(?:add.*)?\+?(-?[0-9]+\.?[0-9]*).*ul\/min$/i;
+            var regexScanBysec = /^\+?(-?[0-9]+\.?[0-9]*).*sec\/scan.*$/i;
+
 
             if (regexEv.test(metadata.value)) {
                 metadata.value = regexEv.exec(metadata.value)[1];
@@ -175,10 +144,29 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                 metadata.value = regexC.exec(metadata.value)[1];
                 metadata.unit = "C";
             }
-
             else if (regexKpa.test(metadata.value)) {
                 metadata.value = regexKpa.exec(metadata.value)[1];
                 metadata.unit = "kPa";
+            }
+            else if (regexMa.test(metadata.value)) {
+                metadata.value = regexMa.exec(metadata.value)[1];
+                metadata.unit = "mA";
+            }
+            else if (regexKv.test(metadata.value)) {
+                metadata.value = regexKv.exec(metadata.value)[1] * 1000;
+                metadata.unit = "V";
+            }
+            else if (regexFlowMinutes.test(metadata.value)) {
+                metadata.value = regexFlowMinutes.exec(metadata.value)[1];
+                metadata.unit = "ml/min";
+            }
+            else if (regexFlowMicroMinutes.test(metadata.value)) {
+                metadata.value = regexFlowMicroMinutes.exec(metadata.value)[1] / 1000;
+                metadata.unit = "ml/min";
+            }
+            else if (regexScanBysec.test(metadata.value)) {
+                metadata.value = regexScanBysec.exec(metadata.value)[1] / 1000;
+                metadata.unit = "sec/scan";
             }
 
             return metadata;
@@ -210,7 +198,6 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                 if (ignored === false) {
                     object = convertName(object);
                     object = convertRetentionTimeToSeconds(object);
-                    object = convertFlowRate(object);
                     object = convertUnits(object);
 
                     if (object != null) {
