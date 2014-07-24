@@ -37,7 +37,11 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
             'chebi',
             'hmdb',
             'nikkaji',
-            'chempdb'
+            'chempdb',
+            'inchikey',
+            'casno',
+            'mw',
+            'comments'
         ];
 
         /**
@@ -121,16 +125,16 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
              * retetnion with minutes
              * @type {RegExp}
              */
-            var regexMinutes = /([0-9]+\.?[0-9]+).*ml\/min/i;
+            var regexMinutes = /^([0-9]+\.?[0-9]+).*ml\/min/i;
 
-            var regexMicroMinutes = /([0-9]+\.?[0-9]+).*ul\/min/i;
+            var regexMicroMinutes = /^([0-9]+\.?[0-9]+).*ul\/min/i;
 
             if (regex.test(metadata.name)) {
                 if (regexMinutes.test(metadata.value)) {
                     metadata.value = regexMinutes.exec(metadata.value)[1];
                 }
                 else if (regexMicroMinutes.test(metadata.value)) {
-                    metadata.value = regexMicroMinutes.exec(metadata.value)[1]/1000;
+                    metadata.value = regexMicroMinutes.exec(metadata.value)[1] / 1000;
                 }
 
                 else {
@@ -147,14 +151,36 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
          * @param metadata
          * @returns {*}
          */
-        function convertCollisionEnergy(metadata) {
+        function convertUnits(metadata) {
 
-            var regex = /([0-9]+\.?[0-9]+).*ev/i;
+            var regexEv = /^([0-9]+\.?[0-9]+).*ev$/i;
+            var regexPercent = /^([0-9]+\.?[0-9]+).*\%(?:.*\(nominal\))?/i;
+            var regexV = /^([0-9]+\.?[0-9]+).*v$/i;
+            var regexC = /^([0-9]+\.?[0-9]+).*c$/i;
+            var regexKpa = /^([0-9]+\.?[0-9]+).*kpa$/i;
 
-            if (regex.test(metadata.value)) {
-                metadata.value = regex.exec(metadata.value)[1];
+            if (regexEv.test(metadata.value)) {
+                metadata.value = regexEv.exec(metadata.value)[1];
                 metadata.unit = "eV";
             }
+            else if (regexPercent.test(metadata.value)) {
+                metadata.value = regexPercent.exec(metadata.value)[1];
+                metadata.unit = "%";
+            }
+            else if (regexV.test(metadata.value)) {
+                metadata.value = regexV.exec(metadata.value)[1];
+                metadata.unit = "V";
+            }
+            else if (regexC.test(metadata.value)) {
+                metadata.value = regexC.exec(metadata.value)[1];
+                metadata.unit = "C";
+            }
+
+            else if (regexKpa.test(metadata.value)) {
+                metadata.value = regexKpa.exec(metadata.value)[1];
+                metadata.unit = "kPa";
+            }
+
             return metadata;
         }
 
@@ -185,7 +211,7 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                     object = convertName(object);
                     object = convertRetentionTimeToSeconds(object);
                     object = convertFlowRate(object);
-                    object = convertCollisionEnergy(object);
+                    object = convertUnits(object);
 
                     if (object != null) {
                         result.push(object);
