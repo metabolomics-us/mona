@@ -95,9 +95,12 @@ class SpectraPersistenceService {
             //println("\t==>\tsave:${metaData}")
             category.save(flush:true)
 
-
             MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())//MetaDataValueHelper.getValueObject(current.value)
 
+            //if an unit is associated let's update it
+            if(current.unit != null){
+                metaDataValue.unit = current.unit
+            }
             try {
                 if (metaDataValue instanceof DoubleMetaDataValue) {
                     if (metaData.type == null) {
@@ -115,7 +118,7 @@ class SpectraPersistenceService {
                             throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean', but is of type: ${metaData.type}");
                         }
                     }
-                } else {
+                } else   {
                     if (metaData.type == null) {
                         metaData.type = "string";
                     } else {
