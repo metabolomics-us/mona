@@ -4,27 +4,9 @@
 'use strict';
 
 /**
- * a simple service to validate metadata and filter objects we don't really want to persist
+ * general service to optimize metadata and take care of some formating issues
  */
 app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q, $timeout, $filter) {
-
-        /**
-         * regular expression to find regex metadata field
-         * @type {number}
-         */
-        var regex = /retention[ -_]?time/i;
-
-        /**
-         * retetnion with minutes
-         * @type {RegExp}
-         */
-        var regexMinutes = /([0-9]+\.?[0-9]+).*min/;
-
-        /**
-         * retention time with seconds
-         * @type {RegExp}
-         */
-        var regexSeconds = /([0-9]+\.?[0-9]+).*s/;
 
         /**
          * numeric value
@@ -65,6 +47,24 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
          */
         function convertRetentionTimeToSeconds(metadata) {
 
+            /**
+             * regular expression to find regex metadata field
+             * @type {number}
+             */
+            var regex = /retention[ -_]?time/i;
+
+            /**
+             * retetnion with minutes
+             * @type {RegExp}
+             */
+            var regexMinutes = /([0-9]+\.?[0-9]+).*min/;
+
+            /**
+             * retention time with seconds
+             * @type {RegExp}
+             */
+            var regexSeconds = /([0-9]+\.?[0-9]+).*s/;
+
             if (regex.test(metadata.name)) {
                 if (regexMinutes.test(metadata.value)) {
                     metadata.value = regexMinutes.exec(metadata.value)[1] * 60;
@@ -83,6 +83,71 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                         $log.warn("invalid pattern, skipped: " + $filter('json')(metadata));
                     }
                 }
+
+                metadata.unit = "s";
+            }
+            return metadata;
+        }
+
+        /**
+         * converts the name and category
+         * @param metadata
+         */
+        function convertName(metadata) {
+
+            metadata.name = metadata.name.replace(/_/g, " ").toLowerCase();
+
+            if (angular.isDefined(metadata.category)) {
+                metadata.category = metadata.category.replace(/_/g, " ").toLowerCase();
+
+            }
+            return metadata;
+        }
+
+        /**
+         * converts all the flow rates
+         * @param metadata
+         * @returns {*}
+         */
+        function convertFlowRate(metadata) {
+
+            /**
+             * regular expression to find regex metadata field
+             * @type {number}
+             */
+            var regex = /flow[ -_]?rate/i;
+
+            /**
+             * retetnion with minutes
+             * @type {RegExp}
+             */
+            var regexMinutes = /([0-9]+\.?[0-9]+).*ml\/min/i;
+
+            if (regex.test(metadata.name)) {
+                if (regexMinutes.test(metadata.value)) {
+                    metadata.value = regexMinutes.exec(metadata.value)[1];
+                }
+                else {
+                    $log.warn("invalid pattern, skipped: " + $filter('json')(metadata));
+                }
+
+                metadata.unit = "ml/min";
+            }
+            return metadata;
+        }
+
+        /**
+         * checks for collision energy and converts it
+         * @param metadata
+         * @returns {*}
+         */
+        function convertCollisionEnergy(metadata) {
+
+            var regex = /([0-9]+\.?[0-9]+).*ev/i;
+
+            if (regex.test(metadata.value)) {
+                metadata.value = regex.exec(metadata.value)[1];
+                metadata.unit = "eV";
             }
             return metadata;
         }
@@ -105,13 +170,16 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                 var ignored = false;
 
                 for (var x in ignore) {
-                    if (object.name === ignore[x]) {
+                    if (object.name.toLowerCase() === ignore[x].toLowerCase()) {
                         ignored = true;
                     }
                 }
 
                 if (ignored === false) {
+                    object = convertName(object);
                     object = convertRetentionTimeToSeconds(object);
+                    object = convertFlowRate(object);
+                    object = convertCollisionEnergy(object);
 
                     if (object != null) {
                         result.push(object);
