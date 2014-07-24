@@ -182,7 +182,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                     s.submitter = submitter;
 
                     $log.info($filter('json')(s));
-//                    saveSpectrumCallback(s);
+                    saveSpectrumCallback(s);
 
                 });
 
