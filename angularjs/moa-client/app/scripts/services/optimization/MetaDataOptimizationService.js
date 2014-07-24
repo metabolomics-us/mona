@@ -41,7 +41,10 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
             'inchikey',
             'casno',
             'mw',
-            'comments'
+            'comments',
+            'kappaview',
+            'lipidmaps',
+            'internal standard'
         ];
 
         /**

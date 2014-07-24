@@ -9,7 +9,10 @@ class CategoryNameFinderService {
      * @param metaDataKey
      * @return
      */
-    def synchronized findCategoryNameForMetaDataKey(String metaDataKey) {
+    def synchronized findCategoryNameForMetaDataKey(String metaDataKey, String providedCategoryName = null) {
+        if(providedCategoryName != null && providedCategoryName.length() > 0){
+            return providedCategoryName;
+        }
        return MetaDataCategory.DEFAULT_CATEGORY_NAME
     }
 }

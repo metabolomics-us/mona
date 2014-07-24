@@ -41,6 +41,8 @@ class SpectraPersistenceService {
         if (spectrum.validate()) {
             spectrum.save(flush: true)
 
+            spectrum.lock()
+            //spectrum.lock()
             def tags = json.tags
 
             //adding our tags
@@ -50,7 +52,7 @@ class SpectraPersistenceService {
 
             //actually assemble them
             buildMetaData(spectrum, json.metaData)
-            spectrum.save()
+            spectrum.save(flush:true)
 
         } else {
             log.warn(spectrum.errors)
@@ -76,29 +78,34 @@ class SpectraPersistenceService {
 
             String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
 
-            MetaDataCategory category = MetaDataCategory.findOrSaveByName(categoryNameFinderService.findCategoryNameForMetaDataKey(metaDataName))
+            String categoryName = categoryNameFinderService.findCategoryNameForMetaDataKey(metaDataName, current.category)
 
-            //println("working on category: ${category}\t${category.validate()}")
-            category.save(flush:true)
+            MetaDataCategory category = MetaDataCategory.findOrSaveByName(categoryName)
+
+            println("working on category: ${category}\t${category.validate()} with value: ${category.name}")
+            category.save(flush: true)
             try {
                 category.lock()
             }
-            catch (e){
+            catch (e) {
                 def newCat = MetaDataCategory.lock(category.id)
                 category = newCat
             }
-            //println("\t=>\tsave:${category}")
+            println("\t=>\tsave:${category}")
+
             MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
             category.addToMetaDatas(metaData)
-            //println("\t==>\tworking on metadata: ${metaData}\t${metaData.validate()}")
-            metaData.save(flush:true)
-            //println("\t==>\tsave:${metaData}")
-            category.save(flush:true)
 
-            MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())//MetaDataValueHelper.getValueObject(current.value)
+            println("\t==>\tworking on metadata: ${metaData}\t${metaData.validate()}")
+            metaData.save(flush: true)
+            println("\t==>\tsave:${metaData}")
+            category.save(flush: true)
+
+            MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
+//MetaDataValueHelper.getValueObject(current.value)
 
             //if an unit is associated let's update it
-            if(current.unit != null){
+            if (current.unit != null) {
                 metaDataValue.unit = current.unit
             }
             try {
@@ -118,7 +125,7 @@ class SpectraPersistenceService {
                             throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean', but is of type: ${metaData.type}");
                         }
                     }
-                } else   {
+                } else {
                     if (metaData.type == null) {
                         metaData.type = "string";
                     } else {
@@ -135,11 +142,10 @@ class SpectraPersistenceService {
                 log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
             }
 
-            //println("\t===>\tworking on value: ${metaDataValue}")
+            println("\t===>\tworking on value: ${metaDataValue}")
 
-            metaDataValue.save()
+            metaDataValue.save(flush: true)
         }
-
     }
 /**
  * builds our internal compound object
@@ -147,7 +153,7 @@ class SpectraPersistenceService {
  * @return
  */
     @Transactional
-    private Compound buildCompound(Compound compound) {
+    private synchronized Compound buildCompound(Compound compound) {
         def names = compound.names
 
         //first get the compound we want
