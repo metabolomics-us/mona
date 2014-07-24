@@ -123,10 +123,16 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
              */
             var regexMinutes = /([0-9]+\.?[0-9]+).*ml\/min/i;
 
+            var regexMicroMinutes = /([0-9]+\.?[0-9]+).*ul\/min/i;
+
             if (regex.test(metadata.name)) {
                 if (regexMinutes.test(metadata.value)) {
                     metadata.value = regexMinutes.exec(metadata.value)[1];
                 }
+                else if (regexMicroMinutes.test(metadata.value)) {
+                    metadata.value = regexMicroMinutes.exec(metadata.value)[1]/1000;
+                }
+
                 else {
                     $log.warn("invalid pattern, skipped: " + $filter('json')(metadata));
                 }
