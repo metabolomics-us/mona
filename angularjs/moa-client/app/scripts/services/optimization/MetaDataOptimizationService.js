@@ -123,8 +123,8 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
             var regexKpa = /^\+?(-?[0-9]+\.?[0-9]*).*kpa$/i;
             var regexMa = /^\+?(-?[0-9]+\.?[0-9]*).*mA$/i;
             var regexKv = /^\+?(-?[0-9]+\.?[0-9]*).*kv$/i;
-            var regexFlowMinutes = /^(?:add.*)?\+?(-?[0-9]+\.?[0-9]*).*ml\/min$/i;
-            var regexFlowMicroMinutes = /^(?:add.*)?\+?(-?[0-9]+\.?[0-9]*).*ul\/min$/i;
+            var regexFlowMinutes = /^(?:add +)?\+?(-?[0-9]+\.?[0-9]*).*ml\/min$/i;
+            var regexFlowMicroMinutes = /^(?:add +)?\+?(-?[0-9]+\.?[0-9]*).*ul\/min$/i;
             var regexScanBysec = /^\+?(-?[0-9]+\.?[0-9]*).*sec\/scan.*$/i;
 
 
