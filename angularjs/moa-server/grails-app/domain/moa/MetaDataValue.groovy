@@ -10,6 +10,11 @@ class MetaDataValue {
 
     Serializable value
 
+    /**
+     * unit it's stored in
+     */
+    String unit
+
     static belongsTo = [metaData: MetaData, spectrum:Spectrum]
 
     static mapping = {
@@ -18,6 +23,7 @@ class MetaDataValue {
     static constraints = {
         metaData nullable: true
         spectrum nullable: true
+        unit nullable: true
     }
 
     /**
