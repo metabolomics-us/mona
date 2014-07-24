@@ -125,9 +125,9 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
              * retetnion with minutes
              * @type {RegExp}
              */
-            var regexMinutes = /^([0-9]+\.?[0-9]+).*ml\/min/i;
+            var regexMinutes = /^(?:add.*)?([0-9]+\.?[0-9]+).*ml\/min$/i;
 
-            var regexMicroMinutes = /^([0-9]+\.?[0-9]+).*ul\/min/i;
+            var regexMicroMinutes = /^(?:add.*)?([0-9]+\.?[0-9]+).*ul\/min$/i;
 
             if (regex.test(metadata.name)) {
                 if (regexMinutes.test(metadata.value)) {
