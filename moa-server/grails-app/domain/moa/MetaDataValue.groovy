@@ -18,6 +18,7 @@ class MetaDataValue {
     static belongsTo = [metaData: MetaData, spectrum:Spectrum]
 
     static mapping = {
+        version false
     }
 
     static constraints = {

@@ -62,8 +62,9 @@ class SpectraPersistenceService {
      * @parm json - json definition of the metadata
      * @return
      */
-    private synchronized void buildMetaData(Spectrum object, def json) {
+    private void buildMetaData(Spectrum object, def json) {
 
+        log.debug("generating meta data")
         //remove existing metadata from the object
 
         json.each { current ->
@@ -72,24 +73,12 @@ class SpectraPersistenceService {
 
             MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
 
-            try {
-                category.lock()
-            }
-            catch (e) {
-                def newCat = MetaDataCategory.lock(category.id)
-                category = newCat
-            }
-//            println("working on category: ${category}\t${category.validate()} with value: ${category.name}")
-
-//            println("\t=>\tsave:${category}")
 
             MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
             category.addToMetaDatas(metaData)
 
-//            println("\t==>\tworking on metadata: ${metaData}\t${metaData.validate()}")
-            metaData.save(flush: true)
-//            println("\t==>\tsave:${metaData}")
-            category.save(flush: true)
+            metaData.save()
+            category.save()
 
             MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
 //MetaDataValueHelper.getValueObject(current.value)
@@ -97,7 +86,12 @@ class SpectraPersistenceService {
             //if an unit is associated let's update it
             if (current.unit != null) {
                 metaDataValue.unit = current.unit
+
+                if (!metaData.requiresUnit) {
+                    metaData.requiresUnit = true
+                }
             }
+
             try {
                 if (metaDataValue instanceof DoubleMetaDataValue) {
                     if (metaData.type == null) {
@@ -134,7 +128,9 @@ class SpectraPersistenceService {
 
 //            println("\t===>\tworking on value: ${metaDataValue}")
 
-            metaDataValue.save(flush: true)
+            log.debug("${metaDataValue.category}:${metaDataValue.name}:${metaDataValue.value}:${metaDataValue.unit}")
+
+            metaDataValue.save()
         }
     }
 /**
@@ -142,14 +138,25 @@ class SpectraPersistenceService {
  * @param compound
  * @return
  */
-    private synchronized Compound buildCompound(Compound compound) {
+    private Compound buildCompound(Compound compound) {
+
         def names = compound.names
 
-        //first get the compound we want
-        def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey, [lock: true])
+        log.debug("trying to generate compound: ${compound.inchiKey}")
 
-        //lets lock it
-        myCompound = Compound.lock(myCompound.id)
+        //first get the compound we want
+        def myCompound = Compound.findByInchiKey(compound.inchiKey)
+
+        if (!myCompound) {
+            Compound.withTransaction {
+                myCompound = new Compound(inchiKey: compound.inchiKey)
+                myCompound.save()
+            }
+        }
+
+        myCompound.lock()
+
+        log.debug("==> done: ${myCompound}")
 
         //merge new names
         names.each { name ->
@@ -160,9 +167,12 @@ class SpectraPersistenceService {
         }
 
         myCompound.molFile = compound.molFile
-        myCompound.save(flush: true)
+        myCompound.save()
+
 
         return myCompound;
+
+
     }
 
 }

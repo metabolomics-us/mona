@@ -10,6 +10,7 @@ class Compound {
     static mapping = {
         inchiKey index: true, indexAttributes: [unique: true]
         molFile sqlType: "text"
+        version false
     }
     /**
      * this compound belongs to one spectrum

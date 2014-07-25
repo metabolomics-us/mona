@@ -45,6 +45,14 @@ class SpectraQueryService {
 
     }
 
+    /**
+     * does searches by tag field
+     * @param json
+     * @param queryOfDoomWhere
+     * @param queryOfDoomJoins
+     * @param executionParams
+     * @return
+     */
     private List handleJsonTagsField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
 //handling tags
         if (json.tags) {
@@ -79,6 +87,14 @@ class SpectraQueryService {
 
     }
 
+    /**
+     * does the searches by metadata field
+     * @param json
+     * @param queryOfDoomWhere
+     * @param queryOfDoomJoins
+     * @param executionParams
+     * @return
+     */
     private List handleJsonMetadataField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
 //if we have a metadata object specified
         if (json.metadata) {
@@ -207,9 +223,9 @@ class SpectraQueryService {
                     impl = estimateMetaDataValueImpl(current.value.unit.toString())
 
                     //equality search
-                    queryOfDoomWhere += " mdv_unit_${index}.${impl.name} = :metaDataImplUnitValue_${index}"
+                    queryOfDoomWhere += "and  mdv_${index}.unit = :metaDataUnitValue_${index}"
 
-                    executionParams.put(" = :metaDataImplUnitValue_${index}".toString(), current.value.unit);
+                    executionParams.put("metaDataUnitValue_${index}".toString(), current.value.unit);
 
                 }
                 queryOfDoomWhere += ")"
@@ -220,6 +236,14 @@ class SpectraQueryService {
         [queryOfDoomWhere, queryOfDoomJoins]
     }
 
+    /**
+     * does the searches for us after compounds
+     * @param json
+     * @param queryOfDoomWhere
+     * @param queryOfDoomJoins
+     * @param executionParams
+     * @return
+     */
     private List handleJsonCompoundField(json, String queryOfDoomWhere, String queryOfDoomJoins, LinkedHashMap executionParams) {
 //if we have a compound
         if (json.compound) {

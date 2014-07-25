@@ -87,7 +87,7 @@ log4j = {
     // Example of changing the log pattern for the default console appender:
     //
     appenders {
-        console name: 'stdout', layout: pattern(conversionPattern: '%5p %c{1} - %m%n')
+        console name: 'stdout', layout: pattern(conversionPattern: '[%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n')
     }
 
     root {
@@ -107,6 +107,7 @@ log4j = {
             'org.hibernate',
             'net.sf.ehcache.hibernate'
 
+
     environments {
         test {
             debug stdout:
@@ -114,6 +115,9 @@ log4j = {
         }
 
         development {
+
+            info 'grails.app.services.moa.server.CategoryNameFinderService'
+
             debug 'grails.app'
     //        debug 'org.hibernate.SQL'
     //        trace 'org.hibernate.type.descriptor.sql.BasicBinder'
