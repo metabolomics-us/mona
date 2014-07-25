@@ -6,16 +6,17 @@ class MetaData {
     static constraints = {
         name blank: false
         value nullable: true
+        searchable nullable: true
+        requiresUnit nullable: true
     }
 
     static mapping = {
         name sqlType: "varchar(100)"
-
     }
 
-    static  belongsTo = [category:MetaDataCategory]
+    static belongsTo = [category: MetaDataCategory]
 
-    static hasMany = [value:MetaDataValue]
+    static hasMany = [value: MetaDataValue]
     /**
      * the key for this metadata
      */
@@ -31,4 +32,13 @@ class MetaData {
      */
     Set<MetaDataValue> value
 
+    /**
+     * is this metadata object searchable
+     */
+    boolean searchable = true
+
+    /**
+     * does this metadata object requires a unit or is the unit optional
+     */
+    boolean requiresUnit = false
 }

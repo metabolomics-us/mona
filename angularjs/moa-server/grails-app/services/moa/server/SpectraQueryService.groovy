@@ -218,6 +218,17 @@ class SpectraQueryService {
                     throw new QueryException("invalid query term: ${current.value}")
                 }
 
+
+                //support for units
+                if(current.value.unit != null){
+                    impl = estimateMetaDataValueImpl(current.value.unit.toString())
+
+                    //equality search
+                    queryOfDoomWhere += " mdv_unit_${index}.${impl.name} = :metaDataImplUnitValue_${index}"
+
+                    executionParams.put(" = :metaDataImplUnitValue_${index}".toString(), current.value.unit);
+
+                }
                 queryOfDoomWhere += ")"
 
 
