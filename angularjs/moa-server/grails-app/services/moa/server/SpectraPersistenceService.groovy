@@ -16,38 +16,38 @@ class SpectraPersistenceService {
      * @param params
      * @return
      */
-    public synchronized Spectrum create(def json) {
+    public synchronized Spectrum create(Map json) {
 
-       Spectrum spectrum = new Spectrum(json)
+        Spectrum spectrum = new Spectrum(json)
 
-        	//we build the metadata rather our self
-        	spectrum.metaData = [];
+        //we build the metadata rather our self
+        spectrum.metaData = [];
 
-        	//we build the tags our self
-        	spectrum.tags = [];
+        //we build the tags our self
+        spectrum.tags = [];
 
-        	//we only care about refreshing the submitter by it's email address since it's unique
-        	spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
+        //we only care about refreshing the submitter by it's email address since it's unique
+        spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
 
-        	//we need to ensure we don't double generate compound
-        	spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
-        	spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
+        //we need to ensure we don't double generate compound
+        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
+        spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
 
-        	if (spectrum.validate()){
-           		spectrum.save(flush: true)
-            		spectrum.lock()
-            		def tags = json.tags
+        if (spectrum.validate()) {
+            spectrum.save(flush: true)
+            spectrum.lock()
+            def tags = json.tags
 
-            		//adding our tags
-            		tags.each {
-				Tag tag = Tag.findOrSaveByText(it.text)
-				tag.refresh()
-                		spectrum.addToTags(tag)
-            		}
+            //adding our tags
+            tags.each {
+                Tag tag = Tag.findOrSaveByText(it.text)
+                tag.refresh()
+                spectrum.addToTags(tag)
+            }
 
-        	} else {
-        		log.warn(spectrum.errors)
-        	}
+        } else {
+            log.warn(spectrum.errors)
+        }
 
         buildMetaData(spectrum, json.metaData)
 
@@ -72,7 +72,7 @@ class SpectraPersistenceService {
 
             MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
 
-	    try{
+            try {
                 category.lock()
             }
             catch (e) {

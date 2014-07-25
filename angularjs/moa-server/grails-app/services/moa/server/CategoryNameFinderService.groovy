@@ -10,7 +10,7 @@ class CategoryNameFinderService {
      * @return
      */
     def synchronized findCategoryForMetaDataKey(String metaDataKey, String providedCategoryName = null) {
-	
+
         String name = ""
 
         if (providedCategoryName != null && providedCategoryName.length() > 0) {
@@ -18,9 +18,9 @@ class CategoryNameFinderService {
         }
         name = MetaDataCategory.DEFAULT_CATEGORY_NAME
 
-        MetaDataCategory category = MetaDataCategory.findOrSaveByName(name,[lock:true])
-	category.refresh()
-        category.save(flush:true)
+        MetaDataCategory category = MetaDataCategory.findOrSaveByName(name, [lock: true])
+        category.refresh()
+        category.save(flush: true)
 
         return category
     }
