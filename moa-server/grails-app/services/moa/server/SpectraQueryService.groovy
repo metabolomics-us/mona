@@ -1,14 +1,8 @@
 package moa.server
-
 import grails.transaction.Transactional
-import moa.MetaDataValue
 import moa.Spectrum
 import moa.Tag
-import moa.meta.BooleanMetaDataValue
-import moa.meta.DoubleMetaDataValue
-import moa.meta.StringMetaDataValue
 import org.hibernate.QueryException
-import util.MetaDataValueHelper
 
 @Transactional
 class SpectraQueryService {
@@ -35,68 +29,58 @@ class SpectraQueryService {
         //our defined execution parameters
         def executionParams = [:]
 
-        //if we have a compound
-        if (json.compound) {
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonCompoundField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
-            //if we have a compound name
-            if (json.compound.name) {
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonMetadataField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
-                if (queryOfDoomWhere.empty) {
-                    queryOfDoomWhere = " where "
-                }
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonTagsField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
-                queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
-                queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
+        //assemble the query of doom
+        queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
-                //if we have a like condition specified
-                if (json.compound.name.like) {
-                    queryOfDoomWhere += "(bcn.name like :compoundName or ccn.name like :compoundName)"
-                    executionParams.compoundName = "%${json.compound.name.like}%"
-                }
+        log.info("generated doom query: \n\n${queryOfDoom}\n\n")
+        log.info("parameter matrix:\n\n ${executionParams}")
 
-                //if we have an equals condition specified
-                else if (json.compound.name.eq) {
-                    queryOfDoomWhere += "(bcn.name = :compoundName or ccn.name = :compoundName)"
-                    executionParams.compoundName = json.compound.name.eq
+        return Spectrum.executeQuery(queryOfDoom, executionParams, params)
 
-                }
-                //well we don't know this, do we?
-                else {
-                    throw new QueryException("invalid query term: ${json.compound.name}")
-                }
-            }
+    }
 
-            //if we have an inchi key
-            if (json.compound.inchiKey) {
+    private List handleJsonTagsField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+//handling tags
+        if (json.tags) {
+
+            if (json.tags.length() > 0) {
 
                 if (queryOfDoomWhere.empty) {
                     queryOfDoomWhere = " where "
                 }
 
-                //we have alreay another term, so let's add an and
-                if (!queryOfDoomWhere.equals(" where ")) {
-                    queryOfDoomWhere += " and "
+                json.tags.eachWithIndex { current, index ->
+
+                    //add our tag join
+                    queryOfDoomJoins += " left join s.tags as t_${index}"
+
+                    //if there is something in the where clause we need an and
+                    if (!queryOfDoomWhere.equals(" where ")) {
+                        queryOfDoomWhere += " and "
+                    }
+
+                    //build our specific query
+                    queryOfDoomWhere += " t_${index}.text = :tag_${index}"
+
+                    executionParams.put("tag_${index}".toString(), current.toString());
+
                 }
 
-                queryOfDoomJoins += " left join s.biologicalCompound as bc"
-                queryOfDoomJoins += " left join s.chemicalCompound as cc"
-
-                if (json.compound.inchiKey.eq) {
-
-                    queryOfDoomWhere += "(bc.inchiKey = :inchiKey or cc.inchiKey = :inchiKey)"
-                    executionParams.inchiKey = json.compound.inchiKey.eq
-                } else if (json.compound.inchiKey.like) {
-
-                    queryOfDoomWhere += "(bc.inchiKey like :inchiKey or cc.inchiKey like :inchiKey)"
-                    executionParams.inchiKey = "%${json.compound.inchiKey.like}%"
-                } else {
-                    throw new QueryException("invalid query term: ${json.compound.inchiKey}")
-                }
 
             }
         }
+        [queryOfDoomWhere, queryOfDoomJoins]
 
-        //if we have a metadata object specified
+    }
+
+    private List handleJsonMetadataField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+//if we have a metadata object specified
         if (json.metadata) {
 
             if (json.metadata.length() > 0) {
@@ -218,9 +202,8 @@ class SpectraQueryService {
                     throw new QueryException("invalid query term: ${current.value}")
                 }
 
-
                 //support for units
-                if(current.value.unit != null){
+                if (current.value.unit != null) {
                     impl = estimateMetaDataValueImpl(current.value.unit.toString())
 
                     //equality search
@@ -234,45 +217,71 @@ class SpectraQueryService {
 
             }
         }
+        [queryOfDoomWhere, queryOfDoomJoins]
+    }
 
-        //handling tags
-        if (json.tags) {
+    private List handleJsonCompoundField(json, String queryOfDoomWhere, String queryOfDoomJoins, LinkedHashMap executionParams) {
+//if we have a compound
+        if (json.compound) {
 
-            if (json.tags.length() > 0) {
+            //if we have a compound name
+            if (json.compound.name) {
 
                 if (queryOfDoomWhere.empty) {
                     queryOfDoomWhere = " where "
                 }
 
-                json.tags.eachWithIndex { current, index ->
+                queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
+                queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
 
-                    //add our tag join
-                    queryOfDoomJoins += " left join s.tags as t_${index}"
-
-                    //if there is something in the where clause we need an and
-                    if (!queryOfDoomWhere.equals(" where ")) {
-                        queryOfDoomWhere += " and "
-                    }
-
-                    //build our specific query
-                    queryOfDoomWhere += " t_${index}.text = :tag_${index}"
-
-                    executionParams.put("tag_${index}".toString(), current.toString());
-
+                //if we have a like condition specified
+                if (json.compound.name.like) {
+                    queryOfDoomWhere += "(bcn.name like :compoundName or ccn.name like :compoundName)"
+                    executionParams.compoundName = "%${json.compound.name.like}%"
                 }
 
+                //if we have an equals condition specified
+                else if (json.compound.name.eq) {
+                    queryOfDoomWhere += "(bcn.name = :compoundName or ccn.name = :compoundName)"
+                    executionParams.compoundName = json.compound.name.eq
+
+                }
+                //well we don't know this, do we?
+                else {
+                    throw new QueryException("invalid query term: ${json.compound.name}")
+                }
+            }
+
+            //if we have an inchi key
+            if (json.compound.inchiKey) {
+
+                if (queryOfDoomWhere.empty) {
+                    queryOfDoomWhere = " where "
+                }
+
+                //we have alreay another term, so let's add an and
+                if (!queryOfDoomWhere.equals(" where ")) {
+                    queryOfDoomWhere += " and "
+                }
+
+                queryOfDoomJoins += " left join s.biologicalCompound as bc"
+                queryOfDoomJoins += " left join s.chemicalCompound as cc"
+
+                if (json.compound.inchiKey.eq) {
+
+                    queryOfDoomWhere += "(bc.inchiKey = :inchiKey or cc.inchiKey = :inchiKey)"
+                    executionParams.inchiKey = json.compound.inchiKey.eq
+                } else if (json.compound.inchiKey.like) {
+
+                    queryOfDoomWhere += "(bc.inchiKey like :inchiKey or cc.inchiKey like :inchiKey)"
+                    executionParams.inchiKey = "%${json.compound.inchiKey.like}%"
+                } else {
+                    throw new QueryException("invalid query term: ${json.compound.inchiKey}")
+                }
 
             }
         }
-
-        //assemble the query of doom
-        queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
-
-        log.info("generated doom query: \n\n${queryOfDoom}\n\n")
-        log.info("parameter matrix:\n\n ${executionParams}")
-
-        return Spectrum.executeQuery(queryOfDoom, executionParams, params)
-
+        [queryOfDoomWhere, queryOfDoomJoins]
     }
 
     /**
@@ -332,6 +341,11 @@ class SpectraQueryService {
 
         def result = [:];
 
+        result.name = "stringValue"
+        result.value = content
+
+        //temporary while we are diagnonsing issues, we only support string storage
+        /*
         MetaDataValue value = MetaDataValueHelper.getValueObject(content)
 
         if (value instanceof BooleanMetaDataValue) {
@@ -346,7 +360,7 @@ class SpectraQueryService {
             result.name = "stringValue"
             result.value = value.getStringValue()
         }
-
+          */
         return result;
     }
 }
