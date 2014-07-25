@@ -1,12 +1,10 @@
 package moa.server
 
-import grails.transaction.Transactional
 import moa.*
 import moa.meta.BooleanMetaDataValue
 import moa.meta.DoubleMetaDataValue
 import moa.meta.StringMetaDataValue
 
-@Transactional
 class SpectraPersistenceService {
 
     MetaDataDictionaryService metaDataDictionaryService
@@ -20,43 +18,38 @@ class SpectraPersistenceService {
      */
     public synchronized Spectrum create(def json) {
 
-        Spectrum spectrum = new Spectrum(json)
+       Spectrum spectrum = new Spectrum(json)
 
-        //we build the metadata rather our self
-        spectrum.metaData = [];
+        	//we build the metadata rather our self
+        	spectrum.metaData = [];
 
-        //we build the tags our self
-        spectrum.tags = [];
+        	//we build the tags our self
+        	spectrum.tags = [];
 
-        //we only care about refreshing the submitter by it's email address since it's unique
-        spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
+        	//we only care about refreshing the submitter by it's email address since it's unique
+        	spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
 
-        //we need to ensure we don't double generate compound
-        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
+        	//we need to ensure we don't double generate compound
+        	spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
+        	spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
 
-        spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
+        	if (spectrum.validate()){
+           		spectrum.save(flush: true)
+            		spectrum.lock()
+            		def tags = json.tags
 
+            		//adding our tags
+            		tags.each {
+				Tag tag = Tag.findOrSaveByText(it.text)
+				tag.refresh()
+                		spectrum.addToTags(tag)
+            		}
 
+        	} else {
+        		log.warn(spectrum.errors)
+        	}
 
-        if (spectrum.validate()) {
-            spectrum.save(flush: true)
-
-            spectrum.lock()
-            //spectrum.lock()
-            def tags = json.tags
-
-            //adding our tags
-            tags.each {
-                spectrum.addToTags(Tag.findOrCreateByText(it.text))
-            }
-
-            //actually assemble them
-            buildMetaData(spectrum, json.metaData)
-            spectrum.save(flush:true)
-
-        } else {
-            log.warn(spectrum.errors)
-        }
+        buildMetaData(spectrum, json.metaData)
 
         //spectrum is now ready to work on
         return spectrum;
@@ -69,8 +62,7 @@ class SpectraPersistenceService {
      * @parm json - json definition of the metadata
      * @return
      */
-    @Transactional
-    private void buildMetaData(Spectrum object, def json) {
+    private synchronized void buildMetaData(Spectrum object, def json) {
 
         //remove existing metadata from the object
 
@@ -78,27 +70,25 @@ class SpectraPersistenceService {
 
             String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
 
-            String categoryName = categoryNameFinderService.findCategoryNameForMetaDataKey(metaDataName, current.category)
+            MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
 
-            MetaDataCategory category = MetaDataCategory.findOrSaveByName(categoryName)
-
-            println("working on category: ${category}\t${category.validate()} with value: ${category.name}")
-            category.save(flush: true)
-            try {
+	    try{
                 category.lock()
             }
             catch (e) {
                 def newCat = MetaDataCategory.lock(category.id)
                 category = newCat
             }
-            println("\t=>\tsave:${category}")
+//            println("working on category: ${category}\t${category.validate()} with value: ${category.name}")
+
+//            println("\t=>\tsave:${category}")
 
             MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
             category.addToMetaDatas(metaData)
 
-            println("\t==>\tworking on metadata: ${metaData}\t${metaData.validate()}")
+//            println("\t==>\tworking on metadata: ${metaData}\t${metaData.validate()}")
             metaData.save(flush: true)
-            println("\t==>\tsave:${metaData}")
+//            println("\t==>\tsave:${metaData}")
             category.save(flush: true)
 
             MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
@@ -142,7 +132,7 @@ class SpectraPersistenceService {
                 log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
             }
 
-            println("\t===>\tworking on value: ${metaDataValue}")
+//            println("\t===>\tworking on value: ${metaDataValue}")
 
             metaDataValue.save(flush: true)
         }
@@ -152,7 +142,6 @@ class SpectraPersistenceService {
  * @param compound
  * @return
  */
-    @Transactional
     private synchronized Compound buildCompound(Compound compound) {
         def names = compound.names
 
