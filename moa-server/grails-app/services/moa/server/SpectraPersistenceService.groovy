@@ -1,15 +1,13 @@
 package moa.server
-
 import moa.*
-import moa.meta.BooleanMetaDataValue
-import moa.meta.DoubleMetaDataValue
-import moa.meta.StringMetaDataValue
+import moa.server.caluclation.CompoundPropertyService
+import moa.server.metadata.MetaDataPersistenceService
 
 class SpectraPersistenceService {
 
-    MetaDataDictionaryService metaDataDictionaryService
+    MetaDataPersistenceService metaDataPersistenceService
 
-    CategoryNameFinderService categoryNameFinderService
+    CompoundPropertyService compoundPropertyService
 
     /**
      * creates a new spectrum and saves it in the database
@@ -50,7 +48,7 @@ class SpectraPersistenceService {
             }
         }
 
-        buildMetaData(spectrum, json.metaData)
+        metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
 
         spectrum.save(flush: true)
 
@@ -65,77 +63,7 @@ class SpectraPersistenceService {
      * @parm json - json definition of the metadata
      * @return
      */
-    private void buildMetaData(Spectrum object, def json) {
 
-        log.debug("generating meta data")
-        //remove existing metadata from the object
-
-        json.each { current ->
-
-            String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
-
-            MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
-
-
-            MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
-            category.addToMetaDatas(metaData)
-
-            metaData.save()
-            category.save()
-
-            MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
-//MetaDataValueHelper.getValueObject(current.value)
-
-            //if an unit is associated let's update it
-            if (current.unit != null) {
-                metaDataValue.unit = current.unit
-
-                if (!metaData.requiresUnit) {
-                    metaData.requiresUnit = true
-                }
-            }
-
-            try {
-                if (metaDataValue instanceof DoubleMetaDataValue) {
-                    if (metaData.type == null) {
-                        metaData.type = "double";
-                    } else {
-                        if (!metaData.type.equals("double")) {
-                            throw new Exception("metaData '${metaData.name}' needs to be of type 'double', but is of type: ${metaData.type}");
-                        }
-                    }
-                } else if (metaDataValue instanceof BooleanMetaDataValue) {
-                    if (metaData.type == null) {
-                        metaData.type = "boolean";
-                    } else {
-                        if (!metaData.type.equals("boolean")) {
-                            throw new Exception("metaData '${metaData.name}' needs to be of type 'boolean', but is of type: ${metaData.type}");
-                        }
-                    }
-                } else {
-                    if (metaData.type == null) {
-                        metaData.type = "string";
-                    } else {
-                        if (!metaData.type.equals("string")) {
-                            throw new Exception("metaData '${metaData.name}' needs to be of type 'string', but is of type: ${metaData.type}");
-                        }
-                    }
-                }
-
-                metaData.addToValue(metaDataValue)
-                object.addToMetaData(metaDataValue)
-
-            } catch (Exception e) {
-                log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
-            }
-
-//            println("\t===>\tworking on value: ${metaDataValue}")
-
-            log.debug("${metaDataValue.category}:${metaDataValue.name}:${metaDataValue.value}:${metaDataValue.unit}")
-
-            metaDataValue.save()
-        }
-    }
 /**
  * builds our internal compound object
  * @param compound
@@ -170,8 +98,10 @@ class SpectraPersistenceService {
         }
 
         myCompound.molFile = compound.molFile
-        myCompound.save()
 
+        myCompound.save(flush:true)
+
+        compoundPropertyService.calculateMetaData(myCompound)
 
         return myCompound;
 
