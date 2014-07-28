@@ -1,6 +1,6 @@
 package moa
 
-class Spectrum {
+class Spectrum extends SupportsMetaData{
 
     /**
      * contains one biological compound and one chemical compound
@@ -12,7 +12,7 @@ class Spectrum {
     /**
      * contains many metadata
      */
-    static hasMany = [metaData: MetaDataValue, tags: Tag]
+    static hasMany = [ tags: Tag]
 
     /**
      * we belong to these
@@ -34,6 +34,7 @@ class Spectrum {
     static mapping = {
         comments sqlType: "text"
         spectrum sqlType: "text"
+        version false
     }
 
     /**

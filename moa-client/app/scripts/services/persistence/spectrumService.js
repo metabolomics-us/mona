@@ -30,7 +30,21 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
                     'Content-Type': 'application/json'
                 },
                 isArray: true
+            },
+
+            /**
+             * sends the object to the server to be processed and executed at their convinience. Meaning no intermidiate feedback is provided or required.
+             */
+            'batchSave': {
+                url: REST_BACKEND_SERVER + '/rest/spectra/batch/save',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                isArray: false
             }
+
+
         }
     );
 });

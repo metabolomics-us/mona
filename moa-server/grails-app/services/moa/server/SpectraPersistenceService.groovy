@@ -20,6 +20,8 @@ class SpectraPersistenceService {
 
         Spectrum spectrum = new Spectrum(json)
 
+        log.debug("inserting new spectra: ${spectrum.spectrum}")
+
         //we build the metadata rather our self
         spectrum.metaData = [];
 
@@ -33,23 +35,24 @@ class SpectraPersistenceService {
         spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
         spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
 
-        if (spectrum.validate()) {
-            spectrum.save(flush: true)
-            spectrum.lock()
+        spectrum.save()
+        spectrum.lock()
+
+        if (json.tags) {
             def tags = json.tags
 
             //adding our tags
             tags.each {
-                Tag tag = Tag.findOrSaveByText(it.text)
+
+                def tag = Tag.findOrSaveByText(it.text)
                 tag.refresh()
                 spectrum.addToTags(tag)
             }
-
-        } else {
-            log.warn(spectrum.errors)
         }
 
         buildMetaData(spectrum, json.metaData)
+
+        spectrum.save(flush: true)
 
         //spectrum is now ready to work on
         return spectrum;

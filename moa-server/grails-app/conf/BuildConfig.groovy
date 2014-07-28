@@ -35,7 +35,9 @@ grails.project.dependency.resolution = {
     // whether to do a secondary resolve on plugin installation, not advised and here for backwards compatibility
 
     repositories {
-        inherits true // Whether to inherit repository definitions from plugins
+
+        mavenRepo "http://download.java.net/maven/2/"
+        mavenRepo "http://maven.antelink.com/content/repositories/central/"
 
         grailsPlugins()
         grailsHome()
@@ -43,7 +45,6 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenCentral()
         // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
-        mavenRepo "http://maven.antelink.com/content/repositories/central/"
     }
 
 
@@ -54,6 +55,39 @@ grails.project.dependency.resolution = {
         runtime 'postgresql:postgresql:9.1-901-1.jdbc4'
 
 
+        compile('xmlpull:xmlpull:1.1.3.1')
+
+        compile('org.openscience.cdk:cdk-fingerprint:1.4.16') {
+            transitive = false
+        }
+        compile('org.openscience.cdk:cdk-inchi:1.4.16') {
+            transitive = false
+        }
+        compile('org.openscience.cdk:cdk-standard:1.4.16')
+        compile('org.openscience.cdk:cdk-interfaces:1.4.16')
+        compile('org.openscience.cdk:cdk-annotation:1.4.16')
+        compile('org.openscience.cdk:cdk-io:1.4.16')
+        compile('org.openscience.cdk:cdk-isomorphism:1.4.16')
+        compile('org.openscience.cdk:cdk-render:1.4.16')
+        compile('org.openscience.cdk:cdk-renderbasic:1.4.16')
+        compile('org.openscience.cdk:cdk-renderawt:1.4.16')
+        compile('org.openscience.cdk:cdk-smarts:1.4.16')  {
+            transitive = false
+        }
+        compile('org.openscience.cdk:cdk-extra:1.4.16')  {
+            transitive = false
+        }
+        compile('org.openscience.cdk:cdk-dict:1.4.16')  {
+            transitive = false
+        }
+        compile('jama:jama:1.0.2')  {
+            transitive = false
+        }
+        compile('org.openscience.cdk:cdk-formula:1.4.16')
+        compile('org.openscience.cdk:cdk-smsd:1.4.16')
+        compile('xpp3:xpp3:1.1.4c')
+        compile('java3d:vecmath:1.3.1')
+        compile('net.sf.jni-inchi:jni-inchi:0.7')
     }
 
     plugins {
@@ -61,14 +95,16 @@ grails.project.dependency.resolution = {
         build ":tomcat:7.0.50"
 
         // plugins for the compile step
-        //compile ":hibernate:3.6.10.15"
-        compile ":hibernate4:4.3.5.4"
+        compile ":hibernate:3.6.10.15"
+        //compile ":hibernate4:4.3.5.4"
+        compile ":rest-client-builder:2.0.0"
+        compile ':quartz:1.0.1'
+
 
         // plugins needed at runtime but not for compilation
         runtime ":database-migration:1.3.8"
         runtime ":resources:1.2.1"
         runtime ":cors:1.1.4"
-        compile ":rest-client-builder:2.0.0"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0.1"

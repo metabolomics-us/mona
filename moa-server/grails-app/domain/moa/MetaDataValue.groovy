@@ -15,7 +15,7 @@ class MetaDataValue {
      */
     String unit
 
-    static belongsTo = [metaData: MetaData, spectrum:Spectrum]
+    static belongsTo = [metaData: MetaData, owner:SupportsMetaData]
 
     static mapping = {
         version false
@@ -23,7 +23,7 @@ class MetaDataValue {
 
     static constraints = {
         metaData nullable: true
-        spectrum nullable: true
+        owner nullable: true
         unit nullable: true
     }
 

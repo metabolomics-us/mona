@@ -73,7 +73,7 @@ moaControllers.SpectraController = function ($scope, $modal, Spectrum, Authentif
                         return $scope.buildSpectrum()
                     }, function (spectra) {
                         //$log.debug("storing spectra: \n\n" + $filter('json')(spectra));
-                        spectra.$save();
+                        spectra.$batchSave();
                     },file.name);
 
                     fireUploadProgress(100);

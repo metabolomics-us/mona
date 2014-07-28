@@ -9,7 +9,7 @@ class UrlMappings {
         /**
          * query by submitter
          */
-        "/rest/submitters"(resources: 'Submitter')     {
+        "/rest/submitters"(resources: 'Submitter') {
             /**
              * and spectra
              */
@@ -19,7 +19,7 @@ class UrlMappings {
         /**
          * query by tags
          */
-        "/rest/tags"(resources: 'Tag'){
+        "/rest/tags"(resources: 'Tag') {
             /**
              * and spectra
              */
@@ -40,9 +40,9 @@ class UrlMappings {
         /**
          * query all the metadata without category
          */
-        "/rest/meta/data"(resources: 'MetaData'){
+        "/rest/meta/data"(resources: 'MetaData') {
             //associated values
-            "/value"(resources:'MetaDataValue')
+            "/value"(resources: 'MetaDataValue')
         }
 
         /**
@@ -52,7 +52,7 @@ class UrlMappings {
             /**
              * and metadata
              */
-            "/data"(resources: 'MetaData'){
+            "/data"(resources: 'MetaData') {
                 /**
                  * and spectra
                  */
@@ -76,6 +76,12 @@ class UrlMappings {
          * batch updates based on queries
          */
         "/rest/spectra/batch/update"(controller: 'spectraQuery', action: 'searchAndUpdate')
+
+        /**
+         * batch save method, to schedule lots of spectra to an internal queue.
+         */
+        "/rest/spectra/batch/save"(controller: 'spectrum', action: 'batchSave')
+
 
     }
 }

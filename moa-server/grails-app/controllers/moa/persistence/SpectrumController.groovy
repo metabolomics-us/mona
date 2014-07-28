@@ -1,7 +1,10 @@
 package moa.persistence
+
+import grails.converters.JSON
 import grails.rest.RestfulController
 import moa.Spectrum
 import moa.server.SpectraPersistenceService
+import moa.server.SpectraUploadJob
 
 class SpectrumController extends RestfulController<Spectrum> {
     static responseFormats = ['json']
@@ -41,6 +44,11 @@ class SpectrumController extends RestfulController<Spectrum> {
         }
     }
 
+    def batchSave() {
+        SpectraUploadJob.triggerNow([spectra: getParametersToBind()])
+
+        render([message: "spectra submitted"] as JSON)
+    }
     /**
      * dynamic query methods to deal with different url mappings based on mapping ids
      * @param params
