@@ -151,10 +151,21 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
                     return $scope.spectra[index];
                 },
                 /**
-                 * build a simple representaion of the massspectra
+                 * build a simple representation of the mass spectra and available annotation
                  */
                 massSpec: function () {
                     var spec = $scope.spectra[index];
+
+                    var meta = [];
+
+                    //assemble our annotation matrix
+                    for (var i = 0; i < spec.metaData.length; i++) {
+
+                        if (spec.metaData[i].category === 'annotation') {
+                            meta.push(spec.metaData[i]);
+                        }
+                    }
+
 
                     var regex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
 
@@ -164,8 +175,18 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
                     while (match != null) {
 
-                        result.push({ion: match[1], intensity: match[2]});
+                        var annotation;
+
+                        for (var i = 0; i < meta.length; i++) {
+
+                            if (meta[i].value == match[1]) {
+                                annotation = meta[i].name;
+                            }
+                        }
+
+                        result.push({ion: match[1], intensity: match[2], annotation: annotation});
                         match = regex.exec(spec.spectrum);
+
                     }
 
                     return result;

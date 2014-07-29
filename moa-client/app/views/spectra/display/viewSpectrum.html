@@ -20,6 +20,7 @@
                     <tr>
                         <th>Ion</th>
                         <th>Intensity</th>
+                        <th>annotation</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -27,6 +28,7 @@
                     <tr ng-repeat="ion in massSpec">
                         <td>{{ion.ion}}</td>
                         <td>{{ion.intensity}}</td>
+                        <td>{{ion.annotation}}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -40,6 +42,32 @@
 
                     <div class="row">
                         <div class="col-md-6">
+                            <div ng-show="spectrum.biologicalCompound.metaData.length">
+                                <h4>Compound Metadata</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>name</th>
+                                        <th>value</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="meta in spectrum.biologicalCompound.metaData | unique:'name' | orderBy : 'name':true ">
+
+                                        <td>
+                                            {{meta.name}}
+                                        </td>
+                                        <td>
+                                            {{meta.value}} {{meta.unit}}
+                                        </td>
+
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
                             <dl class="dl-horizontal compound-properties">
                                 <dt>ID:</dt>
                                 <dd>{{spectrum.biologicalCompound.id}}</dd>
@@ -48,8 +76,7 @@
                                 <dt ng-show="spectrum.biologicalCompound.names.length">Name(s):</dt>
                                 <dd ng-repeat="name in spectrum.biologicalCompound.names">{{name.name}}</dd>
                             </dl>
-                        </div>
-                        <div class="col-md-6">
+
                             <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
                                  id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound"></div>
                         </div>
@@ -57,6 +84,32 @@
                 </tab>
                 <tab heading="Chemical Compound Properties">
                     <div class="row">
+                        <div class="col-md-6">
+                            <div ng-show="spectrum.chemicalCompound.metaData.length">
+                                <h4>Compound Metadata</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>name</th>
+                                        <th>value</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="meta in spectrum.chemicalCompound.metaData | unique:'name' | orderBy : 'name':true ">
+
+                                        <td>
+                                            {{meta.name}}
+                                        </td>
+                                        <td>
+                                            {{meta.value}} {{meta.unit}}
+                                        </td>
+
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <dl class="dl-horizontal compound-properties">
                                 <dt>ID:</dt>
@@ -66,8 +119,6 @@
                                 <dt ng-show="spectrum.chemicalCompound.names.length">Name(s):</dt>
                                 <dd ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</dd>
                             </dl>
-                        </div>
-                        <div class="col-md-6">
                             <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
                                  id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound"></div>
                         </div>
@@ -80,7 +131,7 @@
         <div class="col-md-12">
 
             <div ng-show="spectrum.metaData.length">
-                <h4>Metadata</h4>
+                <h4>Spectra Metadata</h4>
                 <table class="table">
                     <thead>
                     <tr>
@@ -90,7 +141,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="meta in spectrum.metaData">
+                    <tr ng-repeat="meta in spectrum.metaData | orderBy : 'category':true">
                         <td>
                             {{meta.category}}
                         </td>
