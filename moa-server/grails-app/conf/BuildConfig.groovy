@@ -40,7 +40,7 @@ grails.project.dependency.resolution = {
         mavenRepo "http://maven.antelink.com/content/repositories/central/"
         mavenRepo "http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/public/"
         mavenRepo "http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty"
-
+        mavenRepo "http://jni-inchi.sourceforge.net/m2repo"
 
         grailsPlugins()
         grailsHome()
