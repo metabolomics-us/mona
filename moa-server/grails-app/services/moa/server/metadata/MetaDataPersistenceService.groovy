@@ -89,6 +89,8 @@ class MetaDataPersistenceService {
                 }
             }
 
+            //we need a check for duplicates!
+
             metaData.addToValue(metaDataValue)
             object.addToMetaData(metaDataValue)
 

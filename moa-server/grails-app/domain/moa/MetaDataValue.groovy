@@ -44,13 +44,24 @@ class MetaDataValue {
         return metaData?.type
     }
 
-    /**
-     * category for this object
-     * @return
-     */
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (!(o instanceof MetaDataValue)) return false
+
+        MetaDataValue that = (MetaDataValue) o
+
+        if (metaData != that.metaData) return false
+        if (unit != that.unit) return false
+        if (value != that.value) return false
+
+        return true
+    }
+
+
     public String getCategory(){
         return metaData?.category?.name
     }
 
     static transients = ['value','type','name','category']
+
 }

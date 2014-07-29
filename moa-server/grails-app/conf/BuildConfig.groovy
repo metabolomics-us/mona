@@ -24,12 +24,12 @@ grails.project.fork = [
 
 grails.project.dependency.resolver = "maven" // or ivy
 grails.project.dependency.resolution = {
-    // inherit Grails' default dependencies
+    // inherit Grails" default dependencies
     inherits("global") {
         // specify dependency exclusions here; for example, uncomment this to disable ehcache:
-        // excludes 'ehcache'
+        // excludes "ehcache"
     }
-    log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+    log "error" // log level of Ivy resolver, either "error", "warn", "info", "debug" or "verbose"
     checksums true // Whether to verify checksums on resolve
     legacyResolve false
     // whether to do a secondary resolve on plugin installation, not advised and here for backwards compatibility
@@ -38,6 +38,9 @@ grails.project.dependency.resolution = {
 
         mavenRepo "http://download.java.net/maven/2/"
         mavenRepo "http://maven.antelink.com/content/repositories/central/"
+        mavenRepo "http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/public/"
+        mavenRepo "http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty"
+
 
         grailsPlugins()
         grailsHome()
@@ -48,46 +51,47 @@ grails.project.dependency.resolution = {
     }
 
 
+    def cdkVersion = "1.4.16"
     dependencies {
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
-        // runtime 'mysql:mysql-connector-java:5.1.27'
-        // runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'
-        runtime 'postgresql:postgresql:9.1-901-1.jdbc4'
+        // specify dependencies here under either "build", "compile", "runtime", "test" or "provided" scopes e.g.
+        // runtime "mysql:mysql-connector-java:5.1.27"
+        // runtime "org.postgresql:postgresql:9.3-1100-jdbc41"
+        runtime "postgresql:postgresql:9.1-901-1.jdbc4"
 
 
-        compile('xmlpull:xmlpull:1.1.3.1')
+        compile("xmlpull:xmlpull:1.1.3.1")
 
-        compile('org.openscience.cdk:cdk-fingerprint:1.4.16') {
+        compile("org.openscience.cdk:cdk-fingerprint:${cdkVersion}") {
             transitive = false
         }
-        compile('org.openscience.cdk:cdk-inchi:1.4.16') {
+        compile("org.openscience.cdk:cdk-inchi:${cdkVersion}") {
             transitive = false
         }
-        compile('org.openscience.cdk:cdk-standard:1.4.16')
-        compile('org.openscience.cdk:cdk-interfaces:1.4.16')
-        compile('org.openscience.cdk:cdk-annotation:1.4.16')
-        compile('org.openscience.cdk:cdk-io:1.4.16')
-        compile('org.openscience.cdk:cdk-isomorphism:1.4.16')
-        compile('org.openscience.cdk:cdk-render:1.4.16')
-        compile('org.openscience.cdk:cdk-renderbasic:1.4.16')
-        compile('org.openscience.cdk:cdk-renderawt:1.4.16')
-        compile('org.openscience.cdk:cdk-smarts:1.4.16')  {
+        compile("org.openscience.cdk:cdk-standard:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-interfaces:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-annotation:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-io:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-isomorphism:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-render:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-renderbasic:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-renderawt:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-smarts:${cdkVersion}")  {
             transitive = false
         }
-        compile('org.openscience.cdk:cdk-extra:1.4.16')  {
+        compile("org.openscience.cdk:cdk-extra:${cdkVersion}")  {
             transitive = false
         }
-        compile('org.openscience.cdk:cdk-dict:1.4.16')  {
+        compile("org.openscience.cdk:cdk-dict:${cdkVersion}")  {
             transitive = false
         }
-        compile('jama:jama:1.0.2')  {
+        compile("jama:jama:1.0.2")  {
             transitive = false
         }
-        compile('org.openscience.cdk:cdk-formula:1.4.16')
-        compile('org.openscience.cdk:cdk-smsd:1.4.16')
-        compile('xpp3:xpp3:1.1.4c')
-        compile('java3d:vecmath:1.3.1')
-        compile('net.sf.jni-inchi:jni-inchi:0.7')
+        compile("org.openscience.cdk:cdk-formula:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-smsd:${cdkVersion}")
+        compile("xpp3:xpp3:1.1.4c")
+        compile("java3d:vecmath:1.3.1")
+        compile("net.sf.jni-inchi:jni-inchi:0.7")
     }
 
     plugins {
@@ -98,7 +102,7 @@ grails.project.dependency.resolution = {
         compile ":hibernate:3.6.10.15"
         //compile ":hibernate4:4.3.5.4"
         compile ":rest-client-builder:2.0.0"
-        compile ':quartz:1.0.1'
+        compile ":quartz:1.0.1"
 
 
         // plugins needed at runtime but not for compilation

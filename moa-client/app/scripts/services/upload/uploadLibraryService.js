@@ -149,10 +149,10 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                         }
                     }
                     s.biologicalCompound.metaData = [];
-                    s.biologicalCompound.molFile = spectra.molFile;
+                    s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
 
                     s.chemicalCompound.inchiKey = spectra.inchiKey;
-                    s.chemicalCompound.molFile = spectra.molFile;
+                    s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
                     s.biologicalCompound.metaData = [];
 
                     s.spectrum = spectra.spectrum;

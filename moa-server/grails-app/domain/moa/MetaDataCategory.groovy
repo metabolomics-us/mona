@@ -14,6 +14,18 @@ class MetaDataCategory {
         version false
     }
 
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (!(o instanceof MetaDataCategory)) return false
+
+        MetaDataCategory that = (MetaDataCategory) o
+
+        if (visible != that.visible) return false
+        if (name != that.name) return false
+
+        return true
+    }
+
     static hasMany = [metaDatas: MetaData]
 
     String name

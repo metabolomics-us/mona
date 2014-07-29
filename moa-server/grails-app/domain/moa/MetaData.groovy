@@ -32,6 +32,21 @@ class MetaData {
     /**
      * associated content
      */
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (!(o instanceof MetaData)) return false
+
+        MetaData metaData = (MetaData) o
+
+        if (requiresUnit != metaData.requiresUnit) return false
+        if (searchable != metaData.searchable) return false
+        if (category != metaData.category) return false
+        if (name != metaData.name) return false
+        if (type != metaData.type) return false
+
+        return true
+    }
+
     Set<MetaDataValue> value
 
     /**
