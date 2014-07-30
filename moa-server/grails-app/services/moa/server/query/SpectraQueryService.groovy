@@ -1,0 +1,414 @@
+package moa.server.query
+
+import grails.transaction.Transactional
+import moa.Spectrum
+import moa.Tag
+import org.hibernate.QueryException
+
+@Transactional
+class SpectraQueryService {
+
+    /**
+     * returns a list of spectra data based on the given query
+     * @param json
+     */
+    def query(def json, def params = [:]) {
+        log.info("received query: ${json}")
+
+        if (json == null) {
+            throw new Exception("your query needs to contain some parameters!")
+        }
+        //completed query string
+        String queryOfDoom = "select s from Spectrum s "
+
+        //defines all our joins
+        String queryOfDoomJoins = ""
+
+        //defines our where clause
+        String queryOfDoomWhere = ""
+
+        //our defined execution parameters
+        def executionParams = [:]
+
+        (queryOfDoomWhere,queryOfDoomJoins) = handleJsonCompoundField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+
+        (queryOfDoomWhere,queryOfDoomJoins) = handleSpectraJsonMetadataFields(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+
+        (queryOfDoomWhere,queryOfDoomJoins) = handleJsonTagsField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+
+        //assemble the query of doom
+        queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
+
+        log.info("generated query: \n\n${queryOfDoom}\n\n")
+        log.info("parameter matrix:\n\n ${executionParams}")
+
+        return Spectrum.executeQuery(queryOfDoom, executionParams, params)
+
+    }
+
+    /**
+     * does searches by tag field
+     * @param json
+     * @param queryOfDoomWhere
+     * @param queryOfDoomJoins
+     * @param executionParams
+     * @return
+     */
+    private List handleJsonTagsField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+//handling tags
+        if (json.tags) {
+
+            if (json.tags.length() > 0) {
+
+                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+
+                json.tags.eachWithIndex { current, index ->
+
+                    //add our tag join
+                    queryOfDoomJoins += " left join s.tags as t_${index}"
+
+                    //build our specific query
+                    queryOfDoomWhere += " t_${index}.text = :tag_${index}"
+
+                    executionParams.put("tag_${index}".toString(), current.toString());
+
+                }
+
+
+            }
+        }
+        log.info("generated query in method:\n\n$queryOfDoomWhere\n\n")
+
+        [queryOfDoomWhere, queryOfDoomJoins]
+
+    }
+
+    /**
+     * does the searches by metadata field
+     * @param json
+     * @param queryOfDoomWhere
+     * @param queryOfDoomJoins
+     * @param executionParams
+     * @return
+     */
+    private List handleSpectraJsonMetadataFields(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+//if we have a metadata object specified
+        if (json.metadata) {
+
+            if (json.metadata.length() > 0) {
+                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                //go over each metadata definition
+                json.metadata.eachWithIndex { Map current, int index ->
+                    def impl = [:];
+
+                    //build the join for each metadata object link
+                    queryOfDoomJoins += " left join s.metaData as mdv_${index}"
+                    queryOfDoomJoins += " left join mdv_${index}.metaData as md_${index}"
+
+                    queryOfDoomWhere = buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "md_${index}", "mdv_${index}", index)
+
+                }
+            }
+        }
+        log.info("generated query in method:\n\n$queryOfDoomWhere\n\n")
+
+        [queryOfDoomWhere, queryOfDoomJoins]
+    }
+
+    /**
+     * helper method to figure out the exactly required expressions
+     *
+     * @param queryOfDoomWhere query we are building
+     * @param current query json object
+     * @param executionParams list of exectution parameters
+     * @param metaDataTableName name of our metadata table name
+     * @param metaDataValueTableName name of our metadata value table name
+     * @param index current join in case we have more than 1
+     * @return
+     */
+    public String buildMetadataQueryString(String queryOfDoomWhere, Map current, executionParams, String metaDataTableName, String metaDataValueTableName, int index = 0) {
+        Map impl = [:]
+//part of searching by name of metadata object
+        queryOfDoomWhere += " ("
+        queryOfDoomWhere += " " + "${metaDataTableName}" + ".name = :metaDataName_${index}"
+        queryOfDoomWhere += " and "
+
+        executionParams.put("metaDataName_${index}".toString(), current.name);
+
+        //equals
+        if (current.value.eq != null) {
+            impl = estimateMetaDataValueImpl(current.value.eq.toString())
+
+            //equality search
+            queryOfDoomWhere += " " + "${metaDataValueTableName}.${impl.name}" + " = :metaDataImplValue_${index}"
+
+            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
+
+        }
+        //like
+        else if (current.value.like != null) {
+            impl = estimateMetaDataValueImpl(current.value.like.toString())
+
+            //equality search
+            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} like :metaDataImplValue_${index}"
+
+            executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+            executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
+
+        }
+        //greater than
+        else if (current.value.gt != null) {
+            impl = estimateMetaDataValueImpl(current.value.gt.toString())
+
+            //equality search
+            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} > :metaDataImplValue_${index}"
+            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
+
+        }
+        //less than
+        else if (current.value.lt != null) {
+            impl = estimateMetaDataValueImpl(current.value.lt.toString())
+
+            //equality search
+            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} < :metaDataImplValue_${index}"
+            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
+
+        }
+
+        //greate equals
+        else if (current.value.ge != null) {
+            impl = estimateMetaDataValueImpl(current.value.ge.toString())
+
+            //equality search
+            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} >= :metaDataImplValue_${index}"
+            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
+
+        }
+
+        //less equals
+        else if (current.value.le != null) {
+            impl = estimateMetaDataValueImpl(current.value.le.toString())
+
+            //equality search
+            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} <= :metaDataImplValue_${index}"
+            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
+
+        }
+
+        //not equals
+        else if (current.value.ne != null) {
+            impl = estimateMetaDataValueImpl(current.value.ne.toString())
+
+            //equality search
+            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} != :metaDataImplValue_${index}"
+            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
+
+        }
+
+        //between
+        else if (current.value.between != null) {
+            if (current.value.between.length() == 2) {
+                def min = current.value.between[0].toString()
+                def max = current.value.between[1].toString()
+
+                impl = estimateMetaDataValueImpl(min)
+
+                queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} between :metaDataImplValue_min_${index} and :metaDataImplValue_max_${index} "
+
+                executionParams.put("metaDataImplValue_min_${index}".toString(), estimateMetaDataValueImpl(min).value);
+                executionParams.put("metaDataImplValue_max_${index}".toString(), estimateMetaDataValueImpl(max).value);
+
+            } else {
+                throw new QueryException("invalid query term: ${current.value.between}, we need exactly 2 values")
+            }
+
+        }
+        //unsupported term
+        else {
+            throw new QueryException("invalid query term: ${current.value}")
+        }
+
+        //support for units
+        if (current.value.unit != null) {
+
+            //equality search
+            queryOfDoomWhere += " and  ${metaDataValueTableName}.unit = :metaDataUnitValue_${index}"
+
+            executionParams.put("metaDataUnitValue_${index}".toString(), current.value.unit);
+
+        }
+        queryOfDoomWhere += ")"
+
+        log.info("generated query in method:\n\n$queryOfDoomWhere\n\n")
+
+        return queryOfDoomWhere
+    }
+
+    /**
+     * does the searches for us after compounds
+     * @param json
+     * @param queryOfDoomWhere
+     * @param queryOfDoomJoins
+     * @param executionParams
+     * @return
+     */
+    private List handleJsonCompoundField(json, String queryOfDoomWhere, String queryOfDoomJoins, LinkedHashMap executionParams) {
+        log.info("incomming query in compound method:\n\n$queryOfDoomWhere\n\n")
+
+//if we have a compound
+        if (json.compound) {
+
+            //if we have a compound name
+            if (json.compound.name) {
+
+                queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
+                queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
+                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                //if we have a like condition specified
+                if (json.compound.name.like) {
+                    queryOfDoomWhere += "(bcn.name like :compoundName or ccn.name like :compoundName)"
+                    executionParams.compoundName = "%${json.compound.name.like}%"
+                }
+
+                //if we have an equals condition specified
+                else if (json.compound.name.eq) {
+                    queryOfDoomWhere += "(bcn.name = :compoundName or ccn.name = :compoundName)"
+                    executionParams.compoundName = json.compound.name.eq
+
+                }
+                //well we don't know this, do we?
+                else {
+                    throw new QueryException("invalid query term: ${json.compound.name}")
+                }
+            }
+
+            //if we have an inchi key
+            if (json.compound.inchiKey) {
+
+                queryOfDoomJoins += " left join s.biologicalCompound as bc"
+                queryOfDoomJoins += " left join s.chemicalCompound as cc"
+                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                if (json.compound.inchiKey.eq) {
+                    queryOfDoomWhere += "(bc.inchiKey = :inchiKey or cc.inchiKey = :inchiKey)"
+                    executionParams.inchiKey = json.compound.inchiKey.eq
+                } else if (json.compound.inchiKey.like) {
+                    queryOfDoomWhere += "(bc.inchiKey like :inchiKey or cc.inchiKey like :inchiKey)"
+                    executionParams.inchiKey = "%${json.compound.inchiKey.like}%"
+                } else {
+                    throw new QueryException("invalid query term: ${json.compound.inchiKey}")
+                }
+
+            }
+
+        }
+
+        log.info("generated query in compound method:\n\n$queryOfDoomWhere\n\n")
+
+        [queryOfDoomWhere, queryOfDoomJoins]
+    }
+
+    /**
+     * takes care of figuring out if we need a where or an and for the current query
+     * @param queryOfDoomWhere
+     * @return
+     */
+    private String handleWhereAndAnd(String queryOfDoomWhere) {
+        log.info("incomming query in where method:\n\n$queryOfDoomWhere\n\n")
+
+        if (queryOfDoomWhere.empty) {
+            log.info("using where!")
+            queryOfDoomWhere += " where "
+        } else {
+            log.info("using and!")
+            queryOfDoomWhere += " and "
+        }
+
+        log.info("outgoing query in where method:\n\n$queryOfDoomWhere\n\n")
+
+        return queryOfDoomWhere
+    }
+
+    /**
+     * queries the system and updates all the values, based on the payload
+     * @param json
+     */
+    def update(queryContent, update) {
+        def result = query(queryContent);
+
+        //go over all spectra
+        result.each { Spectrum spectrum ->
+
+            //if we have tags specified
+            if (update.tags) {
+                update.tags.each { String t ->
+
+                    //if a tag starts with minus we want to remove it
+                    if (t.startsWith("-")) {
+
+                        String nameToDelete = t.substring(1, t.length())
+                        def deleteMe = []
+                        spectrum.tags.each {
+
+                            if (it.text == nameToDelete) {
+                                deleteMe.add(it)
+                            }
+                        }
+
+                        deleteMe.each { Tag tag ->
+                            log.info("removing tag from spectra: ${tag}")
+                            spectrum.removeFromTags(tag)
+                        }
+                    }
+                    //else we want to add it
+                    else {
+                        Tag tag = Tag.findOrSaveByText(t);
+
+
+                        spectrum.addToTags(tag)
+                    }
+                }
+            }
+
+            //save the now modified spectra
+            spectrum.save(flush: true)
+        }
+
+        return [updated: result.size()]
+    }
+
+    /**
+     * returns a map with exactly two keys
+     * @param content
+     * @return
+     */
+    private Map estimateMetaDataValueImpl(String content) {
+
+        def result = [:];
+
+        result.name = "stringValue"
+        result.value = content
+
+        //temporary while we are diagnonsing issues, we only support string storage
+        /*
+        MetaDataValue value = MetaDataValueHelper.getValueObject(content)
+
+        if (value instanceof BooleanMetaDataValue) {
+
+            result.name = "booleanValue"
+            result.value = value.booleanValue
+        } else if (value instanceof DoubleMetaDataValue) {
+
+            result.name = "doubleValue"
+            result.value = value.doubleValue
+        } else if (value instanceof StringMetaDataValue) {
+            result.name = "stringValue"
+            result.value = value.getStringValue()
+        }
+          */
+        return result;
+    }
+}

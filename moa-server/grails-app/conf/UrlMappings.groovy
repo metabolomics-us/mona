@@ -46,6 +46,11 @@ class UrlMappings {
         }
 
         /**
+         * query all metadata by a given search term and category
+         */
+        "/rest/meta/data/search"(controller: 'metaDataQuery', action: 'listMetaDataValuesBySearchTerm')
+
+        /**
          * query by category
          */
         "/rest/meta/category"(resources: 'MetaDataCategory') {

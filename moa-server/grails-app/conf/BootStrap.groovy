@@ -30,6 +30,8 @@ class BootStrap {
             Tag.findOrCreateWhere(text: "experimental").save()
 
             MetaDataCategory.findOrCreateByName("computed").save()
+            MetaDataCategory.findOrCreateByNameAndVisible("annotation",false).save()
+
 
         }
         JSON.registerObjectMarshaller(Tag,
