@@ -3,7 +3,29 @@ import moa.MetaData
 class UrlMappings {
 
     static mappings = {
+        /**
+         * basic overview of our services
+         */
         "/"(view: 'index')
+
+        /**
+         * status of our job queue
+         */
+
+        "/info/jobs"(controller: "Quartz", action: "list")
+
+        /**
+         * general grails default mapping
+         */
+        "/$controller/$action?/$id?"{
+            constraints {
+                // apply constraints here
+            }
+        }
+
+        /**
+         * if you hit the top directory just redirect
+         */
         "/rest"(redirect: '/')
 
         /**
@@ -48,7 +70,7 @@ class UrlMappings {
         /**
          * query all metadata by a given search term and category
          */
-        "/rest/meta/data/search"(controller: 'metaDataQuery', action: 'listMetaDataValuesBySearchTerm')
+        "/rest/meta/data/search"(controller: 'metaDataQuery', action: 'query')
 
         /**
          * query by category

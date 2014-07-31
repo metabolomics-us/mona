@@ -15,10 +15,19 @@ class MetaDataQueryController {
     /**
      * lists all metadata values by search term
      */
-    def query(){
+    def query() {
 
-        def result = metaDataQueryService.queryMetaData(request.JSON,params)
+        def result = []
+        def json = request.JSON
 
-        render (result as JSON)
+        if (json.query) {
+
+            result = metaDataQueryService.query(json.query, params)
+
+        } else {
+            result = metaDataQueryService.query(json, params)
+        }
+
+        render(result as JSON)
     }
 }

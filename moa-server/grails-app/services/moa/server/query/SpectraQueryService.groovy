@@ -5,13 +5,18 @@ import moa.Spectrum
 import moa.Tag
 import org.hibernate.QueryException
 
-@Transactional
+
 class SpectraQueryService {
+
+    static transactional = false
+
+    MetaDataQueryService metaDataQueryService
 
     /**
      * returns a list of spectra data based on the given query
      * @param json
      */
+    @Transactional
     def query(def json, def params = [:]) {
         log.info("received query: ${json}")
 
@@ -78,7 +83,6 @@ class SpectraQueryService {
 
             }
         }
-        log.info("generated query in method:\n\n$queryOfDoomWhere\n\n")
 
         [queryOfDoomWhere, queryOfDoomJoins]
 
@@ -106,144 +110,16 @@ class SpectraQueryService {
                     //build the join for each metadata object link
                     queryOfDoomJoins += " left join s.metaData as mdv_${index}"
                     queryOfDoomJoins += " left join mdv_${index}.metaData as md_${index}"
+                    queryOfDoomJoins += " left join md_${index}.category as mdc_${index}"
 
-                    queryOfDoomWhere = buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "md_${index}", "mdv_${index}", index)
+
+                    queryOfDoomWhere = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "md_${index}", "mdv_${index}","mdc_${index}", index)
 
                 }
             }
         }
-        log.info("generated query in method:\n\n$queryOfDoomWhere\n\n")
 
         [queryOfDoomWhere, queryOfDoomJoins]
-    }
-
-    /**
-     * helper method to figure out the exactly required expressions
-     *
-     * @param queryOfDoomWhere query we are building
-     * @param current query json object
-     * @param executionParams list of exectution parameters
-     * @param metaDataTableName name of our metadata table name
-     * @param metaDataValueTableName name of our metadata value table name
-     * @param index current join in case we have more than 1
-     * @return
-     */
-    public String buildMetadataQueryString(String queryOfDoomWhere, Map current, executionParams, String metaDataTableName, String metaDataValueTableName, int index = 0) {
-        Map impl = [:]
-//part of searching by name of metadata object
-        queryOfDoomWhere += " ("
-        queryOfDoomWhere += " " + "${metaDataTableName}" + ".name = :metaDataName_${index}"
-        queryOfDoomWhere += " and "
-
-        executionParams.put("metaDataName_${index}".toString(), current.name);
-
-        //equals
-        if (current.value.eq != null) {
-            impl = estimateMetaDataValueImpl(current.value.eq.toString())
-
-            //equality search
-            queryOfDoomWhere += " " + "${metaDataValueTableName}.${impl.name}" + " = :metaDataImplValue_${index}"
-
-            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
-
-        }
-        //like
-        else if (current.value.like != null) {
-            impl = estimateMetaDataValueImpl(current.value.like.toString())
-
-            //equality search
-            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} like :metaDataImplValue_${index}"
-
-            executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
-            executionParams.put("metaDataImplValue_${index}".toString(), "%${impl.value}%");
-
-        }
-        //greater than
-        else if (current.value.gt != null) {
-            impl = estimateMetaDataValueImpl(current.value.gt.toString())
-
-            //equality search
-            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} > :metaDataImplValue_${index}"
-            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
-
-        }
-        //less than
-        else if (current.value.lt != null) {
-            impl = estimateMetaDataValueImpl(current.value.lt.toString())
-
-            //equality search
-            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} < :metaDataImplValue_${index}"
-            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
-
-        }
-
-        //greate equals
-        else if (current.value.ge != null) {
-            impl = estimateMetaDataValueImpl(current.value.ge.toString())
-
-            //equality search
-            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} >= :metaDataImplValue_${index}"
-            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
-
-        }
-
-        //less equals
-        else if (current.value.le != null) {
-            impl = estimateMetaDataValueImpl(current.value.le.toString())
-
-            //equality search
-            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} <= :metaDataImplValue_${index}"
-            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
-
-        }
-
-        //not equals
-        else if (current.value.ne != null) {
-            impl = estimateMetaDataValueImpl(current.value.ne.toString())
-
-            //equality search
-            queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} != :metaDataImplValue_${index}"
-            executionParams.put("metaDataImplValue_${index}".toString(), impl.value);
-
-        }
-
-        //between
-        else if (current.value.between != null) {
-            if (current.value.between.length() == 2) {
-                def min = current.value.between[0].toString()
-                def max = current.value.between[1].toString()
-
-                impl = estimateMetaDataValueImpl(min)
-
-                queryOfDoomWhere += " ${metaDataValueTableName}.${impl.name} between :metaDataImplValue_min_${index} and :metaDataImplValue_max_${index} "
-
-                executionParams.put("metaDataImplValue_min_${index}".toString(), estimateMetaDataValueImpl(min).value);
-                executionParams.put("metaDataImplValue_max_${index}".toString(), estimateMetaDataValueImpl(max).value);
-
-            } else {
-                throw new QueryException("invalid query term: ${current.value.between}, we need exactly 2 values")
-            }
-
-        }
-        //unsupported term
-        else {
-            throw new QueryException("invalid query term: ${current.value}")
-        }
-
-        //support for units
-        if (current.value.unit != null) {
-
-            //equality search
-            queryOfDoomWhere += " and  ${metaDataValueTableName}.unit = :metaDataUnitValue_${index}"
-
-            executionParams.put("metaDataUnitValue_${index}".toString(), current.value.unit);
-
-        }
-        queryOfDoomWhere += ")"
-
-        log.info("generated query in method:\n\n$queryOfDoomWhere\n\n")
-
-        return queryOfDoomWhere
     }
 
     /**
@@ -306,7 +182,6 @@ class SpectraQueryService {
 
         }
 
-        log.info("generated query in compound method:\n\n$queryOfDoomWhere\n\n")
 
         [queryOfDoomWhere, queryOfDoomJoins]
     }
@@ -317,7 +192,6 @@ class SpectraQueryService {
      * @return
      */
     private String handleWhereAndAnd(String queryOfDoomWhere) {
-        log.info("incomming query in where method:\n\n$queryOfDoomWhere\n\n")
 
         if (queryOfDoomWhere.empty) {
             log.info("using where!")
@@ -326,8 +200,6 @@ class SpectraQueryService {
             log.info("using and!")
             queryOfDoomWhere += " and "
         }
-
-        log.info("outgoing query in where method:\n\n$queryOfDoomWhere\n\n")
 
         return queryOfDoomWhere
     }
@@ -380,35 +252,4 @@ class SpectraQueryService {
         return [updated: result.size()]
     }
 
-    /**
-     * returns a map with exactly two keys
-     * @param content
-     * @return
-     */
-    private Map estimateMetaDataValueImpl(String content) {
-
-        def result = [:];
-
-        result.name = "stringValue"
-        result.value = content
-
-        //temporary while we are diagnonsing issues, we only support string storage
-        /*
-        MetaDataValue value = MetaDataValueHelper.getValueObject(content)
-
-        if (value instanceof BooleanMetaDataValue) {
-
-            result.name = "booleanValue"
-            result.value = value.booleanValue
-        } else if (value instanceof DoubleMetaDataValue) {
-
-            result.name = "doubleValue"
-            result.value = value.doubleValue
-        } else if (value instanceof StringMetaDataValue) {
-            result.name = "stringValue"
-            result.value = value.getStringValue()
-        }
-          */
-        return result;
-    }
 }
