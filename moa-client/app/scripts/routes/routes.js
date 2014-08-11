@@ -45,6 +45,12 @@ app.config(function ($routeProvider) {
             controller: 'SpectraBrowserController'
         })
 
+        //view individual spectrum
+        .when('/spectra/display/:id', {
+            templateUrl: 'views/spectra/display/viewSpectrum.html',
+            controller: 'ViewSpectrumController'
+        })
+
         //query spectra
         .when('/spectra/query', {
             templateUrl: 'views/spectra/query/query.html',
