@@ -103,12 +103,15 @@ grails.project.dependency.resolution = {
         //compile ":hibernate4:4.3.5.4"
         compile ":rest-client-builder:2.0.0"
         compile ":quartz:1.0.1"
-
+        compile ":quartz-monitor:1.0"
 
         // plugins needed at runtime but not for compilation
         runtime ":database-migration:1.3.8"
         runtime ":resources:1.2.1"
         runtime ":cors:1.1.4"
+        runtime ":jquery:1.11.1"
+        runtime ':twitter-bootstrap:3.1.1.3'
+
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0.1"

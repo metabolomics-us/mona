@@ -14,7 +14,7 @@ class SpectraPersistenceService {
      * @param params
      * @return
      */
-    public synchronized Spectrum create(Map json) {
+    public  Spectrum create(Map json) {
 
         Spectrum spectrum = new Spectrum(json)
 
@@ -30,8 +30,8 @@ class SpectraPersistenceService {
         spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
 
         //we need to ensure we don't double generate compound
-        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound)
-        spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound)
+        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound).save()
+        spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound).save()
 
         spectrum.save()
         spectrum.lock()
@@ -76,11 +76,12 @@ class SpectraPersistenceService {
         log.debug("trying to generate compound: ${compound.inchiKey}")
 
         //first get the compound we want
-        def myCompound = Compound.findByInchiKey(compound.inchiKey)
+        def myCompound = Compound.findByInchiKey(compound.inchiKey.trim())
 
         if (!myCompound) {
             Compound.withTransaction {
-                myCompound = new Compound(inchiKey: compound.inchiKey)
+                myCompound = new Compound(inchiKey: compound.inchiKey.trim())
+
                 myCompound.save()
             }
         }

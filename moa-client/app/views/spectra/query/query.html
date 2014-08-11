@@ -94,7 +94,7 @@
                 <div id="metaQuery" class="panel-collapse collapse">
                     <div class="panel-body">
 
-                        <fieldset ng-repeat="category in metadataCategories" ng-show="metadata[category.name].length">
+                        <fieldset ng-repeat="category in metadataCategories " ng-show="metadata[category.name].length">
                             <legend>{{category.name == "none" ? "General" : category.name}}</legend>
 
                             <div class="form-group" ng-repeat="meta in metadata[category.name] | unique:'name'">

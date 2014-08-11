@@ -33,16 +33,6 @@ class SpectrumController extends RestfulController<Spectrum> {
         return spectraPersistenceService.create(params)
     }
 
-    protected Spectrum queryForResource(Serializable id) {
-
-        def criteria = Spectrum.createCriteria()
-
-        return criteria.get {
-            if (params.CompoundId) {
-                eq("id", Long.parseLong(id.toString()))
-            }
-        }
-    }
 
     def batchSave() {
         SpectraUploadJob.triggerNow([spectra: getParametersToBind()])

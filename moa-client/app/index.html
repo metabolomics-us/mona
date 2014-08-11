@@ -15,9 +15,9 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-multiselect/css/bootstrap-multiselect.css" />
+    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
     <!-- endbower -->
     <!-- endbuild -->
@@ -257,23 +257,22 @@
 <!-- bower:js -->
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/flot/jquery.flot.js"></script>
 <script src="bower_components/angular-resource/angular-resource.js"></script>
 <script src="bower_components/angular-cookies/angular-cookies.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="bower_components/angular-route/angular-route.js"></script>
-<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/angular-touch/angular-touch.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="bower_components/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
+<script src="bower_components/flot/jquery.flot.js"></script>
 <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
 <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
-<script src="bower_components/angular-flot/angular-flot.js"></script>
-<script src="bower_components/angular-masspec-plotter/angular-masspec-plotter.js"></script>
+<script src="bower_components/angular-cts-service/service.js"></script>
 <script src="bower_components/angular-msp-parser/service.js"></script>
 <script src="bower_components/angular-massbank-parser/service.js"></script>
-<script src="bower_components/angular-cts-service/service.js"></script>
+<script src="bower_components/angular-masspec-plotter/angular-masspec-plotter.js"></script>
 <script src="bower_components/ng-file-upload/angular-file-upload.js"></script>
 <script src="bower_components/ng-file-upload-shim/angular-file-upload-shim.js"></script>
 <script src="bower_components/metisMenu/jquery.metisMenu.js"></script>
@@ -283,8 +282,6 @@
 <script src="bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js"></script>
 <script src="bower_components/angular-jquery/dist/angular-jquery.js"></script>
 <script src="bower_components/flot/jquery.flot.resize.js"></script>
-<script src="bower_components/flot/jquery.flot.navigate.js"></script>
-
 
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
@@ -314,6 +311,8 @@
 <!-- filters -->
 <script src="scripts/filters/spectraBrowserFilter.js"></script>
 <script src="scripts/filters/compoundsBrowserFilter.js"></script>
+<script src="scripts/filters/propertyFilter.js"></script>
+
 
 <!-- controllers -->
 <script src="scripts/controllers/main.js"></script>

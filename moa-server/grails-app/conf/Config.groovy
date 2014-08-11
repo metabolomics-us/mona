@@ -117,8 +117,11 @@ log4j = {
         development {
 
             info 'grails.app.services.moa.server.CategoryNameFinderService'
+            info 'grails.app.services.moa.server.metadata.MetaDataPersistenceService'
+            info 'grails.app.services.moa.server.SpectraPersistenceService'
 
-            debug 'grails.app'
+
+            info 'grails.app'
     //        debug 'org.hibernate.SQL'
     //        trace 'org.hibernate.type.descriptor.sql.BasicBinder'
         }
@@ -129,3 +132,6 @@ log4j = {
         }
     }
 }
+
+//let's use jquery
+grails.views.javascript.library="jquery"
