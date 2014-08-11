@@ -92,9 +92,9 @@ class SpectraPersistenceService {
 
         //merge new names
         names.each { name ->
-            Name n = Name.findByNameAndCompound(name.name, myCompound)
+            Name n = Name.findOrSaveByNameAndCompound(name.name, myCompound)
             if (n != null) {
-                myCompound.addToNames(new Name(name: name))
+                myCompound.addToNames(n)
             }
         }
 
