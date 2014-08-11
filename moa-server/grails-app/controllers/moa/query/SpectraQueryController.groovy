@@ -1,7 +1,7 @@
 package moa.query
 
 import grails.converters.JSON
-import moa.server.SpectraQueryService
+import moa.server.query.SpectraQueryService
 
 class SpectraQueryController {
 

@@ -19,12 +19,25 @@ class SpectraUploadJob {
     SpectraPersistenceService spectraPersistenceService
 
     def execute(context) {
-
         Map data = context.mergedJobDataMap
 
-        if (data.containsKey('spectra')) {
-            Spectrum result = spectraPersistenceService.create(data.spectra)
-            result.save(flush: true)
+        if (data != null) {
+            if (data.containsKey('spectra')) {
+                long begin = System.currentTimeMillis()
+                Spectrum result = spectraPersistenceService.create(data.spectra)
+                result.save(flush: true)
+
+                long end = System.currentTimeMillis()
+
+                long needed = end - begin
+                def message = "stored spectra with id: ${result.id}, which took ${needed/1000}s"
+                log.info("\t=>\t${message}")
+
+            } else {
+                log.info("\t=>\tno spectra was provided!")
+            }
+        } else {
+            log.info("\t=>\tno data was provided")
         }
     }
 }
