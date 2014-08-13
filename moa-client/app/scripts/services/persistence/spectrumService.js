@@ -33,7 +33,7 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
             },
 
             /**
-             * sends the object to the server to be processed and executed at their convinience. Meaning no intermidiate feedback is provided or required.
+             * sends the object to the server to be processed and executed at their convenience. Meaning no intermediate feedback is provided or required.
              */
             'batchSave': {
                 url: REST_BACKEND_SERVER + '/rest/spectra/batch/save',

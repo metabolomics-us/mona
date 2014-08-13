@@ -39,7 +39,7 @@ app.config(function ($routeProvider) {
             controller: 'SpectraController'
         })
 
-        //displaying a single spectra
+        //displaying a single compound
         .when('/spectra/browse/:inchikey?', {
             templateUrl: 'views/spectra/browse/spectra.html',
             controller: 'SpectraBrowserController'
@@ -48,7 +48,8 @@ app.config(function ($routeProvider) {
         //view individual spectrum
         .when('/spectra/display/:id', {
             templateUrl: 'views/spectra/display/viewSpectrum.html',
-            controller: 'ViewSpectrumController'
+            controller: 'ViewSpectrumController',
+            resolve: moaControllers.ViewSpectrumController.loadSpectrum
         })
 
         //query spectra

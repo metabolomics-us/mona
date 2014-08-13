@@ -1,6 +1,5 @@
-<div class="modal-body">
-
-    <!-- massspectral properties -->
+<div>
+    <!-- mass spectral properties -->
     <div class="row">
         <tabset justified="true">
             <tab heading="Mass Spectrum">
@@ -10,35 +9,37 @@
                 </div>
             </tab>
             <tab heading="Table of Ions">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Ion</th>
-                        <th>Intensity</th>
-                        <th>annotation</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                <div style="height: 400px; overflow: auto; margin-top: 10px;">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Ion</th>
+                            <th>Intensity</th>
+                            <th>annotation</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                    <tr ng-repeat="ion in massSpec">
-                        <td>{{ion.ion}}</td>
-                        <td>{{ion.intensity}}</td>
-                        <td>{{ion.annotation}}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                        <tr ng-repeat="ion in massSpec">
+                            <td>{{ion.ion}}</td>
+                            <td>{{ion.intensity}}</td>
+                            <td>{{ion.annotation}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </tab>
         </tabset>
     </div>
+    <br />
+
     <div class="row">
         <dic class="col-md-12">
             <tabset justified="true">
                 <tab heading="Biological Compound Properties">
-
                     <div class="row">
                         <div class="col-md-6">
                             <div ng-show="spectrum.biologicalCompound.metaData.length">
-                                <h4>Compound Metadata</h4>
                                 <table class="table">
                                     <thead>
                                     <tr>
@@ -77,11 +78,11 @@
                         </div>
                     </div>
                 </tab>
+
                 <tab heading="Chemical Compound Properties">
                     <div class="row">
                         <div class="col-md-6">
                             <div ng-show="spectrum.chemicalCompound.metaData.length">
-                                <h4>Compound Metadata</h4>
                                 <table class="table">
                                     <thead>
                                     <tr>
@@ -114,19 +115,18 @@
                                 <dt ng-show="spectrum.chemicalCompound.names.length">Name(s):</dt>
                                 <dd ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</dd>
                             </dl>
+
                             <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
                                  id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound"></div>
                         </div>
-
                     </div>
-
                 </tab>
             </tabset>
         </dic>
-        <div class="col-md-12">
 
+        <div class="col-md-12">
             <div ng-show="spectrum.metaData.length">
-                <h4>Spectra Metadata</h4>
+                <h4>Mass Spectrum Metadata</h4>
                 <table class="table">
                     <thead>
                     <tr>
@@ -152,6 +152,7 @@
                     </tbody>
                 </table>
             </div>
+            <br />
 
             <div ng-show="spectrum.tags.length">
                 <h4>Tags</h4>
@@ -159,6 +160,7 @@
                     <li ng-repeat="tag in spectrum.tags"><span class="label label-primary">{{tag.text}}</span></li>
                 </ul>
             </div>
+            <br />
 
             <div ng-show="spectrum.comments.length">
                 <h4>Comments</h4>

@@ -9,7 +9,6 @@
             as desired.</p></div>
 
     </div>
-    <div ng-bind="query"></div>
 
     <div class="modal-body">
 
@@ -87,6 +86,7 @@
                 </div>
             </div>
 
+
             <div class="panel panel-default">
                 <div class="panel-heading" data-toggle="collapse" data-target="#metaQuery">
                     <h4 class="panel-title">Query by Metadata</h4>
@@ -94,15 +94,15 @@
                 <div id="metaQuery" class="panel-collapse collapse">
                     <div class="panel-body">
 
-                        <fieldset ng-repeat="category in metadataCategories " ng-show="metadata[category.name].length">
+                        <fieldset ng-repeat="category in metadataCategories" ng-show="metadata[category.name].length && category.visible">
                             <legend>{{category.name == "none" ? "General" : category.name}}</legend>
 
                             <div class="form-group" ng-repeat="meta in metadata[category.name] | unique:'name'">
                                 <div ng-if="meta.type == 'double'">
-                                    <label class="control-label col-sm-4" for="{{meta.name}}">{{meta.name}}</label>
+                                    <label class="control-label col-sm-4" for="meta_{{meta.id}}">{{meta.name}}</label>
 
                                     <div class="col-sm-5">
-                                        <input id="{{meta.name}}"
+                                        <input id="meta_{{meta.id}}"
                                                name="{{meta.name}}"
                                                ng-model="query[meta.name]"
                                                class="form-control"/>
@@ -118,7 +118,7 @@
                                 </div>
 
                                 <div ng-if="meta.type == 'string'">
-                                    <label class="control-label col-sm-4" for="{{meta.name}}">{{meta.name}}</label>
+                                    <label class="control-label col-sm-4" for="meta_{{meta.id}}">{{meta.name}}</label>
 
                                     <div class="col-sm-8">
                                         <!--
@@ -127,6 +127,7 @@
                                                ng-model="query[meta.name]"
                                                class="form-control" />
                                        -->
+                                        <!--
                                         <div fl-angucomplete inputid="meta.name"
                                              inputName="meta.name"
                                              placeholder=""
@@ -137,14 +138,24 @@
                                              titlefield="value"
                                              isrequired="true"
                                              inputclass="form-control form-control-small"></div>
+                                         -->
+                                        <input type="text"
+                                               id="meta_{{meta.id}}"
+                                               name="{{meta.name}}"
+                                               ng-model="query[meta.name]"
+                                               typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
+                                               class="form-control" />
+
+
+
                                     </div>
                                 </div>
 
                                 <div ng-if="meta.type == 'boolean'">
-                                    <label class="control-label col-sm-4" for="{{meta.name}}">{{meta.name}}</label>
+                                    <label class="control-label col-sm-4" for="meta_{{meta.id}}">{{meta.name}}</label>
 
                                     <div class="col-sm-8">
-                                        <input id="{{meta.name}}"
+                                        <input id="meta_{{meta.id}}"
                                                name="{{meta.name}}"
                                                ng-model="query[meta.name]"
                                                class="form-control"/>

@@ -18,7 +18,7 @@ app.factory('MetadataService', function ($resource, REST_BACKEND_SERVER, $http) 
             id: "@id",
             categoryController: "@subController",
             dataID: "@subID",
-            dataController: "@subSubController"
+            dataController: "@subSubController",
         },
         {
             categories: {
@@ -43,6 +43,15 @@ app.factory('MetadataService', function ($resource, REST_BACKEND_SERVER, $http) 
                     controller: "data",
                     subController: "value"
                 }
+            },
+            queryValues: {
+                url: REST_BACKEND_SERVER + '/rest/meta/data/search?max=10',
+                method: 'POST',
+                isArray: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                params: { query: '@query' }
             }
         }
     );

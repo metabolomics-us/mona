@@ -6,35 +6,114 @@
  * @param massSpec
  * @constructor
  */
-moaControllers.ViewSpectrumController = function ($scope, Spectrum, $routeParams, $log) {
-    // Query for specific spectrum object
-    $scope.spectrum = {
-        spectrum: ''
-    };
+moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
+    $scope.spectrum = delayedSpectrum;
+
     $scope.massSpec = [];
 
-    (function() {
-        Spectrum.get(
-            {id: $routeParams.id},
 
-            function (data) {
-                // Regular expression to extract ions
-                var regex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
 
-                $log.info(JSON.stringify(data, null, 2));
+    /**
+     * Decimal truncation routines
+     */
+    var truncateDecimal = function(s, length) {
+        var regex = new RegExp("^\\s*(\\d+\\.\\d{"+ length +"})\\d*\\s*$");
+        var m = s.match(regex);
 
-                // Parse spectrum string to generate ion list
-                $scope.massSpec = [];
-                var match;
+        return m ? m[1] : s;
+    };
 
-                while ((match = regex.exec(data.spectrum)) != null) {
-                    $scope.massSpec.push({ion: match[1], intensity: match[2]});
-                }
-            },
+    var truncateMass = function(mass) { truncateDecimal(mass, 4);};
+    var truncateRetentionTime = function(mass) { truncateDecimal(mass, 1);};
 
-            function (error) {
-                alert('failed to obtain spectrum: ' + error);
+
+    /*
+     * Perform all initial data formatting and processing
+     */
+    (function(spectrum) {
+        // Regular expression for truncating accurate masses
+        var massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
+
+
+        //
+        // Truncate metadata mass values
+        //
+
+        for (var i = 0; i < spectrum.metaData.length; i++) {
+            var name = spectrum.metaData[i].name.toLowerCase();
+
+            if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                spectrum.metaData[i].value = truncateMass(spectrum.metaData[i].value);
+            } else if (name.indexOf('retention') > -1) {
+                spectrum.metaData[i].value = truncateRetentionTime(spectrum.metaData[i].value);
             }
-        );
-    })();
+        }
+
+        for (var i = 0; i < spectrum.biologicalCompound.metaData.length; i++) {
+            var name = spectrum.biologicalCompound.metaData[i].name.toLowerCase();
+
+            if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                spectrum.biologicalCompound.metaData[i].value = truncateMass(spectrum.biologicalCompound.metaData[i].value);
+            }
+        }
+
+        for (var i = 0; i < spectrum.chemicalCompound.metaData.length; i++) {
+            var name = spectrum.chemicalCompound.metaData[i].name.toLowerCase();
+
+            if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                spectrum.chemicalCompound.metaData[i].value = truncateMass(spectrum.chemicalCompound.metaData[i].value);
+            }
+        }
+
+
+        //
+        // Create mass spectrum table
+        //
+
+        // Regular expression to extract ions
+        var ionRegex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
+
+        // Assemble our annotation matrix
+        var meta = [];
+
+        for (var i = 0; i < spectrum.metaData.length; i++) {
+            if (spectrum.metaData[i].category === 'annotation') {
+                meta.push(spectrum.metaData[i]);
+            }
+        }
+
+        // Parse spectrum string to generate ion list
+        var match;
+
+        while ((match = ionRegex.exec(spectrum.spectrum)) != null) {
+            // Find annotation
+            var annotation;
+
+            for (var i = 0; i < meta.length; i++) {
+                if (meta[i].value === match[1]) {
+                    annotation = meta[i].name;
+                }
+            }
+
+            // Truncate decimal values of m/z
+            match[1] = truncateMass(match[1]);
+
+            // Store ion
+            $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation});
+        }
+    })(delayedSpectrum);
+};
+
+
+/**
+ * Required in order to load the spectrum before resolving the web page
+ */
+moaControllers.ViewSpectrumController.loadSpectrum = {
+    delayedSpectrum: function(Spectrum, $route) {
+        return Spectrum.get(
+            {id: $route.current.params.id},
+            function (data) {},
+            function (error) { alert('failed to obtain spectrum: ' + error); }
+        ).$promise
+    }
 };

@@ -136,63 +136,8 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * displays the spectrum for the given index
      * @param index
      */
-    $scope.viewSpectrum = function (index) {
-        var modalInstance = $modal.open({
-            templateUrl: '/views/spectra/display/viewSpectrum.html',
-            controller: moaControllers.ViewSpectrumModalController,
-            size: 'lg',
-            backdrop: 'true',
-            resolve: {
-                /**
-                 * assign the spectra object
-                 * @returns {*}
-                 */
-                spectrum: function () {
-                    return $scope.spectra[index];
-                },
-                /**
-                 * build a simple representation of the mass spectra and available annotation
-                 */
-                massSpec: function () {
-                    var spec = $scope.spectra[index];
-
-                    var meta = [];
-
-                    //assemble our annotation matrix
-                    for (var i = 0; i < spec.metaData.length; i++) {
-
-                        if (spec.metaData[i].category === 'annotation') {
-                            meta.push(spec.metaData[i]);
-                        }
-                    }
-
-
-                    var regex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
-
-                    var match = regex.exec(spec.spectrum);
-
-                    var result = [];
-
-                    while (match != null) {
-
-                        var annotation;
-
-                        for (var i = 0; i < meta.length; i++) {
-
-                            if (meta[i].value == match[1]) {
-                                annotation = meta[i].name;
-                            }
-                        }
-
-                        result.push({ion: match[1], intensity: match[2], annotation: annotation});
-                        match = regex.exec(spec.spectrum);
-
-                    }
-
-                    return result;
-                }
-            }
-        });
+    $scope.viewSpectrum = function (id) {
+        $location.path('/spectra/display/'+ id);
     };
 
     /**
