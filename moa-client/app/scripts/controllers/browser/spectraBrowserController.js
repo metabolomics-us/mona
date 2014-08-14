@@ -141,6 +141,14 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     };
 
     /**
+     * show the currently selected sprectra
+     * @param inchikey
+     */
+    $scope.viewAssociatedSpectra = function(inchikey) {
+        $location.path("/spectra/browse/"+ inchikey);
+    };
+
+    /**
      * load more spectra
      */
     $scope.spectraLoadLength = -1;
