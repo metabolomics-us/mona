@@ -19,7 +19,8 @@ environments {
 
         dataSource {
             dbCreate = "update"//*/"create-drop"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
+//            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
+            url = "jdbc:postgresql://localhost:5432/moa-devel"
             driverClassName="org.postgresql.Driver"
             username="compound"
             password="asdf"
@@ -41,7 +42,7 @@ environments {
 
     test {
         dataSource {
-            dbCreate = "create-drop"
+            dbCreate = "update"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-test"
             driverClassName="org.postgresql.Driver"
             username="compound"
@@ -76,4 +77,5 @@ environments {
 
         }
     }
+
 }
