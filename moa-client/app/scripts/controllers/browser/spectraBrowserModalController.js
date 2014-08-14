@@ -20,11 +20,11 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
         var regex = new RegExp("^\\s*(\\d+\\.\\d{"+ length +"})\\d*\\s*$");
         var m = s.match(regex);
 
-        return m ? m[1] : s;
+        return m != null ? m[1] : s;
     };
 
-    var truncateMass = function(mass) { truncateDecimal(mass, 4);};
-    var truncateRetentionTime = function(mass) { truncateDecimal(mass, 1);};
+    var truncateMass = function(mass) { return truncateDecimal(mass, 4);};
+    var truncateRetentionTime = function(mass) { return truncateDecimal(mass, 1);};
 
 
     /*
