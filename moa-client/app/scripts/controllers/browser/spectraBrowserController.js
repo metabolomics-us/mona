@@ -192,16 +192,26 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.loadingMore = false;
 
     /**
+     * Tells whether we are have loaded all available data
+     */
+    $scope.dataAvailable = true;
+
+    /**
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
-        if ($scope.spectraLoadLength != $scope.spectra.length) {
+        if ($scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
+            //search utilizing our compiled query so that it can be easily refined over time
             $scope.loadingMore = true;
             $scope.calculateOffsets();
 
-            //search utilizing our compiled query so that it can be easily refined over time
             Spectrum.searchSpectra($scope.compiledQuery, function (data) {
-                $scope.spectra.push.apply($scope.spectra, data);
+                if (data.length == 0) {
+                    $scope.dataAvailable = false;
+                } else {
+                    $scope.spectra.push.apply($scope.spectra, data);
+                }
+
                 $scope.loadingMore = false;
             });
         }

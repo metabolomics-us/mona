@@ -48,7 +48,11 @@
             <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
         </div>
 
-        <div class="text-center" ng-show="filteredSpectra.length == 0 && !loadingMore">
+        <div class="text-center" ng-show="filteredSpectra.length > 0 && !dataAvailable">
+            <h4>All results loaded</h4>
+        </div>
+
+        <div class="text-center" ng-show="filteredSpectra.length == 0 && !dataAvailable">
             <h4>No results found!</h4>
         </div>
     </div>
