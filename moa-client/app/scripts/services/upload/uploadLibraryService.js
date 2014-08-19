@@ -69,26 +69,35 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
         var deferred = $q.defer();
 
+        // define backup conversion using openbabel
+        var babelConversion = function (backup) {
+            $log.warn('utilizing backup service...');
+            gwCtsService.convertInChICodeToMolUsingBabel(spectra.inchi, function (molFile) {
+                spectra.molFile = molFile;
+
+                //add a tag to it
+                if (angular.isUndefined(spectra.tags)) {
+                    spectra.tags = [];
+                }
+
+                spectra.tags.push({text: 'not confirmed identification!'});
+                deferred.resolve(spectra);
+            });
+        }
+
         //we have an inchi, which is the best
         if (spectra.inchi) {
-            gwCtsService.convertInChICodeToMol(spectra.inchi, function (molFile) {
-                    spectra.molFile = molFile;
-                    deferred.resolve(spectra);
-                },
-                function (backup) {
-                    $log.warn('utilizing backup service...');
-                    gwCtsService.convertInChICodeToMolUsingBabel(spectra.inchi, function (molFile) {
+            gwCtsService.convertInChICodeToMol(spectra.inchi,
+                function (molFile) {
+                    if(molFile === null) {
+                        babelConversion('cts returned null');
+                    } else {
                         spectra.molFile = molFile;
-
-                        //add a tag to it
-                        if (angular.isUndefined(spectra.tags)) {
-                            spectra.tags = [];
-                        }
-
-                        spectra.tags.push({text: 'not confirmed identification!'});
                         deferred.resolve(spectra);
-                    });
-                });
+                    }
+                },
+                babelConversion
+            );
         }
         //we have an inchi key
         else if (spectra.inchiKey) {
