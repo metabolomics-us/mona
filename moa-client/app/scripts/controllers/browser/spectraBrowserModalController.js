@@ -34,6 +34,8 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
         // Regular expression for truncating accurate masses
         var massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
 
+        console.log(spectrum);
+
 
         //
         // Truncate metadata mass values
@@ -106,14 +108,24 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
 
 
 /**
- * Required in order to load the spectrum before resolving the web page
+ * Required in order to load the spectrum before resolving the web page.
+ * Loads spectrum from cache if it exists, otherwise get from rest api
  */
 moaControllers.ViewSpectrumController.loadSpectrum = {
-    delayedSpectrum: function(Spectrum, $route) {
-        return Spectrum.get(
-            {id: $route.current.params.id},
-            function (data) {},
-            function (error) { alert('failed to obtain spectrum: ' + error); }
-        ).$promise
+    delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
+        console.log('Spectrum')
+        console.log(SpectrumCache.get('viewSpectrum'))
+        if (SpectrumCache.get('viewSpectrum') === undefined) {
+            return Spectrum.get(
+                {id: $route.current.params.id},
+                function (data) {
+                },
+                function (error) {
+                    alert('failed to obtain spectrum: ' + error);
+                }
+            ).$promise
+        } else {
+            return SpectrumCache.get('viewSpectrum');
+        }
     }
 };

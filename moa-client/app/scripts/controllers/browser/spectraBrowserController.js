@@ -20,7 +20,7 @@
  * @param $location
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, TaggingService, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, TaggingService, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, SpectrumCache) {
     /**
      * contains all local objects and is our model
      * @type {Array}
@@ -136,7 +136,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * displays the spectrum for the given index
      * @param index
      */
-    $scope.viewSpectrum = function (id) {
+    $scope.viewSpectrum = function (id, index) {
+        SpectrumCache.put('viewSpectrum', $scope.spectra[index]);
+        console.log(SpectrumCache.get('viewSpectrum'));
         $location.path('/spectra/display/'+ id);
     };
 
@@ -236,3 +238,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     })();
 
 };
+
+app.factory('SpectrumCache', function($cacheFactory) {
+    return $cacheFactory('myCache');
+});
