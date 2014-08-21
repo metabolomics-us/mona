@@ -137,7 +137,10 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * @param index
      */
     $scope.viewSpectrum = function (id, index) {
+        // Store spectra in cache
+        SpectrumCache.put('spectra', $scope.spectra);
         SpectrumCache.put('viewSpectrum', $scope.spectra[index]);
+
         console.log(SpectrumCache.get('viewSpectrum'));
         $location.path('/spectra/display/'+ id);
     };
@@ -202,7 +205,10 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
-        if ($scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
+        if(SpectrumCache.get('spectra') !== undefined) {
+            $scope.spectra = SpectrumCache.get('spectra');
+            SpectrumCache.put('spectra', null)
+        } else if ($scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
             //search utilizing our compiled query so that it can be easily refined over time
             $scope.loadingMore = true;
             $scope.calculateOffsets();
@@ -238,7 +244,3 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     })();
 
 };
-
-app.factory('SpectrumCache', function($cacheFactory) {
-    return $cacheFactory('myCache');
-});

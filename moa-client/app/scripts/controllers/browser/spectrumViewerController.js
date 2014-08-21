@@ -12,7 +12,6 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
     $scope.massSpec = [];
 
 
-
     /**
      * Decimal truncation routines
      */
@@ -113,19 +112,22 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
  */
 moaControllers.ViewSpectrumController.loadSpectrum = {
     delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
-        console.log('Spectrum')
-        console.log(SpectrumCache.get('viewSpectrum'))
-        if (SpectrumCache.get('viewSpectrum') === undefined) {
+        var spectrum = SpectrumCache.get('viewSpectrum');
+
+        // If a spectrum is not cached or the id requested does not match the
+        // cached spectrum, request it from the rest api
+        if (spectrum === undefined || spectrum.id != $route.current.params.id) {
             return Spectrum.get(
                 {id: $route.current.params.id},
-                function (data) {
-                },
+                function (data) {},
                 function (error) {
                     alert('failed to obtain spectrum: ' + error);
                 }
             ).$promise
         } else {
-            return SpectrumCache.get('viewSpectrum');
+            var spectrum = SpectrumCache.get('viewSpectrum');
+            SpectrumCache.put('viewSpectrum', null)
+            return spectrum;
         }
     }
 };
