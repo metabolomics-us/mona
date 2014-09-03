@@ -69,12 +69,16 @@ app.filter('spectraQuery', function() {
     };
 
     return function(spectra, scope) {
-        var out = [];
+        if(spectra == null) {
+            return [];
+        } else {
+            var out = [];
 
-        for(var i = 0; i < spectra.length; i++)
-            if(checkSpectrum(spectra[i], scope))
-                out.push(spectra[i]);
+            for (var i = 0; i < spectra.length; i++)
+                if (checkSpectrum(spectra[i], scope))
+                    out.push(spectra[i]);
 
-        return out;
+            return out;
+        }
     }
 });

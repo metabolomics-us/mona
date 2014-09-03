@@ -179,8 +179,28 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             $log.info(data.length);
 
             $scope.spectra.length = 0;
-            $scope.spectra.push.apply($scope.spectra, data);
+            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
         });
+    };
+
+
+    /**
+     * Get natural mass as accurate mass of spectrum
+     */
+    $scope.addAccurateMass = function(spectra) {
+        for(var i = 0; i < spectra.length; i++) {
+            var mass = '';
+
+            for(var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
+                if(spectra[i].biologicalCompound.metaData[j].name === 'natural mass') {
+                    mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
+                }
+            }
+
+            spectra[i].accurateMass = mass;
+        }
+
+        return spectra;
     };
 
 
@@ -205,7 +225,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
-        if(SpectrumCache.get('spectra') !== undefined) {
+        if(SpectrumCache.get('spectra') != null) {
             $scope.spectra = SpectrumCache.get('spectra');
             SpectrumCache.put('spectra', null)
         } else if ($scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
@@ -217,7 +237,8 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
                 if (data.length == 0) {
                     $scope.dataAvailable = false;
                 } else {
-                    $scope.spectra.push.apply($scope.spectra, data);
+                    // Add data to spectra object
+                    $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
                 }
 
                 $scope.loadingMore = false;
@@ -239,7 +260,13 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * initialization and population of default values
      */
     (function list() {
-        $scope.spectra = [];
+        if(SpectrumCache.get('spectra') != null) {
+            $scope.spectra = SpectrumCache.get('spectra');
+            SpectrumCache.put('spectra', null)
+        } else {
+            $scope.spectra = [];
+        }
+
         $scope.loadTags();
     })();
 

@@ -1,40 +1,41 @@
 <div>
     <!-- mass spectral properties -->
     <div class="row">
-        <tabset justified="true">
-            <tab heading="Mass Spectrum">
+        <div class="col-md-12">
+            <tabset justified="true">
+                <tab heading="Mass Spectrum">
+                    <div class="masspec-modal">
+                        <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
+                    </div>
+                </tab>
+                <tab heading="Table of Ions">
+                    <div style="height: 400px; overflow: auto; margin-top: 10px;">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Ion</th>
+                                <th>Intensity</th>
+                                <th>annotation</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                <div class="masspec-modal">
-                    <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
-                </div>
-            </tab>
-            <tab heading="Table of Ions">
-                <div style="height: 400px; overflow: auto; margin-top: 10px;">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Ion</th>
-                            <th>Intensity</th>
-                            <th>annotation</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        <tr ng-repeat="ion in massSpec">
-                            <td>{{ion.ion}}</td>
-                            <td>{{ion.intensity}}</td>
-                            <td>{{ion.annotation}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </tab>
-        </tabset>
+                            <tr ng-repeat="ion in massSpec">
+                                <td>{{ion.ion}}</td>
+                                <td>{{ion.intensity}}</td>
+                                <td>{{ion.annotation}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
     </div>
     <br />
 
     <div class="row">
-        <dic class="col-md-12">
+        <div class="col-md-12">
             <tabset justified="true">
                 <tab heading="Biological Compound Properties">
                     <div class="row">
@@ -122,8 +123,11 @@
                     </div>
                 </tab>
             </tabset>
-        </dic>
+        </div>
+    </div>
+    <br />
 
+    <div class="row">
         <div class="col-md-12">
             <div ng-show="spectrum.metaData.length">
                 <h4>Mass Spectrum Metadata</h4>
@@ -136,19 +140,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="meta in spectrum.metaData | orderBy : 'category':true">
-                        <td>
-                            {{meta.category}}
-                        </td>
-                        <td>
-                            {{meta.name}}
-                        </td>
-                        <td>
-                            {{meta.value}} {{meta.unit}}
-                        </td>
-
-                    </tr>
-
+                        <tr ng-repeat="meta in spectrum.metaData | orderBy : 'category':true">
+                            <td>
+                                {{meta.category}}
+                            </td>
+                            <td>
+                                {{meta.name}}
+                            </td>
+                            <td>
+                                {{meta.value}} {{meta.unit}}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
