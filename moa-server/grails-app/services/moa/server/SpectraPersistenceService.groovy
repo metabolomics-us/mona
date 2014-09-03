@@ -76,15 +76,17 @@ class SpectraPersistenceService {
         log.debug("trying to generate compound: ${compound.inchiKey}")
 
         //first get the compound we want
-        def myCompound = Compound.findByInchiKey(compound.inchiKey.trim())
+        def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey.trim())
 
+        /*
         if (!myCompound) {
             Compound.withTransaction {
                 myCompound = new Compound(inchiKey: compound.inchiKey.trim())
 
-                myCompound.save()
+                myCompound.save(flush: true)
             }
         }
+        */
 
         myCompound.lock()
 

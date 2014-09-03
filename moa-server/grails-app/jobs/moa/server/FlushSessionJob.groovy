@@ -7,6 +7,8 @@ import moa.Spectrum
  */
 class FlushSessionJob {
 
+    def concurrent = false
+
     def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
 
     def description = "flushes and clears the hibernate session to keep performance up for mass inserts/updates"
@@ -21,6 +23,7 @@ class FlushSessionJob {
             session.flush()
             session.clear()
             propertyInstanceMap.get().clear()
+            System.gc()
 
             log.info("\t=>\tsession is cleared")
         }
