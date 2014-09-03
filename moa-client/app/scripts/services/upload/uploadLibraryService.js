@@ -89,7 +89,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
         if (spectra.inchi) {
             gwCtsService.convertInChICodeToMol(spectra.inchi,
                 function (molFile) {
-                    if(molFile === null) {
+                    if(molFile === null || molFile) {
                         babelConversion('cts returned null');
                     } else {
                         spectra.molFile = molFile;
@@ -119,7 +119,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
      * @param origin - where did the object actually come from
      * @param submitter
      * @param buildSpectrum
-     * @param saveSpectrumCallback
+     * @param saveSpectrumCasllback
      * @param spectraObject
      */
     function workOnSpectra(origin, submitter, buildSpectrum, saveSpectrumCallback, spectraObject) {
