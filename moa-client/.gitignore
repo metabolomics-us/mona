@@ -4,3 +4,13 @@ dist
 .tmp
 .sass-cache
 app/bower_components
+
+.classpath
+.project
+application.properties
+grails-app/
+grailsw
+grailsw.bat
+target/
+web-app/
+wrapper/
