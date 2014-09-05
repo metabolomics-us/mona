@@ -62,8 +62,8 @@ app.config(function ($routeProvider) {
         .when('/documentation/webservices', {
 //            templateUrl: 'views/submitters/list.html',
             templateURL: 'views/documentation/webservices.html',
-            controller: 'SubmitterController'
-//            controller: 'DocumentationController'
+//            controller: 'SubmitterController'
+            controller: 'DocumentationController'
         })
 
         //any other page is redirected to the root page
