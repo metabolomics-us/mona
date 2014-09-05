@@ -58,6 +58,14 @@ app.config(function ($routeProvider) {
             controller: 'SpectraBrowserController'
         })
 
+        //show documentation
+        .when('/documentation/webservices', {
+//            templateUrl: 'views/submitters/list.html',
+            templateURL: 'views/documentation/webservices.html',
+            controller: 'SubmitterController'
+//            controller: 'DocumentationController'
+        })
+
         //any other page is redirected to the root page
         .otherwise({
             redirectTo: '/'
