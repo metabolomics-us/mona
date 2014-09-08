@@ -3,7 +3,9 @@
 
     <div class="row">
         <h2>Endpoints</h2>
+
         <div class="col-md-4 col-sm-4 col-lg-4">
+            <h3>Dynamic Mappings</h3>
             <table class="table table-hover" style="table-layout: fixed;">
                 <thead>
                 <tr>
@@ -14,26 +16,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>
-                        /rest/spectra/search
-                    </td>
-                    <td>
-                        GET
-                    </td>
-                    <td>
-                        Returns spectra in json format.
-                    </td>
-
-                </tr>
+                <tr>    <td>/</td>                                          <td>*</td>          <td>View the index</td>             </tr>
+                <tr>    <td>/${controller}/${action}?/${id}?</td>           <td>*</td>          <td>Action: (default action)</td>   </tr>
+                <tr>    <td>/rest</td>                                      <td>*</td>          <td>Action: (default action)</td>   </tr>
                 </tbody>
             </table>
-        </div>
-    </div>
 
-    <div class="row">
-        <h2>Endpoints</h2>
-        <div class="col-md-4 col-sm-4 col-lg-4">
+            <h3>Controller: Compound</h3>
             <table class="table table-hover" style="table-layout: fixed;">
                 <thead>
                 <tr>
@@ -44,78 +33,149 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>
-                        /rest/spectra/search
-                    </td>
-                    <td>
-                        GET
-                    </td>
-                    <td>
-                        Returns spectra in json format.
-                    </td>
-
-                </tr>
+                <tr>    <td>/rest/compounds</td>                            <td>GET</td>
+                                                <td>Action: index; returns the list of compounds in json format</td>                </tr>
+                <tr>    <td>/rest/compounds/create/td>                      <td>GET</td>          <td>Action: create</td>           </tr>
+                <tr>    <td>/rest/compounds<td>                             <td>POST/td>
+                                                <td>Action: save; returns a list of compounds in json format</td>                   </tr>
+                <tr>    <td>/rest/compounds/${id}</td>                      <td>GET</td>          <td>Action: show</td>             </tr>
+                <tr>    <td>/rest/compounds/${id}/edit</td>                 <td>GET</td>          <td>Action: edit</td>             </tr>
+                <tr>    <td>/rest/compounds/${id}</td>                      <td>PUT</td>          <td>Action: update</td>           </tr>
+                <tr>    <td>/rest/compounds/${id}</td>                      <td>DELETE</td>       <td>Action: delete</td>           </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="row">
-        <h2>Endpoints</h2>
-        <div class="col-md-4 col-sm-4 col-lg-4">
-            <table class="table table-hover" style="table-layout: fixed;">
-                <thead>
-                <tr>
-                    <th class="text-center" style="width: 110px">URI</th>
-                    <th class="text-center" style="width: 110px">Method</th>
-                    <th class="text-center" style="width: 110px">Details</th>
 
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        /rest/spectra/search
-                    </td>
-                    <td>
-                        GET
-                    </td>
-                    <td>
-                        Returns spectra in json format.
-                    </td>
+<p>
 
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="row">
-        <h2>Endpoints</h2>
-        <div class="col-md-4 col-sm-4 col-lg-4">
-            <table class="table table-hover" style="table-layout: fixed;">
-                <thead>
-                <tr>
-                    <th class="text-center" style="width: 110px">URI</th>
-                    <th class="text-center" style="width: 110px">Method</th>
-                    <th class="text-center" style="width: 110px">Details</th>
 
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        /rest/spectra/search
-                    </td>
-                    <td>
-                        GET
-                    </td>
-                    <td>
-                        Returns spectra in json format.
-                    </td>
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds                 | Action: index                     |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/create          | Action: create                    |
+    |   POST   | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds                 | Action: save                      |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}           | Action: show                      |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}/edit      | Action: edit                      |
+    |   PUT    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}           | Action: update                    |
+    |  DELETE  | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}           | Action: delete                    |
 
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    Controller: MetaData
+    |   GET    | /rest/meta/data                                                                        | Action: index                     |
+    gets list of meta data in json format
+    |   GET    | /rest/meta/data/create                                                                 | Action: create                    |
+    |   POST   | /rest/meta/data                                                                        | Action: save                      |
+    |   GET    | /rest/meta/data/${id}                                                                  | Action: show                      |
+    |   GET    | /rest/meta/data/${id}/edit                                                             | Action: edit                      |
+    |   PUT    | /rest/meta/data/${id}                                                                  | Action: update                    |
+    |  DELETE  | /rest/meta/data/${id}                                                                  | Action: delete                    |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data                                         | Action: index                     |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/create                                  | Action: create                    |
+    |   POST   | /rest/meta/category/${MetaDataCategoryId}/data                                         | Action: save                      |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${id}                                   | Action: show                      |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${id}/edit                              | Action: edit                      |
+    |   PUT    | /rest/meta/category/${MetaDataCategoryId}/data/${id}                                   | Action: update                    |
+    |  DELETE  | /rest/meta/category/${MetaDataCategoryId}/data/${id}                                   | Action: delete                    |
+
+    Controller: MetaDataCategory
+    |   GET    | /rest/meta/category                                                                    | Action: index                     |
+    |   GET    | /rest/meta/category/create                                                             | Action: create                    |
+    |   POST   | /rest/meta/category                                                                    | Action: save                      |
+    |   GET    | /rest/meta/category/${id}                                                              | Action: show                      |
+    |   GET    | /rest/meta/category/${id}/edit                                                         | Action: edit                      |
+    |   PUT    | /rest/meta/category/${id}                                                              | Action: update                    |
+    |  DELETE  | /rest/meta/category/${id}                                                              | Action: delete                    |
+
+    Controller: MetaDataValue
+    |   GET    | /rest/meta/data/${MetaDataId}/value                                                    | Action: index                     |
+    |   GET    | /rest/meta/data/${MetaDataId}/value/create                                             | Action: create                    |
+    |   POST   | /rest/meta/data/${MetaDataId}/value                                                    | Action: save                      |
+    |   GET    | /rest/meta/data/${MetaDataId}/value/${id}                                              | Action: show                      |
+    |   GET    | /rest/meta/data/${MetaDataId}/value/${id}/edit                                         | Action: edit                      |
+    |   PUT    | /rest/meta/data/${MetaDataId}/value/${id}                                              | Action: update                    |
+    |  DELETE  | /rest/meta/data/${MetaDataId}/value/${id}                                              | Action: delete                    |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value                     | Action: index                     |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/create              | Action: create                    |
+    |   POST   | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value                     | Action: save                      |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}               | Action: show                      |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}/edit          | Action: edit                      |
+    |   PUT    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}               | Action: update                    |
+    |  DELETE  | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}               | Action: delete                    |
+
+    Controller: Quartz
+    |    *     | /info/jobs                                                                             | Action: list                      |
+
+    Controller: Spectrum
+    |   GET    | /rest/submitters/${SubmitterId}/spectra                                                | Action: index                     |
+    |   GET    | /rest/submitters/${SubmitterId}/spectra/create                                         | Action: create                    |
+    |   POST   | /rest/submitters/${SubmitterId}/spectra                                                | Action: save                      |
+    |   GET    | /rest/submitters/${SubmitterId}/spectra/${id}                                          | Action: show                      |
+    |   GET    | /rest/submitters/${SubmitterId}/spectra/${id}/edit                                     | Action: edit                      |
+    |   PUT    | /rest/submitters/${SubmitterId}/spectra/${id}                                          | Action: update                    |
+    |  DELETE  | /rest/submitters/${SubmitterId}/spectra/${id}                                          | Action: delete                    |
+    |   GET    | /rest/tags/${TagId}/spectra                                                            | Action: index                     |
+    |   GET    | /rest/tags/${TagId}/spectra/create                                                     | Action: create                    |
+    |   POST   | /rest/tags/${TagId}/spectra                                                            | Action: save                      |
+    |   GET    | /rest/tags/${TagId}/spectra/${id}                                                      | Action: show                      |
+    |   GET    | /rest/tags/${TagId}/spectra/${id}/edit                                                 | Action: edit                      |
+    |   PUT    | /rest/tags/${TagId}/spectra/${id}                                                      | Action: update                    |
+    |  DELETE  | /rest/tags/${TagId}/spectra/${id}                                                      | Action: delete                    |
+    |   GET    | /rest/compounds/${CompoundId}/spectra                                                  | Action: index                     |
+    |   GET    | /rest/compounds/${CompoundId}/spectra/create                                           | Action: create                    |
+    |   POST   | /rest/compounds/${CompoundId}/spectra                                                  | Action: save                      |
+    |   GET    | /rest/compounds/${CompoundId}/spectra/${id}                                            | Action: show                      |
+    |   GET    | /rest/compounds/${CompoundId}/spectra/${id}/edit                                       | Action: edit                      |
+    |   PUT    | /rest/compounds/${CompoundId}/spectra/${id}                                            | Action: update                    |
+    |  DELETE  | /rest/compounds/${CompoundId}/spectra/${id}                                            | Action: delete                    |
+    |   GET    | /rest/spectra                                                                          | Action: index                     |
+    |   GET    | /rest/spectra/create                                                                   | Action: create                    |
+    |   POST   | /rest/spectra                                                                          | Action: save                      |
+    |   GET    | /rest/spectra/${id}                                                                    | Action: show                      |
+    |   GET    | /rest/spectra/${id}/edit                                                               | Action: edit                      |
+    |   PUT    | /rest/spectra/${id}                                                                    | Action: update                    |
+    |  DELETE  | /rest/spectra/${id}                                                                    | Action: delete                    |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra                   | Action: index                     |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/create            | Action: create                    |
+    |   POST   | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra                   | Action: save                      |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}             | Action: show                      |
+    |   GET    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}/edit        | Action: edit                      |
+    |   PUT    | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}             | Action: update                    |
+    |  DELETE  | /rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}             | Action: delete                    |
+
+    Controller: Submitter
+    |   GET    | /rest/submitters                                                                       | Action: index                     |
+    |   GET    | /rest/submitters/create                                                                | Action: create                    |
+    |   POST   | /rest/submitters                                                                       | Action: save                      |
+    |   GET    | /rest/submitters/${id}                                                                 | Action: show                      |
+    |   GET    | /rest/submitters/${id}/edit                                                            | Action: edit                      |
+    |   PUT    | /rest/submitters/${id}                                                                 | Action: update                    |
+    |  DELETE  | /rest/submitters/${id}                                                                 | Action: delete                    |
+
+    Controller: Tag
+    |   GET    | /rest/tags                                                                             | Action: index                     |
+    //gets a list of the tags in json format
+    |   GET    | /rest/tags/create                                                                      | Action: create                    |
+    |   POST   | /rest/tags                                                                             | Action: save                      |
+    |   GET    | /rest/tags/${id}                                                                       | Action: show                      |
+    |   GET    | /rest/tags/${id}/edit                                                                  | Action: edit                      |
+    |   PUT    | /rest/tags/${id}                                                                       | Action: update                    |
+    |  DELETE  | /rest/tags/${id}                                                                       | Action: delete                    |
+
+    Controller: dbdoc
+    |    *     | /dbdoc/${section}?/${filename}?/${table}?/${column}?                                   | Action: (default action)          |
+
+    Controller: metaDataQuery
+    |    *     | /rest/meta/data/search                                                                 | Action: query                     |
+    //has an error…? is it just that it needs more input than this line.. xD should have an error handler tho(??)
+
+    Controller: spectraQuery
+    |    *     | /rest/spectra/search                                                                   | Action: search                    |
+    returns a list of spectra in json format
+    //how to query for spectra exactly -> add a query to the line using ?queryname
+    |    *     | /rest/spectra/batch/update                                                             | Action: searchAndUpdate           |
+
+    Controller: spectrum
+    |    *     | /rest/spectra/batch/save                                                               | Action: batchSave                 |
+    //allows  you to save spectra..?
+
+    side note options : ?max=10, …etc?
+</p>
 </div>
