@@ -1,443 +1,431 @@
 <!--<link href="blog.css" rel="stylesheet">-->
 
 <div>
-<div ng-value="error"></div>
+    <div ng-value="error"></div>
 
-<<<<<<< HEAD
-<div class="blog-masthead">
-    <div class="container">
-        <nav class="blog-nav">
-            <a class="blog-nav-item" href="#Dynamic Mappings">Dynamic Mappings</a> </br>
-            <a class="blog-nav-item" href="#Controller: Compound">Controller: Compound</a> </br>
-            <a class="blog-nav-item" href="#Controller: MetaData">Controller: MetaData</a> </br>
-            <a class="blog-nav-item" href="#Controller: MetaDataCategory">Controller: MetaDataCategory</a> </br>
-            <a class="blog-nav-item" href="#Controller: MetaDataValue">Controller: MetaDataValue</a> </br>
-            <a class="blog-nav-item" href="#Controller: Quartz">Controller: Quartz</a> </br>
-            <a class="blog-nav-item" href="#Controller: Spectrum">Controller: Spectrum</a> </br>
-            <a class="blog-nav-item" href="#Controller: Submitter">Controller: Submitter</a> </br>
-            <a class="blog-nav-item" href="#Controller: Tag">Controller: Tag</a> </br>
-            <a class="blog-nav-item" href="#Controller: metaDataQuery">Controller: metaDataQuery</a> </br>
-            <a class="blog-nav-item" href="#Controller: spectraQuery">Controller: spectraQuery</a> </br>
-            <a class="blog-nav-item" href="#Controller: spectrum">Controller: spectrum</a> </br>
-        </nav>
+    <div class="blog-masthead">
+        <div class="container">
+            <nav class="blog-nav">
+                <a class="blog-nav-item" href="#information">Information</a> </br>
+                <a class="blog-nav-item" href="#Dynamic Mappings">Dynamic Mappings</a> </br>
+                <a class="blog-nav-item" href="#Controller: Compound">Controller: Compound</a> </br>
+                <a class="blog-nav-item" href="#Controller: MetaData">Controller: MetaData</a> </br>
+                <a class="blog-nav-item" href="#Controller: MetaDataCategory">Controller: MetaDataCategory</a> </br>
+                <a class="blog-nav-item" href="#Controller: MetaDataValue">Controller: MetaDataValue</a> </br>
+                <a class="blog-nav-item" href="#Controller: Quartz">Controller: Quartz</a> </br>
+                <a class="blog-nav-item" href="#Controller: Spectrum">Controller: Spectrum</a> </br>
+                <a class="blog-nav-item" href="#Controller: Submitter">Controller: Submitter</a> </br>
+                <a class="blog-nav-item" href="#Controller: Tag">Controller: Tag</a> </br>
+                <a class="blog-nav-item" href="#Controller: metaDataQuery">Controller: metaDataQuery</a> </br>
+                <a class="blog-nav-item" href="#Controller: spectraQuery">Controller: spectraQuery</a> </br>
+                <a class="blog-nav-item" href="#Controller: spectrum">Controller: spectrum</a> </br>
+            </nav>
+        </div>
     </div>
-</div>
 
-<div class="row ng-scope">
-<h2>Endpoint Documentation</h2>
+    <div class="row ng-scope">
+        <h2>Endpoint Documentation</h2>
 
-<p>All results are in json format.</p>
-<p>More specific searches can be made by using /?{query} on the end of the URI.</p>
+        <h3 id="information">Information</h3>
+        <p>All results are in json format.</p>
+        <p>More specific searches can be made by using /?{query} on the end of the URI.
+            </p>
 
-<div class="col-md9 col-sm-6 col-lg-9">
-<h3 id="Dynamic Mappings">Dynamic Mappings</h3>
-=======
-<div class="row">
-<h2>Endpoints</h2>
+        <div class="col-md9 col-sm-6 col-lg-9">
 
-<div class="col-md-4 col-sm-4 col-lg-4">
-<h3>Dynamic Mappings</h3>
->>>>>>> 1ea812e16d95ffa292b92489478717edf9d7aee3
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+        <div class="not working on right now">
+            <h3 id="Dynamic Mappings">Dynamic Mappings</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width: 110px">URI</th>
+                    <th class="text-center" style="width: 110px">Method</th>
+                    <th class="text-center" style="width: 110px">Details</th>
 
-    </tr>
-    </thead>
-    <tbody>
-    <<<<<<< HEAD
-    <tr>    <td>/</td>                                          <td>*</td>
-        <td>Shows default message</td>                   </tr>
-    <tr>    <td>/${controller}/${action}?/${id}?</td>           <td>*</td>
-        <td>This is the formula for all endpoints</td>      </tr>
-    <tr>    <td>/rest</td>                                      <td>*</td>
-        <td>Defaults to default message</td>                </tr>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>    <td>/</td>                                          <td>*</td>
+                    <td>Shows default message</td>                      </tr>
+                <tr>    <td>/${controller}/${action}?/${id}?</td>           <td>*</td>
+                    <td>This is the formula for all endpoints</td>      </tr>
+                <tr>    <td>/rest</td>                                      <td>*</td>
+                    <td>Defaults to default message</td>                </tr>
 
-    </tbody>
-</table>
+                </tbody>
+            </table>
 
-<h3 id="Controller: Compound">Controller: Compound</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+            <h3 id="Controller: Compound">Controller: Compound</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width: 110px">URI</th>
+                    <th class="text-center" style="width: 110px">Method</th>
+                    <th class="text-center" style="width: 110px">Details</th>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/compounds</td>                            <td>GET</td>
-        <td>Shows the list of compounds</td>                </tr>
-    <tr>    <td>/rest/compounds/create</td>                      <td>GET</td>
-        <td>Creates a compound with the given id</td>           </tr>
-    <tr>    <td>/rest/compounds</td>                             <td>POST</td>
-        <td>Saves a list of compounds</td>                   </tr>
-    <tr>    <td>/rest/compounds/${id}</td>                      <td>GET</td>
-        <td>Shows the compound with the given id</td>             </tr>
-    <tr>    <td>/rest/compounds/${id}/edit</td>                 <td>GET</td>
-        <td>Allows editing of the compound with the given id</td>             </tr>
-    <tr>    <td>/rest/compounds/${id}</td>                      <td>PUT</td>
-        <td>Updates the compound with the given id</td>           </tr>
-    <tr>    <td>/rest/compounds/${id}</td>                      <td>DELETE</td>
-        <td>Deletes the compound with the given id</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds</td>                      <td>GET</td>
-        <td>Shows the compounds with the given a metaDataCategory id and a metaData id</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/create</td>               <td>GET</td>
-        <td>Creates a compound with the given metaDataCategory id and metaData id</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds</td>                      <td>POST</td>
-        <td>Saves the compounds with the given metaDataCategory id and metaData id</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}</td>                <td>GET</td>
-        <td>Shows the compound with the given metaDataCategory id and metaData id and compound id</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}/edit</td>           <td>GET</td>
-        <td>Allows editing of the compound with the given metaDataCategory id and metaData id and compound id</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}</td>                <td>PUT</td>
-        <td>Updates the compound with the given metaDataCategory id and metaData id and compound id</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}</td>                <td>DELETE</td>
-        <td>Deletes the compound with the given metaDataCategory id and metaData id and compound id</td>           </tr>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>    <td>/rest/compounds</td>                            <td>GET</td>
+                    <td>Shows the list of compounds</td>                </tr>
+                <tr>    <td>/rest/compounds/create</td>                      <td>GET</td>
+                    <td>Creates a compound with the given id</td>           </tr>
+                <tr>    <td>/rest/compounds</td>                             <td>POST</td>
+                    <td>Saves a list of compounds</td>                   </tr>
+                <tr>    <td>/rest/compounds/${id}</td>                      <td>GET</td>
+                    <td>Shows the compound with the given id</td>             </tr>
+                <tr>    <td>/rest/compounds/${id}/edit</td>                 <td>GET</td>
+                    <td>Allows editing of the compound with the given id</td>             </tr>
+                <tr>    <td>/rest/compounds/${id}</td>                      <td>PUT</td>
+                    <td>Updates the compound with the given id</td>           </tr>
+                <tr>    <td>/rest/compounds/${id}</td>                      <td>DELETE</td>
+                    <td>Deletes the compound with the given id</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds</td>                      <td>GET</td>
+                    <td>Shows the compounds with the given a metaDataCategory id and a metaData id</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/create</td>               <td>GET</td>
+                    <td>Creates a compound with the given metaDataCategory id and metaData id</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds</td>                      <td>POST</td>
+                    <td>Saves the compounds with the given metaDataCategory id and metaData id</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}</td>                <td>GET</td>
+                    <td>Shows the compound with the given metaDataCategory id and metaData id and compound id</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}/edit</td>           <td>GET</td>
+                    <td>Allows editing of the compound with the given metaDataCategory id and metaData id and compound id</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}</td>                <td>PUT</td>
+                    <td>Updates the compound with the given metaDataCategory id and metaData id and compound id</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/compounds/${id}</td>                <td>DELETE</td>
+                    <td>Deletes the compound with the given metaDataCategory id and metaData id and compound id</td>           </tr>
 
-    </tbody>
-</table>
+                </tbody>
+            </table>
 
-<h3 id="Controller: MetaData">Controller: MetaData</h3>
-=======
-<tr>    <td>/</td>                                          <td>*</td>          <td>View the index</td>             </tr>
-<tr>    <td>/${controller}/${action}?/${id}?</td>           <td>*</td>          <td>Action: (default action)</td>   </tr>
-<tr>    <td>/rest</td>                                      <td>*</td>          <td>Action: (default action)</td>   </tr>
-</tbody>
-</table>
+            <h3 id="Controller: MetaData">Controller: MetaData</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width: 110px">URI</th>
+                    <th class="text-center" style="width: 110px">Method</th>
+                    <th class="text-center" style="width: 110px">Details</th>
 
-<h3>Controller: Compound</h3>
->>>>>>> 1ea812e16d95ffa292b92489478717edf9d7aee3
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>    <td>/rest/meta/data</td>                                            <td>GET</td>
+                    <td>Displays list of metaData</td>             </tr>
+                <tr>    <td>/rest/meta/data/create</td>                                     <td>GET</td>
+                    <td>Creates a metaData, given an id</td>           </tr>
+                <tr>    <td>/rest/meta/data</td>                                            <td>POST</td>
+                    <td>Saves a list of the metaData</td>             </tr>
+                <tr>    <td>/rest/meta/data/${id}</td>                                      <td>GET</td>
+                    <td>Shows the metaData with the given id</td>             </tr>
+                <tr>    <td>/rest/meta/data/${id}/edit</td>                                 <td>GET</td>
+                    <td>Allows editing of the metaData with the given id</td>             </tr>
+                <tr>    <td>/rest/meta/data/${id}</td>                                      <td>PUT</td>
+                    <td>Updates the metaData with the given id</td>           </tr>
+                <tr>    <td>/rest/meta/data/${id}</td>                                      <td>DELETE</td>
+                    <td>Deletes the meta data with the given id</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data</td>             <td>GET</td>
+                    <td>Displays the data with the metaDataCategory (given its id)</td>            </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/create</td>      <td>GET</td>
+                    <td>Creates data with the given metaDataCategory (given its id)</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data</td>             <td>POST</td>
+                    <td>Saves the data of the given metaDataCategory (given its id)</td>             </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${id}</td>       <td>GET</td>
+                    <td>Shows the metaData with the given id and given metaDataCategory (given its id)</td>             </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${id}/edit</td>  <td>GET</td>
+                    <td>Allows editing of the data with the given id and given metaDataCategory (given its id)</td>             </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${id}</td>       <td>PUT</td>
+                    <td>Updates the data with the given id and given metaDataCategory (given its id)</td>           </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${id}</td>       <td>DELETE</td>
+                    <td>Deletes the data with the given id and given metaDataCategory (given its id)</td>           </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <<<<<<< HEAD
-    <tr>    <td>/rest/meta/data</td>                                            <td>GET</td>
-        <td>Displays list of metaData</td>             </tr>
-    <tr>    <td>/rest/meta/data/create</td>                                     <td>GET</td>
-        <td>Creates a metaData, given an id</td>           </tr>
-    <tr>    <td>/rest/meta/data</td>                                            <td>POST</td>
-        <td>Saves a list of the metaData</td>             </tr>
-    <tr>    <td>/rest/meta/data/${id}</td>                                      <td>GET</td>
-        <td>Shows the metaData with the given id</td>             </tr>
-    <tr>    <td>/rest/meta/data/${id}/edit</td>                                 <td>GET</td>
-        <td>Allows editing of the metaData with the given id</td>             </tr>
-    <tr>    <td>/rest/meta/data/${id}</td>                                      <td>PUT</td>
-        <td>Updates the metaData with the given id</td>           </tr>
-    <tr>    <td>/rest/meta/data/${id}</td>                                      <td>DELETE</td>
-        <td>Deletes the meta data with the given id</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data</td>             <td>GET</td>
-        <td>Displays the data with the metaDataCategory (given its id)</td>            </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/create</td>      <td>GET</td>
-        <td>Creates data with the given metaDataCategory (given its id)</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data</td>             <td>POST</td>
-        <td>Saves the data of the given metaDataCategory (given its id)</td>             </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${id}</td>       <td>GET</td>
-        <td>Shows the metaData with the given id and given metaDataCategory (given its id)</td>             </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${id}/edit</td>  <td>GET</td>
-        <td>Allows editing of the data with the given id and given metaDataCategory (given its id)</td>             </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${id}</td>       <td>PUT</td>
-        <td>Updates the data with the given id and given metaDataCategory (given its id)</td>           </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${id}</td>       <td>DELETE</td>
-        <td>Deletes the data with the given id and given metaDataCategory (given its id)</td>           </tr>
+                </tbody>
+            </table>
 
-    </tbody>
-</table>
+            <h3 id="Controller: MetaDataCategory">Controller: MetaDataCategory</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width: 110px">URI</th>
+                    <th class="text-center" style="width: 110px">Method</th>
+                    <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: MetaDataCategory">Controller: MetaDataCategory</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>    <td>/rest/meta/category</td>                  <td>GET</td>
+                    <td>Displays a list of the metaData categories</td>             </tr>
+                <tr>    <td>/rest/meta/category/create</td>           <td>GET</td>
+                    <td>Creates a metaData category</td>   </tr>
+                <tr>    <td>/rest/meta/category</td>                  <td>POST</td>
+                    <td>Saves the list of the metaData categories</td>   </tr>
+                <tr>    <td>/rest/meta/category/${id}</td>            <td>GET</td>
+                    <td>Shows the metaData category with the given id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${id}/edit</td>       <td>GET</td>
+                    <td>Allows editing of the metaData category with the given id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${id}</td>            <td>PUT</td>
+                    <td>Updates the metaData category with the given id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${id}</td>            <td>DELETE</td>
+                    <td>Deletes the metaData category with the given id</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/meta/category</td>                  <td>GET</td>
-        <td>Displays a list of the metaData categories</td>             </tr>
-    <tr>    <td>/rest/meta/category/create</td>           <td>GET</td>
-        <td>Creates a metaData category</td>   </tr>
-    <tr>    <td>/rest/meta/category</td>                  <td>POST</td>
-        <td>Saves the list of the metaData categories</td>   </tr>
-    <tr>    <td>/rest/meta/category/${id}</td>            <td>GET</td>
-        <td>Shows the metaData category with the given id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${id}/edit</td>       <td>GET</td>
-        <td>Allows editing of the metaData category with the given id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${id}</td>            <td>PUT</td>
-        <td>Updates the metaData category with the given id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${id}</td>            <td>DELETE</td>
-        <td>Deletes the metaData category with the given id</td>   </tr>
+                </tbody>
+            </table>
 
-    </tbody>
-</table>
+            <h3 id="Controller: MetaDataValue">Controller: MetaDataValue</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width: 110px">URI</th>
+                    <th class="text-center" style="width: 110px">Method</th>
+                    <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: MetaDataValue">Controller: MetaDataValue</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>    <td>/rest/meta/data/${MetaDataId}/value</td>                                            <td>GET</td>
+                    <td>Displays the values for the metaData with the given id</td>   </tr>
+                <tr>    <td>/rest/meta/data/${MetaDataId}/value/create</td>                                     <td>GET</td>
+                    <td>Creates a value for the metaData with the given id</td>   </tr>
+                <tr>    <td>/rest/meta/data/${MetaDataId}/value</td>                                            <td>POST</td>
+                    <td>Saves the values of the metaData with the given id</td>   </tr>
+                <tr>    <td>/rest/meta/data/${MetaDataId}/value/${id}</td>                                      <td>GET</td>
+                    <td>Shows the value with the given id and given metaData (via its id)</td>   </tr>
+                <tr>    <td>/rest/meta/data/${MetaDataId}/value/${id}/edit</td>                                 <td>GET</td>
+                    <td>Allows editing of the value with the given id and given metaData (via its id)</td>   </tr>
+                <tr>    <td>/rest/meta/data/${MetaDataId}/value/${id}</td>                                      <td>PUT</td>
+                    <td>Updates the value with the given id and given metaData (via its id)</td>   </tr>
+                <tr>    <td>/rest/meta/data/${MetaDataId}/value/${id}</td>                                      <td>DELETE</td>
+                    <td>Deletes the value with the given id and given metaData (via its id)</td>   </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value</td>             <td>GET</td>
+                    <td>Shows the value of the data with the given metaData id and metaDataCategory id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/create</td>      <td>GET</td>
+                    <td>Creates a value of the data with the given metaData id and metaDataCategory id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value</td>             <td>POST</td>
+                    <td>Saves the value of the data with the given metaData id and metaDataCategory id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}</td>       <td>GET</td>
+                    <td>Shows the value with the id of the data with the given metaData id and metaDataCategory id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}/edit</td>  <td>GET</td>
+                    <td>Allows editing of the value with the id of the data with the given metaData id and metaDataCategory id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}</td>       <td>PUT</td>
+                    <td>Updates the value with the id of the data with the given metaData id and metaDataCategory id</td>   </tr>
+                <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}</td>       <td>DELETE</td>
+                    <td>Deletes the value with the id of the data with the given metaData id and metaDataCategory id</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/meta/data/${MetaDataId}/value</td>                                            <td>GET</td>
-        <td>Displays the values for the metaData with the given id</td>   </tr>
-    <tr>    <td>/rest/meta/data/${MetaDataId}/value/create</td>                                     <td>GET</td>
-        <td>Creates a value for the metaData with the given id</td>   </tr>
-    <tr>    <td>/rest/meta/data/${MetaDataId}/value</td>                                            <td>POST</td>
-        <td>Saves the values of the metaData with the given id</td>   </tr>
-    <tr>    <td>/rest/meta/data/${MetaDataId}/value/${id}</td>                                      <td>GET</td>
-        <td>Shows the value with the given id and given metaData (via its id)</td>   </tr>
-    <tr>    <td>/rest/meta/data/${MetaDataId}/value/${id}/edit</td>                                 <td>GET</td>
-        <td>Allows editing of the value with the given id and given metaData (via its id)</td>   </tr>
-    <tr>    <td>/rest/meta/data/${MetaDataId}/value/${id}</td>                                      <td>PUT</td>
-        <td>Updates the value with the given id and given metaData (via its id)</td>   </tr>
-    <tr>    <td>/rest/meta/data/${MetaDataId}/value/${id}</td>                                      <td>DELETE</td>
-        <td>Deletes the value with the given id and given metaData (via its id)</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value</td>             <td>GET</td>
-        <td>Shows the value of the data with the given metaData id and metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/create</td>      <td>GET</td>
-        <td>Creates a value of the data with the given metaData id and metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value</td>             <td>POST</td>
-        <td>Saves the value of the data with the given metaData id and metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}</td>       <td>GET</td>
-        <td>Shows the value with the id of the data with the given metaData id and metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}/edit</td>  <td>GET</td>
-        <td>Allows editing of the value with the id of the data with the given metaData id and metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}</td>       <td>PUT</td>
-        <td>Updates the value with the id of the data with the given metaData id and metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/value/${id}</td>       <td>DELETE</td>
-        <td>Deletes the value with the id of the data with the given metaData id and metaDataCategory id</td>   </tr>
+                </tbody>
+            </table>
 
-    </tbody>
-</table>
+            <h3 id="Controller: Quartz">Controller: Quartz</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width: 110px">URI</th>
+                    <th class="text-center" style="width: 110px">Method</th>
+                    <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: Quartz">Controller: Quartz</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>    <td>/info/jobs</td>        <td>*</td>
+                    <td>Lists the information on the current jobs</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/info/jobs</td>        <td>*</td>
-        <td>Lists the information on the current jobs</td>   </tr>
+                </tbody>
+            </table>
 
-    </tbody>
-</table>
+            <h3 id="Controller: Spectrum">Controller: Spectrum</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 110px">URI</th>
+                <th class="text-center" style="width: 110px">Method</th>
+                <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: Spectrum">Controller: Spectrum</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>    <td>/rest/submitters/${SubmitterId}/spectra</td>                                            <td>GET</td>
+                <td>Displays the spectra submitted by the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/submitters/${SubmitterId}/spectra/create</td>                                     <td>GET</td>
+                <td>Creates a spectra with the submitter id given</td>   </tr>
+            <tr>    <td>/rest/submitters/${SubmitterId}/spectra</td>                                            <td>POST</td>
+                <td>Saves a list of the spectra submitted by the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/submitters/${SubmitterId}/spectra/${id}</td>                                      <td>GET</td>
+                <td>Shows the spectra with the given id submitted by the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/submitters/${SubmitterId}/spectra/${id}/edit</td>                                 <td>GET</td>
+                <td>Allows editing of the spectra with the given id submitted by the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/submitters/${SubmitterId}/spectra/${id}</td>                                      <td>PUT</td>
+                <td>Updates the spectra with the given id submitted by the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/submitters/${SubmitterId}/spectra/${id}</td>                                      <td>DELETE</td>
+                <td>Deletes the spectra with the given id submitted by the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/tags/${TagId}/spectra</td>                                                        <td>GET</td>
+                <td>Displays the spectra with the given tag id</td>   </tr>
+            <tr>    <td>/rest/tags/${TagId}/spectra/create</td>                                                 <td>GET</td>
+                <td>Creates a spectra with the given tag id</td>   </tr>
+            <tr>    <td>/rest/tags/${TagId}/spectra</td>                                                        <td>POST</td>
+                <td>Saves the spectra with the given tag id</td>   </tr>
+            <tr>    <td>/rest/tags/${TagId}/spectra/${id}</td>                                                  <td>GET</td>
+                <td>Shows the spectra with the given id and given tag id</td>   </tr>
+            <tr>    <td>/rest/tags/${TagId}/spectra/${id}/edit</td>                                             <td>GET</td>
+                <td>Allows editing of the spectra with the given id and given tag id</td>   </tr>
+            <tr>    <td>/rest/tags/${TagId}/spectra/${id}</td>                                                  <td>PUT</td>
+                <td>Updates the spectra with the given id and given tag id</td>   </tr>
+            <tr>    <td>/rest/tags/${TagId}/spectra/${id}</td>                                                  <td>DELETE</td>
+                <td>Deletes the spectra with teh given id and given tag id</td>   </tr>
+            <tr>    <td>/rest/compounds/${CompoundId}/spectra</td>                                              <td>GET</td>
+                <td>Displays the spectra with the given compound id</td>   </tr>
+            <tr>    <td>/rest/compounds/${CompoundId}/spectra/create</td>                                       <td>GET</td>
+                <td>Creates a spectra with the given compound id</td>   </tr>
+            <tr>    <td>/rest/compounds/${CompoundId}/spectra</td>                                              <td>POST</td>
+                <td>Saves the spectra with the given compound id</td>   </tr>
+            <tr>    <td>/rest/compounds/${CompoundId}/spectra/${id}</td>                                        <td>GET</td>
+                <td>Shows the spectra with the given id and given compound id</td>   </tr>
+            <tr>    <td>/rest/compounds/${CompoundId}/spectra/${id}/edit</td>                                   <td>GET</td>
+                <td>Allows editing of the spectra with the given id and given compound id</td>   </tr>
+            <tr>    <td>/rest/compounds/${CompoundId}/spectra/${id}</td>                                        <td>PUT</td>
+                <td>Updates the spectra with the given id and given compound id</td>   </tr>
+            <tr>    <td>/rest/compounds/${CompoundId}/spectra/${id}</td>                                        <td>DELETE</td>
+                <td>Deletes the spectra with the given id and given compound id</td>   </tr>
+            <tr>    <td>/rest/spectra</td>                                                                      <td>GET</td>
+                <td>Displays the spectra</td>   </tr>
+            <tr>    <td>/rest/spectra/create</td>                                                               <td>GET</td>
+                <td>Creates a spectra</td>   </tr>
+            <tr>    <td>/rest/spectra</td>                                                                      <td>POST</td>
+                <td>Saves a list of the spectra</td>   </tr>
+            <tr>    <td>/rest/spectra/${id}</td>                                                                <td>GET</td>
+                <td>Shows the spectra with the given id</td>   </tr>
+            <tr>    <td>/rest/spectra/${id}/edit</td>                                                           <td>GET</td>
+                <td>Allows editing of the spectra with the given id</td>   </tr>
+            <tr>    <td>/rest/spectra/${id}</td>                                                                <td>PUT</td>
+                <td>Updates the spectra with the given id</td>   </tr>
+            <tr>    <td>/rest/spectra/${id}</td>                                                                <td>DELETE</td>
+                <td>Deletes the spectra with the given id</td>   </tr>
+            <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra</td>               <td>GET</td>
+                <td>Displays the spectra with the given metaData id and given metaDataCategory id</td>   </tr>
+            <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/create</td>        <td>GET</td>
+                <td>Creates a spectra with the given metaData id and given metaDataCategory id</td>   </tr>
+            <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra</td>               <td>POST</td>
+                <td>Saves the spectra with the given metaData id and given metaDataCategory id</td>   </tr>
+            <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}</td>         <td>GET</td>
+                <td>Shows the spectra with the given id and given metaData id and given metaDataCategory id</td>   </tr>
+            <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}/edit</td>    <td>GET</td>
+                <td>Allows editing of the spectra with the given id and given metaData id and given metaDataCategory id</td>   </tr>
+            <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}</td>         <td>PUT</td>
+                <td>Updates the spectra with the given id and given metaData id and given metaDataCategory id</td>   </tr>
+            <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}</td>         <td>DELETE</td>
+                <td>Deletes the spectra with the given id and given metaData id and given metaDataCategory id</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/submitters/${SubmitterId}/spectra</td>                                            <td>GET</td>
-        <td>Displays the spectra submitted by the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/submitters/${SubmitterId}/spectra/create</td>                                     <td>GET</td>
-        <td>Creates a spectra with the submitter id given</td>   </tr>
-    <tr>    <td>/rest/submitters/${SubmitterId}/spectra</td>                                            <td>POST</td>
-        <td>Saves a list of the spectra submitted by the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/submitters/${SubmitterId}/spectra/${id}</td>                                      <td>GET</td>
-        <td>Shows the spectra with the given id submitted by the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/submitters/${SubmitterId}/spectra/${id}/edit</td>                                 <td>GET</td>
-        <td>Allows editing of the spectra with the given id submitted by the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/submitters/${SubmitterId}/spectra/${id}</td>                                      <td>PUT</td>
-        <td>Updates the spectra with the given id submitted by the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/submitters/${SubmitterId}/spectra/${id}</td>                                      <td>DELETE</td>
-        <td>Deletes the spectra with the given id submitted by the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/tags/${TagId}/spectra</td>                                                        <td>GET</td>
-        <td>Displays the spectra with the given tag id</td>   </tr>
-    <tr>    <td>/rest/tags/${TagId}/spectra/create</td>                                                 <td>GET</td>
-        <td>Creates a spectra with the given tag id</td>   </tr>
-    <tr>    <td>/rest/tags/${TagId}/spectra</td>                                                        <td>POST</td>
-        <td>Saves the spectra with the given tag id</td>   </tr>
-    <tr>    <td>/rest/tags/${TagId}/spectra/${id}</td>                                                  <td>GET</td>
-        <td>Shows the spectra with the given id and given tag id</td>   </tr>
-    <tr>    <td>/rest/tags/${TagId}/spectra/${id}/edit</td>                                             <td>GET</td>
-        <td>Allows editing of the spectra with the given id and given tag id</td>   </tr>
-    <tr>    <td>/rest/tags/${TagId}/spectra/${id}</td>                                                  <td>PUT</td>
-        <td>Updates the spectra with the given id and given tag id</td>   </tr>
-    <tr>    <td>/rest/tags/${TagId}/spectra/${id}</td>                                                  <td>DELETE</td>
-        <td>Deletes the spectra with teh given id and given tag id</td>   </tr>
-    <tr>    <td>/rest/compounds/${CompoundId}/spectra</td>                                              <td>GET</td>
-        <td>Displays the spectra with the given compound id</td>   </tr>
-    <tr>    <td>/rest/compounds/${CompoundId}/spectra/create</td>                                       <td>GET</td>
-        <td>Creates a spectra with the given compound id</td>   </tr>
-    <tr>    <td>/rest/compounds/${CompoundId}/spectra</td>                                              <td>POST</td>
-        <td>Saves the spectra with the given compound id</td>   </tr>
-    <tr>    <td>/rest/compounds/${CompoundId}/spectra/${id}</td>                                        <td>GET</td>
-        <td>Shows the spectra with the given id and given compound id</td>   </tr>
-    <tr>    <td>/rest/compounds/${CompoundId}/spectra/${id}/edit</td>                                   <td>GET</td>
-        <td>Allows editing of the spectra with the given id and given compound id</td>   </tr>
-    <tr>    <td>/rest/compounds/${CompoundId}/spectra/${id}</td>                                        <td>PUT</td>
-        <td>Updates the spectra with the given id and given compound id</td>   </tr>
-    <tr>    <td>/rest/compounds/${CompoundId}/spectra/${id}</td>                                        <td>DELETE</td>
-        <td>Deletes the spectra with the given id and given compound id</td>   </tr>
-    <tr>    <td>/rest/spectra</td>                                                                      <td>GET</td>
-        <td>Displays the spectra</td>   </tr>
-    <tr>    <td>/rest/spectra/create</td>                                                               <td>GET</td>
-        <td>Creates a spectra</td>   </tr>
-    <tr>    <td>/rest/spectra</td>                                                                      <td>POST</td>
-        <td>Saves a list of the spectra</td>   </tr>
-    <tr>    <td>/rest/spectra/${id}</td>                                                                <td>GET</td>
-        <td>Shows the spectra with the given id</td>   </tr>
-    <tr>    <td>/rest/spectra/${id}/edit</td>                                                           <td>GET</td>
-        <td>Allows editing of the spectra with the given id</td>   </tr>
-    <tr>    <td>/rest/spectra/${id}</td>                                                                <td>PUT</td>
-        <td>Updates the spectra with the given id</td>   </tr>
-    <tr>    <td>/rest/spectra/${id}</td>                                                                <td>DELETE</td>
-        <td>Deletes the spectra with the given id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra</td>               <td>GET</td>
-        <td>Displays the spectra with the given metaData id and given metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/create</td>        <td>GET</td>
-        <td>Creates a spectra with the given metaData id and given metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra</td>               <td>POST</td>
-        <td>Saves the spectra with the given metaData id and given metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}</td>         <td>GET</td>
-        <td>Shows the spectra with the given id and given metaData id and given metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}/edit</td>    <td>GET</td>
-        <td>Allows editing of the spectra with the given id and given metaData id and given metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}</td>         <td>PUT</td>
-        <td>Updates the spectra with the given id and given metaData id and given metaDataCategory id</td>   </tr>
-    <tr>    <td>/rest/meta/category/${MetaDataCategoryId}/data/${MetaDataId}/spectra/${id}</td>         <td>DELETE</td>
-        <td>Deletes the spectra with the given id and given metaData id and given metaDataCategory id</td>   </tr>
+            </tbody>
+        </table>
 
-    </tbody>
-</table>
+            <h3 id="Controller: Submitter">Controller: Submitter</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 110px">URI</th>
+                <th class="text-center" style="width: 110px">Method</th>
+                <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: Submitter">Controller: Submitter</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>    <td>/rest/submitters</td>               <td>GET</td>
+                <td>Displays a list of the submitters</td>   </tr>
+            <tr>    <td>/rest/submitters/create</td>        <td>GET</td>
+                <td>Creates a submitter</td>   </tr>
+            <tr>    <td>/rest/submitters</td>               <td>POST</td>
+                <td>Saves the submitters</td>   </tr>
+            <tr>    <td>/rest/submitters/${id}</td>         <td>GET</td>
+                <td>Shows the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/submitters/${id}/edit</td>    <td>GET</td>
+                <td>Allows editing of the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/submitters/${id}</td>         <td>PUT</td>
+                <td>Updates the submitter with the given id</td>   </tr>
+            <tr>    <td>/rest/submitters/${id}</td>         <td>DELETE</td>
+                <td>Deletes the submitter with the given id</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/submitters</td>               <td>GET</td>
-        <td>Displays a list of the submitters</td>   </tr>
-    <tr>    <td>/rest/submitters/create</td>        <td>GET</td>
-        <td>Creates a submitter</td>   </tr>
-    <tr>    <td>/rest/submitters</td>               <td>POST</td>
-        <td>Saves the submitters</td>   </tr>
-    <tr>    <td>/rest/submitters/${id}</td>         <td>GET</td>
-        <td>Shows the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/submitters/${id}/edit</td>    <td>GET</td>
-        <td>Allows editing of the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/submitters/${id}</td>         <td>PUT</td>
-        <td>Updates the submitter with the given id</td>   </tr>
-    <tr>    <td>/rest/submitters/${id}</td>         <td>DELETE</td>
-        <td>Deletes the submitter with the given id</td>   </tr>
+            </tbody>
+        </table>
 
-    </tbody>
-</table>
+            <h3 id="Controller: Tag">Controller: Tag</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 110px">URI</th>
+                <th class="text-center" style="width: 110px">Method</th>
+                <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: Tag">Controller: Tag</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>    <td>/rest/tags</td>                     <td>GET</td>
+                <td>Displays a list of the tags</td>   </tr>
+            <tr>    <td>/rest/tags/create</td>              <td>GET</td>
+                <td>Creates a tag</td>   </tr>
+            <tr>    <td>/rest/tags</td>                     <td>POST</td>
+                <td>Saves the tags</td>   </tr>
+            <tr>    <td>/rest/tags/${id}</td>               <td>GET</td>
+                <td>Shows the tag with the given id</td>   </tr>
+            <tr>    <td>/rest/tags/${id}/edit</td>          <td>GET</td>
+                <td>Allows editing of the tag with the given id</td>   </tr>
+            <tr>    <td>/rest/tags/${id}</td>               <td>PUT</td>
+                <td>Updates the tag with the given id</td>   </tr>
+            <tr>    <td>/rest/tags/${id}</td>               <td>DELETE</td>
+                <td>Deletes the tag with the given id</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/tags</td>                     <td>GET</td>
-        <td>Displays a list of the tags</td>   </tr>
-    <tr>    <td>/rest/tags/create</td>              <td>GET</td>
-        <td>Creates a tag</td>   </tr>
-    <tr>    <td>/rest/tags</td>                     <td>POST</td>
-        <td>Saves the tags</td>   </tr>
-    <tr>    <td>/rest/tags/${id}</td>               <td>GET</td>
-        <td>Shows the tag with the given id</td>   </tr>
-    <tr>    <td>/rest/tags/${id}/edit</td>          <td>GET</td>
-        <td>Allows editing of the tag with the given id</td>   </tr>
-    <tr>    <td>/rest/tags/${id}</td>               <td>PUT</td>
-        <td>Updates the tag with the given id</td>   </tr>
-    <tr>    <td>/rest/tags/${id}</td>               <td>DELETE</td>
-        <td>Deletes the tag with the given id</td>   </tr>
+            </tbody>
+        </table>
+       </div>
 
-    </tbody>
-</table>
+            <h3 id="Controller: metaDataQuery">Controller: metaDataQuery</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 110px">URI</th>
+                <th class="text-center" style="width: 110px">Method</th>
+                <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: metaDataQuery">Controller: metaDataQuery</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>    <td>/rest/meta/data/search</td>        <td>*</td>
+                <td>Queries the metaData</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/meta/data/search</td>        <td>*</td>
-        <td>Queries the metaData</td>   </tr>
+            </tbody>
+        </table>
 
-    </tbody>
-</table>
+            <h3 id="Controller: spectraQuery">Controller: spectraQuery</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 110px">URI</th>
+                <th class="text-center" style="width: 110px">Method</th>
+                <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: spectraQuery">Controller: spectraQuery</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>    <td>/rest/spectra/search</td>               <td>*</td>
+                <td>Searches the spectra.</td>   </tr>
+            <tr>    <td>/rest/spectra/batch/update</td>         <td>*</td>
+                <td>Searches and updates the spectra batch</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/spectra/search</td>               <td>*</td>
-        <td>Searches the spectra.</td>   </tr>
-    <tr>    <td>/rest/spectra/batch/update</td>         <td>*</td>
-        <td>Searches and updates the spectra batch</td>   </tr>
+            </tbody>
+        </table>
 
-    </tbody>
-</table>
+            <h3 id="Controller: spectrum">Controller: spectrum</h3>
+            <table class="table table-hover" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 110px">URI</th>
+                <th class="text-center" style="width: 110px">Method</th>
+                <th class="text-center" style="width: 110px">Details</th>
 
-<h3 id="Controller: spectrum">Controller: spectrum</h3>
-<table class="table table-hover" style="table-layout: fixed;">
-    <thead>
-    <tr>
-        <th class="text-center" style="width: 110px">URI</th>
-        <th class="text-center" style="width: 110px">Method</th>
-        <th class="text-center" style="width: 110px">Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>    <td>/rest/spectra/batch/save</td>       <td>*</td>
+                <td>Batches and saves the spectra</td>   </tr>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>    <td>/rest/spectra/batch/save</td>       <td>*</td>
-        <td>Batches and saves the spectra</td>   </tr>
-
-    </tbody>
-</table>
-</div>
+            </tbody>
+        </table>
+        </div>
+    </div>
 </div>
