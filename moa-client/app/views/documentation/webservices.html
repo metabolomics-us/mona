@@ -6,19 +6,18 @@
     <div class="blog-masthead">
         <div class="container">
             <nav class="blog-nav">
-                <a class="blog-nav-item" href="#Dynamic Mappings">Dynamic Mappings</a>
-                <a class="blog-nav-item" href="#Controller: Compound">Controller: Compound</a>
-                <a class="blog-nav-item" href="#Controller: MetaData">Controller: MetaData</a>
-                <a class="blog-nav-item" href="#Controller: MetaDataCategory">Controller: MetaDataCategory</a>
-                <a class="blog-nav-item" href="#Controller: MetaDataValue">Controller: MetaDataValue</a>
-                <a class="blog-nav-item" href="#Controller: Quartz">Controller: Quartz</a>
-                <a class="blog-nav-item" href="#Controller: Spectrum">Controller: Spectrum</a>
-                <a class="blog-nav-item" href="#Controller: Submitter">Controller: Submitter</a>
-                <a class="blog-nav-item" href="#Controller: Tag">Controller: Tag</a>
-                <a class="blog-nav-item" href="#Controller: dbdoc">Controller: dbdoc</a>
-                <a class="blog-nav-item" href="#Controller: metaDataQuery">Controller: metaDataQuery</a>
-                <a class="blog-nav-item" href="#Controller: spectraQuery">Controller: spectraQuery</a>
-
+                <a class="blog-nav-item" href="#Dynamic Mappings">Dynamic Mappings</a> </br>
+                <a class="blog-nav-item" href="#Controller: Compound">Controller: Compound</a> </br>
+                <a class="blog-nav-item" href="#Controller: MetaData">Controller: MetaData</a> </br>
+                <a class="blog-nav-item" href="#Controller: MetaDataCategory">Controller: MetaDataCategory</a> </br>
+                <a class="blog-nav-item" href="#Controller: MetaDataValue">Controller: MetaDataValue</a> </br>
+                <a class="blog-nav-item" href="#Controller: Quartz">Controller: Quartz</a> </br>
+                <a class="blog-nav-item" href="#Controller: Spectrum">Controller: Spectrum</a> </br>
+                <a class="blog-nav-item" href="#Controller: Submitter">Controller: Submitter</a> </br>
+                <a class="blog-nav-item" href="#Controller: Tag">Controller: Tag</a> </br>
+                <a class="blog-nav-item" href="#Controller: metaDataQuery">Controller: metaDataQuery</a> </br>
+                <a class="blog-nav-item" href="#Controller: spectraQuery">Controller: spectraQuery</a> </br>
+                <a class="blog-nav-item" href="#Controller: spectrum">Controller: spectrum</a> </br>
             </nav>
         </div>
     </div>
@@ -26,8 +25,8 @@
     <div class="row ng-scope">
         <h2>Endpoint Documentation</h2>
 
-        <p>When attempting changes a 405 error may appear if the action is not allowed.</p>
         <p>All results are in json format.</p>
+        <p>More specific searches can be made by using /?{query} on the end of the URI.</p>
 
         <div class="col-md9 col-sm-6 col-lg-9">
             <h3 id="Dynamic Mappings">Dynamic Mappings</h3>
@@ -369,26 +368,7 @@
                 </tbody>
             </table>
 
-            <h3 id="Controller: dbdoc">Controller: dbdoc</h3>
-            <h2>update this--incomplete</h2>
-            <table class="table table-hover" style="table-layout: fixed;">
-                <thead>
-                <tr>
-                    <th class="text-center" style="width: 110px">URI</th>
-                    <th class="text-center" style="width: 110px">Method</th>
-                    <th class="text-center" style="width: 110px">Details</th>
-
-                </tr>
-                </thead>
-                <tbody>
-                <tr>    <td>/dbdoc/${section}?/${filename}?/${table}?/${column}?</td>        <td>*</td>
-                                    <td>Action: (default action)</td>   </tr>
-
-                </tbody>
-            </table>
-
             <h3 id="Controller: metaDataQuery">Controller: metaDataQuery</h3>
-            <h2>update this--incomplete</h2>
             <table class="table table-hover" style="table-layout: fixed;">
                 <thead>
                 <tr>
@@ -400,7 +380,7 @@
                 </thead>
                 <tbody>
                 <tr>    <td>/rest/meta/data/search</td>        <td>*</td>
-                                <td>Queries the metaData. Can search more specifically by using /?{query} on the end of the endpoint</td>   </tr>
+                                <td>Queries the metaData</td>   </tr>
 
                 </tbody>
             </table>
