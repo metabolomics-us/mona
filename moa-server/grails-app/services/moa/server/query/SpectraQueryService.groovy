@@ -23,6 +23,7 @@ class SpectraQueryService {
         if (json == null) {
             throw new Exception("your query needs to contain some parameters!")
         }
+
         //completed query string
         String queryOfDoom = "select s from Spectrum s "
 

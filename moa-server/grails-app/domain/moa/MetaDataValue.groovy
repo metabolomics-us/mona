@@ -19,6 +19,7 @@ class MetaDataValue {
 
     static mapping = {
         version false
+
     }
 
     static constraints = {

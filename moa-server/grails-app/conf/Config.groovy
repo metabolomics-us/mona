@@ -116,14 +116,12 @@ log4j = {
 
         development {
 
-            info 'grails.app.services.moa.server.CategoryNameFinderService'
-            info 'grails.app.services.moa.server.metadata.MetaDataPersistenceService'
-            info 'grails.app.services.moa.server.SpectraPersistenceService'
+            info 'grails.app'
 
 
             info 'grails.app'
-    //        debug 'org.hibernate.SQL'
-    //        trace 'org.hibernate.type.descriptor.sql.BasicBinder'
+            info 'org.hibernate.SQL'
+            info 'org.hibernate.type.descriptor.sql.BasicBinder'
         }
 
         production {
