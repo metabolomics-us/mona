@@ -18,3 +18,6 @@ CREATE INDEX "index-category-name"
 
 CREATE INDEX "index-meta-name"
         ON "public"."meta_data"("name");
+
+CREATE INDEX "index-meta-name"
+        ON "public"."meta_data"("name");
