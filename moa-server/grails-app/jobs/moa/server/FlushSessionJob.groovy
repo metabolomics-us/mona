@@ -13,7 +13,7 @@ class FlushSessionJob {
 
     def description = "flushes and clears the hibernate session to keep performance up for mass inserts/updates"
     static triggers = {
-        cron name: 'flushSession', startDelay: 10000, cronExpression: '0 */2 * * * ?'
+        cron name: 'flushSession', startDelay: 1000000, cronExpression: '0 */2 * * * ?'
     }
 
     def execute() {

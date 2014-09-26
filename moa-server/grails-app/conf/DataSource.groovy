@@ -27,7 +27,7 @@ environments {
 
             cache.use_second_level_cache = false
             cache.use_query_cache = false
-         //   logSql = true
+            //logSql = true
         }
         /*
 
