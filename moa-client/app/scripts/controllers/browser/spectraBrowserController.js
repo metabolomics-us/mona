@@ -20,7 +20,7 @@
  * @param $location
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, TaggingService, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, TaggingService, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, SpectrumCache) {
     /**
      * contains all local objects and is our model
      * @type {Array}
@@ -136,7 +136,12 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * displays the spectrum for the given index
      * @param index
      */
-    $scope.viewSpectrum = function (id) {
+    $scope.viewSpectrum = function (id, index) {
+        // Store spectra in cache
+        SpectrumCache.put('spectra', $scope.spectra);
+        SpectrumCache.put('viewSpectrum', $scope.spectra[index]);
+
+        console.log(SpectrumCache.get('viewSpectrum'));
         $location.path('/spectra/display/'+ id);
     };
 
@@ -182,8 +187,28 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             $log.info(data.length);
 
             $scope.spectra.length = 0;
-            $scope.spectra.push.apply($scope.spectra, data);
+            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
         });
+    };
+
+
+    /**
+     * Get natural mass as accurate mass of spectrum
+     */
+    $scope.addAccurateMass = function(spectra) {
+        for(var i = 0; i < spectra.length; i++) {
+            var mass = '';
+
+            for(var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
+                if(spectra[i].biologicalCompound.metaData[j].name === 'natural mass') {
+                    mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
+                }
+            }
+
+            spectra[i].accurateMass = mass;
+        }
+
+        return spectra;
     };
 
 
@@ -200,16 +225,30 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.loadingMore = false;
 
     /**
+     * Tells whether we are have loaded all available data
+     */
+    $scope.dataAvailable = true;
+
+    /**
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
-        if ($scope.spectraLoadLength != $scope.spectra.length) {
+        if(SpectrumCache.get('spectra') != null) {
+            $scope.spectra = SpectrumCache.get('spectra');
+            SpectrumCache.put('spectra', null)
+        } else if ($scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
+            //search utilizing our compiled query so that it can be easily refined over time
             $scope.loadingMore = true;
             $scope.calculateOffsets();
 
-            //search utilizing our compiled query so that it can be easily refined over time
             Spectrum.searchSpectra($scope.compiledQuery, function (data) {
-                $scope.spectra.push.apply($scope.spectra, data);
+                if (data.length == 0) {
+                    $scope.dataAvailable = false;
+                } else {
+                    // Add data to spectra object
+                    $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+                }
+
                 $scope.loadingMore = false;
             });
         }
@@ -229,7 +268,13 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * initialization and population of default values
      */
     (function list() {
-        $scope.spectra = [];
+        if(SpectrumCache.get('spectra') != null) {
+            $scope.spectra = SpectrumCache.get('spectra');
+            SpectrumCache.put('spectra', null)
+        } else {
+            $scope.spectra = [];
+        }
+
         $scope.loadTags();
     })();
 

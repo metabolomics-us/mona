@@ -16,7 +16,7 @@
             <tr ng-show="spectra.length == 0">
             </tr>
             <tr ng-repeat="spectrum in filteredSpectra = (spectra | spectraQuery:this)"
-                ng-click="viewSpectrum(spectrum.id)">
+                ng-click="viewSpectrum(spectrum.id, $index)">
                 <td>
                     <ul class="list-unstyled">
                         <li ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</li>
@@ -38,7 +38,7 @@
                     </div>
                 </td>
                 <td>
-
+                    <p class="text-center">{{spectrum.accurateMass}}</p>
                 </td>
             </tr>
             </tbody>
@@ -48,7 +48,11 @@
             <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
         </div>
 
-        <div class="text-center" ng-show="filteredSpectra.length == 0 && !loadingMore">
+        <div class="text-center" ng-show="filteredSpectra.length > 0 && !dataAvailable">
+            <h4>All results loaded</h4>
+        </div>
+
+        <div class="text-center" ng-show="filteredSpectra.length == 0 && !dataAvailable">
             <h4>No results found!</h4>
         </div>
     </div>

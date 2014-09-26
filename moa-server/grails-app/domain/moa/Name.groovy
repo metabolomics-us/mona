@@ -1,6 +1,9 @@
 package moa
 
 class Name {
+	static mapping = {
+		name sqlType: "text"
+	}
 
     static constraints = {
     }

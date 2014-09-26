@@ -7,6 +7,8 @@ import moa.Spectrum
  */
 class SpectraUploadJob {
 
+    def concurrent = false
+
     /**
      * needs to be defined
      */
@@ -30,7 +32,7 @@ class SpectraUploadJob {
                 long end = System.currentTimeMillis()
 
                 long needed = end - begin
-                def message = "stored spectra with id: ${result.id}, which took ${needed/1000}s"
+                def message = "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed/1000}s"
                 log.info("\t=>\t${message}")
 
             } else {

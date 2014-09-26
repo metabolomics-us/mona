@@ -12,7 +12,6 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
     $scope.massSpec = [];
 
 
-
     /**
      * Decimal truncation routines
      */
@@ -33,6 +32,8 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
     (function(spectrum) {
         // Regular expression for truncating accurate masses
         var massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
+
+        console.log(spectrum);
 
 
         //
@@ -106,14 +107,27 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
 
 
 /**
- * Required in order to load the spectrum before resolving the web page
+ * Required in order to load the spectrum before resolving the web page.
+ * Loads spectrum from cache if it exists, otherwise get from rest api
  */
 moaControllers.ViewSpectrumController.loadSpectrum = {
-    delayedSpectrum: function(Spectrum, $route) {
-        return Spectrum.get(
-            {id: $route.current.params.id},
-            function (data) {},
-            function (error) { alert('failed to obtain spectrum: ' + error); }
-        ).$promise
+    delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
+        var spectrum = SpectrumCache.get('viewSpectrum');
+
+        // If a spectrum is not cached or the id requested does not match the
+        // cached spectrum, request it from the rest api
+        if (spectrum === undefined || spectrum.id != $route.current.params.id) {
+            return Spectrum.get(
+                {id: $route.current.params.id},
+                function (data) {},
+                function (error) {
+                    alert('failed to obtain spectrum: ' + error);
+                }
+            ).$promise
+        } else {
+            var spectrum = SpectrumCache.get('viewSpectrum');
+            SpectrumCache.put('viewSpectrum', null)
+            return spectrum;
+        }
     }
 };
