@@ -36,6 +36,7 @@ class Spectrum extends SupportsMetaData{
         spectrum sqlType: "text"
         version false
         tags fetch: 'join'
+
     }
 
     /**

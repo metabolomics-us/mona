@@ -14,11 +14,13 @@ class Submitter {
 	    lastName blank: false
 	    password blank: false
 	    spectra nullable: true
+
     }
 
     static hasMany = [spectra: Spectrum]
 
     static mapping = {
+
     }
 
     /**

@@ -5,13 +5,16 @@ import grails.rest.RestfulController
 import moa.Spectrum
 import moa.server.SpectraPersistenceService
 import moa.server.SpectraUploadJob
+import moa.server.query.SpectraQueryService
 
 class SpectrumController extends RestfulController<Spectrum> {
     static responseFormats = ['json']
 
     SpectraPersistenceService spectraPersistenceService
+
+    SpectraQueryService spectraQueryService
+
     def beforeInterceptor = {
-        //log.info(params)
     }
 
     public SpectrumController() {
@@ -29,10 +32,14 @@ class SpectrumController extends RestfulController<Spectrum> {
     }
 
     @Override
+    def show() {
+        render spectraQueryService.query(params.id as long) as JSON
+    }
+
+    @Override
     protected Spectrum createResource(Map params) {
         return spectraPersistenceService.create(params)
     }
-
 
     def batchSave() {
         SpectraUploadJob.triggerNow([spectra: getParametersToBind()])
@@ -48,33 +55,24 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         log.info("params: ${params}")
 
-        return Spectrum.createCriteria().list(params) {
+        def query = [:]
 
-            //if a compound is specified
-            if (params.CompoundId) {
-                log.info("query by compounds: ${params.CompoundId}")
+        //if a compound is specified
+        if (params.CompoundId) {
 
-                biologicalCompound {
-                    eq("id", Long.parseLong(params.CompoundId))
-                }
+            query.compound = [:]
+            query.compound.id = params.CompoundId
 
-                or {
-                    chemicalCompound {
-                        eq("id", Long.parseLong(params.CompoundId))
-                    }
-                }
-            }
-            //if a category is specified
-            if (params.MetaDataId) {
-
-                log.info("query by meta data: ${params.MetaDataId}")
-                metaData {
-                    eq("id", Long.parseLong(params.MetaDataId))
-
-                    //if we got a category as well
-                }
-            }
         }
+
+        //if a category is specified
+        if (params.MetaDataId) {
+
+            query.metadata = []
+            query.metadata.add( [id:params.MetaDataId]   )
+        }
+
+        return spectraQueryService.query(query, params)
     }
 
 

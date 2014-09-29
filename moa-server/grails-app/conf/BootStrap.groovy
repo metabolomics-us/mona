@@ -11,9 +11,16 @@ import moa.Tag
 import moa.MetaDataValue
 import util.DomainClassMarshaller
 
+import org.hibernate.FlushMode
 class BootStrap {
 
+    def sessionFactory
+
     def init = { servletContext ->
+
+        def session = sessionFactory.currentSession
+
+        session.setFlushMode(FlushMode.COMMIT)
 
         if (Environment.isDevelopmentMode()) {
             //just some test data

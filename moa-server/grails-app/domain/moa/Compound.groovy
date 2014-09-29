@@ -12,6 +12,7 @@ class Compound extends SupportsMetaData{
         molFile sqlType: "text"
         version false
         names fetch: 'join'
+
     }
     /**
      * this compound belongs to one spectrum

@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import moa.Spectrum
 import moa.Tag
 import org.hibernate.QueryException
+import org.springframework.cache.annotation.Cacheable
 
 
 class SpectraQueryService {
@@ -12,16 +13,30 @@ class SpectraQueryService {
 
     MetaDataQueryService metaDataQueryService
 
+    @Transactional
+    @Cacheable( "spectrum")
+    def query(long id) {
+        return Spectrum.get(id)
+    }
     /**
      * returns a list of spectra data based on the given query
      * @param json
      */
+
+
+    @Cacheable("spectrum")
     @Transactional
-    def query(def json, def params = [:]) {
+    def query(def json, int limit = -1, int offset = -1) {
         log.info("received query: ${json}")
 
-        if (json == null) {
-            throw new Exception("your query needs to contain some parameters!")
+        def params = [:]
+
+        if (limit != -1) {
+            params.max = limit
+        }
+
+        if (offset != -1) {
+            params.offset = offset
         }
 
         //completed query string
@@ -36,20 +51,44 @@ class SpectraQueryService {
         //our defined execution parameters
         def executionParams = [:]
 
-        (queryOfDoomWhere,queryOfDoomJoins) = handleJsonCompoundField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonCompoundField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
-        (queryOfDoomWhere,queryOfDoomJoins) = handleSpectraJsonMetadataFields(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (queryOfDoomWhere, queryOfDoomJoins) = handleSpectraJsonMetadataFields(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
-        (queryOfDoomWhere,queryOfDoomJoins) = handleJsonTagsField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonTagsField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
         //assemble the query of doom
         queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
-        log.info("generated query: \n\n${queryOfDoom}\n\n")
-        log.info("parameter matrix:\n\n ${executionParams}")
+        log.debug("generated query: \n\n${queryOfDoom}\n\n")
+        log.debug("parameter matrix:\n\n ${executionParams}")
+        log.debug("pagination parameters: \n\n ${params}")
 
-        return Spectrum.executeQuery(queryOfDoom, executionParams, params)
+        def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
 
+        log.debug("result count: ${result.size()}")
+
+        return result
+    }
+
+    @Cacheable("spectrum")
+    @Transactional
+    def query(def json, def params) {
+
+        if(!params.max){
+            params.max = -1
+        }
+
+        if(!params.offset){
+            params.offset = -1
+        }
+
+        if (json == null) {
+            throw new Exception("your query needs to contain some parameters!")
+        }
+
+
+         return query(json,params.max as int,params.offset as int)
     }
 
     /**
@@ -114,7 +153,7 @@ class SpectraQueryService {
                     queryOfDoomJoins += " left join md_${index}.category as mdc_${index}"
 
 
-                    queryOfDoomWhere = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "md_${index}", "mdv_${index}","mdc_${index}", index)
+                    queryOfDoomWhere = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "md_${index}", "mdv_${index}", "mdc_${index}", index)
 
                 }
             }
@@ -180,6 +219,30 @@ class SpectraQueryService {
                 }
 
             }
+
+//if we have an inchi key
+            if (json.compound.id) {
+
+                queryOfDoomJoins += " left join s.biologicalCompound as bc"
+                queryOfDoomJoins += " left join s.chemicalCompound as cc"
+                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                if (json.compound.id) {
+                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id)"
+                    executionParams.compund_id = json.compound.id as long
+                }
+                else if(json.compound.id.eq){
+                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id)"
+                    executionParams.compund_id = json.compound.id.eq as long
+
+                }
+                else {
+                    throw new QueryException("invalid query term: ${json.compound.id}")
+                }
+
+            }
+
+
 
         }
 

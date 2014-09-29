@@ -1,27 +1,58 @@
 package moa.server.query
-
 import grails.transaction.Transactional
 import moa.MetaDataValue
+import org.springframework.cache.annotation.Cacheable
 
 class MetaDataQueryService {
 
     static transactional = false
 
-    def beforeInterceptor = {
-        log.info("$params - $request.JSON")
+    @Transactional
+    @Cacheable("metadata")
+    def query(long id) {
+        return MetaDataValue.get(id)
+    }
+
+    @Cacheable("metadata")
+    @Transactional
+    def query(def json, def params) {
+
+        if(!params.max){
+            params.max = -1
+        }
+
+        if(!params.offset){
+            params.offset = -1
+        }
+
+        if (json == null) {
+            throw new Exception("your query needs to contain some parameters!")
+        }
+
+
+        return query(json,params.max as int,params.offset as int)
     }
 
     /**
      * queries metadata and returns the result as json array of metadata types
      * @param json
      */
+    @Cacheable("metadata")
     @Transactional
-    def query(Map json, def params = [:]) {
+    def query(def json, int limit = -1, int offset = -1) {
 
         log.info("received query: ${json}")
 
-        if (json == null) {
-            throw new Exception("query query needs to contain some parameters")
+        log.info("received query: ${json}")
+
+        def params = [:]
+
+        if (limit != -1) {
+            params.max = limit
+        }
+
+        if (offset != -1) {
+            params.offset = offset
         }
 
 
@@ -168,6 +199,23 @@ class MetaDataQueryService {
             //short form
             else {
                 (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.name], "eq", executionParams, index, metaDataTableName)
+            }
+        }
+
+        if(current.id){
+            whereQuery = addRequiredAnd(whereQuery)
+
+            //long form
+            if (current.id instanceof Map) {
+                current.id.keySet().each { String key ->
+                    if (current.id."${key}") {
+                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id."${key}" as long], key, executionParams, index, metaDataTableName)
+                    }
+                }
+            }
+            //short form
+            else {
+                (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id as long], "eq", executionParams, index, metaDataTableName)
             }
         }
 

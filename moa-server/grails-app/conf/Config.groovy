@@ -116,7 +116,9 @@ log4j = {
 
         development {
 
+            debug 'util'
             info 'grails.app'
+            debug 'grails.plugin.cache'
 
 
             info 'grails.app'
@@ -133,3 +135,18 @@ log4j = {
 
 //let's use jquery
 grails.views.javascript.library="jquery"
+
+grails.cache.config = {
+    cache {
+        name 'spectrum'
+    }
+    cache {
+        name 'compound'
+    }
+    cache {
+        name 'metadata'
+    }
+
+}
+
+grails.cache.keyGenerator = "cacheKey"
