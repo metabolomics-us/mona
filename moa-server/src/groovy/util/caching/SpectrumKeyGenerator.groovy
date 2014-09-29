@@ -19,7 +19,7 @@ class SpectrumKeyGenerator implements KeyGenerator {
     Object generate(Object target, Method method, Object... params) {
         StringBuilder key = new StringBuilder()
 
-        key.append(target.toString())
+        key.append(target.getClass().getName())
         key.append("-")
         key.append(method.toString())
         key.append("-")

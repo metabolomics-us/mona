@@ -2,11 +2,14 @@ package moa.persistence
 
 import grails.rest.RestfulController
 import moa.MetaDataValue
+import moa.server.query.MetaDataQueryService
 
 /**
  * Created by wohlgemuth on 7/3/14.
  */
 class MetaDataValueController extends RestfulController<MetaDataValue> {
+
+    MetaDataQueryService metaDataQueryService
 
     static responseFormats = ['json']
 
@@ -16,7 +19,7 @@ class MetaDataValueController extends RestfulController<MetaDataValue> {
     }
 
     public MetaDataValueController() {
-        super(MetaDataValue,true)
+        super(MetaDataValue, true)
     }
 
     /**
@@ -40,24 +43,26 @@ class MetaDataValueController extends RestfulController<MetaDataValue> {
 
     protected List<MetaDataValue> listAllResources(Map params) {
 
-        return MetaDataValue.createCriteria().list(params) {
+        def query = [:]
 
-            //if we have a metadata id
-            if (params.MetaDataId) {
-                metaData {
-                    eq("id", Long.parseLong(params.MetaDataId))
+        //if we have a metadata id
+        if (params.MetaDataId) {
 
-                    //if we also have a category
-                    if (params.MetaDataCategoryId) {
-                        category {
-                            eq("id", Long.parseLong(params.MetaDataCategoryId))
-                        }
-
-                    }
-                }
-            }
+            query.id = Long.parseLong(params.MetaDataId)
 
         }
+
+        //if we also have a category
+        if (params.MetaDataCategoryId) {
+            query.category = [:]
+
+            query.category.id = params.MetaDataCategoryId
+        }
+
+        log.info("build query: ${query}")
+        return metaDataQueryService.query(query, params)
+
     }
 
 }
+

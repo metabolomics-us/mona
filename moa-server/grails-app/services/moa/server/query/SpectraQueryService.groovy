@@ -6,6 +6,7 @@ import moa.Tag
 import org.hibernate.QueryException
 import org.springframework.cache.annotation.Cacheable
 
+import static util.query.QueryHelper.*
 
 class SpectraQueryService {
 
@@ -140,7 +141,7 @@ class SpectraQueryService {
 //if we have a metadata object specified
         if (json.metadata) {
 
-            if (json.metadata.length() > 0) {
+            if (json.metadata.size() > 0) {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 //go over each metadata definition
@@ -182,6 +183,7 @@ class SpectraQueryService {
                 queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
                 queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
 
                 //if we have a like condition specified
                 if (json.compound.name.like) {

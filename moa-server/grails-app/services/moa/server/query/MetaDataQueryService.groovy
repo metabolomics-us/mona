@@ -1,7 +1,10 @@
 package moa.server.query
+
 import grails.transaction.Transactional
 import moa.MetaDataValue
 import org.springframework.cache.annotation.Cacheable
+
+import static util.query.QueryHelper.*
 
 class MetaDataQueryService {
 
@@ -17,11 +20,11 @@ class MetaDataQueryService {
     @Transactional
     def query(def json, def params) {
 
-        if(!params.max){
+        if (!params.max) {
             params.max = -1
         }
 
-        if(!params.offset){
+        if (!params.offset) {
             params.offset = -1
         }
 
@@ -30,7 +33,7 @@ class MetaDataQueryService {
         }
 
 
-        return query(json,params.max as int,params.offset as int)
+        return query(json, params.max as int, params.offset as int)
     }
 
     /**
@@ -40,8 +43,6 @@ class MetaDataQueryService {
     @Cacheable("metadata")
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
-
-        log.info("received query: ${json}")
 
         log.info("received query: ${json}")
 
@@ -63,91 +64,23 @@ class MetaDataQueryService {
         String queryOfDoomWhere = ""
 
 
-        if(json.isEmpty() == false){
+        if (json.isEmpty() == false) {
             queryOfDoomWhere += " where "
         }
 
         def executionParams = [:]
 
 
-        queryOfDoomWhere = buildMetadataQueryString(queryOfDoomWhere, json, executionParams, "md", "m","mdc", 0)
+        queryOfDoomWhere = buildMetadataQueryString(queryOfDoomWhere, json, executionParams, "md", "m", "mdc", 0)
 
         queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
         log.info("generated query: ${queryOfDoom}")
-        return MetaDataValue.executeQuery(queryOfDoom, executionParams, params)
+        def result = MetaDataValue.executeQuery(queryOfDoom, executionParams, params)
 
-    }
+        log.debug("result size: ${result.size()}")
+        return result
 
-    /**
-     * builds our query for comparison fields
-     * @param fieldName
-     * @param values
-     * @param condition
-     * @param executionParams
-     * @param index
-     * @return
-     */
-    protected List buildComparisonField(String inputQuery, String fieldName, List values, String condition, Map executionParams, int index = 0, String qualifierTable = "") {
-
-        if (qualifierTable != "") {
-            qualifierTable = qualifierTable + "."
-        }
-
-        String query = " ("
-
-        String conditionTranslation = ""
-
-        switch (condition) {
-            case "eq":
-                conditionTranslation = "="
-                break
-            case "like":
-                conditionTranslation = "like"
-                break
-            case "gt":
-                conditionTranslation = ">"
-                break
-            case "lt":
-                conditionTranslation = "<"
-                break
-            case "ge":
-                conditionTranslation = ">="
-                break
-            case "le":
-                conditionTranslation = "<="
-                break
-            case "ne":
-                conditionTranslation = "!="
-                break
-            case "between":
-                conditionTranslation = "between"
-                break
-            default:
-                log.warn("unknown condition specified: ${condition}, skipping!")
-                return [inputQuery, executionParams]
-        }
-
-        /**
-         * special handling for between
-         */
-        if (conditionTranslation.equals("between")) {
-            query += "${qualifierTable}${fieldName} ${conditionTranslation} :${fieldName}_value_${index}_min and :${fieldName}_value_${index}_max"
-            executionParams.put("${fieldName}_value_${index}_min".toString(), values[0])
-            executionParams.put("${fieldName}_value_${index}_max".toString(), values[1])
-
-        }
-        /**
-         * general handling for everything else
-         */
-        else {
-            query += "${qualifierTable}${fieldName} ${conditionTranslation} :${fieldName}_value_${index}"
-            executionParams.put("${fieldName}_value_${index}".toString(), values[0])
-        }
-
-        query += ")"
-
-        return [inputQuery + query, executionParams];
     }
 
     /**
@@ -161,21 +94,31 @@ class MetaDataQueryService {
      * @param index current join in case we have more than 1
      * @return
      */
-    protected String buildMetadataQueryString(String whereQuery, Map current, executionParams, String metaDataTableName, String valueTable,String categoryTable, int index = 0) {
+    protected String buildMetadataQueryString(String whereQuery, Map current, executionParams, String metaDataTableName, String valueTable, String categoryTable, int index = 0) {
 
         whereQuery = addRequiredAnd(whereQuery)
 
         whereQuery += " ("
 
         //support for categories
-        if(current.category){
+        if (current.category) {
             whereQuery = addRequiredAnd(whereQuery)
 
             //long form
             if (current.category instanceof Map) {
-                current.category.keySet().each { String key ->
-                    if (current.category."${key}") {
-                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.category."${key}"], key, executionParams, index, categoryTable)
+
+                //query by id
+                if (current.category.id) {
+                    (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.category.id], "eq", executionParams, index, categoryTable)
+
+                }
+
+                //query by name
+                else {
+                    current.category.keySet().each { String key ->
+                        if (current.category."${key}") {
+                            (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.category."${key}"], key, executionParams, index, categoryTable)
+                        }
                     }
                 }
             }
@@ -202,20 +145,21 @@ class MetaDataQueryService {
             }
         }
 
-        if(current.id){
+        if (current.id) {
             whereQuery = addRequiredAnd(whereQuery)
 
             //long form
             if (current.id instanceof Map) {
                 current.id.keySet().each { String key ->
                     if (current.id."${key}") {
-                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id."${key}" as long], key, executionParams, index, metaDataTableName)
+                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id."${key}"], key, executionParams, index, metaDataTableName)
+
                     }
                 }
             }
             //short form
             else {
-                (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id as long], "eq", executionParams, index, metaDataTableName)
+                (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id], "eq", executionParams, index, metaDataTableName)
             }
         }
 

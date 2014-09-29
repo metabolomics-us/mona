@@ -117,11 +117,10 @@ log4j = {
         development {
 
             debug 'util'
-            info 'grails.app'
+            debug 'grails.app'
             debug 'grails.plugin.cache'
 
 
-            info 'grails.app'
             info 'org.hibernate.SQL'
             info 'org.hibernate.type.descriptor.sql.BasicBinder'
         }

@@ -65,13 +65,42 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         }
 
+        query.metadata = []
+
         //if a category is specified
         if (params.MetaDataId) {
 
-            query.metadata = []
-            query.metadata.add( [id:params.MetaDataId]   )
+            def object = [id: params.MetaDataId]
+
+            //if we also have a category
+
+            /**
+             *
+             * IGNORE FOR NOW, SICNE IT AINT WORKING
+            if (params.MetaDataCategoryId) {
+                object.category = [:]
+
+                object.category.id = params.MetaDataCategoryId
+            }
+
+             **/
+
+            query.metadata.add(object)
+        }
+        else if (params.MetaDataCategoryId){
+            def object = [:]
+
+             object.category = [:]
+
+             object.category.id = params.MetaDataCategoryId
+
+
+            query.metadata.add(object)
         }
 
+
+
+        log.info("build query: ${query as JSON}")
         return spectraQueryService.query(query, params)
     }
 
