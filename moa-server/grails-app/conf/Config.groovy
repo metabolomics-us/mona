@@ -116,9 +116,11 @@ log4j = {
 
         development {
 
-            debug 'util'
+            //debug 'util'
+            debug 'validation'
+
             debug 'grails.app'
-            debug 'grails.plugin.cache'
+            //debug 'grails.plugin.cache'
 
 
             info 'org.hibernate.SQL'

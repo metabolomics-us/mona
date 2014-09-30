@@ -147,8 +147,13 @@
                             <td>
                                 {{meta.name}}
                             </td>
-                            <td>
+                            <td ng-class="{suspect: $meta.suspect}">
                                 {{meta.value}} {{meta.unit}}
+
+                                <!-- display this, if there seems to be something odd with this value -->
+                                <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
+
+                                </i>
                             </td>
                         </tr>
                     </tbody>
@@ -159,7 +164,8 @@
             <div ng-show="spectrum.tags.length">
                 <h4>Tags</h4>
                 <ul class="list-inline">
-                    <li ng-repeat="tag in spectrum.tags"><span class="label label-primary">{{tag.text}}</span></li>
+                    <li ng-repeat="tag in spectrum.tags">
+                        <span ng-class="{'label': true, 'label-primary' : tag.ruleBased == false,'label-info' : tag.ruleBased == true}">{{tag.text}}</span></li>
                 </ul>
             </div>
             <br />

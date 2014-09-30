@@ -9,15 +9,9 @@ class UrlMappings {
         "/"(view: 'index')
 
         /**
-         * status of our job queue
-         */
-
-        "/info/jobs"(controller: "Quartz", action: "list")
-
-        /**
          * general grails default mapping
          */
-        "/$controller/$action?/$id?"{
+        "/$controller/$action?/$id?" {
             constraints {
                 // apply constraints here
             }
@@ -108,6 +102,16 @@ class UrlMappings {
          * batch save method, to schedule lots of spectra to an internal queue.
          */
         "/rest/spectra/batch/save"(controller: 'spectrum', action: 'batchSave')
+
+        /**
+         * validation services
+         */
+        "/rest/spectra/validate/$id"(controller: 'spectraValidation', action: 'validateSpectra', id: id)
+
+/**
+ * validation services
+ */
+        "/rest/spectra/validateAll"(controller: 'spectraValidation', action: 'validateAll')
 
 
     }

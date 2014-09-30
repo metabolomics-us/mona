@@ -1,12 +1,9 @@
 package moa.server.query
-
 import grails.transaction.Transactional
 import moa.Spectrum
 import moa.Tag
 import org.hibernate.QueryException
 import org.springframework.cache.annotation.Cacheable
-
-import static util.query.QueryHelper.*
 
 class SpectraQueryService {
 

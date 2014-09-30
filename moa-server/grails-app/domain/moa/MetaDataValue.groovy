@@ -15,6 +15,11 @@ class MetaDataValue {
      */
     String unit
 
+    /**
+     * something might be wrong with this value
+     */
+    boolean suspect
+
     static belongsTo = [metaData: MetaData, owner:SupportsMetaData]
 
     static mapping = {
@@ -26,6 +31,7 @@ class MetaDataValue {
         metaData nullable: true
         owner nullable: true
         unit nullable: true
+        suspect nullable :true
     }
 
     /**
