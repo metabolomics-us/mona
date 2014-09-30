@@ -1,4 +1,7 @@
 // Karma configuration
+// http://www.yearofmoo.com/2013/09/advanced-testing-and-debugging-in-angularjs.html
+// https://github.com/yearofmoo-articles/AngularJS-Testing-Article
+// https://docs.google.com/document/d/1HYnKnLxhxUYygPqIFiyibI3PsgicGENeHINCN-B_rdw/edit
 
 module.exports = function (config) {
     config.set({
@@ -24,9 +27,7 @@ module.exports = function (config) {
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {
-
-        },
+        preprocessors: {},
 
 
         // test results reporter to use
@@ -54,7 +55,7 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Firefox'],
+        browsers: ['Chrome', 'Firefox'],
     
         
         plugins:[
