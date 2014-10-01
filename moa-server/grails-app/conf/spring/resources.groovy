@@ -29,6 +29,25 @@ beans = {
     }
 
     /**
+     * flow gradiant percentage rule
+     */
+    flowGradientPercentageRule(PercentageValueRule,"flow gradient"){
+
+        minPercentage = 0
+        maxPercentage = 100
+    }
+
+    /**
+     * solvent percentage rule
+     */
+    solventPercentageRule(PercentageValueRule,"solvent"){
+
+        minPercentage = 0
+        maxPercentage = 100
+    }
+
+
+    /**
      * tests the preccssion of the ions in a mass spec
      */
     preciseEnough(MassSpecIsPreciseEnoughRule){ spec ->
@@ -54,7 +73,9 @@ beans = {
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,
                 isAccurateMassSpectra,
-                collisionEnergyPercentageRule
+                collisionEnergyPercentageRule,
+                solventPercentageRule,
+                flowGradientPercentageRule
         ]
         //define and register our validation
     }
