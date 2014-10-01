@@ -1,6 +1,6 @@
 package moa.server
 
-import moa.server.validation.SpectraValidationService
+import moa.server.curation.SpectraCurationService
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -16,11 +16,11 @@ class SpectraValidationJob {
      */
     static triggers = {}
 
-    def group = "validation"
+    def group = "curation"
 
     def description = "uploads spectra data in the background of the server"
 
-    SpectraValidationService spectraValidationService
+    SpectraCurationService spectraCurationService
 
     def execute(context) {
         Map data = context.mergedJobDataMap
@@ -30,7 +30,7 @@ class SpectraValidationJob {
                 long begin = System.currentTimeMillis()
 
 
-                boolean result = spectraValidationService.validateSpectra(data.spectraId as long)
+                boolean result = spectraCurationService.validateSpectra(data.spectraId as long)
 
                 long end = System.currentTimeMillis()
 

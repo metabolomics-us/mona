@@ -1,10 +1,11 @@
 import util.caching.SpectrumKeyGenerator
-import validation.ValidationWorkflow
-import validation.rules.instrument.GCMSSpectraIdentificationRule
-import validation.rules.instrument.LCMSSpectraIdentificationRule
-import validation.rules.meta.PercentageValueRule
-import validation.rules.spectra.IsAccurateMassSpectraRule
-import validation.rules.spectra.MassSpecIsPreciseEnoughRule
+import curation.CurationWorkflow
+import curation.CurationWorkflow
+import curation.rules.instrument.GCMSSpectraIdentificationRule
+import curation.rules.instrument.LCMSSpectraIdentificationRule
+import curation.rules.meta.PercentageValueRule
+import curation.rules.spectra.IsAccurateMassSpectraRule
+import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 
 // Place your Spring DSL code here
 beans = {
@@ -67,7 +68,7 @@ beans = {
     /**
      * define our complete workflow here
      */
-    validationWorkflow(ValidationWorkflow) { workflow ->
+    validationWorkflow(CurationWorkflow) { workflow ->
 
         rules = [
                 lcmsSpectraIdentification,
@@ -77,7 +78,7 @@ beans = {
                 solventPercentageRule,
                 flowGradientPercentageRule
         ]
-        //define and register our validation
+        //define and register our curation
     }
 
 }

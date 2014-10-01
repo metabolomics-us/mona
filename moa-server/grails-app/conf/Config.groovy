@@ -117,7 +117,7 @@ log4j = {
         development {
 
             //debug 'util'
-            debug 'validation'
+            debug 'curation'
 
             debug 'grails.app'
             //debug 'grails.plugin.cache'

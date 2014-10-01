@@ -104,14 +104,14 @@ class UrlMappings {
         "/rest/spectra/batch/save"(controller: 'spectrum', action: 'batchSave')
 
         /**
-         * validation services
+         * curation services
          */
-        "/rest/spectra/validate/$id"(controller: 'spectraValidation', action: 'validateSpectra', id: id)
+        "/rest/spectra/curate/$id"(controller: 'spectraCuration', action: 'curate', id: id)
 
 /**
- * validation services
+ * curation services
  */
-        "/rest/spectra/validateAll"(controller: 'spectraValidation', action: 'validateAll')
+        "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
 
     }

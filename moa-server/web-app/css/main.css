@@ -382,7 +382,7 @@ fieldset.embedded legend {
 	        box-shadow: 0 0 0.5em #ffaaaa;
 }
 
-/* same effects for browsers that support HTML5 client-side validation (these have to be specified separately or IE will ignore the entire rule) */
+/* same effects for browsers that support HTML5 client-side curation (these have to be specified separately or IE will ignore the entire rule) */
 
 input:invalid, select:invalid, textarea:invalid {
 	background: #fff3f3;
