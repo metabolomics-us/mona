@@ -68,7 +68,7 @@ beans = {
     /**
      * define our complete workflow here
      */
-    validationWorkflow(CurationWorkflow) { workflow ->
+    curationWorkflow(CurationWorkflow) { workflow ->
 
         rules = [
                 lcmsSpectraIdentification,
