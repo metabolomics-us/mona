@@ -38,4 +38,13 @@ abstract class AbstractValidationRule implements SpectraValidationRule {
     final ValidationAction getFailureAction() {
         return failureAction
     }
+
+
+    /**
+     * should we fail by default
+     * @return
+     */
+    protected boolean failByDefault() {
+        return true;
+    }
 }

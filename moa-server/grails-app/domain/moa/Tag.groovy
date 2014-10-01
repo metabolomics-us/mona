@@ -20,4 +20,19 @@ class Tag {
      * is this tag being applied from the rule based machine
      */
     boolean ruleBased = false
+
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (!(o instanceof Tag)) return false
+
+        Tag tag = (Tag) o
+
+        if (text != tag.text) return false
+
+        return true
+    }
+
+    int hashCode() {
+        return (text != null ? text.hashCode() : 0)
+    }
 }

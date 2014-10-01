@@ -1,8 +1,9 @@
 package validation.rules.spectra
 
+import validation.SpectraValidationRule
 import validation.ValidationWorkflow
 import validation.actions.AddTagAction
-import validation.actions.IgnoreOnFailureAction
+import validation.actions.RemoveTagAction
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,11 +11,19 @@ import validation.actions.IgnoreOnFailureAction
  * Date: 9/30/14
  * Time: 1:45 PM
  */
-class IsAccurateMassSpectraRule extends ValidationWorkflow{
+class IsAccurateMassSpectraRule extends ValidationWorkflow implements SpectraValidationRule{
 
-    IsAccurateMassSpectraRule() {
-        super(new AddTagAction("accurate"),new IgnoreOnFailureAction())
-
+    @Override
+    protected boolean failByDefault() {
+        return true;
     }
 
+    IsAccurateMassSpectraRule() {
+        super(new AddTagAction("accurate"),new RemoveTagAction("accurate"))
+    }
+
+    @Override
+    protected boolean abortOnFailure() {
+        return true
+    }
 }

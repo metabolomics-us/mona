@@ -47,11 +47,4 @@ abstract class AbstractMetaDataCentricRule extends AbstractValidationRule {
         return true
     }
 
-    /**
-     * if we do not find acceptable metadata values, should we fail by default
-     * @return
-     */
-    protected boolean failByDefault() {
-        return true;
-    }
 }

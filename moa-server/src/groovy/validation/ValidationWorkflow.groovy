@@ -1,7 +1,6 @@
 package validation
 
 import moa.Spectrum
-import moa.Tag
 import org.apache.log4j.Logger
 import validation.actions.IgnoreOnFailureAction
 
@@ -11,7 +10,7 @@ import validation.actions.IgnoreOnFailureAction
  * Date: 9/30/14
  * Time: 11:24 AM
  */
-class ValidationWorkflow extends AbstractValidationRule{
+class ValidationWorkflow extends AbstractValidationRule {
 
     Logger logger = Logger.getLogger(getClass())
 
@@ -24,41 +23,48 @@ class ValidationWorkflow extends AbstractValidationRule{
         super(successAction, failureAction)
     }
 
-    def ValidationWorkflow(){
-        super(new IgnoreOnFailureAction(),new IgnoreOnFailureAction())
+    def ValidationWorkflow() {
+        super(new IgnoreOnFailureAction(), new IgnoreOnFailureAction())
     }
 /**
-     * runs the complete workflow
-     * @param toValidate
-     * @return               ˜
-     */
-    boolean runWorkflow(Spectrum toValidate) {
+ * runs the complete workflow
+ * @param toValidate
+ * @return ˜
+ */
+    final boolean runWorkflow(Spectrum toValidate) {
+
+        if (rules.isEmpty()) {
+            throw new Exception("please add at least 1 rule to be executed!")
+        }
+
+        boolean result = false;
 
         toValidate.attach()
-
-        Tag.findAllByRuleBased(true){ Tag it ->
-            if(toValidate.getTags().contains(it)){
-                toValidate.removeFromTags(it)
-                toValidate.save(flush:true)
-            }
-        }
 
         for (SpectraValidationRule rule : rules) {
 
             logger.info("executing rule: ${rule.getClass().getName()}")
             try {
-                if (rule.executeRule(toValidate)) {
-                    logger.info("\t=> success")
+
+                result = rule.executeRule(toValidate)
+
+                if (result) {
+                    logger.info("\t=> success, execution action ${rule.successAction.getClass().getName()} for rule ${rule.getClass().getName()}")
                     rule.getSuccessAction().doAction(toValidate)
                 } else {
-                    logger.info("\t=> failed")
+                    logger.info("\t=> failed, execution action ${rule.failureAction.getClass().getName()} for rule ${rule.getClass().getName()}")
                     try {
                         rule.getFailureAction().doAction(toValidate)
+                        if(abortOnFailure()){
+                            logger.info("\t=> ${this.getClass().getName()} is designed to break on failure, exciting loop")
+                            return false;
+                        }
                     }
                     catch (Exception e) {
                         return false
                     }
                 }
+
 
             }
             catch (Exception e) {
@@ -68,11 +74,25 @@ class ValidationWorkflow extends AbstractValidationRule{
         }
 
         //we always return true by default
-        return true;
+
+
+        if (result) {
+            return true
+        }
+
+        return failByDefault();
     }
 
     @Override
     boolean executeRule(Spectrum spectrum) {
         return runWorkflow(spectrum)
+    }
+
+    /**
+     * do we abort the complete workflow on failure
+     * @return
+     */
+    protected boolean abortOnFailure() {
+        return false
     }
 }

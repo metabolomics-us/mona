@@ -28,7 +28,7 @@ class PercentageValueRule extends AbstractMetaDataCentricRule {
     protected boolean acceptMetaDataValue(MetaDataValue value) {
         Double val = Double.parseDouble(value.getValue().toString())
 
-        logger.info("\t\t=>checking ${val} to be >= ${minPercentage} and <= ${maxPercentage}")
+        logger.debug("\t\t=>checking ${val} to be >= ${minPercentage} and <= ${maxPercentage}")
         return (val >= minPercentage && val <= maxPercentage)
     }
 
@@ -38,18 +38,18 @@ class PercentageValueRule extends AbstractMetaDataCentricRule {
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue value) {
-        logger.info("checking ${value.name} against defined field ${field}")
+        logger.debug("checking ${value.name} against defined field ${field}")
         if (value.name.toLowerCase().equals(field.toLowerCase())) {
 
-            logger.info("\t=>checking if it's the correct unit: ${value.unit}")
+            logger.debug("\t=>checking if it's the correct unit: ${value.unit}")
             if (value.unit != null && value.unit.toLowerCase().trim().equals("%")) {
                 return true;
             } else {
-                logger.info("\t\t => wrong unit, rule is ignored")
+                logger.debug("\t\t => wrong unit, rule is ignored")
                 return false
             }
         } else {
-            logger.info("\t => wrong field, rule is ignored")
+            logger.debug("\t => wrong field, rule is ignored")
         }
         return false
     }
