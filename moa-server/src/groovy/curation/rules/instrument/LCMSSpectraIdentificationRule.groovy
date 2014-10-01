@@ -1,10 +1,12 @@
 package curation.rules.instrument
+
 import moa.MetaDataValue
 import org.apache.log4j.Logger
 import curation.CurationAction
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import curation.rules.AbstractMetaDataCentricRule
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -25,13 +27,13 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
     @Override
     protected boolean acceptMetaDataValue(MetaDataValue val) {
-        if (val.name.toLowerCase() == "instrument") {
-            String value = val.value.toString().toLowerCase()
+        String value = val.value.toString().toLowerCase()
 
-            return (value.contains("lcms"))
+        return (value.contains("lcms"))
 
-        }
+    }
 
-        return false
+    protected boolean isCorrectMetaDataField(MetaDataValue field) {
+        return field.name.toLowerCase() == "instrument"
     }
 }
