@@ -3,9 +3,8 @@ import moa.MetaDataValue
 import org.apache.log4j.Logger
 import validation.ValidationAction
 import validation.actions.AddTagAction
-import validation.actions.IgnoreOnFailureAction
+import validation.actions.RemoveTagAction
 import validation.rules.AbstractMetaDataCentricRule
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -17,7 +16,7 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
 
     def LCMSSpectraIdentificationRule() {
-        super(new AddTagAction("LCMS"), new IgnoreOnFailureAction());
+        super(new AddTagAction("LCMS"), new RemoveTagAction("LCMS"));
     }
 
     def LCMSSpectraIdentificationRule(ValidationAction successAction, ValidationAction failureAction) {

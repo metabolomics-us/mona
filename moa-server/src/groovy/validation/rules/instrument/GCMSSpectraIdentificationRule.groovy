@@ -2,9 +2,8 @@ package validation.rules.instrument
 import moa.MetaDataValue
 import validation.ValidationAction
 import validation.actions.AddTagAction
-import validation.actions.IgnoreOnFailureAction
+import validation.actions.RemoveTagAction
 import validation.rules.AbstractMetaDataCentricRule
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -14,7 +13,7 @@ import validation.rules.AbstractMetaDataCentricRule
 class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule{
 
     def GCMSSpectraIdentificationRule(){
-        super(new AddTagAction("GCMS"),new IgnoreOnFailureAction());
+        super(new AddTagAction("GCMS"),new RemoveTagAction("GCMS"));
     }
     def GCMSSpectraIdentificationRule(ValidationAction successAction, ValidationAction failureAction) {
         super(successAction, failureAction)

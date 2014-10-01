@@ -15,7 +15,7 @@ class RemoveTagAction implements ValidationAction {
 
     Logger logger = Logger.getLogger(getClass())
 
-    String tagNameToAdd = null
+    String tagNameToRemove = null
 
     RemoveTagAction() {
 
@@ -26,19 +26,19 @@ class RemoveTagAction implements ValidationAction {
      * @param tagName
      */
     RemoveTagAction(String tagName) {
-        this.tagNameToAdd = tagName
+        this.tagNameToRemove = tagName
     }
 
 
     @Override
     void doAction(Spectrum spectrum) {
 
-        logger.debug("removing tag from spectrum(${spectrum.id} - ${tagNameToAdd})")
-        if (!tagNameToAdd) {
-            throw new RuntimeException("please provide us with a 'tagNameToAdd' value!")
+        logger.debug("removing tag from spectrum(${spectrum.id} - ${tagNameToRemove})")
+        if (!tagNameToRemove) {
+            throw new RuntimeException("please provide us with a 'tagNameToRemove' value!")
         }
 
-        Tag tag = Tag.findOrSaveByText(tagNameToAdd)
+        Tag tag = Tag.findOrSaveByText(tagNameToRemove)
         tag.ruleBased = true
         tag.save(flush: true)
 
