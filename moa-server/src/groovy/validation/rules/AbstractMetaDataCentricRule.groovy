@@ -30,13 +30,28 @@ abstract class AbstractMetaDataCentricRule extends AbstractValidationRule {
     @Override
     final boolean executeRule(Spectrum spectrum) {
 
-        boolean result = false
-        spectrum.getMetaData().each { MetaDataValue metaData ->
-
-            if (acceptMetaDataValue(metaData)) {
-                result = true;
+        for (MetaDataValue metaDataValue : spectrum.getMetaData()) {
+            if (isCorrectMetaDataField(metaDataValue)) {
+                return (acceptMetaDataValue(metaDataValue))
             }
         }
-        return result
+        return !failByDefault()
+    }
+
+    /**
+     * do we accepts the given field? Usful to limit execution to certain fields only
+     * @param field
+     * @return
+     */
+    protected boolean isCorrectMetaDataField(MetaDataValue field) {
+        return true
+    }
+
+    /**
+     * if we do not find acceptable metadata values, should we fail by default
+     * @return
+     */
+    protected boolean failByDefault() {
+        return true;
     }
 }
