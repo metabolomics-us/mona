@@ -1,4 +1,6 @@
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
+import curation.rules.spectra.IsAnnotatedSpectraRule
+import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
 import util.caching.SpectrumKeyGenerator
 import curation.CurationWorkflow
@@ -68,6 +70,11 @@ beans = {
     }
 
     /**
+     * does the spectra has any annotations
+     */
+    isAnnotatedSpectraRule(IsAnnotatedSpectraRule)
+
+    /**
      * spectras should always be relative and not absolute
      */
     convertSpectraToRelativeRule(ConvertMassspectraToRelativeSpectraRule)
@@ -92,7 +99,8 @@ beans = {
                 solventPercentageRule,
                 flowGradientPercentageRule,
                 convertSpectraToRelativeRule,
-                isSpectraDirty
+                isSpectraDirty,
+                isAnnotatedSpectraRule
         ]
         //define and register our curation
     }

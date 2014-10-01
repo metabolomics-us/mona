@@ -1,12 +1,11 @@
 package curation.rules.spectra
-
 import curation.AbstractCurationRule
 import curation.actions.AddTagAction
 import moa.Spectrum
+import moa.Tag
 import org.apache.log4j.Logger
 
 import java.text.DecimalFormat
-
 /**
  * converts our massspec to be a relative mass spectra.
  * It also adds a label that this is a relative spectra
@@ -39,9 +38,8 @@ class ConvertMassspectraToRelativeSpectraRule extends AbstractCurationRule {
             }
 
         }
-
-        //this is an absolute spectra
-        if (max > 0) {
+            //this is an absolute spectra
+        if (!spectrum.getTags().contains(Tag.findByText(RELATIVE_SPECTRA))) {
             logger.info("=> spectra needs converting")
             StringBuilder result = new StringBuilder()
 
