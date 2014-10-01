@@ -9,7 +9,7 @@ import moa.Spectrum
  * Date: 9/30/14
  * Time: 11:23 AM
  */
-interface CurationAction {
+interface CurationAction  extends CommonTags{
 
     /**
      * executes a given action

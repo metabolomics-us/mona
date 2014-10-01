@@ -19,7 +19,7 @@ class IsAccurateMassSpectraRule extends CurationWorkflow implements CurationRule
     }
 
     IsAccurateMassSpectraRule() {
-        super(new AddTagAction("accurate"),new RemoveTagAction("accurate"))
+        super(new AddTagAction(ACCURATE),new RemoveTagAction(ACCURATE))
     }
 
     @Override

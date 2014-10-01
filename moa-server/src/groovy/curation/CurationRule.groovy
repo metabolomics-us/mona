@@ -8,7 +8,7 @@ import moa.Spectrum
  * Date: 9/30/14
  * Time: 11:23 AM
  */
-public interface CurationRule {
+public interface CurationRule extends CommonTags {
 
     /**
      * executes the rule for the given spectrum

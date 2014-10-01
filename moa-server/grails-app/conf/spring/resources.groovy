@@ -1,3 +1,5 @@
+import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
+import curation.rules.spectra.IsCleanSpectraRule
 import util.caching.SpectrumKeyGenerator
 import curation.CurationWorkflow
 import curation.CurationWorkflow
@@ -23,7 +25,7 @@ beans = {
     /**
      * limit our collision energy in case of percentages to under 100 and over 0
      */
-    collisionEnergyPercentageRule(PercentageValueRule,"collision energy"){
+    collisionEnergyPercentageRule(PercentageValueRule, "collision energy") {
 
         minPercentage = 0
         maxPercentage = 100
@@ -32,7 +34,7 @@ beans = {
     /**
      * flow gradiant percentage rule
      */
-    flowGradientPercentageRule(PercentageValueRule,"flow gradient"){
+    flowGradientPercentageRule(PercentageValueRule, "flow gradient") {
 
         minPercentage = 0
         maxPercentage = 100
@@ -41,29 +43,41 @@ beans = {
     /**
      * solvent percentage rule
      */
-    solventPercentageRule(PercentageValueRule,"solvent"){
+    solventPercentageRule(PercentageValueRule, "solvent") {
 
         minPercentage = 0
         maxPercentage = 100
     }
 
-
     /**
      * tests the preccssion of the ions in a mass spec
      */
-    preciseEnough(MassSpecIsPreciseEnoughRule){ spec ->
+    preciseEnough(MassSpecIsPreciseEnoughRule) { spec ->
         minPrecission = 3
     }
 
     /**
      * complex check to see if it's an accurate mass spectra
      */
-    isAccurateMassSpectra(IsAccurateMassSpectraRule){
+    isAccurateMassSpectra(IsAccurateMassSpectraRule) {
 
 
         rules = [
                 preciseEnough
         ]
+    }
+
+    /**
+     * spectras should always be relative and not absolute
+     */
+    convertSpectraToRelativeRule(ConvertMassspectraToRelativeSpectraRule)
+
+    /**
+     * is spectra dirty
+     */
+    isSpectraDirty(IsCleanSpectraRule){
+        noisePercentage = 2
+        percentOfSpectraIsNoise = 80
     }
     /**
      * define our complete workflow here
@@ -76,7 +90,9 @@ beans = {
                 isAccurateMassSpectra,
                 collisionEnergyPercentageRule,
                 solventPercentageRule,
-                flowGradientPercentageRule
+                flowGradientPercentageRule,
+                convertSpectraToRelativeRule,
+                isSpectraDirty
         ]
         //define and register our curation
     }

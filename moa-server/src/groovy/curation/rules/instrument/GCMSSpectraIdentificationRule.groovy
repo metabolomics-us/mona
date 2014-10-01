@@ -13,7 +13,7 @@ import curation.rules.AbstractMetaDataCentricRule
 class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule{
 
     def GCMSSpectraIdentificationRule(){
-        super(new AddTagAction("GCMS"),new RemoveTagAction("GCMS"));
+        super(new AddTagAction(GCMS_SPECTRA),new RemoveTagAction(GCMS_SPECTRA));
     }
     def GCMSSpectraIdentificationRule(CurationAction successAction, CurationAction failureAction) {
         super(successAction, failureAction)
