@@ -88,7 +88,7 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
 
         while ((match = ionRegex.exec(spectrum.spectrum)) != null) {
             // Find annotation
-            var annotation;
+            var annotation = '';
 
             for (var i = 0; i < meta.length; i++) {
                 if (meta[i].value === match[1]) {
