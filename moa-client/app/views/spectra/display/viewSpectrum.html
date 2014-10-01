@@ -2,6 +2,18 @@
     <!-- mass spectral properties -->
     <div class="row">
         <div class="col-md-12">
+
+            <div ng-show="spectrum.tags.length">
+                <ul class="list-inline">
+                    <li ng-repeat="tag in spectrum.tags">
+                        <span ng-class="{'label': true, 'label-primary' : tag.ruleBased == false,'label-info' : tag.ruleBased == true}">{{tag.text}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <tabset justified="true">
                 <tab heading="Mass Spectrum">
                     <div class="masspec-modal">
@@ -32,7 +44,7 @@
             </tabset>
         </div>
     </div>
-    <br />
+    <br/>
 
     <div class="row">
         <div class="col-md-12">
@@ -125,7 +137,7 @@
             </tabset>
         </div>
     </div>
-    <br />
+    <br/>
 
     <div class="row">
         <div class="col-md-12">
@@ -140,35 +152,36 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="meta in spectrum.metaData | orderBy : 'category':true">
-                            <td>
-                                {{meta.category}}
-                            </td>
-                            <td>
-                                {{meta.name}}
-                            </td>
-                            <td ng-class="{suspect: $meta.suspect}">
-                                {{meta.value}} {{meta.unit}}
+                    <tr ng-repeat="meta in spectrum.metaData | orderBy : 'category':true">
+                        <td>
+                            {{meta.category}}
+                        </td>
+                        <td>
+                            {{meta.name}}
+                        </td>
+                        <td ng-class="{suspect: $meta.suspect}">
+                            {{meta.value}} {{meta.unit}}
 
-                                <!-- display this, if there seems to be something odd with this value -->
-                                <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
+                            <!-- display this, if there seems to be something odd with this value -->
+                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
 
-                                </i>
-                            </td>
-                        </tr>
+                            </i>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
-            <br />
+            <br/>
 
             <div ng-show="spectrum.tags.length">
                 <h4>Tags</h4>
                 <ul class="list-inline">
                     <li ng-repeat="tag in spectrum.tags">
-                        <span ng-class="{'label': true, 'label-primary' : tag.ruleBased == false,'label-info' : tag.ruleBased == true}">{{tag.text}}</span></li>
+                        <span ng-class="{'label': true, 'label-primary' : tag.ruleBased == false,'label-info' : tag.ruleBased == true}">{{tag.text}}</span>
+                    </li>
                 </ul>
             </div>
-            <br />
+            <br/>
 
             <div ng-show="spectrum.comments.length">
                 <h4>Comments</h4>

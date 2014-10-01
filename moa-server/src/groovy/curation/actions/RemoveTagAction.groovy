@@ -47,7 +47,7 @@ class RemoveTagAction implements CurationAction {
             tag.save(flush:true)
         }
         else{
-            logger.warn("spectra did not contain required tag!")
+            logger.debug("spectra did not contain required tag!")
         }
 
 
