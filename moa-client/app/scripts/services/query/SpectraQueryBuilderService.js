@@ -11,7 +11,7 @@ app.service('SpectraQueryBuilderService', function ($log) {
      * compiles our dedicated query to execute it against another servuce
      * @param element
      */
-    this.compileQuery = function (query, metadata) {
+    this.compileQuery = function (query, metadata, tags) {
         var compiled = {};
 
         // Build individual criteria
@@ -69,6 +69,10 @@ app.service('SpectraQueryBuilderService', function ($log) {
         if (metaData) {
             compiled.metadata = metaData;
         }
+        if (tags.length) {
+            compiled.tags = tags;
+        }
+
         return compiled;
     }
 });

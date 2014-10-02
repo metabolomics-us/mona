@@ -15,7 +15,7 @@
             <tbody>
             <tr ng-show="spectra.length == 0">
             </tr>
-            <tr ng-repeat="spectrum in filteredSpectra = (spectra | spectraQuery:this)"
+            <tr ng-repeat="spectrum in spectra"
                 ng-click="viewSpectrum(spectrum.id, $index)">
                 <td>
                     <ul class="list-unstyled">
@@ -48,11 +48,11 @@
             <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
         </div>
 
-        <div class="text-center" ng-show="filteredSpectra.length > 0 && !dataAvailable">
+        <div class="text-center" ng-show="spectra.length > 0 && !dataAvailable">
             <h4>All results loaded</h4>
         </div>
 
-        <div class="text-center" ng-show="filteredSpectra.length == 0 && !dataAvailable">
+        <div class="text-center" ng-show="spectra.length == 0 && !dataAvailable">
             <h4>No results found!</h4>
         </div>
     </div>
@@ -66,74 +66,56 @@
                     class="fa fa-search fa-fw"></i>Open Query Dialog
             </button>
 
+            <br /><br />
+
             <div class="top17"></div>
             <!-- filter by tags -->
             <form name="spectraQuery" role="form" class="form-vertical">
                 <fieldset>
-                    <legend>refine result</legend>
+                    <legend>Refine Results</legend>
 
                     <div class="form-group" ng-class="{ 'has-error': spectraQuery.newNameFilter.$invalid }">
-                        <label class="control-label" for="newNameFilter">Filter by Name</label>
+                        <label class="control-label" for="nameFilter">Filter by Name</label>
 
-                        <input id="newNameFilter" name="newNameFilter" ng-model="newNameFilter"
+                        <input id="nameFilter"
+                               name="nameFilter"
+                               ng-model="nameFilter"
                                placeholder="Compound Name"
                                class="form-control"
-                               ng-keyup="$event.keyCode == 13 ? addNameFilter() : null">
-
-                        <ul class="list-unstyled">
-                            <li ng-repeat="(name, _) in nameFilters">
-                                        <span class="label label-primary"
-                                              ng-click="removeNameFilter(name)">{{name}}</span>
-                            </li>
-                        </ul>
+                               ng-keyup="$event.keyCode == 13 ? refineQuery() : null">
                     </div>
 
-                    <div class="form-group"
-                         ng-class="{ 'has-error': spectraQuery.newInchiFilter.$invalid }">
-                        <label class="control-label" for="newInchiFilter">Filter by InChI Key</label>
+                    <div class="form-group" ng-class="{ 'has-error': spectraQuery.inchiFilter.$invalid }">
+                        <label class="control-label" for="inchiFilter">Filter by InChI Key</label>
 
-                        <input id="newInchiFilter" name="newInchiFilter" ng-model="newInchiFilter"
+                        <input id="inchiFilter"
+                               name="inchiFilter"
+                               ng-model="inchiFilter"
                                placeholder="InChIKey"
                                class="form-control"
-                               ng-keyup="$event.keyCode == 13 ? addInchiFilter() : null"
-                               ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/">
-
-                        <ul class="list-unstyled">
-                            <li ng-repeat="(inchi, _) in inchiFilters">
-                                    <span class="label label-primary"
-                                          ng-click="removeInchiFilter(inchi)">{{inchi}}</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="form-group"
-                         ng-class="{ 'has-error': spectraQuery.newInchiPartialFilter.$invalid }">
-                        <label class="control-label" for="newInchiPartialFilter">Filter by Partial InChI
-                            Key</label>
-
-                        <input id="newInchiPartialFilter" name="newInchiPartialFilter"
-                               ng-model="newInchiPartialFilter"
-                               placeholder="InChIKey"
-                               class="form-control"
-                               ng-keyup="$event.keyCode == 13 ? addPartialInchiFilter() : null"
-                               ng-pattern="/^[A-Z,0-9,-]+$/">
-
-                        <ul class="list-unstyled">
-                            <li ng-repeat="(inchi, _) in partialInchiFilters">
-                            <span class="label label-primary"
-                                  ng-click="removePartialInchiFilter(inchi)">{{inchi}}</span>
-                            </li>
-                        </ul>
+                               ng-keyup="$event.keyCode == 13 ? refineQuery() : null"
+                               ng-pattern="/^[A-Z,0-9]+$/">
                     </div>
 
                     <div class="form-group">
-                        <label for="tags-select" class=" control-label">Filter By Tags</label><br/>
+                        <label for="tags-select" class=" control-label">Filter By Tags</label>
+                        <br/>
 
-                        <select id="tags-select" name="tags-select" data-placeholder="Select Tags"
+                        <select id="tags-select"
+                                name="tags-select"
+                                class="form-control"
+                                data-placeholder="Select Tags"
                                 ng-model="tagsSelection"
-                                ng-options="tag.text for tag in tags" multiple ng-multiple="true"
-                                multiselect-dropdown class="form-control"></select>
+                                ng-options="tag.text for tag in tags"
+                                ng-multiple="true"
+                                multiple
+                                multiselect-dropdown></select>
                     </div>
+
+
+                    <button class="btn btn-primary" ng-click="refineQuery()">
+                        <i class="fa fa-search fa-fw"></i>Refine Query
+                    </button>
                 </fieldset>
             </form>
         </div>

@@ -40,78 +40,44 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.tagsSelection = [];
 
 
-    // Name filter
-    $scope.nameFilters = {};
 
     /**
-     *  Add name to filter if given in route
+     *  Add name to query if given in route
      */
     if ($routeParams.name) {
-        $scope.nameFilters[$routeParams.name] = true;
+        $scope.nameFilter = $routeParams.name;
+        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({nameFilter: $routeParams.name}, {}, []));
+    }
+
+    /*
+     * Add inchikey to query if given in route
+     */
+    if ($routeParams.inchikey) {
+        $scope.inchiFilter = $routeParams.inchikey;
+        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({inchiFilter: $routeParams.inchikey}, {}, []));
     }
 
     /**
-     * adds the name filer
+     * refine the current query
      */
-    $scope.addNameFilter = function () {
-        if ($scope.spectraQuery.newNameFilter.$valid) {
-            $scope.nameFilters[$scope.newNameFilter] = true;
-            $scope.newNameFilter = '';
+    $scope.refineQuery = function() {
+        var query = {};
+        var tags = [];
+
+        if ($scope.nameFilter && $scope.nameFilter != '') {
+            query.nameFilter = $scope.nameFilter;
         }
-    };
 
-    /**
-     * removes the name filter
-     * @param name
-     */
-    $scope.removeNameFilter = function (name) {
-        delete $scope.nameFilters[name];
-    };
-
-    /**
-     * all our inchi filters
-     * @type {{}}
-     */
-    $scope.inchiFilters = {};
-
-    /**
-     * applies the inchi key filter to our model
-     */
-    $scope.addInchiFilter = function () {
-        if ($scope.spectraQuery.newInchiFilter.$valid) {
-            $scope.inchiFilters[$scope.newInchiFilter] = true;
-            $scope.newInchiFilter = '';
+        if ($scope.inchiFilter && $scope.inchiFilter != '') {
+            query.inchiFilter = $scope.inchiFilter;
         }
-    };
 
-    /**
-     * removes the inchi key filter from our model
-     * @param inchikey
-     */
-    $scope.removeInchiFilter = function (inchikey) {
-        delete $scope.inchiFilters[inchikey];
-    };
-
-
-    // Partial inchi filter
-    $scope.partialInchiFilters = {};
-
-    /**
-     * adds the partial inchi key filter
-     */
-    $scope.addPartialInchiFilter = function () {
-        if ($scope.spectraQuery.newInchiPartialFilter.$valid) {
-            $scope.partialInchiFilters[$scope.newInchiPartialFilter] = true;
-            $scope.newInchiPartialFilter = '';
+        for (var i = 0; i < $scope.tagsSelection.length; i++) {
+            tags.push($scope.tagsSelection[i].text);
         }
-    };
 
-    /**
-     * removes the partial inchi key filter
-     * @param inchikey
-     */
-    $scope.removePartialInchiFilter = function (inchikey) {
-        delete $scope.partialInchiFilters[inchikey];
+        // Reset spectra and perform the query
+        $scope.submitQuery(SpectraQueryBuilderService.compileQuery(query, {}, tags));
     };
 
 
@@ -124,7 +90,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             controller: moaControllers.QuerySpectrumModalController,
             size: 'lg',
             backdrop: 'true'
-
         });
 
         modalInstance.result.then(function (query) {
@@ -179,16 +144,14 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * submits our build query to the backend
      */
     $scope.submitQuery = function (query) {
-
         $scope.compiledQuery = query;
-        $scope.calculateOffsets();
+        $scope.dataAvailable = true;
 
-        Spectrum.searchSpectra($scope.compiledQuery, function (data) {
-            $log.info(data.length);
+        // Reset spectra
+        $scope.spectraLoadLength = -1;
+        $scope.spectra = [];
 
-            $scope.spectra.length = 0;
-            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
-        });
+        $scope.loadMoreSpectra();
     };
 
 
@@ -210,13 +173,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
         return spectra;
     };
-
-
-    /*
-     * Add inchikey to query if given in route
-     */
-    if ($routeParams.inchikey)
-        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({inchiFilter: $routeParams.inchikey}, {}));
 
 
     /**
@@ -277,5 +233,4 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
         $scope.loadTags();
     })();
-
 };
