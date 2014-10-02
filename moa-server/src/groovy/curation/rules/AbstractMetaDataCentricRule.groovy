@@ -31,8 +31,20 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
     final boolean executeRule(Spectrum spectrum) {
 
         for (MetaDataValue metaDataValue : spectrum.getMetaData()) {
+
+            logger.debug("checking for correct meta data value field: ${metaDataValue.name}")
             if (isCorrectMetaDataField(metaDataValue)) {
-                return (acceptMetaDataValue(metaDataValue))
+                logger.debug("\t=> accepted, checking actual value")
+                if (acceptMetaDataValue(metaDataValue)) {
+                    logger.debug("\t\t=> value was ok")
+                    return true
+                }
+                else{
+                    logger.debug("\t\t=> value was not accepted, moving on")
+                }
+            }
+            else{
+                logger.debug("\t=> wrong field, moving on")
             }
         }
         return !failByDefault()
