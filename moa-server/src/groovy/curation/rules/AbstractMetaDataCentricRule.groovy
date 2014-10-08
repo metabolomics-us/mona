@@ -1,11 +1,10 @@
 package curation.rules
-
+import curation.AbstractCurationRule
+import curation.CurationAction
+import curation.CurrationObject
 import moa.MetaDataValue
 import moa.Spectrum
 import org.apache.log4j.Logger
-import curation.AbstractCurationRule
-import curation.CurationAction
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -28,7 +27,14 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
     protected abstract boolean acceptMetaDataValue(MetaDataValue value);
 
     @Override
-    final boolean executeRule(Spectrum spectrum) {
+    boolean ruleAppliesToObject( CurrationObject object) {
+        return object.isSpectra()
+    }
+
+    @Override
+    final boolean executeRule(CurrationObject toValidate) {
+
+        Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         for (MetaDataValue metaDataValue : spectrum.getMetaData()) {
 

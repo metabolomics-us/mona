@@ -29,11 +29,22 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     protected boolean acceptMetaDataValue(MetaDataValue val) {
         String value = val.value.toString().toLowerCase()
 
-        return (value.contains("lcms"))
+        return (value.contains("lcms") || value.contains("lc"))
 
     }
 
+    /**
+     * trying to find out which metadata fields can contain valid values
+     * @param field
+     * @return
+     */
     protected boolean isCorrectMetaDataField(MetaDataValue field) {
-        return field.name.toLowerCase() == "instrument"
+        if (field.name.toLowerCase() == "instrument") {
+            return true
+        } else if (field.name.toLowerCase() == "instrument type") {
+            return true
+        }
+        return false;
     }
+
 }

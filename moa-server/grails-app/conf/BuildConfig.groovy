@@ -31,6 +31,7 @@ grails.project.dependency.resolution = {
     }
     log "error" // log level of Ivy resolver, either "error", "warn", "info", "debug" or "verbose"
     checksums true // Whether to verify checksums on resolve
+
     legacyResolve false
     // whether to do a secondary resolve on plugin installation, not advised and here for backwards compatibility
 
@@ -92,6 +93,9 @@ grails.project.dependency.resolution = {
         compile("xpp3:xpp3:1.1.4c")
         compile("java3d:vecmath:1.3.1")
         compile("net.sf.jni-inchi:jni-inchi:0.7")
+
+        compile('net.sourceforge.owlapi:owlapi-api:4.0.0')
+
     }
 
     plugins {

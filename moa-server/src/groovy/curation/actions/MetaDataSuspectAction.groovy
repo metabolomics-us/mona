@@ -1,5 +1,6 @@
 package curation.actions
 
+import curation.CurrationObject
 import moa.MetaDataValue
 import moa.Spectrum
 import curation.CurationAction
@@ -21,22 +22,50 @@ class MetaDataSuspectAction implements CurationAction {
     }
 
     @Override
-    void doAction(Spectrum spectrum) {
-        spectrum.getMetaData().each { MetaDataValue value ->
+    boolean actionAppliesToObject(CurrationObject toValidate) {
+        if (toValidate.objectAsSpectra) {
+            return true
 
-            if (value.name.toLowerCase().equals(field)) {
-                value.suspect = mark
-                value.save(flush: true)
+        } else if (toValidate.objectAsMetaDataValue) {
+            return true
+        }
+        return false
+    }
+
+    @Override
+    void doAction(CurrationObject currationObject) {
+        if (currationObject.isSpectra()) {
+            Spectrum spectrum = currationObject.getObjectAsSpectra()
+
+            spectrum.getMetaData().each { MetaDataValue value ->
+
+
+                checkValue(value)
             }
+
+            //add a label if the valus are odd
+            if (mark) {
+                new AddTagAction("suspect values").doAction(currationObject)
+            }
+            //remove the label if the values are ok
+            else {
+                new RemoveTagAction("suspect values").doAction(currationObject)
+            }
+        } else if (currationObject.isMetaData()) {
+            checkValue(currationObject.getObjectAsMetaDataValue())
         }
 
-        //add a label if the valus are odd
-        if (mark) {
-            new AddTagAction("suspect values").doAction(spectrum)
-        }
-        //remove the label if the values are ok
-        else {
-            new RemoveTagAction("suspect values").doAction(spectrum)
+
+    }
+
+    /**
+     * does the actual chek
+     * @param value
+     */
+    private void checkValue(MetaDataValue value) {
+        if (value.name.toLowerCase().equals(field)) {
+            value.suspect = mark
+            value.save(flush: true)
         }
     }
 }

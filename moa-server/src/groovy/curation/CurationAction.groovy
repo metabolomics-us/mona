@@ -1,7 +1,4 @@
 package curation
-
-import moa.Spectrum
-
 /**
  *
  * Created with IntelliJ IDEA.
@@ -14,5 +11,12 @@ interface CurationAction  extends CommonTags{
     /**
      * executes a given action
      */
-    public void doAction(Spectrum spectrum);
+    public void doAction(CurrationObject toValidate);
+
+    /**
+     * do we support this object
+     * @param CurrationObject
+     * @return
+     */
+    boolean actionAppliesToObject(CurrationObject toValidate);
 }

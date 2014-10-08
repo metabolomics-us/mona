@@ -2,6 +2,7 @@ package curation.rules.spectra
 
 import curation.CurationRule
 import curation.CurationWorkflow
+import curation.CurrationObject
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 
@@ -25,5 +26,10 @@ class IsAccurateMassSpectraRule extends CurationWorkflow implements CurationRule
     @Override
     protected boolean abortOnFailure() {
         return true
+    }
+
+    @Override
+    boolean ruleAppliesToObject(CurrationObject toValidate) {
+        return toValidate.isSpectra()
     }
 }

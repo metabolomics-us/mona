@@ -1,7 +1,4 @@
 package curation
-
-import moa.Spectrum
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -15,7 +12,7 @@ public interface CurationRule extends CommonTags {
      * @param spectrum
      * @return
      */
-    boolean executeRule(Spectrum spectrum)
+    boolean executeRule(CurrationObject toValidate)
 
     /**
      * returns the success action
@@ -28,5 +25,12 @@ public interface CurationRule extends CommonTags {
      * @return
      */
     CurationAction getFailureAction()
+
+    /**
+     * does this rule apply to the given object
+     * @param CurrationObject
+     * @return
+     */
+    boolean ruleAppliesToObject(CurrationObject toValidate);
 
 }

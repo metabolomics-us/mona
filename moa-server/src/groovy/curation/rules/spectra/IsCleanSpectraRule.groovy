@@ -1,5 +1,6 @@
 package curation.rules.spectra
 import curation.AbstractCurationRule
+import curation.CurrationObject
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import moa.Spectrum
@@ -33,7 +34,13 @@ class IsCleanSpectraRule extends AbstractCurationRule{
     }
 
     @Override
-    boolean executeRule(Spectrum spectrum) {
+    boolean ruleAppliesToObject(CurrationObject toValidate) {
+        return toValidate.isSpectra()
+    }
+
+    @Override
+    boolean executeRule(CurrationObject toValidate) {
+        Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         if(spectrum.getTags().contains(Tag.findByText(RELATIVE_SPECTRA))) {
 
