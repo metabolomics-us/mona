@@ -1,5 +1,6 @@
 package curation.actions
 
+import curation.CurrationObject
 import moa.Spectrum
 import moa.Tag
 import org.apache.log4j.Logger
@@ -31,7 +32,8 @@ class RemoveTagAction implements CurationAction {
 
 
     @Override
-    void doAction(Spectrum spectrum) {
+    void doAction(CurrationObject toValidate) {
+        Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         logger.debug("removing tag from spectrum(${spectrum.id} - ${tagNameToRemove})")
         if (!tagNameToRemove) {
@@ -54,5 +56,11 @@ class RemoveTagAction implements CurationAction {
         spectrum.save(flush: true)
 
         logger.debug("=> done")
+    }
+
+
+    @Override
+    boolean actionAppliesToObject(CurrationObject toValidate) {
+        return toValidate.isSpectra()
     }
 }

@@ -1,5 +1,6 @@
 package curation.rules.spectra
 import curation.AbstractCurationRule
+import curation.CurrationObject
 import curation.actions.AddTagAction
 import moa.Spectrum
 import moa.Tag
@@ -22,7 +23,14 @@ class ConvertMassspectraToRelativeSpectraRule extends AbstractCurationRule {
     }
 
     @Override
-    boolean executeRule(Spectrum spectrum) {
+    boolean ruleAppliesToObject(CurrationObject toValidate) {
+        return toValidate.isSpectra()
+    }
+
+    @Override
+    boolean executeRule(CurrationObject toValidate) {
+
+        Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         logger.info("checking if the spectra is relative...")
         String massSpec = spectrum.spectrum

@@ -1,8 +1,6 @@
 package curation.actions
-
-import moa.Spectrum
 import curation.CurationAction
-
+import curation.CurrationObject
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -11,8 +9,13 @@ import curation.CurationAction
  */
 class IgnoreOnFailureAction implements CurationAction{
     @Override
-    void doAction(Spectrum spectrum) {
+    void doAction(CurrationObject spectrum) {
 
         //nothing
+    }
+
+    @Override
+    boolean actionAppliesToObject(CurrationObject toValidate) {
+        return true
     }
 }

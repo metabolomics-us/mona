@@ -1,5 +1,6 @@
 package moa.server.curation
 
+import curation.CurrationObject
 import grails.plugin.cache.CacheEvict
 import grails.transaction.Transactional
 import moa.Spectrum
@@ -22,6 +23,6 @@ class SpectraCurationService {
     boolean validateSpectra(long id) {
         Spectrum spectrum = spectraQueryService.query(id)
 
-        return curationWorkflow.runWorkflow(spectrum)
+        return curationWorkflow.runWorkflow(new CurrationObject(spectrum))
     }
 }

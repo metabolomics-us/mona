@@ -1,5 +1,6 @@
 package curation.actions
 
+import curation.CurrationObject
 import moa.MetaDataValue
 import moa.Spectrum
 import curation.CurationAction
@@ -23,16 +24,50 @@ class MetaDataSuspectAction implements CurationAction {
     }
 
     @Override
-    void doAction(Spectrum spectrum) {
-        logger.debug("Marking "+ field +" with value "+ mark)
+    boolean actionAppliesToObject(CurrationObject toValidate) {
+        if (toValidate.objectAsSpectra) {
+            return true
 
-        spectrum.getMetaData().each { MetaDataValue value ->
-            if (value.name.toLowerCase().equals(field)) {
-                logger.debug("Marked metadata "+ value.name +" for spectrum "+ spectrum.id)
+        } else if (toValidate.objectAsMetaDataValue) {
+            return true
+        }
+        return false
+    }
 
-                value.suspect = mark
-                value.save(flush: true)
+    @Override
+    void doAction(CurrationObject currationObject) {
+        if (currationObject.isSpectra()) {
+            Spectrum spectrum = currationObject.getObjectAsSpectra()
+
+            spectrum.getMetaData().each { MetaDataValue value ->
+
+
+                checkValue(value)
             }
+
+            //add a label if the valus are odd
+            if (mark) {
+                new AddTagAction("suspect values").doAction(currationObject)
+            }
+            //remove the label if the values are ok
+            else {
+                new RemoveTagAction("suspect values").doAction(currationObject)
+            }
+        } else if (currationObject.isMetaData()) {
+            checkValue(currationObject.getObjectAsMetaDataValue())
+        }
+
+
+    }
+
+    /**
+     * does the actual chek
+     * @param value
+     */
+    private void checkValue(MetaDataValue value) {
+        if (value.name.toLowerCase().equals(field)) {
+            value.suspect = mark
+            value.save(flush: true)
         }
     }
 }
