@@ -7,10 +7,6 @@ package curation
  * Time: 1:49 PM
  */
 public interface CommonTags {
-
-
-    public static final String ACCURATE = "accurate"
-
     public static final String RELATIVE_SPECTRA = "relative spectra"
 
     public static final String LCMS_SPECTRA = "LCMS"

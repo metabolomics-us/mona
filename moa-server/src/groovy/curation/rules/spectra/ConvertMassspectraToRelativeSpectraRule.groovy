@@ -38,7 +38,8 @@ class ConvertMassspectraToRelativeSpectraRule extends AbstractCurationRule {
             }
 
         }
-            //this is an absolute spectra
+
+        //this is an absolute spectra
         if (!spectrum.getTags().contains(Tag.findByText(RELATIVE_SPECTRA))) {
             logger.info("=> spectra needs converting")
             StringBuilder result = new StringBuilder()

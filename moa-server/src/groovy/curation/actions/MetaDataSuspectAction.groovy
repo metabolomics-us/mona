@@ -3,6 +3,7 @@ package curation.actions
 import moa.MetaDataValue
 import moa.Spectrum
 import curation.CurationAction
+import org.apache.log4j.Logger
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,6 +12,7 @@ import curation.CurationAction
  * Time: 2:09 PM
  */
 class MetaDataSuspectAction implements CurationAction {
+    private Logger logger = Logger.getLogger(getClass())
 
     private String field
     private boolean mark
@@ -22,21 +24,15 @@ class MetaDataSuspectAction implements CurationAction {
 
     @Override
     void doAction(Spectrum spectrum) {
-        spectrum.getMetaData().each { MetaDataValue value ->
+        logger.debug("Marking "+ field +" with value "+ mark)
 
+        spectrum.getMetaData().each { MetaDataValue value ->
             if (value.name.toLowerCase().equals(field)) {
+                logger.debug("Marked metadata "+ value.name +" for spectrum "+ spectrum.id)
+
                 value.suspect = mark
                 value.save(flush: true)
             }
-        }
-
-        //add a label if the valus are odd
-        if (mark) {
-            new AddTagAction("suspect values").doAction(spectrum)
-        }
-        //remove the label if the values are ok
-        else {
-            new RemoveTagAction("suspect values").doAction(spectrum)
         }
     }
 }

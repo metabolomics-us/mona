@@ -1,3 +1,5 @@
+import curation.rules.adduct.IsValidLCMSSpectrum
+import curation.rules.meta.IsColumnValid
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
@@ -8,7 +10,7 @@ import curation.CurationWorkflow
 import curation.rules.instrument.GCMSSpectraIdentificationRule
 import curation.rules.instrument.LCMSSpectraIdentificationRule
 import curation.rules.meta.PercentageValueRule
-import curation.rules.spectra.IsAccurateMassSpectraRule
+import curation.SubCurationWorkflow
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 
 // Place your Spring DSL code here
@@ -28,7 +30,6 @@ beans = {
      * limit our collision energy in case of percentages to under 100 and over 0
      */
     collisionEnergyPercentageRule(PercentageValueRule, "collision energy") {
-
         minPercentage = 0
         maxPercentage = 100
     }
@@ -37,7 +38,6 @@ beans = {
      * flow gradiant percentage rule
      */
     flowGradientPercentageRule(PercentageValueRule, "flow gradient") {
-
         minPercentage = 0
         maxPercentage = 100
     }
@@ -59,17 +59,6 @@ beans = {
     }
 
     /**
-     * complex check to see if it's an accurate mass spectra
-     */
-    isAccurateMassSpectra(IsAccurateMassSpectraRule) {
-
-
-        rules = [
-                preciseEnough
-        ]
-    }
-
-    /**
      * does the spectra has any annotations
      */
     isAnnotatedSpectraRule(IsAnnotatedSpectraRule)
@@ -86,23 +75,62 @@ beans = {
         noisePercentage = 2
         percentOfSpectraIsNoise = 80
     }
+
+    /**
+     * is column metadata valid
+     */
+    isColumnValid(IsColumnValid)
+
+    /**
+     * verify that a lcms spectrum has valid adducts
+     */
+    isValidLCMSSpectrum(IsValidLCMSSpectrum) {
+         TOL = 0.5
+         N_ADDUCTS = 1
+     }
+
+
+
+    /**
+     * set up subcuration workflow to check if it's an accurate mass spectra
+     */
+    isAccurateMassSpectra(SubCurationWorkflow, "accurate", true, "accruate mass validation") {
+        rules = [
+                preciseEnough
+        ]
+    }
+
+    /**
+     * set up metadata subcuration workflow
+     */
+    metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") {
+        rules = [
+                collisionEnergyPercentageRule,
+                solventPercentageRule,
+                flowGradientPercentageRule,
+                isColumnValid
+        ]
+    }
+
     /**
      * define our complete workflow here
      */
     curationWorkflow(CurationWorkflow) { workflow ->
 
         rules = [
+                // Metadata curation
+                metadataCuration,
+                
+                // Tagging curation steps
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,
                 isAccurateMassSpectra,
-                collisionEnergyPercentageRule,
-                solventPercentageRule,
-                flowGradientPercentageRule,
                 convertSpectraToRelativeRule,
                 isSpectraDirty,
-                isAnnotatedSpectraRule
+                isAnnotatedSpectraRule,
+                isValidLCMSSpectrum,
+
         ]
         //define and register our curation
     }
-
 }

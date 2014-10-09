@@ -37,7 +37,7 @@ class CurationWorkflow extends AbstractCurationRule {
             throw new Exception("please add at least 1 rule to be executed!")
         }
 
-        boolean result = false;
+        boolean workflowResult = true;
 
         toValidate.attach()
 
@@ -46,13 +46,15 @@ class CurationWorkflow extends AbstractCurationRule {
             logger.info("executing rule: ${rule.getClass().getName()}")
             try {
 
-                result = rule.executeRule(toValidate)
+                boolean result = rule.executeRule(toValidate)
 
                 if (result) {
                     logger.info("\t=> success, execution action ${rule.successAction.getClass().getName()} for rule ${rule.getClass().getName()}")
                     rule.getSuccessAction().doAction(toValidate)
                 } else {
                     logger.info("\t=> failed, execution action ${rule.failureAction.getClass().getName()} for rule ${rule.getClass().getName()}")
+                    workflowResult = false
+
                     try {
                         rule.getFailureAction().doAction(toValidate)
                         if(abortOnFailure()){
@@ -73,23 +75,39 @@ class CurationWorkflow extends AbstractCurationRule {
 
         }
 
+
+
         //we always return true by default
 
 
-        if (result) {
+        return determineResultBasedOnWorkflowStatus(workflowResult)
+    }
+
+    /**
+     * determine the final result status of the workflow and if it fails be default or not
+     * @param workflowResult
+     * @return
+     */
+    protected boolean determineResultBasedOnWorkflowStatus(boolean workflowResult) {
+        if (workflowResult) {
             return true
         }
 
         return failByDefault();
     }
 
+    /**
+     * executes the given workflow
+     * @param spectrum
+     * @return
+     */
     @Override
-    boolean executeRule(Spectrum spectrum) {
+    final boolean executeRule(Spectrum spectrum) {
         return runWorkflow(spectrum)
     }
 
     /**
-     * do we abort the complete workflow on failure
+     * do we abort the complete workflow on failure, this means no further internal rules should be executed
      * @return
      */
     protected boolean abortOnFailure() {
