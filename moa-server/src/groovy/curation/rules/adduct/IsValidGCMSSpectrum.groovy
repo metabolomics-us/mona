@@ -8,9 +8,9 @@ import moa.Spectrum
 import org.apache.log4j.Logger
 
 /**
- * Created by sajjan on 10/1/14.
+ * Created by sajjan on 10/9/14.
  */
-class IsValidLCMSSpectrum extends IsValidSpectrum {
+class IsValidGCMSSpectrum extends IsValidSpectrum {
     private Logger logger = Logger.getLogger(getClass())
 
 
@@ -25,7 +25,7 @@ class IsValidLCMSSpectrum extends IsValidSpectrum {
     int minAdducts = 1
 
 
-    def IsValidLCMSSpectrum() {
+    def IsValidGCMSSpectrum() {
         super(new RemoveTagAction("Suspect InChI"), new AddTagAction("Suspect InChI"))
     }
 
@@ -39,7 +39,6 @@ class IsValidLCMSSpectrum extends IsValidSpectrum {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         double compoundMass = -1;
-        String ionMode = "";
 
         // Get mass and ion mode
         for(MetaDataValue metaDataValue : spectrum.getBiologicalCompound().getMetaData()) {
@@ -51,31 +50,15 @@ class IsValidLCMSSpectrum extends IsValidSpectrum {
             }
         }
 
-        for(MetaDataValue metaDataValue : spectrum.getMetaData()) {
-            logger.debug("checking for correct meta data value field: ${metaDataValue.name}")
-
-            if (metaDataValue.name.toLowerCase() == "ion mode") {
-                ionMode = metaDataValue.value.toString().toLowerCase();
-                logger.debug("\t=> found ion mode "+ ionMode)
-            }
-        }
-
         // Check that mass and ion mode were found
         if(compoundMass == -1) {
             logger.debug("unable to find mass in biological compound meta data!")
             return false;
         }
 
-        if(ionMode == "") {
-            logger.debug("unable to find ion mode in meta data!")
-            return false;
-        }
-
 
         // Get number of adduct matches
-        int n = countAdductMatches(spectrum,
-                        ionMode == "positive" ? LCMS_POSITIVE_ADDUCTS : LCMS_NEGATIVE_ADDUCTS,
-                        compoundMass, toleranceInDalton)
+        int n = countAdductMatches(spectrum, GCMS_ADDUCTS, compoundMass, toleranceInDalton)
 
         logger.debug("Found "+ n +" / "+ minAdducts +" adducts")
 

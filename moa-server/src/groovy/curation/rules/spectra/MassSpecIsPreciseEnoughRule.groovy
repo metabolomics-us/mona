@@ -14,7 +14,7 @@ import curation.AbstractCurationRule
 class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
 
     Logger logger = Logger.getLogger(getClass())
-    double minPrecission = 3
+    double minPrecision = 3
 
     @Override
     boolean ruleAppliesToObject(CurationObject toValidate) {
@@ -40,7 +40,7 @@ class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
 
                 String ionDigits = (ion.substring(ion.indexOf('.') + 1, ion.length() - 1))
 
-                if (ionDigits.length() > minPrecission) {
+                if (ionDigits.length() > minPrecision) {
                     if (Integer.parseInt(ionDigits) > 0) {
                         result = true
                     }

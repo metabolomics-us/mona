@@ -2,10 +2,8 @@ import curation.rules.adduct.IsValidLCMSSpectrum
 import curation.rules.meta.IsColumnValid
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
-import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
 import util.caching.SpectrumKeyGenerator
-import curation.CurationWorkflow
 import curation.CurationWorkflow
 import curation.rules.instrument.GCMSSpectraIdentificationRule
 import curation.rules.instrument.LCMSSpectraIdentificationRule
@@ -46,16 +44,15 @@ beans = {
      * solvent percentage rule
      */
     solventPercentageRule(PercentageValueRule, "solvent") {
-
         minPercentage = 0
         maxPercentage = 100
     }
 
     /**
-     * tests the preccssion of the ions in a mass spec
+     * tests the precision of the ions in a mass spec
      */
     preciseEnough(MassSpecIsPreciseEnoughRule) { spec ->
-        minPrecission = 3
+        minPrecision = 3
     }
 
     /**
@@ -64,7 +61,7 @@ beans = {
     isAnnotatedSpectraRule(IsAnnotatedSpectraRule)
 
     /**
-     * spectras should always be relative and not absolute
+     * spectra should always be relative and not absolute
      */
     convertSpectraToRelativeRule(ConvertMassspectraToRelativeSpectraRule)
 
@@ -85,8 +82,8 @@ beans = {
      * verify that a lcms spectrum has valid adducts
      */
     isValidLCMSSpectrum(IsValidLCMSSpectrum) {
-         TOL = 0.5
-         N_ADDUCTS = 1
+         toleranceInDalton = 0.5
+         minAdducts = 1
      }
 
 
@@ -94,7 +91,7 @@ beans = {
     /**
      * set up subcuration workflow to check if it's an accurate mass spectra
      */
-    isAccurateMassSpectra(SubCurationWorkflow, "accurate", true, "accruate mass validation") {
+    isAccurateMassSpectra(SubCurationWorkflow, "accurate", true, "accurate mass validation") {
         rules = [
                 preciseEnough
         ]
