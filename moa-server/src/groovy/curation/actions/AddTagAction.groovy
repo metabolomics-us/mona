@@ -1,6 +1,6 @@
 package curation.actions
 
-import curation.CurrationObject
+import curation.CurationObject
 import moa.Spectrum
 import moa.Tag
 import org.apache.log4j.Logger
@@ -32,7 +32,7 @@ class AddTagAction implements CurationAction {
 
 
     @Override
-    void doAction(CurrationObject toValidate) {
+    void doAction(CurationObject toValidate) {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
@@ -52,7 +52,7 @@ class AddTagAction implements CurationAction {
     }
 
     @Override
-    boolean actionAppliesToObject(CurrationObject toValidate) {
+    boolean actionAppliesToObject(CurationObject toValidate) {
         return toValidate.isSpectra()
     }
 }

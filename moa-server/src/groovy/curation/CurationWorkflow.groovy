@@ -28,7 +28,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
  * @param toValidate
  * @return ˜
  */
-    final boolean runWorkflow(CurrationObject toValidate) {
+    final boolean runWorkflow(CurationObject toValidate) {
 
         if (rules.isEmpty()) {
             throw new Exception("please add at least 1 rule to be executed!")
@@ -97,12 +97,12 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
      * @return
      */
     @Override
-    boolean ruleAppliesToObject(CurrationObject currationObject) {
+    boolean ruleAppliesToObject(CurationObject curationObject) {
         return true
     }
 
     @Override
-    boolean executeRule(CurrationObject spectrum) {
+    boolean executeRule(CurationObject spectrum) {
         return runWorkflow(spectrum)
     }
 

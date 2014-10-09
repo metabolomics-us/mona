@@ -1,6 +1,6 @@
 package curation.actions
 
-import curation.CurrationObject
+import curation.CurationObject
 import moa.MetaDataValue
 import moa.Spectrum
 import curation.CurationAction
@@ -24,7 +24,7 @@ class MetaDataSuspectAction implements CurationAction {
     }
 
     @Override
-    boolean actionAppliesToObject(CurrationObject toValidate) {
+    boolean actionAppliesToObject(CurationObject toValidate) {
         if (toValidate.objectAsSpectra) {
             return true
 
@@ -35,7 +35,7 @@ class MetaDataSuspectAction implements CurationAction {
     }
 
     @Override
-    void doAction(CurrationObject currationObject) {
+    void doAction(CurationObject curationObject) {
         if (currationObject.isSpectra()) {
             Spectrum spectrum = currationObject.getObjectAsSpectra()
 

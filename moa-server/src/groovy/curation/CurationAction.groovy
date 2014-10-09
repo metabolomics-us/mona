@@ -11,12 +11,12 @@ interface CurationAction  extends CommonTags{
     /**
      * executes a given action
      */
-    public void doAction(CurrationObject toValidate);
+    public void doAction(CurationObject toValidate);
 
     /**
      * do we support this object
      * @param CurrationObject
      * @return
      */
-    boolean actionAppliesToObject(CurrationObject toValidate);
+    boolean actionAppliesToObject(CurationObject toValidate);
 }

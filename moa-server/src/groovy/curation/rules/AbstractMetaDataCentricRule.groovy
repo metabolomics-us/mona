@@ -1,7 +1,7 @@
 package curation.rules
 import curation.AbstractCurationRule
 import curation.CurationAction
-import curation.CurrationObject
+import curation.CurationObject
 import moa.MetaDataValue
 import moa.Spectrum
 import org.apache.log4j.Logger
@@ -27,12 +27,12 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
     protected abstract boolean acceptMetaDataValue(MetaDataValue value);
 
     @Override
-    boolean ruleAppliesToObject( CurrationObject object) {
+    boolean ruleAppliesToObject( CurationObject object) {
         return object.isSpectra()
     }
 
     @Override
-    final boolean executeRule(CurrationObject toValidate) {
+    final boolean executeRule(CurationObject toValidate) {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
