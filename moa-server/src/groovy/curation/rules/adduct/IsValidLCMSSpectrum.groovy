@@ -1,6 +1,7 @@
 package curation.rules.adduct
 
 import curation.AbstractCurationRule
+import curation.CurrationObject
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import moa.MetaDataValue
@@ -96,7 +97,14 @@ class IsValidLCMSSpectrum extends AbstractCurationRule {
     }
 
     @Override
-    boolean executeRule(Spectrum spectrum) {
+    boolean ruleAppliesToObject(CurrationObject toValidate) {
+        return toValidate.isSpectra()
+    }
+
+    @Override
+    boolean executeRule(CurrationObject toValidate) {
+        Spectrum spectrum = toValidate.getObjectAsSpectra()
+
         double compound_mass = -1;
         String ionMode = "";
 

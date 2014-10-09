@@ -7,7 +7,7 @@ import org.apache.log4j.Logger
  * Date: 9/30/14
  * Time: 11:24 AM
  */
-class CurationWorkflow extends AbstractCurationRule implements Workflow{
+class CurationWorkflow extends AbstractCurationRule implements Workflow {
 
     Logger logger = Logger.getLogger(getClass())
 
@@ -39,12 +39,12 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow{
         toValidate.refreshObject()
 
         for (CurationRule rule : rules) {
-
             logger.info("executing rule: ${rule.getClass().getName()}")
+
             try {
 
                 if(rule.ruleAppliesToObject(toValidate)) {
-                    result = rule.executeRule(toValidate)
+                    boolean result = rule.executeRule(toValidate)
 
                     if (result) {
                         logger.info("\t=> success, execution action ${rule.successAction.getClass().getName()} for rule ${rule.getClass().getName()}")
@@ -73,13 +73,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow{
             catch (Exception e) {
                 throw e;
             }
-
         }
-
-
-
-        //we always return true by default
-
 
         return determineResultBasedOnWorkflowStatus(workflowResult)
     }
