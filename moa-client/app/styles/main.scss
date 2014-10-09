@@ -94,94 +94,6 @@ body {
   }
 }
 
-/* Mass Spec */
-div.chart {
-  box-sizing: border-box;
-  width: 850px;
-  height: 450px;
-  padding: 20px 15px 15px 15px;
-  margin: 15px auto 30px auto;
-  border: 1px solid #ddd;
-  background: #fff;
-  //    background: linear-gradient(#f6f6f6 0, #fff 50px);
-  //    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
-  //    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
-  //    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
-  //    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
-  //    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-  -o-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  -ms-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-.masspec-modal {
-  margin: auto;
-  display: block;
-  width: 100%;
-  height: 400px;
-  padding-left: 25px;
-  padding-right: 25px;
-}
-
-.masspec-mini {
-  display: block;
-  width: 100px;
-  height: 100px;
-}
-
-.masspec .button {
-  position: absolute;
-  cursor: pointer;
-}
-
-.masspec div.button {
-  font-size: smaller;
-  color: #999;
-  background-color: #eee;
-  padding: 2px;
-}
-
-/* Spectrum modal dialog */
-.compound-properties {
-  width: 100%;
-}
-
-.compound-properties dt {
-  width: 20%;
-}
-
-.compound-properties dd {
-  width: 80%;
-}
-
-/* Library upload button */
-
-.btn-file {
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-file input[type=file] {
-  position: absolute;
-  top: 0;
-  right: 0;
-  min-width: 100%;
-  min-height: 100%;
-  font-size: 999px;
-  text-align: right;
-  filter: alpha(opacity=0);
-  opacity: 0;
-  background: red;
-  cursor: inherit;
-  display: block;
-}
-
-input[readonly] {
-  background-color: white !important;
-  cursor: text !important;
-}
-
 //our used theme
 @import 'theme';
 
@@ -274,4 +186,100 @@ canvas.ChemDoodleWebComponent {
 
 .nav-tabs {
   margin-bottom: 0;
+}
+
+
+/* Mass Spec */
+div.chart {
+  box-sizing: border-box;
+  width: 850px;
+  height: 450px;
+  padding: 20px 15px 15px 15px;
+  margin: 15px auto 30px auto;
+  border: 1px solid #ddd;
+  background: #fff;
+  //    background: linear-gradient(#f6f6f6 0, #fff 50px);
+  //    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
+  //    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
+  //    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
+  //    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
+  //    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  -o-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  -ms-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.masspec-modal {
+  margin: auto;
+  display: block;
+  width: 100%;
+  height: 400px;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.masspec-mini {
+  display: block;
+  width: 100px;
+  height: 100px;
+}
+
+.masspec .button {
+  position: absolute;
+  cursor: pointer;
+}
+
+.masspec div.button {
+  font-size: smaller;
+  color: #999;
+  background-color: #eee;
+  padding: 2px;
+}
+
+/* Spectrum modal dialog */
+.compound-properties {
+  width: 100%;
+}
+
+.compound-properties dt {
+  width: 20%;
+}
+
+.compound-properties dd {
+  width: 80%;
+}
+
+/* Library upload button */
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 999px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  background: red;
+  cursor: inherit;
+  display: block;
+}
+
+input[readonly] {
+  background-color: white !important;
+  cursor: text !important;
+}
+
+/**
+ * Allow for overflows from jquery accordion div bodies
+ */
+.panel-collapse.collapse.in {
+  overflow: visible;
 }

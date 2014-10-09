@@ -120,7 +120,7 @@ beans = {
         rules = [
                 // Metadata curation
                 metadataCuration,
-                
+
                 // Tagging curation steps
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,

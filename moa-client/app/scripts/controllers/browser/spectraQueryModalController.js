@@ -1,13 +1,14 @@
 /**
  * Created by wohlgemuth on 7/11/14.
  */
-moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,SpectraQueryBuilderService, MetadataService, $log, $http, REST_BACKEND_SERVER) {
-
-
+moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,SpectraQueryBuilderService, MetadataService, $log, $http, REST_BACKEND_SERVER, tags) {
     /* Metadata */
     $scope.metadataCategories = [];
     $scope.metadata = {};
     $scope.metadataValues = {};
+
+    $scope.tags = [];
+    $scope.tagsSelection = [];
 
 
     /**
@@ -24,33 +25,16 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
      * closes the dialog and finishes and builds the query
      */
     $scope.submitQuery = function(){
-        var result = SpectraQueryBuilderService.compileQuery($scope.query, $scope.metadata);
+        var result = SpectraQueryBuilderService.compileQuery($scope.query, $scope.metadata, $scope.tagsSelection);
 
         $modalInstance.close(result);
-    }
+    };
 
     /**
      * perform metadata query
      */
     $scope.queryMetadataValues = function (name, value) {
-        /*
-         TODO: Use $resource instead of $http
-
-        var queryData = {
-            name: name,
-            value: {like: '%' + value + '%'}
-        };
-
-        return MetadataService.queryValues(
-            {query: queryData},
-            function (data) {
-                console.log(data)
-            },
-            function (error) {
-                $log.error('metadata values failed: ' + error);
-            }
-        );
-        */
+        // TODO: Use $resource instead of $http
         return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=100', {
             query: {
                 name: name,
@@ -67,38 +51,6 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
         });
     };
 
-    /**
-     * builds our metadata values for the given query
-     * @param data
-     */
-    var metadataValuesQuery = function (data) {
-//        data.forEach(function (element, index, array) {
-//            if (element.searchable && element.type === "string") {
-//                MetadataService.dataValues(
-//                    {id: element.id},
-//                    function (data) {
-//                        var values = {};
-//
-//                        data.forEach(function (element, index, array) {
-//                            values[element.value] = true;
-//                        });
-//
-//                        /*
-//                        $scope.metadataValues[element.name] = [];
-//                        Object.keys(values).forEach(function (key, index, array) {
-//                            $scope.metadataValues[element.name].push({value: key});
-//                        });
-//                        */
-//                        $scope.metadataValues[element.name] = Object.keys(values);
-//                    },
-//                    function (error) {
-//                        $log.error('metadata values failed: ' + error);
-//                    }
-//                );
-//            }
-//        });
-    };
-
     var metadataQuery = function (data) {
         // Query each metadata category and store the data
         data.forEach(function (element, index, array) {
@@ -106,7 +58,7 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
             if (element.visible) {
                 $scope.metadata[element.name] = MetadataService.categoryData(
                     {id: element.id},
-                    metadataValuesQuery,
+                    function (data) {},
                     function (error) {
                         $log.error('metadata category data failed: ' + error);
                     }
@@ -127,10 +79,12 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
             }
         );
     };
+
     /**
      * initialization and population of default values
      */
     (function list() {
+        $scope.tags = tags;
         $scope.loadCategories();
     })();
 

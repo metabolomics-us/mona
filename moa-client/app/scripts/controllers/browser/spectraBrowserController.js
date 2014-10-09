@@ -6,7 +6,7 @@
 
 
 /**
- * this controller is handling the browssing of compounds in the moa-client application
+ * this controller is handling the browsing of compounds in the moa-client application
  *
  * @param $scope
  * @param Spectrum
@@ -58,7 +58,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     }
 
     /**
-     * refine the current query
+     * refine the current query by submitting an updates query
      */
     $scope.refineQuery = function() {
         var query = {};
@@ -89,7 +89,10 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             templateUrl: '/views/spectra/query/query.html',
             controller: moaControllers.QuerySpectrumModalController,
             size: 'lg',
-            backdrop: 'true'
+            backdrop: 'true',
+            resolve: {
+                tags: function () { return $scope.tags; }
+            }
         });
 
         modalInstance.result.then(function (query) {
@@ -127,7 +130,11 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * compiled query which is supposed to be executed or refiened
      * @type {{}}
      */
-    $scope.compiledQuery = {};
+    $scope.compiledQuery = {
+        compound: {},
+        metadata: [],
+        tags: []
+    };
 
     /**
      * calculates our offsets for us
