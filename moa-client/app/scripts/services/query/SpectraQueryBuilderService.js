@@ -6,9 +6,15 @@
  * a service to build our specific query object to be executed against the Spectrum service
  */
 app.service('SpectraQueryBuilderService', function ($log) {
+    /**
+     * updates a pre-compiled query with the given
+     */
+    this.updateQuery = function (query, metadata, tags, compiledQuery) {
+
+    };
 
     /**
-     * compiles our dedicated query to execute it against another servuce
+     * compiles our dedicated query to execute it against another service
      * @param element
      */
     this.compileQuery = function (query, metadata, tags) {

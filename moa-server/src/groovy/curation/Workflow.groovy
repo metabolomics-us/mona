@@ -13,5 +13,5 @@ public interface Workflow {
      * @param toValidate
      * @return
      */
-    boolean runWorkflow(CurrationObject toValidate)
+    boolean runWorkflow(CurationObject toValidate)
 }

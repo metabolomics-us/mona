@@ -1,9 +1,10 @@
 package curation.actions
 
-import curation.CurrationObject
+import curation.CurationObject
 import moa.MetaDataValue
 import moa.Spectrum
 import curation.CurationAction
+import org.apache.log4j.Logger
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,6 +13,7 @@ import curation.CurationAction
  * Time: 2:09 PM
  */
 class MetaDataSuspectAction implements CurationAction {
+    private Logger logger = Logger.getLogger(getClass())
 
     private String field
     private boolean mark
@@ -22,40 +24,27 @@ class MetaDataSuspectAction implements CurationAction {
     }
 
     @Override
-    boolean actionAppliesToObject(CurrationObject toValidate) {
+    boolean actionAppliesToObject(CurationObject toValidate) {
         if (toValidate.objectAsSpectra) {
             return true
-
         } else if (toValidate.objectAsMetaDataValue) {
             return true
         }
+
         return false
     }
 
     @Override
-    void doAction(CurrationObject currationObject) {
-        if (currationObject.isSpectra()) {
-            Spectrum spectrum = currationObject.getObjectAsSpectra()
+    void doAction(CurationObject curationObject) {
+        if (curationObject.isSpectra()) {
+            Spectrum spectrum = curationObject.getObjectAsSpectra()
 
             spectrum.getMetaData().each { MetaDataValue value ->
-
-
                 checkValue(value)
             }
-
-            //add a label if the valus are odd
-            if (mark) {
-                new AddTagAction("suspect values").doAction(currationObject)
-            }
-            //remove the label if the values are ok
-            else {
-                new RemoveTagAction("suspect values").doAction(currationObject)
-            }
-        } else if (currationObject.isMetaData()) {
-            checkValue(currationObject.getObjectAsMetaDataValue())
+        } else if (curationObject.isMetaData()) {
+            checkValue(curationObject.getObjectAsMetaDataValue())
         }
-
-
     }
 
     /**
@@ -64,6 +53,8 @@ class MetaDataSuspectAction implements CurationAction {
      */
     private void checkValue(MetaDataValue value) {
         if (value.name.toLowerCase().equals(field)) {
+            logger.debug("Marking metadata "+ value.name +" with value "+ mark)
+
             value.suspect = mark
             value.save(flush: true)
         }

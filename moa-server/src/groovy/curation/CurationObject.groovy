@@ -9,11 +9,11 @@ import moa.Spectrum
  * Date: 10/8/14
  * Time: 2:44 PM
  */
-final class CurrationObject {
+final class CurationObject {
 
     private Object object
 
-    public CurrationObject(Object object){
+    public CurationObject(Object object){
         this.object = object
     }
 

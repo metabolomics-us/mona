@@ -7,7 +7,7 @@ import org.apache.log4j.Logger
  * Date: 9/30/14
  * Time: 11:24 AM
  */
-class CurationWorkflow extends AbstractCurationRule implements Workflow{
+class CurationWorkflow extends AbstractCurationRule implements Workflow {
 
     Logger logger = Logger.getLogger(getClass())
 
@@ -28,23 +28,23 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow{
  * @param toValidate
  * @return ˜
  */
-    final boolean runWorkflow(CurrationObject toValidate) {
+    final boolean runWorkflow(CurationObject toValidate) {
 
         if (rules.isEmpty()) {
             throw new Exception("please add at least 1 rule to be executed!")
         }
 
-        boolean result = false;
+        boolean workflowResult = true;
 
         toValidate.refreshObject()
 
         for (CurationRule rule : rules) {
-
             logger.info("executing rule: ${rule.getClass().getName()}")
+
             try {
 
                 if(rule.ruleAppliesToObject(toValidate)) {
-                    result = rule.executeRule(toValidate)
+                    boolean result = rule.executeRule(toValidate)
 
                     if (result) {
                         logger.info("\t=> success, execution action ${rule.successAction.getClass().getName()} for rule ${rule.getClass().getName()}")
@@ -73,31 +73,41 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow{
             catch (Exception e) {
                 throw e;
             }
-
         }
 
-        //we always return true by default
+        return determineResultBasedOnWorkflowStatus(workflowResult)
+    }
 
-
-        if (result) {
+    /**
+     * determine the final result status of the workflow and if it fails be default or not
+     * @param workflowResult
+     * @return
+     */
+    protected boolean determineResultBasedOnWorkflowStatus(boolean workflowResult) {
+        if (workflowResult) {
             return true
         }
 
         return failByDefault();
     }
 
+    /**
+     * executes the given workflow
+     * @param spectrum
+     * @return
+     */
     @Override
-    boolean ruleAppliesToObject(CurrationObject currationObject) {
+    boolean ruleAppliesToObject(CurationObject curationObject) {
         return true
     }
 
     @Override
-    boolean executeRule(CurrationObject spectrum) {
+    boolean executeRule(CurationObject spectrum) {
         return runWorkflow(spectrum)
     }
 
     /**
-     * do we abort the complete workflow on failure
+     * do we abort the complete workflow on failure, this means no further internal rules should be executed
      * @return
      */
     protected boolean abortOnFailure() {

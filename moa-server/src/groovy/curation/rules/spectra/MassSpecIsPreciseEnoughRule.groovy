@@ -1,6 +1,6 @@
 package curation.rules.spectra
 
-import curation.CurrationObject
+import curation.CurationObject
 import moa.Spectrum
 import org.apache.log4j.Logger
 import curation.AbstractCurationRule
@@ -14,15 +14,15 @@ import curation.AbstractCurationRule
 class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
 
     Logger logger = Logger.getLogger(getClass())
-    double minPrecission = 3
+    double minPrecision = 3
 
     @Override
-    boolean ruleAppliesToObject(CurrationObject toValidate) {
+    boolean ruleAppliesToObject(CurationObject toValidate) {
         return toValidate.isSpectra()
     }
 
     @Override
-    boolean executeRule(CurrationObject toValidate) {
+    boolean executeRule(CurationObject toValidate) {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
@@ -40,7 +40,7 @@ class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
 
                 String ionDigits = (ion.substring(ion.indexOf('.') + 1, ion.length() - 1))
 
-                if (ionDigits.length() > minPrecission) {
+                if (ionDigits.length() > minPrecision) {
                     if (Integer.parseInt(ionDigits) > 0) {
                         result = true
                     }

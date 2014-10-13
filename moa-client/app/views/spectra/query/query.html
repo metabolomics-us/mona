@@ -86,6 +86,29 @@
                 </div>
             </div>
 
+            <div class="panel panel-default">
+                <div class="panel-heading" data-toggle="collapse" data-target="#tagQuery">
+                    <h4 class="panel-title">Query by Tags</a></h4>
+                </div>
+                <div id="tagQuery" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="tags-select" class=" control-label">Filter by Tags:</label>
+
+                            <select id="tags-select"
+                                    name="tags-select"
+                                    class="form-control"
+                                    data-placeholder="Select Tags"
+                                    ng-model="tagsSelection"
+                                    ng-options="tag.text for tag in tags"
+                                    ng-multiple="true"
+                                    multiple
+                                    multiselect-dropdown></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="panel panel-default">
                 <div class="panel-heading" data-toggle="collapse" data-target="#metaQuery">

@@ -12,7 +12,7 @@ public interface CurationRule extends CommonTags {
      * @param spectrum
      * @return
      */
-    boolean executeRule(CurrationObject toValidate)
+    boolean executeRule(CurationObject toValidate)
 
     /**
      * returns the success action
@@ -31,6 +31,6 @@ public interface CurationRule extends CommonTags {
      * @param CurrationObject
      * @return
      */
-    boolean ruleAppliesToObject(CurrationObject toValidate);
+    boolean ruleAppliesToObject(CurationObject toValidate);
 
 }
