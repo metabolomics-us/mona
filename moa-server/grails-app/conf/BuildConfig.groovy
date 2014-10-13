@@ -94,7 +94,7 @@ grails.project.dependency.resolution = {
         compile("java3d:vecmath:1.3.1")
         compile("net.sf.jni-inchi:jni-inchi:0.7")
 
-        compile('net.sourceforge.owlapi:owlapi-api:4.0.0')
+        compile('net.sourceforge.owlapi:owlapi-distribution:4.0.0')
 
     }
 
