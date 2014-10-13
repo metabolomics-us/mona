@@ -2,9 +2,11 @@ package moa.server.caluclation
 import grails.transaction.Transactional
 import moa.Compound
 import moa.server.metadata.MetaDataPersistenceService
+import org.openscience.cdk.DefaultChemObjectBuilder
 import org.openscience.cdk.Molecule
 import org.openscience.cdk.interfaces.IMolecularFormula
 import org.openscience.cdk.io.MDLV2000Reader
+import org.openscience.cdk.tools.CDKHydrogenAdder
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator
 
@@ -19,6 +21,7 @@ class CompoundPropertyService {
      */
     def calculateMetaData(Compound compound) {
 
+        log.debug("calculate properties for compound: ${compound}")
         String molFile = compound.molFile
         if (molFile.startsWith("\n") == false) {
             molFile = "\n" + molFile
@@ -28,23 +31,19 @@ class CompoundPropertyService {
 
         Molecule molecule = reader.read(new Molecule())
 
-
         AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
-        //AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule);
-        def naturalMass = AtomContainerManipulator.getNaturalExactMass(molecule)
+        CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.newInstance()).addImplicitHydrogens(molecule)
+        AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule);
 
         IMolecularFormula moleculeFormula = MolecularFormulaManipulator
                 .getMolecularFormula(molecule);
 
 
-        //check for duplicates todo!!!
+        log.debug("persisting properties")
+        metaDataPersistenceService.generateMetaDataObject(compound, [name: "total exact mass", value: MolecularFormulaManipulator.getTotalExactMass(moleculeFormula), category: "computed",computed:true])
+        metaDataPersistenceService.generateMetaDataObject(compound, [name: "molecule formula", value: MolecularFormulaManipulator.getString(moleculeFormula), category: "computed",computed:true])
 
-        //assigns our natural mass with this compound
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "natural mass", value: naturalMass, category: "computed"])
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "natural exact mass", value: MolecularFormulaManipulator.getNaturalExactMass(moleculeFormula), category: "computed"])
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "total exact mass", value: MolecularFormulaManipulator.getTotalExactMass(moleculeFormula), category: "computed"])
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "molecule formula", value: MolecularFormulaManipulator.getString(moleculeFormula), category: "computed"])
-
+        log.debug("done")
         compound.save()
 
     }

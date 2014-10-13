@@ -12,7 +12,7 @@ class SpectraCurationService {
 
     SpectraQueryService spectraQueryService
 
-    CurationWorkflow curationWorkflow
+    CurationWorkflow spectraCurationWorkflow
 
     /**
      * runs the curation workflow for the given spectra
@@ -23,6 +23,6 @@ class SpectraCurationService {
     boolean validateSpectra(long id) {
         Spectrum spectrum = spectraQueryService.query(id)
 
-        return curationWorkflow.runWorkflow(new CurationObject(spectrum))
+        return spectraCurationWorkflow.runWorkflow(new CurationObject(spectrum))
     }
 }

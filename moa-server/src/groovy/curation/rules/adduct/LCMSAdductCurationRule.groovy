@@ -1,14 +1,9 @@
 package curation.rules.adduct
-
-import curation.AbstractCurationRule
-import curation.CurationAction
-import moa.Spectrum
-import org.apache.log4j.Logger
-
 /**
- * Created by sajjan on 10/9/14.
+ * Created by sajjan on 10/1/14.
  */
-abstract class IsValidSpectrum extends AbstractCurationRule {
+class LCMSAdductCurationRule extends AbstractAdductCurationRule {
+
     /**
      * Definitions of positive mode lcms adducts
      * @link http://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
@@ -87,63 +82,21 @@ abstract class IsValidSpectrum extends AbstractCurationRule {
             "[2M+ACN+Na]-": {double M -> 2 * M + 64.015765}
     ]
 
-    /**
-     * Definitions of gcms adducts
-     */
-    public static final GCMS_ADDUCTS = [
-            "[M+TMS]": {double M -> M + 73.1891},
-            "[M+2TMS]": {double M -> M + 146.3782},
-            "[M+3TMS]": {double M -> M + 219.5673},
-    ]
+    @Override
+    Map<String,Closure> getAdductTable(String ionMode) {
 
+        switch(ionMode){
+            case "positive":
+                return LCMS_POSITIVE_ADDUCTS
+                break
+            default:
+                return LCMS_NEGATIVE_ADDUCTS
 
-    public IsValidSpectrum (CurationAction successAction, CurationAction failureAction) {
-        super(successAction, failureAction)
-    }
-
-
-    /**
-     *
-     * @param mz array of m/z values
-     * @param adduct_match mass of adduct to check against list
-     * @param toleranceInDalton tolerance of m/z match
-     * @return whether the list of m/z values contains
-     */
-    public boolean hasMzMatch(def mz, double adductMass, double toleranceInDalton) {
-        return mz.any { double mass ->
-            if(Math.abs(adductMass - mass) < toleranceInDalton) {
-                logger.debug("\t=> found ion with difference "+ Math.abs(adductMass - mass))
-                return true
-            }
         }
     }
 
-    /**
-     *
-     * @param spectrum spectrum object to validate
-     * @param adducts map of adducts and corresponding formula
-     * @param compoundMass mass of spectrum object
-     * @param toleranceInDalton
-     * @return
-     */
-    public int countAdductMatches(Spectrum spectrum, def adducts, double compoundMass, double toleranceInDalton) {
-        // Get m/z values
-        def mz = spectrum.spectrum.split(' ').collect { ion ->
-            Double.parseDouble(ion.split(':')[0])
-        }
-
-        // Check that at least N adducts exist
-        def n = 0
-
-        adducts.each { adduct, formula ->
-            double adductMass = formula(compoundMass)
-
-            logger.debug("Checking adduct "+ adduct +" at m = "+ adductMass)
-
-            if(hasMzMatch(mz, adductMass, toleranceInDalton))
-                n++
-        }
-
-        return n
+    @Override
+    boolean requiresIonMode() {
+        return true
     }
 }

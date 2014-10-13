@@ -44,15 +44,23 @@ class MetaDataPersistenceService {
         MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
 
 
+        log.info("generating metadata object...")
         MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
         category.addToMetaDatas(metaData)
 
         metaData.save()
         category.save()
 
+        log.info("generating metadata value object...")
         MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
 //MetaDataValueHelper.getValueObject(current.value)
 
+        if(current.computed != null && current.computed){
+            metaDataValue.computed = true
+        }
+        else{
+            metaDataValue.computed = false
+        }
         //if an unit is associated let's update it
         if (current.unit != null) {
             metaDataValue.unit = current.unit
@@ -100,8 +108,9 @@ class MetaDataPersistenceService {
 
 //            println("\t===>\tworking on value: ${metaDataValue}")
 
-        log.debug("${metaDataValue.category}:${metaDataValue.name}:${metaDataValue.value}:${metaDataValue.unit}")
 
         metaDataValue.save()
+
+        log.info("done")
     }
 }

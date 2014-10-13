@@ -51,7 +51,20 @@ class UrlMappings {
              */
             "/spectra"(resources: 'Spectrum')
         }
+
+        /**
+         * curates a single compound
+         */
+        "/rest/compounds/curate/$id"(controller: 'compoundCuration', action: 'curate', id: id)
+
+        /**
+         * curates all compounds
+         */
+        "/rest/compounds/curateAll"(controller: 'compoundCuration', action: 'curateAll')
+
+
         "/rest/spectra"(resources: 'Spectrum')
+
 
         /**
          * query all the metadata without category

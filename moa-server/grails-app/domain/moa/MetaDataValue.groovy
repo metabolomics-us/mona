@@ -18,7 +18,12 @@ class MetaDataValue {
     /**
      * something might be wrong with this value
      */
-    boolean suspect
+    boolean suspect = false
+
+    /**
+     * was this value computed or user provided
+     */
+    boolean computed = false
 
     static belongsTo = [metaData: MetaData, owner:SupportsMetaData]
 
@@ -32,6 +37,7 @@ class MetaDataValue {
         owner nullable: true
         unit nullable: true
         suspect nullable :true
+        computed nullable :true
     }
 
     /**

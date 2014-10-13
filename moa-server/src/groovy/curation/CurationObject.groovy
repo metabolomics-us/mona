@@ -1,5 +1,6 @@
 package curation
 
+import moa.Compound
 import moa.MetaDataValue
 import moa.Spectrum
 
@@ -25,6 +26,10 @@ final class CurationObject {
         return object instanceof MetaDataValue
     }
 
+    boolean isCompound(){
+        return object instanceof Compound
+    }
+
     void refreshObject(){
         this.object.attach()
     }
@@ -37,6 +42,13 @@ final class CurationObject {
         return object as Spectrum
     }
 
+    /**
+     * provides us with the compound object
+     * @return
+     */
+    Compound getObjectAsCompound(){
+        return object as Compound
+    }
     /**
      * provides us with the meta data object
      * @return
