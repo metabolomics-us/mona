@@ -16,7 +16,7 @@ class RemoveTagAction implements CurationAction {
 
     Logger logger = Logger.getLogger(getClass())
 
-    String tagNameToRemove = null
+    String[] tagNameToRemove = null
 
     RemoveTagAction() {
 
@@ -26,7 +26,7 @@ class RemoveTagAction implements CurationAction {
      * specify a tag for us
      * @param tagName
      */
-    RemoveTagAction(String tagName) {
+    RemoveTagAction(String... tagName) {
         this.tagNameToRemove = tagName
     }
 
@@ -40,18 +40,19 @@ class RemoveTagAction implements CurationAction {
             throw new RuntimeException("please provide us with a 'tagNameToRemove' value!")
         }
 
-        Tag tag = Tag.findOrSaveByText(tagNameToRemove)
-        tag.ruleBased = true
-        tag.save(flush: true)
+        tagNameToRemove.each {
+            Tag tag = Tag.findOrSaveByText(it)
+            tag.ruleBased = true
+            tag.save(flush: true)
 
-        if (spectrum.getTags().contains(tag)) {
-            spectrum.removeFromTags(tag)
-            tag.save(flush:true)
-        }
-        else{
-            logger.debug("spectra did not contain required tag!")
-        }
+            if (spectrum.getTags().contains(tag)) {
+                spectrum.removeFromTags(tag)
+                tag.save(flush: true)
+            } else {
+                logger.debug("spectra did not contain required tag!")
+            }
 
+        }
 
         spectrum.save(flush: true)
 

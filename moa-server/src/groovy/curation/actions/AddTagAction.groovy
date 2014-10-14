@@ -16,7 +16,7 @@ class AddTagAction implements CurationAction {
 
     Logger logger = Logger.getLogger(getClass())
 
-    String tagNameToAdd = null
+    String[] tagNameToAdd = null
 
      AddTagAction(){
 
@@ -26,7 +26,7 @@ class AddTagAction implements CurationAction {
      * specify a tag for us
      * @param tagName
      */
-     AddTagAction(String tagName){
+     AddTagAction(String... tagName){
         this.tagNameToAdd = tagName
     }
 
@@ -36,19 +36,21 @@ class AddTagAction implements CurationAction {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
-        logger.debug("adding tag to spectrum(${spectrum.id} - ${tagNameToAdd}")
+        logger.debug("adding tag(s) to spectrum(${spectrum.id} - ${tagNameToAdd}")
         if (!tagNameToAdd) {
             throw new RuntimeException("please provide us with a 'tagNameToAdd' value!")
         }
 
-        Tag tag = Tag.findOrSaveByText(tagNameToAdd)
-        tag.ruleBased = true
-        tag.save(flus:true)
+        tagNameToAdd.each {
+            Tag tag = Tag.findOrSaveByText(it)
+            tag.ruleBased = true
+            tag.save(flus: true)
 
-        spectrum.addToTags(tag)
-        spectrum.save(flush: true)
+            spectrum.addToTags(tag)
+            spectrum.save(flush: true)
 
-        logger.debug("=> done")
+            logger.debug("=> done")
+        }
     }
 
     @Override
