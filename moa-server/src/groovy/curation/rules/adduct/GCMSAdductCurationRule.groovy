@@ -1,4 +1,9 @@
 package curation.rules.adduct
+
+import curation.CommonTags
+import moa.Spectrum
+import moa.Tag
+
 /**
  * Created by sajjan on 10/9/14.
  */
@@ -20,6 +25,19 @@ class GCMSAdductCurationRule extends AbstractAdductCurationRule {
 
     @Override
     boolean requiresIonMode() {
+        return false
+    }
+
+    @Override
+    boolean isValidSpectraForRule(Spectrum spectrum) {
+        for(Tag s : spectrum.getTags()){
+            if(s.text == CommonTags.GCMS_SPECTRA){
+                return true
+            }
+        }
+
+        logger.info("no gcms tag found, so wrong object!")
+
         return false
     }
 }

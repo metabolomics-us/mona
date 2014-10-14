@@ -1,4 +1,9 @@
 package curation.rules.adduct
+
+import curation.CommonTags
+import moa.Spectrum
+import moa.Tag
+
 /**
  * Created by sajjan on 10/1/14.
  */
@@ -98,5 +103,18 @@ class LCMSAdductCurationRule extends AbstractAdductCurationRule {
     @Override
     boolean requiresIonMode() {
         return true
+    }
+
+    @Override
+    boolean isValidSpectraForRule(Spectrum spectrum) {
+        for(Tag s : spectrum.getTags()){
+            if(s.text == CommonTags.LCMS_SPECTRA){
+                return true
+            }
+        }
+
+        logger.info("no lcms tag found, so wrong object!")
+
+        return false
     }
 }

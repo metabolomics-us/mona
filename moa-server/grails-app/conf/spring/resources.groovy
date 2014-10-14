@@ -13,6 +13,7 @@ import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
+import curation.rules.tag.RemoveComputedTagRule
 import grails.spring.BeanBuilder
 import util.caching.SpectrumKeyGenerator
 
@@ -36,13 +37,13 @@ beans = {
         bean.autowire = 'byName'
     }
 
-    deleteComputedMetaDataRule(DeletedComputedMetaDataRule)
+    deleteMetaDataRule(DeletedComputedMetaDataRule)
 
 
     compoundCurationWorkflow(CurationWorkflow) { workflow ->
 
         rules = [
-                deleteComputedMetaDataRule,
+                deleteMetaDataRule,
                 computeCompoundValidationData
         ]
     }
@@ -111,7 +112,8 @@ beans = {
 /**
  * verify that a lcms spectrum has valid adducts
  */
-    isValidLCMSSpectrum(LCMSAdductCurationRule) {
+    lcmsAdductCuration(LCMSAdductCurationRule) { bean ->
+        bean.autowire = 'byName'
         toleranceInDalton = 0.5
         minAdducts = 1
     }
@@ -119,7 +121,8 @@ beans = {
 /**
  * verify that a lcms spectrum has valid adducts
  */
-    isValidGCMSSpectrum(GCMSAdductCurationRule) {
+    gcmsAdductCuration(GCMSAdductCurationRule) { bean ->
+        bean.autowire = 'byName'
         toleranceInDalton = 1
         minAdducts = 1
     }
@@ -145,12 +148,16 @@ beans = {
         ]
     }
 
+    deleteRuleBasedTagRule(RemoveComputedTagRule)
+
 /**
  * define our complete workflow here
  */
     spectraCurationWorkflow(CurationWorkflow) { workflow ->
 
         rules = [
+                deleteRuleBasedTagRule,
+                deleteMetaDataRule,
                 // Metadata curation
                 metadataCuration,
 
@@ -161,7 +168,8 @@ beans = {
                 convertSpectraToRelativeRule,
                 isSpectraDirty,
                 isAnnotatedSpectraRule,
-                isValidLCMSSpectrum,
+                lcmsAdductCuration,
+                gcmsAdductCuration
 
         ]
         //define and register our curation

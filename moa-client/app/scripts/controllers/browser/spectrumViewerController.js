@@ -89,10 +89,12 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
         while ((match = ionRegex.exec(spectrum.spectrum)) != null) {
             // Find annotation
             var annotation = '';
+            var computed = false;
 
             for (var i = 0; i < meta.length; i++) {
                 if (meta[i].value === match[1]) {
                     annotation = meta[i].name;
+                    computed = meta[i].computed;
                 }
             }
 
@@ -100,7 +102,7 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
             match[1] = truncateMass(match[1]);
 
             // Store ion
-            $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation});
+            $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation,computed:computed});
         }
     })(delayedSpectrum);
 };

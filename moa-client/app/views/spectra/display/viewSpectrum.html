@@ -35,7 +35,13 @@
                             <tr ng-repeat="ion in massSpec">
                                 <td>{{ion.ion}}</td>
                                 <td>{{ion.intensity}}</td>
-                                <td>{{ion.annotation}}</td>
+                                <td>{{ion.annotation}}
+
+
+                                    <!-- display this, if it's a computed value -->
+                                    <i ng-show="ion.computed == true" class="fa fa-flask"></i>
+
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -68,8 +74,16 @@
                                         </td>
                                         <td>
                                             {{meta.value}} {{meta.unit}}
-                                        </td>
 
+                                            <!-- display this, if there seems to be something odd with this value -->
+                                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
+
+                                            </i>
+
+                                            <!-- display this, if it's a computed value -->
+                                            <i ng-show="meta.computed == true" class="fa fa-flask"></i>
+
+                                        </td>
                                     </tr>
 
                                     </tbody>
@@ -111,6 +125,14 @@
                                         </td>
                                         <td>
                                             {{meta.value}} {{meta.unit}}
+
+                                            <!-- display this, if there seems to be something odd with this value -->
+                                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
+
+                                            </i>
+
+                                            <!-- display this, if it's a computed value -->
+                                            <i ng-show="meta.computed == true" class="fa fa-flask"></i>
                                         </td>
 
                                     </tr>
@@ -159,13 +181,19 @@
                         <td>
                             {{meta.name}}
                         </td>
-                        <td ng-class="{suspect: $meta.suspect}">
+                        <td>
                             {{meta.value}} {{meta.unit}}
 
                             <!-- display this, if there seems to be something odd with this value -->
                             <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
 
                             </i>
+
+                            <!-- display this, if it's a computed value -->
+                            <i ng-show="meta.computed == true" class="fa fa-flask">
+
+                            </i>
+
                         </td>
                     </tr>
                     </tbody>

@@ -1,4 +1,5 @@
 package curation.rules.adduct
+
 import curation.AbstractCurationRule
 import curation.CurationAction
 import curation.CurationObject
@@ -6,14 +7,14 @@ import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import moa.MetaDataValue
 import moa.Spectrum
-import org.apache.log4j.Logger
+import moa.server.metadata.MetaDataPersistenceService
 
 /**
  * Created by sajjan on 10/9/14.
  */
 abstract class AbstractAdductCurationRule extends AbstractCurationRule {
 
-    Logger logger = Logger.getLogger(getClass())
+    MetaDataPersistenceService metaDataPersistenceService
 
     /**
      * do we want to also add spectra annotation metadata
@@ -38,21 +39,24 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
         super(successAction, failureAction)
     }
 
-
     /**
      *
+     * returns the actual mass which is the adduct, not the exact value!
      * @param mz array of m/z values
      * @param adduct_match mass of adduct to check against list
      * @param toleranceInDalton tolerance of m/z match
      * @return whether the list of m/z values contains
      */
-    public boolean hasMzMatch(def mz, double adductMass, double toleranceInDalton) {
-        return mz.any { double mass ->
-            if(Math.abs(adductMass - mass) < toleranceInDalton) {
-                logger.debug("\t=> found ion with difference "+ Math.abs(adductMass - mass))
-                return true
+    public double hasMzMatch(def mz, double adductMass, double toleranceInDalton) {
+
+        for (double mass : mz) {
+            if (Math.abs(adductMass - mass) < toleranceInDalton) {
+                logger.debug("\t=> found ion with difference " + Math.abs(adductMass - mass))
+                return mass
             }
         }
+
+        return -1
     }
 
     /**
@@ -63,7 +67,8 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
      * @param toleranceInDalton
      * @return
      */
-    public Map<String,Double> findAdductMatches(Spectrum spectrum, def adducts, double compoundMass, double toleranceInDalton) {
+    public Map<String, Double> findAdductMatches(Spectrum spectrum,
+                                                 def adducts, double compoundMass, double toleranceInDalton) {
         def identifiedAdducts = [:]
 
         // Get m/z values
@@ -74,10 +79,12 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
         adducts.each { adduct, formula ->
             double adductMass = formula(compoundMass)
 
-            logger.debug("Checking adduct "+ adduct +" at m = "+ adductMass)
+            logger.debug("Checking adduct " + adduct + " at m = " + adductMass)
 
-            if(hasMzMatch(mz, adductMass, toleranceInDalton)){
-                identifiedAdducts.put(adduct,adductMass)
+            double foundAdduct = hasMzMatch(mz, adductMass, toleranceInDalton)
+            if (foundAdduct != -1) {
+                logger.debug("\t=> found adduct: ${foundAdduct}")
+                identifiedAdducts.put(adduct, foundAdduct)
             }
         }
 
@@ -89,60 +96,69 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
     final boolean executeRule(CurationObject toValidate) {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
-        double compoundMass = -1;
-        String ionMode = "";
+        if (isValidSpectraForRule(spectrum)) {
+            double compoundMass = -1;
+            String ionMode = "";
 
-        // Get mass and ion mode
-        for(MetaDataValue metaDataValue : spectrum.getBiologicalCompound().getMetaData()) {
-            logger.debug("checking for correct biological compound meta data value field: ${metaDataValue.name}")
+            // Get mass and ion mode
+            for (MetaDataValue metaDataValue : spectrum.getBiologicalCompound().getMetaData()) {
+                logger.debug("checking for correct biological compound meta data value field: ${metaDataValue.name}")
 
-            if(metaDataValue.name.toLowerCase() == "total exact mass") {
-                compoundMass = Double.parseDouble(metaDataValue.value.toString());
-                logger.debug("\t=> found mass "+ compoundMass)
+                if (metaDataValue.name.toLowerCase() == "total exact mass") {
+                    compoundMass = Double.parseDouble(metaDataValue.value.toString());
+                    logger.debug("\t=> found mass " + compoundMass)
+                }
             }
-        }
 
-        for(MetaDataValue metaDataValue : spectrum.getMetaData()) {
-            logger.debug("checking for correct meta data value field: ${metaDataValue.name}")
+            for (MetaDataValue metaDataValue : spectrum.getMetaData()) {
+                logger.debug("checking for correct meta data value field: ${metaDataValue.name}")
 
-            if (metaDataValue.name.toLowerCase() == "ion mode") {
-                ionMode = metaDataValue.value.toString().toLowerCase();
-                logger.debug("\t=> found ion mode "+ ionMode)
+                if (metaDataValue.name.toLowerCase() == "ion mode") {
+                    ionMode = metaDataValue.value.toString().toLowerCase();
+                    logger.debug("\t=> found ion mode " + ionMode)
+                }
             }
-        }
 
-        // Check that mass and ion mode were found
-        if(compoundMass == -1) {
-            logger.debug("unable to find mass in biological compound meta data!")
-            return false;
-        }
-
-        if(requiresIonMode()) {
-            if (ionMode == "") {
-                logger.debug("unable to find ion mode in meta data!")
+            // Check that mass and ion mode were found
+            if (compoundMass == -1) {
+                logger.debug("unable to find mass in biological compound meta data!")
                 return false;
             }
+
+            if (requiresIonMode()) {
+                if (ionMode == "") {
+                    logger.debug("unable to find ion mode in meta data!")
+                    return false;
+                }
+            }
+
+            return validateFoundMatches(findAdductMatches(spectrum, getAdductTable(ionMode), compoundMass, toleranceInDalton), spectrum)
+        } else {
+            //if this spectrum doesn't apply the rule is always successful
+            return true
         }
-
-        return validateFoundMatches(findAdductMatches(spectrum,getAdductTable(ionMode),compoundMass,toleranceInDalton))
     }
-
 
     /**
      * returns our adduct table
      * @return
      */
-    abstract Map<String,Closure> getAdductTable(String ionMode)
+    abstract Map<String, Closure> getAdductTable(String ionMode)
 
     /**
      * method to validate the matches
      * @param matches
      * @return
      */
-    boolean validateFoundMatches(Map matches){
+    boolean validateFoundMatches(Map matches, Spectrum spectrum) {
 
-        logger.debug("Found "+ matches.size() +" / "+ minAdducts +" adducts")
+        logger.debug("Found " + matches.size() + " / " + minAdducts + " adducts")
 
+        if (updateSpectraAnnotations) {
+            matches.each { String key, Double value ->
+                metaDataPersistenceService.generateMetaDataObject(spectrum, [name: key, value: value, category: "annotation", computed: true])
+            }
+        }
         return (matches.size() >= minAdducts);
 
     }
@@ -153,9 +169,15 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
      */
     abstract boolean requiresIonMode()
 
+    /**
+     * a simple check if this spectrum is actually valid for this adduct curation rule
+     * @param spectrum
+     * @return
+     */
+    abstract boolean isValidSpectraForRule(Spectrum spectrum)
+
     @Override
     boolean ruleAppliesToObject(CurationObject toValidate) {
         return toValidate.isSpectra()
     }
-
 }

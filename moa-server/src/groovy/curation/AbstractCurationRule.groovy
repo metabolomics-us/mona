@@ -1,6 +1,7 @@
 package curation
 
 import curation.actions.IgnoreOnFailureAction
+import org.apache.log4j.Logger
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,6 +10,8 @@ import curation.actions.IgnoreOnFailureAction
  * Time: 11:37 AM
  */
 abstract class AbstractCurationRule implements CurationRule {
+
+    Logger logger = Logger.getLogger(getClass())
 
     protected CurationAction successAction
 
