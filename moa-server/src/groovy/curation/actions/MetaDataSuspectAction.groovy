@@ -58,5 +58,8 @@ class MetaDataSuspectAction implements CurationAction {
             value.suspect = mark
             value.save(flush: true)
         }
+        else{
+            logger.debug("ignoring ${value.name}, doesn't match the requested field ${field}")
+        }
     }
 }

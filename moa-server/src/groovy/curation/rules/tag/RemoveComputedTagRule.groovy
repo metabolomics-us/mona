@@ -12,15 +12,25 @@ class RemoveComputedTagRule extends AbstractCurationRule{
     boolean executeRule(CurationObject toValidate) {
 
         def toRemove = []
-        toValidate.objectAsSpectra.tags.each {
+
+        def object
+
+        if(toValidate.isSpectra()){
+            object = toValidate.objectAsSpectra
+        }
+        else if(toValidate.isCompound()){
+            object = toValidate.objectAsCompound
+        }
+
+       object.tags.each {
             if(it.ruleBased){
                 toRemove.add(it)
             }
         }
 
         toRemove.each {
-            logger.debug("removing tag(${it.text}) from spectra(${toValidate.objectAsSpectra.id})")
-            toValidate.objectAsSpectra.removeFromTags(it)
+            logger.debug("removing tag(${it.text}) from (${object.id})")
+            object.removeFromTags(it)
         }
 
         return true
@@ -28,6 +38,6 @@ class RemoveComputedTagRule extends AbstractCurationRule{
 
     @Override
     boolean ruleAppliesToObject(CurationObject toValidate) {
-        return toValidate.isSpectra()
+        return (toValidate.isSpectra() || toValidate.isCompound())
     }
 }

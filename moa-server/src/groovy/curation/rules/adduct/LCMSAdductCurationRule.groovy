@@ -88,7 +88,7 @@ class LCMSAdductCurationRule extends AbstractAdductCurationRule {
     ]
 
     @Override
-    Map<String,Closure> getAdductTable(String ionMode) {
+    Map<String,Closure> getAdductTable(String ionMode,Spectrum spectrum) {
 
         switch(ionMode){
             case "positive":

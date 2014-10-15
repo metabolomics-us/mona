@@ -17,7 +17,7 @@ class Compound extends SupportsMetaData{
     /**
      * this compound belongs to one spectrum
      */
-    static hasMany = [names: Name]
+    static hasMany = [names: Name, tags:Tag]
 
     /**
      * inchiKey of this compound
@@ -33,5 +33,10 @@ class Compound extends SupportsMetaData{
      * names associated to this compound
      */
     Set<Name> names
+
+    /**
+     * associated tags
+     */
+    Set<Tag> tags
 
 }

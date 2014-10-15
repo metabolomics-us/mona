@@ -1,11 +1,9 @@
 package curation.rules.instrument
-
-import moa.MetaDataValue
 import curation.CurationAction
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import curation.rules.AbstractMetaDataCentricRule
-
+import moa.MetaDataValue
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -30,7 +28,9 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
             return true
         } else if (value.contains("gc")) {
             return true
-        } else {
+        }
+
+        else {
             return false
         }
 

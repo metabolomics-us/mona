@@ -1,11 +1,8 @@
 package curation.actions
-
+import curation.CurationAction
 import curation.CurationObject
-import moa.Spectrum
 import moa.Tag
 import org.apache.log4j.Logger
-import curation.CurationAction
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -34,9 +31,18 @@ class AddTagAction implements CurationAction {
     @Override
     void doAction(CurationObject toValidate) {
 
-        Spectrum spectrum = toValidate.getObjectAsSpectra()
+        def owner = null
+        if(toValidate.isSpectra()) {
+            owner = toValidate.getObjectAsSpectra()
+        }
+        else if(toValidate.isCompound()){
+            owner = toValidate.getObjectAsCompound()
+        }
+        else{
+            throw new RuntimeException("not supported object: ${toValidate}")
+        }
 
-        logger.debug("adding tag(s) to spectrum(${spectrum.id} - ${tagNameToAdd}")
+        logger.debug("adding tag(s) to (${owner.id} - ${tagNameToAdd}")
         if (!tagNameToAdd) {
             throw new RuntimeException("please provide us with a 'tagNameToAdd' value!")
         }
@@ -46,8 +52,8 @@ class AddTagAction implements CurationAction {
             tag.ruleBased = true
             tag.save(flus: true)
 
-            spectrum.addToTags(tag)
-            spectrum.save(flush: true)
+            owner.addToTags(tag)
+            owner.save(flush: true)
 
             logger.debug("=> done")
         }
@@ -55,6 +61,6 @@ class AddTagAction implements CurationAction {
 
     @Override
     boolean actionAppliesToObject(CurationObject toValidate) {
-        return toValidate.isSpectra()
+        return (toValidate.isSpectra() || toValidate.isCompound())
     }
 }

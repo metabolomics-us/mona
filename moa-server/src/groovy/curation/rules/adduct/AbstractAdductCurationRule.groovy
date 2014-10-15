@@ -132,7 +132,11 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
                 }
             }
 
-            return validateFoundMatches(findAdductMatches(spectrum, getAdductTable(ionMode), compoundMass, toleranceInDalton), spectrum)
+            def adductTable = getAdductTable(ionMode, spectrum)
+            adductTable.each {k,v ->
+                logger.info("registered adduct for search: ${k}")
+            }
+            return validateFoundMatches(findAdductMatches(spectrum, adductTable, compoundMass, toleranceInDalton), spectrum)
         } else {
             //if this spectrum doesn't apply the rule is always successful
             return true
@@ -143,7 +147,7 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
      * returns our adduct table
      * @return
      */
-    abstract Map<String, Closure> getAdductTable(String ionMode)
+    abstract Map<String, Closure> getAdductTable(String ionMode, Spectrum spectrum)
 
     /**
      * method to validate the matches

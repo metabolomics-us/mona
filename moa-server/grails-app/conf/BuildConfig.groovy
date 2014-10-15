@@ -90,6 +90,8 @@ grails.project.dependency.resolution = {
         }
         compile("org.openscience.cdk:cdk-formula:${cdkVersion}")
         compile("org.openscience.cdk:cdk-smsd:${cdkVersion}")
+        compile("org.openscience.cdk:cdk-qsarmolecular:${cdkVersion}")
+
         compile("xpp3:xpp3:1.1.4c")
         compile("java3d:vecmath:1.3.1")
         compile("net.sf.jni-inchi:jni-inchi:0.7")

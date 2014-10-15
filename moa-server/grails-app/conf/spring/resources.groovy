@@ -1,10 +1,14 @@
 import curation.CurationObject
 import curation.CurationWorkflow
 import curation.SubCurationWorkflow
+import curation.rules.adduct.ConfirmGCMSDerivatizationRule
 import curation.rules.adduct.GCMSAdductCurationRule
 import curation.rules.adduct.LCMSAdductCurationRule
 import curation.rules.compound.meta.CompoundComputeMetaDataRule
 import curation.rules.compound.meta.DeletedComputedMetaDataRule
+import curation.rules.compound.inchi.VerifyInChIKeyAndMolFileMatchRule
+import curation.rules.compound.structure.TMSSubstructureSearchRule
+import curation.rules.compound.structure.TMSSubstructureSearchRule
 import curation.rules.instrument.GCMSSpectraIdentificationRule
 import curation.rules.instrument.LCMSSpectraIdentificationRule
 import curation.rules.meta.IsColumnValid
@@ -37,14 +41,23 @@ beans = {
         bean.autowire = 'byName'
     }
 
+    inchiKeyMatchesMolFile(VerifyInChIKeyAndMolFileMatchRule) { bean ->
+        bean.autowire = 'byName'
+    }
+
     deleteMetaDataRule(DeletedComputedMetaDataRule)
 
+    deleteRuleBasedTagRule(RemoveComputedTagRule)
+
+    tmsSubstructureSearch(TMSSubstructureSearchRule)
 
     compoundCurationWorkflow(CurationWorkflow) { workflow ->
 
         rules = [
                 deleteMetaDataRule,
-                computeCompoundValidationData
+                deleteRuleBasedTagRule,
+                computeCompoundValidationData,
+                inchiKeyMatchesMolFile
         ]
     }
 
@@ -128,6 +141,10 @@ beans = {
     }
 
 /**
+ * GCMS Derivatization rules
+ */
+    gcmsDerivatizationRule(ConfirmGCMSDerivatizationRule)
+/**
  * set up subcuration workflow to check if it's an accurate mass spectra
  */
     isAccurateMassSpectra(SubCurationWorkflow, "accurate", true, "accurate mass validation") {
@@ -148,8 +165,6 @@ beans = {
         ]
     }
 
-    deleteRuleBasedTagRule(RemoveComputedTagRule)
-
 /**
  * define our complete workflow here
  */
@@ -169,7 +184,9 @@ beans = {
                 isSpectraDirty,
                 isAnnotatedSpectraRule,
                 lcmsAdductCuration,
-                gcmsAdductCuration
+                gcmsAdductCuration,
+                tmsSubstructureSearch,
+                gcmsDerivatizationRule
 
         ]
         //define and register our curation

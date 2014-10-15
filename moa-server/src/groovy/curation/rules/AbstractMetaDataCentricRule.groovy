@@ -1,10 +1,12 @@
 package curation.rules
+
 import curation.AbstractCurationRule
 import curation.CurationAction
 import curation.CurationObject
 import moa.MetaDataValue
 import moa.Spectrum
 import org.apache.log4j.Logger
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -27,7 +29,7 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
     protected abstract boolean acceptMetaDataValue(MetaDataValue value);
 
     @Override
-    boolean ruleAppliesToObject( CurationObject object) {
+    boolean ruleAppliesToObject(CurationObject object) {
         return object.isSpectra()
     }
 
@@ -43,13 +45,16 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
                 logger.debug("\t=> accepted, checking actual value")
                 if (acceptMetaDataValue(metaDataValue)) {
                     logger.debug("\t\t=> value was ok")
-                    return true
+                    return finalCheck(spectrum)
+                } else {
+                    if (failOnInvalidValue()) {
+                        logger.debug("\t\t=> value was not accepted, FAILING rule")
+                        return false
+                    } else {
+                        logger.debug("\t\t=> value was not accepted, moving on")
+                    }
                 }
-                else{
-                    logger.debug("\t\t=> value was not accepted, moving on")
-                }
-            }
-            else{
+            } else {
                 logger.debug("\t=> wrong field, moving on")
             }
         }
@@ -65,4 +70,20 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
         return true
     }
 
+    /**
+     * additional checks for certain cirumstances. Should be overwriten by subclasses
+     * @param spectrum
+     * @return
+     */
+    protected boolean finalCheck(Spectrum spectrum) {
+        return true
+    }
+
+    /**
+     * in case of a none accepted value, do we fail?
+     * @return
+     */
+    protected boolean failOnInvalidValue() {
+        return true
+    }
 }

@@ -1,11 +1,8 @@
 package curation.actions
-
+import curation.CurationAction
 import curation.CurationObject
-import moa.Spectrum
 import moa.Tag
 import org.apache.log4j.Logger
-import curation.CurationAction
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -33,9 +30,18 @@ class RemoveTagAction implements CurationAction {
 
     @Override
     void doAction(CurationObject toValidate) {
-        Spectrum spectrum = toValidate.getObjectAsSpectra()
+        def owner = null
+        if(toValidate.isSpectra()) {
+            owner = toValidate.getObjectAsSpectra()
+        }
+        else if(toValidate.isCompound()){
+            owner = toValidate.getObjectAsCompound()
+        }
+        else{
+            throw new RuntimeException("not supported object: ${toValidate}")
+        }
 
-        logger.debug("removing tag from spectrum(${spectrum.id} - ${tagNameToRemove})")
+        logger.debug("removing tag from spectrum(${owner.id} - ${tagNameToRemove})")
         if (!tagNameToRemove) {
             throw new RuntimeException("please provide us with a 'tagNameToRemove' value!")
         }
@@ -45,8 +51,8 @@ class RemoveTagAction implements CurationAction {
             tag.ruleBased = true
             tag.save(flush: true)
 
-            if (spectrum.getTags().contains(tag)) {
-                spectrum.removeFromTags(tag)
+            if (owner.getTags().contains(tag)) {
+                owner.removeFromTags(tag)
                 tag.save(flush: true)
             } else {
                 logger.debug("spectra did not contain required tag!")
@@ -54,7 +60,7 @@ class RemoveTagAction implements CurationAction {
 
         }
 
-        spectrum.save(flush: true)
+        owner.save(flush: true)
 
         logger.debug("=> done")
     }
@@ -62,6 +68,6 @@ class RemoveTagAction implements CurationAction {
 
     @Override
     boolean actionAppliesToObject(CurationObject toValidate) {
-        return toValidate.isSpectra()
+        return (toValidate.isSpectra() || toValidate.isCompound())
     }
 }

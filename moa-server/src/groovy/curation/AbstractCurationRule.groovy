@@ -1,7 +1,18 @@
 package curation
 
 import curation.actions.IgnoreOnFailureAction
+import moa.Compound
 import org.apache.log4j.Logger
+import org.openscience.cdk.DefaultChemObjectBuilder
+import org.openscience.cdk.Molecule
+import org.openscience.cdk.inchi.InChIGenerator
+import org.openscience.cdk.inchi.InChIGeneratorFactory
+import org.openscience.cdk.interfaces.IMolecularFormula
+import org.openscience.cdk.io.MDLV2000Reader
+import org.openscience.cdk.tools.CDKHydrogenAdder
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
+import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator
+import util.chemical.Derivatizer
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,12 +33,12 @@ abstract class AbstractCurationRule implements CurationRule {
      * @param successAction
      * @param failureAction
      */
-    public AbstractCurationRule(CurationAction successAction, CurationAction failureAction){
+    public AbstractCurationRule(CurationAction successAction, CurationAction failureAction) {
         this.successAction = successAction
         this.failureAction = failureAction
     }
 
-    public AbstractCurationRule(){
+    public AbstractCurationRule() {
         this.successAction = new IgnoreOnFailureAction()
         this.failureAction = new IgnoreOnFailureAction()
     }
@@ -42,7 +53,6 @@ abstract class AbstractCurationRule implements CurationRule {
         return failureAction
     }
 
-
     /**
      * should we fail by default
      * @return
@@ -50,4 +60,77 @@ abstract class AbstractCurationRule implements CurationRule {
     protected boolean failByDefault() {
         return true;
     }
+
+    /**
+     * reads a molecule
+     * @param compound
+     * @return
+     */
+    Molecule readMolecule(Compound compound) {
+
+        String molFile = compound.molFile
+
+        if (molFile.startsWith("\n") == false) {
+            molFile = "\n" + molFile
+        }
+
+        def reader = new MDLV2000Reader(new StringReader(molFile))
+
+        Molecule mol = reader.read(new Molecule())
+
+
+        AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
+        CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.newInstance()).addImplicitHydrogens(mol)
+        AtomContainerManipulator.convertImplicitToExplicitHydrogens(mol);
+
+
+        return mol
+    }
+
+    String calculateInChICode(Molecule molecule) {
+
+        InChIGeneratorFactory factory = InChIGeneratorFactory.getInstance()
+        InChIGenerator gen = factory.getInChIGenerator(molecule);
+
+        return gen.inchi
+    }
+
+    String calculateInChIKey(Molecule molecule) {
+
+        InChIGeneratorFactory factory = InChIGeneratorFactory.getInstance()
+        InChIGenerator gen = factory.getInChIGenerator(molecule);
+
+        return gen.inchiKey
+    }
+
+    IMolecularFormula calculateFormula(Molecule molecule) {
+        IMolecularFormula moleculeFormula = MolecularFormulaManipulator
+                .getMolecularFormula(molecule);
+
+        return moleculeFormula;
+    }
+
+    String calculateSumFormulaString(Molecule molecule) {
+        return MolecularFormulaManipulator.getString(calculateFormula(molecule))
+
+    }
+
+    /**
+     * calculates the count of functional groups in this molecule
+     * @param structure
+     * @param groups
+     * @return
+     */
+    int calculateFunctionalGroupCount(Molecule structure, Collection<Molecule> groups) {
+
+        def result = new Derivatizer().derivatizeWithTMS(structure, groups)
+
+
+        logger.info("received: ${calculateSumFormulaString(structure)}")
+        for (Molecule mol : result) {
+            logger.info("generated: ${calculateSumFormulaString(mol)}")
+        }
+        return result.size()
+    }
+
 }

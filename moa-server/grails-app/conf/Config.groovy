@@ -116,7 +116,7 @@ log4j = {
 
         development {
 
-            //debug 'util'
+            debug 'util.chemical'
             debug 'curation'
 
             debug 'grails.app'
