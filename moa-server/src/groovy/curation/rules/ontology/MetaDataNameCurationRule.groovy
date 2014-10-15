@@ -44,4 +44,10 @@ class MetaDataNameCurationRule extends AbstractCurationRule{
     boolean ruleAppliesToObject(CurationObject toValidate) {
         return true
     }
+
+
+    @Override
+    String getDescription() {
+        return "this rule verifies MetaData names against an Ontology"
+    }
 }

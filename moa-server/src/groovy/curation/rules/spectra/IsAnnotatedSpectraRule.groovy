@@ -25,4 +25,10 @@ class IsAnnotatedSpectraRule extends AbstractMetaDataCentricRule{
         }
         return false
     }
+
+
+    @Override
+    String getDescription() {
+        return "this rule determines if a spectra is annotated and should run at the end of the workflow"
+    }
 }

@@ -47,4 +47,9 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
         return false;
     }
 
+
+    @Override
+    String getDescription() {
+        return "this rule calculates if the Spectrum comes from a LCMS system"
+    }
 }

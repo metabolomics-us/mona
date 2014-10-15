@@ -18,4 +18,8 @@ class IgnoreOnFailureAction implements CurationAction{
     boolean actionAppliesToObject(CurationObject toValidate) {
         return true
     }
+    @Override
+    String getDescription() {
+        return "this action will do nothing"
+    }
 }

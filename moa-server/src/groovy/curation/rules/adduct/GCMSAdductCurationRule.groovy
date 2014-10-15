@@ -56,4 +56,9 @@ class GCMSAdductCurationRule extends AbstractAdductCurationRule {
 
         return false
     }
+
+    @Override
+    String getDescription() {
+        return "this rule tries to annotate all GCMS Adducts, found in the spectra"
+    }
 }

@@ -19,4 +19,10 @@ interface CurationAction  extends CommonTags{
      * @return
      */
     boolean actionAppliesToObject(CurationObject toValidate);
+
+    /**
+     * returns a description of this action
+     * @return
+     */
+    String getDescription();
 }

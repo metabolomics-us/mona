@@ -3,8 +3,6 @@ package curation.rules.adduct
 import curation.AbstractCurationRule
 import curation.CurationAction
 import curation.CurationObject
-import curation.actions.AddTagAction
-import curation.actions.RemoveTagAction
 import moa.MetaDataValue
 import moa.Spectrum
 import moa.server.metadata.MetaDataPersistenceService
@@ -32,7 +30,7 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
     int minAdducts = 1
 
     public AbstractAdductCurationRule() {
-        super(new RemoveTagAction("Suspect InChI"), new AddTagAction("Suspect InChI"))
+        super()
     }
 
     public AbstractAdductCurationRule(CurationAction successAction, CurationAction failureAction) {
@@ -133,7 +131,7 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
             }
 
             def adductTable = getAdductTable(ionMode, spectrum)
-            adductTable.each {k,v ->
+            adductTable.each { k, v ->
                 logger.info("registered adduct for search: ${k}")
             }
             return validateFoundMatches(findAdductMatches(spectrum, adductTable, compoundMass, toleranceInDalton), spectrum)

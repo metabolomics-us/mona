@@ -117,4 +117,10 @@ class LCMSAdductCurationRule extends AbstractAdductCurationRule {
 
         return false
     }
+
+
+    @Override
+    String getDescription() {
+        return "this rule tries to annotate all LCMS Adducts, found in the spectra"
+    }
 }

@@ -63,4 +63,10 @@ class AddTagAction implements CurationAction {
     boolean actionAppliesToObject(CurationObject toValidate) {
         return (toValidate.isSpectra() || toValidate.isCompound())
     }
+
+    @Override
+    String getDescription() {
+        return "this action will add the defined actions to the compound or spectrum"
+    }
 }
+

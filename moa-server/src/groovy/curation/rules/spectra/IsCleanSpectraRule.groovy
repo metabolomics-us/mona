@@ -72,4 +72,9 @@ class IsCleanSpectraRule extends AbstractCurationRule{
         }
     }
 
+
+    @Override
+    String getDescription() {
+        return "this rule calculates if the spectra of the spectrum is dirty or not"
+    }
 }

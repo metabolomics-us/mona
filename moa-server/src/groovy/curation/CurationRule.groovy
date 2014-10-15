@@ -33,4 +33,9 @@ public interface CurationRule extends CommonTags {
      */
     boolean ruleAppliesToObject(CurationObject toValidate);
 
+    /**
+     * returns a brief description of this rule and what it is supposed ToDo
+     * @return
+     */
+    String getDescription()
 }

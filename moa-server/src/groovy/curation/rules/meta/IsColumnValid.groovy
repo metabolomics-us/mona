@@ -1,13 +1,9 @@
 package curation.rules.meta
 
-import curation.CurationAction
-import curation.actions.AddTagAction
 import curation.actions.MetaDataSuspectAction
-import curation.actions.RemoveTagAction
 import curation.rules.AbstractMetaDataCentricRule
 import moa.MetaDataValue
 import org.apache.log4j.Logger
-
 /**
  * Created by sajjan on 10/7/14.
  */
@@ -39,5 +35,11 @@ class IsColumnValid extends AbstractMetaDataCentricRule {
 
     protected boolean isCorrectMetaDataField(MetaDataValue field) {
         return field.name.toLowerCase() == fieldName
+    }
+
+
+    @Override
+    String getDescription() {
+        return "this rule calculates if the $fieldName has a valid column value"
     }
 }

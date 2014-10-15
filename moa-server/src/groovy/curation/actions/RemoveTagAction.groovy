@@ -70,4 +70,9 @@ class RemoveTagAction implements CurationAction {
     boolean actionAppliesToObject(CurationObject toValidate) {
         return (toValidate.isSpectra() || toValidate.isCompound())
     }
+
+    @Override
+    String getDescription() {
+        return "this action will remove the specified tags from the given compound or spectra"
+    }
 }

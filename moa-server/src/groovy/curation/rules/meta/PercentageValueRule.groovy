@@ -58,4 +58,10 @@ class PercentageValueRule extends AbstractMetaDataCentricRule {
     protected boolean failByDefault() {
         return false;
     }
+
+
+    @Override
+    String getDescription() {
+        return "this rule calculates if the percentage of the field $field is between $minPercentage and $maxPercentage"
+    }
 }

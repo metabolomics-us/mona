@@ -40,4 +40,10 @@ class CompoundComputeMetaDataRule extends AbstractCurationRule{
     boolean ruleAppliesToObject(CurationObject toValidate) {
         return toValidate.isCompound()
     }
+
+
+    @Override
+    String getDescription() {
+        return "this rule calculates common metadata fields for a given compound"
+    }
 }

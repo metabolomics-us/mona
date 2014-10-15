@@ -79,4 +79,10 @@ class ConvertMassspectraToRelativeSpectraRule extends AbstractCurationRule {
 
         return true
     }
+
+
+    @Override
+    String getDescription() {
+        return "this rule converts an absolute spectra to a relative spectra"
+    }
 }

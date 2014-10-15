@@ -41,4 +41,9 @@ class DeletedComputedMetaDataRule extends AbstractCurationRule {
     boolean ruleAppliesToObject(CurationObject toValidate) {
         return toValidate.isCompound() || toValidate.isSpectra()
     }
+
+    @Override
+    String getDescription() {
+        return "this rule removes all automatically computed metadata fields from a compound or a spectra"
+    }
 }

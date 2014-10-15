@@ -51,4 +51,10 @@ class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
         logger.debug("considert to be precise enough: ${result}")
         return result
     }
+
+
+    @Override
+    String getDescription() {
+        return "this rule calculates if the spectra of a spectrum is precise enough"
+    }
 }

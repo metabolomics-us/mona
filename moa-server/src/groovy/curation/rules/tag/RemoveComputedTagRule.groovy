@@ -40,4 +40,9 @@ class RemoveComputedTagRule extends AbstractCurationRule{
     boolean ruleAppliesToObject(CurationObject toValidate) {
         return (toValidate.isSpectra() || toValidate.isCompound())
     }
+
+    @Override
+    String getDescription() {
+        return "this rule removes all automatically computed tags from a compound or a spectra"
+    }
 }

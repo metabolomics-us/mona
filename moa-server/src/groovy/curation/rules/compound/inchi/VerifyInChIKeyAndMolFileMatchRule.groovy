@@ -64,4 +64,9 @@ class VerifyInChIKeyAndMolFileMatchRule extends AbstractCompoundRule {
     boolean ruleAppliesToObject(CurationObject toValidate) {
         return toValidate.isCompound()
     }
+
+    @Override
+    String getDescription() {
+        return "this rule calculates if the InChI Key is the correct one for the provided Molfile"
+    }
 }

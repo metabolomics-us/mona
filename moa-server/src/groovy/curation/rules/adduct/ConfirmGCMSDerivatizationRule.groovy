@@ -84,4 +84,8 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
                 field.category == "focused ion" && field.name == this.field)
 
     }
+    @Override
+    String getDescription() {
+        return "this rule tries to calculate if the specified ${field} value is actually possible, based on the provided biological compound"
+    }
 }
