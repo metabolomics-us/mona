@@ -102,6 +102,11 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
     }
 
     @Override
+    String getDescription() {
+        return "this is a rule, which can contain further rules"
+    }
+
+    @Override
     boolean executeRule(CurationObject spectrum) {
         return runWorkflow(spectrum)
     }
