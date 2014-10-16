@@ -24,9 +24,9 @@ abstract class AbstractCurationRule implements CurationRule {
 
     Logger logger = Logger.getLogger(getClass())
 
-    protected CurationAction successAction
+     CurationAction successAction
 
-    protected CurationAction failureAction
+     CurationAction failureAction
 
     /**
      * default constructor
@@ -113,6 +113,10 @@ abstract class AbstractCurationRule implements CurationRule {
     String calculateSumFormulaString(Molecule molecule) {
         return MolecularFormulaManipulator.getString(calculateFormula(molecule))
 
+    }
+
+    double calculateMolareMass(Molecule molecule){
+        return MolecularFormulaManipulator.getTotalExactMass(calculateFormula(molecule))
     }
 
     /**

@@ -1,11 +1,9 @@
 package curation
 
-import curation.CurationRule
-import curation.CurationWorkflow
 import curation.actions.AddTagAction
+import curation.actions.IgnoreOnFailureAction
 import curation.actions.RemoveTagAction
 import org.apache.log4j.Logger
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -17,6 +15,11 @@ class SubCurationWorkflow extends CurationWorkflow implements CurationRule {
 
     private boolean abortOnFailure
     private String tag
+
+    SubCurationWorkflow(boolean abortOnFailure) {
+        super(new IgnoreOnFailureAction(),new IgnoreOnFailureAction())
+        this.abortOnFailure = abortOnFailure
+    }
 
     SubCurationWorkflow(String tag, boolean abortOnFailure, String description) {
         super(new RemoveTagAction(tag), new AddTagAction(tag))

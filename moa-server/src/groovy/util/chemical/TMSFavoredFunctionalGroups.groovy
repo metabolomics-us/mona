@@ -9,7 +9,7 @@ package util.chemical
 public class TMSFavoredFunctionalGroups {
 
     /**
-     * returns a list of favored groups
+     * returns a list of favored groups in there order of likelyhood
      * @return
      */
     static def buildFavoredGroupsInOrder() {

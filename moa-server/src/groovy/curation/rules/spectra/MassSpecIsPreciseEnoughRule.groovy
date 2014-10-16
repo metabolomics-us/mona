@@ -14,7 +14,7 @@ import curation.AbstractCurationRule
 class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
 
     Logger logger = Logger.getLogger(getClass())
-    double minPrecision = 3
+    int minPrecision = 3
 
     @Override
     boolean ruleAppliesToObject(CurationObject toValidate) {
@@ -32,19 +32,15 @@ class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
 
         boolean result = false
 
+        def pattern = /[0-9]+.[0-9]{${minPrecision}}/
         spectra.split(" ").each { String ionPair ->
 
+
             String ion = ionPair.split(":")[0]
-            if (ion.indexOf(".") > 0) {
 
-
-                String ionDigits = (ion.substring(ion.indexOf('.') + 1, ion.length() - 1))
-
-                if (ionDigits.length() > minPrecision) {
-                    if (Integer.parseInt(ionDigits) > 0) {
-                        result = true
-                    }
-                }
+            def matcher = (ion =~ pattern)
+            if(matcher.matches()){
+                result = true
             }
         }
 

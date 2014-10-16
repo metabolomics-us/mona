@@ -1,18 +1,19 @@
 import curation.CurationObject
 import curation.CurationWorkflow
 import curation.SubCurationWorkflow
+import curation.actions.AddTagAction
+import curation.actions.RemoveTagAction
 import curation.rules.adduct.ConfirmGCMSDerivatizationRule
 import curation.rules.adduct.GCMSAdductCurationRule
 import curation.rules.adduct.LCMSAdductCurationRule
 import curation.rules.compound.meta.CompoundComputeMetaDataRule
 import curation.rules.compound.meta.DeletedComputedMetaDataRule
 import curation.rules.compound.inchi.VerifyInChIKeyAndMolFileMatchRule
-import curation.rules.compound.structure.TMSSubstructureSearchRule
-import curation.rules.compound.structure.TMSSubstructureSearchRule
 import curation.rules.instrument.GCMSSpectraIdentificationRule
 import curation.rules.instrument.LCMSSpectraIdentificationRule
 import curation.rules.meta.IsColumnValid
 import curation.rules.meta.PercentageValueRule
+import curation.rules.meta.ProvidedExactMassIsPossibleRule
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
@@ -48,8 +49,6 @@ beans = {
     deleteMetaDataRule(DeletedComputedMetaDataRule)
 
     deleteRuleBasedTagRule(RemoveComputedTagRule)
-
-    tmsSubstructureSearch(TMSSubstructureSearchRule)
 
     compoundCurationWorkflow(CurationWorkflow) { workflow ->
 
@@ -144,13 +143,22 @@ beans = {
  * GCMS Derivatization rules
  */
     gcmsDerivatizationRule(ConfirmGCMSDerivatizationRule)
+
+    /**
+     * checks if the provided accurate mass is actuall possible
+     */
+    exactMassIsPossibleRule(ProvidedExactMassIsPossibleRule)
+
 /**
  * set up subcuration workflow to check if it's an accurate mass spectra
  */
-    isAccurateMassSpectra(SubCurationWorkflow, "accurate", true, "accurate mass validation") {
+    isAccurateMassSpectra(SubCurationWorkflow, true) {
         rules = [
                 preciseEnough
         ]
+
+        successAction = new AddTagAction("accurate")
+        failureAction = new RemoveTagAction("accurate")
     }
 
 /**
@@ -161,7 +169,9 @@ beans = {
                 collisionEnergyPercentageRule,
                 solventPercentageRule,
                 flowGradientPercentageRule,
-                isColumnValid
+                isColumnValid,
+                exactMassIsPossibleRule,
+                gcmsDerivatizationRule
         ]
     }
 
@@ -171,22 +181,27 @@ beans = {
     spectraCurationWorkflow(CurationWorkflow) { workflow ->
 
         rules = [
+                /**
+                 * these rules should run first
+                 */
                 deleteRuleBasedTagRule,
                 deleteMetaDataRule,
-                // Metadata curation
-                metadataCuration,
-
-                // Tagging curation steps
+                convertSpectraToRelativeRule,
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,
+                /**
+                 * order doesn't really matter here
+                 */
+                metadataCuration,
                 isAccurateMassSpectra,
-                convertSpectraToRelativeRule,
                 isSpectraDirty,
-                isAnnotatedSpectraRule,
                 lcmsAdductCuration,
                 gcmsAdductCuration,
-                tmsSubstructureSearch,
-                gcmsDerivatizationRule
+
+                /**
+                 * these rules should run last
+                 */
+                isAnnotatedSpectraRule
 
         ]
         //define and register our curation
