@@ -5,6 +5,7 @@ class Compound extends SupportsMetaData{
     static constraints = {
         inchiKey unique: true, nullable: false
         molFile nullable: true
+        inchi nullable: true
     }
 
     static mapping = {
@@ -12,7 +13,7 @@ class Compound extends SupportsMetaData{
         molFile sqlType: "text"
         version false
         names fetch: 'join'
-
+        inchi sqlType: "text"
     }
     /**
      * this compound belongs to one spectrum
@@ -39,4 +40,8 @@ class Compound extends SupportsMetaData{
      */
     Set<Tag> tags
 
+    /**
+     * associated inchi code
+     */
+    String inchi
 }

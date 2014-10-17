@@ -35,6 +35,11 @@ class MetaDataSuspectAction implements CurationAction {
     }
 
     @Override
+    String getDescription() {
+        return null
+    }
+
+    @Override
     void doAction(CurationObject curationObject) {
         if (curationObject.isSpectra()) {
             Spectrum spectrum = curationObject.getObjectAsSpectra()
