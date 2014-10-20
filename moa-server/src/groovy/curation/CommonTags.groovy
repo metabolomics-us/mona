@@ -13,4 +13,16 @@ public interface CommonTags {
 
     public static final String GCMS_SPECTRA = "GCMS"
 
+    public static final String VIRTUAL_COMPOUND = "virtually derivatized compound"
+
+    public static final String INVALID_DERIVATIZATION = "invalid derivatization"
+
+    public static final String INCHI_KEY_DOESNT_MATCH_MOLECULE = "InChI Key does not match molecule!"
+
+    public static final String DIRTY_SPECTRA = "dirty spectra"
+
+    public static final String ANNOTATED_SPECTRA = "annotated"
+
+    public static final String SUSPECT_VALUE = "suspect value"
+
 }

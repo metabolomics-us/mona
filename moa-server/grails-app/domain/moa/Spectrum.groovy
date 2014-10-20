@@ -20,7 +20,8 @@ class Spectrum extends SupportsMetaData{
     static belongsTo = [
             submitter         : Submitter,
             chemicalCompound  : Compound,
-            biologicalCompound: Compound
+            biologicalCompound: Compound,
+            predictedCompound: Compound
     ]
 
     static constraints = {
@@ -28,6 +29,7 @@ class Spectrum extends SupportsMetaData{
 	    spectrum nullable: false //, unique: true
         chemicalCompound nullable: true
         biologicalCompound nullable: true
+        predictedCompound nullable: true
         submitter nullable: true
     }
 
@@ -36,7 +38,6 @@ class Spectrum extends SupportsMetaData{
         spectrum sqlType: "text"
         version false
         tags fetch: 'join'
-
     }
 
     /**
@@ -64,4 +65,8 @@ class Spectrum extends SupportsMetaData{
      */
     Compound biologicalCompound
 
+    /**
+     * a predicted possible compound by internal algorithms, based on available data
+     */
+    Compound predictedCompound
 }

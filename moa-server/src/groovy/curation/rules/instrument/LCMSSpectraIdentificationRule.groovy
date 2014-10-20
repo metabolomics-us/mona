@@ -16,6 +16,8 @@ import curation.rules.AbstractMetaDataCentricRule
 class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     private Logger logger = Logger.getLogger(getClass())
 
+    Map<String, String> listOfAcceptedField = ["instrument": ".*lcms.*", "instrument type": ".*lc.*", "solvent": ".*"]
+
 
     def LCMSSpectraIdentificationRule() {
         super(new AddTagAction(LCMS_SPECTRA), new RemoveTagAction(LCMS_SPECTRA));
@@ -29,7 +31,21 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     protected boolean acceptMetaDataValue(MetaDataValue val) {
         String value = val.value.toString().toLowerCase()
 
-        return (value.contains("lcms") || value.contains("lc"))
+
+        String s = listOfAcceptedField.get(val.name.toLowerCase())
+
+        logger.info("checking ${s} vs ${val.value} - ${val.unit}")
+
+        if (value.equals(s.toLowerCase())) {
+
+            return true
+        } else if (val.unit != null && val.unit.toLowerCase().equals(s.toLowerCase())) {
+            return true
+        } else if (value.matches(s)) {
+            return true
+        }
+
+        return false
 
     }
 
@@ -39,11 +55,14 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue field) {
-        if (field.name.toLowerCase() == "instrument") {
-            return true
-        } else if (field.name.toLowerCase() == "instrument type") {
-            return true
+
+
+        for (String s in listOfAcceptedField.keySet()) {
+            if (field.name.toLowerCase().equals(s.toLowerCase())) {
+                return true
+            }
         }
+
         return false;
     }
 

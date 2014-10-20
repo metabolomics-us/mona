@@ -73,8 +73,15 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                         if (angular.isDefined(model.molFile)) {
 
                             //$log.debug('rendering mol file: \n' + model.molFile);
-                            var mol = ChemDoodle.readMOL('\n'+model.molFile+'\n');
-                            sketcher.loadMolecule(mol);
+                            if (model.molFile.indexOf('\n') > 0) {
+                                var mol = ChemDoodle.readMOL("\n" + model.molFile + "\n");
+                                sketcher.loadMolecule(mol);
+                            }
+                            else {
+                                var mol = ChemDoodle.readMOL(model.molFile);
+                                sketcher.loadMolecule(mol);
+
+                            }
                         }
 
                         else {

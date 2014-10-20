@@ -1,252 +1,157 @@
 <div>
-<!-- mass spectral properties -->
-<div class="row">
-    <div class="col-md-12">
+    <!-- mass spectral properties -->
+    <div class="row">
+        <div class="col-md-12">
 
-        <div ng-show="spectrum.tags.length">
-            <ul class="list-inline">
-                <li ng-repeat="tag in spectrum.tags">
+            <div ng-show="spectrum.tags.length">
+                <ul class="list-inline">
+                    <li ng-repeat="tag in spectrum.tags">
 
 
-                    <span gw-tag="" rule-based="tag.ruleBased == true">{{tag.text}}</span>
-                </li>
-            </ul>
+                        <span gw-tag="" rule-based="tag.ruleBased == true">{{tag.text}}</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <tabset justified="true">
-            <tab heading="Mass Spectrum">
-                <div class="masspec-modal">
-                    <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
-                </div>
-            </tab>
-            <tab heading="Table of Ions">
-                <div style="height: 400px; overflow: auto; margin-top: 10px;">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Ion</th>
-                            <th>Intensity</th>
-                            <th>annotation</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+    <div class="row">
+        <div class="col-md-12">
+            <tabset justified="true">
+                <tab heading="Mass Spectrum">
 
-                        <tr ng-repeat="ion in massSpec">
-                            <td>{{ion.ion}}</td>
-                            <td>{{ion.intensity}}</td>
-                            <td>{{ion.annotation}}
-
-
-                                <!-- display this, if it's a computed value -->
-                                <i ng-show="ion.computed == true" class="fa fa-flask"></i>
-
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </tab>
-        </tabset>
-    </div>
-</div>
-<br/>
-
-<div class="row">
-    <div class="col-md-12">
-        <tabset justified="true">
-
-            <tab>
-                <tab-heading>Biological Compound Properties</tab-heading>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div ng-show="spectrum.biologicalCompound.metaData.length">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>name</th>
-                                    <th>value</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="meta in spectrum.biologicalCompound.metaData | unique:'name' | orderBy : 'name':true ">
-
-                                    <td>
-                                        {{meta.name}}
-                                    </td>
-                                    <td>
-                                        {{meta.value}} {{meta.unit}}
-
-                                        <!-- display this, if there seems to be something odd with this value -->
-                                        <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
-
-                                        </i>
-
-                                        <!-- display this, if it's a computed value -->
-                                        <i ng-show="meta.computed == true" class="fa fa-flask"></i>
-
-                                    </td>
-                                </tr>
-
-                                </tbody>
-                            </table>
+                    <div class="col-md-8">
+                        <div class="masspec-modal">
+                            <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <dl class="dl-horizontal compound-properties">
-                            <dt>ID:</dt>
-                            <dd>{{spectrum.biologicalCompound.id}}</dd>
-                            <dt>InChIKey:</dt>
-                            <dd>{{spectrum.biologicalCompound.inchiKey}}</dd>
-                            <dt ng-show="spectrum.biologicalCompound.names.length">Name(s):</dt>
-                            <dd ng-repeat="name in spectrum.biologicalCompound.names">{{name.name}}</dd>
-                        </dl>
+                    <div class="col-md-4">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Ion</th>
+                                <th>Intensity</th>
+                                <th>annotation</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                        <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
-                             id="bigBioCompoundViewer_{{spectrum.id}}" ng-model="spectrum.biologicalCompound"></div>
+                            <tr ng-if="ion.annotation != ''" ng-repeat="ion in massSpec">
+
+                                <td>{{ion.ion}}</td>
+                                <td>{{ion.intensity}}</td>
+                                <td>{{ion.annotation}}
+
+
+                                    <!-- display this, if it's a computed value -->
+                                    <i ng-show="ion.computed == true" class="fa fa-flask"></i>
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
+                </tab>
+                <tab heading="Table of Ions">
+                    <div style="height: 400px; overflow: auto; margin-top: 10px;">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Ion</th>
+                                <th>Intensity</th>
+                                <th>annotation</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                        <div ng-show="spectrum.biologicalCompound.tags.length">
-                            <h4>Tags</h4>
-                            <ul class="list-inline">
-                                <li ng-repeat="tag in spectrum.biologicalCompound.tags">
-                                    <span gw-tag="" rule-based="tag.ruleBased == true">{{tag.text}}</span>
-                                </li>
-                            </ul>
-                        </div>
+                            <tr ng-repeat="ion in massSpec">
+                                <td>{{ion.ion}}</td>
+                                <td>{{ion.intensity}}</td>
+                                <td>{{ion.annotation}}
+
+
+                                    <!-- display this, if it's a computed value -->
+                                    <i ng-show="ion.computed == true" class="fa fa-flask"></i>
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-            </tab>
-
-            <tab heading="Chemical Compound Properties">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div ng-show="spectrum.chemicalCompound.metaData.length">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>name</th>
-                                    <th>value</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="meta in spectrum.chemicalCompound.metaData | unique:'name' | orderBy : 'name':true ">
-
-                                    <td>
-                                        {{meta.name}}
-                                    </td>
-                                    <td>
-                                        {{meta.value}} {{meta.unit}}
-
-                                        <!-- display this, if there seems to be something odd with this value -->
-                                        <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
-
-                                        </i>
-
-                                        <!-- display this, if it's a computed value -->
-                                        <i ng-show="meta.computed == true" class="fa fa-flask"></i>
-                                    </td>
-
-                                </tr>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <dl class="dl-horizontal compound-properties">
-                            <dt>ID:</dt>
-                            <dd>{{spectrum.chemicalCompound.id}}</dd>
-                            <dt>InChIKey:</dt>
-                            <dd>{{spectrum.chemicalCompound.inchiKey}}</dd>
-                            <dt ng-show="spectrum.chemicalCompound.names.length">Name(s):</dt>
-                            <dd ng-repeat="name in spectrum.chemicalCompound.names">{{name.name}}</dd>
-                        </dl>
-
-                        <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
-                             id="bigChemCompoundViewer_{{spectrum.id}}" ng-model="spectrum.chemicalCompound"></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-
-                        <div ng-show="spectrum.chemicalCompound.tags.length">
-                            <h4>Tags</h4>
-                            <ul class="list-inline">
-                                <li ng-repeat="tag in spectrum.chemicalCompound.tags">
-                                    <span gw-tag="" rule-based="tag.ruleBased == true">{{tag.text}}</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-            </tab>
-        </tabset>
-    </div>
-</div>
-<br/>
-
-<div class="row">
-    <div class="col-md-12">
-        <div ng-show="spectrum.metaData.length">
-            <h4>Mass Spectrum Metadata</h4>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>category</th>
-                    <th>name</th>
-                    <th>value</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="meta in spectrum.metaData | orderBy : 'category':true">
-                    <td>
-                        {{meta.category}}
-                    </td>
-                    <td>
-                        {{meta.name}}
-                    </td>
-                    <td>
-                        {{meta.value}} {{meta.unit}}
-
-                        <!-- display this, if there seems to be something odd with this value -->
-                        <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
-
-                        </i>
-
-                        <!-- display this, if it's a computed value -->
-                        <i ng-show="meta.computed == true" class="fa fa-flask">
-
-                        </i>
-
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <br/>
-
-        <div ng-show="spectrum.tags.length">
-            <h4>Tags</h4>
-            <ul class="list-inline">
-                <li ng-repeat="tag in spectrum.tags">
-                    <span gw-tag="" rule-based="tag.ruleBased == true">{{tag.text}}</span>
-                </li>
-            </ul>
-        </div>
-        <br/>
-
-        <div ng-show="spectrum.comments.length">
-            <h4>Comments</h4>
-            <blockquote><p style="font-size: 75%">{{spectrum.comments}}</p></blockquote>
+                </tab>
+            </tabset>
         </div>
     </div>
-</div>
+    <br/>
+
+    <div class="row">
+        <div class="col-md-12">
+            <tabset justified="true">
+                <tab heading="Virtually Derivatized Substance Properties" ng-if="spectrum.predictedCompound != null">
+                    <div display-compound-info compound="spectrum.predictedCompound"></div>
+                </tab>
+
+                <tab>
+                    <tab-heading>Substance Properties</tab-heading>
+
+                    <div display-compound-info compound="spectrum.biologicalCompound"></div>
+
+                </tab>
+
+                <tab heading="Submitted Derivatized Substance Properties">
+                    <div display-compound-info compound="spectrum.chemicalCompound"></div>
+                </tab>
+
+
+            </tabset>
+        </div>
+    </div>
+    <br/>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div ng-show="spectrum.metaData.length">
+                <h4>Mass Spectrum Metadata</h4>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>category</th>
+                        <th>name</th>
+                        <th>value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="meta in spectrum.metaData | orderBy : 'category':true">
+                        <td>
+                            {{meta.category}}
+                        </td>
+                        <td>
+                            {{meta.name}}
+                        </td>
+                        <td>
+
+                            <span gw-value value="meta">{{meta.value}} {{meta.unit}}</span>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br/>
+
+            <div ng-show="spectrum.tags.length">
+                <h4>Tags</h4>
+                <ul class="list-inline">
+                    <li ng-repeat="tag in spectrum.tags">
+                        <span gw-tag="" rule-based="tag.ruleBased == true">{{tag.text}}</span>
+                    </li>
+                </ul>
+            </div>
+            <br/>
+
+            <div ng-show="spectrum.comments.length">
+                <h4>Comments</h4>
+                <blockquote><p style="font-size: 75%">{{spectrum.comments}}</p></blockquote>
+            </div>
+        </div>
+    </div>
 </div>

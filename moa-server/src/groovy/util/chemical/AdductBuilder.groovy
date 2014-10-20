@@ -1,6 +1,7 @@
 package util.chemical
 
 import org.openscience.cdk.Atom
+import org.openscience.cdk.Bond
 import org.openscience.cdk.Molecule
 import org.openscience.cdk.interfaces.IBond
 
@@ -20,14 +21,10 @@ class AdductBuilder {
         Molecule molecule = new Molecule()
         Atom carbon = new Atom("C")
         molecule.addAtom(carbon)
-        molecule.addAtom(new Atom("H"))
-        molecule.addAtom(new Atom("H"))
-        molecule.addAtom(new Atom("H"))
 
-        molecule.addBond(0,1,IBond.Order.SINGLE)
-        molecule.addBond(0,2,IBond.Order.SINGLE)
-        molecule.addBond(0,3,IBond.Order.SINGLE)
+        carbon.setImplicitHydrogenCount(3)
 
+        FunctionalGroupBuilder.makeHydrogens(molecule)
         return molecule
     }
 
@@ -38,14 +35,19 @@ class AdductBuilder {
     static Molecule makeTMS() {
         Molecule mol = new Molecule()
 
-        mol.addAtom(new Atom("Si"))
-        mol.add(makeMethyl())
-        mol.add(makeMethyl())
-        mol.add(makeMethyl())
+        Atom silicium = new Atom("Si")
+        Molecule m1 = makeMethyl()
+        Molecule m2 = makeMethyl()
+        Molecule m3 = makeMethyl()
 
-        mol.addBond(0, 1, IBond.Order.SINGLE)
-        mol.addBond(0, 2, IBond.Order.SINGLE)
-        mol.addBond(0, 3, IBond.Order.SINGLE)
+        mol.addAtom(silicium)
+        mol.add(m1)
+        mol.add(m2)
+        mol.add(m3)
+
+        mol.addBond(new Bond(silicium,m1.getAtom(0),IBond.Order.SINGLE))
+        mol.addBond(new Bond(silicium,m2.getAtom(0),IBond.Order.SINGLE))
+        mol.addBond(new Bond(silicium,m3.getAtom(0),IBond.Order.SINGLE))
 
         return mol;
     }

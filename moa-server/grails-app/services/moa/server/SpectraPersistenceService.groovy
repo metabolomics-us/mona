@@ -69,7 +69,7 @@ class SpectraPersistenceService {
  * @param compound
  * @return
  */
-    private Compound buildCompound(Compound compound) {
+    public Compound buildCompound(Compound compound) {
 
         def names = compound.names
 
@@ -92,14 +92,15 @@ class SpectraPersistenceService {
 
         log.debug("==> done: ${myCompound}")
 
-        //merge new names
-        names.each { name ->
-            Name n = Name.findOrSaveByNameAndCompound(name.name, myCompound)
-            if (n != null) {
-                myCompound.addToNames(n)
+        if(names) {
+            //merge new names
+            names.each { name ->
+                Name n = Name.findOrSaveByNameAndCompound(name.name, myCompound)
+                if (n != null) {
+                    myCompound.addToNames(n)
+                }
             }
         }
-
         myCompound.molFile = compound.molFile
 
         myCompound.save(flush:true)
@@ -107,7 +108,6 @@ class SpectraPersistenceService {
         compoundPropertyService.calculateMetaData(myCompound)
 
         return myCompound;
-
 
     }
 

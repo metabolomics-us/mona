@@ -179,6 +179,7 @@ class SpectraQueryService {
 
                 queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
                 queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
+
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
 
@@ -205,13 +206,15 @@ class SpectraQueryService {
 
                 queryOfDoomJoins += " left join s.biologicalCompound as bc"
                 queryOfDoomJoins += " left join s.chemicalCompound as cc"
+                queryOfDoomJoins += " left join s.predictedCompound as pc"
+
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 if (json.compound.inchiKey.eq) {
-                    queryOfDoomWhere += "(bc.inchiKey = :inchiKey or cc.inchiKey = :inchiKey)"
+                    queryOfDoomWhere += "(bc.inchiKey = :inchiKey or cc.inchiKey = :inchiKey or pc.inchiKey = :inchiKey)"
                     executionParams.inchiKey = json.compound.inchiKey.eq
                 } else if (json.compound.inchiKey.like) {
-                    queryOfDoomWhere += "(bc.inchiKey like :inchiKey or cc.inchiKey like :inchiKey)"
+                    queryOfDoomWhere += "(bc.inchiKey like :inchiKey or cc.inchiKey like :inchiKey or pc.inchiKey like :inchiKey)"
                     executionParams.inchiKey = "%${json.compound.inchiKey.like}%"
                 } else {
                     throw new QueryException("invalid query term: ${json.compound.inchiKey}")
@@ -224,14 +227,15 @@ class SpectraQueryService {
 
                 queryOfDoomJoins += " left join s.biologicalCompound as bc"
                 queryOfDoomJoins += " left join s.chemicalCompound as cc"
+                queryOfDoomJoins += " left join s.predictedCompound as pc"
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 if (json.compound.id) {
-                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id)"
+                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
                     executionParams.compund_id = json.compound.id as long
                 }
                 else if(json.compound.id.eq){
-                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id)"
+                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
                     executionParams.compund_id = json.compound.id.eq as long
 
                 }

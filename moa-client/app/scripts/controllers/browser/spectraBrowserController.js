@@ -39,23 +39,30 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.tagsSelection = [];
 
-
+    /**
+     * load more spectra
+     */
+    $scope.spectraLoadLength = -1;
 
     /**
-     *  Add name to query if given in route
+     * compiled query which is supposed to be executed or refiened
+     * @type {{}}
      */
-    if ($routeParams.name) {
-        $scope.nameFilter = $routeParams.name;
-        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({nameFilter: $routeParams.name}, {}, []));
-    }
+    $scope.compiledQuery = {
+        compound: {},
+        metadata: [],
+        tags: []
+    };
 
-    /*
-     * Add inchikey to query if given in route
+    /**
+     * loads more spectra into the view using our query object
      */
-    if ($routeParams.inchikey) {
-        $scope.inchiFilter = $routeParams.inchikey;
-        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({inchiFilter: $routeParams.inchikey}, {}, []));
-    }
+    $scope.loadingMore = false;
+
+    /**
+     * Tells whether we are have loaded all available data
+     */
+    $scope.dataAvailable = true;
 
     /**
      * refine the current query by submitting an updates query
@@ -122,21 +129,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     };
 
     /**
-     * load more spectra
-     */
-    $scope.spectraLoadLength = -1;
-
-    /**
-     * compiled query which is supposed to be executed or refiened
-     * @type {{}}
-     */
-    $scope.compiledQuery = {
-        compound: {},
-        metadata: [],
-        tags: []
-    };
-
-    /**
      * calculates our offsets for us
      */
     $scope.calculateOffsets = function () {
@@ -170,7 +162,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             var mass = '';
 
             for(var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
-                if(spectra[i].biologicalCompound.metaData[j].name === 'natural mass') {
+                if(spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
                     mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
                 }
             }
@@ -180,17 +172,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
         return spectra;
     };
-
-
-    /**
-     * loads more spectra into the view using our query object
-     */
-    $scope.loadingMore = false;
-
-    /**
-     * Tells whether we are have loaded all available data
-     */
-    $scope.dataAvailable = true;
 
     /**
      * loads more spectra into the given view
@@ -240,4 +221,22 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
         $scope.loadTags();
     })();
+
+
+    /**
+     *  Add name to query if given in route
+     */
+    if ($routeParams.name) {
+        $scope.nameFilter = $routeParams.name;
+        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({nameFilter: $routeParams.name}, {}, []));
+    }
+
+    /*
+     * Add inchikey to query if given in route
+     */
+    if ($routeParams.inchikey) {
+        $scope.inchiFilter = $routeParams.inchikey;
+        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({inchiFilter: $routeParams.inchikey}, {}, []));
+    }
+
 };
