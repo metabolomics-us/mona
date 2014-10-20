@@ -13,8 +13,10 @@ import moa.MetaDataValue
  */
 class IsAnnotatedSpectraRule extends AbstractMetaDataCentricRule{
 
+
+
     IsAnnotatedSpectraRule() {
-        super(new AddTagAction("annotated"), new RemoveTagAction("annotated"))
+        super(new AddTagAction(ANNOTATED_SPECTRA), new RemoveTagAction(ANNOTATED_SPECTRA))
     }
 
 

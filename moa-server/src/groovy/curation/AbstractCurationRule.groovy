@@ -1,7 +1,10 @@
 package curation
 
+import curation.actions.AddTagAction
 import curation.actions.IgnoreOnFailureAction
+import curation.actions.RemoveTagAction
 import moa.Compound
+import moa.Tag
 import org.apache.log4j.Logger
 import org.openscience.cdk.DefaultChemObjectBuilder
 import org.openscience.cdk.Molecule
@@ -24,9 +27,9 @@ abstract class AbstractCurationRule implements CurationRule {
 
     Logger logger = Logger.getLogger(getClass())
 
-     CurationAction successAction
+    CurationAction successAction
 
-     CurationAction failureAction
+    CurationAction failureAction
 
     /**
      * default constructor
@@ -87,6 +90,11 @@ abstract class AbstractCurationRule implements CurationRule {
         return mol
     }
 
+    /**
+     * calculate the inchi code
+     * @param molecule
+     * @return
+     */
     String calculateInChICode(Molecule molecule) {
 
         InChIGeneratorFactory factory = InChIGeneratorFactory.getInstance()
@@ -95,6 +103,11 @@ abstract class AbstractCurationRule implements CurationRule {
         return gen.inchi
     }
 
+    /**
+     * calculates the inchi key
+     * @param molecule
+     * @return
+     */
     String calculateInChIKey(Molecule molecule) {
 
         InChIGeneratorFactory factory = InChIGeneratorFactory.getInstance()
@@ -110,13 +123,60 @@ abstract class AbstractCurationRule implements CurationRule {
         return moleculeFormula;
     }
 
+    /**
+     * calculates the sum formula
+     * @param molecule
+     * @return
+     */
     String calculateSumFormulaString(Molecule molecule) {
         return MolecularFormulaManipulator.getString(calculateFormula(molecule))
 
     }
 
-    double calculateMolareMass(Molecule molecule){
+    /**
+     * calculates the molare mass
+     * @param molecule
+     * @return
+     */
+    double calculateMolareMass(Molecule molecule) {
         return MolecularFormulaManipulator.getTotalExactMass(calculateFormula(molecule))
+    }
+
+    /**
+     * is this a gcms spectra
+     * @param object
+     * @return
+     */
+    boolean isGCMSSpectra(CurationObject object) {
+
+        if (object.isSpectra()) {
+
+            for (Tag s : object.getObjectAsSpectra().tags) {
+                if (s.text == GCMS_SPECTRA) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    /**
+     * is this a lcms spectra
+     * @param object
+     * @return
+     */
+    boolean isLCMSSpectra(CurationObject object) {
+
+        if (object.isSpectra()) {
+
+            for (Tag s : object.getObjectAsSpectra().tags) {
+                if (s.text == LCMS_SPECTRA) {
+                    return true
+                }
+            }
+
+        }
+        return false
     }
 
     /**
@@ -136,5 +196,14 @@ abstract class AbstractCurationRule implements CurationRule {
         }
         return result.size()
     }
+
+    protected void addTag(CurationObject object, String... tags) {
+        new AddTagAction(tags).doAction(object)
+    }
+
+    protected void removeTag(CurationObject object, String... tags) {
+        new RemoveTagAction(tags).doAction(object)
+    }
+
 
 }

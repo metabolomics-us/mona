@@ -1,0 +1,64 @@
+<div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div ng-show="compound.metaData.length">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>name</th>
+                        <th>value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="meta in compound.metaData | unique:'name' | orderBy : 'name':true ">
+
+                        <td>
+                            {{meta.name}}
+                        </td>
+                        <td>
+                            {{meta.value}} {{meta.unit}}
+
+                            <!-- display this, if there seems to be something odd with this value -->
+                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
+
+                            </i>
+
+                            <!-- display this, if it's a computed value -->
+                            <i ng-show="meta.computed == true" class="fa fa-flask"></i>
+
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal compound-properties">
+                <dt>ID:</dt>
+                <dd>{{compound.id}}</dd>
+                <dt>InChIKey:</dt>
+                <dd><a href="/#/spectra/browse/{{compound.inchiKey}}">{{compound.inchiKey}}</a></dd>
+                <dt ng-show="compound.names.length">Name(s):</dt>
+                <dd ng-repeat="name in compound.names">{{name.name}}</dd>
+            </dl>
+
+            <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
+                 id="big-{{pictureId}}-CompoundViewer_{{compound.id}}" ng-model="compound"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <div ng-show="compound.tags.length">
+                <h4>Tags</h4>
+                <ul class="list-inline">
+                    <li ng-repeat="tag in compound.tags">
+                        <span gw-tag="" rule-based="tag.ruleBased == true">{{tag.text}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

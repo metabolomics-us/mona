@@ -4,6 +4,9 @@
 'use strict';
 
 /**
+ *
+ * TODO move to rule system on the server side
+ *
  * general service to optimize metadata and take care of some formating issues
  */
 app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q, $timeout, $filter) {

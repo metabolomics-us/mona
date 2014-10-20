@@ -52,6 +52,12 @@ class UrlMappings {
             "/spectra"(resources: 'Spectrum')
         }
 
+
+        /**
+         * renders a compound with this id as mol file
+         */
+        "/rest/compounds/$id/mol"(controller: 'molRender', action: 'renderCompoundAsMolFile', id:id)
+
         /**
          * curates a single compound
          */
@@ -61,7 +67,6 @@ class UrlMappings {
          * curates all compounds
          */
         "/rest/compounds/curateAll"(controller: 'compoundCuration', action: 'curateAll')
-
 
         "/rest/spectra"(resources: 'Spectrum')
 

@@ -3,9 +3,12 @@ import curation.CurationWorkflow
 import curation.SubCurationWorkflow
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
-import curation.rules.adduct.ConfirmGCMSDerivatizationRule
-import curation.rules.adduct.GCMSAdductCurationRule
+import curation.rules.adduct.gcms.ConfirmGCMSDerivatizationRule
+import curation.rules.adduct.gcms.GCMSAdductCurationRule
 import curation.rules.adduct.LCMSAdductCurationRule
+import curation.rules.adduct.gcms.GCMSDerivatizationDoesntMatchCompound
+import curation.rules.adduct.gcms.PredictGCMSCompoundRule
+import curation.rules.adduct.gcms.PredictedMMinus15Rule
 import curation.rules.compound.meta.CompoundComputeMetaDataRule
 import curation.rules.compound.meta.DeletedComputedMetaDataRule
 import curation.rules.compound.inchi.VerifyInChIKeyAndMolFileMatchRule
@@ -144,6 +147,22 @@ beans = {
  */
     gcmsDerivatizationRule(ConfirmGCMSDerivatizationRule)
 
+    gcmsPredictDerivatizedCompoundRule(PredictGCMSCompoundRule) { bean ->
+        bean.autowire = 'byName'
+    }
+
+    gcmsValidateChemicalCompound(GCMSDerivatizationDoesntMatchCompound){ bean ->
+        predictGCMSCompoundRule = gcmsPredictDerivatizedCompoundRule
+
+    }
+
+    gcmsPredictMMinus15Rule(PredictedMMinus15Rule){ bean ->
+        bean.autowire = 'byName'
+        predictGCMSCompoundRule = gcmsPredictDerivatizedCompoundRule
+
+    }
+
+
     /**
      * checks if the provided accurate mass is actuall possible
      */
@@ -197,7 +216,9 @@ beans = {
                 isSpectraDirty,
                 lcmsAdductCuration,
                 gcmsAdductCuration,
-
+                gcmsPredictDerivatizedCompoundRule,
+                gcmsValidateChemicalCompound,
+                gcmsPredictMMinus15Rule,
                 /**
                  * these rules should run last
                  */

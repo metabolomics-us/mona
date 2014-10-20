@@ -83,7 +83,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                 spectra.tags.push({text: 'not confirmed identification!'});
                 deferred.resolve(spectra);
             });
-        }
+        };
 
         //we have an inchi, which is the best
         if (spectra.inchi) {

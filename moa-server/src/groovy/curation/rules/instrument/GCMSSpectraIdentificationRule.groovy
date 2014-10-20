@@ -1,9 +1,11 @@
 package curation.rules.instrument
+
 import curation.CurationAction
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import curation.rules.AbstractMetaDataCentricRule
 import moa.MetaDataValue
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -11,6 +13,8 @@ import moa.MetaDataValue
  * Time: 11:36 AM
  */
 class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
+
+    Map<String, String> listOfAcceptedField = ["instrument": "gcms", "instrument type": "gc", "ionization energy": "ev"]
 
     def GCMSSpectraIdentificationRule() {
         super(new AddTagAction(GCMS_SPECTRA), new RemoveTagAction(GCMS_SPECTRA));
@@ -24,16 +28,21 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     protected boolean acceptMetaDataValue(MetaDataValue val) {
         String value = val.value.toString().toLowerCase()
 
-        if (value.contains("gcms")) {
+        String s = listOfAcceptedField.get(val.name.toLowerCase())
+
+        logger.info("checking ${s} vs ${val.value} - ${val.unit}")
+
+        if (value.equals(s.toLowerCase())) {
+
             return true
-        } else if (value.contains("gc")) {
+        } else if (val.unit != null && val.unit.toLowerCase().equals(s.toLowerCase())) {
+            return true
+        } else if (value.matches(s)) {
             return true
         }
 
-        else {
-            return false
-        }
 
+        return false
     }
 
     /**
@@ -42,11 +51,13 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue field) {
-        if (field.name.toLowerCase() == "instrument") {
-            return true
-        } else if (field.name.toLowerCase() == "instrument type") {
-            return true
+
+        for (String s in listOfAcceptedField.keySet()) {
+            if (field.name.toLowerCase().equals(s.toLowerCase())) {
+                return true
+            }
         }
+
         return false;
     }
 
@@ -56,4 +67,8 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
         return "this rule calculates if the Spectrum comes from a GCMS system"
     }
 
+    @Override
+    protected boolean failOnInvalidValue() {
+        return false
+    }
 }

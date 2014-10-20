@@ -6,5 +6,6 @@ app.directive('submitterForm', function() {
 		restrict: "A",
 		replace: true,
 		templateUrl: '/views/submitters/template/createUpdateForm.html'
+
 	};
 });

@@ -19,7 +19,7 @@ class VerifyInChIKeyAndMolFileMatchRule extends AbstractCompoundRule {
     MetaDataPersistenceService metaDataPersistenceService
 
     VerifyInChIKeyAndMolFileMatchRule() {
-        super(new RemoveTagAction("InChI Key does not match molecule!"),new AddTagAction("InChI Key does not match molecule!"))
+        super(new RemoveTagAction(INCHI_KEY_DOESNT_MATCH_MOLECULE),new AddTagAction(INCHI_KEY_DOESNT_MATCH_MOLECULE))
     }
 
     @Override

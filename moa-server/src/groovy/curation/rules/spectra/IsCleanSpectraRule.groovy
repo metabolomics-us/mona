@@ -30,7 +30,7 @@ class IsCleanSpectraRule extends AbstractCurationRule{
 
 
     IsCleanSpectraRule() {
-        super(new RemoveTagAction("dirty spectra"),new AddTagAction("dirty spectra"))
+        super(new RemoveTagAction(DIRTY_SPECTRA),new AddTagAction(DIRTY_SPECTRA))
     }
 
     @Override

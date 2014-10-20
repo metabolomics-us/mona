@@ -1,9 +1,11 @@
 package util.chemical
-
 import org.openscience.cdk.Atom
+import org.openscience.cdk.Bond
+import org.openscience.cdk.DefaultChemObjectBuilder
 import org.openscience.cdk.Molecule
 import org.openscience.cdk.interfaces.IBond
-
+import org.openscience.cdk.smiles.SmilesParser
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -12,80 +14,91 @@ import org.openscience.cdk.interfaces.IBond
  */
 class FunctionalGroupBuilder {
 
+    static Molecule parseSmile(String smile) {
+
+        return (Molecule) new SmilesParser(DefaultChemObjectBuilder.getInstance()).parseSmiles(smile)
+    }
+
+    static void makeHydrogens(Molecule molecule){
+
+        AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
+        AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule);
+
+    }
     /**
      * builds a hydroxy group
      * @return
      */
-    static Molecule makeHydroxyGroup(){
+    static Molecule makeHydroxyGroup() {
+
         Molecule molecule = new Molecule()
         Atom atom = new Atom("O")
-        atom.setImplicitHydrogenCount(0)
-
-        molecule.addAtom(new Atom("H"))
+        atom.setImplicitHydrogenCount(1)
         molecule.addAtom(atom)
 
-        molecule.addBond(0,1, IBond.Order.SINGLE)
+        makeHydrogens(molecule)
         return molecule
+
     }
 
-    static Molecule makeThiol(){
+    static Molecule makeThiol() {
         Molecule molecule = new Molecule()
         Atom atom = new Atom("S")
-        atom.setImplicitHydrogenCount(0)
+        atom.setImplicitHydrogenCount(1)
 
         molecule.addAtom(atom)
-        molecule.addAtom(new Atom("H"))
-
-        molecule.addBond(0,1, IBond.Order.SINGLE)
+        makeHydrogens(molecule)
 
         return molecule
     }
 
-    static Molecule makePrimaryAmine(){
+    static Molecule makePrimaryAmine() {
         Molecule molecule = new Molecule()
         Atom atom = new Atom("N")
-        atom.setImplicitHydrogenCount(0)
+        atom.setImplicitHydrogenCount(2)
 
         molecule.addAtom(atom)
 
-        molecule.addAtom(new Atom("H"))
-        molecule.addAtom(new Atom("H"))
-
-        molecule.addBond(0,1, IBond.Order.SINGLE)
-        molecule.addBond(0,2, IBond.Order.SINGLE)
-
+        makeHydrogens(molecule)
         return molecule
     }
 
 
-    static Molecule makeSecondaeryAmine(){
+    static Molecule makeSecondaeryAmine() {
         Molecule molecule = new Molecule()
         Atom atom = new Atom("N")
-        atom.setImplicitHydrogenCount(0)
+        atom.setImplicitHydrogenCount(1)
 
         molecule.addAtom(atom)
-        molecule.addAtom(new Atom("H"))
-        molecule.addBond(0,1, IBond.Order.SINGLE)
+        makeHydrogens(molecule)
 
         return molecule
     }
 
 
-    static Molecule makePhosphate(){
+    static Molecule makePhosphate() {
         Molecule molecule = new Molecule()
 
-        molecule.addAtom(new Atom("P"))
+        Atom phosphor = new Atom("P")
+        phosphor.setImplicitHydrogenCount(0)
+        Atom o1 = new Atom("O")
+        Atom o2 = new Atom("O")
 
-        molecule.add(makeHydroxyGroup())
-        molecule.add(makeHydroxyGroup())
-        molecule.addAtom(new Atom("O"))
-        molecule.addAtom(new Atom("O"))
+        Molecule oh1 = makeHydroxyGroup()
+        Molecule oh2 = makeHydroxyGroup()
 
+        molecule.addAtom(phosphor)
+        molecule.addAtom(o1)
+        molecule.addAtom(o2)
+        molecule.add(oh1)
+        molecule.add(oh2)
 
-        molecule.addBond(0,1,IBond.Order.SINGLE)
-        molecule.addBond(0,2,IBond.Order.SINGLE)
-        molecule.addBond(0,3,IBond.Order.DOUBLE)
-        molecule.addBond(0,4,IBond.Order.SINGLE)
+        molecule.addBond(new Bond(phosphor,o1,IBond.Order.SINGLE))
+        molecule.addBond(new Bond(phosphor,o2,IBond.Order.DOUBLE))
+        molecule.addBond(new Bond(phosphor,oh1.getAtom(0),IBond.Order.SINGLE))
+        molecule.addBond(new Bond(phosphor,oh2.getAtom(0),IBond.Order.SINGLE))
+
+        makeHydrogens(molecule)
 
         return molecule
     }

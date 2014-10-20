@@ -1,11 +1,9 @@
 package curation.actions
-
+import curation.CurationAction
 import curation.CurationObject
 import moa.MetaDataValue
 import moa.Spectrum
-import curation.CurationAction
 import org.apache.log4j.Logger
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -36,7 +34,7 @@ class MetaDataSuspectAction implements CurationAction {
 
     @Override
     String getDescription() {
-        return null
+        return "marks the metadata object as suspect or not"
     }
 
     @Override
@@ -62,6 +60,13 @@ class MetaDataSuspectAction implements CurationAction {
 
             value.suspect = mark
             value.save(flush: true)
+
+            if(value.suspect){
+                new AddTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
+            }
+            else{
+                new RemoveTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
+            }
         }
         else{
             logger.debug("ignoring ${value.name}, doesn't match the requested field ${field}")
