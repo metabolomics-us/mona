@@ -4,6 +4,7 @@ import curation.AbstractCurationRule
 import curation.CurationObject
 import groovy.json.JsonSlurper
 import moa.Compound
+import moa.Name
 import moa.Spectrum
 import org.apache.log4j.Logger
 
@@ -15,7 +16,7 @@ class UpdateSpectrum extends AbstractCurationRule {
     private Logger logger = Logger.getLogger(getClass())
 
     // Load json data
-    static final data = new JsonSlurper().parseText(new File("/Volumes/Data/massbank/massbank.json").text)
+    static final data = new JsonSlurper().parseText(new File("/Volumes/Data/massbank/massbank_names.json").text)
 
 
     @Override
@@ -48,21 +49,35 @@ class UpdateSpectrum extends AbstractCurationRule {
         def newData = data[filename]
 
         logger.info("Filename "+ filename +" for spectrum"+ s.getId())
+
+
+        // Update compound names
+
+        for(String newName : newData) {
+            logger.info('Adding name '+ newName)
+
+            Name n = Name.findOrSaveByNameAndCompound(newName, s.biologicalCompound)
+            s.biologicalCompound.addToNames(n)
+            s.biologicalCompound.save(flush: true)
+        }
+
+        /*
+        // Update inchis and mol files
         logger.info("Old InChIKey: "+ s.getBiologicalCompound().getInchiKey() +", New InChIKey: "+ newData.inchikey)
-        logger.info("New InChI: "+ newData.inchi)
         logger.info("Old molFile: "+ s.getBiologicalCompound().getMolFile().length() +", New molFile: "+ newData.mol.length())
 
         // Update the biological/chemical compound and save it
         Compound c = Compound.findOrCreateByInchiKey(newData.inchikey)
         c.molFile = newData.mol
         c.inchi = newData.inchi
-
         c.save(flush: true)
 
         // Update our spectrum object with the possibly new biological/chemical compound
         s.biologicalCompound = c
         s.chemicalCompound = c
         s.save(flush: true)
+        */
+
 
         return true
     }

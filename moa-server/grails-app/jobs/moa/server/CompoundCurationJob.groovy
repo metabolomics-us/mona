@@ -7,7 +7,7 @@ import moa.server.curation.CompoundCurationService
  * Time: 11:00 AM
  */
 class CompoundCurationJob {
-    def concurrent = false
+    def concurrent = true
 
     /**
      * needs to be defined
