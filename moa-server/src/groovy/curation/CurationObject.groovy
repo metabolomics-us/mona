@@ -31,7 +31,8 @@ final class CurationObject {
     }
 
     void refreshObject(){
-        this.object.attach()
+
+        this.object.refresh()
     }
 
     /**
