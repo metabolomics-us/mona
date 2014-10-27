@@ -1,7 +1,7 @@
 <div ng-value="error"></div>
 <div class="row">
     <div class="col-md-9 col-sm-6 col-lg-9">
-        <table class="table table-hover" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()">
+        <table class="table table-hover table-striped" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()">
             <thead>
             <tr>
                 <th class="text-center">Name</th>
@@ -95,7 +95,7 @@
                                placeholder="InChIKey"
                                class="form-control"
                                ng-keyup="$event.keyCode == 13 ? refineQuery() : null"
-                               ng-pattern="/^[A-Z,0-9]+$/">
+                               ng-pattern="/^[A-Z,0-9,\-]*$/">
                     </div>
 
                     <div class="form-group">
