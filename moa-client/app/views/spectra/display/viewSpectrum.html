@@ -2,12 +2,9 @@
     <!-- mass spectral properties -->
     <div class="row">
         <div class="col-md-12">
-
             <div ng-show="spectrum.tags.length">
                 <ul class="list-inline">
                     <li ng-repeat="tag in spectrum.tags">
-
-
                         <span gw-tag="" rule-based="tag.ruleBased == true">{{tag.text}}</span>
                     </li>
                 </ul>
@@ -18,62 +15,31 @@
         <div class="col-md-12">
             <tabset justified="true">
                 <tab heading="Mass Spectrum">
-
-                    <div class="col-md-8">
-                        <div class="masspec-modal">
-                            <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Ion</th>
-                                <th>Intensity</th>
-                                <th>annotation</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <tr ng-if="ion.annotation != ''" ng-repeat="ion in massSpec">
-
-                                <td>{{ion.ion}}</td>
-                                <td>{{ion.intensity}}</td>
-                                <td>{{ion.annotation}}
-
-
-                                    <!-- display this, if it's a computed value -->
-                                    <i ng-show="ion.computed == true" class="fa fa-flask"></i>
-
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="masspec-modal">
+                        <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
                     </div>
                 </tab>
                 <tab heading="Table of Ions">
                     <div style="height: 400px; overflow: auto; margin-top: 10px;">
                         <table class="table">
                             <thead>
-                            <tr>
-                                <th>Ion</th>
-                                <th>Intensity</th>
-                                <th>annotation</th>
-                            </tr>
+                                <tr>
+                                    <th>Ion</th>
+                                    <th>Intensity</th>
+                                    <th>annotation</th>
+                                </tr>
                             </thead>
                             <tbody>
+                                <tr ng-repeat="ion in massSpec">
+                                    <td>{{ion.ion}}</td>
+                                    <td>{{ion.intensity}}</td>
+                                    <td>
+                                        {{ion.annotation}}
 
-                            <tr ng-repeat="ion in massSpec">
-                                <td>{{ion.ion}}</td>
-                                <td>{{ion.intensity}}</td>
-                                <td>{{ion.annotation}}
-
-
-                                    <!-- display this, if it's a computed value -->
-                                    <i ng-show="ion.computed == true" class="fa fa-flask"></i>
-
-                                </td>
-                            </tr>
+                                        <!-- display this, if it's a computed value -->
+                                        <i ng-show="ion.computed == true" class="fa fa-flask"></i>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -94,14 +60,11 @@
                     <tab-heading>Substance Properties</tab-heading>
 
                     <div display-compound-info compound="spectrum.biologicalCompound"></div>
-
                 </tab>
 
                 <tab heading="Submitted Derivatized Substance Properties">
                     <div display-compound-info compound="spectrum.chemicalCompound"></div>
                 </tab>
-
-
             </tabset>
         </div>
     </div>
@@ -120,7 +83,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="meta in spectrum.metaData | orderBy : 'category':true">
+                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | orderBy: 'category': true">
                         <td>
                             {{meta.category}}
                         </td>

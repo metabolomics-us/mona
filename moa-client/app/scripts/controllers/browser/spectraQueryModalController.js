@@ -53,9 +53,25 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
      * initialization and population of default values
      */
     (function list() {
-        $scope.tags = AppCache.getTags();
-        $scope.metadataCategories = AppCache.getMetadataCategories();
-        $scope.metadata = AppCache.getMetadata();
+        $scope.metadata = {};
+
+        AppCache.getTags(function(data) {
+            $scope.tags = data;
+        });
+
+        AppCache.getMetadata(function(data) {
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].category.visible) {
+                    var name = data[i].category.name;
+
+                    if (!$scope.metadata.hasOwnProperty(name)) {
+                        $scope.metadata[name] = [];
+                    }
+
+                    $scope.metadata[name].push(data[i]);
+                }
+            }
+        });
     })();
 
 };

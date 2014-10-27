@@ -14,7 +14,7 @@ app.factory('SpectrumCache', function($cacheFactory) {
 
 
         hasSpectrum: function() {
-            return typeof cache.get('viewSpectrum') != 'undefined';
+            return typeof cache.get('viewSpectrum') !== 'undefined';
         },
         getSpectrum: function() {
             return cache.get('viewSpectrum');
@@ -28,7 +28,7 @@ app.factory('SpectrumCache', function($cacheFactory) {
 
 
         hasBrowserSpectra: function() {
-            return typeof cache.get('spectra') != 'undefined';
+            return typeof cache.get('spectra') !== 'undefined';
         },
         getBrowserSpectra: function() {
             return cache.get('spectra');
@@ -42,7 +42,7 @@ app.factory('SpectrumCache', function($cacheFactory) {
 
 
         hasQuery: function() {
-            return typeof cache.get('query') != 'undefined';
+            return typeof cache.get('query') !== 'undefined';
         },
         getQuery: function() {
             return cache.get('query');
@@ -66,43 +66,44 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService)
             cache.removeAll();
         },
 
-        getTags: function() {
+
+        getTags: function(callback) {
             if(!cache.get('tags')) {
                 cache.put('tags', TaggingService.query(
-                    function (data) {},
+                    callback,
                     function (error) {
                         alert('failed: ' + error);
                     }
                 ));
+            } else {
+                callback(cache.get('tags'));
             }
-
-            return cache.get('tags');
         },
 
-        getMetadataCategories: function() {
+        getMetadataCategories: function(callback) {
             if(!cache.get('metadataCategories')) {
                 cache.put('metadataCategories', MetadataService.categories(
-                    function (data) {},
+                    callback,
                     function (error) {
                         $log.error('metadata categories failed: '+ error);
                     }
                 ));
+            } else {
+                callback(cache.get('metadataCategories'));
             }
-
-            return cache.get('metaDataCategories');
         },
 
-        getMetadata: function() {
-            if(!cache.get('metaData')) {
-                cache.put('metaData', MetadataService.metadata(
-                    function (data) {},
+        getMetadata: function(callback) {
+            if (!cache.get('metadata')) {
+                cache.put('metadata', MetadataService.metadata(
+                    callback,
                     function (error) {
-                        $log.error('metadata failed: '+ error);
+                        $log.error('metadata failed: ' + error);
                     }
                 ));
+            } else {
+                callback(cache.get('metadata'));
             }
-
-            return cache.get('metaData');
         }
     };
 });

@@ -116,11 +116,10 @@
                 </div>
                 <div id="metaQuery" class="panel-collapse collapse">
                     <div class="panel-body">
+                        <fieldset ng-repeat="(k, v) in metadata">
+                            <legend>{{k == "none" ? "General" : k}}</legend>
 
-                        <fieldset ng-repeat="category in metadataCategories" ng-show="metadata[category.name].length && category.visible">
-                            <legend>{{category.name == "none" ? "General" : category.name}}</legend>
-
-                            <div class="form-group" ng-repeat="meta in metadata[category.name] | unique:'name'">
+                            <div class="form-group" ng-repeat="meta in v | unique:'name'">
                                 <div ng-if="meta.type == 'double'">
                                     <label class="control-label col-sm-4" for="meta_{{meta.id}}">{{meta.name}}</label>
 
@@ -130,6 +129,7 @@
                                                ng-model="query[meta.name]"
                                                class="form-control"/>
                                     </div>
+
                                     <label class="control-label col-sm-1" for="{{meta.name}}_tolerance">&pm;</label>
 
                                     <div class="col-sm-2">
@@ -168,9 +168,6 @@
                                                ng-model="query[meta.name]"
                                                typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
                                                class="form-control" />
-
-
-
                                     </div>
                                 </div>
 
@@ -186,7 +183,6 @@
                                 </div>
                             </div>
                         </fieldset>
-
                     </div>
                 </div>
             </div>

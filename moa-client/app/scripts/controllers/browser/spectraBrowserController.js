@@ -202,7 +202,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * initialization and population of default values
      */
     (function list() {
-        $scope.tags = AppCache.getTags();
+        AppCache.getTags(function(data) {
+            $scope.tags = data;
+        });
 
         if(SpectrumCache.hasBrowserSpectra()) {
             $scope.spectra = SpectrumCache.getBrowserSpectra();
