@@ -7,62 +7,72 @@
  * @constructor
  */
 moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
+    /**
+     * Mass spectrum obtained from cache if it exists, otherwise from REST api
+     */
     $scope.spectrum = delayedSpectrum;
 
     $scope.massSpec = [];
 
 
-    /**
-     * Decimal truncation routines
-     */
-    var truncateDecimal = function(s, length) {
-        var regex = new RegExp("^\\s*(\\d+\\.\\d{"+ length +"})\\d*\\s*$");
-        var m = s.match(regex);
-
-        return m != null ? m[1] : s;
-    };
-
-    var truncateMass = function(mass) { return truncateDecimal(mass, 4);};
-    var truncateRetentionTime = function(mass) { return truncateDecimal(mass, 1);};
 
 
     /*
      * Perform all initial data formatting and processing
      */
-    (function(spectrum) {
+    (function() {
         // Regular expression for truncating accurate masses
         var massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
 
-        console.log(spectrum);
+        /**
+         * Decimal truncation routines
+         */
+        var truncateDecimal = function(s, length) {
+            var regex = new RegExp("^\\s*(\\d+\\.\\d{"+ length +"})\\d*\\s*$");
+            var m = s.match(regex);
+
+            return m != null ? m[1] : s;
+        };
+
+        /**
+         * Truncate the
+         */
+        var truncateMass = function(mass) {
+            return truncateDecimal(mass, 4);
+        };
+
+        var truncateRetentionTime = function(mass) {
+            return truncateDecimal(mass, 1);
+        };
 
 
         //
         // Truncate metadata mass values
         //
 
-        for (var i = 0; i < spectrum.metaData.length; i++) {
-            var name = spectrum.metaData[i].name.toLowerCase();
+        for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
+            var name = delayedSpectrum.metaData[i].name.toLowerCase();
 
             if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                spectrum.metaData[i].value = truncateMass(spectrum.metaData[i].value);
+                delayedSpectrum.metaData[i].value = truncateMass(delayedSpectrum.metaData[i].value);
             } else if (name.indexOf('retention') > -1) {
-                spectrum.metaData[i].value = truncateRetentionTime(spectrum.metaData[i].value);
+                delayedSpectrum.metaData[i].value = truncateRetentionTime(delayedSpectrum.metaData[i].value);
             }
         }
 
-        for (var i = 0; i < spectrum.biologicalCompound.metaData.length; i++) {
-            var name = spectrum.biologicalCompound.metaData[i].name.toLowerCase();
+        for (var i = 0; i < delayedSpectrum.biologicalCompound.metaData.length; i++) {
+            var name = delayedSpectrum.biologicalCompound.metaData[i].name.toLowerCase();
 
             if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                spectrum.biologicalCompound.metaData[i].value = truncateMass(spectrum.biologicalCompound.metaData[i].value);
+                delayedSpectrum.biologicalCompound.metaData[i].value = truncateMass(delayedSpectrum.biologicalCompound.metaData[i].value);
             }
         }
 
-        for (var i = 0; i < spectrum.chemicalCompound.metaData.length; i++) {
-            var name = spectrum.chemicalCompound.metaData[i].name.toLowerCase();
+        for (var i = 0; i < delayedSpectrum.chemicalCompound.metaData.length; i++) {
+            var name = delayedSpectrum.chemicalCompound.metaData[i].name.toLowerCase();
 
             if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                spectrum.chemicalCompound.metaData[i].value = truncateMass(spectrum.chemicalCompound.metaData[i].value);
+                delayedSpectrum.chemicalCompound.metaData[i].value = truncateMass(delayedSpectrum.chemicalCompound.metaData[i].value);
             }
         }
 
@@ -77,16 +87,16 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
         // Assemble our annotation matrix
         var meta = [];
 
-        for (var i = 0; i < spectrum.metaData.length; i++) {
-            if (spectrum.metaData[i].category === 'annotation') {
-                meta.push(spectrum.metaData[i]);
+        for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
+            if (delayedSpectrum.metaData[i].category === 'annotation') {
+                meta.push(delayedSpectrum.metaData[i]);
             }
         }
 
         // Parse spectrum string to generate ion list
         var match;
 
-        while ((match = ionRegex.exec(spectrum.spectrum)) != null) {
+        while ((match = ionRegex.exec(delayedSpectrum.spectrum)) != null) {
             // Find annotation
             var annotation = '';
             var computed = false;
@@ -104,7 +114,7 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
             // Store ion
             $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation,computed:computed});
         }
-    })(delayedSpectrum);
+    })();
 };
 
 
@@ -114,21 +124,21 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
  */
 moaControllers.ViewSpectrumController.loadSpectrum = {
     delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
-        var spectrum = SpectrumCache.get('viewSpectrum');
-
         // If a spectrum is not cached or the id requested does not match the
-        // cached spectrum, request it from the rest api
-        if (spectrum === undefined || spectrum.id != $route.current.params.id) {
+        // cached spectrum, request it from the REST api
+        if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id != $route.current.params.id) {
             return Spectrum.get(
                 {id: $route.current.params.id},
                 function (data) {},
                 function (error) {
                     alert('failed to obtain spectrum: ' + error);
                 }
-            ).$promise
-        } else {
-            var spectrum = SpectrumCache.get('viewSpectrum');
-            SpectrumCache.put('viewSpectrum', null)
+            ).$promise;
+        }
+
+        else {
+            var spectrum = SpectrumCache.getSpectrum();
+            SpectrumCache.removeSpectrum();
             return spectrum;
         }
     }

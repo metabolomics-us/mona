@@ -20,7 +20,7 @@
  * @param $location
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, TaggingService, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, SpectrumCache) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache) {
     /**
      * contains all local objects and is our model
      * @type {Array}
@@ -45,7 +45,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.spectraLoadLength = -1;
 
     /**
-     * compiled query which is supposed to be executed or refiened
+     * compiled query which is supposed to be executed or refined
      * @type {{}}
      */
     $scope.compiledQuery = {
@@ -113,10 +113,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.viewSpectrum = function (id, index) {
         // Store spectra in cache
-        SpectrumCache.put('spectra', $scope.spectra);
-        SpectrumCache.put('viewSpectrum', $scope.spectra[index]);
+        SpectrumCache.setBrowserSpectra($scope.spectra);
+        SpectrumCache.setSpectrum($scope.spectra[index]);
 
-        console.log(SpectrumCache.get('viewSpectrum'));
         $location.path('/spectra/display/'+ id);
     };
 
@@ -136,7 +135,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
         //assign the offset
         $scope.compiledQuery.offset = $scope.spectra.length;
-
     };
 
     /**
@@ -177,10 +175,12 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
-        if(SpectrumCache.get('spectra') != null) {
-            $scope.spectra = SpectrumCache.get('spectra');
-            SpectrumCache.put('spectra', null)
-        } else if ($scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
+        if(SpectrumCache.hasBrowserSpectra()) {
+            $scope.spectra = SpectrumCache.getBrowserSpectra();
+            SpectrumCache.removeBrowserSpectra();
+        }
+
+        else if ($scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
             //search utilizing our compiled query so that it can be easily refined over time
             $scope.loadingMore = true;
             $scope.calculateOffsets();
@@ -199,27 +199,17 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     };
 
     /**
-     * loads all our tags into the associated variables
-     */
-    $scope.loadTags = function () {
-        $scope.tags = TaggingService.query(function (data) {
-        }, function (error) {
-            alert('failed: ' + error);
-        });
-    };
-
-    /**
      * initialization and population of default values
      */
     (function list() {
-        if(SpectrumCache.get('spectra') != null) {
-            $scope.spectra = SpectrumCache.get('spectra');
-            SpectrumCache.put('spectra', null)
+        $scope.tags = AppCache.getTags();
+
+        if(SpectrumCache.hasBrowserSpectra()) {
+            $scope.spectra = SpectrumCache.getBrowserSpectra();
+            SpectrumCache.removeBrowserSpectra();
         } else {
             $scope.spectra = [];
         }
-
-        $scope.loadTags();
     })();
 
 
@@ -238,5 +228,4 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         $scope.inchiFilter = $routeParams.inchikey;
         $scope.submitQuery(SpectraQueryBuilderService.compileQuery({inchiFilter: $routeParams.inchikey}, {}, []));
     }
-
 };

@@ -1,7 +1,7 @@
 /**
  * Created by wohlgemuth on 7/11/14.
  */
-moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,SpectraQueryBuilderService, MetadataService, $log, $http, REST_BACKEND_SERVER, tags) {
+moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, SpectraQueryBuilderService, $log, $http, REST_BACKEND_SERVER, AppCache) {
     /* Metadata */
     $scope.metadataCategories = [];
     $scope.metadata = {};
@@ -26,7 +26,6 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
      */
     $scope.submitQuery = function(){
         var result = SpectraQueryBuilderService.compileQuery($scope.query, $scope.metadata, $scope.tagsSelection);
-
         $modalInstance.close(result);
     };
 
@@ -34,7 +33,6 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
      * perform metadata query
      */
     $scope.queryMetadataValues = function (name, value) {
-        // TODO: Use $resource instead of $http
         return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=100', {
             query: {
                 name: name,
@@ -51,41 +49,13 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance,S
         });
     };
 
-    var metadataQuery = function (data) {
-        // Query each metadata category and store the data
-        data.forEach(function (element, index, array) {
-            // Read metadata fields only if element is visible for querying
-            if (element.visible) {
-                $scope.metadata[element.name] = MetadataService.categoryData(
-                    {id: element.id},
-                    function (data) {},
-                    function (error) {
-                        $log.error('metadata category data failed: ' + error);
-                    }
-                );
-            }
-        });
-    };
-
-
-    /**
-     * load categories
-     */
-    $scope.loadCategories = function () {
-        $scope.metadataCategories = MetadataService.categories(
-            metadataQuery,
-            function (error) {
-                $log.error('metadata categories failed: ' + error);
-            }
-        );
-    };
-
     /**
      * initialization and population of default values
      */
     (function list() {
-        $scope.tags = tags;
-        $scope.loadCategories();
+        $scope.tags = AppCache.getTags();
+        $scope.metadataCategories = AppCache.getMetadataCategories();
+        $scope.metadata = AppCache.getMetadata();
     })();
 
 };

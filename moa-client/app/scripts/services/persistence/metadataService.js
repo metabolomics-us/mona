@@ -18,9 +18,16 @@ app.factory('MetadataService', function ($resource, REST_BACKEND_SERVER, $http) 
             id: "@id",
             categoryController: "@subController",
             dataID: "@subID",
-            dataController: "@subSubController",
+            dataController: "@subSubController"
         },
         {
+            metadata: {
+                method: "GET",
+                isArray: true,
+                params: {
+                    controller: "data"
+                }
+            },
             categories: {
                 method: "GET",
                 isArray: true,
