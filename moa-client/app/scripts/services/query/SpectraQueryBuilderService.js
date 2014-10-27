@@ -5,24 +5,23 @@
 /**
  * a service to build our specific query object to be executed against the Spectrum service
  */
-app.service('SpectraQueryBuilderService', function ($log) {
+app.service('SpectraQueryBuilderService', function () {
     /**
      * updates a pre-compiled query with the given
      */
-    this.updateQuery = function (query, metadata, tags, compiledQuery) {
+    this.updateQuery = function (query, metadata, tags, compiled) {
+        // Build query object
+        if(typeof compiled == 'undefined')
+            compiled = {};
 
-    };
+        if(!compiled.hasOwnProperty('compound'))
+            compiled.compound = {};
 
-    /**
-     * compiles our dedicated query to execute it against another service
-     * @param element
-     */
-    this.compileQuery = function (query, metadata, tags) {
-        var compiled = {};
+        if(!compiled.hasOwnProperty('metadata'))
+            compiled.metadata = [];
 
-        // Build individual criteria
-        var compound = {};
-        var metaData = [];
+        if(!compiled.hasOwnProperty('tags'))
+            compiled.tags = [];
 
 
         // Get all metadata in a single dictionary
@@ -34,17 +33,17 @@ app.service('SpectraQueryBuilderService', function ($log) {
         });
 
 
+        // Handle all query components
         Object.keys(query).forEach(function (element, index, array) {
             if (element === "nameFilter" && query[element]) {
-                compound.name = {like: query[element]};
+                compiled.compound.name = {like: query[element]};
             }
 
             else if (element === "inchiFilter" && query[element]) {
                 if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(query[element])) {
-                    compound.inchiKey = {eq: query[element]};
-                }
-                else {
-                    compound.inchiKey = {like: '%' + query[element] + '%'};
+                    compiled.compound.inchiKey = {eq: query[element]};
+                } else {
+                    compiled.compound.inchiKey = {like: '%' + query[element] + '%'};
                 }
             }
 
@@ -52,33 +51,38 @@ app.service('SpectraQueryBuilderService', function ($log) {
             else if (element.indexOf("_tolerance", element.length - 10) !== -1) {
                 //nothing to see here
             }
+
             else {
                 if (query[element]) {
                     if (meta[element].type === "double") {
                         if ((element + "_tolerance") in query && query[element + "_tolerance"]) {
                             var min = parseFloat(query[element]) - parseFloat(query[element + "_tolerance"]);
                             var max = parseFloat(query[element]) + parseFloat(query[element + "_tolerance"]);
-                            metaData.push({name: element, value: {between: [min, max]}});
+                            compiled.metadata.push({name: element, value: {between: [min, max]}});
                         } else
-                            metaData.push({name: element, value: {eq: parseFloat(query[element])}});
+                            compiled.metadata.push({name: element, value: {eq: parseFloat(query[element])}});
                     } else {
-                        metaData.push({name: element, value: {eq: query[element]}});
+                        compiled.metadata.push({name: element, value: {eq: query[element]}});
                     }
                 }
             }
         });
 
-        // Build query
-        if (compound) {
-            compiled.compound = compound;
-        }
-        if (metaData) {
-            compiled.metadata = metaData;
-        }
-        if (tags.length) {
-            compiled.tags = tags;
+
+        // Add all tags to query
+        for(var i = 0; i < tags.length; i++) {
+            compiled.tags.push(tags[i]);
         }
 
+
         return compiled;
-    }
+    };
+
+    /**
+     * compiles our dedicated query to execute it against another service
+     * @param element
+     */
+    this.compileQuery = function (query, metadata, tags) {
+        return this.updateQuery(query, metadata, tags, {});
+    };
 });
