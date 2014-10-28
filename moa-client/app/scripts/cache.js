@@ -2,6 +2,11 @@
  * Created by sajjan on 8/21/14.
  */
 
+
+/**
+ * Stores spectra browser data, individual spectrum, and query data for
+ * persistence between controllers and views
+ */
 app.factory('SpectrumCache', function($cacheFactory) {
     var cache = $cacheFactory('spectra');
 
@@ -56,7 +61,12 @@ app.factory('SpectrumCache', function($cacheFactory) {
     };
 });
 
-app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService) {
+
+/**
+ * Stores commonly used data obtained from the server to reduce load time
+ * of certain views.
+ */
+app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService, INTERNAL_CACHING) {
     var cache = $cacheFactory('app');
 
     return {
@@ -68,7 +78,8 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService)
 
 
         getTags: function(callback) {
-            if(!cache.get('tags')) {
+            if(!INTERNAL_CACHING || !cache.get('tags')) {
+                console.log('LOAD TAGSSSSSES PRECIOUS')
                 cache.put('tags', TaggingService.query(
                     callback,
                     function (error) {
@@ -81,7 +92,7 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService)
         },
 
         getMetadataCategories: function(callback) {
-            if(!cache.get('metadataCategories')) {
+            if(!INTERNAL_CACHING || !cache.get('metadataCategories')) {
                 cache.put('metadataCategories', MetadataService.categories(
                     callback,
                     function (error) {
@@ -94,7 +105,7 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService)
         },
 
         getMetadata: function(callback) {
-            if (!cache.get('metadata')) {
+            if (!INTERNAL_CACHING || !cache.get('metadata')) {
                 cache.put('metadata', MetadataService.metadata(
                     callback,
                     function (error) {
@@ -108,6 +119,10 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService)
     };
 });
 
+
+/**
+ * In progress
+ */
 app.factory('ScrollCache', function($cacheFactory) {
     return $cacheFactory('scroll');
 });
