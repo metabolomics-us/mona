@@ -1,5 +1,6 @@
 package moa.persistence
 
+import grails.converters.JSON
 import grails.rest.RestfulController
 import moa.Tag
 
@@ -37,4 +38,8 @@ class TagController extends RestfulController {
 
 		return t;
 	}
+
+    public def listPublic(){
+        render (Tag.findAllByRuleBased(false) as JSON)
+    }
 }

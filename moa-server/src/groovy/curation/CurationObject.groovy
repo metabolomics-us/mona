@@ -32,7 +32,7 @@ final class CurationObject {
 
     void refreshObject(){
 
-        this.object.refresh()
+        this.object = this.object.get(this.object.id)
     }
 
     /**

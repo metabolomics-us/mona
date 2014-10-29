@@ -21,4 +21,5 @@ public class TMSFavoredFunctionalGroups {
                 FunctionalGroupBuilder.makeSecondaeryAmine()
         ]
     }
+
 }

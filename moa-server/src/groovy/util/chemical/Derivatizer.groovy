@@ -114,6 +114,15 @@ class Derivatizer {
     }
 
     /**
+     * returns if the molecule is derivatized
+     * @param molecule
+     * @return
+     */
+    boolean isDerivatized(Molecule molecule){
+        return UniversalIsomorphismTester.isSubgraph(molecule,AdductBuilder.makeTMS())
+    }
+
+    /**
      * tries to create the best possible TMS structure for the provided input parameters
      * @param myStructure
      * @param maxTMSCount

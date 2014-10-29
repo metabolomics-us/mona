@@ -52,11 +52,10 @@ class UrlMappings {
             "/spectra"(resources: 'Spectrum')
         }
 
-
         /**
          * renders a compound with this id as mol file
          */
-        "/rest/compounds/$id/mol"(controller: 'molRender', action: 'renderCompoundAsMolFile', id:id)
+        "/rest/compounds/$id/mol"(controller: 'molRender', action: 'renderCompoundAsMolFile', id: id)
 
         /**
          * curates a single compound
@@ -69,7 +68,6 @@ class UrlMappings {
         "/rest/compounds/curateAll"(controller: 'compoundCuration', action: 'curateAll')
 
         "/rest/spectra"(resources: 'Spectrum')
-
 
         /**
          * query all the metadata without category
@@ -126,11 +124,16 @@ class UrlMappings {
          */
         "/rest/spectra/curate/$id"(controller: 'spectraCuration', action: 'curate', id: id)
 
-/**
- * curation services
- */
+        /**
+         * curation services
+         */
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
+        /**
+         * general limited public api
+         */
 
+        //limited access to our available tags to be integrated into external api's
+        "/rest/limited/list/tags"(controller: 'Tag', action: 'listPublic')
     }
 }

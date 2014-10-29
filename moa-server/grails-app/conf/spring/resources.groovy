@@ -3,6 +3,7 @@ import curation.CurationWorkflow
 import curation.SubCurationWorkflow
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
+import curation.rules.adduct.gcms.CompoundShouldBeDerivatizedRule
 import curation.rules.adduct.gcms.ConfirmGCMSDerivatizationRule
 import curation.rules.adduct.gcms.GCMSAdductCurationRule
 import curation.rules.adduct.LCMSAdductCurationRule
@@ -162,6 +163,12 @@ beans = {
 
     }
 
+    gcmsCompoundShouldBeDerivatized(CompoundShouldBeDerivatizedRule) { bean ->
+        bean.autowire = 'byName'
+        predictGCMSCompoundRule = gcmsPredictDerivatizedCompoundRule
+        maximumNoneDerivatizedMass = 600
+
+    }
 
     /**
      * checks if the provided accurate mass is actuall possible
@@ -219,6 +226,7 @@ beans = {
                 gcmsPredictDerivatizedCompoundRule,
                 gcmsValidateChemicalCompound,
                 gcmsPredictMMinus15Rule,
+                gcmsCompoundShouldBeDerivatized,
                 /**
                  * these rules should run last
                  */
