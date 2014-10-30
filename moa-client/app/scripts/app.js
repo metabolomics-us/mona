@@ -20,19 +20,15 @@ var app = angular
  * location of our backend server
  */
 
-app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/trashcan.fiehnlab.ucdavis.edu:8080');
+//app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/trashcan.fiehnlab.ucdavis.edu:8080');
 //app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
-//app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
+app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
 
 
 /**
  * Number of spectra/compounds to view
  */
 app.constant('MAX_OBJECTS', 20);
-
-/**
- * system wide variables
- */
 
 app.run(function ($rootScope, SpectraQueryBuilderService) {
 
@@ -63,6 +59,9 @@ app.run(function ($rootScope, SpectraQueryBuilderService) {
     $rootScope.spectraQuery = SpectraQueryBuilderService.prepareQuery();
 
 });
+
+app.constant('INTERNAL_CACHING', true);
+
 
 /**
  * enable cross domain stuff
