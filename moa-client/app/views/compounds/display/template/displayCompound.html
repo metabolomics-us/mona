@@ -39,7 +39,7 @@
                 <dt>ID:</dt>
                 <dd>{{compound.id}}</dd>
                 <dt>InChIKey:</dt>
-                <dd><a href="/#/spectra/browse/{{compound.inchiKey}}">{{compound.inchiKey}}</a></dd>
+                <dd><a ng-href="/#/spectra/browse/{{compound.inchiKey}}">{{compound.inchiKey}}</a></dd>
                 <dt ng-show="compound.names.length">Name(s):</dt>
                 <dd ng-repeat="name in compound.names">{{name.name}}</dd>
             </dl>

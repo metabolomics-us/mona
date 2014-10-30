@@ -20,7 +20,7 @@
  * @param $location
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache, $rootScope) {
     /**
      * contains all local objects and is our model
      * @type {Array}
@@ -45,16 +45,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.spectraLoadLength = -1;
 
     /**
-     * compiled query which is supposed to be executed or refined
-     * @type {{}}
-     */
-    $scope.compiledQuery = {
-        compound: {},
-        metadata: [],
-        tags: []
-    };
-
-    /**
      * loads more spectra into the view using our query object
      */
     $scope.loadingMore = false;
@@ -67,16 +57,22 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     /**
      * refine the current query by submitting an updates query
      */
-    $scope.refineQuery = function() {
+    $scope.refineQuery = function () {
         var query = {};
         var tags = [];
 
-        if ($scope.nameFilter && $scope.nameFilter != '') {
-            query.nameFilter = $scope.nameFilter;
+        /**
+         *  Add name to query if given in route
+         */
+        if ($routeParams.name && $routeParams.name != '') {
+            query.nameFilter = $routeParams.name;
         }
 
-        if ($scope.inchiFilter && $scope.inchiFilter != '') {
-            query.inchiFilter = $scope.inchiFilter;
+        /*
+         * Add inchikey to query if given in route
+         */
+        if ($routeParams.inchikey && $routeParams.inchikey != '') {
+            query.inchiFilter = $routeParams.inchikey;
         }
 
         for (var i = 0; i < $scope.tagsSelection.length; i++) {
@@ -84,7 +80,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         }
 
         // Reset spectra and perform the query
-        $scope.submitQuery(SpectraQueryBuilderService.compileQuery(query, {}, tags));
+        $scope.submitQuery(SpectraQueryBuilderService.updateQuery(query, {}, tags, $rootScope.getSpectraQuery()));
     };
 
 
@@ -98,7 +94,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             size: 'lg',
             backdrop: 'true',
             resolve: {
-                tags: function () { return $scope.tags; }
+                tags: function () {
+                    return $scope.tags;
+                }
             }
         });
 
@@ -116,15 +114,15 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         SpectrumCache.setBrowserSpectra($scope.spectra);
         SpectrumCache.setSpectrum($scope.spectra[index]);
 
-        $location.path('/spectra/display/'+ id);
+        $location.path('/spectra/display/' + id);
     };
 
     /**
      * show the currently selected sprectra
      * @param inchikey
      */
-    $scope.viewAssociatedSpectra = function(inchikey) {
-        $location.path("/spectra/browse/"+ inchikey);
+    $scope.viewAssociatedSpectra = function (inchikey) {
+        $location.path("/spectra/browse/" + inchikey);
     };
 
     /**
@@ -133,15 +131,19 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.calculateOffsets = function () {
         $scope.spectraLoadLength = $scope.spectra.length;
 
+        var query = $rootScope.getSpectraQuery();
+
         //assign the offset
-        $scope.compiledQuery.offset = $scope.spectra.length;
+        query.offset = $scope.spectra.length;
+
+        $rootScope.setSpectraQuery(query);
     };
 
     /**
      * submits our build query to the backend
      */
     $scope.submitQuery = function (query) {
-        $scope.compiledQuery = query;
+        $rootScope.setSpectraQuery(query);
         $scope.dataAvailable = true;
 
         // Reset spectra
@@ -155,12 +157,12 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     /**
      * Get natural mass as accurate mass of spectrum
      */
-    $scope.addAccurateMass = function(spectra) {
-        for(var i = 0; i < spectra.length; i++) {
+    $scope.addAccurateMass = function (spectra) {
+        for (var i = 0; i < spectra.length; i++) {
             var mass = '';
 
-            for(var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
-                if(spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
+            for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
+                if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
                     mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
                 }
             }
@@ -175,7 +177,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
-        if(SpectrumCache.hasBrowserSpectra()) {
+        if (SpectrumCache.hasBrowserSpectra()) {
             $scope.spectra = SpectrumCache.getBrowserSpectra();
             SpectrumCache.removeBrowserSpectra();
         }
@@ -185,7 +187,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             $scope.loadingMore = true;
             $scope.calculateOffsets();
 
-            Spectrum.searchSpectra($scope.compiledQuery, function (data) {
+            Spectrum.searchSpectra($rootScope.getSpectraQuery(), function (data) {
                 if (data.length == 0) {
                     $scope.dataAvailable = false;
                 } else {
@@ -199,35 +201,22 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     };
 
     /**
-     * initialization and population of default values
+     * our list view and default view
      */
     (function list() {
-        AppCache.getTags(function(data) {
+
+        AppCache.getTags(function (data) {
             $scope.tags = data;
         });
 
-        if(SpectrumCache.hasBrowserSpectra()) {
+        if (SpectrumCache.hasBrowserSpectra()) {
             $scope.spectra = SpectrumCache.getBrowserSpectra();
             SpectrumCache.removeBrowserSpectra();
         } else {
             $scope.spectra = [];
         }
+
+        //submit our initial query
+        $scope.refineQuery();
     })();
-
-
-    /**
-     *  Add name to query if given in route
-     */
-    if ($routeParams.name) {
-        $scope.nameFilter = $routeParams.name;
-        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({nameFilter: $routeParams.name}, {}, []));
-    }
-
-    /*
-     * Add inchikey to query if given in route
-     */
-    if ($routeParams.inchikey) {
-        $scope.inchiFilter = $routeParams.inchikey;
-        $scope.submitQuery(SpectraQueryBuilderService.compileQuery({inchiFilter: $routeParams.inchikey}, {}, []));
-    }
 };

@@ -3,26 +3,24 @@
  */
 
 /**
- * a service to build our specific query object to be executed against the Spectrum service
+ * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
+ *
  */
 app.service('SpectraQueryBuilderService', function () {
+    /**
+     * prepares an empty query to avoid null pointer exceptions
+     */
+    this.prepareQuery = function () {
+        return {
+            compound: {},
+            metadata: [],
+            tags: []
+        };
+    }
     /**
      * updates a pre-compiled query with the given
      */
     this.updateQuery = function (query, metadata, tags, compiled) {
-        // Build query object
-        if(typeof compiled == 'undefined')
-            compiled = {};
-
-        if(!compiled.hasOwnProperty('compound'))
-            compiled.compound = {};
-
-        if(!compiled.hasOwnProperty('metadata'))
-            compiled.metadata = [];
-
-        if(!compiled.hasOwnProperty('tags'))
-            compiled.tags = [];
-
 
         // Get all metadata in a single dictionary
         var meta = {};
@@ -70,7 +68,7 @@ app.service('SpectraQueryBuilderService', function () {
 
 
         // Add all tags to query
-        for(var i = 0; i < tags.length; i++) {
+        for (var i = 0; i < tags.length; i++) {
             compiled.tags.push(tags[i]);
         }
 
@@ -83,6 +81,7 @@ app.service('SpectraQueryBuilderService', function () {
      * @param element
      */
     this.compileQuery = function (query, metadata, tags) {
-        return this.updateQuery(query, metadata, tags, {});
+        return this.updateQuery(query, metadata, tags, prepareQuery());
     };
+
 });
