@@ -1,5 +1,4 @@
 package moa.server
-
 import moa.server.curation.SpectraCurationService
 /**
  * Created with IntelliJ IDEA.
@@ -34,8 +33,10 @@ class SpectraValidationJob {
 
                 long end = System.currentTimeMillis()
 
-                long needed = end - begin
-                def message = "validated spectra succesffuly:${result} with id: ${data.spectraId}, which took ${needed/1000}s"
+                long needed = (end - begin)/1000
+                def message = "validated spectra succesffuly:${result} with id: ${data.spectraId}, which took ${needed}s"
+
+
                 log.info("\t=>\t${message}")
 
             } else {

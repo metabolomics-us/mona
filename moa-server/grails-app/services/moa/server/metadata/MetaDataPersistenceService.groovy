@@ -39,6 +39,7 @@ class MetaDataPersistenceService {
      * @param current
      */
     public void generateMetaDataObject(SupportsMetaData object, Map current) {
+        log.debug("received ${object} and map: ${current}")
         String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
 
         MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
