@@ -16,7 +16,7 @@ app.service('SpectraQueryBuilderService', function () {
             metadata: [],
             tags: []
         };
-    }
+    };
     /**
      * updates a pre-compiled query with the given
      */
@@ -81,7 +81,7 @@ app.service('SpectraQueryBuilderService', function () {
      * @param element
      */
     this.compileQuery = function (query, metadata, tags) {
-        return this.updateQuery(query, metadata, tags, prepareQuery());
+        return this.updateQuery(query, metadata, tags, this.prepareQuery());
     };
 
 });
