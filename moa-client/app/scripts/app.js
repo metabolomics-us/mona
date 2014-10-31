@@ -12,7 +12,8 @@ var app = angular
         'angularMasspecPlotter',
         'angularFileUpload',
         'infinite-scroll',
-        'mgcrea.bootstrap.affix'
+        'mgcrea.bootstrap.affix',
+        'ngCookies'
     ]);
 
 
@@ -30,6 +31,9 @@ app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/tras
  */
 app.constant('MAX_OBJECTS', 20);
 
+/**
+ * provides us with application wide useful functions and
+ */
 app.run(function ($rootScope, SpectraQueryBuilderService) {
 
     /**

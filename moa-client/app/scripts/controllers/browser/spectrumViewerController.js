@@ -6,7 +6,7 @@
  * @param massSpec
  * @constructor
  */
-moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
+moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum, CookieService, $log) {
     /**
      * Mass spectrum obtained from cache if it exists, otherwise from REST api
      */
@@ -14,21 +14,40 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
 
     $scope.massSpec = [];
 
+    /**
+     * status of our accordion
+     * @type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
+     */
+    $scope.accordionStatus = {
+        isBiologicalCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisBiologicalCompoundOpen", true),
+        isChemicalCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisChemicalCompoundOpen", false),
+        isDerivatizedCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisDerivatizedCompoundOpen", false),
+        isSpectraOpen: CookieService.getBooleanValue("DisplaySpectraisSpectraOpen", true),
+        isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false)
 
+    };
 
+    /**
+     * watch the accordion status and updates related cookies
+     */
+    $scope.$watch("accordionStatus",function(newVal){
 
+        angular.forEach($scope.accordionStatus, function(value, key){
+            CookieService.update("DisplaySpectra"+key,value);
+        });
+    },true);
     /*
      * Perform all initial data formatting and processing
      */
-    (function() {
+    (function () {
         // Regular expression for truncating accurate masses
         var massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
 
         /**
          * Decimal truncation routines
          */
-        var truncateDecimal = function(s, length) {
-            var regex = new RegExp("^\\s*(\\d+\\.\\d{"+ length +"})\\d*\\s*$");
+        var truncateDecimal = function (s, length) {
+            var regex = new RegExp("^\\s*(\\d+\\.\\d{" + length + "})\\d*\\s*$");
             var m = s.match(regex);
 
             return m != null ? m[1] : s;
@@ -37,11 +56,11 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
         /**
          * Truncate the
          */
-        var truncateMass = function(mass) {
+        var truncateMass = function (mass) {
             return truncateDecimal(mass, 4);
         };
 
-        var truncateRetentionTime = function(mass) {
+        var truncateRetentionTime = function (mass) {
             return truncateDecimal(mass, 1);
         };
 
@@ -112,7 +131,7 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
             match[1] = truncateMass(match[1]);
 
             // Store ion
-            $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation,computed:computed});
+            $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation, computed: computed});
         }
     })();
 };
@@ -123,13 +142,14 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum) {
  * Loads spectrum from cache if it exists, otherwise get from rest api
  */
 moaControllers.ViewSpectrumController.loadSpectrum = {
-    delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
+    delayedSpectrum: function (Spectrum, $route, SpectrumCache) {
         // If a spectrum is not cached or the id requested does not match the
         // cached spectrum, request it from the REST api
         if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id != $route.current.params.id) {
             return Spectrum.get(
                 {id: $route.current.params.id},
-                function (data) {},
+                function (data) {
+                },
                 function (error) {
                     alert('failed to obtain spectrum: ' + error);
                 }
