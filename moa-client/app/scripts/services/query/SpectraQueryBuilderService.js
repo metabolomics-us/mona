@@ -6,7 +6,16 @@
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  *
  */
-app.service('SpectraQueryBuilderService', function () {
+app.service('SpectraQueryBuilderService', function ($rootScope) {
+
+    /**
+     * provides us with the current query
+     * @returns {*|$rootScope.spectraQuery}
+     */
+    this.getQuery = function () {
+        return $rootScope.getSpectraQuery();
+    };
+
     /**
      * prepares an empty query to avoid null pointer exceptions
      */
@@ -84,4 +93,29 @@ app.service('SpectraQueryBuilderService', function () {
         return this.updateQuery(query, metadata, tags, this.prepareQuery());
     };
 
+    /**
+     * adds a tag to the query
+     * @param tag
+     */
+    this.addTagToQuery = function (tag) {
+        var query = this.getQuery();
+
+        query.tags.push(tag);
+
+        $rootScope.setSpectraQuery(query);
+
+    };
+
+    /**
+     * removes a tag from a query
+     * @param tag
+     */
+    this.removeTagFromQuery = function (tag) {
+
+        var query = this.getQuery();
+        query.tags.splice(query.tags.indexOf(tag), 1);
+
+        $rootScope.setSpectraQuery(query);
+
+    }
 });

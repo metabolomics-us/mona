@@ -5,7 +5,7 @@
 /**
  * disables automatic form submission when you press enter in an input element
  */
-app.directive('gwTag', function ($compile, $location,$rootScope,SpectraQueryBuilderService) {
+app.directive('gwTag', function ($compile, $location, $rootScope, $log) {
     return {
         //must be an attribute
         restrict: 'A',
@@ -14,51 +14,78 @@ app.directive('gwTag', function ($compile, $location,$rootScope,SpectraQueryBuil
         replace: true,
 
         //replace the fields text and add it in the internal span
-        transclude: true,
+        //transclude: true,
 
         //our template to use
-        template: '<div class="label" ng-click="click()"><span ng-transclude></span></div>',
+        templateUrl: '/views/templates/tags.html',
 
         //scope definition
         scope: {
-            ruleBased: '=ruleBased'
+            ruleBased: '=ruleBased',
+            tag: '=value'
         },
-        //controller to handle linking
-        controller: function ($scope, $element) {
+        //controller to handle building new queries
+        controller: function ($scope, $element,SpectraQueryBuilderService) {
+
+            //$log.info (angular.element(angular.element(angular.element(angular.element($element.parent()).children()[0]).children()[0]).children()[0]) );
 
             //receive a click
-            $scope.click = function () {
+            $scope.newQuery = function () {
 
-
-                //grab the label
-                var label = $element.text();
 
                 //build a mona query based on this label
                 var query = SpectraQueryBuilderService.prepareQuery();
-                query.tags = [label];
+                query.tags = [$scope.tag.text];
 
                 //assing to the rootscope
-                $rootScope.spectraQuery = query;
+                $rootScope.setSpectraQuery(query);
 
 
                 //run the query and show it's result in the spectra browser
 
                 $location.path("/spectra/browse/");
 
-            }
+            };
+
+            //receive a click
+            $scope.addToQuery = function () {
+                SpectraQueryBuilderService.addTagToQuery($scope.tag.text);
+                $location.path("/spectra/browse/");
+
+            };
+
+
+            //receive a click
+            $scope.removeFromQuery = function () {
+
+                //build a mona query based on this label
+                SpectraQueryBuilderService.removeTagFromQuery($scope.tag.text);
+
+                //run the query and show it's result in the spectra browser
+
+                $location.path("/spectra/browse/");
+
+            };
+
+
         },
+        //decorate our elements based on there properties
         link: function ($scope, element, attrs, ngModel) {
+
+            var elem = angular.element(element[0].querySelector('.btn'));
 
             //append an image
             if ($scope.ruleBased == true) {
-                element.addClass("label-info");
-                element.append("<i class='fa fa-flask'></i>");
+                elem.addClass("btn-info");
+                elem.append("<span class='left15'><i class='fa fa-flask'></i></span>");
             }
             //make it the class which shows it's not computed
             else {
-                element.addClass("label-primary");
+                elem.addClass("btn-primary");
             }
 
+            //set the carret for us
+            elem.append('<span class="caret left30"></span>');
 
         }
     }
