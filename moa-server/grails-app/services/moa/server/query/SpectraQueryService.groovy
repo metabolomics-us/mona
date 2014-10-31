@@ -116,6 +116,9 @@ class SpectraQueryService {
 
                     executionParams.put("tag_${index}".toString(), current.toString());
 
+                    if(index < json.tags.length()-1){
+                        queryOfDoomWhere += " and "
+                    }
                 }
 
 
