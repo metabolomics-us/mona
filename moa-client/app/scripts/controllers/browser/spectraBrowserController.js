@@ -55,6 +55,19 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.dataAvailable = true;
 
     /**
+     * status of our accordion
+     * @type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
+     */
+    $scope.accordionStatus = {
+        isBiologicalCompoundOpen: true,
+        isChemicalCompoundOpen: false,
+        isDerivatizedCompoundOpen: false,
+        isSpectraOpen: true,
+        isIonTableOpen: false
+
+    };
+
+    /**
      * refine the current query by submitting an updates query
      */
     $scope.refineQuery = function () {

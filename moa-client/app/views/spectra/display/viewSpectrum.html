@@ -12,60 +12,93 @@
         </div>
     </div>
     <div class="row">
+
         <div class="col-md-12">
-            <tabset justified="true">
-                <tab heading="Mass Spectrum">
+            <h4>Spectra Properties</h4>
+
+            <accordion close-others="false">
+                <accordion-group is-open="accordionStatus.isSpectraOpen">
+
+                    <accordion-heading>
+                        Mass Spectra<i class="pull-right glyphicon"
+                                       ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen, 'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i>
+                    </accordion-heading>
+
                     <div class="masspec-modal">
                         <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
                     </div>
-                </tab>
-                <tab heading="Table of Ions">
+
+                </accordion-group>
+
+                <accordion-group is-open="accordionStatus.isIonTableOpen">
+
+
+                    <accordion-heading>
+                        Ion Table<i class="pull-right glyphicon"
+                                    ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen, 'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i>
+                    </accordion-heading>
+
                     <div style="height: 400px; overflow: auto; margin-top: 10px;">
                         <table class="table">
                             <thead>
-                                <tr>
-                                    <th>Ion</th>
-                                    <th>Intensity</th>
-                                    <th>annotation</th>
-                                </tr>
+                            <tr>
+                                <th>Ion</th>
+                                <th>Intensity</th>
+                                <th>annotation</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="ion in massSpec">
-                                    <td>{{ion.ion}}</td>
-                                    <td>{{ion.intensity}}</td>
-                                    <td>
-                                        {{ion.annotation}}
+                            <tr ng-repeat="ion in massSpec">
+                                <td>{{ion.ion}}</td>
+                                <td>{{ion.intensity}}</td>
+                                <td>
+                                    {{ion.annotation}}
 
-                                        <!-- display this, if it's a computed value -->
-                                        <i ng-show="ion.computed == true" class="fa fa-flask" tooltip-placement="top" tooltip="This value was computed via automated curation"></i>
-                                    </td>
-                                </tr>
+                                    <!-- display this, if it's a computed value -->
+                                    <i ng-show="ion.computed == true" class="fa fa-flask" tooltip-placement="top"
+                                       tooltip="This value was computed via automated curation"></i>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
-                </tab>
-            </tabset>
+                </accordion-group>
+            </accordion>
         </div>
     </div>
     <br/>
 
     <div class="row">
         <div class="col-md-12">
-            <tabset justified="true">
-                <tab heading="Virtually Derivatized Substance Properties" ng-if="spectrum.predictedCompound != null">
-                    <div display-compound-info compound="spectrum.predictedCompound"></div>
-                </tab>
+            <h4>Compound Properties</h4>
 
-                <tab>
-                    <tab-heading>Substance Properties</tab-heading>
+            <accordion close-others="false">
+                <accordion-group
+                        ng-if="spectrum.predictedCompound != null" is-open="accordionStatus.isDerivatizedCompoundOpen">
+                    <accordion-heading>
+                        Computed Derivatization Product<i class="pull-right glyphicon"
+                                                          ng-class="{'glyphicon-chevron-down': accordionStatus.isDerivatizedCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isDerivatizedCompoundOpen}"></i>
+                    </accordion-heading>
+                    <div display-compound-info compound="spectrum.predictedCompound"></div>
+                </accordion-group>
+
+                <accordion-group is-open="accordionStatus.isBiologicalCompoundOpen">
+                    <accordion-heading>
+                        Substance <i class="pull-right glyphicon"
+                                     ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i>
+                    </accordion-heading>
 
                     <div display-compound-info compound="spectrum.biologicalCompound"></div>
-                </tab>
+                </accordion-group>
 
-                <tab heading="Submitted Derivatized Substance Properties">
+                <accordion-group is-open="accordionStatus.isChemicalCompoundOpen">
+                    <accordion-heading>
+                        Provided Derivatized Substance<i class="pull-right glyphicon"
+                                                         ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i>
+                    </accordion-heading>
                     <div display-compound-info compound="spectrum.chemicalCompound"></div>
-                </tab>
-            </tabset>
+                </accordion-group>
+            </accordion>
         </div>
     </div>
     <br/>
