@@ -6,7 +6,7 @@
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  *
  */
-app.service('SpectraQueryBuilderService', function ($rootScope) {
+app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
 
     /**
      * provides us with the current query
@@ -116,6 +116,23 @@ app.service('SpectraQueryBuilderService', function ($rootScope) {
         query.tags.splice(query.tags.indexOf(tag), 1);
 
         $rootScope.setSpectraQuery(query);
+
+    };
+
+    /**
+     * adds furhter metadata to the query
+     * @param metadata
+     */
+    this.addMetaDataToQuery = function (metadata){
+
+        $log.info(metadata);
+    };
+
+    /**
+     * removes metadata from teh query
+     * @param metadata
+     */
+    this.removeMetaDataFromQuery = function (metadata){
 
     }
 });

@@ -9,6 +9,7 @@
                     </li>
                 </ul>
             </div>
+
         </div>
     </div>
     <div class="row">
@@ -118,7 +119,7 @@
                     <tbody>
                     <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | orderBy: 'category': true">
                         <td>
-                            {{meta.category}}
+                            <span gw-meta-query value="meta"> {{meta.category}}</span>
                         </td>
                         <td>
                             {{meta.name}}
@@ -129,16 +130,6 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
-            <br/>
-
-            <div ng-show="spectrum.tags.length">
-                <h4>Tags</h4>
-                <ul class="list-inline">
-                    <li ng-repeat="tag in spectrum.tags">
-                        <span gw-tag="" rule-based="tag.ruleBased == true" value="tag"></span>
-                    </li>
-                </ul>
             </div>
             <br/>
 
