@@ -4,7 +4,6 @@ var app = angular
     .module('moaClientApp', [
         'ngRoute',
         'ngResource',
-        'ngAnimate',
         'ngCookies',
         'ui.bootstrap',
         'ngTagsInput',
@@ -14,7 +13,7 @@ var app = angular
         'angularMasspecPlotter',
         'angularFileUpload',
         'infinite-scroll',
-        'mgcrea.ngStrap.affix'
+        'mgcrea.bootstrap.affix'
     ]);
 
 
