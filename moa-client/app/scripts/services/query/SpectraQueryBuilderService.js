@@ -120,19 +120,52 @@ app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
     };
 
     /**
-     * adds furhter metadata to the query
+     * adds further metadata to the query
      * @param metadata
      */
-    this.addMetaDataToQuery = function (metadata){
+    this.addMetaDataToQuery = function (metadata) {
 
-        $log.info(metadata);
+        var query = this.getQuery();
+
+        if (query.metadata == null) {
+            query.metadata = [];
+        }
+        //add a metadata query object
+
+        var meta = {'name': metadata.name, 'value': {'eq': metadata.value}};
+
+        if (metadata.unit != null) {
+            meta.unit = {'eq':metadata.unit};
+        }
+
+        query.metadata.push(meta);
+
+        $rootScope.setSpectraQuery(query);
     };
 
     /**
      * removes metadata from teh query
      * @param metadata
      */
-    this.removeMetaDataFromQuery = function (metadata){
+    this.removeMetaDataFromQuery = function (metadata) {
+        var query = this.getQuery();
+
+        if (query.metadata == null) {
+            return
+        }
+
+        //create a metadata query object
+
+        var meta = {'name': metadata.name, 'value': {'eq': metadata.value}};
+
+        if (metadata.unit != null) {
+            meta.unit = {'eq':metadata.unit};
+        }
+
+        query.metadata.splice(query.metadata.indexOf(meta), 1);
+
+
+        $rootScope.setSpectraQuery(query);
 
     }
 });

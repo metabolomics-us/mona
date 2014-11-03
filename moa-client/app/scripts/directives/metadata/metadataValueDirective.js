@@ -52,6 +52,8 @@ app.directive('gwMetaQuery', function ($compile) {
                 //assing to the rootscope
                 $rootScope.setSpectraQuery(query);
 
+                //add it to query
+                SpectraQueryBuilderService.addMetaDataToQuery($scope.value);
 
                 //run the query and show it's result in the spectra browser
 
