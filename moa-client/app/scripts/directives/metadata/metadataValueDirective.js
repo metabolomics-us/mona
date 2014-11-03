@@ -40,46 +40,35 @@ app.directive('gwMetaQuery', function ($compile) {
         },
 
         //controller to handle building new queries
-        controller: function ($scope, $element,SpectraQueryBuilderService, $location) {
+        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location) {
 
             //receive a click
             $scope.newQuery = function () {
-
-
                 //build a mona query based on this label
                 var query = SpectraQueryBuilderService.prepareQuery();
 
-                //assing to the rootscope
-                $rootScope.setSpectraQuery(query);
-
+                //assign to the cache
+                QueryCache.setSpectraQuery(query);
 
                 //run the query and show it's result in the spectra browser
-
                 $location.path("/spectra/browse/");
-
             };
 
             //receive a click
             $scope.addToQuery = function () {
                 SpectraQueryBuilderService.addMetaDataToQuery($scope.value);
                 $location.path("/spectra/browse/");
-
             };
 
 
             //receive a click
             $scope.removeFromQuery = function () {
-
                 //build a mona query based on this label
                 SpectraQueryBuilderService.removeMetaDataFromQuery($scope.value);
 
                 //run the query and show it's result in the spectra browser
-
                 $location.path("/spectra/browse/");
-
             };
-
-
         }
     }
 });

@@ -25,26 +25,22 @@ app.directive('gwTag', function ($compile, $location, $rootScope, $log) {
             tag: '=value'
         },
         //controller to handle building new queries
-        controller: function ($scope, $element,SpectraQueryBuilderService) {
+        controller: function ($scope, $element, QueryCache, SpectraQueryBuilderService) {
 
             //$log.info (angular.element(angular.element(angular.element(angular.element($element.parent()).children()[0]).children()[0]).children()[0]) );
 
             //receive a click
             $scope.newQuery = function () {
-
-
                 //build a mona query based on this label
                 var query = SpectraQueryBuilderService.prepareQuery();
                 query.tags = [$scope.tag.text];
 
                 //assing to the rootscope
-                $rootScope.setSpectraQuery(query);
+                QueryCache.setSpectraQuery(query);
 
 
                 //run the query and show it's result in the spectra browser
-
                 $location.path("/spectra/browse/");
-
             };
 
             //receive a click

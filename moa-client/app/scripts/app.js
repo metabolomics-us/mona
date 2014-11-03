@@ -32,38 +32,9 @@ app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/tras
 app.constant('MAX_OBJECTS', 20);
 
 /**
- * provides us with application wide useful functions and
+ * Toggle for whether commonly used data (tags, metadata, etc) should be
+ * internally cached
  */
-app.run(function ($rootScope, SpectraQueryBuilderService) {
-
-    /**
-     * set's a new spectra query
-     * @param query
-     */
-    $rootScope.setSpectraQuery = function (query) {
-        $rootScope.spectraQuery = query;
-    };
-
-    /**
-     * returns our query
-     * @returns {*|$rootScope.spectraQuery}
-     */
-    $rootScope.getSpectraQuery = function () {
-        return $rootScope.spectraQuery;
-    };
-
-    /**
-     * resets our query
-     */
-    $rootScope.resetSpectraQuery = function () {
-        $rootScope.spectraQuery = SpectraQueryBuilderService.prepareQuery();
-    };
-
-    //contains our build and modified spectra query
-    $rootScope.spectraQuery = SpectraQueryBuilderService.prepareQuery();
-
-});
-
 app.constant('INTERNAL_CACHING', true);
 
 
@@ -82,6 +53,6 @@ app.config(function ($httpProvider) {
 var moaControllers = {};
 
 /**
- * lets assign them
+ * let's assign them
  */
 app.controller(moaControllers);

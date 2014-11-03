@@ -20,7 +20,7 @@
  * @param $location
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache, $rootScope) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache, QueryCache) {
     /**
      * contains all local objects and is our model
      * @type {Array}
@@ -80,7 +80,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         }
 
         // Reset spectra and perform the query
-        $scope.submitQuery(SpectraQueryBuilderService.updateQuery(query, {}, tags, $rootScope.getSpectraQuery()));
+        $scope.submitQuery(SpectraQueryBuilderService.updateQuery(query, {}, tags, QueryCache.getSpectraQuery()));
     };
 
 
@@ -131,19 +131,19 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.calculateOffsets = function () {
         $scope.spectraLoadLength = $scope.spectra.length;
 
-        var query = $rootScope.getSpectraQuery();
+        var query = QueryCache.getSpectraQuery();
 
         //assign the offset
         query.offset = $scope.spectra.length;
 
-        $rootScope.setSpectraQuery(query);
+        QueryCache.setSpectraQuery(query);
     };
 
     /**
      * submits our build query to the backend
      */
     $scope.submitQuery = function (query) {
-        $rootScope.setSpectraQuery(query);
+        QueryCache.setSpectraQuery(query);
         $scope.dataAvailable = true;
 
         // Reset spectra
@@ -187,7 +187,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             $scope.loadingMore = true;
             $scope.calculateOffsets();
 
-            Spectrum.searchSpectra($rootScope.getSpectraQuery(), function (data) {
+            Spectrum.searchSpectra(QueryCache.getSpectraQuery(), function (data) {
                 if (data.length == 0) {
                     $scope.dataAvailable = false;
                 } else {

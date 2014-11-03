@@ -6,14 +6,13 @@
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  *
  */
-app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
-
+app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
     /**
      * provides us with the current query
-     * @returns {*|$rootScope.spectraQuery}
+     * @returns {*|QueryCache.spectraQuery}
      */
     this.getQuery = function () {
-        return $rootScope.getSpectraQuery();
+        return QueryCache.getSpectraQuery();
     };
 
     /**
@@ -26,6 +25,8 @@ app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
             tags: []
         };
     };
+
+
     /**
      * updates a pre-compiled query with the given
      */
@@ -33,7 +34,7 @@ app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
 
         // Get all metadata in a single dictionary
         var meta = {};
-        Object.keys(metadata).forEach(function (element, index, array) {
+        Object.keys(metadata).forEach(function (element) {
             for (var i = 0; i < metadata[element].length; i++) {
                 meta[metadata[element][i].name] = metadata[element][i];
             }
@@ -41,7 +42,7 @@ app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
 
 
         // Handle all query components
-        Object.keys(query).forEach(function (element, index, array) {
+        Object.keys(query).forEach(function (element) {
             if (element === "nameFilter" && query[element]) {
                 compiled.compound.name = {like: query[element]};
             }
@@ -87,7 +88,9 @@ app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
 
     /**
      * compiles our dedicated query to execute it against another service
-     * @param element
+     * @param query
+     * @param metadata
+     * @param tags
      */
     this.compileQuery = function (query, metadata, tags) {
         return this.updateQuery(query, metadata, tags, this.prepareQuery());
@@ -102,8 +105,7 @@ app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
 
         query.tags.push(tag);
 
-        $rootScope.setSpectraQuery(query);
-
+        QueryCache.setSpectraQuery(query);
     };
 
     /**
@@ -111,20 +113,17 @@ app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
      * @param tag
      */
     this.removeTagFromQuery = function (tag) {
-
         var query = this.getQuery();
         query.tags.splice(query.tags.indexOf(tag), 1);
 
-        $rootScope.setSpectraQuery(query);
-
+        QueryCache.setSpectraQuery(query);
     };
 
     /**
-     * adds furhter metadata to the query
+     * adds further metadata to the query
      * @param metadata
      */
-    this.addMetaDataToQuery = function (metadata){
-
+    this.addMetaDataToQuery = function (metadata) {
         $log.info(metadata);
     };
 
@@ -132,7 +131,7 @@ app.service('SpectraQueryBuilderService', function ($rootScope, $log) {
      * removes metadata from teh query
      * @param metadata
      */
-    this.removeMetaDataFromQuery = function (metadata){
+    this.removeMetaDataFromQuery = function (metadata) {
 
     }
 });
