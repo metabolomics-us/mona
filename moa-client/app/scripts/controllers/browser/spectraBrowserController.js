@@ -11,13 +11,15 @@
  * @param $scope
  * @param Spectrum
  * @param Compound
- * @param TaggingService
  * @param $modal
  * @param $routeParams
  * @param SpectraQueryBuilderService
  * @param MetadataService
  * @param $log
  * @param $location
+ * @param AppCache
+ * @param SpectrumCache
+ * @param QueryCache
  * @constructor
  */
 moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache, QueryCache) {

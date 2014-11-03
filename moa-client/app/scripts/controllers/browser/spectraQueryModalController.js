@@ -2,10 +2,10 @@
  * Created by wohlgemuth on 7/11/14.
  */
 moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, SpectraQueryBuilderService, $log, $http, REST_BACKEND_SERVER, AppCache) {
-    /* Metadata */
-    $scope.metadataCategories = [];
+    /**
+     *
+     */
     $scope.metadata = {};
-    $scope.metadataValues = {};
 
     $scope.tags = [];
     $scope.tagsSelection = [];
@@ -33,19 +33,14 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
      * perform metadata query
      */
     $scope.queryMetadataValues = function (name, value) {
-        return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=100', {
+        return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
             query: {
                 name: name,
-                value: {like: '%' + value + '%'}
+                value: {ilike: '%' + value + '%'},
+                property: 'stringValue'
             }
-        }).then(function (res) {
-            var values = {};
-
-            angular.forEach(res.data, function(value) {
-                values[value.value] = true;
-            });
-
-            return Object.keys(values).slice(0,10);
+        }).then(function (data) {
+            return data.data;
         });
     };
 
