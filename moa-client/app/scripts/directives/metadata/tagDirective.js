@@ -5,7 +5,7 @@
 /**
  * disables automatic form submission when you press enter in an input element
  */
-app.directive('gwTag', function ($compile, $location, $log) {
+app.directive('gwTag', function ($compile, $location) {
     return {
         //must be an attribute
         restrict: 'A',
@@ -25,7 +25,7 @@ app.directive('gwTag', function ($compile, $location, $log) {
             tag: '=value'
         },
         //controller to handle building new queries
-        controller: function ($scope, $element, QueryCache, SpectraQueryBuilderService) {
+        controller: function ($scope, $element, SpectraQueryBuilderService) {
 
             //receive a click
             $scope.newQuery = function () {

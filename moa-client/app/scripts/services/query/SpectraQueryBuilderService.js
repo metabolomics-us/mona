@@ -12,7 +12,13 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
      * @returns {*|QueryCache.spectraQuery}
      */
     this.getQuery = function () {
-        return QueryCache.getSpectraQuery();
+        var query =  QueryCache.getSpectraQuery();
+
+        if(query == null){
+            query = this.prepareQuery();
+        }
+
+        return query;
     };
 
     /**
@@ -35,6 +41,11 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
      * updates a pre-compiled query with the given
      */
     this.updateQuery = function (query, metadata, tags, compiled) {
+
+        //no query assigned, use the one from the cache
+        if(compiled == null){
+            compiled = this.getQuery();
+        }
 
         // Get all metadata in a single dictionary
         var meta = {};
@@ -86,7 +97,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
             compiled.tags.push(tags[i]);
         }
 
-        QueryCache.setSpectraQuery(query);
+        QueryCache.setSpectraQuery(compiled);
 
         return compiled;
     };
@@ -102,10 +113,26 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
     };
 
     /**
+     * removes a tag from a query
+     * @param tag
+     */
+    this.removeTagFromQuery = function (tag) {
+        var query = this.getQuery();
+        var index = query.tags.indexOf(tag);
+
+        if (index > -1) {
+            query.tags.splice(query.tags.indexOf(tag), 1);
+        }
+        QueryCache.setSpectraQuery(query);
+    };
+
+
+    /**
      * adds a tag to the query
      * @param tag
      */
     this.addTagToQuery = function (tag) {
+        this.removeTagFromQuery(tag);
         var query = this.getQuery();
 
         query.tags.push(tag);
@@ -114,14 +141,25 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
     };
 
     /**
-     * removes a tag from a query
-     * @param tag
+     * removes metadata from teh query
+     * @param metadata
      */
-    this.removeTagFromQuery = function (tag) {
+    this.removeMetaDataFromQuery = function (metadata) {
         var query = this.getQuery();
-        query.tags.splice(query.tags.indexOf(tag), 1);
 
-        QueryCache.setSpectraQuery(query);
+        if (query.metadata == null) {
+            return
+        }
+
+        //create a metadata query object
+
+        for (var i = 0; i < query.metadata.length; i++) {
+            if (query.metadata[i].name == metadata.name) {
+                query.metadata.splice(i, 1);
+                QueryCache.setSpectraQuery(query);
+                return;
+            }
+        }
     };
 
     /**
@@ -129,6 +167,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
      * @param metadata
      */
     this.addMetaDataToQuery = function (metadata) {
+        this.removeMetaDataFromQuery(metadata);
 
         var query = this.getQuery();
 
@@ -149,27 +188,4 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
 
     };
 
-    /**
-     * removes metadata from teh query
-     * @param metadata
-     */
-    this.removeMetaDataFromQuery = function (metadata) {
-        var query = this.getQuery();
-
-        if (query.metadata == null) {
-            return
-        }
-
-        //create a metadata query object
-
-        var meta = {'name': metadata.name, 'value': {'eq': metadata.value}};
-
-        if (metadata.unit != null) {
-            meta.unit = {'eq': metadata.unit};
-        }
-
-        query.metadata.splice(query.metadata.indexOf(meta), 1);
-
-        QueryCache.setSpectraQuery(query);
-    }
 });
