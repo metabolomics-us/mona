@@ -1,22 +1,20 @@
 package moa.server.query
-
 import grails.transaction.Transactional
 import moa.MetaDataValue
-import org.springframework.cache.annotation.Cacheable
 
-import static util.query.QueryHelper.*
+import static util.query.QueryHelper.buildComparisonField
 
 class MetaDataQueryService {
 
     static transactional = false
 
     @Transactional
-    @Cacheable("metadata")
+    //@Cacheable("metadata")
     def query(long id) {
         return MetaDataValue.get(id)
     }
 
-    @Cacheable("metadata")
+   // @Cacheable("metadata")
     @Transactional
     def query(def json, def params) {
 
@@ -40,7 +38,7 @@ class MetaDataQueryService {
      * queries metadata and returns the result as json array of metadata types
      * @param json
      */
-    @Cacheable("metadata")
+   // @Cacheable("metadata")
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
 
@@ -56,8 +54,16 @@ class MetaDataQueryService {
             params.offset = offset
         }
 
+        String field = "m"
+        /**
+         * if only one field is specifed
+         */
+        if(json.property != null){
+            log.debug("add property limitation to query: ${json.property}")
+            field = "m.${json.property}"
+        }
 
-        String queryOfDoom = "select m from MetaDataValue m left join m.metaData as md left join md.category as mdc "
+        String queryOfDoom = "select distinct ${field} from MetaDataValue m left join m.metaData as md left join md.category as mdc "
 
         String queryOfDoomJoins = ""
 
@@ -78,6 +84,7 @@ class MetaDataQueryService {
         log.info("generated query: ${queryOfDoom}")
         def result = MetaDataValue.executeQuery(queryOfDoom, executionParams, params)
 
+        println ("\n\nt query: \n\n ${queryOfDoom}\n\n")
         log.debug("result size: ${result.size()}")
         return result
 

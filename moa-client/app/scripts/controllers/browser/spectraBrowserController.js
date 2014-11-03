@@ -82,7 +82,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         }
 
         // Reset spectra and perform the query
-        $scope.submitQuery(SpectraQueryBuilderService.updateQuery(query, {}, tags, QueryCache.getSpectraQuery()));
+        SpectraQueryBuilderService.updateQuery(query, {}, tags);
+
+        $scope.submitQuery();
     };
 
 
@@ -144,8 +146,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     /**
      * submits our build query to the backend
      */
-    $scope.submitQuery = function (query) {
-        QueryCache.setSpectraQuery(query);
+    $scope.submitQuery = function () {
         $scope.dataAvailable = true;
 
         // Reset spectra
@@ -157,6 +158,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
 
     /**
+     * TODO remove
      * Get natural mass as accurate mass of spectrum
      */
     $scope.addAccurateMass = function (spectra) {

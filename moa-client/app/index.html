@@ -174,7 +174,8 @@
                             <a href="#/spectra/browse"><i class="fa fa-table fa-fw"></i>Browse Spectra</a>
                         </li>
                         <li>
-                            <a href="#/spectra/upload/single"><i class="fa fa-file-o fa-fw"></i>Upload Single Spectrum</a>
+                            <a href="#/spectra/upload/single"><i class="fa fa-file-o fa-fw"></i>Upload Single
+                                Spectrum</a>
                         </li>
                         <li>
                             <a href="#/spectra/upload/library"><i class="fa fa-files-o fa-fw"></i>Upload Library</a>
@@ -236,8 +237,11 @@
 <div id="page-wrapper">
 
     <div class="row">
-        {{$root.getSpectraQuery()}}
+        <span show-query/>
     </div>
+    <div>there is 3</div>
+    <div>{{$root.myStupidQuery | json}}</div>
+
     <div class="row">
         <div class="top17">
             <div ng-view=""></div>
@@ -312,7 +316,6 @@
 <script src="scripts/services/cookie/CookieService.js"></script>
 
 
-
 <script src="scripts/services/authentificationService.js"></script>
 <script src="scripts/services/upload/uploadLibraryService.js"></script>
 
@@ -343,7 +346,7 @@
 <script src="scripts/directives/metadata/metadataValueDirective.js"></script>
 
 <script src="scripts/directives/compound/displayCompoundDirective.js"></script>
-
+<script src="scripts/directives/query/queryDirective.js"></script>
 
 
 <!-- none bower js -->

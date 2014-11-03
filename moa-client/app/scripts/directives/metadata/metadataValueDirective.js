@@ -45,10 +45,12 @@ app.directive('gwMetaQuery', function ($compile) {
             //receive a click
             $scope.newQuery = function () {
                 //build a mona query based on this label
-                var query = SpectraQueryBuilderService.prepareQuery();
+                SpectraQueryBuilderService.prepareQuery();
+
+                //add it to query
+                SpectraQueryBuilderService.addMetaDataToQuery($scope.value);
 
                 //assign to the cache
-                QueryCache.setSpectraQuery(query);
 
                 //run the query and show it's result in the spectra browser
                 $location.path("/spectra/browse/");

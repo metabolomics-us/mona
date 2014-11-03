@@ -120,6 +120,7 @@ log4j = {
             debug 'curation'
 
             debug 'grails.app'
+            debug 'moa'
             //debug 'grails.plugin.cache'
 
 

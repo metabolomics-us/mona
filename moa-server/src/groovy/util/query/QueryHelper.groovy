@@ -17,7 +17,8 @@ class QueryHelper {
      * @param index
      * @return
      */
-    public static List buildComparisonField(String inputQuery, String fieldName, List values, String condition, Map executionParams, int index = 0, String qualifierTable = "") {
+    public
+    static List buildComparisonField(String inputQuery, String fieldName, List values, String condition, Map executionParams, int index = 0, String qualifierTable = "") {
 
         if (qualifierTable != "") {
             qualifierTable = qualifierTable + "."
@@ -34,6 +35,10 @@ class QueryHelper {
             case "like":
                 conditionTranslation = "like"
                 break
+            case "ilike":
+                conditionTranslation = "ilike"
+                break
+
             case "gt":
                 conditionTranslation = ">"
                 break
@@ -67,6 +72,13 @@ class QueryHelper {
             executionParams.put("${fieldName}_value_${index}_min".toString(), values[0])
             executionParams.put("${fieldName}_value_${index}_max".toString(), values[1])
 
+        } else if (conditionTranslation.equals("ilike")) {
+
+            def value = values[0];
+
+            query += "lower(${qualifierTable}${fieldName}) like (:${fieldName}_value_${index})"
+
+            executionParams.put("${fieldName}_value_${index}".toString(), value.toString().toLowerCase())
         }
         /**
          * general handling for everything else

@@ -7,7 +7,7 @@
  * Stores spectra browser data, individual spectrum, and query data for
  * persistence between controllers and views
  */
-app.factory('SpectrumCache', function($cacheFactory) {
+app.factory('SpectrumCache', function ($cacheFactory) {
     var cache = $cacheFactory('spectrum');
 
     return {
@@ -24,30 +24,30 @@ app.factory('SpectrumCache', function($cacheFactory) {
         },
 
 
-        hasSpectrum: function() {
+        hasSpectrum: function () {
             return typeof cache.get('viewSpectrum') !== 'undefined';
         },
-        getSpectrum: function() {
+        getSpectrum: function () {
             return cache.get('viewSpectrum');
         },
-        setSpectrum: function(spectrum) {
+        setSpectrum: function (spectrum) {
             cache.put('viewSpectrum', spectrum);
         },
-        removeSpectrum: function() {
+        removeSpectrum: function () {
             cache.remove('viewSpectrum');
         },
 
 
-        hasBrowserSpectra: function() {
+        hasBrowserSpectra: function () {
             return typeof cache.get('spectra') !== 'undefined';
         },
-        getBrowserSpectra: function() {
+        getBrowserSpectra: function () {
             return cache.get('spectra');
         },
-        setBrowserSpectra: function(spectrum) {
+        setBrowserSpectra: function (spectrum) {
             cache.put('spectra', spectrum);
         },
-        removeBrowserSpectra: function() {
+        removeBrowserSpectra: function () {
             cache.remove('spectra');
         }
     };
@@ -57,68 +57,69 @@ app.factory('SpectrumCache', function($cacheFactory) {
 /**
  * Stores the current query for persistence and updating between views
  */
-app.factory('QueryCache', function($cacheFactory, $injector) {
-    var cache = $cacheFactory('query');
-
-    return {
-        /**
-         * Retrieve this cache factory
-         */
-        cache: cache,
-
-        /**
-         * Clear all values stored in this cache factory
-         */
-        clear: function () {
-            cache.removeAll();
-        },
+app.service('QueryCache', function ( $injector, $log, $rootScope) {
 
 
-        /**
-         * Retruns whether a query exists
-         * @returns {boolean}
-         */
-        hasSpectraQuery: function() {
-            return typeof cache.get('spectraQuery') !== 'undefined';
-        },
+    /**
+     * Retrieve this cache factory
+     */
+    this.query = null;
 
-        /**
-         * returns our query or creates a default query if it does not exist
-         * @returns {*|QueryCache.spectraQuery}
-         */
-        getSpectraQuery: function () {
-            // Create default query if none exists
-            // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
-            if(typeof cache.get('spectraQuery') === 'undefined') {
-                this.setSpectraQuery($injector.get('SpectraQueryBuilderService').prepareQuery());
-            }
+    /**
+     * Clear all values stored in this cache factory
+     */
+    this.clear = function () {
+        this.query = null;
+    };
 
-            return cache.get('spectraQuery');
-        },
 
-        /**
-         * sets a new spectra query
-         * @param query
-         */
-        setSpectraQuery: function (query) {
-            cache.put('spectraQuery', query);
-        },
+    /**
+     * Retruns whether a query exists
+     * @returns {boolean}
+     */
+    this.hasSpectraQuery = function () {
+        return this.query != null;
+    };
 
-        /**
-         * Resets the current query
-         */
-        resetSpectraQuery: function () {
-            cache.remove('spectraQuery');
+    /**
+     * returns our query or creates a default query if it does not exist
+     * @returns {*|QueryCache.spectraQuery}
+     */
+    this.getSpectraQuery = function () {
+        // Create default query if none exists
+        // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
+        if (this.query == null) {
+            this.setSpectraQuery($injector.get('SpectraQueryBuilderService').prepareQuery());
         }
+
+        return this.query;
+    };
+
+    /**
+     * sets a new spectra query
+     * @param query
+     */
+    this.setSpectraQuery = function (query) {
+        $rootScope.$broadcast('spectra:query',query);
+        this.query = query;
+    };
+
+    /**
+     * Resets the current query
+     */
+    this.resetSpectraQuery = function () {
+        this.clear();
     }
-});
+
+})
+;
 
 
 /**
  * Stores commonly used data obtained from the server to reduce load time
  * of certain views
  */
-app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService, INTERNAL_CACHING) {
+app.factory('AppCache', function ($cacheFactory, MetadataService, TaggingService, INTERNAL_CACHING) {
     var cache = $cacheFactory('app');
 
     return {
@@ -135,8 +136,8 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService,
         },
 
 
-        getTags: function(callback) {
-            if(!INTERNAL_CACHING || !cache.get('tags')) {
+        getTags: function (callback) {
+            if (!INTERNAL_CACHING || !cache.get('tags')) {
                 cache.put('tags', TaggingService.query(
                     callback,
                     function (error) {
@@ -148,12 +149,12 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService,
             }
         },
 
-        getMetadataCategories: function(callback) {
-            if(!INTERNAL_CACHING || !cache.get('metadataCategories')) {
+        getMetadataCategories: function (callback) {
+            if (!INTERNAL_CACHING || !cache.get('metadataCategories')) {
                 cache.put('metadataCategories', MetadataService.categories(
                     callback,
                     function (error) {
-                        $log.error('metadata categories failed: '+ error);
+                        $log.error('metadata categories failed: ' + error);
                     }
                 ));
             } else {
@@ -161,7 +162,7 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService,
             }
         },
 
-        getMetadata: function(callback) {
+        getMetadata: function (callback) {
             if (!INTERNAL_CACHING || !cache.get('metadata')) {
                 cache.put('metadata', MetadataService.metadata(
                     callback,
@@ -180,6 +181,6 @@ app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService,
 /**
  * In progress
  */
-app.factory('ScrollCache', function($cacheFactory) {
+app.factory('ScrollCache', function ($cacheFactory) {
     return $cacheFactory('scroll');
 });
