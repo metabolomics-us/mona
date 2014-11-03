@@ -21,8 +21,8 @@
                 <accordion-group is-open="accordionStatus.isSpectraOpen">
 
                     <accordion-heading>
-                        Mass Spectra<i class="pull-right glyphicon"
-                                       ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen, 'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i>
+                        <div>Mass Spectra<i class="pull-right glyphicon"
+                                       ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen, 'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i></div>
                     </accordion-heading>
 
                     <div class="masspec-modal">
@@ -35,8 +35,8 @@
 
 
                     <accordion-heading>
-                        Ion Table<i class="pull-right glyphicon"
-                                    ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen, 'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i>
+                        <div>Ion Table<i class="pull-right glyphicon"
+                                    ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen, 'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i></div>
                     </accordion-heading>
 
                     <div style="height: 400px; overflow: auto; margin-top: 10px;">
@@ -77,16 +77,16 @@
                 <accordion-group
                         ng-if="spectrum.predictedCompound != null" is-open="accordionStatus.isDerivatizedCompoundOpen">
                     <accordion-heading>
-                        Computed Derivatization Product<i class="pull-right glyphicon"
-                                                          ng-class="{'glyphicon-chevron-down': accordionStatus.isDerivatizedCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isDerivatizedCompoundOpen}"></i>
+                        <div>Computed Derivatization Product<i class="pull-right glyphicon"
+                                                          ng-class="{'glyphicon-chevron-down': accordionStatus.isDerivatizedCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isDerivatizedCompoundOpen}"></i></div>
                     </accordion-heading>
                     <div display-compound-info compound="spectrum.predictedCompound"></div>
                 </accordion-group>
 
                 <accordion-group is-open="accordionStatus.isBiologicalCompoundOpen">
                     <accordion-heading>
-                        Substance <i class="pull-right glyphicon"
-                                     ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i>
+                        <div>Substance <i class="pull-right glyphicon"
+                                     ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i></div>
                     </accordion-heading>
 
                     <div display-compound-info compound="spectrum.biologicalCompound"></div>
@@ -94,9 +94,8 @@
 
                 <accordion-group is-open="accordionStatus.isChemicalCompoundOpen">
                     <accordion-heading>
-                        Provided Derivatized Substance<i class="pull-right glyphicon"
-                                                         ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i>
-                    </accordion-heading>
+                        <div>Provided Derivatized Substance<i class="pull-right glyphicon"
+                                                         ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i></div>                    </accordion-heading>
                     <div display-compound-info compound="spectrum.chemicalCompound"></div>
                 </accordion-group>
             </accordion>
