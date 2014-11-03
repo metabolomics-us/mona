@@ -7,49 +7,52 @@
  * Stores spectra browser data, individual spectrum, and query data for
  * persistence between controllers and views
  */
-app.factory('SpectrumCache', function ($cacheFactory) {
-    var cache = $cacheFactory('spectrum');
+app.service('SpectrumCache', function () {
+    /**
+     * Stored browser spectra
+     */
+    this.spectra = null;
 
-    return {
-        /**
-         * Retrieve this cache factory
-         */
-        cache: cache,
-
-        /**
-         * Clear all values stored in this cache factory
-         */
-        clear: function () {
-            cache.removeAll();
-        },
+    /**
+     * Stored spectrum for viewing
+     */
+    this.spectrum = null;
 
 
-        hasSpectrum: function () {
-            return typeof cache.get('viewSpectrum') !== 'undefined';
-        },
-        getSpectrum: function () {
-            return cache.get('viewSpectrum');
-        },
-        setSpectrum: function (spectrum) {
-            cache.put('viewSpectrum', spectrum);
-        },
-        removeSpectrum: function () {
-            cache.remove('viewSpectrum');
-        },
+    /**
+     * Clear all values stored in this cache factory
+     */
+    this.clear = function () {
+        this.removeBrowserSpectra();
+        this.removeSpectrum();
+    };
 
 
-        hasBrowserSpectra: function () {
-            return typeof cache.get('spectra') !== 'undefined';
-        },
-        getBrowserSpectra: function () {
-            return cache.get('spectra');
-        },
-        setBrowserSpectra: function (spectrum) {
-            cache.put('spectra', spectrum);
-        },
-        removeBrowserSpectra: function () {
-            cache.remove('spectra');
-        }
+    this.hasBrowserSpectra = function () {
+        return this.spectra != null;
+    };
+    this.getBrowserSpectra = function () {
+        return this.spectra;
+    };
+    this.setBrowserSpectra = function (spectra) {
+        this.spectra = spectra;
+    };
+    this.removeBrowserSpectra = function () {
+        this.spectra = null;
+    };
+
+
+    this.hasSpectrum = function () {
+        return this.spectrum != null;
+    };
+    this.getSpectrum = function () {
+        return this.spectrum;
+    };
+    this.setSpectrum = function (spectrum) {
+        this.spectrum = spectrum;
+    };
+    this.removeSpectrum = function () {
+        this.spectrum = null;
     };
 });
 
@@ -57,11 +60,9 @@ app.factory('SpectrumCache', function ($cacheFactory) {
 /**
  * Stores the current query for persistence and updating between views
  */
-app.service('QueryCache', function ( $injector, $log, $rootScope) {
-
-
+app.service('QueryCache', function ($injector, $log, $rootScope) {
     /**
-     * Retrieve this cache factory
+     * Stored query
      */
     this.query = null;
 
@@ -74,7 +75,7 @@ app.service('QueryCache', function ( $injector, $log, $rootScope) {
 
 
     /**
-     * Retruns whether a query exists
+     * Returns whether a query exists
      * @returns {boolean}
      */
     this.hasSpectraQuery = function () {
@@ -83,16 +84,18 @@ app.service('QueryCache', function ( $injector, $log, $rootScope) {
 
     /**
      * returns our query or creates a default query if it does not exist
-     * @returns {*|QueryCache.spectraQuery}
+     * @returns {*|query}
      */
     this.getSpectraQuery = function () {
         // Create default query if none exists
         // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
         if (this.query == null) {
-            this.setSpectraQuery($injector.get('SpectraQueryBuilderService').prepareQuery());
+            return $injector.get('SpectraQueryBuilderService').prepareQuery();
         }
 
-        return this.query;
+        else {
+            return this.query;
+        }
     };
 
     /**
@@ -100,7 +103,7 @@ app.service('QueryCache', function ( $injector, $log, $rootScope) {
      * @param query
      */
     this.setSpectraQuery = function (query) {
-        $rootScope.$broadcast('spectra:query',query);
+        $rootScope.$broadcast('spectra:query', query);
         this.query = query;
     };
 
@@ -110,69 +113,85 @@ app.service('QueryCache', function ( $injector, $log, $rootScope) {
     this.resetSpectraQuery = function () {
         this.clear();
     }
-
-})
-;
+});
 
 
 /**
  * Stores commonly used data obtained from the server to reduce load time
  * of certain views
  */
-app.factory('AppCache', function ($cacheFactory, MetadataService, TaggingService, INTERNAL_CACHING) {
-    var cache = $cacheFactory('app');
+app.service('AppCache', function (MetadataService, TaggingService, INTERNAL_CACHING) {
+    /**
+     * Stored tags
+     */
+    this.tags = null;
 
-    return {
-        /**
-         * Retrieve this cache factory
-         */
-        cache: cache,
+    /**
+     * Stored metadata
+     */
+    this.metadata = null;
 
-        /**
-         * Clear all values stored in this cache factory
-         */
-        clear: function () {
-            cache.removeAll();
-        },
+    /**
+     * Stored metadata categories
+     */
+    this.metadataCategories = null;
 
 
-        getTags: function (callback) {
-            if (!INTERNAL_CACHING || !cache.get('tags')) {
-                cache.put('tags', TaggingService.query(
-                    callback,
-                    function (error) {
-                        alert('failed: ' + error);
-                    }
-                ));
-            } else {
-                callback(cache.get('tags'));
-            }
-        },
+    /**
+     * Clear all values stored in this cache factory
+     */
+    this.clear = function () {
+        this.tags = null;
+        this.metadata = null;
+        this.metadataCategories = null;
+    };
 
-        getMetadataCategories: function (callback) {
-            if (!INTERNAL_CACHING || !cache.get('metadataCategories')) {
-                cache.put('metadataCategories', MetadataService.categories(
-                    callback,
-                    function (error) {
-                        $log.error('metadata categories failed: ' + error);
-                    }
-                ));
-            } else {
-                callback(cache.get('metadataCategories'));
-            }
-        },
 
-        getMetadata: function (callback) {
-            if (!INTERNAL_CACHING || !cache.get('metadata')) {
-                cache.put('metadata', MetadataService.metadata(
-                    callback,
-                    function (error) {
-                        $log.error('metadata failed: ' + error);
-                    }
-                ));
-            } else {
-                callback(cache.get('metadata'));
-            }
+    /**
+     * Retrieve tags either from the rest api or internal cache
+     */
+    this.getTags = function (callback) {
+        if (!INTERNAL_CACHING || this.tags == null) {
+            this.tags = TaggingService.query(
+                callback,
+                function (error) {
+                    alert('failed: ' + error);
+                }
+            );
+        } else {
+            callback(this.tags);
+        }
+    };
+
+    /**
+     * Retrieve metadata fields either from the rest api or internal cache
+     */
+    this.getMetadata = function (callback) {
+        if (!INTERNAL_CACHING || this.metadata == null) {
+            this.metadata = MetadataService.metadata(
+                callback,
+                function (error) {
+                    $log.error('metadata failed: ' + error);
+                }
+            );
+        } else {
+            callback(this.metadata);
+        }
+    };
+
+    /**
+     * Retrieve metadata categories either from the rest api or internal cache
+     */
+    this.getMetadataCategories = function (callback) {
+        if (!INTERNAL_CACHING || this.metadataCategories == null) {
+            this.metadataCategories = MetadataService.categories(
+                callback,
+                function (error) {
+                    $log.error('metadata categories failed: ' + error);
+                }
+            );
+        } else {
+            callback(this.metadataCategories);
         }
     };
 });
