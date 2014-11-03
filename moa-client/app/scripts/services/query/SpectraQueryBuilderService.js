@@ -123,6 +123,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
         if (index > -1) {
             query.tags.splice(query.tags.indexOf(tag), 1);
         }
+
         QueryCache.setSpectraQuery(query);
     };
 
@@ -185,7 +186,5 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
         query.metadata.push(meta);
 
         QueryCache.setSpectraQuery(query);
-
     };
-
 });
