@@ -148,8 +148,7 @@
                                                id="meta_{{meta.id}}"
                                                name="{{meta.name}}"
                                                ng-model="query[meta.name]"
-                                               typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
-                                               typeahead-min-length="1"
+                                               typeahead="queryMetadataValues(meta.name, $viewValue)"
                                                class="form-control" />
                                     </div>
                                 </div>
