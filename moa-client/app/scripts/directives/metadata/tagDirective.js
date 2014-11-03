@@ -27,8 +27,6 @@ app.directive('gwTag', function ($compile, $location, $rootScope, $log) {
         //controller to handle building new queries
         controller: function ($scope, $element,SpectraQueryBuilderService) {
 
-            //$log.info (angular.element(angular.element(angular.element(angular.element($element.parent()).children()[0]).children()[0]).children()[0]) );
-
             //receive a click
             $scope.newQuery = function () {
 

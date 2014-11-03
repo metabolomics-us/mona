@@ -20,6 +20,7 @@ class MetaDataQueryController {
         def result = []
         def json = request.JSON
 
+        log.info(json)
         if (json.query) {
 
             result = metaDataQueryService.query(json.query, params)
