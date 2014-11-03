@@ -39,7 +39,9 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
                 value: {ilike: '%' + value + '%'},
                 property: 'stringValue'
             }
-        }).$promise;
+        }).then(function(data) {
+            return data.data;
+        });
     };
 
 
