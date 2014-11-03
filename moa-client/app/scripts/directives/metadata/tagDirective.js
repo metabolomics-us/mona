@@ -5,7 +5,7 @@
 /**
  * disables automatic form submission when you press enter in an input element
  */
-app.directive('gwTag', function ($compile, $location, $rootScope, $log) {
+app.directive('gwTag', function ($compile, $location, $log) {
     return {
         //must be an attribute
         restrict: 'A',
@@ -25,24 +25,18 @@ app.directive('gwTag', function ($compile, $location, $rootScope, $log) {
             tag: '=value'
         },
         //controller to handle building new queries
-        controller: function ($scope, $element,SpectraQueryBuilderService) {
+        controller: function ($scope, $element, QueryCache, SpectraQueryBuilderService) {
 
             //receive a click
             $scope.newQuery = function () {
-
-
                 //build a mona query based on this label
-                var query = SpectraQueryBuilderService.prepareQuery();
-                query.tags = [$scope.tag.text];
+                SpectraQueryBuilderService.prepareQuery();
 
-                //assing to the rootscope
-                $rootScope.setSpectraQuery(query);
+                SpectraQueryBuilderService.addTagToQuery($scope.tag.text);
 
 
                 //run the query and show it's result in the spectra browser
-
                 $location.path("/spectra/browse/");
-
             };
 
             //receive a click

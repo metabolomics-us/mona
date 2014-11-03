@@ -8,12 +8,18 @@
  * persistence between controllers and views
  */
 app.factory('SpectrumCache', function($cacheFactory) {
-    var cache = $cacheFactory('spectra');
+    var cache = $cacheFactory('spectrum');
 
     return {
+        /**
+         * Retrieve this cache factory
+         */
         cache: cache,
 
-        clear: function() {
+        /**
+         * Clear all values stored in this cache factory
+         */
+        clear: function () {
             cache.removeAll();
         },
 
@@ -43,43 +49,94 @@ app.factory('SpectrumCache', function($cacheFactory) {
         },
         removeBrowserSpectra: function() {
             cache.remove('spectra');
-        },
-
-
-        hasQuery: function() {
-            return typeof cache.get('query') !== 'undefined';
-        },
-        getQuery: function() {
-            return cache.get('query');
-        },
-        setQuery: function(query) {
-            cache.put('query', query);
-        },
-        resetQuery: function() {
-            cache.remove('query');
         }
     };
 });
 
 
 /**
+ * Stores the current query for persistence and updating between views
+ */
+app.factory('QueryCache', function($cacheFactory, $injector) {
+    var cache = $cacheFactory('query');
+
+    return {
+        /**
+         * Retrieve this cache factory
+         */
+        cache: cache,
+
+        /**
+         * Clear all values stored in this cache factory
+         */
+        clear: function () {
+            cache.removeAll();
+        },
+
+
+        /**
+         * Retruns whether a query exists
+         * @returns {boolean}
+         */
+        hasSpectraQuery: function() {
+            return typeof cache.get('spectraQuery') !== 'undefined';
+        },
+
+        /**
+         * returns our query or creates a default query if it does not exist
+         * @returns {*|QueryCache.spectraQuery}
+         */
+        getSpectraQuery: function () {
+            // Create default query if none exists
+            // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
+            if(typeof cache.get('spectraQuery') === 'undefined') {
+                this.setSpectraQuery($injector.get('SpectraQueryBuilderService').prepareQuery());
+            }
+
+            return cache.get('spectraQuery');
+        },
+
+        /**
+         * sets a new spectra query
+         * @param query
+         */
+        setSpectraQuery: function (query) {
+            cache.put('spectraQuery', query);
+        },
+
+        /**
+         * Resets the current query
+         */
+        resetSpectraQuery: function () {
+            cache.remove('spectraQuery');
+        }
+    }
+});
+
+
+/**
  * Stores commonly used data obtained from the server to reduce load time
- * of certain views.
+ * of certain views
  */
 app.factory('AppCache', function($cacheFactory, MetadataService, TaggingService, INTERNAL_CACHING) {
     var cache = $cacheFactory('app');
 
     return {
+        /**
+         * Retrieve this cache factory
+         */
         cache: cache,
 
-        clear: function() {
+        /**
+         * Clear all values stored in this cache factory
+         */
+        clear: function () {
             cache.removeAll();
         },
 
 
         getTags: function(callback) {
             if(!INTERNAL_CACHING || !cache.get('tags')) {
-                console.log('LOAD TAGSSSSSES PRECIOUS')
                 cache.put('tags', TaggingService.query(
                     callback,
                     function (error) {
