@@ -45,12 +45,9 @@ class BootStrap {
 
         }
 
-        new TagMarshaller().register()
-        /*
         JSON.registerObjectMarshaller(Tag,
                 DomainClassMarshaller.createExcludeMarshaller(Tag, ["class","id"])
         )
-        */
 
         JSON.registerObjectMarshaller(Compound,
                 DomainClassMarshaller.createExcludeMarshaller(Compound, ["class", "spectra"])
