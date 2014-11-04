@@ -64,27 +64,16 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         var query = {};
         var tags = [];
 
-        /*
-         *  Add name to query if given in route or query refining
-         */
-        if ($routeParams.name && $routeParams.name != '') {
-            query.nameFilter = $routeParams.name;
-        } else if ($scope.nameFilter != '') {
+        // Add name and inchikey to query if provided
+        if ($scope.nameFilter != '') {
             query.nameFilter = $scope.nameFilter;
         }
 
-        /*
-         * Add inchikey to query if given in route
-         */
-        if ($routeParams.inchikey && $routeParams.inchikey != '') {
-            query.inchiFilter = $routeParams.inchikey;
-        } else if ($scope.inchiFilter != '') {
+        if ($scope.inchiFilter != '') {
             query.inchiFilter = $scope.inchiFilter;
         }
 
-        /*
-         * Add selected tags to query
-         */
+        // Add selected tags to query
         for (var i = 0; i < $scope.tagsSelection.length; i++) {
             tags.push($scope.tagsSelection[i].text);
         }
@@ -99,7 +88,15 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * reset the current query
      */
     $scope.resetQuery = function() {
+        // Reset query object
         SpectraQueryBuilderService.prepareQuery();
+
+        // Reset query refining
+        $scope.nameFilter = '';
+        $scope.inchiFilter = '';
+        $scope.tagsSelection = [];
+
+        // Submit blank query
         $scope.submitQuery();
     };
 
@@ -168,6 +165,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         $scope.spectraLoadLength = -1;
         $scope.spectra = [];
 
+        // Add query parameters to query refining
+
+
         $scope.loadMoreSpectra();
     };
 
@@ -223,11 +223,12 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * our list view and default view
      */
     (function list() {
-
+        // Get tags from cache
         AppCache.getTags(function (data) {
             $scope.tags = data;
         });
 
+        // Load spectra if available
         if (SpectrumCache.hasBrowserSpectra()) {
             $scope.spectra = SpectrumCache.getBrowserSpectra();
             SpectrumCache.removeBrowserSpectra();
@@ -235,7 +236,16 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             $scope.spectra = [];
         }
 
-        //submit our initial query
+        // Add name and inchikey to query if given in route
+        if ($routeParams.name && $routeParams.name != '') {
+            $scope.nameFilter = $routeParams.name;
+        }
+
+        if ($routeParams.inchikey && $routeParams.inchikey != '') {
+            $scope.inchiFilter = $routeParams.inchikey;
+        }
+
+        // Submit our initial query
         $scope.refineQuery();
     })();
 };
