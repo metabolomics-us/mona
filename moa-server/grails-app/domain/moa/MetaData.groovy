@@ -1,18 +1,21 @@
 package moa
 
 
-class MetaData {
+class MetaData implements Comparable<MetaData> {
 
     static constraints = {
         name blank: false
         value nullable: true
         searchable nullable: true
         requiresUnit nullable: true
+        priority nullable: true
+
     }
 
     static mapping = {
         name sqlType: "varchar(100)"
         version false
+        priority defaultValue : 0
 
     }
 
@@ -28,6 +31,11 @@ class MetaData {
      * what kind of type we support
      */
     String type
+
+    /**
+     * the priority of this metadata object
+     */
+    Integer priority = 0
 
     /**
      * associated content
@@ -58,4 +66,9 @@ class MetaData {
      * does this metadata object requires a unit or is the unit optional
      */
     boolean requiresUnit = false
+
+    @Override
+    int compareTo(MetaData metaData) {
+        return this.priority.compareTo(metaData.priority)
+    }
 }

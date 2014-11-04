@@ -38,7 +38,7 @@ class SpectraQueryService {
         }
 
         //completed query string
-        String queryOfDoom = "select s from Spectrum s "
+        String queryOfDoom = "select distinct s from Spectrum s "
 
         //defines all our joins
         String queryOfDoomJoins = ""

@@ -7,7 +7,7 @@ app.directive('showQuery', function ($compile) {
         //must be an attribute
         restrict: 'A',
         replace: true,
-        template: '<div><pre>{{query | json}}</pre></div>',
+        templateUrl: '/views/templates/showQuery.html',
 
         /**
          * watches for changes and is used to modify the query terms on the fly
@@ -18,10 +18,20 @@ app.directive('showQuery', function ($compile) {
          */
         controller: function ($scope, QueryCache, $log, $rootScope) {
             $scope.query = QueryCache.getSpectraQuery();
+            $scope.result = [];
 
             $scope.$on('spectra:query', function (event, data) {
+
                 $scope.query = data;
             });
+
+            $scope.$on('spectra:loaded', function (event, data) {
+                $log.info("loaded spectra...");
+
+                $scope.result = data;
+            });
+
+
         },
 
         //decorate our elements based on there properties
