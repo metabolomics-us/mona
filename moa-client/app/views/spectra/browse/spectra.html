@@ -63,10 +63,14 @@
         <div id="filterBar" bs-affix data-offset-top="-80">
 
             <!-- search bar -->
-            <button class="btn btn-primary" ng-click="querySpectraDialog()"><i
-                    class="fa fa-search fa-fw"></i>Open Query Dialog
+            <button class="btn btn-primary" ng-click="querySpectraDialog()">
+                <i class="fa fa-search fa-fw"></i>Open Query Dialog
             </button>
+            <br /><br />
 
+            <button class="btn btn-primary" ng-click="resetQuery()">
+                <i class="fa fa-search fa-fw"></i>Reset Current Query
+            </button>
             <br /><br />
 
             <div class="top17"></div>
@@ -95,7 +99,7 @@
                                placeholder="InChIKey"
                                class="form-control"
                                ng-keyup="$event.keyCode == 13 ? refineQuery() : null"
-                               ng-pattern="/^[A-Z,0-9,\-]*$/">
+                               ng-pattern="/^[A-Z,0-9,\-]+$/">
                     </div>
 
                     <div class="form-group">
