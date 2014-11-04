@@ -36,35 +36,18 @@ class Tag {
         return (text != null ? text.hashCode() : 0)
     }
 
+    def afterLoad() {
 
-    int getSpectraCount() {
+        log.debug("populating caclulated values for tag: ${text}")
 
-        int value = 0
-
-        withSession { session ->
-            def result = session.createSQLQuery(" select count(*) as c from spectrum_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
-
-            if(!result.isEmpty()){
-                value = result[0]
-            }
-        }
-
-        return value
+        spectraCount = tagCachingService.computeSpectraCount(this.text)
+        compoundCount = tagCachingService.computeCompoundCount(this.text)
     }
 
-    int getCompoundCount() {
+    int spectraCount = 0
+    int compoundCount = 0
+    static transients = ['spectraCount', 'compoundCount']
 
-        int value = 0
-
-        withSession { session ->
-            def result = session.createSQLQuery(" select count(*) as c from compound_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
-
-            if(!result.isEmpty()){
-                value = result[0]
-            }
-        }
-
-        return value    }
-    static transients = ['spectraCount', 'compoundCound']
+    def tagCachingService
 
 }

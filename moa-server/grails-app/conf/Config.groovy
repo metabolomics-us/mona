@@ -148,6 +148,10 @@ grails.cache.config = {
     cache {
         name 'metadata'
     }
+    cache {
+        name 'tag'
+    }
+
 
 }
 

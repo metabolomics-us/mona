@@ -46,7 +46,7 @@ class BootStrap {
         }
 
         JSON.registerObjectMarshaller(Tag,
-                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class","id"])
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class","id","tagCachingService"])
         )
 
         JSON.registerObjectMarshaller(Compound,
