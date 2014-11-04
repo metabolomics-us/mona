@@ -66,7 +66,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
                 if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(query[element])) {
                     compiled.compound.inchiKey = {eq: query[element]};
                 } else {
-                    compiled.compound.inchiKey = {like: '%' + query[element] + '%'};
+                    compiled.compound.inchiKey = {like: query[element]};
                 }
             }
 
