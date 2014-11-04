@@ -3,8 +3,8 @@ package moa
 class Tag {
 
     static constraints = {
-	    text blank: false, unique: true, nullable: false
-        ruleBased unique: false, nullable:true
+        text blank: false, unique: true, nullable: false
+        ruleBased unique: false, nullable: true
     }
 
     static mapping = {
@@ -35,4 +35,19 @@ class Tag {
     int hashCode() {
         return (text != null ? text.hashCode() : 0)
     }
+
+    def afterLoad() {
+
+        log.debug("populating caclulated values for tag: ${text}")
+
+        spectraCount = tagCachingService.computeSpectraCount(this.text)
+        compoundCount = tagCachingService.computeCompoundCount(this.text)
+    }
+
+    int spectraCount = 0
+    int compoundCount = 0
+    static transients = ['spectraCount', 'compoundCount']
+
+    def tagCachingService
+
 }

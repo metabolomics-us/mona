@@ -12,6 +12,8 @@ import moa.MetaDataValue
 import util.DomainClassMarshaller
 
 import org.hibernate.FlushMode
+import util.marshallers.TagMarshaller
+
 class BootStrap {
 
     def sessionFactory
@@ -42,8 +44,9 @@ class BootStrap {
               */
 
         }
+
         JSON.registerObjectMarshaller(Tag,
-                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class","id"])
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class","id","tagCachingService"])
         )
 
         JSON.registerObjectMarshaller(Compound,
