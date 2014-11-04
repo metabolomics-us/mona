@@ -22,9 +22,7 @@
  * @param QueryCache
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, $modal, $routeParams, $window, $log, $location,
-        Spectrum, Compound, SpectraQueryBuilderService, MetadataService, AppCache, SpectrumCache, QueryCache) {
-
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache, QueryCache, $rootScope) {
     /**
      * contains all local objects and is our model
      * @type {Array}
@@ -90,8 +88,7 @@ moaControllers.SpectraBrowserController = function ($scope, $modal, $routeParams
     /**
      * reset the current query
      */
-    $scope.resetQuery = function() {
-        // Reset query object
+    $scope.resetQuery = function () {
         SpectraQueryBuilderService.prepareQuery();
 
         // Reset query refining
@@ -225,6 +222,9 @@ moaControllers.SpectraBrowserController = function ($scope, $modal, $routeParams
 
                 $scope.loadingMore = false;
             });
+        }
+        if ($scope.spectra) {
+            $rootScope.$broadcast('spectra:loaded', $scope.spectra);
         }
     };
 
