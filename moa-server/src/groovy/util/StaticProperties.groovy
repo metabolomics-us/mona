@@ -11,5 +11,5 @@ class StaticProperties {
     /**
      * unless otherwise specified, we never return more hits by a query
      */
-    static int MAX_QUERY_RESULTS = 25
+    static int MAX_QUERY_RESULTS = 25000
 }

@@ -1,9 +1,6 @@
 <div class="btn-group" dropdown>
     <button type="button" class="btn dropdown-toggle">{{tag.text}}</button>
     <ul class="dropdown-menu" role="menu">
-        <li><a ng-click="newQuery()">Create new query</a></li>
-        <li><a ng-click="addToQuery()">Add to query</a></li>
-        <li><a ng-click="removeFromQuery()">Remove from query</a></li>
-
+        <li ng-repeat="opt in options"><a ng-click="opt.action(tag)">{{opt.name}}</a></li>
     </ul>
 </div>

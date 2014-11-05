@@ -1,10 +1,10 @@
 package moa.persistence
-
 import grails.converters.JSON
 import grails.rest.RestfulController
 import moa.Spectrum
 import moa.server.SpectraPersistenceService
 import moa.server.SpectraUploadJob
+import moa.server.convert.SpectraConversionService
 import moa.server.query.SpectraQueryService
 
 class SpectrumController extends RestfulController<Spectrum> {
@@ -13,6 +13,8 @@ class SpectrumController extends RestfulController<Spectrum> {
     SpectraPersistenceService spectraPersistenceService
 
     SpectraQueryService spectraQueryService
+
+    SpectraConversionService spectraConversionService
 
     def beforeInterceptor = {
     }
@@ -33,7 +35,16 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     @Override
     def show() {
-        render spectraQueryService.query(params.id as long) as JSON
+
+        def spectrum = spectraQueryService.query(params.id as long)
+
+        switch (params.format) {
+            case "msp":
+                render spectraConversionService.convertToMsp(spectrum)
+                break
+            default:
+                render spectrum as JSON
+        }
     }
 
     @Override
@@ -77,22 +88,17 @@ class SpectrumController extends RestfulController<Spectrum> {
             /**
              *
              * IGNORE FOR NOW, SICNE IT AINT WORKING
-            if (params.MetaDataCategoryId) {
-                object.category = [:]
+             if (params.MetaDataCategoryId) {object.category = [:]
 
-                object.category.id = params.MetaDataCategoryId
-            }
-
-             **/
+             object.category.id = params.MetaDataCategoryId}**/
 
             query.metadata.add(object)
-        }
-        else if (params.MetaDataCategoryId){
+        } else if (params.MetaDataCategoryId) {
             def object = [:]
 
-             object.category = [:]
+            object.category = [:]
 
-             object.category.id = params.MetaDataCategoryId
+            object.category.id = params.MetaDataCategoryId
 
 
             query.metadata.add(object)

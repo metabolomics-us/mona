@@ -6,7 +6,7 @@
  * @param massSpec
  * @constructor
  */
-moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum, CookieService, $log) {
+moaControllers.ViewSpectrumController = function ($scope, $location, $log, delayedSpectrum, CookieService, SpectraQueryBuilderService) {
     /**
      * Mass spectrum obtained from cache if it exists, otherwise from REST api
      */
@@ -24,19 +24,52 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum, Cooki
         isDerivatizedCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisDerivatizedCompoundOpen", false),
         isSpectraOpen: CookieService.getBooleanValue("DisplaySpectraisSpectraOpen", true),
         isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false)
-
     };
 
     /**
      * watch the accordion status and updates related cookies
      */
-    $scope.$watch("accordionStatus",function(newVal){
-
-        angular.forEach($scope.accordionStatus, function(value, key){
-            CookieService.update("DisplaySpectra"+key,value);
+    $scope.$watch("accordionStatus", function(newVal) {
+        angular.forEach($scope.accordionStatus, function(value, key) {
+            CookieService.update("DisplaySpectra"+ key, value);
         });
     },true);
-    /*
+
+
+    /**
+     * Query options for tags directive
+     */
+    $scope.tagsOptions = [
+        {
+            name: 'Create new query',
+            action: function (tag) {
+                //build a mona query based on this label
+                SpectraQueryBuilderService.prepareQuery();
+                SpectraQueryBuilderService.addTagToQuery(tag.text);
+
+                //run the query and show it's result in the spectra browser
+                $location.path("/spectra/browse/");
+            }
+        },
+        {
+            name: 'Add to query',
+            action: function (tag) {
+                SpectraQueryBuilderService.addTagToQuery(tag.text);
+                $location.path("/spectra/browse/");
+
+            }
+        },
+        {
+            name: 'Remove from query',
+            action: function (tag) {
+                SpectraQueryBuilderService.removeTagFromQuery(tag.text);
+                $location.path("/spectra/browse/");
+            }
+        }
+    ];
+
+
+    /**
      * Perform all initial data formatting and processing
      */
     (function () {
@@ -134,6 +167,8 @@ moaControllers.ViewSpectrumController = function ($scope, delayedSpectrum, Cooki
             $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation, computed: computed});
         }
     })();
+
+
 };
 
 

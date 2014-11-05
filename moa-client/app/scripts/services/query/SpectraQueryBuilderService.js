@@ -12,9 +12,9 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
      * @returns {*|QueryCache.spectraQuery}
      */
     this.getQuery = function () {
-        var query =  QueryCache.getSpectraQuery();
+        var query = QueryCache.getSpectraQuery();
 
-        if(query == null){
+        if (query == null) {
             query = this.prepareQuery();
         }
 
@@ -43,8 +43,12 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
     this.updateQuery = function (query, metadata, tags, compiled) {
 
         //no query assigned, use the one from the cache
-        if(compiled == null){
+        if (compiled == null) {
             compiled = this.getQuery();
+        }
+
+        if (tags == null) {
+            tags = [];
         }
 
         // Get all metadata in a single dictionary
@@ -137,6 +141,14 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
         var query = this.getQuery();
 
         query.tags.push(tag);
+
+        QueryCache.setSpectraQuery(query);
+    };
+
+    this.clearTagsFromQuery = function () {
+        var query = this.getQuery();
+
+        query.tags = [];
 
         QueryCache.setSpectraQuery(query);
     };
