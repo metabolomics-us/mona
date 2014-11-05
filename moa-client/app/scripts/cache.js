@@ -7,7 +7,7 @@
  * Stores spectra browser data, individual spectrum, and query data for
  * persistence between controllers and views
  */
-app.service('SpectrumCache', function () {
+app.service('SpectrumCache', function ($log) {
     /**
      * Stored browser spectra
      */
@@ -155,7 +155,7 @@ app.service('AppCache', function (MetadataService, TaggingService, INTERNAL_CACH
             this.tags = TaggingService.query(
                 callback,
                 function (error) {
-                    alert('failed: ' + error);
+                    $log.error('failed: ' + error);
                 }
             );
         } else {
