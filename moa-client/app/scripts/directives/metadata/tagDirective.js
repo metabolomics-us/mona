@@ -5,7 +5,7 @@
 /**
  * disables automatic form submission when you press enter in an input element
  */
-app.directive('gwTag', function ($compile, $location) {
+app.directive('gwTag', function () {
     return {
         //must be an attribute
         restrict: 'A',
@@ -22,45 +22,11 @@ app.directive('gwTag', function ($compile, $location) {
         //scope definition
         scope: {
             ruleBased: '=ruleBased',
-            tag: '=value'
+            tag: '=value',
+            options: '=options',
+            size: '@size'
         },
-        //controller to handle building new queries
-        controller: function ($scope, $element, SpectraQueryBuilderService) {
 
-            //receive a click
-            $scope.newQuery = function () {
-                //build a mona query based on this label
-                SpectraQueryBuilderService.prepareQuery();
-
-                SpectraQueryBuilderService.addTagToQuery($scope.tag.text);
-
-
-                //run the query and show it's result in the spectra browser
-                $location.path("/spectra/browse/");
-            };
-
-            //receive a click
-            $scope.addToQuery = function () {
-                SpectraQueryBuilderService.addTagToQuery($scope.tag.text);
-                $location.path("/spectra/browse/");
-
-            };
-
-
-            //receive a click
-            $scope.removeFromQuery = function () {
-
-                //build a mona query based on this label
-                SpectraQueryBuilderService.removeTagFromQuery($scope.tag.text);
-
-                //run the query and show it's result in the spectra browser
-
-                $location.path("/spectra/browse/");
-
-            };
-
-
-        },
         //decorate our elements based on there properties
         link: function ($scope, element, attrs, ngModel) {
 
@@ -74,6 +40,11 @@ app.directive('gwTag', function ($compile, $location) {
             //make it the class which shows it's not computed
             else {
                 elem.addClass("btn-primary");
+            }
+
+            //set button size
+            if (typeof $scope.size == 'undefined' && ($scope.size == 'lg' || $scope.size == 'sm' || $scope.size == 'xs')) {
+                elem.addClass("btn-"+ $scope.size);
             }
 
             //set the carret for us

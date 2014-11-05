@@ -5,7 +5,7 @@
             <div ng-show="spectrum.tags.length">
                 <ul class="list-inline">
                     <li ng-repeat="tag in spectrum.tags">
-                        <span gw-tag="" rule-based="tag.ruleBased == true" value="tag"></span>
+                        <span gw-tag rule-based="tag.ruleBased == true" value="tag" options="tagsOptions"></span>
                     </li>
                 </ul>
             </div>

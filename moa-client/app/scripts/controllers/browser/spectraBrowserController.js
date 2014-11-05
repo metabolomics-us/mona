@@ -22,7 +22,9 @@
  * @param QueryCache
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache, QueryCache, $rootScope) {
+moaControllers.SpectraBrowserController = function ($scope, $modal, $routeParams, $window, $log, $location, $rootScope,
+            Spectrum, Compound, SpectraQueryBuilderService, MetadataService, AppCache, SpectrumCache, QueryCache) {
+
     /**
      * contains all local objects and is our model
      * @type {Array}
