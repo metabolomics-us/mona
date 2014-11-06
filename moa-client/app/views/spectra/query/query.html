@@ -3,7 +3,10 @@
         <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true">×</button>
         <h3 class="modal-title">Query Spectra</h3>
 
-        <div><p>Below are all querieable options for our mass spectral database. You may fill in as many or as few fields as desired.</p></div>
+        <div><p>
+            Below are all queryable options for our mass spectral database. You may fill in as many or as few fields as desired.
+            Note that the query will search for spectra that match <b>all</b> of the properties you specify.
+        </p></div>
     </div>
 
     <div class="modal-body">
@@ -67,20 +70,6 @@
             </accordion-group>
 
 
-            <accordion-group is-open="queryAccordion.tags">
-                <accordion-heading><div>Query by Tags</div></accordion-heading>
-
-                <ul class="list-inline" style="text-align: center;">
-                    <li ng-repeat="tag in tags">
-                        <button type="button" class="btn" ng-class="tagClass(tag)" ng-click="selectTag(tag)">
-                            {{tag.text}}
-                            <i class="fa fa-flask" ng-show="tag.ruleBased"></i>
-                        </button>
-                    </li>
-                </ul>
-            </accordion-group>
-
-
             <accordion-group is-open="queryAccordion.metadata">
                 <accordion-heading><div>Query by Metadata</div></accordion-heading>
                 <label>Select an existing metadata type and then input a value to query</label>
@@ -108,6 +97,20 @@
                 <div class="col-sm-12">
                     <button type="button" class="btn btn-default btn-xs" ng-click="addMetadataQuery()">+</button>
                 </div>
+            </accordion-group>
+
+
+            <accordion-group is-open="queryAccordion.tags">
+                <accordion-heading><div>Query by Tags</div></accordion-heading>
+
+                <ul class="list-inline" style="text-align: center;">
+                    <li ng-repeat="tag in tags">
+                        <button type="button" class="btn" ng-class="tagClass(tag)" ng-click="selectTag(tag)">
+                            {{tag.text}}
+                            <i class="fa fa-flask" ng-show="tag.ruleBased"></i>
+                        </button>
+                    </li>
+                </ul>
             </accordion-group>
         </accordion>
 

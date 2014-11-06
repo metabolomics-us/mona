@@ -26,15 +26,21 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
     $scope.selectedTags = {};
 
     $scope.tagClass = function(tag) {
-        var tagClass = $scope.selectedTags[tag.text] ? 'btn-primary' : 'btn-default';
+        var tagClass = [];
+
+        if($scope.selectedTags[tag.text]) {
+            tagClass.push('btn-primary');
+        } else {
+            tagClass.push('btn-default');
+        }
 
         if($scope.maxTagsCount != 0) {
             if (tag.spectraCount / $scope.maxTagsCount < 0.25) {
-                tagClass = ' btn-xs';
+                tagClass.push('btn-xs');
             } else if (tag.spectraCount / $scope.maxTagsCount < 0.5) {
-                tagClass = ' btn-sm';
+                tagClass.push('btn-sm');
             } else if (tag.spectraCount / $scope.maxTagsCount > 0.75) {
-                tagClass = ' btn-lg';
+                tagClass.push('btn-lg');
             }
         }
 
