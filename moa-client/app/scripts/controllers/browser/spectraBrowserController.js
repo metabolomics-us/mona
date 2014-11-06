@@ -23,6 +23,7 @@
  * @constructor
  */
 moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache, QueryCache, $rootScope, $window) {
+
     /**
      * contains all local objects and is our model
      * @type {Array}
@@ -57,7 +58,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.dataAvailable = true;
 
 
-
     /**
      * refine the current query by submitting an updates query
      */
@@ -73,13 +73,16 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         if ($scope.inchiFilter != '') {
             query.inchiFilter = $scope.inchiFilter;
         }
+        if ($scope.tagsSelection.length > 0) {
+            SpectraQueryBuilderService.clearTagsFromQuery();
 
-        // Add selected tags to query
-        for (var i = 0; i < $scope.tagsSelection.length; i++) {
-            tags.push($scope.tagsSelection[i].text);
+            // Add selected tags to query
+            for (var i = 0; i < $scope.tagsSelection.length; i++) {
+                SpectraQueryBuilderService.addTagToQuery($scope.tagsSelection[i].text);
+            }
         }
-
         // Reset spectra and perform the query
+
         SpectraQueryBuilderService.updateQuery(query, tags);
 
         $scope.submitQuery();
@@ -99,7 +102,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         // Submit blank query
         $scope.submitQuery();
     };
-
 
 
     /**
@@ -129,7 +131,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         $scope.tagsSelection = [];
 
         for (var i = 0; i < query.tags.length; i++) {
-            for (var j = 0; j < $scope.tags.length; j++){
+            for (var j = 0; j < $scope.tags.length; j++) {
                 if (query.tags[i] == $scope.tags[j].text) {
                     $scope.tagsSelection.push($scope.tags[j]);
                     break;
@@ -138,7 +140,8 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         }
 
         // Scroll to top of the page
-        $window.scrollTo(0,0);
+        $window.scrollTo(0, 0)
+
 
         $scope.loadMoreSpectra();
     };
@@ -224,6 +227,8 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
                 $scope.loadingMore = false;
             });
         }
+
+        //let other parts know that we loaded more spectra
         if ($scope.spectra) {
             $rootScope.$broadcast('spectra:loaded', $scope.spectra);
         }

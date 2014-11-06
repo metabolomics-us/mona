@@ -1,11 +1,15 @@
 package moa.query
 
 import grails.converters.JSON
+import moa.Spectrum
+import moa.server.convert.SpectraConversionService
 import moa.server.query.SpectraQueryService
 
 class SpectraQueryController {
 
     static responseFormats = ['json']
+
+    SpectraConversionService spectraConversionService
 
     /**
      * service to query the backend
@@ -31,7 +35,16 @@ class SpectraQueryController {
             result = spectraQueryService.query(json, params);
         }
 
-        render(result as JSON)
+        switch (json.format ) {
+            case "msp":
+                for (Spectrum s : result) {
+                    render spectraConversionService.convertToMsp(s)
+
+                }
+                break
+            default:
+                render(result as JSON)
+        }
     }
 
     /**

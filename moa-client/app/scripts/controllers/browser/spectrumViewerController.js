@@ -134,6 +134,8 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
             $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation, computed: computed});
         }
     })();
+
+
 };
 
 
