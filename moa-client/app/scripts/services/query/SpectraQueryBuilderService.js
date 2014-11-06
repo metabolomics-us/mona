@@ -6,7 +6,7 @@
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  *
  */
-app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
+app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) {
     /**
      * provides us with the current query
      * @returns {*|QueryCache.spectraQuery}
@@ -40,18 +40,23 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
     /**
      * updates a pre-compiled query with the given
      */
-    this.updateQuery = function (query, metadata, tags, compiled) {
+    this.updateQuery = function (query, tags, compiled) {
 
         //no query assigned, use the one from the cache
-        if(compiled == null){
+        if(compiled == null) {
             compiled = this.getQuery();
         }
 
+        if(tags == null) {
+            tags = [];
+        }
+
+
         // Get all metadata in a single dictionary
         var meta = {};
-        Object.keys(metadata).forEach(function (element) {
-            for (var i = 0; i < metadata[element].length; i++) {
-                meta[metadata[element][i].name] = metadata[element][i];
+        AppCache.getMetadata(function(data) {
+            for(var i = 0; i < data.length; i++) {
+                meta[data[i].name] = data[i];
             }
         });
 
@@ -108,8 +113,8 @@ app.service('SpectraQueryBuilderService', function (QueryCache, $log) {
      * @param metadata
      * @param tags
      */
-    this.compileQuery = function (query, metadata, tags) {
-        return this.updateQuery(query, metadata, tags, this.prepareQuery());
+    this.compileQuery = function (query, tags) {
+        return this.updateQuery(query, tags, this.prepareQuery());
     };
 
     /**

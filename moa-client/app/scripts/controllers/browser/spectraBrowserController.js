@@ -82,7 +82,7 @@ moaControllers.SpectraBrowserController = function ($scope, $modal, $routeParams
         }
 
         // Reset spectra and perform the query
-        SpectraQueryBuilderService.updateQuery(query, {}, tags);
+        SpectraQueryBuilderService.updateQuery(query, tags);
 
         $scope.submitQuery();
     };
@@ -115,7 +115,8 @@ moaControllers.SpectraBrowserController = function ($scope, $modal, $routeParams
         $scope.spectra = [];
 
         // Add query parameters to query refining
-        var query = QueryCache.getSpectraQuery();
+        var query = SpectraQueryBuilderService.getQuery();
+
 
         if (query.compound.hasOwnProperty('name')) {
             $scope.nameFilter = query.compound.name.like;
@@ -139,7 +140,7 @@ moaControllers.SpectraBrowserController = function ($scope, $modal, $routeParams
         }
 
         // Scroll to top of the page
-        $window.scrollTo(0,0)
+        $window.scrollTo(0,0);
 
         $scope.loadMoreSpectra();
     };
@@ -263,6 +264,6 @@ moaControllers.SpectraBrowserController = function ($scope, $modal, $routeParams
         }
 
         // Submit our initial query
-        $scope.refineQuery();
+        $scope.submitQuery();
     })();
 };
