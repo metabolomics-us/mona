@@ -1,6 +1,6 @@
 <div class="btn-group" dropdown>
-    <button type="button" class="btn dropdown-toggle">{{tag.text}}</button>
+    <button type="button" class="btn dropdown-toggle" ng-class="{active: status.active}" ng-disabled="options.length == 0">{{tag.text}}</button>
     <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="opt in options"><a ng-click="opt.action(tag)">{{opt.name}}</a></li>
+        <li ng-repeat="opt in options"><a ng-click="opt.action(tag, status)">{{opt.name}}</a></li>
     </ul>
 </div>

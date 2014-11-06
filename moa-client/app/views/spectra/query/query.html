@@ -3,7 +3,10 @@
         <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true">×</button>
         <h3 class="modal-title">Query Spectra</h3>
 
-        <div><p>Below are all querieable options for our mass spectral database. You may fill in as many or as few fields as desired.</p></div>
+        <div><p>
+            Below are all queryable options for our mass spectral database. You may fill in as many or as few fields as desired.
+            Note that the query will search for spectra that match <b>all</b> of the properties you specify.
+        </p></div>
     </div>
 
     <div class="modal-body">
@@ -67,77 +70,47 @@
             </accordion-group>
 
 
-            <accordion-group is-open="queryAccordion.tags">
-                <accordion-heading><div>Query by Tags</div></accordion-heading>
+            <accordion-group is-open="queryAccordion.metadata">
+                <accordion-heading><div>Query by Metadata</div></accordion-heading>
+                <label>Select an existing metadata type and then input a value to query</label>
+                <br /><br />
 
-                <div class="form-group">
-                    <label for="tags-select" class=" control-label">Filter by Tags:</label>
+                <div ng-repeat="meta in metadataQuery">
+                    <div class="col-sm-6 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
+                        <input type="text"
+                               ng-model="meta.name"
+                               placeholder="Metadata Name"
+                               typeahead="x for x in metadataNames | filter:$viewValue| limitTo:10"
+                               typeahead-editable="false"
+                               class="form-control" />
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        <input type="text"
+                               ng-model="meta.value"
+                               ng-disabled="!meta.name || meta.name == ''"
+                               placeholder="Value to Query"
+                               typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
+                               class="form-control" />
+                    </div>
+                </div>
 
-                    <select id="tags-select"
-                            name="tags-select"
-                            class="form-control"
-                            data-placeholder="Select Tags"
-                            ng-model="tagsSelection"
-                            ng-options="tag.text for tag in tags"
-                            ng-multiple="true"
-                            multiple
-                            multiselect-dropdown></select>
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-default btn-xs" ng-click="addMetadataQuery()">+</button>
                 </div>
             </accordion-group>
 
 
-            <accordion-group is-open="queryAccordion.metadata">
-                <accordion-heading><div>Query by Metadata</div></accordion-heading>
+            <accordion-group is-open="queryAccordion.tags">
+                <accordion-heading><div>Query by Tags</div></accordion-heading>
 
-                <fieldset ng-repeat="(k, v) in metadata">
-                    <legend>{{k == "none" ? "General" : k}}</legend>
-
-                    <div class="form-group" ng-repeat="meta in v | unique:'name'">
-                        <div ng-if="meta.type == 'double'">
-                            <label class="control-label col-sm-4" for="meta_{{meta.id}}">{{meta.name}}</label>
-
-                            <div class="col-sm-5">
-                                <input id="meta_{{meta.id}}"
-                                       name="{{meta.name}}"
-                                       ng-model="query[meta.name]"
-                                       class="form-control"/>
-                            </div>
-
-                            <label class="control-label col-sm-1" for="{{meta.name}}_tolerance">&pm;</label>
-
-                            <div class="col-sm-2">
-                                <input id="{{meta.name}}_tolerance"
-                                       name="{{meta.name}}_tolerance"
-                                       ng-model="query[meta.name +'_tolerance']"
-                                       class="form-control"/>
-                            </div>
-                        </div>
-
-                        <div ng-if="meta.type == 'string'">
-                            <label class="control-label col-sm-4" for="meta_{{meta.id}}">{{meta.name}}</label>
-
-                            <div class="col-sm-8">
-                                <input type="text"
-                                       id="meta_{{meta.id}}"
-                                       name="{{meta.name}}"
-                                       ng-model="query[meta.name]"
-                                       typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
-                                       class="form-control" />
-                            </div>
-                        </div>
-
-                        <div ng-if="meta.type == 'boolean'">
-                            <label class="control-label col-sm-4" for="meta_{{meta.id}}">{{meta.name}}</label>
-
-                            <div class="col-sm-8">
-                                <input id="meta_{{meta.id}}"
-                                       name="{{meta.name}}"
-                                       ng-model="query[meta.name]"
-                                       class="form-control"/>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
+                <ul class="list-inline" style="text-align: center;">
+                    <li ng-repeat="tag in tags">
+                        <button type="button" class="btn" ng-class="tagClass(tag)" ng-click="selectTag(tag)">
+                            {{tag.text}}
+                            <i class="fa fa-flask" ng-show="tag.ruleBased"></i>
+                        </button>
+                    </li>
+                </ul>
             </accordion-group>
         </accordion>
 

@@ -11,10 +11,8 @@ app.directive('displayCompoundInfo', function() {
         },
         templateUrl: '/views/compounds/display/template/displayCompound.html',
         controller: function($scope){
-
             //calculate some unique id for the compound picture
             $scope.pictureId = Math.floor(Math.random()*1000);
-
         }
     };
 });
