@@ -1,18 +1,27 @@
 <div>
     <accordion close-others="true">
-        <accordion-group heading="Current Query">
-            <pre>{{query | json}}</pre>
+        <accordion-group heading="Generated Query">
 
             <div>
-                Received Results: {{result.length}}
+                Generated Query to use in third party software
+                <pre>{{query | json}}</pre>
             </div>
 
             <div>
-                Curl Query:
+                Generated Query to use directly from curl:
                 <pre>
                     {{query | curl}}
                 </pre>
             </div>
+
+
+            <div>
+                Generated Query to use directly from curl as library file:
+                <pre>
+                    {{query | curlAsMsp}}
+                </pre>
+            </div>
+
         </accordion-group>
     </accordion>
 </div>

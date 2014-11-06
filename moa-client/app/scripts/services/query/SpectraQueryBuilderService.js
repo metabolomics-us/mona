@@ -124,10 +124,19 @@ app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) 
      */
     this.removeTagFromQuery = function (tag) {
         var query = this.getQuery();
+
         var index = query.tags.indexOf(tag);
 
         if (index > -1) {
             query.tags.splice(query.tags.indexOf(tag), 1);
+        }
+
+        if(query.compound.tags){
+            index = query.compound.tags.indexOf(tag);
+
+            if (index > -1) {
+                query.tags.splice(query.compound.tags.indexOf(tag), 1);
+            }
         }
 
         QueryCache.setSpectraQuery(query);
@@ -137,13 +146,21 @@ app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) 
     /**
      * adds a tag to the query
      * @param tag
+     * @param isCompound is this a tag of a compound
      */
-    this.addTagToQuery = function (tag) {
+    this.addTagToQuery = function (tag,isCompound) {
         this.removeTagFromQuery(tag);
         var query = this.getQuery();
 
-        query.tags.push(tag);
-
+        if(isCompound){
+            if(!query.compounds.tags){
+                query.compounds.tags = [];
+            }
+            query.compounds.tags.push(tag);
+        }
+        else {
+            query.tags.push(tag);
+        }
         QueryCache.setSpectraQuery(query);
     };
 

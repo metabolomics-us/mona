@@ -31,6 +31,7 @@ class SpectraQueryController {
         if (json.query) {
             log.info("received query: " + json.query)
             result = spectraQueryService.query(json.query, params);
+            json = json.query;
         } else {
             result = spectraQueryService.query(json, params);
         }

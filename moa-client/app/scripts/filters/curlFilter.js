@@ -2,6 +2,9 @@
  * Created by wohlgemuth on 11/6/14.
  */
 
+/**
+ * generates a curl link for us
+ */
 app.filter('curl', function (REST_BACKEND_SERVER) {
 
     return function(input) {
@@ -9,3 +12,18 @@ app.filter('curl', function (REST_BACKEND_SERVER) {
     };
 
 });
+
+/**
+ * generates a curl link as msp file for us
+ */
+app.filter('curlAsMsp', function (curlFilter) {
+
+    return function(input) {
+        var object = angular.copy(input);
+        object.format = "msp";
+        return curlFilter(object)};
+
+});
+
+
+

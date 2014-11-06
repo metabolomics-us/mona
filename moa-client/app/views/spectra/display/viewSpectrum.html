@@ -1,27 +1,38 @@
 <div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="h3">
+                Summary for spectra {{spectrum.id}}
+            </div>
+            <div class="h5">
+                {{spectrum.biologicalCompound.names[0].name}}
+            </div>
+        </div>
+        <div class="col-md-4 text-right">
+            <div class="h3">
+                <a><i class="fa fa-cloud-download"></i> Download</a>
+            </div>
+        </div>
+    </div>
     <!-- mass spectral properties -->
     <div class="row">
+
         <div class="col-md-12">
-            <div ng-show="spectrum.tags.length">
+            <div ng-show="spectrum.tags.length" class="top30">
                 <ul class="list-inline">
                     <li ng-repeat="tag in spectrum.tags">
                         <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
                     </li>
                 </ul>
             </div>
-        </div>
-    </div>
-    <div class="row">
-
-        <div class="col-md-12">
-            <h4>Spectra Properties</h4>
 
             <accordion close-others="false">
                 <accordion-group is-open="accordionStatus.isSpectraOpen">
 
                     <accordion-heading>
                         <div>Mass Spectra<i class="pull-right glyphicon"
-                                       ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen, 'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i></div>
+                                            ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen, 'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i>
+                        </div>
                     </accordion-heading>
 
                     <div class="masspec-modal">
@@ -35,7 +46,8 @@
 
                     <accordion-heading>
                         <div>Ion Table<i class="pull-right glyphicon"
-                                    ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen, 'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i></div>
+                                         ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen, 'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i>
+                        </div>
                     </accordion-heading>
 
                     <div style="height: 400px; overflow: auto; margin-top: 10px;">
@@ -65,6 +77,7 @@
                 </accordion-group>
             </accordion>
         </div>
+
     </div>
     <br/>
 
@@ -74,10 +87,12 @@
 
             <accordion close-others="false">
                 <accordion-group
-                        ng-if="spectrum.predictedCompound != null" is-open="accordionStatus.isDerivatizedCompoundOpen">
+                        ng-if="spectrum.predictedCompound != null"
+                        is-open="accordionStatus.isDerivatizedCompoundOpen">
                     <accordion-heading>
                         <div>Computed Derivatization Product<i class="pull-right glyphicon"
-                                                          ng-class="{'glyphicon-chevron-down': accordionStatus.isDerivatizedCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isDerivatizedCompoundOpen}"></i></div>
+                                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isDerivatizedCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isDerivatizedCompoundOpen}"></i>
+                        </div>
                     </accordion-heading>
                     <div display-compound-info compound="spectrum.predictedCompound"></div>
                 </accordion-group>
@@ -85,7 +100,8 @@
                 <accordion-group is-open="accordionStatus.isBiologicalCompoundOpen">
                     <accordion-heading>
                         <div>Substance <i class="pull-right glyphicon"
-                                     ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i></div>
+                                          ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i>
+                        </div>
                     </accordion-heading>
 
                     <div display-compound-info compound="spectrum.biologicalCompound"></div>
@@ -94,7 +110,9 @@
                 <accordion-group is-open="accordionStatus.isChemicalCompoundOpen">
                     <accordion-heading>
                         <div>Provided Derivatized Substance<i class="pull-right glyphicon"
-                                                         ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i></div>                    </accordion-heading>
+                                                              ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i>
+                        </div>
+                    </accordion-heading>
                     <div display-compound-info compound="spectrum.chemicalCompound"></div>
                 </accordion-group>
             </accordion>

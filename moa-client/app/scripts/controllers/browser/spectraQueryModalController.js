@@ -25,6 +25,11 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
      */
     $scope.selectedTags = {};
 
+    /**
+     * modifies the display of the tags and the class
+     * @param tag
+     * @returns {Array}
+     */
     $scope.tagClass = function(tag) {
         var tagClass = [];
 
