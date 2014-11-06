@@ -21,13 +21,10 @@ app.directive('showQuery', function ($compile) {
             $scope.result = [];
 
             $scope.$on('spectra:query', function (event, data) {
-
                 $scope.query = data;
             });
 
             $scope.$on('spectra:loaded', function (event, data) {
-                $log.info("loaded spectra...");
-
                 $scope.result = data;
             });
 

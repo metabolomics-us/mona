@@ -2,14 +2,16 @@ package moa.server.cache
 
 import grails.transaction.Transactional
 import moa.Tag
+import org.springframework.cache.annotation.Cacheable
 
-@Transactional
 class TagCachingService {
 
     /**
      * computes how many spectra a tag ha
      * @param tag
      */
+    @Cacheable("tag")
+    @Transactional
     int computeSpectraCount(String text) {
 
         int spectraCount = 0
@@ -29,6 +31,8 @@ class TagCachingService {
      * @param text
      * @return
      */
+    @Cacheable("tag")
+    @Transactional
     int computeCompoundCount(String text) {
 
         int compoundCount = 0
