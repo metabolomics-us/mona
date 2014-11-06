@@ -40,7 +40,7 @@ app.config(function ($routeProvider) {
         })
 
         //displaying a single compound
-        .when('/spectra/browse/:inchikey?', {
+        .when('/spectra/browse', {
             templateUrl: 'views/spectra/browse/spectra.html',
             controller: 'SpectraBrowserController'
         })
@@ -52,10 +52,10 @@ app.config(function ($routeProvider) {
             resolve: moaControllers.ViewSpectrumController.loadSpectrum
         })
 
-        //query spectra
-        .when('/spectra/query', {
-            templateUrl: 'views/spectra/query/query.html',
-            controller: 'SpectraBrowserController'
+        //database index
+        .when('/spectra/dbindex', {
+            templateUrl: 'views/spectra/dbindex/dbindex.html',
+            controller: 'SpectraDatabaseIndexController'
         })
 
         //any other page is redirected to the root page
