@@ -82,7 +82,7 @@ app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) 
 
             else {
                 if (query[element]) {
-                    if (meta[element].type === "double") {
+                    if (meta.hasOwnProperty(element) && meta[element].type === "double") {
                         if ((element + "_tolerance") in query && query[element + "_tolerance"]) {
                             var min = parseFloat(query[element]) - parseFloat(query[element + "_tolerance"]);
                             var max = parseFloat(query[element]) + parseFloat(query[element + "_tolerance"]);
