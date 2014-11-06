@@ -1,8 +1,7 @@
 <div ng-value="error"></div>
 
 <div class="row">
-
-    <div class="col-md-9">
+    <div class="col-md-12">
         <table class="table table-hover" style="table-layout: fixed;" infinite-scroll="loadMoreCompounds()">
             <thead>
             <tr>
@@ -12,7 +11,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="compound in filteredCompounds = (compounds | compoundsQuery:this)" ng-click="viewSpectra(compound.inchiKey)">
+            <tr ng-repeat="compound in compounds" ng-click="viewSpectra(compound.inchiKey)">
                 <td>
                     <ul>
                         <li ng-repeat="name in compound.names">{{name.name}}</li>
@@ -27,58 +26,6 @@
             </tbody>
         </table>
         <div class="text-center" ng-show="loadingMore"><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span></div>
-        <div class="text-center" ng-show="filteredCompounds.length == 0 && !loadingMore"><h4>No results found!</h4></div>
-
+        <div class="text-center" ng-show="compounds.length == 0 && !loadingMore"><h4>No results found!</h4></div>
     </div>
-    <div class="col-md-3">
-        <form name="compoundsQuery" role="form" class="form-vertical">
-            <fieldset>
-                <legend>Filter</legend>
-
-                <div class="form-group" ng-class="{ 'has-error': compoundsQuery.newNameFilter.$invalid }">
-                    <label class="control-label" for="newNameFilter">Filter by Name</label>
-
-                    <input id="newNameFilter" name="newNameFilter" ng-model="newNameFilter" placeholder="Compound Name"
-                           class="form-control" ng-keyup="$event.keyCode == 13 ? addNameFilter() : null">
-
-                    <ul class="list-unstyled">
-                        <li ng-repeat="(name, _) in nameFilters">
-                            <span class="label label-primary" ng-click="removeNameFilter(name)">{{name}}</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="form-group" ng-class="{ 'has-error': compoundsQuery.newInchiFilter.$invalid }">
-                    <label class="control-label" for="newInchiFilter">Filter by InChI Key</label>
-
-                    <input id="newInchiFilter" name="newInchiFilter" ng-model="newInchiFilter"
-                           placeholder="InChIKey"
-                           class="form-control" ng-keyup="$event.keyCode == 13 ? addInchiFilter() : null"
-                           ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/">
-
-                    <ul class="list-unstyled">
-                        <li ng-repeat="(inchi, _) in inchiFilters">
-                            <span class="label label-primary" ng-click="removeInchiFilter(inchi)">{{inchi}}</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="form-group" ng-class="{ 'has-error': compoundsQuery.newInchiPartialFilter.$invalid }">
-                    <label class="control-label" for="newInchiPartialFilter">Filter by Partial InChI Key</label>
-
-                    <input id="newInchiPartialFilter" name="newInchiPartialFilter" ng-model="newInchiPartialFilter"
-                           placeholder="InChIKey"
-                           class="form-control" ng-keyup="$event.keyCode == 13 ? addPartialInchiFilter() : null"
-                           ng-pattern="/^[A-Z,0-9,-]+$/">
-
-                    <ul class="list-unstyled">
-                        <li ng-repeat="(inchi, _) in partialInchiFilters">
-                            <span class="label label-primary" ng-click="removePartialInchiFilter(inchi)">{{inchi}}</span>
-                        </li>
-                    </ul>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-
 </div>
