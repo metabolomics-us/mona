@@ -1,12 +1,11 @@
 package moa
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
  * Date: 6/30/14
  * Time: 4:44 PM
  */
-class MetaDataValue {
+class MetaDataValue{
 
     Serializable value
 

@@ -64,7 +64,6 @@ class DomainClassMarshaller {
                     results[field.name] = domainItem[field.name]
                 }
             }
-
             return results
         }
     }

@@ -1,6 +1,5 @@
 package moa
 
-
 class MetaData implements Comparable<MetaData> {
 
     static constraints = {
@@ -71,4 +70,5 @@ class MetaData implements Comparable<MetaData> {
     int compareTo(MetaData metaData) {
         return this.priority.compareTo(metaData.priority)
     }
+
 }

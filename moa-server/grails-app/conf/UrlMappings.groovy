@@ -135,5 +135,21 @@ class UrlMappings {
 
         //limited access to our available tags to be integrated into external api's
         "/rest/limited/list/tags"(controller: 'Tag', action: 'listPublic')
+
+        /**
+         * statistics api
+         */
+
+        "/rest/statistics/tags/spectra/count/$id" (controller: 'statistics',action: 'countOfSpectraForTag', id:id)
+
+        "/rest/statistics/tags/spectra/countAll" (controller: 'statistics',action: 'countOfSpectraForAllTags')
+
+
+        "/rest/statistics/tags/compound/count/$id" (controller: 'statistics',action: 'countOfCompoundsForTag', id:id)
+
+        "/rest/statistics/meta/spectra/count/$id" (controller: 'statistics',action: 'metaDataValueCountForMetadataValueId', id:id)
+
+
+
     }
 }
