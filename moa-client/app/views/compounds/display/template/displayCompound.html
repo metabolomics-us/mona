@@ -19,7 +19,7 @@
 
                     <tr>
                         <td>InChIKey</td>
-                        <td><a ng-href="/#/spectra/browse/{{compound.inchiKey}}">{{compound.inchiKey}}</a></td>
+                        <td>{{compound.inchiKey}}</td>
                     </tr>
 
                     <tr ng-repeat="meta in compound.metaData | unique:'name' | orderBy : 'name':true ">
@@ -73,7 +73,6 @@
         <div class="col-md-12">
 
             <div ng-show="compound.tags.length">
-                <h4>Tags</h4>
                 <ul class="list-inline">
                     <li ng-repeat="tag in compound.tags">
                         <span gw-tag="" rule-based="tag.ruleBased" value="tag" type="compound"></span>

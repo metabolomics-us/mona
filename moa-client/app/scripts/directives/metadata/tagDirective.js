@@ -5,7 +5,7 @@
 /**
  * disables automatic form submission when you press enter in an input element
  */
-app.directive('gwTag', function () {
+app.directive('gwTag', function (AppCache) {
     return {
         //must be an attribute
         restrict: 'A',
@@ -26,12 +26,14 @@ app.directive('gwTag', function () {
             tag: '=value',
             size: '@'
         },
+        priority: 1001,
+
 
         //controller to handle building new queries
         controller: function ($scope, SpectraQueryBuilderService, $location) {
             $scope.options = [];
 
-            if($scope.type == 'spectrum') {
+            if ($scope.type == 'spectrum') {
                 $scope.options = [
                     {
                         name: 'Create new query',
@@ -64,30 +66,12 @@ app.directive('gwTag', function () {
 
         //decorate our elements based on there properties
         link: function (scope, element, attrs, ctrl) {
-            var elem = angular.element(element[0].querySelector('.btn'));
-
-            //append an image
-            if (scope.ruleBased == true) {
-                elem.addClass("btn-info");
-                elem.append("<span class='left15'><i class='fa fa-flask'></i></span>");
-            }
-            //make it the class which shows it's not computed
-            else {
-                elem.addClass("btn-primary");
-            }
-
-            //set button size
-            if (typeof scope.size == 'undefined' && (scope.size == 'lg' || scope.size == 'sm' || scope.size == 'xs')) {
-                elem.addClass("btn-"+ $scope.size);
-            }
 
             // Set default tag status
             scope.status = {
                 active: false
             };
 
-            //set the caret for us
-            elem.append('<span class="caret left30"></span>');
         }
     }
 });

@@ -1,6 +1,36 @@
-<div class="btn-group" dropdown>
-    <button type="button" class="btn dropdown-toggle" ng-class="{active: status.active}" ng-disabled="options.length == 0">{{tag.text}}</button>
-    <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="opt in options"><a ng-click="opt.action(tag, status)">{{opt.name}}</a></li>
-    </ul>
+<div>
+    <div ng-if="options.length == 0">
+        <div class="btn-group">
+            <button type="button" class="btn btn-sm" ng-class="{active: status.active, 'btn-info' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}" disabled="true">
+
+                <span ng-if="tag.ruleBased">
+                    <i class='fa fa-flask'></i>
+                </span>
+
+                {{tag.text}}
+
+            </button>
+        </div>
+
+    </div>
+
+    <div ng-if="options.length > 0">
+        <div class="btn-group" dropdown>
+            <button type="button" class="btn dropdown-toggle btn-sm"
+                    ng-class="{active: status.active, 'btn-info' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}">
+
+                <span ng-if="tag.ruleBased">
+                    <i class='fa fa-flask'></i>
+                </span>
+
+                {{tag.text}}
+
+                <span class="caret left30"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="opt in options"><a ng-click="opt.action(tag, status)">{{opt.name}}</a></li>
+            </ul>
+        </div>
+
+    </div>
 </div>
