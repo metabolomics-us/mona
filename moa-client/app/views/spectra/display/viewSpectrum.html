@@ -10,7 +10,18 @@
         </div>
         <div class="col-md-4 text-right">
             <div class="h3">
-                <a><i class="fa fa-cloud-download"></i> Download</a>
+                <span class="dropdown">
+
+                <a href class="dropdown-toggle"><i class="fa fa-cloud-download"></i> Download</a>
+
+                          <ul class="dropdown-menu">
+                              <li>
+                                  <a href="{{spectrum.id | spectraDownloadAsMsp}}" target="_blank">as MSP file</a>
+                                  <a href="{{spectrum.id | spectraDownload}}" target="_blank">as Mona record</a>
+
+                              </li>
+                          </ul>
+                    </span>
             </div>
         </div>
     </div>

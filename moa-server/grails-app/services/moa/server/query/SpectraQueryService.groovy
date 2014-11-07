@@ -1,4 +1,5 @@
 package moa.server.query
+
 import grails.transaction.Transactional
 import moa.Spectrum
 import moa.Tag
@@ -12,7 +13,7 @@ class SpectraQueryService {
     MetaDataQueryService metaDataQueryService
 
     @Transactional
-    @Cacheable( "spectrum")
+    @Cacheable("spectrum")
     def query(long id) {
         return Spectrum.get(id)
     }
@@ -73,11 +74,11 @@ class SpectraQueryService {
     @Transactional
     def query(def json, def params) {
 
-        if(!params.max){
+        if (!params.max) {
             params.max = -1
         }
 
-        if(!params.offset){
+        if (!params.offset) {
             params.offset = -1
         }
 
@@ -86,7 +87,7 @@ class SpectraQueryService {
         }
 
 
-         return query(json,params.max as int,params.offset as int)
+        return query(json, params.max as int, params.offset as int)
     }
 
     /**
@@ -116,7 +117,7 @@ class SpectraQueryService {
 
                     executionParams.put("tag_${index}".toString(), current.toString());
 
-                    if(index < json.tags.length()-1){
+                    if (index < json.tags.length() - 1) {
                         queryOfDoomWhere += " and "
                     }
                 }
@@ -185,7 +186,6 @@ class SpectraQueryService {
 
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-
                 //if we have a like condition specified
                 if (json.compound.name.like) {
                     queryOfDoomWhere += "(bcn.name like :compoundName or ccn.name like :compoundName)"
@@ -236,21 +236,41 @@ class SpectraQueryService {
                 if (json.compound.id) {
                     queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
                     executionParams.compund_id = json.compound.id as long
-                }
-                else if(json.compound.id.eq){
+                } else if (json.compound.id.eq) {
                     queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
                     executionParams.compund_id = json.compound.id.eq as long
 
-                }
-                else {
+                } else {
                     throw new QueryException("invalid query term: ${json.compound.id}")
                 }
 
             }
 
+            //if we have metadata
+            if (json.compound.metadata) {
 
+                if (json.compound.metadata.size() > 0) {
+                    queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                    //go over each metadata definition
+                    json.compound.metadata.eachWithIndex { Map current, int index ->
+                        def impl = [:];
+
+                        //build the join for each metadata object link
+                        queryOfDoomJoins += " left join s.biologicalCompound.metaData as cmdv_${index}"
+                        queryOfDoomJoins += " left join cmdv_${index}.metaData as cmd_${index}"
+                        queryOfDoomJoins += " left join cmd_${index}.category as cmdc_${index}"
+
+
+                        queryOfDoomWhere = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "cmd_${index}", "cmdv_${index}", "cmdc_${index}", index)
+
+                    }
+                }
+            }
 
         }
+
+
 
 
         [queryOfDoomWhere, queryOfDoomJoins]

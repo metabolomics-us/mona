@@ -12,7 +12,6 @@ import moa.MetaDataValue
 import util.DomainClassMarshaller
 
 import org.hibernate.FlushMode
-import util.marshallers.TagMarshaller
 
 class BootStrap {
 

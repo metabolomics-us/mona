@@ -25,7 +25,7 @@ environments {
             password="asdf"
             pooled = true
 
-            logSql = false
+            logSql = true
         }
         /*
 
