@@ -32,7 +32,6 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
                 if(data.data.length > 0) {
                     $scope.fieldData[data.data[0].name] = data.data;
                 }
-                console.log(data)
             }
         );
     };
@@ -75,3 +74,4 @@ app.filter('titlecase', function() {
         });
     };
 });
+

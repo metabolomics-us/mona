@@ -58,6 +58,12 @@ app.config(function ($routeProvider) {
             controller: 'SpectraDatabaseIndexController'
         })
 
+        //statistics page
+        .when('/statistics', {
+            templateUrl: 'views/statistics/statistics.html',
+            controller: 'SpectraDatabaseIndexController'
+        })
+
         //any other page is redirected to the root page
         .otherwise({
             redirectTo: '/'

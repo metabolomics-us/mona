@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col-md-12">
+        <h3>Statistics</h3>
+        <p>View the distributions of metadata values and perform simple queries on the individual spectrum attributes.</p>
+    </div>
+</div>
+
+<div class="row" ng-repeat="(name, data) in fieldData">
+    <div class="col-md-12">
+        <h4 class="page-header">{{name | titlecase}} <span ng-show="data.length > 10">(Top 10)</span></h4>
+
+        <div style="display: block; height: 400px;">
+            <query-pie style="display: none; width: 400px; height: 400px;" ng-model="data" data-name="name"></query-pie>
+        </div>
+    </div>
+</div>
