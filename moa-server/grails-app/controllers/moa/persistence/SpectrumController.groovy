@@ -1,4 +1,5 @@
 package moa.persistence
+
 import grails.converters.JSON
 import grails.rest.RestfulController
 import moa.Spectrum
@@ -40,7 +41,17 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         switch (params.format) {
             case "msp":
-                render spectraConversionService.convertToMsp(spectrum)
+                response.setContentType("application/octet-stream")
+                response.setHeader("Content-disposition", "attachment;filename=${params.id}.msp")
+                response.outputStream << spectraConversionService.convertToMsp(spectrum)
+                response.outputStream.flush()
+                break
+            case "mona":
+                response.setContentType("application/octet-stream")
+                response.setHeader("Content-disposition", "attachment;filename=${params.id}.json")
+
+                response.outputStream << (spectrum as JSON)
+                response.outputStream.flush()
                 break
             default:
                 render spectrum as JSON
