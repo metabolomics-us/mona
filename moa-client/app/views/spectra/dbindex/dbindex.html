@@ -1,13 +1,14 @@
 <div class="row">
     <div class="col-md-12">
-        <p>Perform simple queries based on single spectrum attributes.</p>
+        <h3>Database Index</h3>
+        <p>Perform simple queries based on single spectrum attributes.  The numbers refer to the number of spectra in the database that are associated with each metadata value.</p>
 
         <div ng-repeat="(name, data) in fieldData">
             <h4 class="page-header">{{name | titlecase}}</h4>
 
             <div class="row">
                 <div class="col-sm-4 text-center" ng-repeat-start="meta in data">
-                    <a style="cursor: pointer;" ng-click="submitQuery(name, meta.value)">{{meta.value}} ({{meta.count}})</a>
+                    ({{meta.count}}) <a style="cursor: pointer;" ng-click="submitQuery(name, meta.value)">{{meta.value}}</a>
                 </div>
                 <div class="clearfix" ng-if="$index % 3 == 2"></div>
                 <div ng-repeat-end=""></div>
