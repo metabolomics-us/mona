@@ -20,10 +20,17 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
     $scope.tags = [];
 
     /**
+     * Number of associated spectra for each tag
+     * @type {{}}
+     */
+    $scope.tagsCount = {};
+
+    /**
      * Tags selected in query window
      * @type {{}}
      */
     $scope.selectedTags = {};
+
 
     /**
      * modifies the display of the tags and the class
@@ -39,12 +46,12 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
             tagClass.push('btn-default');
         }
 
-        if($scope.maxTagsCount != 0) {
-            if (tag.spectraCount / $scope.maxTagsCount < 0.25) {
+        if($scope.maxTagsCount > 0 && $scope.tagsCount.hasOwnProperty(tag.text)) {
+            if ($scope.tagsCount[tag.text] / $scope.maxTagsCount < 0.25) {
                 tagClass.push('btn-xs');
-            } else if (tag.spectraCount / $scope.maxTagsCount < 0.5) {
+            } else if ($scope.tagsCount[tag.text] / $scope.maxTagsCount < 0.5) {
                 tagClass.push('btn-sm');
-            } else if (tag.spectraCount / $scope.maxTagsCount > 0.75) {
+            } else if ($scope.tagsCount[tag.text] / $scope.maxTagsCount > 0.75) {
                 tagClass.push('btn-lg');
             }
         }
@@ -133,11 +140,17 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
 
         AppCache.getTags(function(data) {
             $scope.tags = data;
+        });
+
+        AppCache.getTagsStatistics(function(data) {
             $scope.maxTagsCount = 0;
+            $scope.tagsCount = {};
 
             for(var i = 0; i < data.length; i++) {
-                if(data[i].spectraCount > $scope.maxTagsCount)
-                    $scope.maxTagsCount = data[i].spectraCount;
+                $scope.tagsCount[data[i].tag] = data[i].count;
+
+                if(data[i].count > $scope.maxTagsCount)
+                    $scope.maxTagsCount = data[i].count;
             }
         });
 

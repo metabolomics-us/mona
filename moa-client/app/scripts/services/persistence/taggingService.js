@@ -19,6 +19,14 @@ app.factory('TaggingService', function ($resource, REST_BACKEND_SERVER, $http) {
             'update': {
                 method: 'PUT'
 
+            },
+            'statistics': {
+                url: REST_BACKEND_SERVER + '/rest/statistics/tags/spectra/countAll?max='+ 100,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                isArray: true
             }
         }
     );

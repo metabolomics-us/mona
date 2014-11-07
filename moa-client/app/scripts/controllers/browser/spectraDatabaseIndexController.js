@@ -26,16 +26,15 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
      * @param name
      * @param callback
      */
-    var queryMetadataValues = function (name, callback) {
-        $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=100', {
-            query: {
-                name: name,
-                value: {like: '%'},
-                property: 'stringValue'
+    var queryMetadataValues = function (id, callback) {
+        $http.get(REST_BACKEND_SERVER + '/rest/statistics/meta/spectra/count/'+ id)
+            .then(function(data) {
+                if(data.data.length > 0) {
+                    $scope.fieldData[data.data[0].name] = data.data;
+                }
+                console.log(data)
             }
-        }).then(function(data) {
-            callback(name, data.data);
-        });
+        );
     };
 
 
@@ -45,7 +44,6 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
     $scope.submitQuery = function(name, value) {
         var query = {};
         query[name] = value;
-        console.log(query)
 
         SpectraQueryBuilderService.compileQuery(query);
         $location.path("/spectra/browse/");
@@ -56,11 +54,16 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
      * initialization and population of metadata values
      */
     (function list() {
-        for(var i = 0; i < $scope.fields.length; i++) {
-            queryMetadataValues($scope.fields[i], function(name, data) {
-                $scope.fieldData[name] = data;
-            });
-        }
+        AppCache.getMetadata(function(data) {
+            for(var i = 0; i < data.length; i++) {
+                for(var j = 0; j < $scope.fields.length; j++) {
+                    if(data[i].name == $scope.fields[j]) {
+                        queryMetadataValues(data[i].id);
+                        break;
+                    }
+                }
+            }
+        });
     })();
 };
 

@@ -2,12 +2,12 @@
     <div class="col-md-12">
         <p>Perform simple queries based on single spectrum attributes.</p>
 
-        <div ng-repeat="name in fields" ng-show="fieldData[name].length">
+        <div ng-repeat="(name, data) in fieldData">
             <h4 class="page-header">{{name | titlecase}}</h4>
 
             <div class="row">
-                <div class="col-sm-4 text-center" ng-repeat-start="value in fieldData[name]">
-                    <a ng-click="submitQuery(name, value)">{{value}}</a>
+                <div class="col-sm-4 text-center" ng-repeat-start="meta in data">
+                    <a style="cursor: pointer;" ng-click="submitQuery(name, meta.value)">{{meta.value}} ({{meta.count}})</a>
                 </div>
                 <div class="clearfix" ng-if="$index % 3 == 2"></div>
                 <div ng-repeat-end=""></div>
