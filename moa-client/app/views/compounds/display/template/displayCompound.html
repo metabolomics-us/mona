@@ -25,7 +25,10 @@
                     <tr ng-repeat="meta in compound.metaData | unique:'name' | orderBy : 'name':true ">
 
                         <td>
+                            <span gw-meta-query value="meta" compound="true">
+
                             {{meta.name}}
+                            </span>
                         </td>
                         <td>
                             {{meta.value}} {{meta.unit}}

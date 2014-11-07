@@ -44,19 +44,19 @@ app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) 
 
         //no query assigned, use the one from the cache
 
-        if(compiled == null) {
+        if (compiled == null) {
             compiled = this.getQuery();
         }
 
-        if(tags == null) {
+        if (tags == null) {
             tags = [];
         }
 
 
         // Get all metadata in a single dictionary
         var meta = {};
-        AppCache.getMetadata(function(data) {
-            for(var i = 0; i < data.length; i++) {
+        AppCache.getMetadata(function (data) {
+            for (var i = 0; i < data.length; i++) {
                 meta[data[i].name] = data[i];
             }
         });
@@ -131,7 +131,7 @@ app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) 
             query.tags.splice(query.tags.indexOf(tag), 1);
         }
 
-        if(query.compound.tags){
+        if (query.compound.tags) {
             index = query.compound.tags.indexOf(tag);
 
             if (index > -1) {
@@ -148,12 +148,12 @@ app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) 
      * @param tag
      * @param isCompound is this a tag of a compound
      */
-    this.addTagToQuery = function (tag,isCompound) {
+    this.addTagToQuery = function (tag, isCompound) {
         this.removeTagFromQuery(tag);
         var query = this.getQuery();
 
-        if(isCompound){
-            if(!query.compounds.tags){
+        if (isCompound) {
+            if (!query.compounds.tags) {
                 query.compounds.tags = [];
             }
             query.compounds.tags.push(tag);
@@ -179,43 +179,66 @@ app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) 
     this.removeMetaDataFromQuery = function (metadata) {
         var query = this.getQuery();
 
-        if (query.metadata == null) {
-            return
-        }
+        if (query.metadata) {
 
-        //create a metadata query object
+            //create a metadata query object
 
-        for (var i = 0; i < query.metadata.length; i++) {
-            if (query.metadata[i].name == metadata.name) {
-                query.metadata.splice(i, 1);
-                QueryCache.setSpectraQuery(query);
-                return;
+            for (var i = 0; i < query.metadata.length; i++) {
+                if (query.metadata[i].name == metadata.name) {
+                    query.metadata.splice(i, 1);
+                }
             }
         }
+
+        if (query.compound.metadata) {
+
+            for (var i = 0; i < query.compound.metadata.length; i++) {
+                if (query.compound.metadata[i].name == metadata.name) {
+                    query.compound.metadata.splice(i, 1);
+                }
+            }
+        }
+        QueryCache.setSpectraQuery(query);
+        return;
+
     };
 
     /**
      * adds further metadata to the query
      * @param metadata
      */
-    this.addMetaDataToQuery = function (metadata) {
+    this.addMetaDataToQuery = function (metadata, compound) {
         this.removeMetaDataFromQuery(metadata);
 
         var query = this.getQuery();
 
+        if (compound == null) {
+            compound = false;
+        }
+
         if (query.metadata == null) {
             query.metadata = [];
         }
-        //add a metadata query object
 
+        //build query data object
         var meta = {'name': metadata.name, 'value': {'eq': metadata.value}};
 
         if (metadata.unit != null) {
             meta.unit = {'eq': metadata.unit};
         }
 
-        query.metadata.push(meta);
+        if (compound) {
+            if (query.compound.metadata == null) {
+                query.compound.metadata = [];
+            }
+            query.compound.metadata.push(meta);
 
+        }
+
+        else {
+            //add a metadata query object
+            query.metadata.push(meta);
+        }
         QueryCache.setSpectraQuery(query);
     };
 });

@@ -33,7 +33,8 @@ app.directive('gwMetaQuery', function ($compile) {
         templateUrl: '/views/templates/metaQuery.html',
         restrict: 'A',
         scope: {
-            value: '=value'
+            value: '=value',
+            compound: '=compound'
         },
         link: function ($scope, element, attrs, ngModel) {
 
@@ -48,7 +49,7 @@ app.directive('gwMetaQuery', function ($compile) {
                 SpectraQueryBuilderService.prepareQuery();
 
                 //add it to query
-                SpectraQueryBuilderService.addMetaDataToQuery($scope.value);
+                SpectraQueryBuilderService.addMetaDataToQuery($scope.value,$scope.compound);
 
                 //assign to the cache
 
@@ -58,7 +59,7 @@ app.directive('gwMetaQuery', function ($compile) {
 
             //receive a click
             $scope.addToQuery = function () {
-                SpectraQueryBuilderService.addMetaDataToQuery($scope.value);
+                SpectraQueryBuilderService.addMetaDataToQuery($scope.value,$scope.compound);
                 $location.path("/spectra/browse/");
             };
 
@@ -66,7 +67,7 @@ app.directive('gwMetaQuery', function ($compile) {
             //receive a click
             $scope.removeFromQuery = function () {
                 //build a mona query based on this label
-                SpectraQueryBuilderService.removeMetaDataFromQuery($scope.value);
+                SpectraQueryBuilderService.removeMetaDataFromQuery($scope.value,$scope.compound);
 
                 //run the query and show it's result in the spectra browser
                 $location.path("/spectra/browse/");

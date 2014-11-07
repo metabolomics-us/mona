@@ -155,4 +155,6 @@ grails.cache.config = {
 
 }
 
+grails.cache.enabled = false
+
 grails.cache.keyGenerator = "cacheKey"
