@@ -120,7 +120,7 @@ app.service('QueryCache', function ($injector, $log, $rootScope) {
  * Stores commonly used data obtained from the server to reduce load time
  * of certain views
  */
-app.service('AppCache', function (MetadataService, TaggingService, INTERNAL_CACHING) {
+app.service('AppCache', function (MetadataService, TaggingService, INTERNAL_CACHING, $log) {
     /**
      * Stored tags
      */
@@ -160,6 +160,22 @@ app.service('AppCache', function (MetadataService, TaggingService, INTERNAL_CACH
             );
         } else {
             callback(this.tags);
+        }
+    };
+
+    /**
+     * Retrieve tags statistics either from the rest api or internal cache
+     */
+    this.getTagsStatistics = function (callback) {
+        if (!INTERNAL_CACHING || this.tagsStatistics == null) {
+            this.tagsStatistics = TaggingService.statistics(
+                callback,
+                function (error) {
+                    $log.error('failed: ' + error);
+                }
+            );
+        } else {
+            callback(this.tagsStatistics);
         }
     };
 
