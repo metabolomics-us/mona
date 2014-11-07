@@ -16,10 +16,6 @@ class SpectraQueryController {
      */
     SpectraQueryService spectraQueryService
 
-    def beforeInterceptor = {
-        log.info("$params - $request.JSON")
-    }
-
     /**
      * search function for the query controller
      */

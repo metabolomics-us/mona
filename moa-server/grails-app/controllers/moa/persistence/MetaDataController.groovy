@@ -1,10 +1,7 @@
 package moa.persistence
-
 import grails.rest.RestfulController
 import moa.MetaData
-import org.springframework.cache.annotation.Cacheable
-
-@Cacheable("metadata")
+//@Cacheable("metadata")
 class MetaDataController extends RestfulController<MetaData> {
 
     static responseFormats = ['json']
@@ -23,7 +20,6 @@ class MetaDataController extends RestfulController<MetaData> {
      * @return
      */
     protected Map getParametersToBind() {
-        log.info(params)
 
         if (request.JSON) {
             params.putAll(
@@ -35,7 +31,10 @@ class MetaDataController extends RestfulController<MetaData> {
 
 
     protected MetaData queryForResource(Serializable id) {
-        return resource.get(id)
+
+        MetaData metaData = resource.get(id)
+
+        return metaData
     }
 
     protected List<MetaData> listAllResources(Map params) {

@@ -1,6 +1,6 @@
 package moa
 
-class MetaDataCategory {
+class MetaDataCategory{
 
     static final String DEFAULT_CATEGORY_NAME = "none"
 
@@ -36,4 +36,5 @@ class MetaDataCategory {
      * is this category object visible
      */
     boolean visible = true
+
 }
