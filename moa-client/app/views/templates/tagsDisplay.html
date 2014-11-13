@@ -1,0 +1,10 @@
+<div>
+  <ul class="list-inline" style="text-align: center;">
+    <li ng-repeat="tag in tags">
+      <button type="button" class="btn" ng-class="tagClass(tag)" ng-click="selectTag(tag)">
+        {{tag.text}}
+        <i class="fa fa-flask" ng-show="tag.ruleBased"></i>
+      </button>
+    </li>
+  </ul>
+</div>
