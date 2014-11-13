@@ -25,7 +25,7 @@ class Spectrum extends SupportsMetaData{
     ]
 
     static constraints = {
-	    comments nullable: true, blank: true
+	    comments nullable: true
 	    spectrum nullable: false //, unique: true
         chemicalCompound nullable: true
         biologicalCompound nullable: true
@@ -37,6 +37,7 @@ class Spectrum extends SupportsMetaData{
         spectrum sqlType: "text"
         version false
         tags fetch: 'join'
+        comments fetch: 'join'
     }
 
     /**
@@ -47,7 +48,7 @@ class Spectrum extends SupportsMetaData{
     /**
      * comments
      */
-    Set<String> comments
+    Set<Comment> comments
 
     /**
      * tags

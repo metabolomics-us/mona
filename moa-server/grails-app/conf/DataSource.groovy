@@ -18,14 +18,14 @@ environments {
     development {
 
         dataSource {
-            dbCreate = "update"//*/"create-drop"
+            dbCreate = "create-drop"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
             driverClassName="org.postgresql.Driver"
             username="compound"
             password="asdf"
             pooled = true
 
-            logSql = true
+            logSql = false
         }
 
     }

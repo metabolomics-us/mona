@@ -27,7 +27,7 @@ class MetaDataPersistenceService {
 
         log.debug("generating meta data")
         //remove existing metadata from the object
-
+        object.refresh()
         json.each { Map current ->
             generateMetaDataObject(object, current)
         }

@@ -80,10 +80,13 @@ class SpectrumController extends RestfulController<Spectrum> {
 
                 render([message: "${array.length()} spectra submitted"] as JSON)
 
+            } else {
+                SpectraUploadJob.triggerNow([spectra: request.JSON])
+                render([message: "1 spectra submitted"] as JSON)
             }
-        } else {
-            SpectraUploadJob.triggerNow([spectra: getParametersToBind()])
-            render([message: "1 spectra submitted"] as JSON)
+        }
+        else{
+            render([errors: "sorry missing JSON request"]);
         }
     }
     /**
