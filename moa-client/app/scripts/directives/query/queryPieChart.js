@@ -12,6 +12,12 @@ app.directive('queryPie', function(){
             data: '=ngModel'
         },
 
+        replace: 'true',
+        template:
+        '<div style="width: 100%; height: 100%; display: inline-block;">'+
+        '    <div class="statistics-chart" style="width: 100%; height: 100%"></div>'+
+        '</div>',
+
         controller: function($scope, $location, SpectraQueryBuilderService) {
             $scope.redirect = function(event, pos, obj) {
                 if(typeof obj != 'undefined') {
@@ -30,7 +36,19 @@ app.directive('queryPie', function(){
             var opts  = {
                 series: {
                     pie: {
-                        show: true
+                        show: true,
+                      radius: 3/4,
+                      label: {
+                        show: true,
+                        radius: 5/6,
+                        formatter: function(label, series){
+                          return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+' ('+Math.round(series.percent)+'%)</div>';
+                        },
+                        background: {
+                          opacity: 0.8
+                        },
+                        threshold: 0.01
+                      }
                     }
                 },
                 grid: {
@@ -42,41 +60,31 @@ app.directive('queryPie', function(){
                 }
             };
 
-            var data = scope.data;
+            if(typeof scope.data != 'undefined') {
+                var plotData = [];
+                var minValue = 0;
 
-            scope.$watch('data', function(v) {
-                if(typeof v != 'undefined') {
-                    var plotData = [];
-                    var minValue = 0;
+                if(scope.data.length > 10) {
+                    var lengths = [];
 
-                    if(v.length > 10) {
-                        var lengths = [];
+                    for (var i = 0; i < scope.data.length; i++)
+                        lengths.push(scope.data[i].count)
 
-                        for (var i = 0; i < v.length; i++)
-                            lengths.push(v[i].count)
+                    minValue = lengths[9];
+                }
 
-                        minValue = lengths[9];
-                    }
-
-                    for (var i = 0; i < v.length; i++) {
-                        if(v[i].count >= minValue) {
-                            plotData.push({
-                                label: v[i].value,
-                                data: v[i].count
-                            });
-                        }
-                    }
-
-                    if (!chart) {
-                        chart = $.plot(elem, plotData, opts);
-                        elem.show();
-                    } else {
-                        chart.setData(plotData);
-                        chart.setupGrid();
-                        chart.draw();
+                for (var i = 0; i < scope.data.length; i++) {
+                    if(scope.data[i].count >= minValue) {
+                        plotData.push({
+                            label: scope.data[i].value,
+                            data: scope.data[i].count
+                        });
                     }
                 }
-            });
+
+                var chart = $.plot(elem, plotData, opts);
+                elem.show();
+            }
 
             elem.bind("plotclick", scope.redirect);
         }
