@@ -172,12 +172,6 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                         });
                     }
 
-                    if (spectra.accurate) {
-                        s.tags.push({'text': 'accurate'});
-                    }
-                    s.tags.push({'text': 'imported'});
-                    s.tags.push({'text': 'library'});
-
                     s.comments = "this spectra was added to the system, by utilizing a library upload.";
                     metaData.forEach(function (e) {
                         s.metaData.push(e);

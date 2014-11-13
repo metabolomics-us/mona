@@ -12,7 +12,7 @@ class Spectrum extends SupportsMetaData{
     /**
      * contains many metadata
      */
-    static hasMany = [ tags: Tag]
+    static hasMany = [ tags: Tag, comments:Comment]
 
     /**
      * we belong to these
@@ -34,7 +34,6 @@ class Spectrum extends SupportsMetaData{
     }
 
     static mapping = {
-        comments sqlType: "text"
         spectrum sqlType: "text"
         version false
         tags fetch: 'join'
@@ -48,7 +47,12 @@ class Spectrum extends SupportsMetaData{
     /**
      * comments
      */
-    String comments
+    Set<String> comments
+
+    /**
+     * tags
+     */
+    Set<Tag> tags
 
     /**
      * who submitted this

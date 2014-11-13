@@ -20,7 +20,7 @@ app.directive('gwValue', function ($compile) {
       }
 
       if ($scope.value.computed == true) {
-        element.append("<i class='fa fa-flast'></i>");
+        element.append("<i class='fa fa-flask'></i>");
       }
     }
   }

@@ -1,5 +1,6 @@
 import grails.converters.JSON
 import grails.util.Environment
+import moa.Comment
 import moa.Compound
 import moa.MetaData
 import moa.MetaDataCategory
@@ -70,6 +71,9 @@ class BootStrap {
         )
         JSON.registerObjectMarshaller(MetaDataCategory,
                 DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class","metaDatas"])
+        )
+        JSON.registerObjectMarshaller(Comment,
+                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class"])
         )
 
 

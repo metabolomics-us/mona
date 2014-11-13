@@ -56,10 +56,9 @@ class MetaDataPersistenceService {
         MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
 //MetaDataValueHelper.getValueObject(current.value)
 
-        if(current.computed != null && current.computed){
+        if (current.computed != null && current.computed) {
             metaDataValue.computed = true
-        }
-        else{
+        } else {
             metaDataValue.computed = false
         }
         //if an unit is associated let's update it
@@ -106,9 +105,6 @@ class MetaDataPersistenceService {
         } catch (Exception e) {
             log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
         }
-
-//            println("\t===>\tworking on value: ${metaDataValue}")
-
 
         metaDataValue.save()
 
