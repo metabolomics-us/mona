@@ -1,9 +1,11 @@
 package curation.actions
+
 import curation.CurationAction
 import curation.CurationObject
 import moa.MetaDataValue
 import moa.Spectrum
 import org.apache.log4j.Logger
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -15,10 +17,22 @@ class MetaDataSuspectAction implements CurationAction {
 
     private String field
     private boolean mark
+    private String reason = "unknown"
+
+    public MetaDataSuspectAction(String field, boolean mark, String reason) {
+        this.field = field
+        this.mark = mark
+        this.reason = reason
+    }
 
     public MetaDataSuspectAction(String field, boolean mark) {
         this.field = field
         this.mark = mark
+        this.reason = ""
+    }
+
+    public void setReason(String reason){
+        this.reason = reason
     }
 
     @Override
@@ -34,7 +48,7 @@ class MetaDataSuspectAction implements CurationAction {
 
     @Override
     String getDescription() {
-        return "marks the metadata object as suspect or not"
+        return "marks the metadata object as suspicious or not"
     }
 
     @Override
@@ -56,19 +70,24 @@ class MetaDataSuspectAction implements CurationAction {
      */
     private void checkValue(MetaDataValue value) {
         if (value.name.toLowerCase().equals(field)) {
-            logger.debug("Marking metadata "+ value.name +" with value "+ mark)
+            logger.debug("Marking metadata " + value.name + " with value " + mark)
 
             value.suspect = mark
+
+            if (mark) {
+                value.reasonForSuspicion = reason
+            } else {
+                value.reasonForSuspicion = ""
+            }
+
             value.save(flush: true)
 
-            if(value.suspect){
+            if (value.suspect) {
                 new AddTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
-            }
-            else{
+            } else {
                 new RemoveTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
             }
-        }
-        else{
+        } else {
             logger.debug("ignoring ${value.name}, doesn't match the requested field ${field}")
         }
     }

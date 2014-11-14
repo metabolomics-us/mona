@@ -26,11 +26,11 @@ class BootStrap {
 
         if (Environment.isDevelopmentMode()) {
             //just some test data
-            /*
+
             new Submitter(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save()
             new Submitter(firstName: "Diego", lastName: "Pedrosa", emailAddress: "linuxmant@gmail.com", password: "dsadasd").save()
             new Submitter(firstName: "Oliver", lastName: "Fiehn", emailAddress: "ofiehn@ucdavis.edu", password: "sdsadsad").save()
-
+            /*
 
             Tag.findOrCreateWhere(text: "dirty").save()
             Tag.findOrCreateWhere(text: "clean").save()
@@ -73,7 +73,7 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class","metaDatas"])
         )
         JSON.registerObjectMarshaller(Comment,
-                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class"])
+                DomainClassMarshaller.createExcludeMarshaller(Comment, ["class"])
         )
 
 

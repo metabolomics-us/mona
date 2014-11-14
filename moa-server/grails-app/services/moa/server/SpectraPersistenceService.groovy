@@ -1,5 +1,6 @@
 package moa.server
 
+import grails.plugin.cache.CacheEvict
 import moa.*
 import moa.server.caluclation.CompoundPropertyService
 import moa.server.metadata.MetaDataPersistenceService
@@ -18,6 +19,7 @@ class SpectraPersistenceService {
      * @param params
      * @return
      */
+    @CacheEvict(value = 'spectrum', allEntries = true)
     public Spectrum create(JSONObject json) {
         //handle outdated format
         if (json.comments instanceof String) {
@@ -33,10 +35,7 @@ class SpectraPersistenceService {
             json.put("comments", array)
         }
 
-        if (json.id) {
-            log.warn("dropping existing id...")
-            json.remove("id")
-        }
+        json = dropIds(json);
 
         Spectrum spectrum = new Spectrum(json)
 
@@ -77,6 +76,9 @@ class SpectraPersistenceService {
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
 
         spectrum.save(flush: true)
+
+        //submit for validation
+        SpectraValidationJob.triggerNow([spectraId:spectrum.id])
 
         //spectrum is now ready to work on
         return spectrum;
@@ -137,6 +139,18 @@ class SpectraPersistenceService {
 
         return myCompound;
 
+    }
+
+    /**
+     * removes id objects from the json file, since we can't really reuse them
+     * @param json
+     * @return
+     */
+    private Map dropIds(Map json){
+        json.remove("id")
+
+        json.remove("predictedCompound")
+        return json
     }
 
 }

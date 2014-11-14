@@ -1,0 +1,13 @@
+<span>
+  <span ng-if="value.suspect == true" title="{{value.reasonForSuspicion}}">
+  {{value.value}}
+      <span ng-if="value.unit != 'null'">{{value.unit}}</span>
+    <i class='fa fa-exclamation-triangle'></i>
+  </span>
+  <span ng-if="value.suspect == false">
+  {{value.value}}
+      <span ng-if="value.unit != 'null'">{{value.unit}}</span>
+  </span>
+
+
+</span>

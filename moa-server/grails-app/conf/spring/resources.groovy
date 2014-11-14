@@ -23,7 +23,12 @@ import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.tag.RemoveComputedTagRule
+import persistence.metadata.filter.Filters
+import persistence.metadata.filter.NameDoesntMatchFilter
+import persistence.metadata.filter.NameMatchesFilter
 import grails.spring.BeanBuilder
+import persistence.metadata.filter.unit.BasicUnitConverter
+import persistence.metadata.filter.unit.Converters
 import util.caching.SpectrumKeyGenerator
 
 
@@ -152,12 +157,12 @@ beans = {
         bean.autowire = 'byName'
     }
 
-    gcmsValidateChemicalCompound(GCMSDerivatizationDoesntMatchCompound){ bean ->
+    gcmsValidateChemicalCompound(GCMSDerivatizationDoesntMatchCompound) { bean ->
         predictGCMSCompoundRule = gcmsPredictDerivatizedCompoundRule
 
     }
 
-    gcmsPredictMMinus15Rule(PredictedMMinus15Rule){ bean ->
+    gcmsPredictMMinus15Rule(PredictedMMinus15Rule) { bean ->
         bean.autowire = 'byName'
         predictGCMSCompoundRule = gcmsPredictDerivatizedCompoundRule
 
@@ -234,6 +239,52 @@ beans = {
 
         ]
         //define and register our curation
+    }
+
+    /**
+     * metadata filter, we only care for certain fields
+     */
+
+    metadataFilters(Filters) {
+
+        filters = [
+                new NameDoesntMatchFilter("SCIENTIFIC_NAME"),
+                new NameDoesntMatchFilter("LINEAGE"),
+                new NameDoesntMatchFilter("ACCESSION"),
+                new NameDoesntMatchFilter("SAMPLE"),
+                new NameDoesntMatchFilter("COMPOUND_CLASS"),
+                new NameDoesntMatchFilter("taxonomy"),
+                new NameDoesntMatchFilter("COMMENT"),
+                new NameDoesntMatchFilter("pubchem"),
+                new NameDoesntMatchFilter("chemspider"),
+                new NameDoesntMatchFilter("cas"),
+                new NameDoesntMatchFilter("kegg"),
+                new NameDoesntMatchFilter("knapsack"),
+                new NameDoesntMatchFilter("lipidbank"),
+                new NameDoesntMatchFilter("date"),
+                new NameDoesntMatchFilter("cayman"),
+                new NameDoesntMatchFilter("chebi"),
+                new NameDoesntMatchFilter("hmdb"),
+                new NameDoesntMatchFilter("nikkaji"),
+                new NameDoesntMatchFilter("chempdb"),
+                new NameDoesntMatchFilter("inchikey"),
+                new NameDoesntMatchFilter("casno"),
+                new NameDoesntMatchFilter("mv"),
+                new NameDoesntMatchFilter("comments"),
+                new NameDoesntMatchFilter("kappaview"),
+                new NameDoesntMatchFilter("lipidmaps"),
+                new NameDoesntMatchFilter("internal standard"),
+                new NameDoesntMatchFilter("name")
+        ]
+    }
+
+    /**
+     * tries to discover units for us and converts them on the fly
+     */
+    metadataValueConverter(Converters) {
+        converters = [
+                new BasicUnitConverter()
+        ]
     }
 
 }

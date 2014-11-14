@@ -10,6 +10,8 @@ import moa.meta.DoubleMetaDataValue
 import moa.meta.StringMetaDataValue
 import moa.server.CategoryNameFinderService
 import moa.server.MetaDataDictionaryService
+import persistence.metadata.filter.Filters
+import persistence.metadata.filter.unit.Converters
 
 @Transactional
 class MetaDataPersistenceService {
@@ -17,6 +19,10 @@ class MetaDataPersistenceService {
     MetaDataDictionaryService metaDataDictionaryService
 
     CategoryNameFinderService categoryNameFinderService
+
+    Filters metadataFilters
+
+    Converters metadataValueConverter
 
     /**
      * generates our required metadata based on the json array of metadata
@@ -40,8 +46,26 @@ class MetaDataPersistenceService {
      */
     public void generateMetaDataObject(SupportsMetaData object, Map current) {
         log.debug("received ${object} and map: ${current}")
+
+        if (!metadataFilters.accept(current.name, current.value)) {
+            log.info("metadata value rejected at filters...")
+            return
+        }
+
         String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
 
+        //calculate our units
+        Map calculatedValue = metadataValueConverter.convert(metaDataName, current.value.toString())
+
+        if (!calculatedValue.isEmpty()) {
+            //and assign them
+            if (calculatedValue.unit != null) {
+                current.unit = calculatedValue.unit
+            }
+            if (calculatedValue.value != null) {
+                current.value = calculatedValue.value
+            }
+        }
         MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
 
 

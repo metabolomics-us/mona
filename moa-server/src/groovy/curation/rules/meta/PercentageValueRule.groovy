@@ -28,7 +28,10 @@ class PercentageValueRule extends AbstractMetaDataCentricRule {
     protected boolean acceptMetaDataValue(MetaDataValue value) {
         Double val = Double.parseDouble(value.getValue().toString())
 
-        logger.debug("\t\t=>checking ${val} to be >= ${minPercentage} and <= ${maxPercentage}")
+        this.getFailureAction().setReason(("value needs to be >= ${minPercentage} and <= ${maxPercentage}"))
+
+
+
         return (val >= minPercentage && val <= maxPercentage)
     }
 

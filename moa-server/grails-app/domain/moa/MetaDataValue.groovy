@@ -20,6 +20,11 @@ class MetaDataValue{
     boolean suspect = false
 
     /**
+     * reason being for value being suspicious
+     */
+    String reasonForSuspicion = ""
+
+    /**
      * was this value computed or user provided
      */
     boolean computed = false
@@ -37,6 +42,7 @@ class MetaDataValue{
         unit nullable: true
         suspect nullable :true
         computed nullable :true
+        reasonForSuspicion nullable: true
     }
 
     /**

@@ -47,8 +47,11 @@ class ProvidedExactMassIsPossibleRule extends AbstractMetaDataCentricRule{
                 return true
             }
 
-            if(Math.abs(chemMass-mass) <= accuracyInDalton){
+            else if(Math.abs(chemMass-mass) <= accuracyInDalton){
                 return true
+            }
+            else{
+                this.getFailureAction().setReason(("accuracy is now high enough, should be less than ${accuracyInDalton}"))
             }
 
         }
