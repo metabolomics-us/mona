@@ -9,6 +9,10 @@ class StatisticsController {
 
     def statisticsService
 
+    def countAll() {
+        render statisticsService.countAll() as JSON
+    }
+
     def countOfSpectraForAllTags() {
         render statisticsService.getSpectraCountForAllTags() as JSON
     }

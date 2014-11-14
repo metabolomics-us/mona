@@ -1,14 +1,36 @@
 package moa.server.statistics
 
 import grails.transaction.Transactional
+import moa.Compound
+import moa.MetaData
+import moa.MetaDataValue
 import moa.Spectrum
+import moa.Submitter
 import moa.Tag
+import org.spockframework.compiler.model.Spec
 
 /**
  * provides us with uptodate statistics of the system
  */
 @Transactional
 class StatisticsService {
+
+    /**
+     *
+     * @return
+     */
+    List countAll() {
+        def res = []
+
+        res.add([type: 'spectra', count: Spectrum.count()])
+        res.add([type: 'compounds', count: Compound.count()])
+        res.add([type: 'metadata', count: MetaData.count()])
+        res.add([type: 'metadataValue', count: MetaDataValue.count()])
+        res.add([type: 'tags', count: Tag.count()])
+        res.add([type: 'submitters', count: Submitter.count()])
+        
+        return res
+    }
 
     /**
      * returns the spectra count for the given tag

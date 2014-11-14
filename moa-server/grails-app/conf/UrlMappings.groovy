@@ -140,6 +140,8 @@ class UrlMappings {
          * statistics api
          */
 
+        "/rest/statistics/countAll" (controller: 'statistics', action: 'countAll')
+
         "/rest/statistics/tags/spectra/count/$id" (controller: 'statistics',action: 'countOfSpectraForTag', id:id)
 
         "/rest/statistics/tags/spectra/countAll" (controller: 'statistics',action: 'countOfSpectraForAllTags')
