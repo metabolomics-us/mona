@@ -48,7 +48,7 @@ class MetaDataPersistenceService {
         log.debug("received ${object} and map: ${current}")
 
         if (!metadataFilters.accept(current.name, current.value)) {
-            log.info("metadata value rejected at filters...")
+            log.info("metadata '${current.name}' with value  '${current.value}' rejected at filters...")
             return
         }
 
@@ -69,14 +69,14 @@ class MetaDataPersistenceService {
         MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
 
 
-        log.info("generating metadata object...")
+        log.debug("generating metadata object...")
         MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
         category.addToMetaDatas(metaData)
 
         metaData.save()
         category.save()
 
-        log.info("generating metadata value object...")
+        log.debug("generating metadata value object...")
         MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
 //MetaDataValueHelper.getValueObject(current.value)
 
@@ -132,6 +132,6 @@ class MetaDataPersistenceService {
 
         metaDataValue.save()
 
-        log.info("done")
+        log.debug("done")
     }
 }

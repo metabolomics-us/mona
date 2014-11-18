@@ -11,7 +11,7 @@ class HibernateStatisticsFilters {
             before = {
                 def stats = sessionFactory.getStatistics()
 
-                log.info "\n### In action: $controllerName/$actionName ###"
+                log.debug "\n### In action: $controllerName/$actionName ###"
 
                 if (!stats.statisticsEnabled) {
                     stats.statisticsEnabled = true
@@ -21,7 +21,7 @@ class HibernateStatisticsFilters {
             afterView = {
                 def stats = sessionFactory.getStatistics()
 
-                log.info """
+                log.debug """
             ############## Hibernate Stats ##############
             Action: /${controllerName}/${actionName}
 

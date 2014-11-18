@@ -1,5 +1,4 @@
 package moa.server
-
 import moa.MetaDataCategory
 
 class CategoryNameFinderService {
@@ -9,7 +8,7 @@ class CategoryNameFinderService {
      * @param metaDataKey
      * @return
      */
-    def synchronized findCategoryForMetaDataKey(String metaDataKey, String providedCategoryName = null) {
+    MetaDataCategory findCategoryForMetaDataKey(String metaDataKey, String providedCategoryName = null) {
         log.debug("trying to find best category for: '${metaDataKey}', user provided '${providedCategoryName}' as suggested category")
         String name = ""
 
@@ -20,9 +19,6 @@ class CategoryNameFinderService {
         }
 
         MetaDataCategory category = MetaDataCategory.findOrSaveByName(name)
-
-//        category.refresh()
-//        category.save(flush: true)
 
         log.debug("found category: '${category.id} - ${category.name}'")
         return category
