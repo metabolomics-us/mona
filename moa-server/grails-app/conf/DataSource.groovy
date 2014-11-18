@@ -18,22 +18,15 @@ environments {
     development {
 
         dataSource {
-            dbCreate = "update"//*/"create-drop"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-test"
+            dbCreate = "create-drop"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
             driverClassName="org.postgresql.Driver"
             username="compound"
             password="asdf"
             pooled = true
 
-            logSql = true
+            logSql = false
         }
-        /*
-
-        dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
-            url = "jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
-        }
-        */
 
     }
 

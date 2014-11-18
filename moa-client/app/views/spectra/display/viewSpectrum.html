@@ -161,8 +161,12 @@
             <br/>
 
             <div ng-show="spectrum.comments.length">
+
                 <h4>Comments</h4>
-                <blockquote><p style="font-size: 75%">{{spectrum.comments}}</p></blockquote>
+
+                <ul>
+                  <li ng-repeat="comment in spectrum.comments">{{comment.comment}}</li>
+                </ul>
             </div>
         </div>
     </div>

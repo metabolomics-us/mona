@@ -1,7 +1,12 @@
 package moa.server
+
+import grails.plugin.cache.CacheEvict
 import moa.*
 import moa.server.caluclation.CompoundPropertyService
 import moa.server.metadata.MetaDataPersistenceService
+import org.codehaus.groovy.grails.web.json.JSONArray
+import org.codehaus.groovy.grails.web.json.JSONObject
+import org.grails.datastore.mapping.validation.ValidationException
 
 class SpectraPersistenceService {
 
@@ -14,11 +19,27 @@ class SpectraPersistenceService {
      * @param params
      * @return
      */
-    public  Spectrum create(Map json) {
+    @CacheEvict(value = 'spectrum', allEntries = true)
+    public Spectrum create(JSONObject json) {
+        //handle outdated format
+        if (json.comments instanceof String) {
+            log.warn("using out dated Mona format, comment's should be in form of an array -> skipping attribute!")
+            String value = json.get("comments")
+            json.remove("comments")
+
+            JSONArray array = new JSONArray();
+            JSONObject comment = new JSONObject();
+            comment.put("comment", value)
+
+            array.add(comment)
+            json.put("comments", array)
+        }
+
+        json = dropIds(json);
 
         Spectrum spectrum = new Spectrum(json)
 
-        log.debug("inserting new spectra: ${spectrum.spectrum}")
+        log.debug("inserting new spectra")
 
         //we build the metadata rather our self
         spectrum.metaData = [];
@@ -33,8 +54,12 @@ class SpectraPersistenceService {
         spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound).save()
         spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound).save()
 
-        spectrum.save()
-        spectrum.lock()
+        if (!spectrum.validate()) {
+            log.error(spectrum.errors)
+            throw new ValidationException("sorry was not able to persist spectra", spectrum.errors)
+        }
+
+        spectrum.save(flush: true)
 
         if (json.tags) {
             def tags = json.tags
@@ -51,6 +76,9 @@ class SpectraPersistenceService {
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
 
         spectrum.save(flush: true)
+
+        //submit for validation
+        SpectraValidationJob.triggerNow([spectraId:spectrum.id])
 
         //spectrum is now ready to work on
         return spectrum;
@@ -92,7 +120,7 @@ class SpectraPersistenceService {
 
         log.debug("==> done: ${myCompound}")
 
-        if(names) {
+        if (names) {
             //merge new names
             names.each { name ->
                 Name n = Name.findOrSaveByNameAndCompound(name.name, myCompound)
@@ -101,14 +129,28 @@ class SpectraPersistenceService {
                 }
             }
         }
-        myCompound.molFile = compound.molFile
 
-        myCompound.save(flush:true)
+        myCompound.molFile = compound.molFile
+        myCompound.inchi = compound.inchi
+
+        myCompound.save(flush: true)
 
         compoundPropertyService.calculateMetaData(myCompound)
 
         return myCompound;
 
+    }
+
+    /**
+     * removes id objects from the json file, since we can't really reuse them
+     * @param json
+     * @return
+     */
+    private Map dropIds(Map json){
+        json.remove("id")
+
+        json.remove("predictedCompound")
+        return json
     }
 
 }

@@ -1,5 +1,6 @@
 import grails.converters.JSON
 import grails.util.Environment
+import moa.Comment
 import moa.Compound
 import moa.MetaData
 import moa.MetaDataCategory
@@ -25,11 +26,11 @@ class BootStrap {
 
         if (Environment.isDevelopmentMode()) {
             //just some test data
-            /*
+
             new Submitter(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save()
             new Submitter(firstName: "Diego", lastName: "Pedrosa", emailAddress: "linuxmant@gmail.com", password: "dsadasd").save()
             new Submitter(firstName: "Oliver", lastName: "Fiehn", emailAddress: "ofiehn@ucdavis.edu", password: "sdsadsad").save()
-
+            /*
 
             Tag.findOrCreateWhere(text: "dirty").save()
             Tag.findOrCreateWhere(text: "clean").save()
@@ -70,6 +71,9 @@ class BootStrap {
         )
         JSON.registerObjectMarshaller(MetaDataCategory,
                 DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class","metaDatas"])
+        )
+        JSON.registerObjectMarshaller(Comment,
+                DomainClassMarshaller.createExcludeMarshaller(Comment, ["class"])
         )
 
 

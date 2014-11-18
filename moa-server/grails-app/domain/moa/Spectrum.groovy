@@ -12,7 +12,7 @@ class Spectrum extends SupportsMetaData{
     /**
      * contains many metadata
      */
-    static hasMany = [ tags: Tag]
+    static hasMany = [ tags: Tag, comments:Comment]
 
     /**
      * we belong to these
@@ -25,7 +25,7 @@ class Spectrum extends SupportsMetaData{
     ]
 
     static constraints = {
-	    comments nullable: true, blank: true
+	    comments nullable: true
 	    spectrum nullable: false //, unique: true
         chemicalCompound nullable: true
         biologicalCompound nullable: true
@@ -34,10 +34,10 @@ class Spectrum extends SupportsMetaData{
     }
 
     static mapping = {
-        comments sqlType: "text"
         spectrum sqlType: "text"
         version false
         tags fetch: 'join'
+        comments fetch: 'join'
     }
 
     /**
@@ -48,7 +48,12 @@ class Spectrum extends SupportsMetaData{
     /**
      * comments
      */
-    String comments
+    Set<Comment> comments
+
+    /**
+     * tags
+     */
+    Set<Tag> tags
 
     /**
      * who submitted this

@@ -85,7 +85,9 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
                 } else {
                     logger.debug("automatic tagging is disabled")
                 }
-                logger.debug("hydroxyl group validation failed")
+                if (this.getFailureAction() instanceof MetaDataSuspectAction) {
+                    this.getFailureAction().setReason("hydroxyl group validation failed")
+                }
                 return false
             } else {
                 logger.debug("=>hydroxyl groups are accpeted!")
@@ -104,6 +106,7 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
                 field.category == "focused ion" && field.name == this.field)
 
     }
+
     @Override
     String getDescription() {
         return "this rule tries to calculate if the specified ${field} value is actually possible, based on the provided biological compound"

@@ -10,6 +10,8 @@ import moa.meta.DoubleMetaDataValue
 import moa.meta.StringMetaDataValue
 import moa.server.CategoryNameFinderService
 import moa.server.MetaDataDictionaryService
+import persistence.metadata.filter.Filters
+import persistence.metadata.filter.unit.Converters
 
 @Transactional
 class MetaDataPersistenceService {
@@ -17,6 +19,10 @@ class MetaDataPersistenceService {
     MetaDataDictionaryService metaDataDictionaryService
 
     CategoryNameFinderService categoryNameFinderService
+
+    Filters metadataFilters
+
+    Converters metadataValueConverter
 
     /**
      * generates our required metadata based on the json array of metadata
@@ -27,7 +33,7 @@ class MetaDataPersistenceService {
 
         log.debug("generating meta data")
         //remove existing metadata from the object
-
+        object.refresh()
         json.each { Map current ->
             generateMetaDataObject(object, current)
         }
@@ -40,8 +46,26 @@ class MetaDataPersistenceService {
      */
     public void generateMetaDataObject(SupportsMetaData object, Map current) {
         log.debug("received ${object} and map: ${current}")
+
+        if (!metadataFilters.accept(current.name, current.value)) {
+            log.info("metadata value rejected at filters...")
+            return
+        }
+
         String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
 
+        //calculate our units
+        Map calculatedValue = metadataValueConverter.convert(metaDataName, current.value.toString())
+
+        if (!calculatedValue.isEmpty()) {
+            //and assign them
+            if (calculatedValue.unit != null) {
+                current.unit = calculatedValue.unit
+            }
+            if (calculatedValue.value != null) {
+                current.value = calculatedValue.value
+            }
+        }
         MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
 
 
@@ -56,10 +80,9 @@ class MetaDataPersistenceService {
         MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
 //MetaDataValueHelper.getValueObject(current.value)
 
-        if(current.computed != null && current.computed){
+        if (current.computed != null && current.computed) {
             metaDataValue.computed = true
-        }
-        else{
+        } else {
             metaDataValue.computed = false
         }
         //if an unit is associated let's update it
@@ -106,9 +129,6 @@ class MetaDataPersistenceService {
         } catch (Exception e) {
             log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
         }
-
-//            println("\t===>\tworking on value: ${metaDataValue}")
-
 
         metaDataValue.save()
 

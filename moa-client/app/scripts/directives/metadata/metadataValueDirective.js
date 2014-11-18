@@ -7,6 +7,7 @@
  */
 app.directive('gwValue', function ($compile) {
   return {
+    templateUrl: '/views/templates/metaValue.html',
 
     restrict: 'A',
     scope: {
@@ -14,13 +15,8 @@ app.directive('gwValue', function ($compile) {
     },
     link: function ($scope, element, attrs, ngModel) {
 
-
-      if ($scope.value.suspect == true) {
-        element.append("<i class='fa fa-exclamation-triangle'></i>");
-      }
-
       if ($scope.value.computed == true) {
-        element.append("<i class='fa fa-flast'></i>");
+        element.append("<i class='fa fa-flask'></i>");
       }
     }
   }

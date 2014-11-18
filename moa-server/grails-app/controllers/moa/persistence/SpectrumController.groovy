@@ -7,6 +7,8 @@ import moa.server.SpectraPersistenceService
 import moa.server.SpectraUploadJob
 import moa.server.convert.SpectraConversionService
 import moa.server.query.SpectraQueryService
+import org.codehaus.groovy.grails.web.json.JSONArray
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 class SpectrumController extends RestfulController<Spectrum> {
     static responseFormats = ['json']
@@ -64,9 +66,28 @@ class SpectrumController extends RestfulController<Spectrum> {
     }
 
     def batchSave() {
-        SpectraUploadJob.triggerNow([spectra: getParametersToBind()])
 
-        render([message: "spectra submitted"] as JSON)
+        if (request.JSON) {
+            if (request.JSON instanceof JSONArray) {
+                JSONArray array = request.JSON
+
+                for (int i = 0; i < array.length(); i++) {
+                    if (array.get(i) instanceof JSONObject) {
+                        SpectraUploadJob.triggerNow([spectra: array.getJSONObject(i)])
+
+                    }
+                }
+
+                render([message: "${array.length()} spectra submitted"] as JSON)
+
+            } else {
+                SpectraUploadJob.triggerNow([spectra: request.JSON])
+                render([message: "1 spectra submitted"] as JSON)
+            }
+        }
+        else{
+            render([errors: "sorry missing JSON request"]);
+        }
     }
     /**
      * dynamic query methods to deal with different url mappings based on mapping ids
