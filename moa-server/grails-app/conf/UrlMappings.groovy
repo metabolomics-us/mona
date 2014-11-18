@@ -109,6 +109,7 @@ class UrlMappings {
          * provides us with access to simple queries
          */
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
+
         /**
          * batch updates based on queries
          */
@@ -139,19 +140,16 @@ class UrlMappings {
         /**
          * statistics api
          */
-
         "/rest/statistics/countAll" (controller: 'statistics', action: 'countAll')
 
-        "/rest/statistics/tags/spectra/count/$id" (controller: 'statistics',action: 'countOfSpectraForTag', id:id)
+        "/rest/statistics/tags/spectra/count/$id" (controller: 'statistics', action: 'countOfSpectraForTag', id:id)
 
-        "/rest/statistics/tags/spectra/countAll" (controller: 'statistics',action: 'countOfSpectraForAllTags')
+        "/rest/statistics/tags/spectra/countAll" (controller: 'statistics' ,action: 'countOfSpectraForAllTags')
 
+        "/rest/statistics/submitters/countAll" (controller: 'statistics', action: 'countOfSpectraForAllSubmitters')
 
-        "/rest/statistics/tags/compound/count/$id" (controller: 'statistics',action: 'countOfCompoundsForTag', id:id)
+        "/rest/statistics/tags/compound/count/$id" (controller: 'statistics', action: 'countOfCompoundsForTag', id:id)
 
-        "/rest/statistics/meta/spectra/count/$id" (controller: 'statistics',action: 'metaDataValueCountForMetadataValueId', id:id)
-
-
-
+        "/rest/statistics/meta/spectra/count/$id" (controller: 'statistics', action: 'metaDataValueCountForMetadataValueId', id:id)
     }
 }

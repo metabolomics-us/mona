@@ -8,7 +8,7 @@ import moa.server.curation.SpectraCurationService
  */
 class SpectraValidationJob {
 
-    def concurrent = true
+    def concurrent = false
 
     /**
      * needs to be defined
