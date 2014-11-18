@@ -6,6 +6,7 @@ import groovy.json.JsonSlurper
 import moa.Compound
 import moa.Name
 import moa.Spectrum
+import moa.Submitter
 import org.apache.log4j.Logger
 
 /**
@@ -16,8 +17,39 @@ class UpdateSpectrum extends AbstractCurationRule {
     private Logger logger = Logger.getLogger(getClass())
 
     // Load json data
-    static final data = new JsonSlurper().parseText(new File("/Volumes/Data/massbank/massbank_names.json").text)
+    //static final data = new JsonSlurper().parseText(new File("/Volumes/Data/massbank/massbank_names.json").text)
 
+    static final massbankSubmiters = [
+            'BML': 'Washington State University',
+            'BSU': 'Boise State University',
+            'CA': 'Kyoto University',
+            'CE': 'MPI for Chemical Ecology',
+            'CO': 'University of Connecticut',
+            'EA': 'Eawag',
+            'EQ': 'Eawag',
+            'FFF': 'PFOS Research Group',
+            'FIO': 'CPqRR/FIOCRUZ',
+            'FU': 'Fukuyama University',
+            'GLS': 'GL Sciences Inc.',
+            'JEL': 'JEOL Ltd.',
+            'JP': 'University of Tokyo',
+            'KNA': 'NAIST',
+            'KO': 'Keio University',
+            'KZ': 'Kazusa DNA Research Institute',
+            'MCH': 'Osaka MCHRI',
+            'MSJ': 'Mass Spectrometry Society of Japan',
+            'MT': 'Metabolon, Inc.',
+            'NU': 'Nihon University',
+            'OUF': 'Osaka University',
+            'PB': 'IPB Halle',
+            'PR': 'RIKEN',
+            'TT': 'Tottori University',
+            'TY': 'University of Toyama',
+            'UF': 'Helmholtz Centre for Environmental Research',
+            'UO': 'University of Occupational and Environmental Health',
+            'UT': 'Chubu University',
+            'WA': 'Nihon Waters K.K.'
+    ]
 
     @Override
     boolean executeRule(CurationObject toValidate) {
@@ -40,6 +72,25 @@ class UpdateSpectrum extends AbstractCurationRule {
             return false
         }
 
+
+        // Update submitter for massbank records
+        if(s.submitter.firstName == 'Gert') {
+            filename = filename.replaceAll("\\s", "").substring(0, 4).replaceAll("\\d", "");
+
+            Submitter submitter = Submitter.findOrSaveByEmailAddress(filename + '@MassBank.jp');
+            submitter.firstName = massbankSubmiters[filename]
+            submitter.lastName = 'Blank'
+            submitter.password = 'password'
+            submitter.addToSpectra(s)
+
+            logger.info(submitter.validate())
+            logger.info(submitter.errors)
+
+            submitter.save(flush: true)
+        }
+
+
+        /*
         if(!data.find{it.key == filename}) {
             logger.info('Could not find filename!')
             return false
@@ -51,8 +102,8 @@ class UpdateSpectrum extends AbstractCurationRule {
         logger.info("Filename "+ filename +" for spectrum"+ s.getId())
 
 
-        // Update compound names
 
+        // Update compound names
         for(String newName : newData) {
             logger.info('Adding name '+ newName)
 
@@ -61,7 +112,6 @@ class UpdateSpectrum extends AbstractCurationRule {
             s.biologicalCompound.save(flush: true)
         }
 
-        /*
         // Update inchis and mol files
         logger.info("Old InChIKey: "+ s.getBiologicalCompound().getInchiKey() +", New InChIKey: "+ newData.inchikey)
         logger.info("Old molFile: "+ s.getBiologicalCompound().getMolFile().length() +", New molFile: "+ newData.mol.length())
