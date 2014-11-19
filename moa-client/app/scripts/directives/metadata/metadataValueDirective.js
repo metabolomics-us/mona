@@ -15,6 +15,7 @@ app.directive('gwValue', function ($compile) {
     },
     link: function ($scope, element, attrs, ngModel) {
 
+
       if ($scope.value.computed == true) {
         element.append("<i class='fa fa-flask'></i>");
       }

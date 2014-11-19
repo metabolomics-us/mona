@@ -13,7 +13,7 @@ class MaxFilterFilters {
                     params.max = StaticProperties.MAX_QUERY_RESULTS
                 }
 
-                log.info("received parameters: ${params}")
+                log.debug("received parameters: ${params}")
             }
             after = { Map model ->
 

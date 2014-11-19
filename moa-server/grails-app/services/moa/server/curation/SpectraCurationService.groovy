@@ -28,19 +28,23 @@ class SpectraCurationService {
 
         Spectrum spectrum = spectraQueryService.query(id)
 
-        boolean result = spectraCurationWorkflow.runWorkflow(new CurationObject(spectrum))
+        if (spectrum) {
+            boolean result = spectraCurationWorkflow.runWorkflow(new CurationObject(spectrum))
 
-        long end = System.currentTimeMillis()
+            long end = System.currentTimeMillis()
 
-        long needed = (end - begin)
+            long needed = (end - begin)
 
-        spectrum = Spectrum.get(spectrum.id)
-        metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "validation date", value: new Date().format("dd-MMM-yyyy"), category: "computed", computed: true])
-        metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "validation time", value: needed, unit: "ms", category: "computed", computed: true])
+            spectrum = Spectrum.get(spectrum.id)
+            metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "validation date", value: new Date().format("dd-MMM-yyyy"), category: "computed", computed: true])
+            metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "validation time", value: needed, unit: "ms", category: "computed", computed: true])
 
-        spectrum.save(flush: true)
+            spectrum.save(flush: true)
 
-        return result
+            return result
+        } else {
+            return false
+        }
 
     }
 }

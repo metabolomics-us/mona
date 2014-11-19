@@ -1,8 +1,7 @@
 package moa.server
-
+import grails.converters.JSON
 import grails.plugin.cache.CacheEvict
 import moa.*
-import moa.server.caluclation.CompoundPropertyService
 import moa.server.metadata.MetaDataPersistenceService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -11,8 +10,6 @@ import org.grails.datastore.mapping.validation.ValidationException
 class SpectraPersistenceService {
 
     MetaDataPersistenceService metaDataPersistenceService
-
-    CompoundPropertyService compoundPropertyService
 
     /**
      * creates a new spectrum and saves it in the database
@@ -59,7 +56,7 @@ class SpectraPersistenceService {
             throw new ValidationException("sorry was not able to persist spectra", spectrum.errors)
         }
 
-        spectrum.save(flush: true)
+        spectrum.save()
 
         if (json.tags) {
             def tags = json.tags
@@ -75,10 +72,17 @@ class SpectraPersistenceService {
 
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
 
-        spectrum.save(flush: true)
-
+        try {
+            spectrum.save(flush: true)
+        }
+        catch (Exception e) {
+            log.error(e.getMessage())
+            log.error(spectrum.getErrors())
+            log.error(json as JSON)
+            throw e;
+        }
         //submit for validation
-        SpectraValidationJob.triggerNow([spectraId:spectrum.id])
+        //SpectraValidationJob.triggerNow([spectraId:spectrum.id])
 
         //spectrum is now ready to work on
         return spectrum;
@@ -135,8 +139,6 @@ class SpectraPersistenceService {
 
         myCompound.save(flush: true)
 
-        compoundPropertyService.calculateMetaData(myCompound)
-
         return myCompound;
 
     }
@@ -146,7 +148,7 @@ class SpectraPersistenceService {
      * @param json
      * @return
      */
-    private Map dropIds(Map json){
+    private Map dropIds(Map json) {
         json.remove("id")
 
         json.remove("predictedCompound")

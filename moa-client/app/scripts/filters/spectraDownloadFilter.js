@@ -24,5 +24,21 @@ app.filter('spectraDownloadAsMsp', function (REST_BACKEND_SERVER) {
 
 });
 
+/**
+ * as mol file
+ */
+app.filter('compoundDownloadAsMolFile', function( REST_BACKEND_SERVER){
+  return function(input) {
+    return REST_BACKEND_SERVER + '/rest/compounds/' + input + "?format=mol";
+  };
+});
 
+/**
+ * as mona record file
+ */
+app.filter('compoundDownloadFile', function( REST_BACKEND_SERVER){
+  return function(input) {
+    return REST_BACKEND_SERVER + '/rest/compounds/' + input + "?format=mona";
+  };
+});
 

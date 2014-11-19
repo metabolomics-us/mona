@@ -1,4 +1,5 @@
 package moa.server.caluclation
+
 import grails.transaction.Transactional
 import moa.Compound
 import moa.server.metadata.MetaDataPersistenceService
@@ -20,28 +21,36 @@ class CompoundPropertyService {
      * @param compound
      */
     def calculateMetaData(Compound compound) {
-
-        log.debug("calculate properties for compound: ${compound}")
         String molFile = compound.molFile
-        if (molFile.startsWith("\n") == false) {
-            molFile = "\n" + molFile
+
+        try {
+            log.debug("calculate properties for compound: ${compound}")
+            if (molFile.startsWith("\n") == false) {
+                molFile = "\n" + molFile
+            }
+
+            def reader = new MDLV2000Reader(new StringReader(molFile))
+
+            Molecule molecule = reader.read(new Molecule())
+
+            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
+            CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.newInstance()).addImplicitHydrogens(molecule)
+            AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule);
+
+            IMolecularFormula moleculeFormula = MolecularFormulaManipulator
+                    .getMolecularFormula(molecule);
+
+
+            log.debug("persisting properties")
+            metaDataPersistenceService.generateMetaDataObject(compound, [name: "total exact mass", value: MolecularFormulaManipulator.getTotalExactMass(moleculeFormula), category: "computed", computed: true])
+            metaDataPersistenceService.generateMetaDataObject(compound, [name: "molecule formula", value: MolecularFormulaManipulator.getString(moleculeFormula), category: "computed", computed: true])
+
         }
-
-        def reader = new MDLV2000Reader(new StringReader(molFile))
-
-        Molecule molecule = reader.read(new Molecule())
-
-        AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule);
-        CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.newInstance()).addImplicitHydrogens(molecule)
-        AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule);
-
-        IMolecularFormula moleculeFormula = MolecularFormulaManipulator
-                .getMolecularFormula(molecule);
-
-
-        log.debug("persisting properties")
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "total exact mass", value: MolecularFormulaManipulator.getTotalExactMass(moleculeFormula), category: "computed",computed:true])
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "molecule formula", value: MolecularFormulaManipulator.getString(moleculeFormula), category: "computed",computed:true])
+        catch (Exception e){
+            log.warn("error in compound service...")
+            log.warn(molFile)
+            log.warn(e.getMessage(),e)
+        }
 
         log.debug("done")
         compound.save()

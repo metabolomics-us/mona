@@ -72,8 +72,8 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="ion in massSpec">
-                                <td>{{ion.ion}}</td>
-                                <td>{{ion.intensity}}</td>
+                                <td>{{ion.ion  | number : 4}}</td>
+                                <td>{{ion.intensity  | number : 4}}</td>
                                 <td>
                                     {{ion.annotation}}
 
@@ -152,7 +152,7 @@
                             {{meta.name}}
                         </td>
                         <td>
-                            <span gw-value value="meta">{{meta.value}} {{meta.unit}}</span>
+                            <span gw-value value="meta">{{meta.value | number:4 }} {{meta.unit}}</span>
                         </td>
                     </tr>
                     </tbody>
