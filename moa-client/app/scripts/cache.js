@@ -163,6 +163,7 @@ app.service('AppCache', function (MetadataService, TaggingService, INTERNAL_CACH
         }
     };
 
+
     /**
      * Retrieve tags statistics either from the rest api or internal cache
      */

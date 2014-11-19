@@ -20,25 +20,42 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
      */
     $scope.fieldData = {};
 
+    /**
+     *
+     * @type {{}}
+     */
+    $scope.totalData = {};
+
+
 
     /**
      * Query all metadata values for a given metadata name
-     * @param name
-     * @param callback
+     * @param id
      */
-    var queryMetadataValues = function (id, callback) {
+    var queryMetadataValues = function(id) {
         $http.get(REST_BACKEND_SERVER + '/rest/statistics/meta/spectra/count/'+ id)
-            .then(function(data) {
-                if(data.data.length > 0) {
-                    $scope.fieldData[data.data[0].name] = data.data;
+            .success(function(data) {
+                if(data.length > 0) {
+                    $scope.fieldData[data[0].name] = data;
                 }
-            }
-        );
+            });
+    };
+
+    /**
+     * Query for total statistics
+     */
+    var queryTotalStatistics = function() {
+        return $http.get(REST_BACKEND_SERVER + '/rest/statistics/countAll/')
+            .success(function(data) {
+                $scope.totalData = data;
+            });
     };
 
 
     /**
      * Submit query from clicked metadata link
+     * @param name
+     * @param value
      */
     $scope.submitQuery = function(name, value) {
         var query = {};
@@ -63,6 +80,8 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
                 }
             }
         });
+
+        queryTotalStatistics();
     })();
 };
 
