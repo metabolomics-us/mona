@@ -26,7 +26,10 @@ class StatisticsController {
     }
 
     def metaDataValueCountForMetadataValueId() {
-        render statisticsService.getSpectraCountForMetaDataId(params.id as long)   as JSON
+        render statisticsService.getSpectraCountForMetaDataId(params.id as long) as JSON
     }
 
+    def countOfSpectraForAllSubmitters() {
+        render statisticsService.getSpectraCountForAllSubmitters() as JSON
+    }
 }

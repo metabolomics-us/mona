@@ -7,7 +7,6 @@ import moa.MetaDataValue
 import moa.Spectrum
 import moa.Submitter
 import moa.Tag
-import org.spockframework.compiler.model.Spec
 
 /**
  * provides us with uptodate statistics of the system
@@ -16,20 +15,18 @@ import org.spockframework.compiler.model.Spec
 class StatisticsService {
 
     /**
-     *
+     * counts the total number of all domain classes
      * @return
      */
-    List countAll() {
-        def res = []
-
-        res.add([type: 'spectra', count: Spectrum.count()])
-        res.add([type: 'compounds', count: Compound.count()])
-        res.add([type: 'metadata', count: MetaData.count()])
-        res.add([type: 'metadataValue', count: MetaDataValue.count()])
-        res.add([type: 'tags', count: Tag.count()])
-        res.add([type: 'submitters', count: Submitter.count()])
-        
-        return res
+    Map countAll() {
+        return [
+                spectra: Spectrum.count(),
+                compounds: Compound.count(),
+                metadata: MetaData.count(),
+                metadataValue: MetaDataValue.count(),
+                tags: Tag.count(),
+                submitters: Submitter.count()
+        ]
     }
 
     /**
@@ -38,8 +35,8 @@ class StatisticsService {
      * @return
      */
     int getSpectraCountForTag(String text) {
-
         int count = 0
+
         Tag.withSession { session ->
             def result = session.createSQLQuery(" select count(*) as c from spectrum_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
 
@@ -56,8 +53,8 @@ class StatisticsService {
      * @return
      */
     List getSpectraCountForAllTags() {
-
         def res = []
+
         Tag.withSession { session ->
             def result = session.createSQLQuery(" select count(*) as count, text  from spectrum_tag a, tag b where a.tag_id = b.id group by text").list()
 
@@ -78,8 +75,9 @@ class StatisticsService {
      */
     List getCompoundCountForTag(String text) {
         int compoundCount = 0
+
         Tag.withSession { session ->
-            def result = session.createSQLQuery(" select count(*) as c from compound_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
+            def result = session.createSQLQuery("select count(*) as c from compound_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
 
             if (!result.isEmpty()) {
                 compoundCount = result[0]
@@ -96,7 +94,6 @@ class StatisticsService {
      * @return
      */
     List getSpectraCountForMetaDataId(long id) {
-
         def result = []
 
         Spectrum.withSession { session ->
@@ -106,10 +103,28 @@ class StatisticsService {
                 result.add([count: o[0], name: o[1], value: o[2]])
 
             }
-
         }
 
         return result
     }
 
+    /**
+     *
+     * @return
+     */
+    List getSpectraCountForAllSubmitters() {
+        def res = []
+
+        Submitter.withSession { session ->
+            def result = session.createSQLQuery("select count(*) as count, b.first_name, b.last_name, b.email_address from spectrum a, submitter b where a.submitter_id = b.id group by b.id").list()
+
+            if (!result.isEmpty()) {
+                for (Object[] o : result) {
+                    res.add([count: o[0], firstName: o[1], lastName: o[2], emailAddress: o[3]])
+                }
+            }
+        }
+
+        return res
+    }
 }
