@@ -147,8 +147,8 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
           var s = buildSpectrum();
 
           s.biologicalCompound.inchiKey = spectra.inchiKey;
-          s.chemicalCompound.inchi = spectra.inchi;
-          
+          s.biologicalCompound.inchi = spectra.inchi;
+
           //assign all the defined name of the spectra
           if (angular.isDefined(spectra.name)) {
             s.biologicalCompound.names = [
