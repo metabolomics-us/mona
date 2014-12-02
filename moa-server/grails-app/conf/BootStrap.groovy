@@ -25,9 +25,10 @@ class BootStrap {
         session.setFlushMode(FlushMode.COMMIT)
 
         if (Environment.isDevelopmentMode()) {
+            log.warn("in development mode, setting up users...")
             //just some test data
 
-            new Submitter(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save()
+            new Submitter(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save(flush:true)
             new Submitter(firstName: "Diego", lastName: "Pedrosa", emailAddress: "linuxmant@gmail.com", password: "dsadasd").save()
             new Submitter(firstName: "Oliver", lastName: "Fiehn", emailAddress: "ofiehn@ucdavis.edu", password: "sdsadsad").save()
             /*

@@ -1,3 +1,9 @@
+CREATE INDEX "metadata_value_metadata_id_index"
+	ON "public"."meta_data_value"("meta_data_id");
+
+CREATE INDEX "metadata_value_owner_index"
+	ON "public"."meta_data_value"("owner_id");
+
 CREATE INDEX "index-spectra-meta-string"
         ON "public"."meta_data_value"("string_value", "meta_data_id", "owner_id");
 

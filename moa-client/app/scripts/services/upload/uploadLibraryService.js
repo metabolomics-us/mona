@@ -147,6 +147,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
           var s = buildSpectrum();
 
           s.biologicalCompound.inchiKey = spectra.inchiKey;
+          s.biologicalCompound.inchi = spectra.inchi;
 
           //assign all the defined name of the spectra
           if (angular.isDefined(spectra.name)) {
@@ -170,8 +171,10 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
           s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
 
           s.chemicalCompound.inchiKey = spectra.inchiKey;
+          s.chemicalCompound.inchi = spectra.inchi;
+
           s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
-          s.biologicalCompound.metaData = [];
+          s.chemicalCompound.metaData = [];
 
           s.spectrum = spectra.spectrum;
 
