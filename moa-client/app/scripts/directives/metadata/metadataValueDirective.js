@@ -88,7 +88,8 @@ app.directive('gwMetaQueryInput', function ($compile) {
         templateUrl: '/views/templates/metaQueryInput.html',
         restrict: 'A',
         scope: {
-            query: "="
+            query: '=',
+            editable: '=?'
         },
         link: function ($scope, element, attrs, ngModel) {
 
@@ -128,6 +129,22 @@ app.directive('gwMetaQueryInput', function ($compile) {
              * initializations
              */
             (function () {
+                // Set query if undefined
+                if(typeof $scope.query == 'undefined') {
+                    $scope.query = [];
+                }
+
+                // Set blank entry if query list is empty
+                if($scope.query.length == 0) {
+                    $scope.addMetadataQuery();
+                }
+
+                // Set editable option if not set
+                if(typeof $scope.editable == 'undefined') {
+                    $scope.editable = false;
+                }
+
+                // Get metadata
                 AppCache.getMetadata(function (data) {
                     var metadataNames = {};
 
