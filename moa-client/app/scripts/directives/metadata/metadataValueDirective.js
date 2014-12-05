@@ -130,7 +130,7 @@ app.directive('gwMetaQueryInput', function ($compile) {
              */
             (function () {
                 // Set query if undefined
-                if(typeof $scope.query == 'undefined') {
+                if(!angular.isDefined($scope.query)) {
                     $scope.query = [];
                 }
 
@@ -140,7 +140,7 @@ app.directive('gwMetaQueryInput', function ($compile) {
                 }
 
                 // Set editable option if not set
-                if(typeof $scope.editable == 'undefined') {
+                if(!angular.isDefined($scope.editable)) {
                     $scope.editable = false;
                 }
 
