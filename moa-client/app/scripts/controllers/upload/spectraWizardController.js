@@ -184,7 +184,6 @@ moaControllers.SpectraWizardController = function ($scope, $q, $modalInstance, $
                         $scope.spectrum.meta.push({name: '', value: ''});
 
                         $scope.step += 1;
-                        $scope.step = 5;
                         $scope.batchUpload = false;
                     }, origin);
                 } else {
