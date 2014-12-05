@@ -6,6 +6,11 @@
  * handles the upload of library spectra to the system
  */
 app.service('UploadLibraryService', function (ApplicationError, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
+    var self = this;
+
+    self.currentUploadProgress = 0;
+    self.totalUploadProgress = 0;
+
 
     /**
      * obtains a promise for us to get to the an inchi key for a spectra object
@@ -120,13 +125,12 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
     /**
      * assembles a spectra and prepares it for upload
-     * @param origin - where did the object actually come from
      * @param submitter
-     * @param buildSpectrum
-     * @param saveSpectrumCasllback
+     * @param saveSpectrumCallback
      * @param spectraObject
+     * @param additionalData
      */
-    function workOnSpectra(origin, submitter, buildSpectrum, saveSpectrumCallback, spectraObject) {
+    function workOnSpectra(submitter, saveSpectrumCallback, spectraObject, additionalData) {
 
         $log.debug('converting object:\n\n' + $filter('json')(spectraObject));
 
@@ -144,7 +148,7 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
                     $log.debug('optimized metadata...');
 
-                    var s = buildSpectrum();
+                    var s = self.buildSpectrum();
 
                     s.biologicalCompound.inchiKey = spectra.inchiKey;
                     s.biologicalCompound.inchi = spectra.inchi;
@@ -184,15 +188,14 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
                         });
                     }
 
-                    s.comments = "this spectra was added to the system, by utilizing a library upload.";
+                    s.comments = ["this spectra was added to the system, by utilizing a library upload."];
+                    if (angular.isDefined(spectra.comments)) {
+                        s.comments.push(spectra.comments);
+                    }
+
                     metaData.forEach(function (e) {
                         s.metaData.push(e);
                     });
-
-                    //adds a metadata field
-                    if (angular.isDefined(origin)) {
-                        s.metaData.push({name: 'origin', value: origin});
-                    }
 
                     s.submitter = submitter;
 
@@ -210,82 +213,162 @@ app.service('UploadLibraryService', function (ApplicationError, gwMspService, gw
 
 
     /**
-     * uploads an msp file to the system
-     * @param data object containing our data
-     * @param buildSpectrum a function to build our spectrum object
-     * @param saveSpectrumCallback a function to call to save our generated spectra object
+     *
+     * @returns {Spectrum}
      */
-    function uploadMSP(data, buildSpectrum, saveSpectrumCallback, origin) {
-        //$log.info("uploading msp file: " + origin);
+    self.buildSpectrum = function() {
+        var spectrum = new Spectrum();
+        spectrum.biologicalCompound = {names: []};
+        spectrum.chemicalCompound = {names: []};
+        spectrum.tags = [];
+        spectrum.metaData = [];
 
-        var pool = [];
+        return spectrum;
+    };
 
-        //get the current user
-        AuthentificationService.getCurrentUser().then(function (submitter) {
-
-
-            var toWork = (function (spectra) {
-                workOnSpectra(origin, submitter, buildSpectrum, saveSpectrumCallback, spectra)
-            });
-
-            //convert our files
-            var content = gwMspService.convertFromData(data, function (spectra) {
-                AsyncService.addToPool(spectra, toWork);
-            });
-
-        });
-    }
 
     /**
-     * uploads data using mass bank
-     * @param data
-     * @param buildSpectrum
-     * @param saveSpectrumCallback
-     * @param origin
+     * Loads spectra file and returns the data to a callback function
+     * @param file
+     * @param callback
      */
-    function uploadMassBank(data, buildSpectrum, saveSpectrumCallback, origin) {
-        //$log.info("uploading mass bank file: " + origin);
-
-        //get the current user
-        AuthentificationService.getCurrentUser().then(function (submitter) {
+    self.loadSpectraFile = function(file, callback, fireUploadProgress) {
+        var fileReader = new FileReader();
+        self.currentUploadProgress = 0;
 
 
-            var toWork = (function (spectra) {
-                workOnSpectra(origin, submitter, buildSpectrum, saveSpectrumCallback, spectra)
-            });
+        // Call the callback function with the loaded data once the file has been read
+        fileReader.onload =  function(event) {
+            callback(event.target.result, file.name);
+            self.currentUploadProgress = 100;
 
-            //convert our files
-            var content = gwMassbankService.convertFromData(data, function (spectra) {
-                AsyncService.addToPool(spectra, toWork);
-            });
+            if(angular.isDefined(fireUploadProgress)) {
+                fireUploadProgress(100);
+            }
+        };
 
-        });
-    }
+        // progress notification
+        fileReader.onprogress = function(event) {
+            if(event.lengthComputable) {
+                var progress = parseInt(((event.loaded / event.total) * 100), 10);
+                self.currentUploadProgress = progress;
+
+                if(angular.isDefined(fireUploadProgress)) {
+                    fireUploadProgress(progress);
+                }
+            }
+        };
+
+        //start the reading
+        fileReader.readAsText(file);
+    };
 
     /**
-     * simples uploader
-     * @param data
-     * @param buildSpectrum
-     * @param saveSpectrumCallback
-     * @param origin
+     *
+     * @param files
+     * @param callback
      */
-    this.upload = function (data, buildSpectrum, saveSpectrumCallback, origin) {
+    self.loadSpectraFiles = function(files, callback) {
+        self.totalUploadProgress = 0;
+
+        for(var i = 0; i < files.length; i++) {
+            self.loadSpectraFile(files[i], callback);
+            self.totalUploadProgress = parseInt((((i + 1) / files.length) * 100), 10);
+        }
+    };
+
+
+    /**
+     *
+     * @param data
+     * @param origin
+     * @returns {number}
+     */
+    self.countData = function(data, origin) {
         if (angular.isDefined(origin)) {
-
             if (origin.toLowerCase().indexOf(".msp") > 0) {
-                $log.debug("uploading msp file...");
-                uploadMSP(data, buildSpectrum, saveSpectrumCallback, origin);
+                return gwMspService.countSpectra(data);
             }
             else if (origin.toLowerCase().indexOf(".txt") > 0) {
-                $log.debug("uploading massbank file...");
-                uploadMassBank(data, buildSpectrum, saveSpectrumCallback, origin);
+                return gwMassbankService.countSpectra(data);
             }
             else {
                 alert('not supported file format!');
             }
         } else {
-            uploadMSP(data, buildSpectrum, saveSpectrumCallback, orign);
+            return gwMspService.countSpectra(data);
         }
     };
 
+    /**
+     *
+     * @param data
+     * @param buildSpectrum
+     * @param callback
+     * @param origin
+     */
+    self.processData = function(data, callback, origin) {
+        // Add origin to spectrum metadata before callback
+        var addOriginMetadata = function(spectrum) {
+            if (angular.isDefined(origin)) {
+                spectrum.meta.push({name: 'origin', value: origin});
+            }
+
+            callback(spectrum);
+        };
+
+        // Parse data
+        if (angular.isDefined(origin)) {
+            if (origin.toLowerCase().indexOf(".msp") > 0) {
+                $log.debug("uploading msp file...");
+                gwMspService.convertFromData(data, addOriginMetadata);
+            }
+            else if (origin.toLowerCase().indexOf(".txt") > 0) {
+                $log.debug("uploading massbank file...");
+                gwMassbankService.convertFromData(data, addOriginMetadata);
+            }
+            else {
+                alert('not supported file format!');
+            }
+        } else {
+            gwMspService.convertFromData(data, addOriginMetadata);
+        }
+    };
+
+
+    /**
+     * simples uploader
+     * @param files
+     * @param saveSpectrumCallback
+     * @param wizardData
+     */
+    self.uploadSpectra = function(files, saveSpectrumCallback, wizardData) {
+        AuthentificationService.getCurrentUser().then(function (submitter) {
+            var uploadSpectrum = function (file) {
+                self.loadSpectraFile(file, function (data, origin) {
+                    self.processData(data, function (spectrum) {
+                        workOnSpectra(submitter, saveSpectrumCallback, spectrum, wizardData);
+                    }, origin);
+                })
+            };
+
+
+            for (var i = 0; i < files.length; i++) {
+                AsyncService.addToPool(files[i], uploadSpectrum);
+            }
+        });
+    };
+
+    /**
+     *
+     * @param wizardData
+     * @param saveSpectrumCallback
+     */
+    self.uploadSpectrum = function(wizardData, saveSpectrumCallback) {
+        AuthentificationService.getCurrentUser().then(function (submitter) {
+            AsyncService.addToPool(wizardData, function (data) {
+                workOnSpectra(submitter, saveSpectrumCallback, wizardData);
+            });
+        });
+    }
 });
