@@ -30,6 +30,34 @@ environments {
 
     }
 
+    lipid {
+
+        dataSource {
+            dbCreate = "create-drop"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-lipid"
+            driverClassName="org.postgresql.Driver"
+            username="compound"
+            password="asdf"
+            pooled = true
+            logSql = false
+
+            properties {
+                maxActive = 10
+                minEvictableIdleTimeMillis=1800000
+                timeBetweenEvictionRunsMillis=1800000
+                numTestsPerEvictionRun=3
+                testOnBorrow=true
+                testWhileIdle=true
+                testOnReturn=false
+                validationQuery="SELECT 1"
+                jdbcInterceptors="ConnectionState"
+            }
+
+        }
+
+    }
+
+
     test {
         dataSource {
             dbCreate = "create-drop"
