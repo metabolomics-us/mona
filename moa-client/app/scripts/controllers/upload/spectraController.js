@@ -15,7 +15,7 @@ moaControllers.SpectraController = function ($scope, $modal, Spectrum, Authentif
             backdrop: 'static',
             resolve: {
                 newSpectrum: function () {
-                    return $scope.buildSpectrum();
+                    return $scope.buildSpectrum;
                 }
             }
         });

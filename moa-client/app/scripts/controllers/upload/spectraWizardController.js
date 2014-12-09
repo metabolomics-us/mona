@@ -15,25 +15,17 @@
  * @param newSpectrum
  * @constructor
  */
-moaControllers.SpectraWizardController = function ($scope, $modalInstance, $window, $http, TaggingService, AuthentificationService,gwCtsService, newSpectrum,$log) {
+moaControllers.SpectraWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, AppCache, AuthentificationService, UploadLibraryService, gwCtsService, newSpectrum, $log) {
+    //
+    // Define wizard steps
+    //
 
     /**
      * definition of all our steps
      * @type {string[]}
      */
-    $scope.steps = ['spectra', 'bioLogicalInchi', 'chemicalInChI', 'meta', 'tags', 'comment', 'summary'];
+    $scope.steps = ['spectra', 'loading', 'metadata', 'tags', 'comments', 'summary'];
 
-    /**
-     * contains all possible chemical names
-     * @type {Array}
-     */
-    $scope.possibleChemicalNames = [];
-
-    /**
-     * all possible names for a biological inchi
-     * @type {Array}
-     */
-    $scope.possibleBiologicalNames = [];
     /**
      * our current step where we are at
      * @type {number}
@@ -41,17 +33,11 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
     $scope.step = 0;
 
     /**
-     * this object contains all our generated data
-     * @type {{}}
+     *
+     * @type {string}
      */
-    $scope.spectra = newSpectrum;
+    $scope.error = [];
 
-    /**
-     * assign our submitter
-     */
-    AuthentificationService.getCurrentUser().then(function (data) {
-        $scope.spectra.submitter = data;
-    });
 
     /**
      * is this our current step
@@ -107,6 +93,10 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      */
     $scope.handlePrevious = function () {
         $scope.step -= ($scope.isFirstStep()) ? 0 : 1;
+
+        if($scope.getCurrentStep() === 'loading') {
+            $scope.step--;
+        }
     };
 
     /**
@@ -115,45 +105,15 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
      * @returns {boolean}
      */
     $scope.isStepComplete = function (form) {
-
-        //is the spectrum field valid
         if ($scope.getCurrentStep() === 'spectra') {
-            if (form.spectrum.$valid) {
-                if( !form.spectrum.$pristine){
-                    return true;
-                }
-                //check our object if something is assigned
-                else if(angular.isDefined($scope.spectra.spectrum)){
-                    return true;
-                }
-            }
+            return ($scope.files.length > 0);
         }
 
-        //the biological inchi key field is valid
-        if ($scope.getCurrentStep() === 'bioLogicalInchi'){
-            if( form.biologicalInchi.$valid && !form.biologicalInchi.$pristine) {
-                return true;
-            }
-            else if(angular.isDefined($scope.spectra.biologicalCompound.names)){
-                return true;
-            }
+        if ($scope.getCurrentStep() === 'loading') {
+            return false;
         }
 
-        //the chemical inchi page is complete
-        if ($scope.getCurrentStep() === 'chemicalInChI') {
-            if( form.chemicalInChI.$valid && !form.chemicalInChI.$pristine) {
-                return true;
-            }
-            else if(angular.isDefined($scope.spectra.chemicalCompound.names)){
-                return true;
-            }
-        }
-
-        if ($scope.getCurrentStep() === 'meta') {
-            return true;
-        }
-
-        if ($scope.getCurrentStep() === 'summary') {
+        if ($scope.getCurrentStep() === 'metadata') {
             return true;
         }
 
@@ -161,82 +121,175 @@ moaControllers.SpectraWizardController = function ($scope, $modalInstance, $wind
             return true;
         }
 
-        if ($scope.getCurrentStep() === 'comment') {
+        if ($scope.getCurrentStep() === 'comments') {
             return true;
         }
 
+        if ($scope.getCurrentStep() === 'summary') {
+            return true;
+        }
 
-        //we can only return when our wizard is valid
-        return false
+        // We can only return when our wizard is valid
+        return false;
     };
+
     /**
      * next step
      * @param dismiss
      */
     $scope.handleNext = function (dismiss) {
+        // Reset error message
+        $scope.error = [];
+
+        // Scroll to the top of the window, useful for screens like metadata
+        $window.scrollTo(0, 0);
+
+
         if ($scope.isLastStep()) {
-            $modalInstance.close($scope.spectra);
-        } else {
+            submitSpectra();
+        }
+        else if ($scope.getCurrentStep() === 'spectra') {
+            $scope.step += 1;
+            loadSpectra();
+        }
+        else {
             $scope.step += 1;
         }
     };
 
-
     /**
-     * popluate the biological inchi names field
+     *
      */
-    $scope.$watch('spectra.biologicalCompound.inchiKey', function () {
+    var loadSpectra = function() {
+        $scope.loadingStatus = 'Loading... 0%';
 
-        //get all names for the inchi key
-
-        //only if it's a valid inchi key we will query the server for valid names
-        //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
-        if (angular.isDefined($scope.spectra.biologicalCompound.inchiKey)) {
-
-            gwCtsService.getNamesForInChIKey($scope.spectra.biologicalCompound.inchiKey,function (result) {
-                //$log.debug('recevied names: ' + result);
-
-                $scope.possibleBiologicalNames = result;
-
-            });
+        // If there are multiple files, continue to batch uploader
+        if($scope.files.length > 1) {
+            $scope.step += 1;
+            $scope.batchUpload = true;
         }
 
-        //}
+        // Otherwise, parse the file and determine the number of spectra in the file
+        else {
+            UploadLibraryService.loadSpectraFile($scope.files[0], function(data, origin) {
+                var count = UploadLibraryService.countData(data, $scope.files[0].name);
 
-    });
+                if(count == 1) {
+                    $scope.loadingStatus = 'Processing...';
+
+                    UploadLibraryService.processData(data, function(spectrum) {
+                        $scope.loadingStatus = 'Completed';
+
+                        $scope.spectrum = spectrum;
+                        $scope.spectrum.meta.push({name: '', value: ''});
+
+                        $scope.step += 1;
+                        $scope.batchUpload = false;
+                    }, origin);
+                } else {
+                    $scope.step += 1;
+                    $scope.batchUpload = true;
+                }
+            }, function(progress) {
+                $scope.loadingStatus = 'Loading...'+ progress +'%';
+            });
+        }
+    };
 
     /**
-     * populate the chemical inchi name field
+     *
      */
-    $scope.$watch('spectra.chemicalCompound.inchiKey', function () {
-
-        //get all names for the inchi key
-
-        //only if it's a valid inchi key we will query the server for valid names
-        //if (key.match(/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/)) {
-
-        if (angular.isDefined($scope.spectra.chemicalCompound.inchiKey)) {
-            gwCtsService.getNamesForInChIKey($scope.spectra.chemicalCompound.inchiKey,function (result) {
-                $log.debug('recevied names: ' + result);
-                $scope.possibleChemicalNames = result;
-
+    var submitSpectra = function() {
+        if($scope.batchUpload) {
+            UploadLibraryService.uploadSpectra($scope.files, function (spectrum) {
+                spectrum.$batchSave();
+            }, $scope.spectrum);
+        } else {
+            UploadLibraryService.uploadSpectrum($scope.spectrum, function (spectrum) {
+                spectrum.$save();
             });
-
         }
-        //}
+    };
 
+
+
+    /**
+     * assign our submitter
+     */
+    AuthentificationService.getCurrentUser().then(function (data) {
+        $scope.submitter = data;
     });
+
+
+    /**
+     *
+     * @param files
+     */
+    $scope.loadSpectraFiles = function(files) {
+        $scope.errors = [];
+        $scope.files = [];
+
+        // Valid file properties
+        for(var i = 0; i < files.length; i++) {
+            var extension = files[i].name.split('.').pop().toLowerCase();
+
+            if(files[i].size > 26214400) {
+                $scope.errors.push(files[i].name +' exceeds the 25 Mb upload limit and will be excluded');
+            }
+
+            else if(extension != 'msp' && extension != 'txt' && extension != 'mgf') {
+                $scope.errors.push(files[i].name +' is not an accepted file type and will be excluded');
+            }
+
+            else {
+                $scope.files.push(files[i]);
+            }
+        }
+
+        // Set selected filenames
+        if($scope.files.length > 0) {
+            $scope.filenames = $scope.files[0].name + ($scope.files.length > 1 ? ' + '+ ($scope.files.length - 1) + ' file(s)' : '');
+        } else {
+            $scope.filenames = '';
+        }
+    };
+
 
     /**
      * provides us with an overview of all our tags
      * @param query
      * @returns {*}
+     * Performs initialization and acquisition of data used by the wizard
      */
     $scope.loadTags = function (query) {
-        return TaggingService.query(function (data) {
-        }, function (error) {
-            alert('failed: ' + error);
-        }).$promise
+        var deferred = $q.defer();
+
+        // First filters by the query and then removes any tags already selected
+        deferred.resolve($filter('filter')($scope.tags, query));
+
+        return deferred.promise;
     };
 
+
+
+    /**
+     * Performs initialization and acquisition of data used by the wizard
+     */
+    (function() {
+        // Define new spectrum
+        $scope.spectrum = {
+            meta: []
+        };
+
+
+        // Set file lists
+        $scope.files = [];
+        $scope.filenames = '';
+
+
+        // Get tags
+        AppCache.getTags(function(data) {
+            $scope.tags = data;
+        })
+    })();
 };

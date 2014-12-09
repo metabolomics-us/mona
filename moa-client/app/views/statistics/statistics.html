@@ -5,6 +5,42 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-12">
+        <h5>Database Information</h5>
+        <pre>{{test}}</pre>
+
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>Total Submitters</td>
+                    <td>{{totalData.submitters}}</td>
+                </tr>
+                <tr>
+                    <td>Total Spectra</td>
+                    <td>{{totalData.spectra}}</td>
+                </tr>
+                <tr>
+                    <td>Total Compounds</td>
+                    <td>{{totalData.compounds}}</td>
+                </tr>
+                <tr>
+                    <td>Total Metadata Types</td>
+                    <td>{{totalData.metadata}}</td>
+                </tr>
+                <tr>
+                    <td>Total Metadata Values</td>
+                    <td>{{totalData.metadataValues}}</td>
+                </tr>
+                <tr>
+                    <td>Total Tags</td>
+                    <td>{{totalData.tags}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="row" ng-repeat="(name, data) in fieldData">
     <div class="col-md-12">
         <h4 class="page-header">{{name | titlecase}} <span ng-show="data.length > 10">(Top 10)</span></h4>
