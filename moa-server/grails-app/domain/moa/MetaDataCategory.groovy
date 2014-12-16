@@ -1,6 +1,6 @@
 package moa
 
-class MetaDataCategory{
+class MetaDataCategory {
 
     static final String DEFAULT_CATEGORY_NAME = "none"
 

@@ -1,6 +1,5 @@
 package moa.server.metadata
 
-import grails.transaction.Transactional
 import moa.MetaData
 import moa.MetaDataCategory
 import moa.MetaDataValue
@@ -13,7 +12,6 @@ import moa.server.MetaDataDictionaryService
 import persistence.metadata.filter.Filters
 import persistence.metadata.filter.unit.Converters
 
-@Transactional
 class MetaDataPersistenceService {
 
     MetaDataDictionaryService metaDataDictionaryService

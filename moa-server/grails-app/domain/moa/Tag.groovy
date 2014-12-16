@@ -1,6 +1,6 @@
 package moa
 
-class Tag{
+class Tag implements Serializable{
 
     static constraints = {
         text blank: false, unique: true, nullable: false

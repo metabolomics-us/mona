@@ -1,6 +1,6 @@
 package moa
 
-class Spectrum extends SupportsMetaData{
+class Spectrum extends SupportsMetaData {
 
     /**
      * contains one biological compound and one chemical compound

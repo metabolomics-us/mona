@@ -1,6 +1,6 @@
 package moa
 
-class Name {
+class Name  {
     static mapping = {}
 
     static constraints = {
