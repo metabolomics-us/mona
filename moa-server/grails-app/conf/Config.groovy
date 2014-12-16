@@ -128,6 +128,20 @@ log4j = {
             info 'org.hibernate.type.descriptor.sql.BasicBinder'
         }
 
+        lipid {
+
+            info 'util.chemical'
+            info 'curation'
+
+            info 'grails.app'
+            info 'moa'
+            //debug 'grails.plugin.cache'
+
+
+            info 'org.hibernate.SQL'
+            info 'org.hibernate.type.descriptor.sql.BasicBinder'
+        }
+
         production {
             error stdout:
                     'grails.app'

@@ -123,8 +123,11 @@ class MetaDataPersistenceService {
 
             //we need a check for duplicates!
 
-            metaData.addToValue(metaDataValue)
-            object.addToMetaData(metaDataValue)
+            metaDataValue.metaData = metaData
+            metaDataValue.owner = object
+
+            //metaData.addToValue(metaDataValue)
+            //object.addToMetaData(metaDataValue)
 
         } catch (Exception e) {
             log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);

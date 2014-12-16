@@ -24,30 +24,12 @@ class BootStrap {
 
         session.setFlushMode(FlushMode.COMMIT)
 
-        if (Environment.isDevelopmentMode()) {
-            log.warn("in development mode, setting up users...")
-            //just some test data
-
-            new Submitter(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save(flush:true)
-            new Submitter(firstName: "Diego", lastName: "Pedrosa", emailAddress: "linuxmant@gmail.com", password: "dsadasd").save()
-            new Submitter(firstName: "Oliver", lastName: "Fiehn", emailAddress: "ofiehn@ucdavis.edu", password: "sdsadsad").save()
-            /*
-
-            Tag.findOrCreateWhere(text: "dirty").save()
-            Tag.findOrCreateWhere(text: "clean").save()
-            Tag.findOrCreateWhere(text: "mixed").save()
-            Tag.findOrCreateWhere(text: "standard").save()
-            Tag.findOrCreateWhere(text: "injected").save()
-            Tag.findOrCreateWhere(text: "experimental").save()
-
-            MetaDataCategory.findOrCreateByName("computed").save()
-            MetaDataCategory.findOrCreateByNameAndVisible("annotation",false).save()
-              */
-
-        }
+        log.warn("in development mode, setting up users...")
+        //just some test data
+        Submitter.findOrCreateWhere(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save(flush: true)
 
         JSON.registerObjectMarshaller(Tag,
-                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class","id","tagCachingService"])
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class", "id", "tagCachingService"])
         )
 
         JSON.registerObjectMarshaller(Compound,
@@ -55,28 +37,27 @@ class BootStrap {
         )
 
         JSON.registerObjectMarshaller(Submitter,
-                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra","password"])
+                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra", "password"])
         )
 
         JSON.registerObjectMarshaller(Spectrum,
                 DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class"])
         )
         JSON.registerObjectMarshaller(Name,
-                DomainClassMarshaller.createExcludeMarshaller(Name, ["class","id","compound"])
+                DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound"])
         )
         JSON.registerObjectMarshaller(MetaData,
-                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class","value"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class", "value"])
         )
         JSON.registerObjectMarshaller(MetaDataValue,
-                DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class","id","owner","metaData"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class", "id", "owner", "metaData"])
         )
         JSON.registerObjectMarshaller(MetaDataCategory,
-                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class","metaDatas"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class", "metaDatas"])
         )
         JSON.registerObjectMarshaller(Comment,
                 DomainClassMarshaller.createExcludeMarshaller(Comment, ["class"])
         )
-
 
 
     }
