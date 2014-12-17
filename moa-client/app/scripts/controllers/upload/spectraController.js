@@ -12,25 +12,7 @@ moaControllers.SpectraController = function ($scope, $modal, Spectrum, Authentif
             templateUrl: '/views/spectra/upload/wizards/uploadNewSpectraWizard.html',
             controller: moaControllers.SpectraWizardController,
             size: 'lg',
-            backdrop: 'static',
-            resolve: {
-                newSpectrum: function () {
-                    return $scope.buildSpectrum;
-                }
-            }
-        });
-
-        //retrieve the result from the dialog and save it
-        modalInstance.result.then(function (spectra) {
-            //ugly hack for now
-            spectra.biologicalCompound.names = [
-                {name: spectra.biologicalCompound.names}
-            ];
-            spectra.chemicalCompound.names = [
-                {name: spectra.chemicalCompound.names}
-            ];
-
-            spectra.$save();
+            backdrop: 'static'
         });
     };
 

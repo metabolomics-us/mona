@@ -131,7 +131,6 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
      * @param additionalData
      */
     function workOnSpectra(submitter, saveSpectrumCallback, spectraObject, additionalData) {
-
         $log.debug('converting object:\n\n' + $filter('json')(spectraObject));
 
         //get the key
@@ -154,15 +153,9 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
                     s.biologicalCompound.inchi = spectra.inchi;
 
                     //assign all the defined name of the spectra
-                    if (angular.isDefined(spectra.name)) {
-                        s.biologicalCompound.names = [
-
-                            {name: spectra.name}
-                        ];
-                        s.chemicalCompound.names = [
-                            {name: spectra.name}
-                        ];
-
+                    if (angular.isDefined(spectra.names)) {
+                        s.biologicalCompound.names = spectra.names;
+                        s.chemicalCompound.names = spectra.names;
                     }
                     //assign all names of the spectra
                     else if (angular.isDefined(spectra.names)) {
@@ -183,8 +176,8 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
                     s.spectrum = spectra.spectrum;
 
                     if (angular.isDefined(spectra.tags)) {
-                        spectra.tags.forEach(function (e) {
-                            s.tags.push(e);
+                        spectra.tags.forEach(function (tag) {
+                            s.tags.push(tag);
                         });
                     }
 
@@ -196,6 +189,29 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
                     metaData.forEach(function (e) {
                         s.metaData.push(e);
                     });
+
+                    if(angular.isDefined(additionalData)) {
+                        if(angular.isDefined(additionalData.tags)) {
+                            additionalData.tags.forEach(function (tag) {
+                                for(var i = 0; i < s.tags.length; i++) {
+                                    if(s.tags[i].text == tag.text)
+                                        return;
+                                }
+
+                                s.tags.push(tag);
+                            });
+                        }
+
+                        if(angular.isDefined(additionalData.meta)) {
+                            additionalData.tags.forEach(function(e) {
+                                s.metaData.push(e);
+                            });
+                        }
+
+                        if(angular.isDefined(additionalData.comments)) {
+                            s.comments.push(additionalData.comments);
+                        }
+                    }
 
                     s.submitter = submitter;
 

@@ -15,7 +15,7 @@
  * @param newSpectrum
  * @constructor
  */
-moaControllers.SpectraWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, AppCache, AuthentificationService, UploadLibraryService, gwCtsService, newSpectrum, $log) {
+moaControllers.SpectraWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, AppCache, AuthentificationService, UploadLibraryService, $log) {
     //
     // Define wizard steps
     //
@@ -202,13 +202,19 @@ moaControllers.SpectraWizardController = function ($scope, $q, $modalInstance, $
     var submitSpectra = function() {
         if($scope.batchUpload) {
             UploadLibraryService.uploadSpectra($scope.files, function (spectrum) {
+                $log.info('Final spectrum');
+                $log.info(spectrum);
                 spectrum.$batchSave();
             }, $scope.spectrum);
         } else {
             UploadLibraryService.uploadSpectrum($scope.spectrum, function (spectrum) {
+                $log.info('Final spectrum');
+                $log.info(spectrum);
                 spectrum.$save();
             });
         }
+
+        $modalInstance.close();
     };
 
 
