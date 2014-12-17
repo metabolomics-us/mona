@@ -28,7 +28,7 @@ app.config(function ($routeProvider) {
         //uploading a massspec
         .when('/spectra/upload', {
             templateUrl: 'views/spectra/upload/upload.html',
-            controller: 'SpectraController'
+            controller: 'SpectraUploadController'
         })
 
         //displaying a single compound
