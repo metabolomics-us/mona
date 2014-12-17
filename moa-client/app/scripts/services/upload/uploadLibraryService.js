@@ -182,9 +182,9 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
                         });
                     }
 
-                    s.comments = [{comment: "this spectra was added to the system, by utilizing a library upload."}];
+                    s.comments = [{comment:"this spectra was added to the system, by utilizing a library upload."}];
                     if (angular.isDefined(spectra.comments)) {
-                        s.comments.push({comment: spectra.comments});
+                        s.comments.push({comment:spectra.comments});
                     }
 
                     metaData.forEach(function (e) {

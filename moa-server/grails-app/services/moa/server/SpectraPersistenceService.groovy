@@ -18,6 +18,7 @@ class SpectraPersistenceService {
      */
     @CacheEvict(value = 'spectrum', allEntries = true)
     public Spectrum create(Map json) {
+
         //handle outdated format
         if (json.comments instanceof String) {
             log.warn("using out dated Mona format, comment's should be in form of an array -> skipping attribute!")
@@ -120,7 +121,7 @@ class SpectraPersistenceService {
         }
         */
 
-        myCompound.lock()
+        //myCompound.lock()
 
         log.debug("==> done: ${myCompound}")
 
