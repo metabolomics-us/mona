@@ -11,12 +11,12 @@ class ExecutionTimeFilters {
             after = { Map model ->
                 long time = request["MEASURE_TIME"] as long
 
-                log.debug("controller execution time: ${System.currentTimeMillis() - time} ms")
+                log.info("controller ${controllerName}/${actionName} execution time: ${System.currentTimeMillis() - time} ms")
             }
             afterView = { Exception e ->
                 long time = request["MEASURE_TIME"] as long
 
-                log.debug("total execution time: ${System.currentTimeMillis() - time} ms")
+                log.info("controller ${controllerName}/${actionName} total execution time: ${System.currentTimeMillis() - time} ms")
             }
         }
     }

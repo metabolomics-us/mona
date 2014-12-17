@@ -94,6 +94,7 @@ log4j = {
 
     root {
         error 'stdout'
+        info 'file'
     }
 
     error stdout:
@@ -135,7 +136,8 @@ log4j = {
             info 'util.chemical'
             info 'curation'
 
-            info file: 'grails.app'
+            debug file: 'grails.app'
+            debug file: 'moa'
             info 'grails.app'
             info 'moa'
 
