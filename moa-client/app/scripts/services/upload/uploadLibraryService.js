@@ -32,6 +32,7 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
                 }
             });
         }
+
         //if we just have a name
         else if (spectra.name) {
             gwChemifyService.nameToInChIKey(spectra.name, function (key) {
@@ -181,9 +182,9 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
                         });
                     }
 
-                    s.comments = ["this spectra was added to the system, by utilizing a library upload."];
+                    s.comments = [{comment: "this spectra was added to the system, by utilizing a library upload."}];
                     if (angular.isDefined(spectra.comments)) {
-                        s.comments.push(spectra.comments);
+                        s.comments.push({comment: spectra.comments});
                     }
 
                     metaData.forEach(function (e) {
@@ -209,7 +210,7 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
                         }
 
                         if(angular.isDefined(additionalData.comments)) {
-                            s.comments.push(additionalData.comments);
+                            s.comments.push({comment: additionalData.comments});
                         }
                     }
 
