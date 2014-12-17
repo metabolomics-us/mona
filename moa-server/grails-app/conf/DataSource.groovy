@@ -30,6 +30,34 @@ environments {
 
     }
 
+    lipid {
+
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-lipid"
+            driverClassName="org.postgresql.Driver"
+            username="compound"
+            password="asdf"
+            pooled = true
+            logSql = false
+
+            properties {
+                maxActive = 100
+                minEvictableIdleTimeMillis=1800000
+                timeBetweenEvictionRunsMillis=1800000
+                numTestsPerEvictionRun=3
+                testOnBorrow=true
+                testWhileIdle=true
+                testOnReturn=false
+                validationQuery="SELECT 1"
+                jdbcInterceptors="ConnectionState"
+            }
+
+        }
+
+    }
+
+
     test {
         dataSource {
             dbCreate = "create-drop"
@@ -46,6 +74,7 @@ environments {
     }
 
     production {
+        /*
         dataSource {
             dbCreate = "update"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa"
@@ -65,6 +94,31 @@ environments {
                 jdbcInterceptors="ConnectionState"
             }
 
+        }    */
+
+
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-lipid"
+            driverClassName="org.postgresql.Driver"
+            username="compound"
+            password="asdf"
+            pooled = true
+            logSql = false
+
+            properties {
+                maxActive = 100
+                minEvictableIdleTimeMillis=1800000
+                timeBetweenEvictionRunsMillis=1800000
+                numTestsPerEvictionRun=3
+                testOnBorrow=true
+                testWhileIdle=true
+                testOnReturn=false
+                validationQuery="SELECT 1"
+                jdbcInterceptors="ConnectionState"
+            }
+
         }
+
     }
 }

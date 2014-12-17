@@ -87,7 +87,9 @@ log4j = {
     // Example of changing the log pattern for the default console appender:
     //
     appenders {
-        console name: 'stdout', layout: pattern(conversionPattern: '[%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n')
+        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n')
+        file name:'file', file:'mona.log', append: false
+
     }
 
     root {
@@ -128,7 +130,26 @@ log4j = {
             info 'org.hibernate.type.descriptor.sql.BasicBinder'
         }
 
+        lipid {
+
+            info 'util.chemical'
+            info 'curation'
+
+            info file: 'grails.app'
+            info 'grails.app'
+            info 'moa'
+
+            //debug 'grails.plugin.cache'
+
+
+            info 'org.hibernate.SQL'
+            info 'org.hibernate.type.descriptor.sql.BasicBinder'
+        }
+
         production {
+
+            info file: 'grails.app'
+
             error stdout:
                     'grails.app'
         }

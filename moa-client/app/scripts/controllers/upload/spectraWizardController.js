@@ -239,8 +239,8 @@ moaControllers.SpectraWizardController = function ($scope, $q, $modalInstance, $
         for(var i = 0; i < files.length; i++) {
             var extension = files[i].name.split('.').pop().toLowerCase();
 
-            if(files[i].size > 26214400) {
-                $scope.errors.push(files[i].name +' exceeds the 25 Mb upload limit and will be excluded');
+            if(files[i].size > 26214400*4) {
+                $scope.errors.push(files[i].name +' exceeds the 100 Mb upload limit and will be excluded');
             }
 
             else if(extension != 'msp' && extension != 'txt' && extension != 'mgf') {

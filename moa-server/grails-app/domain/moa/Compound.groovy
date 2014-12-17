@@ -1,6 +1,6 @@
 package moa
 
-class Compound extends SupportsMetaData{
+class Compound extends SupportsMetaData {
 
     static constraints = {
         inchiKey unique: true, nullable: false

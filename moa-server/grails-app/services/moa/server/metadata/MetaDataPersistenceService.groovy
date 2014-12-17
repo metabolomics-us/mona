@@ -1,6 +1,5 @@
 package moa.server.metadata
 
-import grails.transaction.Transactional
 import moa.MetaData
 import moa.MetaDataCategory
 import moa.MetaDataValue
@@ -13,7 +12,6 @@ import moa.server.MetaDataDictionaryService
 import persistence.metadata.filter.Filters
 import persistence.metadata.filter.unit.Converters
 
-@Transactional
 class MetaDataPersistenceService {
 
     MetaDataDictionaryService metaDataDictionaryService
@@ -123,8 +121,11 @@ class MetaDataPersistenceService {
 
             //we need a check for duplicates!
 
-            metaData.addToValue(metaDataValue)
-            object.addToMetaData(metaDataValue)
+            metaDataValue.metaData = metaData
+            metaDataValue.owner = object
+
+            //metaData.addToValue(metaDataValue)
+            //object.addToMetaData(metaDataValue)
 
         } catch (Exception e) {
             log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);

@@ -70,7 +70,7 @@ class SpectraConversionService {
                 writer.append("\$")
             }
             writer.append(key.toUpperCase())
-            writer.append(":")
+            writer.append(" : ")
             writer.append(value)
             writer.append("\n")
         }

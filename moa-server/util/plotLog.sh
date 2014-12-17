@@ -1,0 +1,1 @@
+cat $1 | awk '{print $17}' | sed  's/s//g' | gnuplot -p -e "set terminal 'png' size 1280,768; set output 'report.png';set lt 1 lw 1 ps 0; set title 'performance filling database over time'; set xlabel 'count'; set ylabel 'time (s)'; set yrange [0:1];  plot '-';"

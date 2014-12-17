@@ -1,5 +1,6 @@
 package moa.server
 
+import grails.converters.JSON
 import moa.Spectrum
 
 /**
@@ -7,7 +8,7 @@ import moa.Spectrum
  */
 class SpectraUploadJob {
 
-    def concurrent = false
+    def concurrent = true
 
     /**
      * needs to be defined
@@ -26,7 +27,8 @@ class SpectraUploadJob {
         if (data != null) {
             if (data.containsKey('spectra')) {
                 long begin = System.currentTimeMillis()
-                Spectrum result = spectraPersistenceService.create(data.spectra)
+
+                Spectrum result = spectraPersistenceService.create(JSON.parse(data.spectra))
                 result.save(flush: true)
 
                 long end = System.currentTimeMillis()
