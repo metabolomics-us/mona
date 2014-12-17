@@ -15,7 +15,7 @@
  * @param newSpectrum
  * @constructor
  */
-moaControllers.SpectraWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, AppCache, AuthentificationService, UploadLibraryService, $log) {
+moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, AppCache, AuthentificationService, UploadLibraryService, $log) {
     //
     // Define wizard steps
     //
@@ -24,7 +24,7 @@ moaControllers.SpectraWizardController = function ($scope, $q, $modalInstance, $
      * definition of all our steps
      * @type {string[]}
      */
-    $scope.steps = ['spectra', 'loading', 'metadata', 'tags', 'comments', 'summary'];
+    $scope.steps = ['spectra', 'loading', 'compound', 'metadata', 'tags', 'comments', 'summary'];
 
     /**
      * our current step where we are at

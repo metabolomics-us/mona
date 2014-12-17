@@ -26,16 +26,8 @@ app.config(function ($routeProvider) {
         })
 
         //uploading a massspec
-        .when('/spectra/upload/single', {
-            templateUrl: 'views/spectra/upload/single.html',
-            controller: 'SpectraController'
-        })
-        .when('/spectra/upload/library', {
-            templateUrl: 'views/spectra/upload/library.html',
-            controller: 'SpectraController'
-        })
-        .when('/spectra/upload/moa', {
-            templateUrl: 'views/spectra/upload/moa.html',
+        .when('/spectra/upload', {
+            templateUrl: 'views/spectra/upload/upload.html',
             controller: 'SpectraController'
         })
 
