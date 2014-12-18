@@ -87,14 +87,13 @@ log4j = {
     // Example of changing the log pattern for the default console appender:
     //
     appenders {
-        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n')
-        file name:'file', file:'mona.log', append: false
+        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n'),  threshold: org.apache.log4j.Level.WARN
+        file name:'file', file:"/Volumes/ras/mona.log", append: false
 
     }
 
     root {
         error 'stdout'
-        info 'file'
     }
 
     error stdout:
@@ -133,19 +132,12 @@ log4j = {
 
         lipid {
 
-            info 'util.chemical'
-            info 'curation'
+            info file: 'util.chemical'
+            info file: 'curation'
+            info file: 'moa'
+            info file: 'grails.app'
+            info file: 'org.codehaus.groovy.grails.web.servlet'
 
-            debug file: 'grails.app'
-            debug file: 'moa'
-            info 'grails.app'
-            info 'moa'
-
-            //debug 'grails.plugin.cache'
-
-
-            info 'org.hibernate.SQL'
-            info 'org.hibernate.type.descriptor.sql.BasicBinder'
         }
 
         production {

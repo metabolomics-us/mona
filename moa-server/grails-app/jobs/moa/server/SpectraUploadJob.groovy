@@ -9,6 +9,8 @@ import org.springframework.dao.DataIntegrityViolationException
  */
 class SpectraUploadJob {
 
+    def sessionFactory
+
     def concurrent = true
 
     /**
@@ -30,14 +32,24 @@ class SpectraUploadJob {
                 long begin = System.currentTimeMillis()
 
                 try {
-                    Spectrum result = spectraPersistenceService.create(JSON.parse(data.spectra))
+                    def stats = sessionFactory.getStatistics()
+
+                    if (!stats.statisticsEnabled) {
+                        stats.statisticsEnabled = true
+                    }
+
+                    def json = JSON.parse(data.spectra);
+
+                    Spectrum result = spectraPersistenceService.create(json)
                     result.save(flush: true)
 
                     long end = System.currentTimeMillis()
 
                     long needed = end - begin
-                    def message = "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}s"
-                    log.info("\t=>\t${message}")
+                    log.info( "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000} Transaction Count: ${stats.transactionCount} Flush Count: ${stats.flushCount} Prepared Statement Count: ${stats.prepareStatementCount}" )
+
+                    stats.clear() // We assume no one else is using stats
+
 
                 }catch (DataIntegrityViolationException e){
                     log.warn("resubmitting failed job")
