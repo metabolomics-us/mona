@@ -123,6 +123,9 @@ class MetaDataPersistenceService {
             metaDataValue.metaData = metaData
             metaDataValue.owner = object
 
+            metaData.save()
+            object.save()
+
         } catch (Exception e) {
             log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
         }

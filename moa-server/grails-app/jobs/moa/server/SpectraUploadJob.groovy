@@ -2,6 +2,7 @@ package moa.server
 
 import grails.converters.JSON
 import moa.Spectrum
+import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.dao.DataIntegrityViolationException
 
 /**
@@ -38,7 +39,13 @@ class SpectraUploadJob {
                         stats.statisticsEnabled = true
                     }
 
-                    def json = JSON.parse(data.spectra);
+                    def json = null
+                    if(data.spectra instanceof JSONObject){
+                        json = data.spectra
+                    }
+                    else{
+                        json = JSON.parse(data.spectra);
+                    }
 
                     Spectrum result = spectraPersistenceService.create(json)
                     result.save(flush: true)
@@ -46,7 +53,7 @@ class SpectraUploadJob {
                     long end = System.currentTimeMillis()
 
                     long needed = end - begin
-                    log.info( "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000} Transaction Count: ${stats.transactionCount} Flush Count: ${stats.flushCount} Prepared Statement Count: ${stats.prepareStatementCount}" )
+                    log.debug( "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000} Transaction Count: ${stats.transactionCount} Flush Count: ${stats.flushCount} Prepared Statement Count: ${stats.prepareStatementCount}" )
 
                     stats.clear() // We assume no one else is using stats
 

@@ -20,7 +20,7 @@ class FlushSessionJob {
 
         Spectrum.withSession { session ->
             log.debug("flushing session")
-            log.info(" memory usage before flushing, free: ${Runtime.getRuntime().freeMemory()} total: ${Runtime.getRuntime().totalMemory()} used: ${Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()}")
+            log.debug(" memory usage before flushing, free: ${Runtime.getRuntime().freeMemory()} total: ${Runtime.getRuntime().totalMemory()} used: ${Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()}")
 
             long begin = System.currentTimeMillis()
             session.flush()
@@ -31,8 +31,8 @@ class FlushSessionJob {
             long end = System.currentTimeMillis()
 
 
-            log.info("flushed session in: ${end-begin} ms")
-            log.info(" memory usage after flushing, free: ${Runtime.getRuntime().freeMemory()} total: ${Runtime.getRuntime().totalMemory()} used: ${Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()}")
+            log.debug("flushed session in: ${end-begin} ms")
+            log.debug(" memory usage after flushing, free: ${Runtime.getRuntime().freeMemory()} total: ${Runtime.getRuntime().totalMemory()} used: ${Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()}")
 
         }
     }
