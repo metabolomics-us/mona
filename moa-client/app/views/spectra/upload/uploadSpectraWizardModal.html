@@ -1,0 +1,148 @@
+<form role="form" name="uploadWizard" novalidate>
+    <div class="modal-header">
+        <h4 class="modal-title">Upload spectra to the system</h4>
+        <h5>Please fill out all the properties to define a new spectra. This wizard should guide you.</h5>
+    </div>
+
+    <div class="modal-body">
+        <div class="alert alert-danger .alert-dismissible " role="alert" ng-show="errors.length">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span>Error:</span>
+            <ul>
+                <li ng-repeat="error in errors">{{error}}</li>
+            </ul>
+        </div>
+
+        <div ng-switch="getCurrentStep()" ng-animate="'slide'" class="slide-frame">
+
+            <!-- here we define the spectra -->
+            <div ng-switch-when="spectra">
+                <fieldset>
+                    <div class="form-group">
+                        <h4>Select mass spectra to upload</h4>
+
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                    Browse&hellip; <input type="file" multiple ng-file-select="loadSpectraFiles($files)" />
+                                </span>
+                            </span>
+                            <input id="spectrumFile" type="text" class="form-control" ng-model="filenames" readonly />
+                        </div>
+
+                        <span class="help-block">
+                            Supports MSP, MGF, MassBank record, and MoNA JSON formats
+                        </span>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- loading screen -->
+            <div ng-switch-when="loading">
+                <div class="text-center">
+                    <span class="spinner"><i class="fa fa-refresh fa-spin"></i> {{loadingStatus}}</span>
+                </div>
+            </div>
+
+            <!-- defines our metadata -->
+            <div ng-switch-when="metadata">
+                <fieldset>
+                    <label>Select or define a metadata type and then input a value to query</label>
+                    <label ng-if="batchUpload" class="text-warning">Note: These metadata values will be applied to ALL spectra to be uploaded.</label>
+                    <label ng-if="!batchUpload" class="text-muted">Note: The metadata values extracted from the spectrum file have already been populated</label>
+                    <p class="top17"></p>
+
+                    <div gw-meta-query-input query="spectrum.meta" editable="true"></div>
+                </fieldset>
+            </div>
+
+            <!-- adds tags to the spectrum -->
+            <div ng-switch-when="tags">
+                <label>Please add any 'tags' here, you consider useful for other people.</label><br />
+                <label>Tags provide an easy way to find and label spectra.</label>
+                <p class="top17"></p>
+
+                <tags-input ng-model="spectrum.tags"
+                            min-length="3"
+                            replace-spaces-with-dashes="false">
+
+                    <auto-complete source="loadTags($query)"
+                                   min-length="1"
+                                   load-on-empty="true"
+                                   load-on-down-arrow="true"
+                                   load-on-focus="true"></auto-complete>
+                </tags-input>
+            </div>
+
+            <!-- allows us to provide some comments to this spectrum -->
+            <div ng-switch-when="comments">
+                <fieldset>
+                    <div class="form-group"
+                         ng-class="{'has-error' : uploadWizard.comment.$invalid && !uploadWizard.comment.$pristine}">
+                        <label for="comment">Please add any comments to the spectra that you consider of importance.</label>
+
+                        <textarea ng-model="spectrum.comments" id="comment" class="form-control" rows="6"></textarea>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div ng-switch-when="summary">
+                <label>Chemical Properties</label>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-if="spectrum.inchi">
+                        <td>InChI</td>
+                        <td>{{spectrum.inchi}}</td>
+                    </tr>
+                    <tr ng-if="spectrum.inchikey">
+                        <td>InChI</td>
+                        <td>{{spectrum.inchikey}}</td>
+                    </tr>
+                    <tr>
+                        <td>Names</td>
+                        <td>
+                            <ul><li ng-repeat="name in spectrum.names">{{name}}</li></ul>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <label>Metadata</label>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="meta in spectrum.meta">
+                        <td>{{meta.name}}</td>
+                        <td>{{meta.value}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <label>Comments</label>
+                <div>{{spectrum.comments}}</div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!--<div><pre>{{spectrum | json}}</pre></div>-->
+
+    <div class="modal-footer">
+        <a class="btn" ng-click="handlePrevious()" ng-show="!isFirstStep()">Back</a>
+        <a class="btn btn-primary" ng-click="handleNext(dismiss)" ng-disabled="!isStepComplete(uploadWizard)">{{getNextLabel()}}</a>
+    </div>
+</form>
