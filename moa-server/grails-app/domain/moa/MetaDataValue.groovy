@@ -7,6 +7,9 @@ package moa
  */
 class MetaDataValue {
 
+    Date dateCreated
+    Date lastUpdated
+
     Serializable value
 
     /**

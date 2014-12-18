@@ -89,6 +89,10 @@ log4j = {
     appenders {
         console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n'),  threshold: org.apache.log4j.Level.WARN
         file name:'file', file:"/Volumes/ras/mona.log", append: false
+        file name:'monaImportStatistics', file:"/Volumes/ras/monaImport.log", append: false
+        file name:'monaFlushStatistics', file:"/Volumes/ras/monaFlush.log", append: false
+
+
 
     }
 
@@ -137,7 +141,8 @@ log4j = {
             info file: 'moa'
             info file: 'grails.app'
             info file: 'org.codehaus.groovy.grails.web.servlet'
-
+            info monaImportStatistics: 'moa.server.SpectraUploadJob'
+            info monaFlushStatistics: 'moa.server.FlushSessionJob'
         }
 
         production {

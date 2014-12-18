@@ -2,6 +2,9 @@ package moa
 
 class MetaDataCategory {
 
+    Date dateCreated
+    Date lastUpdated
+
     static final String DEFAULT_CATEGORY_NAME = "none"
 
     static constraints = {

@@ -1,6 +1,10 @@
 package moa
 
 class Name  {
+
+    Date dateCreated
+    Date lastUpdated
+
     static mapping = {}
 
     static constraints = {

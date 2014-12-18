@@ -5,6 +5,9 @@ package moa
  */
 class Comment {
 
+    Date dateCreated
+    Date lastUpdated
+
     static constraints = {
         comment unique: false
     }

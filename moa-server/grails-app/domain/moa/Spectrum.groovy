@@ -2,6 +2,9 @@ package moa
 
 class Spectrum extends SupportsMetaData {
 
+    Date dateCreated
+    Date lastUpdated
+
     /**
      * contains one biological compound and one chemical compound
      */

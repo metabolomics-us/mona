@@ -2,6 +2,9 @@ package moa
 
 class Compound extends SupportsMetaData {
 
+    Date dateCreated
+    Date lastUpdated
+
     static constraints = {
         inchiKey unique: true, nullable: false
         molFile nullable: true
