@@ -1,0 +1,49 @@
+library(gplots)
+
+"disable scientific numbers"
+options(scipen=999)
+
+"read our prepared data file"
+df = read.table(file('stdin'))
+
+"assign column names"
+colnames(df)=c('date','time','worker','duration')
+
+"format date and times"
+df.date=as.Date(df$date,"%Y-%m-%d")
+df.time=as.Date(df$time,"%H:%M:%S")
+
+"generate a histogram of the spectra duration"
+histDuration = hist(df$duration,breaks=75)
+
+
+"our output file"
+pdf("importStatistics.pdf")
+
+"plot the histogram"
+
+plot(histDuration, xlab = "import time (ms)", col="lightblue", main="Histogram of the Import duration")
+
+"how did the import of the spectra behave during this log period"
+plot(df$duration, col="lightblue",xlab="count", ylab="duration (s)", main="Import time for spectra",type="l")
+
+
+
+"calculate basic statistics of the performance for the system"
+
+medianSpectraPerSecond = median(df$duration)
+meanSpectraPerSecond = mean(df$duration)
+
+importPerformance <- data.frame(
+
+    Timeframe = c('Ms/s','Ms/min','Ms/h','MS/d'),
+    Median = c(1/medianSpectraPerSecond,60/medianSpectraPerSecond,60*60/medianSpectraPerSecond,60*60*24/medianSpectraPerSecond),
+    Mean = c(1/meanSpectraPerSecond,60/meanSpectraPerSecond,60*60/meanSpectraPerSecond,60*60*24/meanSpectraPerSecond)
+)
+
+"render our table"
+textplot(format(importPerformance,digits=1),valign="top")
+title("Import statistics and estimates for Spectra")
+
+
+dev.off()
