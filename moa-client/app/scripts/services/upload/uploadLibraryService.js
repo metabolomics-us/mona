@@ -5,11 +5,13 @@
 /**
  * handles the upload of library spectra to the system
  */
-app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
+app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spectrum, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
+    // Representing this service
     var self = this;
 
-    self.currentUploadProgress = 0;
-    self.totalUploadProgress = 0;
+    // Number of submitted spectra
+    var completedSpectraCount = 0;
+    var uploadedSpectraCount = 0;
 
 
     /**
@@ -128,105 +130,115 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
      * assembles a spectra and prepares it for upload
      * @param submitter
      * @param saveSpectrumCallback
-     * @param spectraObject
+     * @param spectrumObject
      * @param additionalData
      */
-    function workOnSpectra(submitter, saveSpectrumCallback, spectraObject, additionalData) {
-        $log.debug('converting object:\n\n' + $filter('json')(spectraObject));
+    function workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData) {
+        $log.debug('converting object:\n\n' + $filter('json')(spectrumObject));
 
         //get the key
-        obtainKey(spectraObject).then(function (spectraWithKey) {
+        obtainKey(spectrumObject).then(function (spectrumWithKey) {
             $log.debug('received key...');
 
             //get the mol file
-            obtainMolFile(spectraWithKey).then(function (spectra) {
-
+            obtainMolFile(spectrumWithKey).then(function (spectrum) {
                 $log.debug('received mol file...');
-
-                //optimize all our metadata
-                MetaDataOptimizationService.optimizeMetaData(spectra.meta).then(function (metaData) {
-
-                    $log.debug('optimized metadata...');
-
-                    var s = self.buildSpectrum();
-
-                    s.biologicalCompound.inchiKey = spectra.inchiKey;
-                    s.biologicalCompound.inchi = spectra.inchi;
-
-                    //assign all the defined name of the spectra
-                    if (angular.isDefined(spectra.names)) {
-                        s.biologicalCompound.names = spectra.names;
-                        s.chemicalCompound.names = spectra.names;
-                    }
-                    //assign all names of the spectra
-                    else if (angular.isDefined(spectra.names)) {
-                        for (var i = 0; i < spectra.names.length; i++) {
-                            s.biologicalCompound.names.push({name: spectra.names[i]})
-                            s.chemicalCompound.names.push({name: spectra.names[i]})
-                        }
-                    }
-                    s.biologicalCompound.metaData = [];
-                    s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
-
-                    s.chemicalCompound.inchiKey = spectra.inchiKey;
-                    s.chemicalCompound.inchi = spectra.inchi;
-
-                    s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
-                    s.chemicalCompound.metaData = [];
-
-                    s.spectrum = spectra.spectrum;
-
-                    if (angular.isDefined(spectra.tags)) {
-                        spectra.tags.forEach(function (tag) {
-                            s.tags.push(tag);
-                        });
-                    }
-
-                    s.comments = [{comment:"this spectra was added to the system, by utilizing a library upload."}];
-                    if (angular.isDefined(spectra.comments)) {
-                        s.comments.push({comment:spectra.comments});
-                    }
-
-                    metaData.forEach(function (e) {
-                        s.metaData.push(e);
-                    });
-
-                    if(angular.isDefined(additionalData)) {
-                        if(angular.isDefined(additionalData.tags)) {
-                            additionalData.tags.forEach(function (tag) {
-                                for(var i = 0; i < s.tags.length; i++) {
-                                    if(s.tags[i].text == tag.text)
-                                        return;
-                                }
-
-                                s.tags.push(tag);
-                            });
-                        }
-
-                        if(angular.isDefined(additionalData.meta)) {
-                            additionalData.tags.forEach(function(e) {
-                                s.metaData.push(e);
-                            });
-                        }
-
-                        if(angular.isDefined(additionalData.comments)) {
-                            s.comments.push({comment: additionalData.comments});
-                        }
-                    }
-
-                    s.submitter = submitter;
-
-                    //$log.info($filter('json')(s));
-                    saveSpectrumCallback(s);
-
-                });
-
+                self.submitSpectrum(spectrum, submitter, saveSpectrumCallback, additionalData)
             });
 
         }, function (reason) {
             $log.error(reason);
         });
     }
+
+
+    /**
+     *
+     * @param spectra
+     * @param submitter
+     * @param saveSpectrumCallback
+     * @param additionalData
+     */
+    self.submitSpectrum = function(spectra, submitter, saveSpectrumCallback, additionalData) {
+        //optimize all our metadata
+        MetaDataOptimizationService.optimizeMetaData(spectra.meta).then(function (metaData) {
+
+            $log.debug('optimized metadata...');
+
+            var s = self.buildSpectrum();
+
+            s.biologicalCompound.inchiKey = spectra.inchiKey;
+            s.biologicalCompound.inchi = spectra.inchi;
+
+            //assign all the defined name of the spectra
+            if (angular.isDefined(spectra.names)) {
+                s.biologicalCompound.names = spectra.names;
+                s.chemicalCompound.names = spectra.names;
+            }
+            //assign all names of the spectra
+            else if (angular.isDefined(spectra.names)) {
+                for (var i = 0; i < spectra.names.length; i++) {
+                    s.biologicalCompound.names.push({name: spectra.names[i]})
+                    s.chemicalCompound.names.push({name: spectra.names[i]})
+                }
+            }
+            s.biologicalCompound.metaData = [];
+            s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
+
+            s.chemicalCompound.inchiKey = spectra.inchiKey;
+            s.chemicalCompound.inchi = spectra.inchi;
+
+            s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
+            s.chemicalCompound.metaData = [];
+
+            s.spectrum = spectra.spectrum;
+
+            if (angular.isDefined(spectra.tags)) {
+                spectra.tags.forEach(function (tag) {
+                    s.tags.push(tag);
+                });
+            }
+
+            s.comments = [{comment:"this spectra was added to the system, by utilizing a library upload."}];
+            if (angular.isDefined(spectra.comments)) {
+                s.comments.push({comment:spectra.comments});
+            }
+
+            metaData.forEach(function (e) {
+                s.metaData.push(e);
+            });
+
+            if(angular.isDefined(additionalData)) {
+                if(angular.isDefined(additionalData.tags)) {
+                    additionalData.tags.forEach(function (tag) {
+                        for(var i = 0; i < s.tags.length; i++) {
+                            if(s.tags[i].text == tag.text)
+                                return;
+                        }
+
+                        s.tags.push(tag);
+                    });
+                }
+
+                if(angular.isDefined(additionalData.meta)) {
+                    additionalData.tags.forEach(function(e) {
+                        s.metaData.push(e);
+                    });
+                }
+
+                if(angular.isDefined(additionalData.comments)) {
+                    s.comments.push({comment: additionalData.comments});
+                }
+            }
+
+            s.submitter = submitter;
+
+            //$log.info($filter('json')(s));
+            saveSpectrumCallback(s);
+
+            updateUploadProgress();
+        });
+    };
 
 
     /**
@@ -251,13 +263,10 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
      */
     self.loadSpectraFile = function(file, callback, fireUploadProgress) {
         var fileReader = new FileReader();
-        self.currentUploadProgress = 0;
-
 
         // Call the callback function with the loaded data once the file has been read
         fileReader.onload =  function(event) {
             callback(event.target.result, file.name);
-            self.currentUploadProgress = 100;
 
             if(angular.isDefined(fireUploadProgress)) {
                 fireUploadProgress(100);
@@ -266,32 +275,13 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
 
         // progress notification
         fileReader.onprogress = function(event) {
-            if(event.lengthComputable) {
-                var progress = parseInt(((event.loaded / event.total) * 100), 10);
-                self.currentUploadProgress = progress;
-
-                if(angular.isDefined(fireUploadProgress)) {
-                    fireUploadProgress(progress);
-                }
+            if(event.lengthComputable && angular.isDefined(fireUploadProgress)) {
+                fireUploadProgress(parseInt(((event.loaded / event.total) * 100), 10));
             }
         };
 
         //start the reading
         fileReader.readAsText(file);
-    };
-
-    /**
-     *
-     * @param files
-     * @param callback
-     */
-    self.loadSpectraFiles = function(files, callback) {
-        self.totalUploadProgress = 0;
-
-        for(var i = 0; i < files.length; i++) {
-            self.loadSpectraFile(files[i], callback);
-            self.totalUploadProgress = parseInt((((i + 1) / files.length) * 100), 10);
-        }
     };
 
 
@@ -360,6 +350,8 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
      * @param wizardData
      */
     self.uploadSpectra = function(files, saveSpectrumCallback, wizardData) {
+        uploadedSpectraCount += files.length;
+
         AuthentificationService.getCurrentUser().then(function (submitter) {
             var uploadSpectrum = function (file) {
                 self.loadSpectraFile(file, function (data, origin) {
@@ -368,7 +360,6 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
                     }, origin);
                 })
             };
-
 
             for (var i = 0; i < files.length; i++) {
                 AsyncService.addToPool(files[i], uploadSpectrum);
@@ -382,10 +373,26 @@ app.service('UploadLibraryService', function (ApplicationError, Spectrum, gwMspS
      * @param saveSpectrumCallback
      */
     self.uploadSpectrum = function(wizardData, saveSpectrumCallback) {
+        uploadedSpectraCount += 1;
+
         AuthentificationService.getCurrentUser().then(function (submitter) {
             AsyncService.addToPool(wizardData, function (data) {
                 workOnSpectra(submitter, saveSpectrumCallback, wizardData);
             });
         });
-    }
+    };
+
+
+    /**
+     *
+     */
+    var updateUploadProgress = function() {
+        completedSpectraCount++;
+        $rootScope.$broadcast('spectra:uploadprogress', parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10));
+
+        if(completedSpectraCount == uploadedSpectraCount) {
+            completedSpectraCount = 0;
+            uploadedSpectraCount = 0;
+        }
+    };
 });

@@ -24,7 +24,7 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
      * definition of all our steps
      * @type {string[]}
      */
-    $scope.steps = ['spectra', 'loading', 'metadata', 'tags', 'comments', 'summary'];
+    $scope.steps = ['spectra', 'loading', 'compound', 'metadata', 'tags', 'comments', 'summary'];
 
     /**
      * our current step where we are at
@@ -113,6 +113,10 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
             return false;
         }
 
+        if ($scope.getCurrentStep() === 'compound') {
+            return true;
+        }
+
         if ($scope.getCurrentStep() === 'metadata') {
             return true;
         }
@@ -147,12 +151,10 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
 
         if ($scope.isLastStep()) {
             submitSpectra();
-        }
-        else if ($scope.getCurrentStep() === 'spectra') {
+        } else if ($scope.getCurrentStep() === 'spectra') {
             $scope.step += 1;
             loadSpectra();
-        }
-        else {
+        } else {
             $scope.step += 1;
         }
     };
@@ -165,19 +167,21 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
 
         // If there are multiple files, continue to batch uploader
         if($scope.files.length > 1) {
-            $scope.step += 1;
+            $scope.step += 2;
             $scope.batchUpload = true;
         }
 
         // Otherwise, parse the file and determine the number of spectra in the file
         else {
             UploadLibraryService.loadSpectraFile($scope.files[0], function(data, origin) {
+                // Count the number of spectra in the file
                 var count = UploadLibraryService.countData(data, $scope.files[0].name);
 
                 if(count == 1) {
                     $scope.loadingStatus = 'Processing...';
 
                     UploadLibraryService.processData(data, function(spectrum) {
+                        console.log(spectrum)
                         $scope.loadingStatus = 'Completed';
 
                         $scope.spectrum = spectrum;
@@ -187,7 +191,7 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
                         $scope.batchUpload = false;
                     }, origin);
                 } else {
-                    $scope.step += 1;
+                    $scope.step += 2;
                     $scope.batchUpload = true;
                 }
             }, function(progress) {
@@ -214,7 +218,7 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
             });
         }
 
-        $modalInstance.close();
+        $modalInstance.close(true);
     };
 
 
@@ -277,7 +281,6 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
     };
 
 
-
     /**
      * Performs initialization and acquisition of data used by the wizard
      */
@@ -287,15 +290,13 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
             meta: []
         };
 
-
         // Set file lists
         $scope.files = [];
         $scope.filenames = '';
 
-
         // Get tags
         AppCache.getTags(function(data) {
             $scope.tags = data;
-        })
+        });
     })();
 };

@@ -3,7 +3,11 @@
  */
 'use strict';
 
-moaControllers.SpectraUploadController = function ($scope, $modal) {
+moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibraryService) {
+    $scope.spectraUploaded = false;
+    $scope.spectraUploadProgress = 0.0;
+
+
     /**
      * Initializes our spectra upload dialog
      */
@@ -14,5 +18,15 @@ moaControllers.SpectraUploadController = function ($scope, $modal) {
             size: 'lg',
             backdrop: 'static'
         });
+
+        modalInstance.result.then(function (result) {
+            if(result) {
+                $scope.spectraUploaded = true;
+            }
+        });
     };
+
+    $scope.$on('spectra:uploadprogress', function(event, uploadProgress) {
+        $scope.spectraUploadProgress = uploadProgress;
+    });
 };
