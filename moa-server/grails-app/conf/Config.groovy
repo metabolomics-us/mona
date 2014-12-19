@@ -87,18 +87,25 @@ log4j = {
     // Example of changing the log pattern for the default console appender:
     //
     appenders {
-        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n')
-        file name:'file', file:'mona.log', append: false
+        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.WARN
+        file name: 'file', file: "/Volumes/ras/mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaImportStatistics', file: "/Volumes/ras/monaImport.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaFlushStatistics', file: "/Volumes/ras/monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaMemoryStatistics', file: "/Volumes/ras/monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+
 
     }
 
     root {
         error 'stdout'
         info 'file'
+
     }
 
-    error stdout:
-            'org.codehaus.groovy.grails.web.servlet',        // controllers
+    //info file: 'grails.app'
+
+
+    error 'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
             'org.codehaus.groovy.grails.web.sitemesh',       // layouts
             'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
@@ -108,8 +115,14 @@ log4j = {
             'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
             'org.springframework',
             'org.hibernate',
-            'net.sf.ehcache.hibernate'
+            'net.sf.ehcache.hibernate',
+            'org.quartz.plugins.history.LoggingTriggerHistoryPlugin'
 
+    warn 'grails.app'
+
+    debug monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
+    debug monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
+    debug monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
 
     environments {
         test {
@@ -131,23 +144,6 @@ log4j = {
             info 'org.hibernate.type.descriptor.sql.BasicBinder'
         }
 
-        lipid {
-
-            info 'util.chemical'
-            info 'curation'
-
-            debug file: 'grails.app'
-            debug file: 'moa'
-            info 'grails.app'
-            info 'moa'
-
-            //debug 'grails.plugin.cache'
-
-
-            info 'org.hibernate.SQL'
-            info 'org.hibernate.type.descriptor.sql.BasicBinder'
-        }
-
         production {
 
             info file: 'grails.app'
@@ -159,7 +155,7 @@ log4j = {
 }
 
 //let's use jquery
-grails.views.javascript.library="jquery"
+grails.views.javascript.library = "jquery"
 
 grails.cache.config = {
     cache {

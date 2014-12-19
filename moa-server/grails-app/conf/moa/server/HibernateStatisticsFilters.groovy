@@ -6,7 +6,7 @@ class HibernateStatisticsFilters {
     def filters = {
 
 // ...
-
+      /*
         logHibernateStats(controller: '*', action: '*') {
             before = {
                 def stats = sessionFactory.getStatistics()
@@ -20,19 +20,10 @@ class HibernateStatisticsFilters {
 
             afterView = {
                 def stats = sessionFactory.getStatistics()
-
-                log.debug """
-            ############## Hibernate Stats ##############
-            Action: /${controllerName}/${actionName}
-
-            Transaction Count: ${stats.transactionCount}
-            Flush Count: ${stats.flushCount}
-            Prepared Statement Count: ${stats.prepareStatementCount}
-            #############################################
-        """
-
+                log.info("Action: /${controllerName}/${actionName} Transaction Count: ${stats.transactionCount} Flush Count: ${stats.flushCount} Prepared Statement Count: ${stats.prepareStatementCount}")
                 stats.clear() // We assume no one else is using stats
             }
         }
+        */
     }
 }

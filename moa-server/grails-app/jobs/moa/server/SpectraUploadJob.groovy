@@ -2,12 +2,15 @@ package moa.server
 
 import grails.converters.JSON
 import moa.Spectrum
+import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.dao.DataIntegrityViolationException
 
 /**
  * used to upload a spectra in the background
  */
 class SpectraUploadJob {
+
+    def sessionFactory
 
     def concurrent = true
 
@@ -30,14 +33,30 @@ class SpectraUploadJob {
                 long begin = System.currentTimeMillis()
 
                 try {
-                    Spectrum result = spectraPersistenceService.create(JSON.parse(data.spectra))
+                    def stats = sessionFactory.getStatistics()
+
+                    if (!stats.statisticsEnabled) {
+                        stats.statisticsEnabled = true
+                    }
+
+                    def json = null
+                    if(data.spectra instanceof JSONObject){
+                        json = data.spectra
+                    }
+                    else{
+                        json = JSON.parse(data.spectra);
+                    }
+
+                    Spectrum result = spectraPersistenceService.create(json)
                     result.save(flush: true)
 
                     long end = System.currentTimeMillis()
 
                     long needed = end - begin
-                    def message = "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}s"
-                    log.info("\t=>\t${message}")
+                    log.debug( "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000} Transaction Count: ${stats.transactionCount} Flush Count: ${stats.flushCount} Prepared Statement Count: ${stats.prepareStatementCount}" )
+
+                    stats.clear() // We assume no one else is using stats
+
 
                 }catch (DataIntegrityViolationException e){
                     log.warn("resubmitting failed job")

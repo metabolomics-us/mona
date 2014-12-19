@@ -2,6 +2,9 @@ package moa
 
 class MetaData implements Comparable<MetaData> {
 
+    Date dateCreated
+    Date lastUpdated
+
     static constraints = {
         name blank: false
         value nullable: true

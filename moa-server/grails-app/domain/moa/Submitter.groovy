@@ -8,6 +8,9 @@ import grails.rest.Resource
 @Resource(formats=['json'])
 class Submitter {
 
+    Date dateCreated
+    Date lastUpdated
+
     static constraints = {
 	    emailAddress unique: true, blank: false
 	    firstName blank: false

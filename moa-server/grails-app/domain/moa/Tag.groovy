@@ -2,6 +2,9 @@ package moa
 
 class Tag implements Serializable{
 
+    Date dateCreated
+    Date lastUpdated
+
     static constraints = {
         text blank: false, unique: true, nullable: false
         ruleBased unique: false, nullable: true

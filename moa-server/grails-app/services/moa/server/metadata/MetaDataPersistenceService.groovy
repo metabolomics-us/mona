@@ -31,7 +31,7 @@ class MetaDataPersistenceService {
 
         log.debug("generating meta data")
         //remove existing metadata from the object
-        object.refresh()
+        //object.refresh()
         json.each { Map current ->
             generateMetaDataObject(object, current)
         }
@@ -76,7 +76,6 @@ class MetaDataPersistenceService {
 
         log.debug("generating metadata value object...")
         MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
-//MetaDataValueHelper.getValueObject(current.value)
 
         if (current.computed != null && current.computed) {
             metaDataValue.computed = true
@@ -124,8 +123,8 @@ class MetaDataPersistenceService {
             metaDataValue.metaData = metaData
             metaDataValue.owner = object
 
-            //metaData.addToValue(metaDataValue)
-            //object.addToMetaData(metaDataValue)
+            metaData.save()
+            object.save()
 
         } catch (Exception e) {
             log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
