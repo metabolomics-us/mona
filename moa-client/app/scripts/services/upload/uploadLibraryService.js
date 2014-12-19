@@ -148,6 +148,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
         }, function (reason) {
             $log.error(reason);
+            updateUploadProgress();
         });
     }
 
@@ -351,6 +352,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      */
     self.uploadSpectra = function(files, saveSpectrumCallback, wizardData) {
         uploadedSpectraCount += files.length;
+        broadcastUploadProgress();
 
         AuthentificationService.getCurrentUser().then(function (submitter) {
             var uploadSpectrum = function (file) {
@@ -374,10 +376,11 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      */
     self.uploadSpectrum = function(wizardData, saveSpectrumCallback) {
         uploadedSpectraCount += 1;
+        broadcastUploadProgress();
 
         AuthentificationService.getCurrentUser().then(function (submitter) {
-            AsyncService.addToPool(wizardData, function (data) {
-                workOnSpectra(submitter, saveSpectrumCallback, wizardData);
+            AsyncService.addToPool(wizardData, function (spectrum) {
+                workOnSpectra(submitter, saveSpectrumCallback, spectrum);
             });
         });
     };
@@ -388,11 +391,19 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      */
     var updateUploadProgress = function() {
         completedSpectraCount++;
-        $rootScope.$broadcast('spectra:uploadprogress', parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10));
+        broadcastUploadProgress();
 
         if(completedSpectraCount == uploadedSpectraCount) {
             completedSpectraCount = 0;
             uploadedSpectraCount = 0;
         }
     };
+
+    /**
+     * Requires separate function for broadcasting at start of upload
+     */
+    var broadcastUploadProgress = function() {
+        console.log('broadcast'+ parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10))
+        $rootScope.$broadcast('spectra:uploadprogress', parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10));
+    }
 });

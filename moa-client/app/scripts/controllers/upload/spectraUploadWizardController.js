@@ -181,7 +181,6 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
                     $scope.loadingStatus = 'Processing...';
 
                     UploadLibraryService.processData(data, function(spectrum) {
-                        console.log(spectrum)
                         $scope.loadingStatus = 'Completed';
 
                         $scope.spectrum = spectrum;

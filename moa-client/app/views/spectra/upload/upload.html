@@ -1,6 +1,6 @@
 <div ng-init="uploadSpectraDialog()">
 
-    <div ng-if="spectraUploaded">
+    <div ng-show="spectraUploaded">
         <h3>Thank you for your submission!</h3>
         <p>The bar below displays the upload progress.  Please <b>do not close your browser</b> while your upload is being processed, otherwise your will not be sent to the server.</p>
         <p>Please feel free to continue browsing the website.  You will be notified when your upload is complete.</p>
@@ -10,7 +10,7 @@
         <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Spectrum</button>
     </div>
 
-    <div ng-if="!spectraUploaded">
+    <div ng-show="!spectraUploaded">
         <h3>Upload Mass Spectra Wizard</h3>
         <p>Please use the following wizard to upload a new mass spectra to the MoNA.<br /> It should guide you and provide you with all the help you need.</p>
 
