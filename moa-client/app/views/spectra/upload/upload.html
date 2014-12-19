@@ -5,10 +5,8 @@
         <p>The bar below displays the upload progress.  Please <b>do not close your browser</b> while your upload is being processed, otherwise your will not be sent to the server.</p>
         <p>Please feel free to continue browsing the website.  You will be notified when your upload is complete.</p>
 
-        <progressbar class="progress-striped active" max="100" value="spectraUploadProgress"><span style="white-space:nowrap;">{{spectraUploadProgress}}%</span></progressbar>
-
+        <spectra-upload-progress-bar></spectra-upload-progress-bar>
         <hr />
-
         <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Spectrum</button>
     </div>
 
