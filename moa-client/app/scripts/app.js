@@ -22,8 +22,8 @@ var app = angular
  */
 
 //app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/trashcan.fiehnlab.ucdavis.edu:8080');
-app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
-//app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
+//app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
+app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
 
 
 /**
@@ -44,6 +44,19 @@ app.constant('INTERNAL_CACHING', true);
 app.config(function ($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+});
+
+/**
+ *
+ */
+app.run(function($rootScope, $window, UploadLibraryService) {
+
+    $window.onbeforeunload = function () {
+        if(UploadLibraryService.completedSpectraCount != UploadLibraryService.uploadedSpectraCount) {
+            var progress = parseInt(((UploadLibraryService.completedSpectraCount / UploadLibraryService.uploadedSpectraCount) * 100), 10);
+            return 'MoNA is '+ progress +'% done with processing and uploading spectra.';
+        }
+    }
 });
 
 /**
