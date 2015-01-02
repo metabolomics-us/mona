@@ -16,7 +16,7 @@ app.directive('spectraUploadProgressBar', function () {
             '        <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" ng-bind="spectraUploadProgressString"></span>'+
             '    </progressbar>'+
             '</div>'+
-            '<div ng-if="spectraUploadProgress == -1"><label>No Upload Started</label></div>',
+            '<div ng-if="spectraUploadProgress == -1"><i>No Upload Started</i></div>',
 
         /**
          * watches for changes to the upload progress
@@ -31,15 +31,7 @@ app.directive('spectraUploadProgressBar', function () {
                 $scope.spectraUploadProgress = uploadProgress;
                 $scope.spectraUploadProgressString = uploadProgress +'%';
                 $scope.running = ($scope.spectraUploadProgress != -1 && $scope.spectraUploadProgress < 100);
-                console.log($scope.spectraUploadProgress)
-                console.log($scope.spectraUploadProgressString)
-                console.log($scope.running)
-
             });
-        },
-
-        link: function (scope, element, attrs) {
-
         }
     };
 });
