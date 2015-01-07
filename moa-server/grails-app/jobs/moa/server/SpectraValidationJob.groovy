@@ -7,7 +7,6 @@ import moa.server.curation.SpectraCurationService
  * Time: 1:30 PM
  */
 class SpectraValidationJob {
-
     def concurrent = false
 
     /**
@@ -26,18 +25,16 @@ class SpectraValidationJob {
 
         if (data != null) {
             if (data.containsKey('spectraId')) {
-                long begin = System.currentTimeMillis()
 
+                long begin = System.currentTimeMillis()
 
                 boolean result = spectraCurationService.validateSpectra(data.spectraId as long)
 
                 long end = System.currentTimeMillis()
 
-                long needed = (end - begin)/1000
-                def message = "validated spectra succesffuly:${result} with id: ${data.spectraId}, which took ${needed}s"
+                long needed = (end - begin)
 
-
-                log.info("\t=>\t${message}")
+                log.debug( "validated spectra with id: ${data.spectraId}, which took ${needed / 1000}, success: ${result} ")
 
             } else {
                 log.info("\t=>\tno spectraId was provided!")

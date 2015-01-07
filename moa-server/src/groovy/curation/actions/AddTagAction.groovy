@@ -49,8 +49,9 @@ class AddTagAction implements CurationAction {
 
         tagNameToAdd.each {
             Tag tag = Tag.findOrSaveByText(it)
+            tag.lock()
             tag.ruleBased = true
-            tag.save(flus: true)
+            tag.save(flush: true)
 
             owner.addToTags(tag)
             owner.save(flush: true)

@@ -7,7 +7,7 @@ import moa.server.curation.CompoundCurationService
  * Time: 11:00 AM
  */
 class CompoundCurationJob {
-    def concurrent = true
+    def concurrent = false
 
     /**
      * needs to be defined
@@ -33,8 +33,8 @@ class CompoundCurationJob {
                 long end = System.currentTimeMillis()
 
                 long needed = end - begin
-                def message = "validated compound succesffuly:${result} with id: ${data.compoundId}, which took ${needed/1000}s"
-                log.info("\t=>\t${message}")
+                log.debug( "validated compound with id: ${data.compoundId}, which took ${needed / 1000}, success: ${result} ")
+
 
             } else {
                 log.info("\t=>\tno compoundId was provided!")

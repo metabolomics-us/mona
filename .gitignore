@@ -2,3 +2,4 @@
 **/*.iml
 **/.idea/
 angularjs/moa-client/.idea/
+.Rproj.user
