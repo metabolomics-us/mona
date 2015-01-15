@@ -47,16 +47,17 @@ app.config(function ($httpProvider) {
 });
 
 /**
- *
+ * Prompt user before leaving the page if spectra are being uploaded
  */
-app.run(function($rootScope, $window, UploadLibraryService) {
+app.run(function($window, $injector) {
+    $window.onbeforeunload = function (e) {
+        var service = $injector.get('UploadLibraryService');
 
-    $window.onbeforeunload = function () {
-        if(UploadLibraryService.completedSpectraCount != UploadLibraryService.uploadedSpectraCount) {
-            var progress = parseInt(((UploadLibraryService.completedSpectraCount / UploadLibraryService.uploadedSpectraCount) * 100), 10);
+        if(service.completedSpectraCount != service.uploadedSpectraCount) {
+            var progress = parseInt(((service.completedSpectraCount / service.uploadedSpectraCount) * 100), 10);
             return 'MoNA is '+ progress +'% done with processing and uploading spectra.';
         }
-    }
+    };
 });
 
 /**
