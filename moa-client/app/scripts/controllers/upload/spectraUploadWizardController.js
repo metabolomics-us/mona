@@ -101,7 +101,7 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
 
     /**
      * checks if the current step is complete of the wizard
-     * @param uploadWizard
+     * @param form
      * @returns {boolean}
      */
     $scope.isStepComplete = function (form) {

@@ -44,6 +44,69 @@
                 </div>
             </div>
 
+            <!-- compound screen -->
+            <div ng-switch-when="compound">
+                <fieldset>
+                    <div class="form-group" ng-class="{'has-error' : uploadWizard.inchi.$invalid && !uploadWizard.inchi.$pristine}">
+                        <label for="inchi">InChI:</label>
+                        <input class="form-control"
+                               type="text"
+                               ng-model="spectra.inchi"
+                               name="inchi"
+                               id="inchi"
+                               ng-required
+                               ng-pattern="/^((InChI=)?[^J][0-9BCOHNSOPrIFla+\-\(\)\\\/,pqbtmsih]{6,})$/ig">
+
+                        <p>The biological InChI Key is the key, which reflects the actual substance, prior to
+                            modifications due to adducts, dehydration or derivatisation. You will be able to define
+                            the actual chemical InChI Key in the next step</p>
+
+                        <p ng-show="bio.biologicalInchi.$invalid && !bio.biologicalInchi.$pristine"
+                           class="help-block">
+                            please make sure that the value is a valid InChI Key. It needs to look something like
+                            'RYGMFSIKBFXOCR-UHFFFAOYSA-N'
+                        </p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inchikey">InChI:</label>
+                        <input class="form-control"
+                               type="text"
+                               ng-model="spectra.inchikey"
+                               name="inchikey"
+                               id="inchikey"
+                               ng-required
+                               ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])$/" fl-no-submit/>
+
+                    </div>
+
+                    <div class="form-group"
+                         ng-class="{'has-error' : uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine}">
+                        <label for="biologicalInChIName">Please provide us with a name for this chemical</label>
+
+
+                        <input
+                                id="biologicalInChIName"
+                                name="biologicalInChIName"
+                                placeholder="Search for a Name for this InChI Key"
+                                required="true"
+                                class="form-control form-control-small"
+                                typeahead="name.name for name in possibleBiologicalNames | limitTo:8"
+                                type="text"
+                                ng-model="spectra.biologicalCompound.names"/>
+
+                        <p ng-show="uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine"
+                           class="help-block">
+                            please make sure you provide a valid name
+                        </p>
+                    </div>
+
+                    <div chemical-sketcher id="bioLogicalInChiSketcher" ng-model="spectra.biologicalCompound.inchiKey"></div>
+
+                </fieldset>
+            </div>
+
             <!-- defines our metadata -->
             <div ng-switch-when="metadata">
                 <fieldset>
