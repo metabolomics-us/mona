@@ -47,7 +47,8 @@ app.config(function ($httpProvider) {
 });
 
 /**
- * Prompt user before leaving the page if spectra are being uploaded
+ * Prompt user before leaving the page if spectra are being uploaded.
+ * Uses $injector to bypass timeout error when testing with protractor.
  */
 app.run(function($window, $injector) {
     $window.onbeforeunload = function (e) {
