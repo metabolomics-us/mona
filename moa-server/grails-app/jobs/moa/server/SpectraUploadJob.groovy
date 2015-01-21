@@ -1,16 +1,13 @@
 package moa.server
-
 import grails.converters.JSON
 import moa.Spectrum
 import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.dao.DataIntegrityViolationException
-
 /**
  * used to upload a spectra in the background
  */
 class SpectraUploadJob {
 
-    def concurrent = true
+    def concurrent = false
 
     /**
      * needs to be defined
@@ -41,7 +38,7 @@ class SpectraUploadJob {
                     }
 
                     Spectrum result = spectraPersistenceService.create(json)
-                    result.save(flush: true)
+                    //result.save(flush: true)
 
                     long end = System.currentTimeMillis()
 
@@ -49,11 +46,14 @@ class SpectraUploadJob {
                     log.debug( "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}" )
 
 
-                    SpectraValidationJob.triggerNow([spectraId:result.id])
+                    //SpectraValidationJob.triggerNow([spectraId:result.id])
 
-                }catch (DataIntegrityViolationException e){
-                    log.warn("resubmitting failed job")
+                }catch (Exception e){
+                    log.warn("resubmitting failed job",e)
+                    log.debug(JSON.parse(data.spectra) as JSON,e)
+
                     SpectraUploadJob.triggerNow([spectra: data.spectra])
+
                 }
             } else {
                 log.info("\t=>\tno spectra was provided!")

@@ -39,11 +39,6 @@ class Compound extends SupportsMetaData {
     Set<Name> names
 
     /**
-     * associated tags
-     */
-    Set<Tag> tags
-
-    /**
      * assoicated comments
      */
     Set<Comment> comments

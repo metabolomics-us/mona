@@ -59,6 +59,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
                             }
                         }
                         catch (Exception e) {
+                            logger.debug(e.getMessage(),e)
                             return false
                         }
                     }

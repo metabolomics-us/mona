@@ -15,7 +15,7 @@ class IsAnnotatedSpectraRule extends AbstractMetaDataCentricRule{
 
 
 
-    IsAnnotatedSpectraRule() {
+    public IsAnnotatedSpectraRule() {
         super(new AddTagAction(ANNOTATED_SPECTRA), new RemoveTagAction(ANNOTATED_SPECTRA))
     }
 

@@ -1,7 +1,9 @@
 package curation.actions
 import curation.CurationAction
 import curation.CurationObject
-import moa.Tag
+import grails.util.Holders
+import moa.SupportsMetaData
+import moa.server.tag.TagService
 import org.apache.log4j.Logger
 /**
  * Created with IntelliJ IDEA.
@@ -11,11 +13,13 @@ import org.apache.log4j.Logger
  */
 class AddTagAction implements CurationAction {
 
+    TagService tagService
+
     Logger logger = Logger.getLogger(getClass())
 
     String[] tagNameToAdd = null
 
-     AddTagAction(){
+    AddTagAction() {
 
     }
 
@@ -23,7 +27,8 @@ class AddTagAction implements CurationAction {
      * specify a tag for us
      * @param tagName
      */
-     AddTagAction(String... tagName){
+    AddTagAction(String... tagName) {
+        this()
         this.tagNameToAdd = tagName
     }
 
@@ -31,14 +36,15 @@ class AddTagAction implements CurationAction {
     @Override
     void doAction(CurationObject toValidate) {
 
-        def owner = null
-        if(toValidate.isSpectra()) {
+        if(tagService == null){
+            tagService = Holders.grailsApplication.mainContext.tagService
+        }
+        SupportsMetaData owner = null
+        if (toValidate.isSpectra()) {
             owner = toValidate.getObjectAsSpectra()
-        }
-        else if(toValidate.isCompound()){
+        } else if (toValidate.isCompound()) {
             owner = toValidate.getObjectAsCompound()
-        }
-        else{
+        } else {
             throw new RuntimeException("not supported object: ${toValidate}")
         }
 
@@ -47,14 +53,8 @@ class AddTagAction implements CurationAction {
             throw new RuntimeException("please provide us with a 'tagNameToAdd' value!")
         }
 
-        tagNameToAdd.each {
-            Tag tag = Tag.findOrSaveByText(it)
-            tag.lock()
-            tag.ruleBased = true
-            tag.save(flush: true)
-
-            owner.addToTags(tag)
-            owner.save(flush: true)
+        for (String tag : tagNameToAdd) {
+            tagService.addTagTo(tag, owner)
 
             logger.debug("=> done")
         }

@@ -15,6 +15,7 @@ class MetaDataCategory {
 
     static mapping = {
         version false
+        metaDatas  cascade: 'all-delete-orphan'
     }
 
     boolean equals(o) {

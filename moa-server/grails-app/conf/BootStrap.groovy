@@ -26,7 +26,7 @@ class BootStrap {
 
         log.warn("in development mode, setting up users...")
         //just some test data
-        Submitter.findOrCreateWhere(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save(flush: true)
+        Submitter.findOrCreateWhere(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save()
 
         JSON.registerObjectMarshaller(Tag,
                 DomainClassMarshaller.createExcludeMarshaller(Tag, ["class", "id", "tagCachingService"])

@@ -40,7 +40,7 @@ class Spectrum extends SupportsMetaData {
         spectrum sqlType: "text"
         version false
         tags fetch: 'join'
-        comments fetch: 'join'
+        comments fetch: 'join',  cascade: 'all-delete-orphan'
     }
 
     /**
@@ -52,11 +52,6 @@ class Spectrum extends SupportsMetaData {
      * comments
      */
     Set<Comment> comments
-
-    /**
-     * tags
-     */
-    Set<Tag> tags
 
     /**
      * who submitted this

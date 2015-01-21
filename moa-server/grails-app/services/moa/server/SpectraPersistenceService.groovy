@@ -1,15 +1,25 @@
 package moa.server
+
 import grails.converters.JSON
 import grails.plugin.cache.CacheEvict
+import grails.transaction.Transactional
 import moa.*
 import moa.server.metadata.MetaDataPersistenceService
+import moa.server.tag.TagService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.validation.ValidationException
 
+@Transactional
 class SpectraPersistenceService {
 
     MetaDataPersistenceService metaDataPersistenceService
+
+    TagService tagService
+
+    SubmitterService submitterService
+
+    CompoundService compoundService
 
     /**
      * creates a new spectrum and saves it in the database
@@ -21,7 +31,7 @@ class SpectraPersistenceService {
 
         //handle outdated format
         if (json.comments instanceof String) {
-            log.warn("using out dated Mona format, comment's should be in form of an array -> skipping attribute!")
+            log.info("using out dated Mona format, comment's should be in form of an array -> skipping attribute!")
             String value = json.get("comments")
             json.remove("comments")
 
@@ -45,47 +55,46 @@ class SpectraPersistenceService {
         //we build the tags our self
         spectrum.tags = [];
 
-        //we only care about refreshing the submitter by it's email address since it's unique
-        spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
+        //add a submitter
+        spectrum.submitter = submitterService.findOrCreateSubmitter(spectrum)
 
         //we need to ensure we don't double generate compound
-        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound).save()
-        spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound).save()
+        spectrum.biologicalCompound = compoundService.buildCompound(spectrum.biologicalCompound)
+        spectrum.chemicalCompound = compoundService.buildCompound(spectrum.chemicalCompound)
 
         if (!spectrum.validate()) {
             log.error(spectrum.errors)
             throw new ValidationException("sorry was not able to persist spectra", spectrum.errors)
         }
 
-        spectrum.save()
+        spectrum.save(flush:true)
 
         if (json.tags) {
             def tags = json.tags
 
             //adding our tags
             tags.each {
-
-                def tag = Tag.findOrSaveByText(it.text)
-                tag.refresh()
-                spectrum.addToTags(tag)
+                tagService.addTagTo(it.text, spectrum)
             }
         }
 
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
 
         try {
-            spectrum.save(flush: true)
+            spectrum.save(flush:true)
         }
         catch (Exception e) {
-            log.error(e.getMessage())
+            log.error(e.getMessage(),e)
             log.error(spectrum.getErrors())
             log.error(json as JSON)
             throw e;
         }
         //submit for validation
-        //SpectraValidationJob.triggerNow([spectraId:spectrum.id])
+        SpectraValidationJob.triggerNow([spectraId:spectrum.id])
 
         //spectrum is now ready to work on
+
+
         return spectrum;
 
     }
@@ -102,47 +111,6 @@ class SpectraPersistenceService {
  * @param compound
  * @return
  */
-    public Compound buildCompound(Compound compound) {
-
-        def names = compound.names
-
-        log.debug("trying to generate compound: ${compound.inchiKey}")
-
-        //first get the compound we want
-        def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey.trim())
-
-        /*
-        if (!myCompound) {
-            Compound.withTransaction {
-                myCompound = new Compound(inchiKey: compound.inchiKey.trim())
-
-                myCompound.save(flush: true)
-            }
-        }
-        */
-
-        //myCompound.lock()
-
-        log.debug("==> done: ${myCompound}")
-
-        if (names) {
-            //merge new names
-            names.each { name ->
-                Name n = Name.findOrSaveByNameAndCompound(name.name, myCompound)
-                if (n != null) {
-                    myCompound.addToNames(n)
-                }
-            }
-        }
-
-        myCompound.molFile = compound.molFile
-        myCompound.inchi = compound.inchi
-
-        myCompound.save(flush: true)
-
-        return myCompound;
-
-    }
 
     /**
      * removes id objects from the json file, since we can't really reuse them
@@ -153,6 +121,19 @@ class SpectraPersistenceService {
         json.remove("id")
 
         json.remove("predictedCompound")
+
+        json.entrySet().each {
+            if(it instanceof Map){
+                dropIds(it)
+            }
+            else if (it instanceof Collection){
+                it.each {
+                    if(it instanceof Map){
+                        dropIds()
+                    }
+                }
+            }
+        }
         return json
     }
 
