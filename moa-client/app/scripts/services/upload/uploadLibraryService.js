@@ -10,8 +10,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     var self = this;
 
     // Number of submitted spectra
-    var completedSpectraCount = 0;
-    var uploadedSpectraCount = 0;
+    self.completedSpectraCount = 0;
+    self.uploadedSpectraCount = 0;
 
 
     /**
@@ -148,6 +148,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
         }, function (reason) {
             $log.error(reason);
+            updateUploadProgress();
         });
     }
 
@@ -260,6 +261,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * Loads spectra file and returns the data to a callback function
      * @param file
      * @param callback
+     * @param fireUploadProgress
      */
     self.loadSpectraFile = function(file, callback, fireUploadProgress) {
         var fileReader = new FileReader();
@@ -310,7 +312,6 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     /**
      *
      * @param data
-     * @param buildSpectrum
      * @param callback
      * @param origin
      */
@@ -350,7 +351,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param wizardData
      */
     self.uploadSpectra = function(files, saveSpectrumCallback, wizardData) {
-        uploadedSpectraCount += files.length;
+        self.uploadedSpectraCount += files.length;
+        broadcastUploadProgress();
 
         AuthentificationService.getCurrentUser().then(function (submitter) {
             var uploadSpectrum = function (file) {
@@ -373,11 +375,12 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param saveSpectrumCallback
      */
     self.uploadSpectrum = function(wizardData, saveSpectrumCallback) {
-        uploadedSpectraCount += 1;
+        self.uploadedSpectraCount += 1;
+        broadcastUploadProgress();
 
         AuthentificationService.getCurrentUser().then(function (submitter) {
-            AsyncService.addToPool(wizardData, function (data) {
-                workOnSpectra(submitter, saveSpectrumCallback, wizardData);
+            AsyncService.addToPool(wizardData, function (spectrum) {
+                workOnSpectra(submitter, saveSpectrumCallback, spectrum);
             });
         });
     };
@@ -387,12 +390,19 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      *
      */
     var updateUploadProgress = function() {
-        completedSpectraCount++;
-        $rootScope.$broadcast('spectra:uploadprogress', parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10));
+        self.completedSpectraCount++;
+        broadcastUploadProgress();
 
-        if(completedSpectraCount == uploadedSpectraCount) {
-            completedSpectraCount = 0;
-            uploadedSpectraCount = 0;
+        if(self.completedSpectraCount == self.uploadedSpectraCount) {
+            self.completedSpectraCount = 0;
+            self.uploadedSpectraCount = 0;
         }
     };
+
+    /**
+     * Requires separate function for broadcasting at start of upload
+     */
+    var broadcastUploadProgress = function() {
+        $rootScope.$broadcast('spectra:uploadprogress', parseInt(((self.completedSpectraCount / self.uploadedSpectraCount) * 100), 10));
+    }
 });

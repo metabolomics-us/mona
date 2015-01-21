@@ -22,8 +22,8 @@ var app = angular
  */
 
 //app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/trashcan.fiehnlab.ucdavis.edu:8080');
-app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
-//app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
+//app.constant('REST_BACKEND_SERVER', 'http://localhost:8080');
+app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
 
 
 /**
@@ -44,6 +44,21 @@ app.constant('INTERNAL_CACHING', true);
 app.config(function ($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+});
+
+/**
+ * Prompt user before leaving the page if spectra are being uploaded.
+ * Uses $injector to bypass timeout error when testing with protractor.
+ */
+app.run(function($window, $injector) {
+    $window.onbeforeunload = function (e) {
+        var service = $injector.get('UploadLibraryService');
+
+        if(service.completedSpectraCount != service.uploadedSpectraCount) {
+            var progress = parseInt(((service.completedSpectraCount / service.uploadedSpectraCount) * 100), 10);
+            return 'MoNA is '+ progress +'% done with processing and uploading spectra.';
+        }
+    };
 });
 
 /**

@@ -16,7 +16,7 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/bootstrap-multiselect/css/bootstrap-multiselect.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
     <!-- endbower -->
@@ -58,22 +58,12 @@
                 <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-tasks">
-
                 <li class="divider"></li>
                 <li>
                     <a href="#">
                         <div>
-                            <p>
-                                <strong>Curration Process</strong>
-                                <span class="pull-right text-muted">60% Complete</span>
-                            </p>
-
-                            <div class="progress progress-striped active">
-                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60"
-                                     aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                    <span class="sr-only">60% Complete (warning)</span>
-                                </div>
-                            </div>
+                            <p><strong>Upload Progress</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                            <spectra-upload-progress-bar></spectra-upload-progress-bar>
                         </div>
                     </a>
                 </li>
@@ -85,7 +75,6 @@
                                 <strong>Average query speed</strong>
                                 <span class="pull-right text-muted">35ms</span>
                             </p>
-
                         </div>
                     </a>
                 </li>
@@ -262,7 +251,7 @@
 <script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-<script src="bower_components/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
+<script src="bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
 <script src="bower_components/flot/jquery.flot.js"></script>
 <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
 <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
@@ -338,7 +327,7 @@
 <script src="scripts/directives/multiselectDropdown.js"></script>
 <script src="scripts/directives/metadata/tagDirective.js"></script>
 <script src="scripts/directives/metadata/metadataValueDirective.js"></script>
-
+<script src="scripts/directives/spectra/spectraUploadProgressDirective.js"></script>
 <script src="scripts/directives/compound/displayCompoundDirective.js"></script>
 <script src="scripts/directives/query/queryDirective.js"></script>
 <script src="scripts/directives/query/queryPieChart.js"></script>

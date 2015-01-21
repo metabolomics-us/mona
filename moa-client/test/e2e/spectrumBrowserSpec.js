@@ -1,40 +1,65 @@
 describe('e2e testing spectrum browser', function() {
+    var DEFAULT_LOAD_NUMBER = 20;
+
     beforeEach(function() {
-        browser().navigateTo('/#/spectra/browse');
+        browser.get('#/spectra/browse');
     });
+
 
     it('should access the correct page when viewing the spectrum browser', function() {
-        expect(browser().location().path()).toBe("/spectra/browse");
-        expect(element('#page-wrapper').html()).toContain('Chem. Structure');
-        expect(repeater('canvas').count()).toEqual(80);
+        // Verify url
+        expect(browser.getCurrentUrl()).toContain('/#/spectra/browse');
+
+        // Verify content
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Name');
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Structure');
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Accurate Mass');
     });
 
-    it('should jump to the spectrum displayer when accessed', function() {
-        browser().navigateTo('#/spectra/display/135');
 
-        expect(browser().location().path()).toBe("/spectra/display/135");
-        expect(element('#page-wrapper').html()).toContain('Mass Spectrum');
-        expect(element('#page-wrapper').html()).toContain('Table of Ions');
-        expect(repeater('canvas').count()).toEqual(4);
+    var verifyInitialLoad = function() {
+        element.all(by.repeater('spectrum in spectra')).then(function(items) {
+            expect(items.length).toBe(DEFAULT_LOAD_NUMBER);
+        });
+
+        element.all(by.css('canvas')).then(function(items) {
+            expect(items.length).toBe(4 * DEFAULT_LOAD_NUMBER);
+        });
+    };
+
+    it('should load spectra automatically', function() {
+        // Verify that spectra load
+        verifyInitialLoad();
     });
 
-    it('should jump to a spectrum displayer when a spectrum is clicked', function() {
-        element('canvas').click();
+    it('should load more spectra when scrolling to the bottom of the page', function() {
+        // Verify that spectra load
+        verifyInitialLoad();
 
-        expect(browser().location().path()).toContain("/spectra/display/");
-        expect(element('#page-wrapper').html()).toContain('Mass Spectrum');
-        expect(element('#page-wrapper').html()).toContain('Table of Ions');
-        expect(repeater('canvas').count()).toEqual(4);
+        // Verify that infinite scroll works
+        browser.executeScript('window.scrollTo(0, 10000);').then(function () {
+            element.all(by.repeater('spectrum in spectra')).then(function(items) {
+                expect(items.length).toBeGreaterThan(DEFAULT_LOAD_NUMBER);
+            });
+
+            element.all(by.css('canvas')).then(function(items) {
+                expect(items.length).toBeGreaterThan(4 * DEFAULT_LOAD_NUMBER);
+            });
+        });
     });
 
-    it('should perform a query correctly', function() {
-        element('#page-wrapper button').click();
-        sleep(2);
 
-        input('query.nameFilter').enter('alanine');
-        element('.modal-footer button').click();
-        sleep(3);
+    it('should jump to the spectrum display when accessed', function() {
+        // Click on the first canvas object
+        element.all(by.css('canvas')).first().click();
 
-        // Need to verify query
+        // Verify that the page has updated to the spectrum viewer
+        expect(browser.getCurrentUrl()).toContain('/#/spectra/display/');
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Summary for spectrum');
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Download');
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Mass Spectrum');
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Ion Table');
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Mass Spectrum Metadata');
+        expect(element(by.css('#page-wrapper')).getText()).toContain('Comments');
     });
 });
