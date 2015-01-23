@@ -14,28 +14,17 @@ class CompoundService {
         log.debug("trying to generate compound: ${compound.inchiKey} with ${compound.id}")
 
         //first get the compound we want
-        Compound myCompound = new Compound()
-
-        def names = compound.names
-
-
-        def myNames = []
-        //merge new names
-        names.each { name ->
-            myNames.add(name.name)
-        }
-
-        compound.names = []
+        Compound myCompound = null
 
         myCompound = Compound.findOrCreateByInchiKey(compound.inchiKey.trim())
 
         if (myCompound == null) {
             log.debug("compound not found -> adding it")
-            myCompound = new Compound(inchiKey: compound.inchiKey)
+            myCompound = Compound.deepClone(compound)
 
             log.info(" compound validation: ${myCompound.validate()} - ${myCompound.errors}")
 
-            myCompound.save()
+            myCompound.save(flush:true)
             log.debug("==> done: ${myCompound}")
 
         } else {
@@ -46,11 +35,10 @@ class CompoundService {
         myCompound.molFile = compound.molFile
         myCompound.inchi = compound.inchi
 
-        myCompound.save(flush: true)
+        myCompound.save(flush:true)
 
-
-        myNames.each {
-            nameService.addNameToCompound(it, myCompound)
+        compound.names.each {
+            nameService.addNameToCompound(it.name, myCompound)
         }
 
         myCompound.save(flush: true)

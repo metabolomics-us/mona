@@ -55,15 +55,19 @@ class SpectraPersistenceService {
         //add a submitter
         spectrum.submitter = submitterService.findOrCreateSubmitter(spectrum)
 
-        //assign the biological inchi key
-        spectrum.biologicalCompound = compoundService.buildCompound(spectrum.biologicalCompound);
 
         //we need to ensure we don't double generate compound
         if(spectrum.biologicalCompound.inchiKey == spectrum.chemicalCompound.inchiKey){
+            log.debug("identical InChI keys")
+            //assign the biological inchi key
+            spectrum.biologicalCompound = compoundService.buildCompound(spectrum.biologicalCompound);
             spectrum.chemicalCompound = spectrum.biologicalCompound
 
         }
         else {
+            log.debug("different InChI keys")
+            //assign the biological inchi key
+            spectrum.biologicalCompound = compoundService.buildCompound(spectrum.biologicalCompound);
             spectrum.chemicalCompound = compoundService.buildCompound(spectrum.chemicalCompound)
         }
         if (!spectrum.validate()) {

@@ -14,9 +14,9 @@ class SubmitterService {
 
         Submitter submitter = null
 
-        Submitter.withNewSession {
+     //   Submitter.withNewSession {
             submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
-        }
+       // }
 
         if (submitter) {
             log.debug("found existing submitter: ${submitter}")
