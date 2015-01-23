@@ -39,8 +39,8 @@ class Spectrum extends SupportsMetaData {
     static mapping = {
         spectrum sqlType: "text"
         version false
-        tags fetch: 'join'
-        comments fetch: 'join',  cascade: 'all-delete-orphan'
+        tags batchSize: 20
+        comments batchSize: 20,  cascade: 'all-delete-orphan'
     }
 
     /**

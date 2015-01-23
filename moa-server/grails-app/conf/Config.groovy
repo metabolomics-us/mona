@@ -123,13 +123,14 @@ log4j = {
 
     //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
+    warn 'org.quartz.plugins'
     debug 'grails.app'
     debug monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
     debug monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
     debug monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
     debug monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
 
-    debug 'org.hibernate'
+    //debug 'org.hibernate'
 
     environments {
         test {

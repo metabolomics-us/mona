@@ -1,16 +1,13 @@
 package moa.server
-
 import grails.converters.JSON
 import grails.plugin.cache.CacheEvict
-import grails.transaction.Transactional
-import moa.*
+import moa.Spectrum
 import moa.server.metadata.MetaDataPersistenceService
 import moa.server.tag.TagService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.validation.ValidationException
-
-@Transactional
+//@Transactional
 class SpectraPersistenceService {
 
     MetaDataPersistenceService metaDataPersistenceService
@@ -58,16 +55,23 @@ class SpectraPersistenceService {
         //add a submitter
         spectrum.submitter = submitterService.findOrCreateSubmitter(spectrum)
 
-        //we need to ensure we don't double generate compound
-        spectrum.biologicalCompound = compoundService.buildCompound(spectrum.biologicalCompound)
-        spectrum.chemicalCompound = compoundService.buildCompound(spectrum.chemicalCompound)
+        //assign the biological inchi key
+        spectrum.biologicalCompound = compoundService.buildCompound(spectrum.biologicalCompound);
 
+        //we need to ensure we don't double generate compound
+        if(spectrum.biologicalCompound.inchiKey == spectrum.chemicalCompound.inchiKey){
+            spectrum.chemicalCompound = spectrum.biologicalCompound
+
+        }
+        else {
+            spectrum.chemicalCompound = compoundService.buildCompound(spectrum.chemicalCompound)
+        }
         if (!spectrum.validate()) {
             log.error(spectrum.errors)
             throw new ValidationException("sorry was not able to persist spectra", spectrum.errors)
         }
 
-        spectrum.save(flush:true)
+        spectrum.save()
 
         if (json.tags) {
             def tags = json.tags

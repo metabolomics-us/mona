@@ -15,7 +15,7 @@ class Compound extends SupportsMetaData {
         inchiKey index: true, indexAttributes: [unique: true]
         molFile sqlType: "text"
         version false
-        names fetch: 'join'
+        names batchSize: 20
         inchi sqlType: "text"
     }
     /**
@@ -47,4 +47,6 @@ class Compound extends SupportsMetaData {
      * associated inchi code
      */
     String inchi
+
+
 }

@@ -5,10 +5,11 @@ class Name  {
     Date dateCreated
     Date lastUpdated
 
-    static mapping = {}
+    static mapping = {
+        name sqlType: "text"
+    }
 
     static constraints = {
-        name(maxSize: 1024)
     }
 
     static belongsTo = [compound:Compound]
