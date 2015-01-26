@@ -11,7 +11,7 @@ class CompoundService {
      * @param compound
      * @return
      */
-    public Compound buildCompound(Compound compound) {
+    public Compound buildCompound(Map compound) {
         log.debug("trying to generate compound: ${compound.inchiKey} with ${compound.id}")
 
         //first get the compound we want
@@ -21,7 +21,10 @@ class CompoundService {
 
         if (myCompound == null) {
             log.debug("compound not found -> adding it")
-            myCompound = Compound.deepClone(compound)
+            myCompound = new Compound()
+            myCompound.inchi = compound.inchi
+            myCompound.inchiKey = compound.inchiKey
+            myCompound.molFile = compound.molFile
 
             log.info(" compound validation: ${myCompound.validate()} - ${myCompound.errors}")
 

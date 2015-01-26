@@ -1,5 +1,5 @@
 package moa.server
-import grails.converters.JSON
+
 import grails.plugin.cache.CacheEvict
 import moa.Spectrum
 import moa.Submitter
@@ -8,6 +8,7 @@ import moa.server.tag.TagService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.validation.ValidationException
+
 //@Transactional
 class SpectraPersistenceService {
 
@@ -43,7 +44,9 @@ class SpectraPersistenceService {
 
         json = dropIds(json);
 
-        Spectrum spectrum = new Spectrum(json)
+        Spectrum spectrum = new Spectrum()
+
+        spectrum.spectrum = json.spectrum
 
         log.debug("inserting new spectra")
 
@@ -57,23 +60,13 @@ class SpectraPersistenceService {
         log.info(json)
 
         //add a submitter
-        spectrum.submitter = Submitter.findByEmailAddress("wohlgemuth@ucdavis.edu")//submitterService.findOrCreateSubmitter(spectrum)
+        spectrum.submitter = Submitter.findByEmailAddress("wohlgemuth@ucdavis.edu")
+//submitterService.findOrCreateSubmitter(spectrum)
+
+        spectrum.biologicalCompound = compoundService.buildCompound(json.biologicalCompound);
+        spectrum.chemicalCompound = compoundService.buildCompound(json.chemicalCompound)
 
 
-        //we need to ensure we don't double generate compound
-        if(spectrum.biologicalCompound.inchiKey == spectrum.chemicalCompound.inchiKey){
-            log.debug("identical InChI keys")
-            //assign the biological inchi key
-            spectrum.biologicalCompound = compoundService.buildCompound(spectrum.biologicalCompound);
-            spectrum.chemicalCompound = spectrum.biologicalCompound
-
-        }
-        else {
-            log.debug("different InChI keys")
-            //assign the biological inchi key
-            spectrum.biologicalCompound = compoundService.buildCompound(spectrum.biologicalCompound);
-            spectrum.chemicalCompound = compoundService.buildCompound(spectrum.chemicalCompound)
-        }
         if (!spectrum.validate()) {
             log.error(spectrum.errors)
             throw new ValidationException("sorry was not able to persist spectra", spectrum.errors)
@@ -91,18 +84,10 @@ class SpectraPersistenceService {
         }
 
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
+        spectrum.save()
 
-        try {
-            spectrum.save()
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(),e)
-            log.error(spectrum.getErrors())
-            log.error(json as JSON)
-            throw e;
-        }
         //submit for validation
-        SpectraValidationJob.triggerNow([spectraId:spectrum.id])
+        //SpectraValidationJob.triggerNow([spectraId:spectrum.id])
 
         //spectrum is now ready to work on
 
@@ -135,12 +120,11 @@ class SpectraPersistenceService {
         json.remove("predictedCompound")
 
         json.entrySet().each {
-            if(it instanceof Map){
+            if (it instanceof Map) {
                 dropIds(it)
-            }
-            else if (it instanceof Collection){
+            } else if (it instanceof Collection) {
                 it.each {
-                    if(it instanceof Map){
+                    if (it instanceof Map) {
                         dropIds()
                     }
                 }
