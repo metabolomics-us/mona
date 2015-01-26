@@ -1,6 +1,7 @@
 package moa.server
 
 import moa.Compound
+
 //@Transactional
 class CompoundService {
 
@@ -24,7 +25,7 @@ class CompoundService {
 
             log.info(" compound validation: ${myCompound.validate()} - ${myCompound.errors}")
 
-            myCompound.save(flush:true)
+            myCompound.save()
             log.debug("==> done: ${myCompound}")
 
         } else {
@@ -35,13 +36,14 @@ class CompoundService {
         myCompound.molFile = compound.molFile
         myCompound.inchi = compound.inchi
 
-        myCompound.save(flush:true)
+        myCompound.save()
 
         compound.names.each {
-            nameService.addNameToCompound(it.name, myCompound)
+                nameService.addNameToCompound(it.name, myCompound)
         }
 
-        myCompound.save(flush: true)
+        log.info("compound valid: ${myCompound.validate()}")
+        myCompound.save()
         return myCompound;
 
     }

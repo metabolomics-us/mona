@@ -2,6 +2,7 @@ package moa.server
 import grails.converters.JSON
 import grails.plugin.cache.CacheEvict
 import moa.Spectrum
+import moa.Submitter
 import moa.server.metadata.MetaDataPersistenceService
 import moa.server.tag.TagService
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -52,8 +53,11 @@ class SpectraPersistenceService {
         //we build the tags our self
         spectrum.tags = [];
 
+        log.info("valid: ${spectrum.validate()}")
+        log.info(json)
+
         //add a submitter
-        spectrum.submitter = submitterService.findOrCreateSubmitter(spectrum)
+        spectrum.submitter = Submitter.findByEmailAddress("wohlgemuth@ucdavis.edu")//submitterService.findOrCreateSubmitter(spectrum)
 
 
         //we need to ensure we don't double generate compound
@@ -89,7 +93,7 @@ class SpectraPersistenceService {
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
 
         try {
-            spectrum.save(flush:true)
+            spectrum.save()
         }
         catch (Exception e) {
             log.error(e.getMessage(),e)

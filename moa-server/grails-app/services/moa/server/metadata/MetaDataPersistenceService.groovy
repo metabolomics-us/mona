@@ -70,8 +70,10 @@ class MetaDataPersistenceService {
 
         log.debug("generating metadata object...")
         MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
-        category.addToMetaDatas(metaData)
+        metaData.category = category
 
+        log.info("category valid: ${category.validate()}")
+        log.info("metadata valid: ${metaData.validate()}")
         metaData.save()
         category.save()
 
