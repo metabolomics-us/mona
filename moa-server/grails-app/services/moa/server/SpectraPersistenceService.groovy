@@ -1,14 +1,11 @@
 package moa.server
-
 import grails.plugin.cache.CacheEvict
 import moa.Spectrum
-import moa.Submitter
 import moa.server.metadata.MetaDataPersistenceService
 import moa.server.tag.TagService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.validation.ValidationException
-
 //@Transactional
 class SpectraPersistenceService {
 
@@ -42,6 +39,14 @@ class SpectraPersistenceService {
             json.put("comments", array)
         }
 
+        if(json.biologicalCompound == null){
+            throw new RuntimeException("sorry you need to provide a biologicalCompound!")
+        }
+        if(json.chemicalCompound == null){
+            throw new RuntimeException("sorry you need to provide a chemicalCompound!")
+        }
+
+
         json = dropIds(json);
 
         Spectrum spectrum = new Spectrum()
@@ -60,8 +65,7 @@ class SpectraPersistenceService {
         log.info(json)
 
         //add a submitter
-        spectrum.submitter = Submitter.findByEmailAddress("wohlgemuth@ucdavis.edu")
-//submitterService.findOrCreateSubmitter(spectrum)
+        spectrum.submitter = submitterService.findOrCreateSubmitter(json.submitter)
 
         spectrum.biologicalCompound = compoundService.buildCompound(json.biologicalCompound);
         spectrum.chemicalCompound = compoundService.buildCompound(json.chemicalCompound)
