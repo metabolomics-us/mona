@@ -201,14 +201,18 @@ abstract class AbstractCurationRule implements CurationRule {
     }
 
     protected void addTag(CurationObject object, String... tags) {
-        tags.each {
-            tagService.addTagTo(it, object)
+        if (object.isSupportsMetaDataObject()) {
+            tags.each { String tag ->
+                tagService.addTagTo(tag, object.getObjectAsSupportsMetaData())
+            }
         }
     }
 
     protected void removeTag(CurationObject object, String... tags) {
-        tags.each {
-            tagService.removeTagFrom(it, object)
+        if (object) {
+            tags.each {
+                tagService.removeTagFrom(it, object.getObjectAsSupportsMetaData())
+            }
         }
     }
 

@@ -8,7 +8,7 @@ class SupportsMetaData {
     static mapping = {
         tablePerSubclass true
         version false
-        tags  cascade: 'all-delete-orphan'
+        //tags  cascade: 'all-delete-orphan'
         metaData  cascade: 'all-delete-orphan'
     }
 

@@ -3,6 +3,7 @@ package curation
 import moa.Compound
 import moa.MetaDataValue
 import moa.Spectrum
+import moa.SupportsMetaData
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,6 +29,10 @@ final class CurationObject {
 
     boolean isCompound(){
         return object instanceof Compound
+    }
+
+    boolean isSupportsMetaDataObject(){
+        return  object instanceof SupportsMetaData
     }
 
     void refreshObject(){
@@ -56,5 +61,9 @@ final class CurationObject {
      */
     MetaDataValue getObjectAsMetaDataValue(){
         return object as MetaDataValue
+    }
+
+    SupportsMetaData getObjectAsSupportsMetaData(){
+        return object as SupportsMetaData
     }
 }

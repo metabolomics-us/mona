@@ -57,8 +57,6 @@ class RemoveTagAction implements CurationAction {
             tagService.removeTagFrom(name,owner)
         }
 
-        owner.save(flush: true)
-
         logger.debug("=> done")
     }
 

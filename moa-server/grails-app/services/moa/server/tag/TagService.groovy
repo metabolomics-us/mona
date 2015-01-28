@@ -36,7 +36,8 @@ class TagService {
         if (owner != null && owner.getTags() != null) {
             if (owner.getTags().contains(tag)) {
                 owner.removeFromTags(tag)
-                tag.save(flush: true)
+                tag.save()
+                owner.save()
             } else {
                 log.debug("spectra did not contain required tag!")
             }
