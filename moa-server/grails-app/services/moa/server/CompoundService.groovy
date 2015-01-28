@@ -51,8 +51,14 @@ class CompoundService {
         log.info("compound valid: ${myCompound.validate()}")
         myCompound.save()
 
-        compoundCurationService.validate(myCompound.id)
-        return myCompound;
+        try {
+            compoundCurationService.validate(myCompound.id)
+        }
+        catch (Exception e){
+            //debugging enough not important errors normally
+            log.debug(e.getMessage(),e)
+        }
+            return myCompound;
 
     }
 

@@ -2,6 +2,8 @@ package moa
 
 class Spectrum extends SupportsMetaData {
 
+    static transients = [ "spectrum" ]
+
     Date dateCreated
     Date lastUpdated
 
@@ -15,7 +17,7 @@ class Spectrum extends SupportsMetaData {
     /**
      * contains many metadata
      */
-    static hasMany = [ tags: Tag, comments:Comment]
+    static hasMany = [ comments:Comment, ions:Ion]
 
     /**
      * we belong to these
@@ -29,7 +31,6 @@ class Spectrum extends SupportsMetaData {
 
     static constraints = {
 	    comments nullable: true
-	    spectrum nullable: false //, unique: true
         chemicalCompound nullable: true
         biologicalCompound nullable: true
         predictedCompound nullable: true
@@ -46,12 +47,27 @@ class Spectrum extends SupportsMetaData {
     /**
      * raw data: (m/z, intensity) pairs
      */
-    String spectrum
+    //String spectrum
 
+    String getSpectrum(){
+        if(ions == null){
+            return ""
+        }
+        return ions.join(":")
+    }
+
+    void setSpectrum(String spectrum){
+
+    }
     /**
      * comments
      */
     Set<Comment> comments
+
+    /**
+     * related ion
+     */
+    Set<Ion> ions
 
     /**
      * who submitted this

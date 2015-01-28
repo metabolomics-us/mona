@@ -21,7 +21,7 @@ class Compound extends SupportsMetaData {
     /**
      * this compound belongs to one spectrum
      */
-    static hasMany = [names: Name, tags:Tag, comments:Comment]
+    static hasMany = [names: Name, comments:Comment]
 
     /**
      * inchiKey of this compound

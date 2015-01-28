@@ -1,11 +1,14 @@
 package moa.server
+
 import grails.plugin.cache.CacheEvict
+import moa.Ion
 import moa.Spectrum
 import moa.server.metadata.MetaDataPersistenceService
 import moa.server.tag.TagService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.validation.ValidationException
+
 //@Transactional
 class SpectraPersistenceService {
 
@@ -39,10 +42,10 @@ class SpectraPersistenceService {
             json.put("comments", array)
         }
 
-        if(json.biologicalCompound == null){
+        if (json.biologicalCompound == null) {
             throw new exception.ValidationException("sorry you need to provide a biologicalCompound!")
         }
-        if(json.chemicalCompound == null){
+        if (json.chemicalCompound == null) {
             throw new exception.ValidationException("sorry you need to provide a chemicalCompound!")
         }
 
@@ -90,8 +93,27 @@ class SpectraPersistenceService {
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
         spectrum.save()
 
+
+        json.spectrum.split(" ").each { s ->
+            def i = s.split(":")
+
+            if (i.size() > 1) {
+                double mass = Double.parseDouble(i[0])
+                double intensity = Double.parseDouble(i[1])
+
+                if (mass > 0 && intensity > 0) {
+                    Ion ion = new Ion()
+                    ion.spectrum = spectrum
+                    ion.intensity = intensity
+                    ion.mass = mass
+
+                    ion.save()
+                }
+            }
+        }
+
         //submit for validation
-        SpectraValidationJob.triggerNow([spectraId:spectrum.id])
+        SpectraValidationJob.triggerNow([spectraId: spectrum.id])
 
         //spectrum is now ready to work on
 
