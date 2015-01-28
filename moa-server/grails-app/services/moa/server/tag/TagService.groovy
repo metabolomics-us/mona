@@ -14,13 +14,12 @@ class TagService {
      */
     def addTagTo(String tagName, SupportsMetaData meta) {
 
-        SupportsMetaData.withNewSession {
-            log.debug("adding tagName: ${tagName}")
-            Tag tag = getTag(tagName)
-            tag.lock()
-            meta.addToTags(tag)
-            tag.save(flush: true)
-        }
+        log.debug("adding tagName: ${tagName}")
+        Tag tag = getTag(tagName)
+        tag.lock()
+        meta.addToTags(tag)
+        tag.save()
+
 
     }
 
@@ -32,17 +31,17 @@ class TagService {
     def removeTagFrom(String tagName, SupportsMetaData owner) {
 
 
-        Tag tag = Tag.findOrSaveByText(it)
-        tag.ruleBased = true
-        tag.save(flush: true)
+        Tag tag = getTag(tagName)
 
-        if (owner.getTags().contains(tag)) {
-            owner.removeFromTags(tag)
-            tag.save(flush: true)
-        } else {
-            log.debug("spectra did not contain required tag!")
+        if (owner != null && owner.getTags() != null) {
+            if (owner.getTags().contains(tag)) {
+                owner.removeFromTags(tag)
+                tag.save(flush: true)
+            } else {
+                log.debug("spectra did not contain required tag!")
+            }
+
         }
-
     }
 
     /**

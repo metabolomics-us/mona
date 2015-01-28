@@ -53,8 +53,8 @@ class RemoveTagAction implements CurationAction {
             throw new RuntimeException("please provide us with a 'tagNameToRemove' value!")
         }
 
-        tagNameToRemove.each {
-            tagService.removeTagFrom(it,owner)
+        tagNameToRemove.each { String name ->
+            tagService.removeTagFrom(name,owner)
         }
 
         owner.save(flush: true)

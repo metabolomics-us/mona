@@ -23,7 +23,6 @@ class SubmitterService {
             submitter.lastName = json.lastName ?: "not provided"
 
             submitter.password = "${System.currentTimeMillis()}"
-            log.debug("valid: ${submitter.validate()} - ${submitter.errors}" )
             submitter.save(flush:true)
         }
 

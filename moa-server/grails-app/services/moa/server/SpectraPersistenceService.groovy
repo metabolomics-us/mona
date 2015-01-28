@@ -27,7 +27,7 @@ class SpectraPersistenceService {
 
         //handle outdated format
         if (json.comments instanceof String) {
-            log.info("using out dated Mona format, comment's should be in form of an array -> skipping attribute!")
+            log.debug("using out dated Mona format, comment's should be in form of an array -> skipping attribute!")
             String value = json.get("comments")
             json.remove("comments")
 
@@ -40,10 +40,10 @@ class SpectraPersistenceService {
         }
 
         if(json.biologicalCompound == null){
-            throw new RuntimeException("sorry you need to provide a biologicalCompound!")
+            throw new exception.ValidationException("sorry you need to provide a biologicalCompound!")
         }
         if(json.chemicalCompound == null){
-            throw new RuntimeException("sorry you need to provide a chemicalCompound!")
+            throw new exception.ValidationException("sorry you need to provide a chemicalCompound!")
         }
 
 
@@ -91,7 +91,7 @@ class SpectraPersistenceService {
         spectrum.save()
 
         //submit for validation
-        //SpectraValidationJob.triggerNow([spectraId:spectrum.id])
+        SpectraValidationJob.triggerNow([spectraId:spectrum.id])
 
         //spectrum is now ready to work on
 
