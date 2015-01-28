@@ -1,14 +1,10 @@
 package moa.server
-
 import moa.Compound
-import moa.server.curation.CompoundCurationService
-
 //@Transactional
 class CompoundService {
 
     NameService nameService
 
-    CompoundCurationService compoundCurationService
     /**
      * adds or updates this compound in the system
      * @param compound
@@ -45,20 +41,14 @@ class CompoundService {
         myCompound.save()
 
         compound.names.each {
-                nameService.addNameToCompound(it.name, myCompound)
+            nameService.addNameToCompound(it.name, myCompound)
         }
 
         log.info("compound valid: ${myCompound.validate()}")
         myCompound.save()
 
-        try {
-            compoundCurationService.validate(myCompound.id)
-        }
-        catch (Exception e){
-            //debugging enough not important errors normally
-            log.debug(e.getMessage(),e)
-        }
-            return myCompound;
+        CompoundCurationJob.triggerNow(compoundId: myCompound.id)
+        return myCompound;
 
     }
 

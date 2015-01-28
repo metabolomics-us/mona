@@ -111,13 +111,6 @@ class SpectraPersistenceService {
                 }
             }
         }
-
-        //submit for validation
-        SpectraValidationJob.triggerNow([spectraId: spectrum.id])
-
-        //spectrum is now ready to work on
-
-
         return spectrum;
 
     }

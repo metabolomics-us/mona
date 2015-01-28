@@ -18,37 +18,37 @@ class BootStrap {
         Submitter.findOrCreateWhere(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa").save()
 
         JSON.registerObjectMarshaller(Tag,
-                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class", "id", "tagCachingService"])
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class", "id", "tagCachingService","dateCreated","lastUpdated"])
         )
 
         JSON.registerObjectMarshaller(Compound,
-                DomainClassMarshaller.createExcludeMarshaller(Compound, ["class", "spectra"])
+                DomainClassMarshaller.createExcludeMarshaller(Compound, ["class", "spectra","dateCreated"])
         )
 
         JSON.registerObjectMarshaller(Submitter,
-                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra", "password"])
+                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra", "password","dateCreated","lastUpdated"])
         )
 
         JSON.registerObjectMarshaller(Spectrum,
-                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class"])
+                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class","dateCreated"])
         )
         JSON.registerObjectMarshaller(Name,
-                DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound"])
+                DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound","dateCreated"])
         )
         JSON.registerObjectMarshaller(MetaData,
-                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class", "value"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class", "value","dateCreated"])
         )
         JSON.registerObjectMarshaller(MetaDataValue,
                 DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class", "id", "owner", "metaData"])
         )
         JSON.registerObjectMarshaller(MetaDataCategory,
-                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class", "metaDatas"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class", "metaDatas","dateCreated"])
         )
         JSON.registerObjectMarshaller(Comment,
-                DomainClassMarshaller.createExcludeMarshaller(Comment, ["class"])
+                DomainClassMarshaller.createExcludeMarshaller(Comment, ["class","dateCreated"])
         )
         JSON.registerObjectMarshaller(Ion,
-                DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id"])
+                DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
         )
 
 

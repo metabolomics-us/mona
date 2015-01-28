@@ -45,19 +45,6 @@ setPngOption <- function(file){
     )
 }
 
-
-
-"long running calculations"
-
-jobSubmissionTime <- sapply(importDuration$time,toms)
-
-for(i in 1:length(jobSubmissionTime)-1){
-    jobSubmissionTime[i] = jobSubmissionTime[i+1] - jobSubmissionTime[i]
-}
-
-"chop the last one off since it's not a difference anyway"
-jobSubmissionTime = head(jobSubmissionTime,-1)
-
 "LETS START WITH PLOTS"
 
 "General import related plots"
@@ -108,47 +95,9 @@ title("Estimates how many spectra in a given time the system can import")
 "our output file"
 dev.off()
 
-
-"generate a chart off the job execution rate over time"
-
-setPngOption("graph-5.png")
-
-plot(head(importDuration$time,-1),jobSubmissionTime,xlab="submission time",ylab="duration to previous job in ms",main="Job Submission Time over current runtime",col="lightblue")
-
-dev.off()
-
-"histogram of the job submission time"
-
-setPngOption("graph-6.png")
-
-generateHistogram(jobSubmissionTime,"Job submission distribution","time in ms")
-
-dev.off()
-
-"calculate job submission statistics"
-
-setPngOption("graph-7.png")
-
-medianJobsPerSecond = median(jobSubmissionTime)/1000
-meanJobsPerSecond = mean(jobSubmissionTime)/1000
-
-
-jobPerformance <- data.frame(
-
-    Timeframe = c('Ms/s','Ms/min','Ms/h','MS/d'),
-    Median = c(1/medianJobsPerSecond,60/medianJobsPerSecond,60*60/medianJobsPerSecond,60*60*24/medianJobsPerSecond),
-    Mean = c(1/meanJobsPerSecond,60/meanJobsPerSecond,60*60/meanJobsPerSecond,60*60*24/meanJobsPerSecond)
-)
-
-
-textplot(format(jobPerformance,digits=1),valign="top")
-title("Estimates how many Jobs in a given time the system can handle")
-
-dev.off()
-
 "calculate on how many samples this analysis was based"
 
-setPngOption("graph-8.png")
+setPngOption("graph-5.png")
 
 textplot(format(
  data.frame(
@@ -166,12 +115,12 @@ dev.off()
 "General validation plots"
 
 
-setPngOption("graph-9.png")
+setPngOption("graph-6.png")
 generateHistogram(validationDuration$duration,"Validation Duration of Spectra","time in s")
 
 dev.off()
 
-setPngOption("graph-10.png")
+setPngOption("graph-7.png")
 
 generateLineChart(validationDuration$duration,"Validation time over time","spectra count","time in s")
 
@@ -200,10 +149,7 @@ ncol = 2)
 
 grid.arrange(
      rasterGrob(readPNG("graph-7.png", native = FALSE),interpolate = FALSE),
-     rasterGrob(readPNG("graph-8.png", native = FALSE),interpolate = FALSE),
-     rasterGrob(readPNG("graph-9.png", native = FALSE),interpolate = FALSE),
-     rasterGrob(readPNG("graph-10.png", native = FALSE),interpolate = FALSE),
-     
+
      
      ncol = 2)
 

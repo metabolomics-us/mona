@@ -53,7 +53,7 @@ class Spectrum extends SupportsMetaData {
         if(ions == null){
             return ""
         }
-        return ions.join(":")
+        return ions.join(" ")
     }
 
     void setSpectrum(String spectrum){
