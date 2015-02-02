@@ -31,7 +31,7 @@ environments {
     lipid {
 
         dataSource {
-            dbCreate = "create-drop"
+            dbCreate = "update"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-lipid"
             driverClassName="org.postgresql.Driver"
             username="compound"

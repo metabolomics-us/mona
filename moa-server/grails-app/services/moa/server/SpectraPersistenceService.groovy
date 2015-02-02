@@ -93,7 +93,23 @@ class SpectraPersistenceService {
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
         spectrum.save()
 
+        double max = 0
 
+        //find our max intensity
+
+        json.spectrum.split(" ").each { s ->
+            def i = s.split(":")
+
+            if (i.size() > 1) {
+                double intensity = Double.parseDouble(i[1])
+
+                if(intensity > max){
+                    max = intensity
+                }
+            }
+        }
+
+        //calculate relative spectra
         json.spectrum.split(" ").each { s ->
             def i = s.split(":")
 
@@ -104,7 +120,7 @@ class SpectraPersistenceService {
                 if (mass > 0 && intensity > 0) {
                     Ion ion = new Ion()
                     ion.spectrum = spectrum
-                    ion.intensity = intensity
+                    ion.intensity = intensity/max
                     ion.mass = mass
 
                     ion.save()

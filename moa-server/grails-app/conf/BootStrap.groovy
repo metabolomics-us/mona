@@ -30,7 +30,7 @@ class BootStrap {
         )
 
         JSON.registerObjectMarshaller(Spectrum,
-                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class","dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class","dateCreated","ions"])
         )
         JSON.registerObjectMarshaller(Name,
                 DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound","dateCreated"])
@@ -47,10 +47,12 @@ class BootStrap {
         JSON.registerObjectMarshaller(Comment,
                 DomainClassMarshaller.createExcludeMarshaller(Comment, ["class","dateCreated"])
         )
+        /*
         JSON.registerObjectMarshaller(Ion,
                 DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
         )
 
+*/
 
 
     }
