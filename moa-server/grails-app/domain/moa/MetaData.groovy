@@ -18,6 +18,7 @@ class MetaData implements Comparable<MetaData> {
         name sqlType: "varchar(100)"
         version false
         priority defaultValue : 0
+        value  cascade: 'all-delete-orphan'
 
     }
 

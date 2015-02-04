@@ -8,10 +8,12 @@ class SupportsMetaData {
     static mapping = {
         tablePerSubclass true
         version false
+        //tags  cascade: 'all-delete-orphan'
+        metaData  cascade: 'all-delete-orphan'
     }
 
     Date dateCreated
     Date lastUpdated
 
-    static hasMany = [metaData: MetaDataValue]
+    static hasMany = [metaData: MetaDataValue,tags:Tag]
 }

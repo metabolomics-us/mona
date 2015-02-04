@@ -65,6 +65,14 @@ class SpectrumController extends RestfulController<Spectrum> {
         return spectraPersistenceService.create(params)
     }
 
+    def singleSave(){
+
+        String text = request.getReader().text
+
+        SpectraUploadJob.triggerNow([spectra: text])
+        render([message: "1 spectra submitted"] as JSON)
+    }
+
     def batchSave() {
 
         if (request.JSON) {

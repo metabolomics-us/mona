@@ -9,8 +9,8 @@ hibernate {
     cache.use_query_cache = true
     cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
 //    cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory' // Hibernate 4
-    //format_sql = true
-    //use_sql_comments = true
+    format_sql = true
+    use_sql_comments = true
 }
 
 environments {
@@ -24,8 +24,6 @@ environments {
             username="compound"
             password="asdf"
             pooled = true
-
-            logSql = false
         }
 
     }
@@ -33,7 +31,7 @@ environments {
     lipid {
 
         dataSource {
-            dbCreate = "create-drop"
+            dbCreate = "update"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-lipid"
             driverClassName="org.postgresql.Driver"
             username="compound"
@@ -99,7 +97,7 @@ environments {
 
         dataSource {
             dbCreate = "update"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-lipid"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa"
             driverClassName="org.postgresql.Driver"
             username="compound"
             password="asdf"

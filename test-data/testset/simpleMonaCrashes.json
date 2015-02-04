@@ -1,0 +1,405 @@
+{
+  "id": 69266,
+  "tags": 
+  [
+    {
+      "text": "accurate",
+      "ruleBased": true
+    },
+    {
+      "text": "LCMS",
+      "ruleBased": true
+    },
+    {
+      "text": "relative spectra",
+      "ruleBased": true
+    },
+    {
+      "text": "library",
+      "ruleBased": false
+    },
+    {
+      "text": "imported",
+      "ruleBased": false
+    },
+    {
+      "text": "suspect value",
+      "ruleBased": true
+    }
+  ],
+  "chemicalCompound": {
+    "id": 67689,
+    "molFile": "\n OpenBabel10151423232D\n\n 26 28  0  0  1  0  0  0  0  0999 V2000\n    5.8352   -1.8834    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1361    2.7914    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6312    0.9417    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8156    1.4126    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6312   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0000    0.9418    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8156   -0.4709    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.0197   -2.3543    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3644   -1.7572    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2624   -1.8834    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0000   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0779   -2.3543    0.0000 C   0  0  1  0  0  0  0  0  0  0  0  0\n    4.8935   -0.9416    0.0000 C   0  0  2  0  0  0  0  0  0  0  0  0\n    3.2624   -0.9417    0.0000 C   0  0  1  0  0  0  0  0  0  0  0  0\n    4.0779   -0.4708    0.0000 C   0  0  2  0  0  0  0  0  0  0  0  0\n    0.8156   -0.4709    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1362    1.1603    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8935   -1.8834    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8156   -1.4126    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1944    1.1603    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6070    1.9759    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6312    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0779   -3.2960    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7090   -0.4707    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4468   -0.4708    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6070    0.3448    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1 18  1  0  0  0  0\n  2 21  1  0  0  0  0\n  3  4  2  0  0  0  0\n  3  5  1  0  0  0  0\n  4  6  1  0  0  0  0\n  5  7  2  0  0  0  0\n  6 11  2  0  0  0  0\n  7 11  1  0  0  0  0\n  8  9  1  0  0  0  0\n  8 12  1  0  0  0  0\n  9 13  1  0  0  0  0\n 10 12  1  0  0  0  0\n 10 14  1  0  0  0  0\n 11 16  1  0  0  0  0\n 12 23  1  6  0  0  0\n 12 18  1  0  0  0  0\n 13 24  1  6  0  0  0\n 13 15  1  0  0  0  0\n 13 18  1  0  0  0  0\n 14 25  1  1  0  0  0\n 14 15  1  0  0  0  0\n 14 22  1  0  0  0  0\n 15 26  1  1  0  0  0\n 15 17  1  0  0  0  0\n 16 19  2  0  0  0  0\n 16 22  1  0  0  0  0\n 17 20  2  0  0  0  0\n 17 21  1  0  0  0  0\nM  END\n",
+    "tags": 
+    [
+    ],
+    "names": 
+    [
+      {
+        "name": "COCAINE"
+      },
+      {
+        "name": "Cocaine"
+      },
+      {
+        "name": "OCAINE"
+      },
+      {
+        "name": "(1S,3S,4R,5R)-3-benzoyloxy-8-methyl-8-azabicyclo[3.2.1]octane-4-carboxylic acid methyl ester"
+      },
+      {
+        "name": "ocaine"
+      }
+    ],
+    "inchiKey": "ZPUCINDJVBIVPJ-LJISPDSOSA-N",
+    "dateCreated": "2014-08-22T01:55:31Z",
+    "lastUpdated": "2014-08-22T01:55:31Z",
+    "inchi": "InChI=1S/C17H21NO4/c1-18-12-8-9-13(18)15(17(20)21-2)14(10-12)22-16(19)11-6-4-3-5-7-11/h3-7,12-15H,8-10H2,1-2H3/t12-,13+,14-,15+/m0/s1",
+    "metaData": 
+    [
+      {
+        "unit": null,
+        "category": "computed",
+        "computed": true,
+        "name": "total exact mass",
+        "value": "303.147058152",
+        "suspect": false,
+        "type": "string"
+      },
+      {
+        "unit": null,
+        "category": "computed",
+        "computed": true,
+        "name": "molecule formula",
+        "value": "C17H21NO4",
+        "suspect": false,
+        "type": "string"
+      }
+    ]
+  },
+  "predictedCompound": null,
+  "spectrum": "91.054:0.305 108.0808:1.119 118.0409:0.132 119.0491:0.492 122.0966:0.334 150.0914:2.88 151.0748:0.123 182.1178:100 272.1281:1.281",
+  "biologicalCompound": {
+    "id": 67689,
+    "molFile": "\n OpenBabel10151423232D\n\n 26 28  0  0  1  0  0  0  0  0999 V2000\n    5.8352   -1.8834    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1361    2.7914    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6312    0.9417    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8156    1.4126    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6312   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0000    0.9418    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8156   -0.4709    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.0197   -2.3543    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3644   -1.7572    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2624   -1.8834    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0000   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0779   -2.3543    0.0000 C   0  0  1  0  0  0  0  0  0  0  0  0\n    4.8935   -0.9416    0.0000 C   0  0  2  0  0  0  0  0  0  0  0  0\n    3.2624   -0.9417    0.0000 C   0  0  1  0  0  0  0  0  0  0  0  0\n    4.0779   -0.4708    0.0000 C   0  0  2  0  0  0  0  0  0  0  0  0\n    0.8156   -0.4709    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1362    1.1603    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8935   -1.8834    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8156   -1.4126    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1944    1.1603    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6070    1.9759    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6312    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0779   -3.2960    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7090   -0.4707    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4468   -0.4708    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6070    0.3448    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1 18  1  0  0  0  0\n  2 21  1  0  0  0  0\n  3  4  2  0  0  0  0\n  3  5  1  0  0  0  0\n  4  6  1  0  0  0  0\n  5  7  2  0  0  0  0\n  6 11  2  0  0  0  0\n  7 11  1  0  0  0  0\n  8  9  1  0  0  0  0\n  8 12  1  0  0  0  0\n  9 13  1  0  0  0  0\n 10 12  1  0  0  0  0\n 10 14  1  0  0  0  0\n 11 16  1  0  0  0  0\n 12 23  1  6  0  0  0\n 12 18  1  0  0  0  0\n 13 24  1  6  0  0  0\n 13 15  1  0  0  0  0\n 13 18  1  0  0  0  0\n 14 25  1  1  0  0  0\n 14 15  1  0  0  0  0\n 14 22  1  0  0  0  0\n 15 26  1  1  0  0  0\n 15 17  1  0  0  0  0\n 16 19  2  0  0  0  0\n 16 22  1  0  0  0  0\n 17 20  2  0  0  0  0\n 17 21  1  0  0  0  0\nM  END\n",
+    "tags": 
+    [
+    ],
+    "names": 
+    [
+      {
+        "name": "COCAINE"
+      },
+      {
+        "name": "Cocaine"
+      },
+      {
+        "name": "OCAINE"
+      },
+      {
+        "name": "(1S,3S,4R,5R)-3-benzoyloxy-8-methyl-8-azabicyclo[3.2.1]octane-4-carboxylic acid methyl ester"
+      },
+      {
+        "name": "ocaine"
+      }
+    ],
+    "inchiKey": "ZPUCINDJVBIVPJ-LJISPDSOSA-N",
+    "dateCreated": "2014-08-22T01:55:31Z",
+    "lastUpdated": "2014-08-22T01:55:31Z",
+    "inchi": "InChI=1S/C17H21NO4/c1-18-12-8-9-13(18)15(17(20)21-2)14(10-12)22-16(19)11-6-4-3-5-7-11/h3-7,12-15H,8-10H2,1-2H3/t12-,13+,14-,15+/m0/s1",
+    "metaData": 
+    [
+      {
+        "unit": null,
+        "category": "computed",
+        "computed": true,
+        "name": "total exact mass",
+        "value": "303.147058152",
+        "suspect": false,
+        "type": "string"
+      },
+      {
+        "unit": null,
+        "category": "computed",
+        "computed": true,
+        "name": "molecule formula",
+        "value": "C17H21NO4",
+        "suspect": false,
+        "type": "string"
+      }
+    ]
+  },
+  "submitter": {
+    "id": 1272861,
+    "lastName": "Blank",
+    "emailAddress": "EA@MassBank.jp",
+    "firstName": "Eawag"
+  },
+  "dateCreated": "2014-08-22T01:59:27Z",
+  "lastUpdated": "2014-08-22T01:59:27Z",
+  "comments": "this spectra was added to the system, by utilizing a library upload.",
+  "metaData": 
+  [
+    {
+      "unit": "ms",
+      "category": "computed",
+      "computed": true,
+      "name": "validation time",
+      "value": "258",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "data processing",
+      "value": "RECALIBRATE loess on assigned fragments and MS1",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "license",
+      "value": "CC BY-SA",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "authors",
+      "value": "Stravs M, Schymanski E, Singer H, Department of Environmental Chemistry, Eawag",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "exact mass",
+      "value": "303.1471",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "data processing",
+      "value": "DEPROFILE Spline",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "mass spectrometry",
+      "computed": false,
+      "name": "fragmentation mode",
+      "value": "CID",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "instrument type",
+      "value": "LC-ESI-ITFT",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "data processing",
+      "value": "REANALYZE Peaks with additional N2/O included",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "focused ion",
+      "computed": false,
+      "name": "base peak",
+      "value": "304.1557",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "computed",
+      "computed": true,
+      "name": "validation date",
+      "value": "30-Oct-2014",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "data processing",
+      "value": "WHOLE RMassBank 1.3.1",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": "ml/min",
+      "category": "chromatography",
+      "computed": false,
+      "name": "flow rate",
+      "value": "0.2",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "chromatography",
+      "computed": false,
+      "name": "column name",
+      "value": "XBridge C18 3.5um, 2.1x50mm, Waters",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "mass spectrometry",
+      "computed": false,
+      "name": "resolution",
+      "value": "7500",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "mass spectrometry",
+      "computed": false,
+      "name": "ms type",
+      "value": "MS2",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": "s",
+      "category": "chromatography",
+      "computed": false,
+      "name": "retention time",
+      "value": "300",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "chromatography",
+      "computed": false,
+      "name": "solvent",
+      "value": "A water with 0.1% formic acid",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "focused ion",
+      "computed": false,
+      "name": "precursor type",
+      "value": "[M+H]+",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "chromatography",
+      "computed": false,
+      "name": "solvent",
+      "value": "B methanol with 0.1% formic acid",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "instrument",
+      "value": "LTQ Orbitrap XL Thermo Scientific",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": "%",
+      "category": "mass spectrometry",
+      "computed": false,
+      "name": "collision energy",
+      "value": "35",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "origin",
+      "value": "EA281701.txt",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "mass spectrometry",
+      "computed": false,
+      "name": "ionization",
+      "value": "ESI",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "chromatography",
+      "computed": false,
+      "name": "flow gradient",
+      "value": "90/10 at 0 min, 50/50 at 4 min, 5/95 at 17 min, 5/95 at 25 min, 90/10 at 25.1 min, 90/10 at 30 min",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "focused ion",
+      "computed": false,
+      "name": "precursor m/z",
+      "value": "304.1543",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "mass spectrometry",
+      "computed": false,
+      "name": "ion mode",
+      "value": "POSITIVE",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": null,
+      "category": "none",
+      "computed": false,
+      "name": "copyright",
+      "value": "Copyright (C) 2012 Eawag, Duebendorf, Switzerland",
+      "suspect": false,
+      "type": "string"
+    },
+    {
+      "unit": "s",
+      "category": "chromatography",
+      "computed": false,
+      "name": "retention time",
+      "value": "300",
+      "suspect": false,
+      "type": "string"
+    }
+  ]
+}

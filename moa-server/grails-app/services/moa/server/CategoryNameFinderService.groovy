@@ -1,6 +1,9 @@
 package moa.server
+
+import grails.transaction.Transactional
 import moa.MetaDataCategory
 
+@Transactional
 class CategoryNameFinderService {
 
     /**
@@ -8,19 +11,23 @@ class CategoryNameFinderService {
      * @param metaDataKey
      * @return
      */
-    MetaDataCategory findCategoryForMetaDataKey(String metaDataKey, String providedCategoryName = null) {
-        log.debug("trying to find best category for: '${metaDataKey}', user provided '${providedCategoryName}' as suggested category")
-        String name = ""
+     MetaDataCategory findCategoryForMetaDataKey(String metaDataKey, String providedCategoryName = null) {
+        MetaDataCategory category = null
 
-        if (providedCategoryName != null && providedCategoryName.length() > 0) {
-            name = providedCategoryName;
-        } else {
-            name = MetaDataCategory.DEFAULT_CATEGORY_NAME
-        }
+            log.debug("trying to find best category for: '${metaDataKey}', user provided '${providedCategoryName}' as suggested category")
+            String name = ""
 
-        MetaDataCategory category = MetaDataCategory.findOrSaveByName(name)
+            if (providedCategoryName != null && providedCategoryName.length() > 0) {
+                name = providedCategoryName;
+            } else {
+                name = MetaDataCategory.DEFAULT_CATEGORY_NAME
+            }
 
-        log.debug("found category: '${category.id} - ${category.name}'")
+            category = MetaDataCategory.findOrSaveByName(name)
+            category.lock()
+            category.save()
+            log.debug("found category: '${category.id} - ${category.name}'")
+
         return category
     }
 }

@@ -55,16 +55,24 @@ beans = {
         bean.autowire = 'byName'
     }
 
-    deleteMetaDataRule(DeletedComputedMetaDataRule)
+    deleteMetaDataRule(DeletedComputedMetaDataRule)   { bean ->
+        bean.autowire = 'byName'
+    }
 
-    deleteRuleBasedTagRule(RemoveComputedTagRule)
 
-    compoundCurationWorkflow(CurationWorkflow) { workflow ->
+    deleteRuleBasedTagRule(RemoveComputedTagRule)  { bean ->
+        bean.autowire = 'byName'
+    }
+
+
+    compoundCurationWorkflow(CurationWorkflow) {bean ->
+        bean.autowire = 'byName'
 
         rules = [
                 deleteMetaDataRule,
                 deleteRuleBasedTagRule,
-                computeCompoundValidationData,
+                computeCompoundValidationData
+                ,
                 inchiKeyMatchesMolFile
         ]
     }
@@ -73,13 +81,19 @@ beans = {
  * Spectra curation workflow
  */
 
-    lcmsSpectraIdentification(LCMSSpectraIdentificationRule)
-    gcmsSpectraIdentification(GCMSSpectraIdentificationRule)
+    lcmsSpectraIdentification(LCMSSpectraIdentificationRule)  { bean ->
+        bean.autowire = 'byName'
+    }
+
+    gcmsSpectraIdentification(GCMSSpectraIdentificationRule){ bean ->
+        bean.autowire = 'byName'
+    }
 
 /**
  * limit our collision energy in case of percentages to under 100 and over 0
  */
-    collisionEnergyPercentageRule(PercentageValueRule, "collision energy") {
+    collisionEnergyPercentageRule(PercentageValueRule, "collision energy") {  bean ->
+        bean.autowire = 'byName'
         minPercentage = 0
         maxPercentage = 100
     }
@@ -87,7 +101,8 @@ beans = {
 /**
  * flow gradiant percentage rule
  */
-    flowGradientPercentageRule(PercentageValueRule, "flow gradient") {
+    flowGradientPercentageRule(PercentageValueRule, "flow gradient") {        bean ->
+        bean.autowire = 'byName'
         minPercentage = 0
         maxPercentage = 100
     }
@@ -95,7 +110,8 @@ beans = {
 /**
  * solvent percentage rule
  */
-    solventPercentageRule(PercentageValueRule, "solvent") {
+    solventPercentageRule(PercentageValueRule, "solvent") {       bean ->
+        bean.autowire = 'byName'
         minPercentage = 0
         maxPercentage = 100
     }
@@ -103,24 +119,28 @@ beans = {
 /**
  * tests the precision of the ions in a mass spec
  */
-    preciseEnough(MassSpecIsPreciseEnoughRule) { spec ->
+    preciseEnough(MassSpecIsPreciseEnoughRule) { bean ->
+        bean.autowire = 'byName'
         minPrecision = 3
     }
 
 /**
  * does the spectra has any annotations
  */
-    isAnnotatedSpectraRule(IsAnnotatedSpectraRule)
+    isAnnotatedSpectraRule(IsAnnotatedSpectraRule)  {bean ->
+        bean.autowire = 'byName'}
 
 /**
  * spectra should always be relative and not absolute
  */
-    convertSpectraToRelativeRule(ConvertMassspectraToRelativeSpectraRule)
+    convertSpectraToRelativeRule(ConvertMassspectraToRelativeSpectraRule)     {bean ->
+        bean.autowire = 'byName'}
 
 /**
  * is spectra dirty
  */
-    isSpectraDirty(IsCleanSpectraRule) {
+    isSpectraDirty(IsCleanSpectraRule) {    bean ->
+        bean.autowire = 'byName'
         noisePercentage = 2
         percentOfSpectraIsNoise = 80
     }
@@ -128,7 +148,8 @@ beans = {
 /**
  * is column metadata valid
  */
-    isColumnValid(IsColumnValid)
+    isColumnValid(IsColumnValid) {bean ->
+        bean.autowire = 'byName'}
 
 /**
  * verify that a lcms spectrum has valid adducts
@@ -151,7 +172,8 @@ beans = {
 /**
  * GCMS Derivatization rules
  */
-    gcmsDerivatizationRule(ConfirmGCMSDerivatizationRule)
+    gcmsDerivatizationRule(ConfirmGCMSDerivatizationRule)  {bean ->
+        bean.autowire = 'byName'}
 
     gcmsPredictDerivatizedCompoundRule(PredictGCMSCompoundRule) { bean ->
         bean.autowire = 'byName'
@@ -159,6 +181,7 @@ beans = {
 
     gcmsValidateChemicalCompound(GCMSDerivatizationDoesntMatchCompound) { bean ->
         predictGCMSCompoundRule = gcmsPredictDerivatizedCompoundRule
+        bean.autowire = 'byName'
 
     }
 
@@ -178,24 +201,29 @@ beans = {
     /**
      * checks if the provided accurate mass is actuall possible
      */
-    exactMassIsPossibleRule(ProvidedExactMassIsPossibleRule)
+    exactMassIsPossibleRule(ProvidedExactMassIsPossibleRule){bean ->
+        bean.autowire = 'byName'
+    }
 
 /**
  * set up subcuration workflow to check if it's an accurate mass spectra
  */
-    isAccurateMassSpectra(SubCurationWorkflow, true) {
+    isAccurateMassSpectra(SubCurationWorkflow, true) {bean ->
+        bean.autowire = 'byName'
         rules = [
                 preciseEnough
         ]
 
-        successAction = new AddTagAction("accurate")
-        failureAction = new RemoveTagAction("accurate")
+     //   successAction = new AddTagAction("accurate")
+     //   failureAction = new RemoveTagAction("accurate")
+
     }
 
 /**
  * set up metadata subcuration workflow
  */
-    metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") {
+    metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") {   bean ->
+        bean.autowire = 'byName'
         rules = [
                 collisionEnergyPercentageRule,
                 solventPercentageRule,
@@ -209,7 +237,8 @@ beans = {
 /**
  * define our complete workflow here
  */
-    spectraCurationWorkflow(CurationWorkflow) { workflow ->
+    spectraCurationWorkflow(CurationWorkflow) { bean ->
+        bean.autowire = 'byName'
 
         rules = [
                 /**
@@ -245,7 +274,8 @@ beans = {
      * metadata filter, we only care for certain fields
      */
 
-    metadataFilters(Filters) {
+    metadataFilters(Filters) {      bean ->
+        bean.autowire = 'byName'
 
         filters = [
                 new NameDoesntMatchFilter("SCIENTIFIC_NAME"),
@@ -281,7 +311,8 @@ beans = {
     /**
      * tries to discover units for us and converts them on the fly
      */
-    metadataValueConverter(Converters) {
+    metadataValueConverter(Converters) {   bean ->
+        bean.autowire = 'byName'
         converters = [
                 new BasicUnitConverter()
         ]

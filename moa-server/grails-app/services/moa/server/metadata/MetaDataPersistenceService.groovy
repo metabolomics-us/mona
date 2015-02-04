@@ -1,5 +1,7 @@
 package moa.server.metadata
 
+import exception.ConfigurationError
+import grails.transaction.Transactional
 import moa.MetaData
 import moa.MetaDataCategory
 import moa.MetaDataValue
@@ -12,6 +14,7 @@ import moa.server.MetaDataDictionaryService
 import persistence.metadata.filter.Filters
 import persistence.metadata.filter.unit.Converters
 
+@Transactional
 class MetaDataPersistenceService {
 
     MetaDataDictionaryService metaDataDictionaryService
@@ -45,6 +48,9 @@ class MetaDataPersistenceService {
     public void generateMetaDataObject(SupportsMetaData object, Map current) {
         log.debug("received ${object} and map: ${current}")
 
+        if(metadataFilters == null){
+            throw new ConfigurationError("sorry it looks like the filters were not injected!")
+        }
         if (!metadataFilters.accept(current.name, current.value)) {
             log.info("metadata '${current.name}' with value  '${current.value}' rejected at filters...")
             return
@@ -69,7 +75,7 @@ class MetaDataPersistenceService {
 
         log.debug("generating metadata object...")
         MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
-        category.addToMetaDatas(metaData)
+        metaData.category = category
 
         metaData.save()
         category.save()

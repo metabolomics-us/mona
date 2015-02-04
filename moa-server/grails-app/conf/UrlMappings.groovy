@@ -121,6 +121,12 @@ class UrlMappings {
         "/rest/spectra/batch/save"(controller: 'spectrum', action: 'batchSave')
 
         /**
+         * batch save method, to schedule lots of spectra to an internal queue.
+         */
+        "/rest/spectra/single/save"(controller: 'spectrum', action: 'singleSave',parseRequest: false)
+
+
+        /**
          * curation services
          */
         "/rest/spectra/curate/$id"(controller: 'spectraCuration', action: 'curate', id: id)

@@ -41,7 +41,7 @@ class PredictedMMinus15Rule extends AbstractCurationRule {
                 logger.debug("\t\t=>predicted compound is ${spectrum.predictedCompound}")
 
             } else {
-                logger.warn("not able to predict a compound, assuming provided compound is corred")
+                logger.debug("not able to predict a compound, assuming provided compound is corred")
             }
         }
 

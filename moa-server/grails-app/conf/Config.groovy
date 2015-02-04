@@ -76,6 +76,9 @@ environments {
         grails.converters.default.pretty.print = true
 
     }
+    lipid{
+        grails.converters.default.pretty.print = true
+    }
     production {
         grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
@@ -88,11 +91,11 @@ log4j = {
     //
     appenders {
         console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.WARN
-        file name: 'file', file: "/Volumes/ras/mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c{2}] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaImportStatistics', file: "/Volumes/ras/monaImport.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaFlushStatistics', file: "/Volumes/ras/monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaMemoryStatistics', file: "/Volumes/ras/monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-
+        file name: 'file', file: "/Volumes/ras/mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaImportStatistics', file: "/Volumes/ras/monaImport.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaFlushStatistics', file: "/Volumes/ras/monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaMemoryStatistics', file: "/Volumes/ras/monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaSpectraValidationStatistics', file: "/Volumes/ras/monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
 
     }
 
@@ -113,16 +116,21 @@ log4j = {
             'org.codehaus.groovy.grails.commons',            // core / classloading
             'org.codehaus.groovy.grails.plugins',            // plugins
             'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
-            'org.springframework',
-            'org.hibernate',
-            'net.sf.ehcache.hibernate',
-            'org.quartz.plugins.history.LoggingTriggerHistoryPlugin'
+            'org.springframework'
+            //'org.hibernate',
+            //'net.sf.ehcache.hibernate',
+            //'org.quartz.plugins.history.LoggingTriggerHistoryPlugin'
 
-    warn 'grails.app'
+    //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
+    warn 'org.quartz.plugins'
+    debug 'grails.app'
+    debug monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
     debug monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
     debug monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
     debug monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
+
+    //debug 'org.hibernate'
 
     environments {
         test {

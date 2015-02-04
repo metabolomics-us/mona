@@ -1,15 +1,24 @@
 package moa.server
-import grails.converters.JSON
+
 import grails.plugin.cache.CacheEvict
-import moa.*
+import moa.Ion
+import moa.Spectrum
 import moa.server.metadata.MetaDataPersistenceService
+import moa.server.tag.TagService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.validation.ValidationException
 
+//@Transactional
 class SpectraPersistenceService {
 
     MetaDataPersistenceService metaDataPersistenceService
+
+    TagService tagService
+
+    SubmitterService submitterService
+
+    CompoundService compoundService
 
     /**
      * creates a new spectrum and saves it in the database
@@ -21,7 +30,7 @@ class SpectraPersistenceService {
 
         //handle outdated format
         if (json.comments instanceof String) {
-            log.warn("using out dated Mona format, comment's should be in form of an array -> skipping attribute!")
+            log.debug("using out dated Mona format, comment's should be in form of an array -> skipping attribute!")
             String value = json.get("comments")
             json.remove("comments")
 
@@ -33,9 +42,19 @@ class SpectraPersistenceService {
             json.put("comments", array)
         }
 
+        if (json.biologicalCompound == null) {
+            throw new exception.ValidationException("sorry you need to provide a biologicalCompound!")
+        }
+        if (json.chemicalCompound == null) {
+            throw new exception.ValidationException("sorry you need to provide a chemicalCompound!")
+        }
+
+
         json = dropIds(json);
 
-        Spectrum spectrum = new Spectrum(json)
+        Spectrum spectrum = new Spectrum()
+
+        spectrum.spectrum = json.spectrum
 
         log.debug("inserting new spectra")
 
@@ -45,12 +64,15 @@ class SpectraPersistenceService {
         //we build the tags our self
         spectrum.tags = [];
 
-        //we only care about refreshing the submitter by it's email address since it's unique
-        spectrum.submitter = Submitter.findByEmailAddress(spectrum.submitter.emailAddress)
+        log.info("valid: ${spectrum.validate()}")
+        log.info(json)
 
-        //we need to ensure we don't double generate compound
-        spectrum.chemicalCompound = buildCompound(spectrum.chemicalCompound).save()
-        spectrum.biologicalCompound = buildCompound(spectrum.biologicalCompound).save()
+        //add a submitter
+        spectrum.submitter = submitterService.findOrCreateSubmitter(json.submitter)
+
+        spectrum.biologicalCompound = compoundService.buildCompound(json.biologicalCompound);
+        spectrum.chemicalCompound = compoundService.buildCompound(json.chemicalCompound)
+
 
         if (!spectrum.validate()) {
             log.error(spectrum.errors)
@@ -64,28 +86,47 @@ class SpectraPersistenceService {
 
             //adding our tags
             tags.each {
-
-                def tag = Tag.findOrSaveByText(it.text)
-                tag.refresh()
-                spectrum.addToTags(tag)
+                tagService.addTagTo(it.text, spectrum)
             }
         }
 
         metaDataPersistenceService.generateMetaDataFromJson(spectrum, json.metaData)
+        spectrum.save()
 
-        try {
-            spectrum.save(flush: true)
-        }
-        catch (Exception e) {
-            log.error(e.getMessage())
-            log.error(spectrum.getErrors())
-            log.error(json as JSON)
-            throw e;
-        }
-        //submit for validation
-        //SpectraValidationJob.triggerNow([spectraId:spectrum.id])
+        double max = 0
 
-        //spectrum is now ready to work on
+        //find our max intensity
+
+        json.spectrum.split(" ").each { s ->
+            def i = s.split(":")
+
+            if (i.size() > 1) {
+                double intensity = Double.parseDouble(i[1])
+
+                if(intensity > max){
+                    max = intensity
+                }
+            }
+        }
+
+        //calculate relative spectra
+        json.spectrum.split(" ").each { s ->
+            def i = s.split(":")
+
+            if (i.size() > 1) {
+                double mass = Double.parseDouble(i[0])
+                double intensity = Double.parseDouble(i[1])
+
+                if (mass > 0 && intensity > 0) {
+                    Ion ion = new Ion()
+                    ion.spectrum = spectrum
+                    ion.intensity = intensity/max
+                    ion.mass = mass
+
+                    ion.save()
+                }
+            }
+        }
         return spectrum;
 
     }
@@ -102,47 +143,6 @@ class SpectraPersistenceService {
  * @param compound
  * @return
  */
-    public Compound buildCompound(Compound compound) {
-
-        def names = compound.names
-
-        log.debug("trying to generate compound: ${compound.inchiKey}")
-
-        //first get the compound we want
-        def myCompound = Compound.findOrSaveByInchiKey(compound.inchiKey.trim())
-
-        /*
-        if (!myCompound) {
-            Compound.withTransaction {
-                myCompound = new Compound(inchiKey: compound.inchiKey.trim())
-
-                myCompound.save(flush: true)
-            }
-        }
-        */
-
-        //myCompound.lock()
-
-        log.debug("==> done: ${myCompound}")
-
-        if (names) {
-            //merge new names
-            names.each { name ->
-                Name n = Name.findOrSaveByNameAndCompound(name.name, myCompound)
-                if (n != null) {
-                    myCompound.addToNames(n)
-                }
-            }
-        }
-
-        myCompound.molFile = compound.molFile
-        myCompound.inchi = compound.inchi
-
-        myCompound.save(flush: true)
-
-        return myCompound;
-
-    }
 
     /**
      * removes id objects from the json file, since we can't really reuse them
@@ -153,6 +153,18 @@ class SpectraPersistenceService {
         json.remove("id")
 
         json.remove("predictedCompound")
+
+        json.entrySet().each {
+            if (it instanceof Map) {
+                dropIds(it)
+            } else if (it instanceof Collection) {
+                it.each {
+                    if (it instanceof Map) {
+                        dropIds()
+                    }
+                }
+            }
+        }
         return json
     }
 

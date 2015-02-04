@@ -1,7 +1,8 @@
 package curation.actions
 import curation.CurationAction
 import curation.CurationObject
-import moa.Tag
+import grails.util.Holders
+import moa.server.tag.TagService
 import org.apache.log4j.Logger
 /**
  * Created with IntelliJ IDEA.
@@ -15,21 +16,27 @@ class RemoveTagAction implements CurationAction {
 
     String[] tagNameToRemove = null
 
+    TagService tagService
     RemoveTagAction() {
-
-    }
+   }
 
     /**
      * specify a tag for us
      * @param tagName
      */
     RemoveTagAction(String... tagName) {
+        this()
         this.tagNameToRemove = tagName
     }
 
 
     @Override
     void doAction(CurationObject toValidate) {
+
+        if(tagService == null){
+            tagService = Holders.grailsApplication.mainContext.tagService
+        }
+
         def owner = null
         if(toValidate.isSpectra()) {
             owner = toValidate.getObjectAsSpectra()
@@ -46,21 +53,9 @@ class RemoveTagAction implements CurationAction {
             throw new RuntimeException("please provide us with a 'tagNameToRemove' value!")
         }
 
-        tagNameToRemove.each {
-            Tag tag = Tag.findOrSaveByText(it)
-            tag.ruleBased = true
-            tag.save(flush: true)
-
-            if (owner.getTags().contains(tag)) {
-                owner.removeFromTags(tag)
-                tag.save(flush: true)
-            } else {
-                logger.debug("spectra did not contain required tag!")
-            }
-
+        tagNameToRemove.each { String name ->
+            tagService.removeTagFrom(name,owner)
         }
-
-        owner.save(flush: true)
 
         logger.debug("=> done")
     }

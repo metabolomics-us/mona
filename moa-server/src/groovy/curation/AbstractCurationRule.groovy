@@ -1,10 +1,9 @@
 package curation
 
-import curation.actions.AddTagAction
 import curation.actions.IgnoreOnFailureAction
-import curation.actions.RemoveTagAction
 import moa.Compound
 import moa.Tag
+import moa.server.tag.TagService
 import org.apache.log4j.Logger
 import org.openscience.cdk.DefaultChemObjectBuilder
 import org.openscience.cdk.Molecule
@@ -15,6 +14,7 @@ import org.openscience.cdk.io.MDLV2000Reader
 import org.openscience.cdk.tools.CDKHydrogenAdder
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator
+import org.springframework.beans.factory.annotation.Autowired
 import util.chemical.Derivatizer
 
 /**
@@ -30,6 +30,9 @@ abstract class AbstractCurationRule implements CurationRule {
     CurationAction successAction
 
     CurationAction failureAction
+
+    @Autowired
+    TagService tagService
 
     /**
      * default constructor
@@ -198,12 +201,19 @@ abstract class AbstractCurationRule implements CurationRule {
     }
 
     protected void addTag(CurationObject object, String... tags) {
-        new AddTagAction(tags).doAction(object)
+        if (object.isSupportsMetaDataObject()) {
+            tags.each { String tag ->
+                tagService.addTagTo(tag, object.getObjectAsSupportsMetaData())
+            }
+        }
     }
 
     protected void removeTag(CurationObject object, String... tags) {
-        new RemoveTagAction(tags).doAction(object)
+        if (object) {
+            tags.each {
+                tagService.removeTagFrom(it, object.getObjectAsSupportsMetaData())
+            }
+        }
     }
-
 
 }
