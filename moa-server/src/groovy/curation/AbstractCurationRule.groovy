@@ -16,7 +16,6 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator
 import org.springframework.beans.factory.annotation.Autowired
 import util.chemical.Derivatizer
-
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth

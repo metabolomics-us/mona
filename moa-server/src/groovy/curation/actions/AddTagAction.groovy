@@ -5,6 +5,8 @@ import grails.util.Holders
 import moa.SupportsMetaData
 import moa.server.tag.TagService
 import org.apache.log4j.Logger
+import org.springframework.beans.factory.annotation.Autowired
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -13,6 +15,7 @@ import org.apache.log4j.Logger
  */
 class AddTagAction implements CurationAction {
 
+    @Autowired
     TagService tagService
 
     Logger logger = Logger.getLogger(getClass())

@@ -19,7 +19,9 @@ class GCMSDerivatizationDoesntMatchCompound extends AbstractCurationRule {
     double accuracyInDalton = 1
 
     GCMSDerivatizationDoesntMatchCompound() {
-        super(new AddTagAction(SUSPECT_VALUE), new RemoveTagAction(SUSPECT_VALUE))
+        super()
+        this.successAction = new AddTagAction(SUSPECT_VALUE)
+        this.failureAction = new RemoveTagAction(SUSPECT_VALUE)
     }
 
     @Override

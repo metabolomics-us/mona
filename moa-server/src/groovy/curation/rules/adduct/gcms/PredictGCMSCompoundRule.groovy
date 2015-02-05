@@ -22,7 +22,9 @@ class PredictGCMSCompoundRule extends AbstractCurationRule {
     CompoundPropertyService compoundPropertyService
 
     PredictGCMSCompoundRule() {
-        super(new AddTagAction(VIRTUAL_COMPOUND), new RemoveTagAction(VIRTUAL_COMPOUND))
+
+        this.successAction = new AddTagAction(VIRTUAL_COMPOUND)
+        this.failureAction = new RemoveTagAction(VIRTUAL_COMPOUND)
     }
 
     @Override

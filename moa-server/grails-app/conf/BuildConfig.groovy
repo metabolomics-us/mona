@@ -35,6 +35,12 @@ grails.project.dependency.resolution = {
     // whether to do a secondary resolve on plugin installation, not advised and here for backwards compatibility
 
     repositories {
+
+        grailsPlugins()
+        grailsHome()
+        mavenLocal()
+        grailsCentral()
+        mavenCentral()
         mavenRepo "http://repo.fiehnlab.ucdavis.edu:55000/content/groups/public"
 
         mavenRepo "http://download.java.net/maven/2/"
@@ -43,11 +49,6 @@ grails.project.dependency.resolution = {
         mavenRepo "http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty"
         mavenRepo "http://jni-inchi.sourceforge.net/m2repo"
 
-        grailsPlugins()
-        grailsHome()
-        mavenLocal()
-        grailsCentral()
-        mavenCentral()
         // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
     }
 
@@ -100,14 +101,16 @@ grails.project.dependency.resolution = {
         compile("java3d:vecmath:1.3.1")
         compile("net.sf.jni-inchi:jni-inchi:0.7")
 
-        compile('net.sourceforge.owlapi:owlapi-distribution:4.0.0')
+        //compile('net.sourceforge.owlapi:owlapi-distribution:4.0.0')
 
     }
 
     plugins {
+        //compile ":tomcat:8.0.18"
+
         // plugins for the build system only
-        build ":tomcat:7.0.50"
-        //compile ":jetty:2.0.3"
+        //build ":tomcat:7.0.50"
+        compile ":jetty:2.0.3"
 
         // plugins for the compile step
         compile ":hibernate:3.6.10.15"
@@ -119,7 +122,7 @@ grails.project.dependency.resolution = {
         // plugins needed at runtime but not for compilation
         runtime ":database-migration:1.3.8"
         runtime ":resources:1.2.1"
-        runtime ":cors:1.1.4"
+        //runtime ":cors:1.1.4"
         runtime ":jquery:1.11.1"
         runtime ':twitter-bootstrap:3.1.1.3'
 
