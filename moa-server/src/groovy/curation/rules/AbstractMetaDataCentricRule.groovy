@@ -21,6 +21,9 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
         super(successAction, failureAction)
     }
 
+    public AbstractMetaDataCentricRule(){
+        super()
+    }
     /**
      * does the actual check
      * @param value

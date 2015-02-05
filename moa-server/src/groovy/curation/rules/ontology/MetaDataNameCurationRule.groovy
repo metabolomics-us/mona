@@ -37,7 +37,7 @@ class MetaDataNameCurationRule extends AbstractCurationRule{
     }
 
     private void checkValue(MetaDataValue m){
-
+          //TODO
     }
 
     @Override

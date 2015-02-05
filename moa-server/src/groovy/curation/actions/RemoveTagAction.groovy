@@ -4,6 +4,8 @@ import curation.CurationObject
 import grails.util.Holders
 import moa.server.tag.TagService
 import org.apache.log4j.Logger
+import org.springframework.beans.factory.annotation.Autowired
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -16,6 +18,7 @@ class RemoveTagAction implements CurationAction {
 
     String[] tagNameToRemove = null
 
+    @Autowired
     TagService tagService
     RemoveTagAction() {
    }

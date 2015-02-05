@@ -21,7 +21,9 @@ class CompoundShouldBeDerivatizedRule extends AbstractCurationRule {
     double maximumNoneDerivatizedMass = 600
 
     CompoundShouldBeDerivatizedRule() {
-        super(new RemoveTagAction("should be derivatized"), new AddTagAction("should be derivatized"))
+        super()
+        this.successAction =new RemoveTagAction("should be derivatized")
+        this.failureAction = new AddTagAction("should be derivatized")
     }
 
     @Override

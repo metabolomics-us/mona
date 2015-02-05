@@ -17,7 +17,8 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     Map<String, String> listOfAcceptedField = ["instrument": "gcms", "instrument type": "gc", "ionization energy": "ev"]
 
     def GCMSSpectraIdentificationRule() {
-        super(new AddTagAction(GCMS_SPECTRA), new RemoveTagAction(GCMS_SPECTRA));
+        this.successAction = new AddTagAction(GCMS_SPECTRA)
+        this.failureAction =  new RemoveTagAction(GCMS_SPECTRA)
     }
 
     def GCMSSpectraIdentificationRule(CurationAction successAction, CurationAction failureAction) {

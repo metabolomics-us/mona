@@ -19,7 +19,10 @@ class VerifyInChIKeyAndMolFileMatchRule extends AbstractCompoundRule {
     MetaDataPersistenceService metaDataPersistenceService
 
     VerifyInChIKeyAndMolFileMatchRule() {
-        super(new RemoveTagAction(INCHI_KEY_DOESNT_MATCH_MOLECULE),new AddTagAction(INCHI_KEY_DOESNT_MATCH_MOLECULE))
+        //super(new RemoveTagAction(INCHI_KEY_DOESNT_MATCH_MOLECULE),new AddTagAction(INCHI_KEY_DOESNT_MATCH_MOLECULE));
+        super()
+        this.successAction = new RemoveTagAction(INCHI_KEY_DOESNT_MATCH_MOLECULE)
+        this.failureAction = new AddTagAction(INCHI_KEY_DOESNT_MATCH_MOLECULE)
     }
 
     @Override
@@ -40,20 +43,20 @@ class VerifyInChIKeyAndMolFileMatchRule extends AbstractCompoundRule {
         logger.debug("\t=> match(${equals}")
 
 
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "calculated InChI Code", value: gen.inchi, category: "computed",computed:true])
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "calculated InChI Key", value: gen.inchiKey, category: "computed",computed:true])
+        metaDataPersistenceService.generateMetaDataObject(compound, [name: "calculated InChI Code", value: gen.inchi, category: "computed", computed: true])
+        metaDataPersistenceService.generateMetaDataObject(compound, [name: "calculated InChI Key", value: gen.inchiKey, category: "computed", computed: true])
 
 
         def compoundKey = compound.inchiKey.split("-")
         def computedKey = gen.inchiKey.split("-")
 
-        if(compoundKey[0] != computedKey[0]){
+        if (compoundKey[0] != computedKey[0]) {
             new AddTagAction("calculated InChI Key first block doesn't match").doAction(toValidate)
         }
-        if(compoundKey[1] != computedKey[1]){
+        if (compoundKey[1] != computedKey[1]) {
             new AddTagAction("calculated InChI Key second block doesn't match").doAction(toValidate)
         }
-        if(compoundKey[2] != computedKey[2]){
+        if (compoundKey[2] != computedKey[2]) {
             new AddTagAction("calculated InChI Key third block doesn't match").doAction(toValidate)
         }
 

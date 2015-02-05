@@ -20,7 +20,9 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
 
     def LCMSSpectraIdentificationRule() {
-        super(new AddTagAction(LCMS_SPECTRA), new RemoveTagAction(LCMS_SPECTRA));
+        super()
+        this.successAction = new AddTagAction(LCMS_SPECTRA)
+        this.failureAction =new RemoveTagAction(LCMS_SPECTRA)
     }
 
     def LCMSSpectraIdentificationRule(CurationAction successAction, CurationAction failureAction) {
