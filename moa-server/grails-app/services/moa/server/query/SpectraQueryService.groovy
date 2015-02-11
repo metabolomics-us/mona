@@ -1,12 +1,15 @@
 package moa.server.query
 
 import grails.transaction.Transactional
+import groovy.sql.Sql
 import moa.Spectrum
 import moa.Tag
 import org.hibernate.QueryException
 import org.springframework.cache.annotation.Cacheable
 
 class SpectraQueryService {
+
+    def dataSource
 
     static transactional = false
 
@@ -17,12 +20,61 @@ class SpectraQueryService {
     def query(long id) {
         return Spectrum.get(id)
     }
+
+    /**
+     * returns a list of similar spectra and similarity scores
+     * @param massSpectra massspectra in a standard ion:intensity ion:intensity format
+     * @param minSimilarity minimum similarity required
+     * @param countTopIons how many of the ions largest ions have to be shared to be considered a hit
+     * @param maxResults how many results do we maximal want to have
+     */
+    def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10){
+        Sql sql = new Sql(dataSource)
+
+        def resultList = []
+
+        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a",[massSpectra,minSimilarity,countTopIons,maxResults] ){  row ->
+
+            def hit = [:]
+            hit.id = row.id
+            hit.similarity = row.similarity
+
+            resultList.add(hit)
+        }
+
+        return resultList
+    }
+
+
+    /**
+     * returns a list of similar spectra and similarity scores
+     * @param id mona spectrum id
+     * @param minSimilarity minimum similarity required
+     * @param countTopIons how many of the ions largest ions have to be shared to be considered a hit
+     * @param maxResults how many results do we maximal want to have
+     */
+    def findSimilarSpectraIds(long id, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10){
+        Sql sql = new Sql(dataSource)
+
+        def resultList = []
+
+        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a",[id,minSimilarity,countTopIons,maxResults] ){  row ->
+
+            def hit = [:]
+            hit.id = row.id
+            hit.similarity = row.similarity
+
+            resultList.add(hit)
+        }
+
+        return resultList
+    }
+
+
     /**
      * returns a list of spectra data based on the given query
      * @param json
      */
-
-
     @Cacheable("spectrum")
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
