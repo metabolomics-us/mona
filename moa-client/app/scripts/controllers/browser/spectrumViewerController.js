@@ -37,6 +37,30 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
 
 
     /**
+     * Sort order for the ion table - default m/z ascending
+     */
+    $scope.ionTableSort = 'ion';
+    $scope.ionTableSortReverse = false;
+
+    $scope.sortIonTable = function(column) {
+        if (column == 'ion') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort == '+ion') ? !$scope.ionTableSortReverse : false;
+            $scope.ionTableSort = '+ion';
+        }
+
+        else if (column == 'intensity') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort == '-intensity') ? !$scope.ionTableSortReverse : false;
+            $scope.ionTableSort = '-intensity';
+        }
+
+        else if (column == 'annotation') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort == '-annotation') ? !$scope.ionTableSortReverse : false;
+            $scope.ionTableSort = '-annotation';
+        }
+    };
+
+
+    /**
      * Perform all initial data formatting and processing
      */
     (function () {
@@ -131,11 +155,14 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
             match[1] = truncateMass(match[1]);
 
             // Store ion
-            $scope.massSpec.push({ion: match[1], intensity: match[2], annotation: annotation, computed: computed});
+            $scope.massSpec.push({
+                ion: parseFloat(match[1]),
+                intensity:parseFloat(match[2]),
+                annotation: annotation,
+                computed: computed
+            });
         }
     })();
-
-
 };
 
 
