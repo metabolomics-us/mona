@@ -94,10 +94,16 @@ class SpectraQueryController {
                 id = json.spectra.toString()
 
             }
+
+            long begin = System.currentTimeMillis()
             def result = spectraQueryService.findSimilarSpectraIds(id, json.minSimilarity as Double, json.commonIonCount as Integer, json.maxHits as Integer)
 
 
-            render(result as JSON)
+            def map = [result: result, statistics: [
+                    duration: (System.currentTimeMillis() - begin)
+            ], config        : json]
+
+            render(map as JSON)
         } else {
             render(status: 404, text: "please provide a provide the following payLoade {'spectra:string or id',minSimilarity:0-1000,maxHits:0-25,commonIonCount:0-n'}");
         }

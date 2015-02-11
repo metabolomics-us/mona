@@ -10,10 +10,18 @@
 %{--</body>--}%
 %{--</html>--}%
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.css">
 
-%{--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.css">--}%
-
-<script src="bower_components/bootstrap/dist/css/bootstrap.css"></script>
+%{--<g:javascript>--}%
+    %{--$.ajax({--}%
+       %{--/* url: '/controller/ajax_wrapper/',--}%
+        %{--success: function( aResponse ) {--}%
+            %{--var response = $.parseJSON( aResponse );--}%
+%{----}%
+            %{--console.log( response );--}%
+        %{--}*/--}%
+    %{--});--}%
+%{--</g:javascript>--}%
 
 <div>
 <div ng-value="error"></div>
