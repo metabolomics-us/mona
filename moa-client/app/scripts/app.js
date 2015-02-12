@@ -21,7 +21,7 @@ var app = angular
  * location of our backend server
  */
 
-app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/trashcan.fiehnlab.ucdavis.edu:8080');
+//app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/trashcan.fiehnlab.ucdavis.edu:8080');
 //app.constant('REST_BACKEND_SERVER', 'http://127.0.0.1:8080');
 //app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
 

@@ -71,33 +71,13 @@ environments {
         }
     }
 
+    /**
+     * mona production database
+     */
     production {
-        /*
         dataSource {
             dbCreate = "update"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa"
-            driverClassName="org.postgresql.Driver"
-            username="compound"
-            password="asdf"
-            pooled = true
-            properties {
-                maxActive = -1
-                minEvictableIdleTimeMillis=1800000
-                timeBetweenEvictionRunsMillis=1800000
-                numTestsPerEvictionRun=3
-                testOnBorrow=true
-                testWhileIdle=true
-                testOnReturn=false
-                validationQuery="SELECT 1"
-                jdbcInterceptors="ConnectionState"
-            }
-
-        }    */
-
-
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-prod"
             driverClassName="org.postgresql.Driver"
             username="compound"
             password="asdf"
