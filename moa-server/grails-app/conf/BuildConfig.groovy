@@ -118,6 +118,7 @@ grails.project.dependency.resolution = {
         compile ":rest-client-builder:2.0.0"
         compile ":quartz:1.0-RC11"
         compile ":cache:1.1.8"
+        compile ":url-mappings-generator:0.1"
 
         // plugins needed at runtime but not for compilation
         runtime ":database-migration:1.3.8"

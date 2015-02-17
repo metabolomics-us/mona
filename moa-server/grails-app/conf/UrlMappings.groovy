@@ -110,6 +110,7 @@ class UrlMappings {
          */
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
 
+        "/rest/spectra/similarity"(controller: 'spectraQuery', action: 'similaritySearch')
         /**
          * batch updates based on queries
          */

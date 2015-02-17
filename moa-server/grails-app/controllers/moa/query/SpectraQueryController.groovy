@@ -32,7 +32,7 @@ class SpectraQueryController {
             result = spectraQueryService.query(json, params);
         }
 
-        switch (json.format ) {
+        switch (json.format) {
             case "msp":
                 for (Spectrum s : result) {
                     render spectraConversionService.convertToMsp(s)
@@ -65,6 +65,49 @@ class SpectraQueryController {
 
             render(result as JSON)
         }
+    }
+
+    /**
+     * runs a similarity search against the system
+     */
+    def similaritySearch() {
+
+        def json = request.JSON
+
+        log.info("received request: ${json}")
+        if (json && json.spectra && json.minSimilarity) {
+
+            if (json.maxHits == null) {
+                json.maxHits = 10
+            }
+
+            if (json.commonIonCount == null) {
+                json.commonIonCount = 3
+            }
+
+            log.info("modified request: ${json}")
+            def id = null
+            try {
+                id = Long.parseLong(json.spectra.toString())
+            }
+            catch (NumberFormatException e) {
+                id = json.spectra.toString()
+
+            }
+
+            long begin = System.currentTimeMillis()
+            def result = spectraQueryService.findSimilarSpectraIds(id, json.minSimilarity as Double, json.commonIonCount as Integer, json.maxHits as Integer)
+
+
+            def map = [result: result, statistics: [
+                    duration: (System.currentTimeMillis() - begin)
+            ], config        : json]
+
+            render(map as JSON)
+        } else {
+            render(status: 404, text: "please provide a provide the following payLoade {'spectra:string or id',minSimilarity:0-1000,maxHits:0-25,commonIonCount:0-n'}");
+        }
+
     }
 
 }
