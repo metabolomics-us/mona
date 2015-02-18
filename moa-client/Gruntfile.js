@@ -324,6 +324,15 @@ module.exports = function (grunt) {
                         src: ['generated/*']
                     },
 
+                    // scripts
+                    // remove if using ngmin and uglify
+                    {
+                        expand: true,
+                        cwd: '.tmp/concat/scripts',
+                        dest: '<%= yeoman.dist %>/scripts',
+                        src: ['*.js']
+                    },
+
                     // fonts
                     {
                         expand: true,
@@ -466,11 +475,11 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer',
         'concat',
-        'ngmin',
+        //'ngmin',
         'copy:dist',
         'cdnify',
         'cssmin',
-        'uglify',
+        //'uglify',
         'rev',
         'usemin',
         'htmlmin'
