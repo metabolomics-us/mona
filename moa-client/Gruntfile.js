@@ -37,14 +37,14 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-//        tasks: ['newer:jshint:all'],
+                //tasks: ['newer:jshint:all'],
                 options: {
                     livereload: true
                 }
             },
             jsTest: {
                 files: ['test/spec/{,*/}*.js'],
-//        tasks: ['newer:jshint:test', 'karma']
+                //tasks: ['newer:jshint:test', 'karma']
                 tasks: ['karma']
             },
             compass: {
@@ -101,22 +101,22 @@ module.exports = function (grunt) {
         },
 
         // Make sure code styles are up to par and there are no obvious mistakes
-//    jshint: {
-//      options: {
-//        jshintrc: '.jshintrc',
-//        reporter: require('jshint-stylish')
-//      },
-//      all: [
-//        'Gruntfile.js',
-//        '<%= yeoman.app %>/scripts/{,*/}*.js'
-//      ],
-//      test: {
-//        options: {
-//          jshintrc: 'test/.jshintrc'
-//        },
-//        src: ['test/spec/{,*/}*.js']
-//      }
-//    },
+        //jshint: {
+        //    options: {
+        //        jshintrc: '.jshintrc',
+        //        reporter: require('jshint-stylish')
+        //    },
+        //    all: [
+        //        'Gruntfile.js',
+        //        '<%= yeoman.app %>/scripts/{,*/}*.js'
+        //    ],
+        //    test: {
+        //        options: {
+        //            jshintrc: 'test/.jshintrc'
+        //        },
+        //        src: ['test/spec/{,*/}*.js']
+        //    }
+        //},
 
         // Empties folders to start fresh
         clean: {
@@ -235,7 +235,7 @@ module.exports = function (grunt) {
         // The following *-min tasks produce minified files in the dist folder
         cssmin: {
             options: {
-                root: '<%= yeoman.app %>'
+                //root: '<%= yeoman.app %>'
             }
         },
 
@@ -302,25 +302,53 @@ module.exports = function (grunt) {
         // Copies remaining files to places other tasks can use
         copy: {
             dist: {
-                files: [{
-                    expand: true,
-                    dot: true,
-                    cwd: '<%= yeoman.app %>',
-                    dest: '<%= yeoman.dist %>',
-                    src: [
-                        '*.{ico,png,txt}',
-                        '.htaccess',
-                        '*.html',
-                        'views/{,*/}*.html',
-                        'images/{,*/}*.{webp}',
-                        'fonts/*'
-                    ]
-                }, {
-                    expand: true,
-                    cwd: '.tmp/images',
-                    dest: '<%= yeoman.dist %>/images',
-                    src: ['generated/*']
-                }]
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= yeoman.app %>',
+                        dest: '<%= yeoman.dist %>',
+                        src: [
+                            '*.{ico,png,txt}',
+                            '.htaccess',
+                            '*.html',
+                            'views/**/*.html',
+                            'images/{,*/}*.{webp}',
+                            'fonts/*'
+                        ]
+                    },
+                    {
+                        expand: true,
+                        cwd: '.tmp/images',
+                        dest: '<%= yeoman.dist %>/images',
+                        src: ['generated/*']
+                    },
+
+                    // scripts
+                    // remove if using ngmin and uglify
+                    {
+                        expand: true,
+                        cwd: '.tmp/concat/scripts',
+                        dest: '<%= yeoman.dist %>/scripts',
+                        src: ['*.js']
+                    },
+
+                    // fonts
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= yeoman.app %>/bower_components/bootstrap',
+                        src: ['fonts/*.*'],
+                        dest: '<%= yeoman.dist %>'
+                    },
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= yeoman.app %>/bower_components/components-font-awesome',
+                        src: ['fonts/*.*'],
+                        dest: '<%= yeoman.dist %>'
+                    }
+                ]
             },
             styles: {
                 expand: true,
@@ -348,28 +376,28 @@ module.exports = function (grunt) {
         // By default, your `index.html`'s <!-- Usemin block --> will take care of
         // minification. These next options are pre-configured if you do not wish
         // to use the Usemin blocks.
-        // cssmin: {
-        //   dist: {
-        //     files: {
-        //       '<%= yeoman.dist %>/styles/main.css': [
-        //         '.tmp/styles/{,*/}*.css',
-        //         '<%= yeoman.app %>/styles/{,*/}*.css'
-        //       ]
-        //     }
-        //   }
-        // },
-        // uglify: {
-        //   dist: {
-        //     files: {
-        //       '<%= yeoman.dist %>/scripts/scripts.js': [
-        //         '<%= yeoman.dist %>/scripts/scripts.js'
-        //       ]
-        //     }
-        //   }
-        // },
-        // concat: {
-        //   dist: {}
-        // },
+        //cssmin: {
+        //    dist: {
+        //        files: {
+        //            '<%= yeoman.dist %>/styles/main.css': [
+        //                '.tmp/styles/{,*/}*.css',
+        //                '<%= yeoman.app %>/styles/{,*/}*.css'
+        //            ]
+        //        }
+        //    }
+        //},
+        //uglify: {
+        //    dist: {
+        //        files: {
+        //            '<%= yeoman.dist %>/scripts/scripts.js': [
+        //                '<%= yeoman.dist %>/scripts/scripts.js'
+        //            ]
+        //        }
+        //    }
+        //},
+        //concat: {
+        //    dist: {}
+        //},
 
         // Test settings
         karma: {
@@ -387,7 +415,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     {
-                        src: '**/*', cwd: 'dist',expand:true
+                        src: '**/*', cwd: 'dist', expand: true
                     }
                 ]
             }
@@ -397,15 +425,15 @@ module.exports = function (grunt) {
     /**
      * which server do we want to use for our application
      */
-    grunt.registerTask('setServer', function(target) {
+    grunt.registerTask('setServer', function (target) {
 
-        if(target === 'dist'){
-            grunt.file.copy('serverDeploy.js','app/scripts/server.js' );
+        if (target === 'dist') {
+            grunt.file.copy('serverDeploy.js', 'app/scripts/server.js');
         }
-        else if(target === 'local'){
-            grunt.file.copy('local.js','app/scripts/server.js' );
+        else if (target === 'local') {
+            grunt.file.copy('local.js', 'app/scripts/server.js');
         }
-        else{
+        else {
             //
         }
 
@@ -447,22 +475,21 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer',
         'concat',
-        'ngmin',
+        //'ngmin',
         'copy:dist',
         'cdnify',
         'cssmin',
-        'uglify',
+        //'uglify',
         'rev',
         'usemin',
         'htmlmin'
     ]);
 
     grunt.registerTask('default', [
-//    'newer:jshint',
+        //'newer:jshint',
         'test',
         'build'
     ]);
-
 
     /**
      *

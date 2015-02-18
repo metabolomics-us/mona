@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-8">
             <div class="h3">
-                Summary for spectra {{spectrum.id}}
+                Summary for Spectrum {{spectrum.id}}
             </div>
             <div class="h5">
                 {{spectrum.biologicalCompound.names[0].name}}
@@ -11,17 +11,16 @@
         <div class="col-md-4 text-right">
             <div class="h3">
                 <span class="dropdown">
+                    <a href class="dropdown-toggle"><i class="fa fa-cloud-download"></i> Download</a>
 
-                <a href class="dropdown-toggle"><i class="fa fa-cloud-download"></i> Download</a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="{{spectrum.id | spectraDownloadAsMsp}}" target="_blank">as MSP file</a>
+                            <a href="{{spectrum.id | spectraDownload}}" target="_blank">as Mona record</a>
 
-                          <ul class="dropdown-menu">
-                              <li>
-                                  <a href="{{spectrum.id | spectraDownloadAsMsp}}" target="_blank">as MSP file</a>
-                                  <a href="{{spectrum.id | spectraDownload}}" target="_blank">as Mona record</a>
-
-                              </li>
-                          </ul>
-                    </span>
+                        </li>
+                    </ul>
+                </span>
             </div>
         </div>
     </div>
@@ -39,10 +38,9 @@
 
             <accordion close-others="false">
                 <accordion-group is-open="accordionStatus.isSpectraOpen">
-
                     <accordion-heading>
-                        <div>Mass Spectra<i class="pull-right glyphicon"
-                                            ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen,
+                        <div>Mass Spectrum<i class="pull-right glyphicon"
+                                             ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen,
                                                        'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i>
                         </div>
                     </accordion-heading>
@@ -50,12 +48,9 @@
                     <div class="masspec-modal">
                         <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
                     </div>
-
                 </accordion-group>
 
                 <accordion-group is-open="accordionStatus.isIonTableOpen">
-
-
                     <accordion-heading>
                         <div>Ion Table<i class="pull-right glyphicon"
                                          ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen,
@@ -67,13 +62,13 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>Ion</th>
-                                <th>Intensity</th>
-                                <th>annotation</th>
+                                <th><a href="" ng-click="sortIonTable('ion')">Ion</a></th>
+                                <th><a href="" ng-click="sortIonTable('intensity')">Intensity</a></th>
+                                <th><a href="" ng-click="sortIonTable('annotation')">Annotation</a></th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="ion in massSpec">
+                            <tr ng-repeat="ion in massSpec | orderBy:ionTableSort:ionTableSortReverse">
                                 <td>{{ion.ion  | number : 4}}</td>
                                 <td>{{ion.intensity  | number : 4}}</td>
                                 <td>
@@ -90,7 +85,6 @@
                 </accordion-group>
             </accordion>
         </div>
-
     </div>
     <br/>
 
@@ -163,11 +157,10 @@
             <br/>
 
             <div ng-show="spectrum.comments.length">
-
                 <h4>Comments</h4>
 
                 <ul>
-                  <li ng-repeat="comment in spectrum.comments">{{comment.comment}}</li>
+                    <li ng-repeat="comment in spectrum.comments">{{comment.comment}}</li>
                 </ul>
             </div>
         </div>

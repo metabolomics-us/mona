@@ -38,7 +38,7 @@ class StatisticsService {
         int count = 0
 
         Tag.withSession { session ->
-            def result = session.createSQLQuery(" select count(*) as c from spectrum_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
+            def result = session.createSQLQuery(" select count(*) as c from supports_meta_data_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
 
             if (!result.isEmpty()) {
                 count = result[0]
@@ -56,7 +56,7 @@ class StatisticsService {
         def res = []
 
         Tag.withSession { session ->
-            def result = session.createSQLQuery(" select count(*) as count, text  from spectrum_tag a, tag b where a.tag_id = b.id group by text").list()
+            def result = session.createSQLQuery(" select count(*) as count, text  from supports_meta_data_tag a, tag b where a.tag_id = b.id group by text").list()
 
             if (!result.isEmpty()) {
                 for (Object[] o : result) {
@@ -77,7 +77,7 @@ class StatisticsService {
         int compoundCount = 0
 
         Tag.withSession { session ->
-            def result = session.createSQLQuery("select count(*) as c from compound_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
+            def result = session.createSQLQuery("select count(*) as c from supports_meta_data_tag a, tag b where a.tag_id = b.id and b.text = ? group by text").setString(0, text).list()
 
             if (!result.isEmpty()) {
                 compoundCount = result[0]

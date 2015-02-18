@@ -1,110 +1,109 @@
 <div>
+    <div class="row">
+        <div class="col-md-8">
 
-  <div class="row">
-    <div class="col-md-8">
+            <div ng-show="compound.metaData.length == 0">
+                <div class="alert alert-info">
+                    Sorry we do not have any metadata at this point in time for this compound
+                </div>
+            </div>
+            <div ng-show="compound.metaData.length > 0">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>name</th>
+                        <th>value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Internal Id</td>
+                        <td>{{compound.id}}</td>
+                    </tr>
 
-      <div ng-show="compound.metaData.length == 0">
-        <div class="alert alert-info">
-          Sorry we do not have any metadata at this point in time for this compound
-        </div>
-      </div>
-      <div ng-show="compound.metaData.length > 0">
-        <table class="table">
-          <thead>
-          <tr>
-            <th>name</th>
-            <th>value</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>Internal Id</td>
-            <td>{{compound.id}}</td>
-          </tr>
+                    <tr>
+                        <td>InChIKey</td>
+                        <td>{{compound.inchiKey}}</td>
+                    </tr>
 
-          <tr>
-            <td>InChIKey</td>
-            <td>{{compound.inchiKey}}</td>
-          </tr>
+                    <tr ng-repeat="meta in compound.metaData | unique:'name' | orderBy : 'name':true ">
 
-          <tr ng-repeat="meta in compound.metaData | unique:'name' | orderBy : 'name':true ">
-
-            <td>
+                        <td>
                             <span gw-meta-query value="meta" compound="true">
 
                             {{meta.name}}
                             </span>
-            </td>
-            <td>
-              {{meta.value}} {{meta.unit}}
+                        </td>
+                        <td>
+                            {{meta.value}} {{meta.unit}}
 
-              <!-- display this, if there seems to be something odd with this value -->
-              <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
+                            <!-- display this, if there seems to be something odd with this value -->
+                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
 
-              </i>
+                            </i>
 
-              <!-- display this, if it's a computed value -->
-              <i ng-show="meta.computed == true" class="fa fa-flask" tooltip-placement="top"
-                 tooltip="This value was computed via automated curation"></i>
+                            <!-- display this, if it's a computed value -->
+                            <i ng-show="meta.computed == true" class="fa fa-flask" tooltip-placement="top"
+                               tooltip="This value was computed via automated curation"></i>
 
-            </td>
-          </tr>
+                        </td>
+                    </tr>
 
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="col-md-4">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4">
 
-      <div class="text-right">
-        <div class="h5">
+            <div class="text-right">
+                <div class="h5">
                 <span class="dropdown">
 
                 <a href class="dropdown-toggle"><i class="fa fa-cloud-download"></i> Download</a>
 
                           <ul class="dropdown-menu">
-                            <li>
-                              <a href="{{compound.id | compoundDownloadAsMolFile }}" target="_blank">as Mol file</a>
-                            </li>
-                            <li>
-                              <a href="{{compound.id | compoundDownloadAsSDFFile }}" target="_blank">as SDF file</a>
-                            </li>
+                              <li>
+                                  <a href="{{compound.id | compoundDownloadAsMolFile }}" target="_blank">as Mol file</a>
+                              </li>
+                              <li>
+                                  <a href="{{compound.id | compoundDownloadAsSDFFile }}" target="_blank">as SDF file</a>
+                              </li>
 
-                            <li>
-                              <a href="{{compound.id | compoundDownloadFile }}" target="_blank">as Mona file</a>
-                            </li>
+                              <li>
+                                  <a href="{{compound.id | compoundDownloadFile }}" target="_blank">as Mona file</a>
+                              </li>
 
                           </ul>
                     </span>
+                </div>
+                <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
+                     id="big-{{pictureId}}-CompoundViewer_{{compound.id}}" ng-model="compound"></div>
+            </div>
         </div>
-      <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
-           id="big-{{pictureId}}-CompoundViewer_{{compound.id}}" ng-model="compound"></div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div ng-show="compound.names.length">
+
+                    <ul class="list-inline">
+                        <li ng-repeat="name in compound.names">{{name.name}}
+                            <span ng-if="!$last">,</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div ng-show="compound.tags.length">
+                    <ul class="list-inline">
+                        <li ng-repeat="tag in compound.tags">
+                            <span gw-tag="" rule-based="tag.ruleBased" value="tag" type="compound"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <div ng-show="compound.names.length">
-
-        <ul class="list-inline">
-          <li ng-repeat="name in compound.names">{{name.name}}
-            <span ng-if="!$last">,</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-
-      <div ng-show="compound.tags.length">
-        <ul class="list-inline">
-          <li ng-repeat="tag in compound.tags">
-            <span gw-tag="" rule-based="tag.ruleBased" value="tag" type="compound"></span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </div>
