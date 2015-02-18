@@ -41,7 +41,7 @@ class CompoundService {
         myCompound.save()
 
         compound.names.each {
-            nameService.addNameToCompound(it.name, myCompound)
+            nameService.addNameToCompound(it, myCompound)
         }
 
         log.info("compound valid: ${myCompound.validate()}")
