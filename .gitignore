@@ -1,3 +1,4 @@
+*.tar
 **/.DS_Store
 **/*.iml
 **/.idea/

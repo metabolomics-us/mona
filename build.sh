@@ -22,4 +22,4 @@ cp ../moa-client/mona-client.zip client.zip
 
 $(boot2docker shellinit)
 
-docker build .
+docker build -t mona .
