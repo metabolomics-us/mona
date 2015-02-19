@@ -110,7 +110,7 @@ log4j = {
 
     root {
         error 'stdout'
-        info 'file'
+        debug 'file'
 
     }
 
@@ -149,11 +149,11 @@ log4j = {
 
         development {
 
-            info 'util.chemical'
-            info 'curation'
+            debug 'util.chemical'
+            debug 'curation'
 
-            info 'grails.app'
-            info 'moa'
+            debug 'grails.app'
+            debug 'moa'
             //debug 'grails.plugin.cache'
 
 

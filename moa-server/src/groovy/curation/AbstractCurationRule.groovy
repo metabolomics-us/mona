@@ -79,6 +79,8 @@ abstract class AbstractCurationRule implements CurationRule {
             molFile = "\n" + molFile
         }
 
+        logger.debug("using mol file: ${molFile}")
+
         def reader = new MDLV2000Reader(new StringReader(molFile))
 
         Molecule mol = reader.read(new Molecule())

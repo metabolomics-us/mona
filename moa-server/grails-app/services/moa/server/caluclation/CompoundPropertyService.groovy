@@ -29,6 +29,7 @@ class CompoundPropertyService {
                 molFile = "\n" + molFile
             }
 
+            log.debug("mol file: ${molFile}")
             def reader = new MDLV2000Reader(new StringReader(molFile))
 
             Molecule molecule = reader.read(new Molecule())

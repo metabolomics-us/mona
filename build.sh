@@ -15,10 +15,10 @@ cd ..
 
 #assmeble docker file
 
-cd mona-docker
+cd mona-docker/single
 
-cp ../moa-server/target/mona-server.war root.war
-cp ../moa-client/mona-client.zip client.zip
+cp ../../moa-server/target/mona-server.war root.war
+cp ../../moa-client/mona-client.zip client.zip
 
 $(boot2docker shellinit)
 
