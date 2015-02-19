@@ -1,14 +1,6 @@
 #!/bin/sh
 
 ###
-# Squid Part
-###
-
-squid3 -z
-
-squid3
-
-###
 # Mona client part
 ###
 service nginx start

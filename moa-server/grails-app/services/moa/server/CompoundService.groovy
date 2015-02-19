@@ -36,7 +36,7 @@ class CompoundService {
 
 
         myCompound.molFile = compound.molFile
-        myCompound.inchi = compound.inchi
+        myCompound.inchi = compound.inci
 
         myCompound.save()
 

@@ -5,6 +5,8 @@ import moa.Compound
 import moa.MetaDataValue
 import moa.Name
 
+import java.text.Normalizer
+
 @Transactional
 class CompoundConversionService {
 
@@ -18,7 +20,7 @@ class CompoundConversionService {
      * @return
      */
     String convertToMol(Compound compound) {
-        return compound.molFile
+        return Normalizer.normalize(compound.molFile,Normalizer.Form.NFC)
     }
 
     /**
