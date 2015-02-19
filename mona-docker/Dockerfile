@@ -1,7 +1,5 @@
 FROM ubuntu
 MAINTAINER Gert Wohlgemuth "wohlgemuth@ucdavis.edu"
-#squid - runs on port 3128
-EXPOSE 3128
 
 #jetty - runs on port 8080
 EXPOSE 8080
@@ -20,7 +18,6 @@ RUN apt-get -qq install bash
 
 #install unzip
 RUN apt-get -y install unzip
-
 
 # Install awstats
 
@@ -52,11 +49,6 @@ RUN unzip /opt/mona/mona.zip -d /opt/mona
 
 ADD nginx/mona-client.conf /etc/nginx/sites-enabled/mona-client.conf
 ADD nginx/awtstats.conf /etc/awstats/awstats.client.conf
-
-#add our custom nginx files
-
-# install vim
-RUN apt-get install -y vim
 
 # Install Mona Server Apps
 ADD root.war /opt/jetty/webapps/root.war
