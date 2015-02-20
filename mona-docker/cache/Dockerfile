@@ -5,7 +5,7 @@ MAINTAINER Gert Wohlgemuth "wohlgemuth@ucdavis.edu"
 EXPOSE 80
  
 #here we are collecting our daily statistics
-EXPORT 8080
+EXPOSE 8080
 
 #update apt-get
 RUN apt-get update -y
@@ -27,15 +27,17 @@ RUN rm /etc/nginx/sites-enabled/default
 #configure nginx
 ADD nginx/logrotate /etc/logrotate.d/nginx
 RUN chmod 644 /etc/logrotate.d/nginx
-ADD nginx/cache.conf /etc/nginx/nginx.conf
+ADD nginx/nginx.conf /etc/nginx/nginx.conf
+ADD nginx/cache.conf /etc/nginx/sites-enabled/cache.conf
+
+#awstats configuration
 ADD nginx/awtstats.conf /etc/awstats/awstats.client.conf
 
 RUN   echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 
-###
-#useful utilities for testing and so, should not be on prodcution system
-#
-RUN apt-get install -y lynx mc vim
+ADD start.sh /opt/start.sh
+RUN chmod +x /opt/start.sh
+
 
 # Run nginx
-CMD ["nginx"]
+CMD ["/opt/start.sh"]
