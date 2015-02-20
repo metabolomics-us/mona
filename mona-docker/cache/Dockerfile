@@ -3,9 +3,6 @@ MAINTAINER Gert Wohlgemuth "wohlgemuth@ucdavis.edu"
 
 #nginx - runs on port 80
 EXPOSE 80
- 
-#here we are collecting our daily statistics
-EXPOSE 8080
 
 #update apt-get
 RUN apt-get update -y
