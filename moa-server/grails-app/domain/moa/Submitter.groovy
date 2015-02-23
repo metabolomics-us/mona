@@ -1,6 +1,8 @@
 package moa
 
 import grails.rest.Resource
+import moa.auth.Role
+import moa.auth.SubmitterRole
 
 /**
  * who submitted this spectra
@@ -11,19 +13,22 @@ class Submitter {
     Date dateCreated
     Date lastUpdated
 
+    transient springSecurityService
+
+    static transients = ['springSecurityService']
+
     static constraints = {
 	    emailAddress unique: true, blank: false
 	    firstName blank: false
 	    lastName blank: false
 	    password blank: false
 	    spectra nullable: true
-
     }
 
     static hasMany = [spectra: Spectrum]
 
     static mapping = {
-
+        password column: '`password`'
     }
 
     /**
@@ -35,6 +40,11 @@ class Submitter {
      * last name of the submitter
      */
     String lastName
+
+//    /**
+//     * institution of the submitter
+//     */
+//    String institution
 
     /**
      * email address of the submitter
@@ -50,4 +60,33 @@ class Submitter {
      * owned spectra
      */
     Set<Spectrum> spectra
+
+    /**
+     * state of the submitter account
+     */
+    boolean accountEnabled = true
+    boolean accountLocked
+    boolean accountExpired
+    boolean passwordExpired
+
+
+    Set<Role> getAuthorities() {
+        SubmitterRole.findAllBySubmitter(this).collect {
+            it.role
+        }
+    }
+
+    def beforeInsert() {
+        encodePassword()
+    }
+
+    def beforeUpdate() {
+        if (isDirty('password')) {
+            encodePassword()
+        }
+    }
+
+    protected void encodePassword() {
+        password = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(password) : password
+    }
 }

@@ -49,6 +49,9 @@ grails.project.dependency.resolution = {
         mavenRepo "http://ambit.uni-plovdiv.bg:8083/nexus/content/repositories/thirdparty"
         mavenRepo "http://jni-inchi.sourceforge.net/m2repo"
 
+        // repo for spring security rest
+        mavenRepo 'http://repo.spring.io/milestone'
+
         // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
     }
 
@@ -126,6 +129,12 @@ grails.project.dependency.resolution = {
         //runtime ":cors:1.1.4"
         runtime ":jquery:1.11.1"
         runtime ':twitter-bootstrap:3.1.1.3'
+
+        // spring security
+        compile ":spring-security-core:2.0-RC3"
+        compile ":spring-security-rest:1.5.0.M1", {
+            excludes: 'spring-security-core'
+        }
 
 
         // Uncomment these (or add new ones) to enable additional resources capabilities

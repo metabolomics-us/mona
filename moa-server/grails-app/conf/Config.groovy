@@ -130,6 +130,13 @@ log4j = {
             //'net.sf.ehcache.hibernate',
             //'org.quartz.plugins.history.LoggingTriggerHistoryPlugin'
 
+    debug  'com.odobo',
+            'grails.app.controllers.com.odobo',
+            'grails.app.services.com.odobo',
+            'org.pac4j',
+            'org.springframework.security'
+
+
     //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
     warn 'org.quartz.plugins'
@@ -194,3 +201,8 @@ grails.cache.config = {
 grails.cache.enabled = true
 
 grails.cache.keyGenerator = "cacheKey"
+
+
+// Set additional config locations
+grails.config.locations = []
+grails.config.locations << SpringSecurityConfig
