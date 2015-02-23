@@ -70,18 +70,27 @@ grails.exceptionresolver.params.exclude = ['password']
 // configure auto-caching of queries by default (if false you can cache individual queries with 'cache: true')
 grails.hibernate.cache.queries = false
 
+def logdirectory = "./"
+
 environments {
     development {
         grails.logging.jul.usebridge = true
         grails.converters.default.pretty.print = true
 
+        logdirectory = "/Volumes/ras/"
     }
     lipid{
         grails.converters.default.pretty.print = true
+
+
+        logdirectory = "/Volumes/ras/"
     }
     production {
         grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
+
+
+        logdirectory = "/var/log/mona/"
     }
 }
 
@@ -91,17 +100,17 @@ log4j = {
     //
     appenders {
         console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.WARN
-        file name: 'file', file: "/Volumes/ras/mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaImportStatistics', file: "/Volumes/ras/monaImport.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaFlushStatistics', file: "/Volumes/ras/monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaMemoryStatistics', file: "/Volumes/ras/monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaSpectraValidationStatistics', file: "/Volumes/ras/monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'file', file: "${logdirectory}mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.INFO
+        file name: 'monaImportStatistics', file: "${logdirectory}monaImport.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaFlushStatistics', file: "${logdirectory}monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaMemoryStatistics', file: "${logdirectory}monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaSpectraValidationStatistics', file: "${logdirectory}monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
 
     }
 
     root {
         error 'stdout'
-        info 'file'
+        debug 'file'
 
     }
 
@@ -140,11 +149,11 @@ log4j = {
 
         development {
 
-            info 'util.chemical'
-            info 'curation'
+            debug 'util.chemical'
+            debug 'curation'
 
-            info 'grails.app'
-            info 'moa'
+            debug 'grails.app'
+            debug 'moa'
             //debug 'grails.plugin.cache'
 
 

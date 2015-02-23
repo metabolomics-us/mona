@@ -77,37 +77,14 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
         var deferred = $q.defer();
 
-        // define backup conversion using openbabel
-        var babelConversion = function (backup) {
-            $log.warn('utilizing backup service...');
-            gwCtsService.convertInChICodeToMolUsingBabel(spectra.inchi, function (molFile) {
-                spectra.molFile = molFile;
-
-                //add a tag to it
-                if (angular.isUndefined(spectra.tags)) {
-                    spectra.tags = [];
-                }
-
-                spectra.tags.push({text: 'not confirmed identification!'});
-                deferred.resolve(spectra);
-            });
-        };
-
         //we have an inchi, which is the best
         if (spectra.inchi) {
             $log.debug("using InChI code");
             gwCtsService.convertInChICodeToMol(spectra.inchi,
                 function (molFile) {
-
-                    if (molFile === null) {
-                        $log.debug('did not recive a mole file');
-                        babelConversion('cts returned null');
-                    } else {
                         spectra.molFile = molFile;
                         deferred.resolve(spectra);
-                    }
-                },
-                babelConversion
+                }
             );
         }
         //we have an inchi key
@@ -184,12 +161,15 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
                 }
             }
             s.biologicalCompound.metaData = [];
-            s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
 
             s.chemicalCompound.inchiKey = spectra.inchiKey;
             s.chemicalCompound.inchi = spectra.inchi;
 
-            s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
+            if(spectra.molFile != null) {
+                s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
+                s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
+            }
+
             s.chemicalCompound.metaData = [];
 
             s.spectrum = spectra.spectrum;

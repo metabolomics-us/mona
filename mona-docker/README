@@ -1,0 +1,8 @@
+single:
+
+The docker 'single' image, contains  a complete mona image with server, redirects and can be used standalone. All the rest services will be statically linked against mona.fiehnlab.ucdavis.edu
+
+cache:
+
+The docker 'cache' image, is an nginx caching proxy sitting in front of 1-n 'single' images deployed on a docker server. The main reson for this image is automaticall load balancing and other combined web statistics.
+

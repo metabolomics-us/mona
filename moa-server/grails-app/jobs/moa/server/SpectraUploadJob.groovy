@@ -4,11 +4,13 @@ import exception.ValidationException
 import grails.converters.JSON
 import moa.Spectrum
 import org.codehaus.groovy.grails.web.json.JSONObject
+
 /**
  * used to upload a spectra in the background
  */
 class SpectraUploadJob {
 
+    def resubmit = false
     def concurrent = false
 
     /**
@@ -32,10 +34,9 @@ class SpectraUploadJob {
                 try {
 
                     def json = null
-                    if(data.spectra instanceof JSONObject){
+                    if (data.spectra instanceof JSONObject) {
                         json = data.spectra
-                    }
-                    else{
+                    } else {
                         json = JSON.parse(data.spectra);
                     }
 
@@ -45,22 +46,33 @@ class SpectraUploadJob {
                     long end = System.currentTimeMillis()
 
                     long needed = end - begin
-                    log.debug( "stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}" )
+                    log.debug("stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}")
 
 
-                    SpectraValidationJob.triggerNow([spectraId:result.id])
+                    SpectraValidationJob.triggerNow([spectraId: result.id])
 
                 }
-                catch (ValidationException e){
+                catch (ValidationException e) {
+
+                    JSON json = JSON.parse(data.spectra) as JSON
+                    json.prettyPrint = true
+
                     log.debug("validation error found: ${e.getMessage()} ignoring this ojbect and skipping it from the upload")
-                    log.debug(JSON.parse(data.spectra) as JSON,e)
+                    log.debug(json, e)
                 }
-                catch (Exception e){
-                    log.warn("resubmitting failed job",e)
-                    log.debug(JSON.parse(data.spectra) as JSON,e)
+                catch (Exception e) {
 
-                    SpectraUploadJob.triggerNow([spectra: data.spectra])
+                    JSON json = JSON.parse(data.spectra) as JSON
+                    json.prettyPrint = true
+                    log.debug(json, e)
 
+                    if (resubmit) {
+                        log.warn("resubmitting failed job", e)
+
+                        SpectraUploadJob.triggerNow([spectra: data.spectra])
+                    } else {
+                        log.error("upload fatally failed: ${e.getMessage()}", e)
+                    }
                 }
             } else {
                 log.info("\t=>\tno spectra was provided!")
