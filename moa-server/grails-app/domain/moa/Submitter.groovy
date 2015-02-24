@@ -18,11 +18,12 @@ class Submitter {
     static transients = ['springSecurityService']
 
     static constraints = {
-	    emailAddress unique: true, blank: false
-	    firstName blank: false
-	    lastName blank: false
-	    password blank: false
-	    spectra nullable: true
+        emailAddress unique: true, blank: false
+        firstName blank: true
+        lastName blank: true
+        password blank: false
+        spectra nullable: true
+        institution nullable: true, blank: true
     }
 
     static hasMany = [spectra: Spectrum]
@@ -41,10 +42,10 @@ class Submitter {
      */
     String lastName
 
-//    /**
-//     * institution of the submitter
-//     */
-//    String institution
+    /**
+     * institution of the submitter
+     */
+    String institution
 
     /**
      * email address of the submitter

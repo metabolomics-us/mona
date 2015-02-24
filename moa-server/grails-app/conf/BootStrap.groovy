@@ -18,7 +18,7 @@ class BootStrap {
         log.warn("in development mode, setting up users...")
 
         //just some test data
-        Submitter.findOrCreateWhere(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "password").save()
+        Submitter.findOrCreateWhere(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "password", institution: "University of California, Davis").save()
 
         // Submitter roles
         Role.findOrCreateByAuthority('ROLE_ADMIN').save()
