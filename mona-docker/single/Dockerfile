@@ -57,10 +57,4 @@ ADD root.war /opt/jetty/webapps/root.war
 ADD start.sh /opt/start.sh
 RUN chmod +x /opt/start.sh
 
-###
-#useful utilities for testing and so, should not be on prodcution system
-#
-RUN apt-get install -y lynx mc vim
-
-# Run Jetty
-CMD ["/opt/start.sh"]
+ENTRYPOINT ["./opt/start.sh"]

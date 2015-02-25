@@ -3,7 +3,7 @@
 
 echo "
         upstream backends {
-                server trashcan.fiehnlab.ucdavis.edu:8080;
+                server gose.fiehnlab.ucdavis.edu:10000;
         }
 
 " > /etc/nginx/conf.d/upstream.conf
