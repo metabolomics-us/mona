@@ -7,12 +7,13 @@
 
         <spectra-upload-progress-bar></spectra-upload-progress-bar>
         <hr />
+        <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra</button>
     </div>
 
     <div ng-show="!spectraUploaded">
         <h3>Upload Mass Spectra Wizard</h3>
         <p>Please use the following wizard to upload a new mass spectra to the MoNA.<br /> It should guide you and provide you with all the help you need.</p>
-    </div>
 
-    <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
+        <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
+    </div>
 </div>
