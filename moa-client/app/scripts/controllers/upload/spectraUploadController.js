@@ -26,7 +26,7 @@ moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibrary
         });
     };
 
-    $scope.$on('spectra:uploadprogress', function(event, uploadProgress) {
-        $scope.spectraUploadProgress = uploadProgress;
+    $scope.$on('spectra:uploadprogress', function(event, completedSpectraCount, uploadedSpectraCount) {
+        $scope.spectraUploadProgress = parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10);
     });
 };

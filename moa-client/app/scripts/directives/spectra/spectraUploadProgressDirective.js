@@ -12,6 +12,7 @@ app.directive('spectraUploadProgressBar', function () {
         replace: false,
         template:
             '<div ng-if="spectraUploadProgress > -1">'+
+            '    <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} spectra</i></div>'+
             '    <progressbar ng-class="{active: running, \'progress-striped\': running}" max="100" value="spectraUploadProgress">'+
             '        <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" ng-bind="spectraUploadProgressString"></span>'+
             '    </progressbar>'+
@@ -27,9 +28,13 @@ app.directive('spectraUploadProgressBar', function () {
             $scope.spectraUploadProgressString = 'Processing...';
             $scope.running = false;
 
-            $scope.$on('spectra:uploadprogress', function(event, uploadProgress) {
-                $scope.spectraUploadProgress = uploadProgress;
-                $scope.spectraUploadProgressString = uploadProgress +'%';
+            $scope.$on('spectra:uploadprogress', function(event, completedSpectraCount, uploadedSpectraCount) {
+                $scope.completedSpectraCount = completedSpectraCount;
+                $scope.uploadedSpectraCount = uploadedSpectraCount;
+
+                $scope.spectraUploadProgress = parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10);
+                $scope.spectraUploadProgressString = $scope.spectraUploadProgress +'%';
+
                 $scope.running = ($scope.spectraUploadProgress != -1 && $scope.spectraUploadProgress < 100);
             });
         }
