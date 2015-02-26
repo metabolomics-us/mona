@@ -367,7 +367,15 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
 
     /**
-     *
+     * Checks if spectra are being processed and uploaded
+     */
+    self.isUploading = function() {
+        return self.completedSpectraCount != self.uploadedSpectraCount;
+    };
+
+
+    /**
+     * Updates and broadcasts the upload progress
      */
     var updateUploadProgress = function() {
         self.completedSpectraCount++;
@@ -378,6 +386,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             self.uploadedSpectraCount = 0;
         }
     };
+
+
 
     /**
      * Requires separate function for broadcasting at start of upload
