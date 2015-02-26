@@ -4,10 +4,6 @@
 'use strict';
 
 moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibraryService) {
-    $scope.spectraUploaded = false;
-    $scope.spectraUploadProgress = 0.0;
-
-
     /**
      * Initializes our spectra upload dialog
      */
@@ -26,7 +22,14 @@ moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibrary
         });
     };
 
-    $scope.$on('spectra:uploadprogress', function(event, completedSpectraCount, uploadedSpectraCount) {
-        $scope.spectraUploadProgress = parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10);
-    });
+    /**
+     * Check whether the user is uploading, and open the upload dialog accordingly
+     */
+    (function() {
+        $scope.spectraUploaded = UploadLibraryService.isUploading();
+
+        if (!$scope.spectraUploaded) {
+            $scope.uploadSpectraDialog()
+        }
+    })();
 };
