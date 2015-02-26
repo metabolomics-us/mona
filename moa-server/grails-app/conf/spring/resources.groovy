@@ -10,6 +10,7 @@ import curation.rules.adduct.LCMSAdductCurationRule
 import curation.rules.adduct.gcms.GCMSDerivatizationDoesntMatchCompound
 import curation.rules.adduct.gcms.PredictGCMSCompoundRule
 import curation.rules.adduct.gcms.PredictedMMinus15Rule
+
 import curation.rules.compound.meta.CompoundComputeMetaDataRule
 import curation.rules.compound.meta.DeletedComputedMetaDataRule
 import curation.rules.compound.inchi.VerifyInChIKeyAndMolFileMatchRule
@@ -59,17 +60,18 @@ beans = {
     }
 
 
+
     compoundCurationWorkflow(CurationWorkflow) { bean ->
         bean.autowire = 'byName'
 
         rules = [
                 deleteMetaDataRule,
                 deleteRuleBasedTagRule,
-                computeCompoundValidationData
-                ,
+                computeCompoundValidationData,
                 inchiKeyMatchesMolFile
         ]
     }
+
 
 //Spectra curation workflow
     lcmsSpectraIdentification(LCMSSpectraIdentificationRule) { bean ->

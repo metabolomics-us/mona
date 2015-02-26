@@ -40,6 +40,14 @@ class SpectraUploadJob {
                         json = JSON.parse(data.spectra);
                     }
 
+                    if(log.isDebugEnabled()) {
+                        JSON j = json
+                        j.prettyPrint = true
+
+                        log.debug("received object for upload: \n ${j}")
+                    }
+
+
                     Spectrum result = spectraPersistenceService.create(json)
                     //result.save(flush: true)
 
@@ -49,7 +57,7 @@ class SpectraUploadJob {
                     log.debug("stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}")
 
 
-                    SpectraValidationJob.triggerNow([spectraId: result.id])
+                    //SpectraValidationJob.triggerNow([spectraId: result.id])
 
                 }
                 catch (ValidationException e) {
