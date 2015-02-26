@@ -11,11 +11,11 @@
  * @param $http
  * @param CTSService
  * @param TaggingService
- * @param AuthentificationService
+ * @param AuthenticationService
  * @param newSpectrum
  * @constructor
  */
-moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, AppCache, AuthentificationService, UploadLibraryService, $log) {
+moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, AppCache, AuthenticationService, UploadLibraryService, $log) {
     //
     // Define wizard steps
     //
@@ -225,7 +225,7 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
     /**
      * assign our submitter
      */
-    AuthentificationService.getCurrentUser().then(function (data) {
+    AuthenticationService.getCurrentUser().then(function (data) {
         $scope.submitter = data;
     });
 

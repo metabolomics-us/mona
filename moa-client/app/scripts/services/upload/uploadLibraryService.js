@@ -5,7 +5,7 @@
 /**
  * handles the upload of library spectra to the system
  */
-app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spectrum, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
+app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spectrum, gwMspService, gwChemifyService, AuthenticationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
     // Representing this service
     var self = this;
 
@@ -334,7 +334,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         self.uploadedSpectraCount += files.length;
         broadcastUploadProgress();
 
-        AuthentificationService.getCurrentUser().then(function (submitter) {
+        AuthenticationService.getCurrentUser().then(function (submitter) {
             var uploadSpectrum = function (file) {
                 self.loadSpectraFile(file, function (data, origin) {
                     self.processData(data, function (spectrum) {
@@ -358,7 +358,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         self.uploadedSpectraCount += 1;
         broadcastUploadProgress();
 
-        AuthentificationService.getCurrentUser().then(function (submitter) {
+        AuthenticationService.getCurrentUser().then(function (submitter) {
             AsyncService.addToPool(wizardData, function (spectrum) {
                 workOnSpectra(submitter, saveSpectrumCallback, spectrum);
             });
