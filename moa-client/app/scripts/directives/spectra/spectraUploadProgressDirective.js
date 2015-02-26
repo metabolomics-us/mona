@@ -23,11 +23,7 @@ app.directive('spectraUploadProgressBar', function () {
          * watches for changes to the upload progress
          * @param $scope
          */
-        controller: function ($scope) {
-            $scope.spectraUploadProgress = -1;
-            $scope.spectraUploadProgressString = 'Processing...';
-            $scope.running = false;
-
+        controller: function ($scope, UploadLibraryService) {
             $scope.$on('spectra:uploadprogress', function(event, completedSpectraCount, uploadedSpectraCount) {
                 $scope.completedSpectraCount = completedSpectraCount;
                 $scope.uploadedSpectraCount = uploadedSpectraCount;
@@ -37,6 +33,18 @@ app.directive('spectraUploadProgressBar', function () {
 
                 $scope.running = ($scope.spectraUploadProgress != -1 && $scope.spectraUploadProgress < 100);
             });
+
+            (function() {
+                if (UploadLibraryService.isUploading()) {
+                    $scope.spectraUploadProgress = parseInt(((UploadLibraryService.completedSpectraCount / UploadLibraryService.uploadedSpectraCount) * 100), 10);
+                    $scope.spectraUploadProgressString = $scope.spectraUploadProgress +'%';
+                    $scope.running = ($scope.spectraUploadProgress != -1 && $scope.spectraUploadProgress < 100);
+                } else {
+                    $scope.spectraUploadProgress = -1;
+                    $scope.spectraUploadProgressString = 'Processing...';
+                    $scope.running = false;
+                }
+            })();
         }
     };
 });
