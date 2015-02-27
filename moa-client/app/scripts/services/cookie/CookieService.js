@@ -22,17 +22,18 @@ app.service('CookieService', function (ApplicationError, $cookieStore, $log) {
     /**
      * updates the cookie
      * @param name
+     * @param value
      */
     this.update = function (name, value) {
         $cookieStore.put(name, value);
     };
 
     /**
-     * updates the cookie
-     * @param name
+     * gets the cookie
+     * @param cookieName
      */
-    this.get = function (name) {
-        return $cookieStore.get(name);
+    this.get = function (cookieName) {
+        return $cookieStore.get(cookieName);
     };
 
     /**
@@ -56,5 +57,4 @@ app.service('CookieService', function (ApplicationError, $cookieStore, $log) {
         return result;
 
     }
-
 });
