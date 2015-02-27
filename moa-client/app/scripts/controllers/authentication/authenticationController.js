@@ -95,10 +95,10 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
     };
 
     $scope.$on('auth:login-success', function(event, data, status, headers, config) {
-        $scope.state = 'successful';
+        $scope.state = 'success';
         $timeout(function() {
             $modalInstance.close();
-        }, 2000);
+        }, 1000);
     });
 
     $scope.$on('auth:login-error', function(event, data, status, headers, config) {
