@@ -1,3 +1,4 @@
+import auth.SubmitterRestAuthenticationTokenJsonRenderer
 import curation.CurationObject
 import curation.CurationWorkflow
 import curation.SubCurationWorkflow
@@ -34,6 +35,9 @@ import util.caching.SpectrumKeyGenerator
 
 // Place your Spring DSL code here
 beans = {
+    // Authentication beans
+    restAuthenticationTokenJsonRenderer( SubmitterRestAuthenticationTokenJsonRenderer )
+
 
     //rest service generation for client side stuff
     rest(grails.plugins.rest.client.RestBuilder)

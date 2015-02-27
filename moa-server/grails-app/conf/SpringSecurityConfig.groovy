@@ -77,12 +77,9 @@ grails {
                         }
                     }
 
-                    rendering.usernamePropertyName = 'email'
-
                     validation {
                         active = true
                         useBearerToken = false
-                        headerName = 'X-Auth-Token'
                         endpointUrl = '/rest/login/validate'
                         enableAnonymousAcess = true
                     }
