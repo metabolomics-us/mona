@@ -7,6 +7,7 @@ import curation.actions.RemoveTagAction
 import moa.Compound
 import moa.MetaDataValue
 import moa.Spectrum
+import moa.server.CompoundService
 import moa.server.caluclation.CompoundPropertyService
 import org.openscience.cdk.Molecule
 import util.chemical.Derivatizer
@@ -19,7 +20,8 @@ import util.chemical.Derivatizer
  */
 class PredictGCMSCompoundRule extends AbstractCurationRule {
 
-    CompoundPropertyService compoundPropertyService
+
+    CompoundService compoundService
 
     PredictGCMSCompoundRule() {
 
@@ -59,25 +61,20 @@ class PredictGCMSCompoundRule extends AbstractCurationRule {
                         String inchiKey = calculateInChIKey(derivatizedCompound)
 
                         //find or create a new compound
-                        Compound newCompound = Compound.findOrCreateByInchiKey(inchiKey)
 
-                        logger.debug("compound is ${newCompound}")
-
+                        Map newCompound = [:]
+                        newCompound.inchiKey = inchiKey
+                        newCompound.inchi = calculateInChICode(derivatizedCompound)
                         newCompound.molFile = derivatizer.getMOLFile(derivatizedCompound)
 
-                        String inchiCode = calculateInChICode(derivatizedCompound)
 
+                        Compound c = compoundService.buildCompound(newCompound)
                         //assign inchiCode to compound
 
-                        //save our compound
-                        newCompound.save(flush: true)
-
                         //adds the tag
-                        new AddTagAction(VIRTUAL_COMPOUND).doAction(new CurationObject(newCompound))
+                        addTag(new CurationObject(c),VIRTUAL_COMPOUND)
 
-                        compoundPropertyService.calculateMetaData(newCompound)
-
-                        spectrum.predictedCompound = newCompound
+                        spectrum.predictedCompound = c
                         spectrum.save(flush: true)
 
                         return true
