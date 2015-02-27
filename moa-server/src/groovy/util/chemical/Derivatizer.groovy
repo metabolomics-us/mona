@@ -98,7 +98,7 @@ class Derivatizer {
                             StructureDiagramGenerator sdg = new StructureDiagramGenerator();
                             sdg.setMolecule(structure.clone());
                             sdg.generateCoordinates();
-                            result.add(sdg.getMolecule() )
+                            result.add(sdg.getMolecule())
 
                             break;
                         }
@@ -118,8 +118,8 @@ class Derivatizer {
      * @param molecule
      * @return
      */
-    boolean isDerivatized(Molecule molecule){
-        return UniversalIsomorphismTester.isSubgraph(molecule,AdductBuilder.makeTMS())
+    boolean isDerivatized(Molecule molecule) {
+        return UniversalIsomorphismTester.isSubgraph(molecule, AdductBuilder.makeTMS())
     }
 
     /**
@@ -136,14 +136,18 @@ class Derivatizer {
         //generate all products
         List<Molecule> result = derivatizeWithTMS(myStructure, functionalGroups, true)
 
+        if (result.isEmpty() == false) {
 
-        return result.last()
+            return result.last()
+        }
+
+        return null;
 
     }
 
     static String getMOLFile(Molecule molecule) {
 
-        molecule =AtomContainerManipulator.removeHydrogens(molecule)
+        molecule = AtomContainerManipulator.removeHydrogens(molecule)
 
         StructureDiagramGenerator sdg = new StructureDiagramGenerator();
         sdg.setMolecule(molecule);

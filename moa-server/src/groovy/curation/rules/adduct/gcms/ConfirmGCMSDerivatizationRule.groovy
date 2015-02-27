@@ -53,6 +53,9 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
 
             return count
         }
+        else if( (stringValue =~ /n+.*TMS/).matches()){
+            return Integer.MAX_VALUE
+        }
 
         return 0
     }
@@ -77,11 +80,12 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
             logger.info("=> validate hyrdroxyl groups")
             int hydroxylGroups = derivatizer.derivatizeWithTMS(molecule, [FunctionalGroupBuilder.makeHydroxyGroup()]).size()
 
-            logger.info("=> found ${hydroxylGroups} hyrdoxy groups and specified is ${count} TMS")
+
+            logger.info("=> found ${hydroxylGroups} hyrdoxy groups and specified is ${count == Integer.MAX_VALUE ? 'n' : count} TMS")
             //hydroxyl groups always get all derivatized at once!
             if (count < hydroxylGroups) {
                 if (enableTagging) {
-                    new AddTagAction(INVALID_DERIVATIZATION).doAction(new CurationObject(spectrum))
+                    addTag(new CurationObject(spectrum),INVALID_DERIVATIZATION)
                 } else {
                     logger.debug("automatic tagging is disabled")
                 }
