@@ -80,7 +80,6 @@ grails.project.dependency.resolution = {
         compile("org.openscience.cdk:cdk-smarts:${cdkVersion}")  {
             transitive = false
         }
-        compile("org.openscience.cdk:cdk-builder3d:${cdkVersion}")
 
         compile("org.openscience.cdk:cdk-extra:${cdkVersion}")  {
             transitive = false

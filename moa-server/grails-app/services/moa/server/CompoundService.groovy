@@ -5,16 +5,22 @@ import grails.validation.ValidationErrors
 import grails.validation.ValidationException
 import moa.Compound
 import net.sf.jniinchi.INCHI_RET
+import org.openscience.cdk.AtomContainer
 import org.openscience.cdk.DefaultChemObjectBuilder
 import org.openscience.cdk.Molecule
+import org.openscience.cdk.MoleculeSet
 import org.openscience.cdk.exception.CDKException
+import org.openscience.cdk.graph.ConnectivityChecker
 import org.openscience.cdk.inchi.InChIGeneratorFactory
 import org.openscience.cdk.inchi.InChIToStructure
+import org.openscience.cdk.interfaces.IAtomContainer
 import org.openscience.cdk.interfaces.IMolecule
 import org.openscience.cdk.io.MDLV2000Writer
 import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 import org.openscience.cdk.modeling.builder3d.ModelBuilder3D
+
+import java.util.concurrent.atomic.AtomicBoolean
 
 //@Transactional
 class CompoundService {
@@ -50,16 +56,15 @@ class CompoundService {
             log.debug("molFile was provided!\n ${compound.molFile}")
             myCompound.molFile = compound.molFile.trim()
 
-            if(compound.inchi == null){
+            if (compound.inchi == null) {
                 log.debug("generating inchi code from mold file...")
 
             }
-        } else if(myCompound.inchi != null){
+        } else if (myCompound.inchi != null) {
             log.debug("no molFile provided, need to generated one!")
             myCompound.molFile = generateMol(compound.inchi)
             log.debug("generated: ${myCompound.molFile}")
-        }
-        else{
+        } else {
             //give up and toss an exception in the next step
         }
 
@@ -98,13 +103,38 @@ class CompoundService {
         }
 
 
-        IMolecule molecule = new Molecule(structureGen.atomContainer)
-        StructureDiagramGenerator sdg = new StructureDiagramGenerator();
+        IAtomContainer molecule = new Molecule(structureGen.atomContainer)
         //sdg.setUseTemplates(true);
-        sdg.setMolecule(molecule,true)
-        sdg.generateCoordinates();
 
-        molecule = sdg.getMolecule()
+        MoleculeSet set = ConnectivityChecker.partitionIntoMolecules(molecule)
+
+        if (set.getMoleculeCount() == 1) {
+            StructureDiagramGenerator sdg = new StructureDiagramGenerator();
+
+            sdg.setMolecule(molecule, true)
+            sdg.generateCoordinates();
+            molecule = sdg.getMolecule()
+
+        } else {
+            log.warn("disconnected molecule might not look nice!")
+
+            Iterator<IAtomContainer> iterator = set.molecules().iterator()
+
+            AtomContainer result = new AtomContainer()
+            while(iterator.hasNext()){
+                StructureDiagramGenerator sdg = new StructureDiagramGenerator();
+
+                sdg.setMolecule(iterator.next(), true)
+                sdg.generateCoordinates();
+
+                result.add(sdg.getMolecule())
+
+
+            }
+
+            molecule = result
+        }
+
 
         //ModelBuilder3D builder = ModelBuilder3D.getInstance()
         //molecule = builder.generate3DCoordinates(molecule, false)
