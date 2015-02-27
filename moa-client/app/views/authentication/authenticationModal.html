@@ -1,0 +1,44 @@
+<form role="form" name="authentication" autocomplete="off" novalidate>
+    <div class="modal-header" ng-if="state == 'login' || state == 'success'">
+        <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true">×</button>
+        <h4 class="modal-title">Log into MoNA</h4>
+    </div>
+    <div class="modal-header" ng-if="state == 'logging in'">
+        <h4 class="modal-title">Log into MoNA</h4>
+    </div>
+
+
+    <div class="modal-body" ng-if="state == 'login'">
+        <div class="alert alert-danger .alert-dismissible " role="alert" ng-show="errors.length">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span>Error:</span>
+            <ul>
+                <li ng-repeat="error in errors">{{error}}</li>
+            </ul>
+        </div>
+
+        <div class="row" ng-if="state == 'login'">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label for="email" class="sr-only">Email Address</label>
+                    <input type="email" name="email" id="email" ng-model="email" class="form-control" placeholder="Email Adress">
+                </div>
+                <div class="form-group">
+                    <label for="password" class="sr-only">Password</label>
+                    <input type="password" name="password" id="password" ng-model="password" class="form-control" placeholder="Password">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body text-center" ng-if="state == 'logging in'">
+        <h4><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Logging in...</span></h4>
+    </div>
+    <div class="modal-body text-center success" ng-if="state == 'success'">
+        <h4><i class="fa fa-check"></i> Success!</h4>
+    </div>
+
+
+    <div class="modal-footer" ng-if="state == 'login'">
+        <a class="btn btn-primary btn-block" type="submit" ng-click="submitLogin()">Log In</a>
+    </div>
+</form>
