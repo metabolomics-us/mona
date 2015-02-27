@@ -30,8 +30,7 @@ abstract class AbstractCurationRule implements CurationRule {
 
     CurationAction failureAction
 
-    @Autowired
-    TagService tagService
+    def tagService
 
     /**
      * default constructor
@@ -75,23 +74,27 @@ abstract class AbstractCurationRule implements CurationRule {
 
         String molFile = compound.molFile
 
-        if (molFile.startsWith("\n") == false) {
-            molFile = "\n" + molFile
+        if(molFile != null) {
+            if (molFile.startsWith("\n") == false) {
+                molFile = "\n" + molFile
+            }
+
+            logger.debug("using mol file: ${molFile}")
+
+            def reader = new MDLV2000Reader(new StringReader(molFile))
+
+            Molecule mol = reader.read(new Molecule())
+
+
+            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
+            CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.newInstance()).addImplicitHydrogens(mol)
+            AtomContainerManipulator.convertImplicitToExplicitHydrogens(mol);
+
+            return mol
         }
-
-        logger.debug("using mol file: ${molFile}")
-
-        def reader = new MDLV2000Reader(new StringReader(molFile))
-
-        Molecule mol = reader.read(new Molecule())
-
-
-        AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
-        CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.newInstance()).addImplicitHydrogens(mol)
-        AtomContainerManipulator.convertImplicitToExplicitHydrogens(mol);
-
-
-        return mol
+        else {
+            throw new NullPointerException("there was no molfile provided for compound: ${compound}")
+        }
     }
 
     /**

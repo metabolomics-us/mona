@@ -1,15 +1,25 @@
 package moa.server
 
+import grails.converters.JSON
+import grails.validation.ValidationErrors
+import grails.validation.ValidationException
 import moa.Compound
 import net.sf.jniinchi.INCHI_RET
+import org.openscience.cdk.AtomContainer
 import org.openscience.cdk.DefaultChemObjectBuilder
 import org.openscience.cdk.Molecule
+import org.openscience.cdk.MoleculeSet
 import org.openscience.cdk.exception.CDKException
+import org.openscience.cdk.graph.ConnectivityChecker
 import org.openscience.cdk.inchi.InChIGeneratorFactory
 import org.openscience.cdk.inchi.InChIToStructure
+import org.openscience.cdk.interfaces.IAtomContainer
 import org.openscience.cdk.interfaces.IMolecule
 import org.openscience.cdk.io.MDLV2000Writer
+import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
+
+import java.util.concurrent.atomic.AtomicBoolean
 
 //@Transactional
 class CompoundService {
@@ -22,7 +32,7 @@ class CompoundService {
      * @return
      */
     public Compound buildCompound(Map compound) {
-        log.debug("trying to generate compound: ${compound.inchiKey} with ${compound.id}")
+        log.debug("trying to generate compound: ${compound.inchiKey}")
 
         //first get the compound we want
         Compound myCompound = null
@@ -32,35 +42,45 @@ class CompoundService {
         if (myCompound == null) {
             log.debug("compound not found -> adding it")
             myCompound = new Compound()
-            myCompound.inchi = compound.inchi
             myCompound.inchiKey = compound.inchiKey
-
-            log.info(" compound validation: ${myCompound.validate()} - ${myCompound.errors}")
-
-            myCompound.save()
-            log.debug("==> done: ${myCompound}")
 
         } else {
             log.debug("compound already existed")
         }
 
-        //validate the mol file
+        myCompound.inchi = compound.inchi
 
+        //validate the mol file or try to generate it
         if (compound.molFile != null && compound.molFile.toString().size() > 0) {
+            log.debug("molFile was provided!\n ${compound.molFile}")
             myCompound.molFile = compound.molFile.trim()
-        } else {
+
+            if (compound.inchi == null) {
+                log.debug("generating inchi code from mold file...")
+
+            }
+        } else if (myCompound.inchi != null) {
+            log.debug("no molFile provided, need to generated one!")
             myCompound.molFile = generateMol(compound.inchi)
+            log.debug("generated: ${myCompound.molFile}")
+        } else {
+            //give up and toss an exception in the next step
         }
 
-        myCompound.save()
+        if (myCompound.validate()) {
+            myCompound.save(flush:true)
+        } else {
+            throw new ValidationException("sorry this compound is not valid", myCompound.errors)
+        }
+
 
         compound.names.each {
             nameService.addNameToCompound(it, myCompound)
         }
 
-        log.info("compound valid: ${myCompound.validate()}")
-        myCompound.save()
+        myCompound.save(flush:true)
 
+        log.debug("added or updated compound with id: ${myCompound.id}")
         CompoundCurationJob.triggerNow(compoundId: myCompound.id)
         return myCompound;
 
@@ -68,12 +88,11 @@ class CompoundService {
 
     private String generateMol(String inchi) {
 
+        log.debug("creating mol file for inchi: ${inchi}")
         InChIGeneratorFactory factory = InChIGeneratorFactory.getInstance()
         InChIToStructure structureGen = factory.getInChIToStructure(inchi, DefaultChemObjectBuilder.getInstance())
 
         AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(structureGen.atomContainer)
-
-        IMolecule molecule = new Molecule(structureGen.atomContainer)
 
         def INCHI_RET ret = structureGen.getReturnStatus();
         if (ret == INCHI_RET.WARNING) {
@@ -84,6 +103,42 @@ class CompoundService {
             throw new CDKException("Structure generation failed failed: ${ret.toString()}\n[ ${structureGen.getMessage()}\t${structureGen.warningFlags} ]")
         }
 
+
+        IAtomContainer molecule = new Molecule(structureGen.atomContainer)
+        //sdg.setUseTemplates(true);
+
+        MoleculeSet set = ConnectivityChecker.partitionIntoMolecules(molecule)
+
+        if (set.getMoleculeCount() == 1) {
+            StructureDiagramGenerator sdg = new StructureDiagramGenerator();
+
+            sdg.setMolecule(molecule, true)
+            sdg.generateCoordinates();
+            molecule = sdg.getMolecule()
+
+        } else {
+            log.warn("disconnected molecule might not look nice!")
+
+            Iterator<IAtomContainer> iterator = set.molecules().iterator()
+
+            AtomContainer result = new AtomContainer()
+            while(iterator.hasNext()){
+                StructureDiagramGenerator sdg = new StructureDiagramGenerator();
+
+                sdg.setMolecule(iterator.next(), true)
+                sdg.generateCoordinates();
+
+                result.add(sdg.getMolecule())
+
+
+            }
+
+            molecule = result
+        }
+
+
+        //ModelBuilder3D builder = ModelBuilder3D.getInstance()
+        //molecule = builder.generate3DCoordinates(molecule, false)
 
         StringWriter stringWriter = new StringWriter()
         MDLV2000Writer writer = new MDLV2000Writer(stringWriter)

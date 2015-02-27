@@ -90,7 +90,9 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
 
 
-        logdirectory = "/var/log/mona/"
+        //logdirectory = "/var/log/mona/"
+        logdirectory = "/Volumes/ras/"
+
     }
 }
 
@@ -109,7 +111,7 @@ log4j = {
     }
 
     root {
-        error 'stdout'
+        warn 'stdout'
         debug 'file'
 
     }

@@ -24,7 +24,7 @@ class CompoundCurationJob {
         Map data = context.mergedJobDataMap
 
         if (data != null) {
-            if (data.containsKey('compoundId')) {
+            if (data.containsKey('compoundId') && data.compoundId != null) {
                 long begin = System.currentTimeMillis()
 
 

@@ -11,6 +11,7 @@ import curation.rules.adduct.LCMSAdductCurationRule
 import curation.rules.adduct.gcms.GCMSDerivatizationDoesntMatchCompound
 import curation.rules.adduct.gcms.PredictGCMSCompoundRule
 import curation.rules.adduct.gcms.PredictedMMinus15Rule
+
 import curation.rules.compound.meta.CompoundComputeMetaDataRule
 import curation.rules.compound.meta.DeletedComputedMetaDataRule
 import curation.rules.compound.inchi.VerifyInChIKeyAndMolFileMatchRule
@@ -22,6 +23,7 @@ import curation.rules.meta.ProvidedExactMassIsPossibleRule
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
+import curation.rules.spectra.IsDuplicatedSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.tag.RemoveComputedTagRule
 import persistence.metadata.filter.Filters
@@ -63,14 +65,14 @@ beans = {
     }
 
 
+
     compoundCurationWorkflow(CurationWorkflow) { bean ->
         bean.autowire = 'byName'
 
         rules = [
                 deleteMetaDataRule,
                 deleteRuleBasedTagRule,
-                computeCompoundValidationData
-                ,
+                computeCompoundValidationData,
                 inchiKeyMatchesMolFile
         ]
     }
@@ -126,6 +128,11 @@ beans = {
         bean.autowire = 'byName'
         noisePercentage = 2
         percentOfSpectraIsNoise = 80
+    }
+
+    isSpectraDuplicated(IsDuplicatedSpectraRule) { bean ->
+        bean.autowire = 'byName'
+        minSimilarity = 900
     }
 
 //is column metadata valid
@@ -213,11 +220,12 @@ beans = {
 //these rules should run first
 deleteRuleBasedTagRule,
 deleteMetaDataRule,
-convertSpectraToRelativeRule,
 lcmsSpectraIdentification,
 gcmsSpectraIdentification,
+
 //order doesn't really matter here
 metadataCuration,
+isSpectraDuplicated,
 isAccurateMassSpectra,
 isSpectraDirty,
 lcmsAdductCuration,
@@ -228,7 +236,6 @@ gcmsPredictMMinus15Rule,
 gcmsCompoundShouldBeDerivatized,
 //these rules should run last
 isAnnotatedSpectraRule
-
         ]
 //define and register our curation
     }

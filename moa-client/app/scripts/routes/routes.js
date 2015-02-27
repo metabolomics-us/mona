@@ -56,6 +56,9 @@ app.config(function ($routeProvider) {
             controller: 'SpectraDatabaseIndexController'
         })
 
+        .when('/documentation/license', {
+            templateUrl: 'views/documentation/license.html'
+        })
         //any other page is redirected to the root page
         .otherwise({
             redirectTo: '/'

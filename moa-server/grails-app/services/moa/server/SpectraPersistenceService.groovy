@@ -1,5 +1,6 @@
 package moa.server
 
+import grails.converters.JSON
 import grails.plugin.cache.CacheEvict
 import moa.Ion
 import moa.Spectrum

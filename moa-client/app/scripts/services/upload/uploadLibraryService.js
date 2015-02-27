@@ -26,7 +26,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         if (spectra.inchi) {
             gwCtsService.convertInChICodeToKey(spectra.inchi, function (key) {
                 if (key == null) {
-                    deferred.reject("sorry no key found!");
+                    deferred.reject("sorry no key found, at convert inchi code to key!");
                 }
                 else {
                     spectra.inchiKey = key;
@@ -34,12 +34,33 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
                 }
             });
         }
+        else if (spectra.inchiKey) {
+            gwCtsService.convertInChIKeyToInChICode(spectra.inchiKey, function (inchi) {
+                if (inchi == null && spectra.inchi == null) {
+                    deferred.reject("sorry no key found, at convert inchi key to inchi code!");
+                }
+                else {
+                    if(inchi != null) {
+                        spectra.inchi = inchi;
+                    }
+                    deferred.resolve(spectra);
+                }
+            });
+        }
+        //in case we got a smile
+        else if (spectra.smile) {
+            gwCtsService.convertSmileToInChICode(spectra.smile, function (data) {
+                spectra.inchi = data.inchicode;
+                spectra.inchiKey = data.inchikey;
 
+                deferred.resolve(spectra);
+            });
+        }
         //if we just have a name
         else if (spectra.name) {
             gwChemifyService.nameToInChIKey(spectra.name, function (key) {
                 if (key == null) {
-                    deferred.reject("sorry no key found!");
+                    deferred.reject("sorry no key found, at name to inchi key!");
                 }
                 else {
                     spectra.inchiKey = key;
@@ -52,7 +73,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         else if (spectra.names && spectra.names.length > 0) {
             gwChemifyService.nameToInChIKey(spectra.names[0], function (key) {
                 if (key == null) {
-                    deferred.reject("sorry no key found!");
+                    deferred.reject("sorry no key found, at names to inchi key!");
                 }
                 else {
                     spectra.inchiKey = key;
@@ -70,40 +91,6 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     }
 
     /**
-     * obtains a mol file for the spectra
-     * @param spectra
-     */
-    function obtainMolFile(spectra) {
-
-        var deferred = $q.defer();
-
-        //we have an inchi, which is the best
-        if (spectra.inchi) {
-            $log.debug("using InChI code");
-            gwCtsService.convertInChICodeToMol(spectra.inchi,
-                function (molFile) {
-                        spectra.molFile = molFile;
-                        deferred.resolve(spectra);
-                }
-            );
-        }
-        //we have an inchi key
-        else if (spectra.inchiKey) {
-            $log.info("using InChI key");
-            gwCtsService.convertInchiKeyToMol(spectra.inchiKey, function (molFile) {
-                spectra.molFile = molFile;
-                deferred.resolve(spectra);
-            });
-        }
-        //we are screwed
-        else {
-            deferred.reject("sorry given object was invalid, we need an inchi code (inchi) or inchi key (key) as property!")
-        }
-
-        return deferred.promise;
-    }
-
-    /**
      * assembles a spectra and prepares it for upload
      * @param submitter
      * @param saveSpectrumCallback
@@ -111,22 +98,37 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param additionalData
      */
     function workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData) {
-        $log.debug('converting object:\n\n' + $filter('json')(spectrumObject));
+        //$log.debug('converting object:\n\n' + $filter('json')(spectrumObject));
 
-        //get the key
-        obtainKey(spectrumObject).then(function (spectrumWithKey) {
-            $log.debug('received key...');
+        //if we have  a key or an inchi
+        if (spectrumObject.inchiKey != null && spectrumObject.inchi != null) {
 
-            //get the mol file
-            obtainMolFile(spectrumWithKey).then(function (spectrum) {
-                $log.debug('received mol file...');
-                self.submitSpectrum(spectrum, submitter, saveSpectrumCallback, additionalData)
+            self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData)
+        }
+        //we need to get a key or inchi code
+        else {
+            //get the key
+            obtainKey(spectrumObject).then(function (spectrumWithKey) {
+                //$log.debug('submitting object:\n\n' + $filter('json')(spectrum));
+
+                //only if we have an inchi or a molfile we can submit this file
+                if (spectrumWithKey.inchi != null || spectrumWithKey.molFile != null) {
+                    $log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
+                    self.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData)
+                }
+                else {
+                    $log.warn('dropped object from submission, since it was declared invalid');
+                    $log.debug( $filter('json')(spectrumWithKey));
+
+                }
+
+            }, function (reason) {
+                $log.error(reason);
+                $log.warn( $filter('json')(spectrumObject));
             });
+        }
+        updateUploadProgress();
 
-        }, function (reason) {
-            $log.error(reason);
-            updateUploadProgress();
-        });
     }
 
 
@@ -137,11 +139,12 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param saveSpectrumCallback
      * @param additionalData
      */
-    self.submitSpectrum = function(spectra, submitter, saveSpectrumCallback, additionalData) {
+    self.submitSpectrum = function (spectra, submitter, saveSpectrumCallback, additionalData) {
+        $log.debug("submitting spectra...");
         //optimize all our metadata
         MetaDataOptimizationService.optimizeMetaData(spectra.meta).then(function (metaData) {
 
-            $log.debug('optimized metadata...');
+            $log.debug("building final spectra...");
 
             var s = self.buildSpectrum();
 
@@ -149,15 +152,20 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             s.biologicalCompound.inchi = spectra.inchi;
 
             //assign all the defined name of the spectra
-            if (angular.isDefined(spectra.names)) {
-                s.biologicalCompound.names = spectra.names;
-                s.chemicalCompound.names = spectra.names;
+            if (angular.isDefined(spectra.name)) {
+                s.biologicalCompound.names = [];
+                s.chemicalCompound.names = [];
+
+                s.biologicalCompound.names.push(spectra.name);
+                s.chemicalCompound.names.push(spectra.name);
+
             }
+
             //assign all names of the spectra
             else if (angular.isDefined(spectra.names)) {
                 for (var i = 0; i < spectra.names.length; i++) {
-                    s.biologicalCompound.names.push({name: spectra.names[i]})
-                    s.chemicalCompound.names.push({name: spectra.names[i]})
+                    s.biologicalCompound.names.push(spectra.names[i]);
+                    s.chemicalCompound.names.push(spectra.names[i]);
                 }
             }
             s.biologicalCompound.metaData = [];
@@ -165,7 +173,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             s.chemicalCompound.inchiKey = spectra.inchiKey;
             s.chemicalCompound.inchi = spectra.inchi;
 
-            if(spectra.molFile != null) {
+            if (spectra.molFile != null) {
                 s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
                 s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
             }
@@ -180,20 +188,20 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
                 });
             }
 
-            s.comments = [{comment:"this spectra was added to the system, by utilizing a library upload."}];
+            s.comments = [{comment: "this spectra was added to the system, by utilizing a library upload."}];
             if (angular.isDefined(spectra.comments)) {
-                s.comments.push({comment:spectra.comments});
+                s.comments.push({comment: spectra.comments});
             }
 
             metaData.forEach(function (e) {
                 s.metaData.push(e);
             });
 
-            if(angular.isDefined(additionalData)) {
-                if(angular.isDefined(additionalData.tags)) {
+            if (angular.isDefined(additionalData)) {
+                if (angular.isDefined(additionalData.tags)) {
                     additionalData.tags.forEach(function (tag) {
-                        for(var i = 0; i < s.tags.length; i++) {
-                            if(s.tags[i].text == tag.text)
+                        for (var i = 0; i < s.tags.length; i++) {
+                            if (s.tags[i].text == tag.text)
                                 return;
                         }
 
@@ -201,19 +209,20 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
                     });
                 }
 
-                if(angular.isDefined(additionalData.meta)) {
-                    additionalData.tags.forEach(function(e) {
+                if (angular.isDefined(additionalData.meta)) {
+                    additionalData.tags.forEach(function (e) {
                         s.metaData.push(e);
                     });
                 }
 
-                if(angular.isDefined(additionalData.comments)) {
+                if (angular.isDefined(additionalData.comments)) {
                     s.comments.push({comment: additionalData.comments});
                 }
             }
 
             s.submitter = submitter;
 
+            $log.debug("submit to actual server");
             //$log.info($filter('json')(s));
             saveSpectrumCallback(s);
 
@@ -226,7 +235,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      *
      * @returns {Spectrum}
      */
-    self.buildSpectrum = function() {
+    self.buildSpectrum = function () {
         var spectrum = new Spectrum();
         spectrum.biologicalCompound = {names: []};
         spectrum.chemicalCompound = {names: []};
@@ -243,21 +252,21 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param callback
      * @param fireUploadProgress
      */
-    self.loadSpectraFile = function(file, callback, fireUploadProgress) {
+    self.loadSpectraFile = function (file, callback, fireUploadProgress) {
         var fileReader = new FileReader();
 
         // Call the callback function with the loaded data once the file has been read
-        fileReader.onload =  function(event) {
+        fileReader.onload = function (event) {
             callback(event.target.result, file.name);
 
-            if(angular.isDefined(fireUploadProgress)) {
+            if (angular.isDefined(fireUploadProgress)) {
                 fireUploadProgress(100);
             }
         };
 
         // progress notification
-        fileReader.onprogress = function(event) {
-            if(event.lengthComputable && angular.isDefined(fireUploadProgress)) {
+        fileReader.onprogress = function (event) {
+            if (event.lengthComputable && angular.isDefined(fireUploadProgress)) {
                 fireUploadProgress(parseInt(((event.loaded / event.total) * 100), 10));
             }
         };
@@ -273,7 +282,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param origin
      * @returns {number}
      */
-    self.countData = function(data, origin) {
+    self.countData = function (data, origin) {
         if (angular.isDefined(origin)) {
             if (origin.toLowerCase().indexOf(".msp") > 0) {
                 return gwMspService.countSpectra(data);
@@ -295,9 +304,9 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param callback
      * @param origin
      */
-    self.processData = function(data, callback, origin) {
+    self.processData = function (data, callback, origin) {
         // Add origin to spectrum metadata before callback
-        var addOriginMetadata = function(spectrum) {
+        var addOriginMetadata = function (spectrum) {
             if (angular.isDefined(origin)) {
                 spectrum.meta.push({name: 'origin', value: origin});
             }
@@ -330,7 +339,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param saveSpectrumCallback
      * @param wizardData
      */
-    self.uploadSpectra = function(files, saveSpectrumCallback, wizardData) {
+    self.uploadSpectra = function (files, saveSpectrumCallback, wizardData) {
         self.uploadedSpectraCount += files.length;
         broadcastUploadProgress();
 
@@ -354,7 +363,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param wizardData
      * @param saveSpectrumCallback
      */
-    self.uploadSpectrum = function(wizardData, saveSpectrumCallback) {
+    self.uploadSpectrum = function (wizardData, saveSpectrumCallback) {
         self.uploadedSpectraCount += 1;
         broadcastUploadProgress();
 
@@ -377,11 +386,11 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     /**
      * Updates and broadcasts the upload progress
      */
-    var updateUploadProgress = function() {
+    var updateUploadProgress = function () {
         self.completedSpectraCount++;
         broadcastUploadProgress();
 
-        if(self.completedSpectraCount == self.uploadedSpectraCount) {
+        if (self.completedSpectraCount == self.uploadedSpectraCount) {
             self.completedSpectraCount = 0;
             self.uploadedSpectraCount = 0;
         }
@@ -392,7 +401,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     /**
      * Requires separate function for broadcasting at start of upload
      */
-    var broadcastUploadProgress = function() {
-        $rootScope.$broadcast('spectra:uploadprogress', self.completedSpectraCount, self.uploadedSpectraCount);
+    var broadcastUploadProgress = function () {
+        $rootScope.$broadcast('spectra:uploadprogress', parseInt(((self.completedSpectraCount / self.uploadedSpectraCount) * 100), 10));
     }
 });
