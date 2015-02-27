@@ -5,7 +5,7 @@
 /**
  * a service to handle authentications and provides us with the currently logged in user
  */
-app.service('AuthenticationService', function (Submitter, $q, $http, $resource, $rootScope, REST_BACKEND_SERVER) {
+app.service('AuthenticationService', function (Submitter, $q, $http, $resource, $rootScope, CookieService, REST_BACKEND_SERVER) {
     /**
      * log us in
      */
@@ -21,6 +21,7 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
         }, function(data, status, headers, config) {
             $rootScope.currentUser = data;
             $http.defaults.headers.common['X-Auth-Token'] = data.access_token;
+            CookieService.update('AuthorizationToken', data.access_token);
 
             $rootScope.$broadcast('auth:login-success', data, status, headers, config);
         }, function(data, status, headers, config) {
@@ -32,18 +33,34 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
      * validate user
      */
     this.validate = function () {
-        if (this.isLoggedIn()) {
+        var access_token = undefined;
+
+        if(this.isLoggedIn()) {
+            access_token = $rootScope.currentUser.access_token;
+        } else {
+            access_token = CookieService.get('AuthorizationToken');
+        }
+
+        if (angular.isDefined(access_token)) {
+            $http.defaults.headers.common['X-Auth-Token'] = access_token;
+
             $resource(REST_BACKEND_SERVER +'/rest/login/validate', {}, {
                 post: {
                     method: 'POST'
                 }
             }).post({}, function(data, status, headers, config) {
-                $rootScope.$broadcast('auth:validate-success', data, status, headers, config);
+                $rootScope.currentUser = data;
+                $http.defaults.headers.common['X-Auth-Token'] = data.access_token;
+                CookieService.update('AuthorizationToken', data.access_token);
+
+                $rootScope.$broadcast('auth:login-success', data, status, headers, config);
             }, function(data, status, headers, config) {
-                $rootScope.$broadcast('auth:validate-error', data, status, headers, config);
+                $rootScope.currentUser = null;
+                $http.defaults.headers.common['X-Auth-Token'] = undefined;
+                CookieService.update('AuthorizationToken', undefined);
+
+                $rootScope.$broadcast('auth:login-error', data, status, headers, config);
             });
-        } else {
-            $rootScope.$broadcast('auth:login-status', null, null, null, null);
         }
     };
 
@@ -61,12 +78,13 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
             }, function(data, status, headers, config) {
                 $rootScope.$broadcast('auth:logout', data, status, headers, config);
             });
-
-            $rootScope.currentUser = null;
-            $http.defaults.headers.common['X-Auth-Token'] = undefined;
         } else {
-            $rootScope.$broadcast('auth:logout-status', null, null, null, null);
+            $rootScope.$broadcast('auth:logout', null, null, null, null);
         }
+
+        $rootScope.currentUser = null;
+        $http.defaults.headers.common['X-Auth-Token'] = undefined;
+        CookieService.update('AuthorizationToken', undefined);
     };
 
 

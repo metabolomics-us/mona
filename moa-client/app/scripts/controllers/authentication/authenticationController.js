@@ -36,15 +36,28 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
         });
     };
 
+    /**
+     * Create a welcome message on login
+     */
     $scope.$on('auth:login-success', function(event, data, status, headers, config) {
         AuthenticationService.getCurrentUser().then(function(data) {
             $scope.welcomeMessage = "Welcome "+ data.firstName +"!";
         });
     });
 
+    /**
+     * Remove the welcome message on logout
+     */
     $scope.$on('auth:logout', function(event, data, status, headers, config) {
         $scope.welcomeMessage = '';
     });
+
+    /**
+     * Attempt to log in with authentication cookie stored in cookie
+     */
+    (function() {
+        AuthenticationService.validate();
+    })();
 };
 
 
