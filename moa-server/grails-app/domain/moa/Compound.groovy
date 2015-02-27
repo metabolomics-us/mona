@@ -7,8 +7,8 @@ class Compound extends SupportsMetaData {
 
     static constraints = {
         inchiKey unique: true, nullable: false
-        molFile nullable: true
-        inchi nullable: true
+        molFile nullable: false
+        inchi nullable: false
     }
 
     static mapping = {

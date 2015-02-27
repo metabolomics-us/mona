@@ -26,7 +26,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         if (spectra.inchi) {
             gwCtsService.convertInChICodeToKey(spectra.inchi, function (key) {
                 if (key == null) {
-                    deferred.reject("sorry no key found!");
+                    deferred.reject("sorry no key found, at convert inchi code to key!");
                 }
                 else {
                     spectra.inchiKey = key;
@@ -35,21 +35,32 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             });
         }
         else if (spectra.inchiKey) {
-            gwCtsService.convertInChIKeyToInChICode(spectra.inchi, function (key) {
-                if (key == null) {
-                    deferred.reject("sorry no key found!");
+            gwCtsService.convertInChIKeyToInChICode(spectra.inchiKey, function (inchi) {
+                if (inchi == null && spectra.inchi == null) {
+                    deferred.reject("sorry no key found, at convert inchi key to inchi code!");
                 }
                 else {
-                    spectra.inchiKey = key;
+                    if(inchi != null) {
+                        spectra.inchi = inchi;
+                    }
                     deferred.resolve(spectra);
                 }
+            });
+        }
+        //in case we got a smile
+        else if (spectra.smile) {
+            gwCtsService.convertSmileToInChICode(spectra.smile, function (data) {
+                spectra.inchi = data.inchicode;
+                spectra.inchiKey = data.inchikey;
+
+                deferred.resolve(spectra);
             });
         }
         //if we just have a name
         else if (spectra.name) {
             gwChemifyService.nameToInChIKey(spectra.name, function (key) {
                 if (key == null) {
-                    deferred.reject("sorry no key found!");
+                    deferred.reject("sorry no key found, at name to inchi key!");
                 }
                 else {
                     spectra.inchiKey = key;
@@ -62,7 +73,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         else if (spectra.names && spectra.names.length > 0) {
             gwChemifyService.nameToInChIKey(spectra.names[0], function (key) {
                 if (key == null) {
-                    deferred.reject("sorry no key found!");
+                    deferred.reject("sorry no key found, at names to inchi key!");
                 }
                 else {
                     spectra.inchiKey = key;
@@ -80,40 +91,6 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     }
 
     /**
-     * obtains a mol file for the spectra
-     * @param spectra
-     */
-    function obtainMolFile(spectra) {
-
-        var deferred = $q.defer();
-
-        //we have an inchi, which is the best
-        if (spectra.inchi) {
-            $log.debug("using InChI code");
-            gwCtsService.convertInChICodeToMol(spectra.inchi,
-                function (molFile) {
-                    spectra.molFile = molFile;
-                    deferred.resolve(spectra);
-                }
-            );
-        }
-        //we have an inchi key
-        else if (spectra.inchiKey) {
-            $log.info("using InChI key");
-            gwCtsService.convertInchiKeyToMol(spectra.inchiKey, function (molFile) {
-                spectra.molFile = molFile;
-                deferred.resolve(spectra);
-            });
-        }
-        //we are screwed
-        else {
-            deferred.reject("sorry given object was invalid, we need an inchi code (inchi) or inchi key (key) as property!")
-        }
-
-        return deferred.promise;
-    }
-
-    /**
      * assembles a spectra and prepares it for upload
      * @param submitter
      * @param saveSpectrumCallback
@@ -121,34 +98,33 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param additionalData
      */
     function workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData) {
-        $log.debug('converting object:\n\n' + $filter('json')(spectrumObject));
+        //$log.debug('converting object:\n\n' + $filter('json')(spectrumObject));
 
-        //convert the optional smile to an inchi for easier use
-        if(spectrumObject.smile != null && spectrumObject.inchi == null){
-            gwCtsService.convertSmileToInChICode(spectrumObject.smile, function(smile){
-               alert(smile);
-            });
-        }
-        if (spectrumObject.inchiKey != null) {
-            obtainMolFile(spectrumObject).then(function (spectrum) {
-                $log.debug('received mol file...');
-                self.submitSpectrum(spectrum, submitter, saveSpectrumCallback, additionalData)
-            });
+        //if we have  a key or an inchi
+        if (spectrumObject.inchiKey != null && spectrumObject.inchi != null) {
 
+            self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData)
         }
+        //we need to get a key or inchi code
         else {
             //get the key
             obtainKey(spectrumObject).then(function (spectrumWithKey) {
-                $log.debug('received key: ' + spectrumWithKey.inchiKey);
+                //$log.debug('submitting object:\n\n' + $filter('json')(spectrum));
 
-                //get the mol file
-                obtainMolFile(spectrumWithKey).then(function (spectrum) {
-                    $log.debug('received mol file...');
-                    self.submitSpectrum(spectrum, submitter, saveSpectrumCallback, additionalData)
-                });
+                //only if we have an inchi or a molfile we can submit this file
+                if (spectrumWithKey.inchi != null || spectrumWithKey.molFile != null) {
+                    $log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
+                    self.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData)
+                }
+                else {
+                    $log.warn('dropped object from submission, since it was declared invalid');
+                    $log.debug( $filter('json')(spectrumWithKey));
+
+                }
 
             }, function (reason) {
                 $log.error(reason);
+                $log.warn( $filter('json')(spectrumObject));
             });
         }
         updateUploadProgress();
@@ -164,10 +140,11 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param additionalData
      */
     self.submitSpectrum = function (spectra, submitter, saveSpectrumCallback, additionalData) {
+        $log.debug("submitting spectra...");
         //optimize all our metadata
         MetaDataOptimizationService.optimizeMetaData(spectra.meta).then(function (metaData) {
 
-            $log.debug('optimized metadata...');
+            $log.debug("building final spectra...");
 
             var s = self.buildSpectrum();
 
@@ -175,15 +152,20 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             s.biologicalCompound.inchi = spectra.inchi;
 
             //assign all the defined name of the spectra
-            if (angular.isDefined(spectra.names)) {
-                s.biologicalCompound.names = spectra.names;
-                s.chemicalCompound.names = spectra.names;
+            if (angular.isDefined(spectra.name)) {
+                s.biologicalCompound.names = [];
+                s.chemicalCompound.names = [];
+
+                s.biologicalCompound.names.push(spectra.name);
+                s.chemicalCompound.names.push(spectra.name);
+
             }
+
             //assign all names of the spectra
             else if (angular.isDefined(spectra.names)) {
                 for (var i = 0; i < spectra.names.length; i++) {
-                    s.biologicalCompound.names.push({name: spectra.names[i]})
-                    s.chemicalCompound.names.push({name: spectra.names[i]})
+                    s.biologicalCompound.names.push(spectra.names[i]);
+                    s.chemicalCompound.names.push(spectra.names[i]);
                 }
             }
             s.biologicalCompound.metaData = [];
@@ -240,6 +222,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
             s.submitter = submitter;
 
+            $log.debug("submit to actual server");
             //$log.info($filter('json')(s));
             saveSpectrumCallback(s);
 
