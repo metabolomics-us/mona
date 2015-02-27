@@ -1,8 +1,10 @@
 package moa.curation
 
+import grails.converters.JSON
 import moa.Spectrum
 import moa.server.SpectraValidationJob
 import moa.server.curation.SpectraCurationService
+import moa.server.query.SpectraQueryService
 
 class SpectraCurationController {
 
@@ -11,6 +13,8 @@ class SpectraCurationController {
     static responseFormats = ['json']
 
     SpectraCurationService spectraCurationService
+
+    SpectraQueryService spectraQueryService
 
     /**
      * validates the spectra for the given id
@@ -39,5 +43,21 @@ class SpectraCurationController {
         ids.each {long id ->
             SpectraValidationJob.triggerNow([spectraId:id])
         }
+    }
+
+    /**
+     * curates spectra found by the given query the format is the same as in the query service
+     */
+    def curateByQuery(){
+
+        def query = request.getJSON()
+
+        def spectra = spectraQueryService.query(query,params)
+
+        spectra.each { Spectrum s ->
+            SpectraValidationJob.triggerNow([spectraId:s.id])
+        }
+
+        render ([message:"validating ${spectra.size()} spectra now"] as JSON )
     }
 }

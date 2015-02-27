@@ -61,30 +61,27 @@ class PredictGCMSCompoundRule extends AbstractCurationRule {
                         //find or create a new compound
                         Compound newCompound = Compound.findOrCreateByInchiKey(inchiKey)
 
-                        if (!newCompound.molFile) {
-                            logger.debug("compound is ${newCompound}")
+                        logger.debug("compound is ${newCompound}")
 
-                            newCompound.molFile = derivatizer.getMOLFile(derivatizedCompound)
+                        newCompound.molFile = derivatizer.getMOLFile(derivatizedCompound)
 
-                            String inchiCode = calculateInChICode(derivatizedCompound)
+                        String inchiCode = calculateInChICode(derivatizedCompound)
 
-                            //assign inchiCode to compound
+                        //assign inchiCode to compound
 
-                            //save our compound
-                            newCompound.save(flush: true)
+                        //save our compound
+                        newCompound.save(flush: true)
 
-                            //adds the tag
-                            new AddTagAction(VIRTUAL_COMPOUND).doAction(new CurationObject(newCompound))
+                        //adds the tag
+                        new AddTagAction(VIRTUAL_COMPOUND).doAction(new CurationObject(newCompound))
 
-                            compoundPropertyService.calculateMetaData(newCompound)
-                        }
+                        compoundPropertyService.calculateMetaData(newCompound)
 
                         spectrum.predictedCompound = newCompound
                         spectrum.save(flush: true)
 
                         return true
-                    }
-                    else{
+                    } else {
                         logger.debug("no TMS values specified")
                     }
                 }

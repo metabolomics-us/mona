@@ -137,6 +137,7 @@ class UrlMappings {
          */
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
+        "/rest/spectra/curateByQuery"(controller: 'spectraCuration', action: 'curateByQuery')
         /**
          * general limited public api
          */

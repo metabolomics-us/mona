@@ -40,14 +40,6 @@ class SpectraUploadJob {
                         json = JSON.parse(data.spectra);
                     }
 
-                    if(log.isDebugEnabled()) {
-                        JSON j = json
-                        j.prettyPrint = true
-
-                        log.debug("received object for upload: \n ${j}")
-                    }
-
-
                     Spectrum result = spectraPersistenceService.create(json)
                     //result.save(flush: true)
 
