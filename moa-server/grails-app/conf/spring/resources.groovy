@@ -216,7 +216,6 @@ beans = {
 //these rules should run first
 deleteRuleBasedTagRule,
 deleteMetaDataRule,
-convertSpectraToRelativeRule,
 lcmsSpectraIdentification,
 gcmsSpectraIdentification,
 

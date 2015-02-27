@@ -75,7 +75,7 @@ class CompoundService {
 
         myCompound.save()
 
-        //CompoundCurationJob.triggerNow(compoundId: myCompound.id)
+        CompoundCurationJob.triggerNow(compoundId: myCompound.id)
         return myCompound;
 
     }
