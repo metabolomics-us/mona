@@ -57,7 +57,7 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
             }, function(data, status, headers, config) {
                 $rootScope.currentUser = null;
                 $http.defaults.headers.common['X-Auth-Token'] = undefined;
-                CookieService.update('AuthorizationToken', undefined);
+                CookieService.remove('AuthorizationToken');
 
                 $rootScope.$broadcast('auth:login-error', data, status, headers, config);
             });
@@ -84,7 +84,7 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
 
         $rootScope.currentUser = null;
         $http.defaults.headers.common['X-Auth-Token'] = undefined;
-        CookieService.update('AuthorizationToken', undefined);
+        CookieService.remove('AuthorizationToken');
     };
 
 
