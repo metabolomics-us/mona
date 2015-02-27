@@ -1,0 +1,23 @@
+<blockquote>
+    <dl class="bg-info" ng-repeat="newsItem in recentNews">
+        <dt>
+            {{newsItem.title}}
+        </dt>
+        <dd>
+            <span ng-if="newsItem.url != 'none'">
+                <span ng-if="newsItem.url.indexOf('/') == 0">
+                    <a href="#{{newsItem.url}}">{{newsItem.description}}</a>
+                </span>
+                <span ng-if="newsItem.url.indexOf('/') != 0">
+                    <a href="{{newsItem.url}}">{{newsItem.description}}</a>
+                </span>
+            </span>
+
+             <span ng-if="newsItem.url == 'none'">
+                {{newsItem.description}}
+            </span>
+
+
+        </dd>
+    </dl>
+</blockquote>

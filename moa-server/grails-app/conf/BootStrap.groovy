@@ -1,9 +1,14 @@
 import grails.converters.JSON
+import groovy.sql.Sql
 import moa.*
+import moa.server.NewsService
 import org.hibernate.FlushMode
 import util.DomainClassMarshaller
 
 class BootStrap {
+
+    NewsService newsService
+
 
     def sessionFactory
 
@@ -47,6 +52,10 @@ class BootStrap {
         JSON.registerObjectMarshaller(Comment,
                 DomainClassMarshaller.createExcludeMarshaller(Comment, ["class","dateCreated"])
         )
+        JSON.registerObjectMarshaller(News,
+                DomainClassMarshaller.createExcludeMarshaller(News, ["class"])
+        )
+
         /*
         JSON.registerObjectMarshaller(Ion,
                 DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
@@ -54,6 +63,16 @@ class BootStrap {
 
 */
 
+
+
+
+        if(News.getCount() == 0){
+            newsService.createNews("test","a simple test")
+            newsService.createNews("test2","a simple test 2")
+            newsService.createNews("test3","a simple test 3")
+            newsService.createNews("test4","a simple test 4")
+
+        }
 
     }
 

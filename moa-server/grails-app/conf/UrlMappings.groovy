@@ -6,7 +6,7 @@ class UrlMappings {
         /**
          * basic overview of our services
          */
-         "/"(redirect: '/documentation')
+        "/"(redirect: '/documentation')
 
         "/documentation"(controller: 'documentation', action: 'index')
 
@@ -18,7 +18,7 @@ class UrlMappings {
         /**
          * query by submitter
          */
-         "/rest/submitters"(resources: 'Submitter') {
+        "/rest/submitters"(resources: 'Submitter') {
             /**
              * and spectra
              */
@@ -118,8 +118,7 @@ class UrlMappings {
         /**
          * batch save method, to schedule lots of spectra to an internal queue.
          */
-        "/rest/spectra/single/save"(controller: 'spectrum', action: 'singleSave',parseRequest: false)
-
+        "/rest/spectra/single/save"(controller: 'spectrum', action: 'singleSave', parseRequest: false)
 
         /**
          * curation services
@@ -142,16 +141,29 @@ class UrlMappings {
         /**
          * statistics api
          */
-        "/rest/statistics/countAll" (controller: 'statistics', action: 'countAll')
+        "/rest/statistics/countAll"(controller: 'statistics', action: 'countAll')
 
-        "/rest/statistics/tags/spectra/count/$id" (controller: 'statistics', action: 'countOfSpectraForTag', id:id)
+        "/rest/statistics/tags/spectra/count/$id"(controller: 'statistics', action: 'countOfSpectraForTag', id: id)
 
-        "/rest/statistics/tags/spectra/countAll" (controller: 'statistics' ,action: 'countOfSpectraForAllTags')
+        "/rest/statistics/tags/spectra/countAll"(controller: 'statistics', action: 'countOfSpectraForAllTags')
 
-        "/rest/statistics/submitters/countAll" (controller: 'statistics', action: 'countOfSpectraForAllSubmitters')
+        "/rest/statistics/submitters/countAll"(controller: 'statistics', action: 'countOfSpectraForAllSubmitters')
 
-        "/rest/statistics/tags/compound/count/$id" (controller: 'statistics', action: 'countOfCompoundsForTag', id:id)
+        "/rest/statistics/tags/compound/count/$id"(controller: 'statistics', action: 'countOfCompoundsForTag', id: id)
 
-        "/rest/statistics/meta/spectra/count/$id" (controller: 'statistics', action: 'metaDataValueCountForMetadataValueId', id:id)
+        "/rest/statistics/meta/spectra/count/$id"(controller: 'statistics', action: 'metaDataValueCountForMetadataValueId', id: id)
+
+        /**
+         * news related items
+         */
+        "/rest/news"(resources: 'News')
+
+        "/rest/news/query/announcements"(controller: 'news', action: 'listAnnouncements')
+
+        "/rest/news/query/notifications"(controller: 'news', action: 'listNotifications')
+
+        "/rest/news/query/uploads"(controller: 'news',
+                action: 'listUploads')
+
     }
 }
