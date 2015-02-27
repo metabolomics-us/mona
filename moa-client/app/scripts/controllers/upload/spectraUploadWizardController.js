@@ -205,6 +205,12 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
      *
      */
     var submitSpectra = function() {
+        // Reset the spectrum count if necessary
+        if(!UploadLibraryService.isUploading()) {
+            UploadLibraryService.completedSpectraCount = 0;
+            UploadLibraryService.uploadedSpectraCount = 0;
+        }
+
         if($scope.batchUpload) {
             UploadLibraryService.uploadSpectra($scope.files, function (spectrum) {
                 spectrum.$batchSave();

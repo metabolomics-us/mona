@@ -11,13 +11,13 @@ app.directive('spectraUploadProgressBar', function () {
         restrict: 'E',
         replace: false,
         template:
-            '<div ng-if="spectraUploadProgress > -1">'+
+            '<div ng-if="running">'+
             '    <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} spectra</i></div>'+
             '    <progressbar ng-class="{active: running, \'progress-striped\': running}" max="100" value="spectraUploadProgress">'+
             '        <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" ng-bind="spectraUploadProgressString"></span>'+
             '    </progressbar>'+
             '</div>'+
-            '<div ng-if="spectraUploadProgress == -1"><i>No Upload Started</i></div>',
+            '<div ng-if="!running"><i>No Upload Started</i></div>',
 
         /**
          * watches for changes to the upload progress
@@ -31,14 +31,16 @@ app.directive('spectraUploadProgressBar', function () {
                 $scope.spectraUploadProgress = parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10);
                 $scope.spectraUploadProgressString = $scope.spectraUploadProgress +'%';
 
-                $scope.running = ($scope.spectraUploadProgress != -1 && $scope.spectraUploadProgress < 100);
+                $scope.running = $scope.spectraUploadProgress != -1;
+
+                console.log('spectra:uploadprogress '+ completedSpectraCount +' '+ uploadedSpectraCount +' '+ $scope.running)
             });
 
             (function() {
                 if (UploadLibraryService.isUploading()) {
                     $scope.spectraUploadProgress = parseInt(((UploadLibraryService.completedSpectraCount / UploadLibraryService.uploadedSpectraCount) * 100), 10);
                     $scope.spectraUploadProgressString = $scope.spectraUploadProgress +'%';
-                    $scope.running = ($scope.spectraUploadProgress != -1 && $scope.spectraUploadProgress < 100);
+                    $scope.running = $scope.spectraUploadProgress != -1;
                 } else {
                     $scope.spectraUploadProgress = -1;
                     $scope.spectraUploadProgressString = 'Processing...';

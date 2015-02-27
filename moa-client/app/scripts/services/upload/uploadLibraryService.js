@@ -98,37 +98,33 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param additionalData
      */
     function workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData) {
-        //$log.debug('converting object:\n\n' + $filter('json')(spectrumObject));
-
         //if we have  a key or an inchi
         if (spectrumObject.inchiKey != null && spectrumObject.inchi != null) {
 
             self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData)
         }
+
         //we need to get a key or inchi code
         else {
             //get the key
             obtainKey(spectrumObject).then(function (spectrumWithKey) {
-                //$log.debug('submitting object:\n\n' + $filter('json')(spectrum));
-
                 //only if we have an inchi or a molfile we can submit this file
                 if (spectrumWithKey.inchi != null || spectrumWithKey.molFile != null) {
-                    $log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
+                    //$log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
                     self.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData)
                 }
+
                 else {
                     $log.warn('dropped object from submission, since it was declared invalid');
                     $log.debug( $filter('json')(spectrumWithKey));
-
+                    updateUploadProgress();
                 }
-
             }, function (reason) {
                 $log.error(reason);
                 $log.warn( $filter('json')(spectrumObject));
+                updateUploadProgress();
             });
         }
-        updateUploadProgress();
-
     }
 
 
@@ -379,7 +375,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * Checks if spectra are being processed and uploaded
      */
     self.isUploading = function() {
-        return self.completedSpectraCount != self.uploadedSpectraCount;
+        return self.completedSpectraCount < self.uploadedSpectraCount;
     };
 
 
@@ -389,11 +385,6 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     var updateUploadProgress = function () {
         self.completedSpectraCount++;
         broadcastUploadProgress();
-
-        if (self.completedSpectraCount == self.uploadedSpectraCount) {
-            self.completedSpectraCount = 0;
-            self.uploadedSpectraCount = 0;
-        }
     };
 
 
