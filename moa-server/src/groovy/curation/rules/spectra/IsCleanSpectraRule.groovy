@@ -1,4 +1,5 @@
 package curation.rules.spectra
+
 import curation.AbstractCurationRule
 import curation.CurationObject
 import curation.actions.AddTagAction
@@ -14,7 +15,7 @@ import org.apache.log4j.Logger
  * Date: 10/1/14
  * Time: 2:00 PM
  */
-class IsCleanSpectraRule extends AbstractCurationRule{
+class IsCleanSpectraRule extends AbstractCurationRule {
 
     private Logger logger = Logger.getLogger(getClass())
 
@@ -31,7 +32,7 @@ class IsCleanSpectraRule extends AbstractCurationRule{
 
     IsCleanSpectraRule() {
         this.successAction = new RemoveTagAction(DIRTY_SPECTRA)
-        this.failureAction =new AddTagAction(DIRTY_SPECTRA)
+        this.failureAction = new AddTagAction(DIRTY_SPECTRA)
     }
 
     @Override
@@ -43,34 +44,30 @@ class IsCleanSpectraRule extends AbstractCurationRule{
     boolean executeRule(CurationObject toValidate) {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
-        if(spectrum.getTags().contains(Tag.findByText(RELATIVE_SPECTRA))) {
 
-            int countOfPeaks = 0
-            int countOfNoisyPeaks = 0
+        int countOfPeaks = 0
+        int countOfNoisyPeaks = 0
 
-            spectrum.spectrum.split(" ").each {
-                countOfPeaks++
+        spectrum.spectrum.split(" ").each {
+            countOfPeaks++
 
-                if (Double.parseDouble(it.split(":")[1]) < noisePercentage) {
-                    countOfNoisyPeaks++
-                }
-            }
-
-            double ratio = countOfNoisyPeaks / countOfPeaks * 100
-
-            logger.info("noise ratio: ${ratio}, spectra is")
-
-            if (ratio > percentOfSpectraIsNoise) {
-                logger.info("\t => dirty!")
-                return false
-            } else {
-                logger.info("\t => clean!")
-                return true
+            if (Double.parseDouble(it.split(":")[1]) < noisePercentage) {
+                countOfNoisyPeaks++
             }
         }
-        else{
-            throw new RuntimeException("not a valid spectra, it needs to be relative. Please configure your workflow right!")
+
+        double ratio = countOfNoisyPeaks / countOfPeaks * 100
+
+        logger.info("noise ratio: ${ratio}, spectra is")
+
+        if (ratio > percentOfSpectraIsNoise) {
+            logger.info("\t => dirty!")
+            return false
+        } else {
+            logger.info("\t => clean!")
+            return true
         }
+
     }
 
 
