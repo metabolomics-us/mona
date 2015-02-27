@@ -1,19 +1,25 @@
-<div ng-init="">
-    <div ng-show="spectraUploaded">
-        <h3>Thank you for your submission!</h3>
-        <p>The bar below displays the upload progress.  Please <b>do not close your browser</b> while your upload is being processed, otherwise your will not be sent to the server.</p>
-        <p>Please feel free to continue browsing the website.  You will be notified when your upload is complete.</p>
-        <br /><br />
+<div class="row">
+    <div class="col-md-12">
+        <div ng-show="!isLoggedIn()">
+            <h3><i class="fa fa-user fa-fw"></i> Please log in before uploading spectra!</h3>
+        </div>
 
-        <spectra-upload-progress-bar></spectra-upload-progress-bar>
-        <hr />
-        <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra</button>
-    </div>
+        <div ng-show="isLoggedIn() && spectraUploaded">
+            <h3>Thank you for your submission!</h3>
+            <p>The bar below displays the upload progress.  Please <b>do not close your browser</b> while your upload is being processed, otherwise your will not be sent to the server.</p>
+            <p>Please feel free to continue browsing the website.  You will be notified when your upload is complete.</p>
+            <br /><br />
 
-    <div ng-show="!spectraUploaded">
-        <h3>Upload Mass Spectra Wizard</h3>
-        <p>Please use the following wizard to upload a new mass spectra to the MoNA.<br /> It should guide you and provide you with all the help you need.</p>
+            <spectra-upload-progress-bar></spectra-upload-progress-bar>
+            <hr />
+            <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra</button>
+        </div>
 
-        <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
+        <div ng-show="isLoggedIn() && !spectraUploaded">
+            <h3>Upload Mass Spectra Wizard</h3>
+            <p>Please use the following wizard to upload a new mass spectra to the MoNA.<br /> It should guide you and provide you with all the help you need.</p>
+
+            <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
+        </div>
     </div>
 </div>

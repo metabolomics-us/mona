@@ -3,7 +3,12 @@
  */
 'use strict';
 
-moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibraryService) {
+moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibraryService, AuthenticationService) {
+    $scope.isLoggedIn = function() {
+        return AuthenticationService.isLoggedIn();
+    };
+
+
     /**
      * Initializes our spectra upload dialog
      */
@@ -28,7 +33,7 @@ moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibrary
     (function() {
         $scope.spectraUploaded = UploadLibraryService.isUploading();
 
-        if (!$scope.spectraUploaded) {
+        if ($scope.isLoggedIn() && !$scope.spectraUploaded) {
             $scope.uploadSpectraDialog()
         }
     })();

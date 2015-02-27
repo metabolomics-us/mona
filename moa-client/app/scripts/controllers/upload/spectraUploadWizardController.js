@@ -225,8 +225,10 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
     /**
      * assign our submitter
      */
-    AuthenticationService.getCurrentUser().then(function (data) {
-        $scope.submitter = data;
+    $scope.$on('auth:login-success', function(event, data, status, headers, config) {
+        AuthenticationService.getCurrentUser().then(function (data) {
+            $scope.submitter = data;
+        });
     });
 
 
