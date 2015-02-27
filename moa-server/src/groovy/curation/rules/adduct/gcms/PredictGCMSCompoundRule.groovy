@@ -58,26 +58,32 @@ class PredictGCMSCompoundRule extends AbstractCurationRule {
                         //our newly derivatized compound
                         Molecule derivatizedCompound = derivatizer.generateTMSDerivatizationProduct(readMolecule(spectrum.biologicalCompound), tmsCount)
 
-                        String inchiKey = calculateInChIKey(derivatizedCompound)
+                        if(derivatizedCompound != null) {
+                            String inchiKey = calculateInChIKey(derivatizedCompound)
 
-                        //find or create a new compound
+                            //find or create a new compound
 
-                        Map newCompound = [:]
-                        newCompound.inchiKey = inchiKey
-                        newCompound.inchi = calculateInChICode(derivatizedCompound)
-                        newCompound.molFile = derivatizer.getMOLFile(derivatizedCompound)
+                            Map newCompound = [:]
+                            newCompound.inchiKey = inchiKey
+                            newCompound.inchi = calculateInChICode(derivatizedCompound)
+                            newCompound.molFile = derivatizer.getMOLFile(derivatizedCompound)
 
 
-                        Compound c = compoundService.buildCompound(newCompound)
-                        //assign inchiCode to compound
+                            Compound c = compoundService.buildCompound(newCompound)
+                            //assign inchiCode to compound
 
-                        //adds the tag
-                        addTag(new CurationObject(c),VIRTUAL_COMPOUND)
+                            //adds the tag
+                            addTag(new CurationObject(c), VIRTUAL_COMPOUND)
 
-                        spectrum.predictedCompound = c
-                        spectrum.save(flush: true)
+                            spectrum.predictedCompound = c
+                            spectrum.save(flush: true)
 
-                        return true
+                            return true
+                        }
+                        else{
+                            logger.debug("not able to derivatize compound")
+                            return  false
+                        }
                     } else {
                         logger.debug("no TMS values specified")
                     }

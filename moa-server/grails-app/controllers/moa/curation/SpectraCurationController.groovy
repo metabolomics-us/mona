@@ -22,13 +22,13 @@ class SpectraCurationController {
      */
     def curate() {
 
-        long id = params.id as long
+        //long id = params.id as long
         boolean result = spectraCurationService.validateSpectra(id)
 
         if (!result) {
             render(status: 503, text: "curation of ${id} failed!")
         } else {
-            render( text: "curation of ${id} succesful!")
+            render(text: "curation of ${id} succesful!")
         }
     }
 
@@ -36,28 +36,28 @@ class SpectraCurationController {
      * validate all spectrums
      * @return
      */
-    def curateAll(){
+    def curateAll() {
 
         def ids = Spectrum.findAll()*.id
 
-        ids.each {long id ->
-            SpectraValidationJob.triggerNow([spectraId:id])
+        ids.each { long id ->
+            SpectraValidationJob.triggerNow([spectraId: id])
         }
     }
 
     /**
      * curates spectra found by the given query the format is the same as in the query service
      */
-    def curateByQuery(){
+    def curateByQuery() {
 
         def query = request.getJSON()
 
-        def spectra = spectraQueryService.query(query,params)
+        def spectra = spectraQueryService.query(query, params)
 
         spectra.each { Spectrum s ->
-            SpectraValidationJob.triggerNow([spectraId:s.id])
+            SpectraValidationJob.triggerNow([spectraId: s.id])
         }
 
-        render ([message:"validating ${spectra.size()} spectra now"] as JSON )
+        render([message: "validating ${spectra.size()} spectra now"] as JSON)
     }
 }

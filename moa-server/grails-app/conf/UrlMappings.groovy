@@ -6,26 +6,19 @@ class UrlMappings {
         /**
          * basic overview of our services
          */
-        "/"(view: 'index')
+         "/"(redirect: '/documentation')
 
-        /**
-         * general grails default mapping
-         */
-        "/$controller/$action?/$id?" {
-            constraints {
-                // apply constraints here
-            }
-        }
+        "/documentation"(controller: 'documentation', action: 'index')
 
         /**
          * if you hit the top directory just redirect
          */
-        "/rest"(redirect: '/')
+        "/rest"(redirect: '/documentation')
 
         /**
          * query by submitter
          */
-        "/rest/submitters"(resources: 'Submitter') {
+         "/rest/submitters"(resources: 'Submitter') {
             /**
              * and spectra
              */
@@ -110,7 +103,8 @@ class UrlMappings {
          */
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
 
-        "/rest/spectra/similarity"(controller: 'spectraQuery', action: 'similaritySearch')
+        "/rest/spectra/similarity/"(controller: 'spectraQuery', action: 'similaritySearch')
+
         /**
          * batch updates based on queries
          */
