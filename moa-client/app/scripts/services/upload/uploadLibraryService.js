@@ -402,6 +402,6 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * Requires separate function for broadcasting at start of upload
      */
     var broadcastUploadProgress = function () {
-        $rootScope.$broadcast('spectra:uploadprogress', parseInt(((self.completedSpectraCount / self.uploadedSpectraCount) * 100), 10));
+        $rootScope.$broadcast('spectra:uploadprogress', self.completedSpectraCount, self.uploadedSpectraCount);
     }
 });
