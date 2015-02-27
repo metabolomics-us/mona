@@ -28,6 +28,14 @@ app.service('CookieService', function (ApplicationError, $cookieStore, $log) {
     };
 
     /**
+     * updates the cookie
+     * @param name
+     */
+    this.get = function (name) {
+        return $cookieStore.get(name);
+    };
+
+    /**
      * provides us with a boolean cookie value of true or false
      * @param cookieName name your cookie
      * @param defaultValueIfNotFound default value if we don't find the cookie
