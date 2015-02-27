@@ -20,7 +20,6 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
             password: password
         }, function(data, status, headers, config) {
             $rootScope.currentUser = data;
-            $http.defaults.headers.common['Authorization'] = data.access_token;
             $http.defaults.headers.common['X-Auth-Token'] = data.access_token;
 
             $rootScope.$broadcast('auth:login-success', data, status, headers, config);
@@ -64,7 +63,6 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
             });
 
             $rootScope.currentUser = null;
-            $http.defaults.headers.common['Authorization'] = undefined;
             $http.defaults.headers.common['X-Auth-Token'] = undefined;
         } else {
             $rootScope.$broadcast('auth:logout-status', null, null, null, null);
