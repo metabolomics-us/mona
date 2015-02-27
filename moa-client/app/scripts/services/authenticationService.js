@@ -58,9 +58,9 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
                     method: 'POST'
                 }
             }).post({}, function(data, status, headers, config) {
-                $rootScope.$broadcast('auth:logout-success', data, status, headers, config);
+                $rootScope.$broadcast('auth:logout', data, status, headers, config);
             }, function(data, status, headers, config) {
-                $rootScope.$broadcast('auth:logout-error', data, status, headers, config);
+                $rootScope.$broadcast('auth:logout', data, status, headers, config);
             });
 
             $rootScope.currentUser = null;

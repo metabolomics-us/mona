@@ -89,7 +89,7 @@
         <!-- /.dropdown -->
         <li class="dropdown" ng-controller="AuthenticationController">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa fa-user fa-fw"></i> {{isLoggedIn() ? "Welcome "+ name +"!" : ""}} <i class="fa fa-caret-down"></i>
+                <i class="fa fa-user fa-fw"></i> <span ng-bind="welcomeMessage"></span> <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
                 <!--

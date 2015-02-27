@@ -2,6 +2,9 @@
  * Created by wohlgemuth on 7/11/14.
  */
 moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, AuthenticationService) {
+    $scope.welcomeMessage = '';
+
+
     /**
      * Returns whether or not the user is logged in
      * @returns {*}
@@ -35,8 +38,12 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
 
     $scope.$on('auth:login-success', function(event, data, status, headers, config) {
         AuthenticationService.getCurrentUser().then(function(data) {
-            $scope.name = data.firstName;
+            $scope.welcomeMessage = "Welcome "+ data.firstName +"!";
         });
+    });
+
+    $scope.$on('auth:logout', function(event, data, status, headers, config) {
+        $scope.welcomeMessage = '';
     });
 };
 
