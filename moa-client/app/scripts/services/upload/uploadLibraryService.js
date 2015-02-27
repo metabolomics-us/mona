@@ -80,6 +80,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     }
 
     /**
+     * @DEPRECATED - should get rid of it since the server does it now for us
      * obtains a mol file for the spectra
      * @param spectra
      */

@@ -22,6 +22,7 @@ import curation.rules.meta.ProvidedExactMassIsPossibleRule
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
+import curation.rules.spectra.IsDuplicatedSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.tag.RemoveComputedTagRule
 import persistence.metadata.filter.Filters
@@ -71,7 +72,6 @@ beans = {
                 inchiKeyMatchesMolFile
         ]
     }
-
 
 //Spectra curation workflow
     lcmsSpectraIdentification(LCMSSpectraIdentificationRule) { bean ->
@@ -124,6 +124,11 @@ beans = {
         bean.autowire = 'byName'
         noisePercentage = 2
         percentOfSpectraIsNoise = 80
+    }
+
+    isSpectraDuplicated(IsDuplicatedSpectraRule) { bean ->
+        bean.autowire = 'byName'
+        minSimilarity = 900
     }
 
 //is column metadata valid
@@ -214,8 +219,10 @@ deleteMetaDataRule,
 convertSpectraToRelativeRule,
 lcmsSpectraIdentification,
 gcmsSpectraIdentification,
+
 //order doesn't really matter here
 metadataCuration,
+isSpectraDuplicated,
 isAccurateMassSpectra,
 isSpectraDirty,
 lcmsAdductCuration,
@@ -226,7 +233,6 @@ gcmsPredictMMinus15Rule,
 gcmsCompoundShouldBeDerivatized,
 //these rules should run last
 isAnnotatedSpectraRule
-
         ]
 //define and register our curation
     }

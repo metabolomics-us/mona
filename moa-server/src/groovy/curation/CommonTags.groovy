@@ -25,4 +25,8 @@ public interface CommonTags {
 
     public static final String SUSPECT_VALUE = "suspect value"
 
+    public static final String DUPLICATED_SPECTRA = "duplicated"
+
+
+
 }
