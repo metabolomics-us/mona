@@ -31,7 +31,7 @@ class CorsFilter implements Filter {
     private String exposeHeaders;
 
     public void init(FilterConfig cfg) throws ServletException {
-        optionsHeaders.put("Access-Control-Allow-Headers", "origin, authorization, accept, content-type, x-requested-with");
+        optionsHeaders.put("Access-Control-Allow-Headers", "origin, authorization, accept, content-type, x-requested-with, x-auth-token");
         optionsHeaders.put("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS");
         optionsHeaders.put("Access-Control-Max-Age", "3600");
         for (Enumeration<String> i = cfg.getInitParameterNames(); i.hasMoreElements();) {

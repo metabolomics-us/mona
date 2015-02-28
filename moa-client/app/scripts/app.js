@@ -54,7 +54,7 @@ app.run(function($window, $injector) {
     $window.onbeforeunload = function (e) {
         var service = $injector.get('UploadLibraryService');
 
-        if(service.completedSpectraCount != service.uploadedSpectraCount) {
+        if(service.isUploading()) {
             var progress = parseInt(((service.completedSpectraCount / service.uploadedSpectraCount) * 100), 10);
             return 'MoNA is '+ progress +'% done with processing and uploading spectra.';
         }

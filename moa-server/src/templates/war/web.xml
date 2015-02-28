@@ -35,16 +35,6 @@
         </init-param>
     </filter>
 
-    <filter>
-        <filter-name>corsFilter</filter-name>
-        <filter-class>filter.CorsFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>corsFilter</filter-name>
-        <url-pattern>/rest/*</url-pattern>
-    </filter-mapping>
-
     <filter-mapping>
         <filter-name>charEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
