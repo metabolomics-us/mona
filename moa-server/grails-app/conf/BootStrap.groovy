@@ -30,40 +30,47 @@ class BootStrap {
         Role.findOrCreateByAuthority('ROLE_CURATOR').save()
         Role.findOrCreateByAuthority('ROLE_USER').save()
 
-        SubmitterRole.create(Submitter.findOrCreateByEmailAddress("wohlgemuth@ucdavis.edu"), Role.findOrCreateByAuthority('ROLE_ADMIN'))
-        SubmitterRole.create(Submitter.findOrCreateByEmailAddress("wohlgemuth@ucdavis.edu"), Role.findOrCreateByAuthority('ROLE_USER'))
+        Submitter s = Submitter.findOrCreateByEmailAddress("wohlgemuth@ucdavis.edu")
+        Role a = Role.findOrCreateByAuthority('ROLE_ADMIN')
+        Role u = Role.findOrCreateByAuthority('ROLE_USER')
 
+        if (SubmitterRole.findBySubmitterAndRole(s, a) == null) {
+            SubmitterRole.create(Submitter.findOrCreateByEmailAddress("wohlgemuth@ucdavis.edu"), Role.findOrCreateByAuthority('ROLE_ADMIN'))
+        }
+        if (SubmitterRole.findBySubmitterAndRole(s, u) == null) {
+            SubmitterRole.create(Submitter.findOrCreateByEmailAddress("wohlgemuth@ucdavis.edu"), Role.findOrCreateByAuthority('ROLE_USER'))
+        }
 
 
         JSON.registerObjectMarshaller(Tag,
-                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class", "id", "tagCachingService","dateCreated","lastUpdated"])
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class", "id", "tagCachingService", "dateCreated", "lastUpdated"])
         )
 
         JSON.registerObjectMarshaller(Compound,
-                DomainClassMarshaller.createExcludeMarshaller(Compound, ["class", "spectra","dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(Compound, ["class", "spectra", "dateCreated"])
         )
 
         JSON.registerObjectMarshaller(Submitter,
-                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra", "password","dateCreated","lastUpdated"])
+                DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra", "password", "dateCreated", "lastUpdated"])
         )
 
         JSON.registerObjectMarshaller(Spectrum,
-                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class","dateCreated","ions"])
+                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class", "dateCreated", "ions"])
         )
         JSON.registerObjectMarshaller(Name,
-                DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound","dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound", "dateCreated"])
         )
         JSON.registerObjectMarshaller(MetaData,
-                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class", "value","dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class", "value", "dateCreated"])
         )
         JSON.registerObjectMarshaller(MetaDataValue,
                 DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class", "id", "owner", "metaData"])
         )
         JSON.registerObjectMarshaller(MetaDataCategory,
-                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class", "metaDatas","dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class", "metaDatas", "dateCreated"])
         )
         JSON.registerObjectMarshaller(Comment,
-                DomainClassMarshaller.createExcludeMarshaller(Comment, ["class","dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(Comment, ["class", "dateCreated"])
         )
         JSON.registerObjectMarshaller(News,
                 DomainClassMarshaller.createExcludeMarshaller(News, ["class"])

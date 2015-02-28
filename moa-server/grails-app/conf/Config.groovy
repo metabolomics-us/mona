@@ -90,8 +90,8 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
 
 
-        //logdirectory = "/var/log/mona/"
-        logdirectory = "/Volumes/ras/"
+        logdirectory = "/var/log/mona/"
+        //logdirectory = "/Volumes/ras/"
 
     }
 }
