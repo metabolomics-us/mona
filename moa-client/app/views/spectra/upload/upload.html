@@ -8,6 +8,11 @@
         <spectra-upload-progress-bar></spectra-upload-progress-bar>
         <hr />
         <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Spectrum</button>
+
+        <div>
+            <h4>Recently uploaded spectra, from all over the world!</h4>
+            <div gw-news limit="100" type="upload"></div>
+        </div>
     </div>
 
     <div ng-show="!spectraUploaded">
@@ -16,4 +21,6 @@
 
         <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
     </div>
+
+
 </div>

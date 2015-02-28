@@ -18,7 +18,6 @@ import org.openscience.cdk.interfaces.IMolecule
 import org.openscience.cdk.io.MDLV2000Writer
 import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
-import org.openscience.cdk.modeling.builder3d.ModelBuilder3D
 
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -69,17 +68,19 @@ class CompoundService {
         }
 
         if (myCompound.validate()) {
-            myCompound.save()
+            myCompound.save(flush:true)
         } else {
             throw new ValidationException("sorry this compound is not valid", myCompound.errors)
         }
+
 
         compound.names.each {
             nameService.addNameToCompound(it, myCompound)
         }
 
-        myCompound.save()
+        myCompound.save(flush:true)
 
+        log.debug("added or updated compound with id: ${myCompound.id}")
         CompoundCurationJob.triggerNow(compoundId: myCompound.id)
         return myCompound;
 

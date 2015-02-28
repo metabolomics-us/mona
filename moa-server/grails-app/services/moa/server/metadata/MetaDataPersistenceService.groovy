@@ -48,6 +48,10 @@ class MetaDataPersistenceService {
     public void generateMetaDataObject(SupportsMetaData object, Map current) {
         log.debug("received ${object} and map: ${current}")
 
+        if(current.name == null || current.value == null){
+            log.warn("received null data for some reason, object was ${object}")
+            return
+        }
         if(metadataFilters == null){
             throw new ConfigurationError("sorry it looks like the filters were not injected!")
         }

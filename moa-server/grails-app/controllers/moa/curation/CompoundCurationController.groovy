@@ -7,6 +7,7 @@ class CompoundCurationController {
 
     def sessionFactory
 
+
     static responseFormats = ['json']
 
     CompoundCurationService compoundCurationService

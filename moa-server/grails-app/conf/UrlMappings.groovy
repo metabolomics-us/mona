@@ -6,21 +6,14 @@ class UrlMappings {
         /**
          * basic overview of our services
          */
-        "/"(view: 'index')
+        "/"(redirect: '/documentation')
 
-        /**
-         * general grails default mapping
-         */
-        "/$controller/$action?/$id?" {
-            constraints {
-                // apply constraints here
-            }
-        }
+        "/documentation"(controller: 'documentation', action: 'index')
 
         /**
          * if you hit the top directory just redirect
          */
-        "/rest"(redirect: '/')
+        "/rest"(redirect: '/documentation')
 
         /**
          * query by submitter
@@ -110,7 +103,8 @@ class UrlMappings {
          */
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
 
-        "/rest/spectra/similarity"(controller: 'spectraQuery', action: 'similaritySearch')
+        "/rest/spectra/similarity/"(controller: 'spectraQuery', action: 'similaritySearch')
+
         /**
          * batch updates based on queries
          */
@@ -124,8 +118,7 @@ class UrlMappings {
         /**
          * batch save method, to schedule lots of spectra to an internal queue.
          */
-        "/rest/spectra/single/save"(controller: 'spectrum', action: 'singleSave',parseRequest: false)
-
+        "/rest/spectra/single/save"(controller: 'spectrum', action: 'singleSave', parseRequest: false)
 
         /**
          * curation services
@@ -137,6 +130,7 @@ class UrlMappings {
          */
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
+        "/rest/spectra/curateByQuery"(controller: 'spectraCuration', action: 'curateByQuery')
         /**
          * general limited public api
          */
@@ -147,16 +141,29 @@ class UrlMappings {
         /**
          * statistics api
          */
-        "/rest/statistics/countAll" (controller: 'statistics', action: 'countAll')
+        "/rest/statistics/countAll"(controller: 'statistics', action: 'countAll')
 
-        "/rest/statistics/tags/spectra/count/$id" (controller: 'statistics', action: 'countOfSpectraForTag', id:id)
+        "/rest/statistics/tags/spectra/count/$id"(controller: 'statistics', action: 'countOfSpectraForTag', id: id)
 
-        "/rest/statistics/tags/spectra/countAll" (controller: 'statistics' ,action: 'countOfSpectraForAllTags')
+        "/rest/statistics/tags/spectra/countAll"(controller: 'statistics', action: 'countOfSpectraForAllTags')
 
-        "/rest/statistics/submitters/countAll" (controller: 'statistics', action: 'countOfSpectraForAllSubmitters')
+        "/rest/statistics/submitters/countAll"(controller: 'statistics', action: 'countOfSpectraForAllSubmitters')
 
-        "/rest/statistics/tags/compound/count/$id" (controller: 'statistics', action: 'countOfCompoundsForTag', id:id)
+        "/rest/statistics/tags/compound/count/$id"(controller: 'statistics', action: 'countOfCompoundsForTag', id: id)
 
-        "/rest/statistics/meta/spectra/count/$id" (controller: 'statistics', action: 'metaDataValueCountForMetadataValueId', id:id)
+        "/rest/statistics/meta/spectra/count/$id"(controller: 'statistics', action: 'metaDataValueCountForMetadataValueId', id: id)
+
+        /**
+         * news related items
+         */
+        "/rest/news"(resources: 'News')
+
+        "/rest/news/query/announcements"(controller: 'news', action: 'listAnnouncements')
+
+        "/rest/news/query/notifications"(controller: 'news', action: 'listNotifications')
+
+        "/rest/news/query/uploads"(controller: 'news',
+                action: 'listUploads')
+
     }
 }

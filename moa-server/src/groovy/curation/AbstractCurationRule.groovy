@@ -30,8 +30,7 @@ abstract class AbstractCurationRule implements CurationRule {
 
     CurationAction failureAction
 
-    @Autowired
-    TagService tagService
+    def tagService
 
     /**
      * default constructor

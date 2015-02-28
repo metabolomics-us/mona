@@ -184,6 +184,8 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
                         $scope.loadingStatus = 'Completed';
 
                         $scope.spectrum = spectrum;
+
+                        //place holder
                         $scope.spectrum.meta.push({name: '', value: ''});
 
                         $scope.step += 1;
@@ -205,14 +207,10 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
     var submitSpectra = function() {
         if($scope.batchUpload) {
             UploadLibraryService.uploadSpectra($scope.files, function (spectrum) {
-                $log.info('Final spectrum');
-                $log.info(spectrum);
                 spectrum.$batchSave();
             }, $scope.spectrum);
         } else {
             UploadLibraryService.uploadSpectrum($scope.spectrum, function (spectrum) {
-                $log.info('Final spectrum');
-                $log.info(spectrum);
                 spectrum.$save();
             });
         }
