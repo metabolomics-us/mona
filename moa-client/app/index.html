@@ -51,14 +51,12 @@
     <!-- /.navbar-header -->
 
     <ul class="nav navbar-top-links navbar-right">
-
         <!-- /.dropdown -->
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-tasks">
-                <li class="divider"></li>
                 <li>
                     <a href="#">
                         <div>
@@ -80,7 +78,7 @@
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a class="text-center" href="#">
+                    <a class="text-center" href="#/statistics">
                         <strong>See All Statistics</strong>
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -89,49 +87,16 @@
             <!-- /.dropdown-tasks -->
         </li>
         <!-- /.dropdown -->
-        <li class="dropdown">
+        <li class="dropdown" ng-controller="AuthenticationController">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa   fa-flag-o fa-fw"></i> <i class="fa fa-caret-down"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-alerts">
-                <li>
-                    <a href="#">
-                        <div>
-                            <i class="fa fa-comment fa-fw"></i>New Publication!
-                            <span class="pull-right text-muted small">4 minutes ago</span>
-                        </div>
-                    </a>
-                </li>
-
-                <li class="divider"></li>
-                <li>
-                    <a href="#">
-                        <div>
-                            <i class="fa fa-upload fa-fw"></i> New Library uploaded
-                            <span class="pull-right text-muted small">12 minutes ago</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a class="text-center" href="#">
-                        <strong>See All Alerts</strong>
-                        <i class="fa fa-angle-right"></i>
-                    </a>
-                </li>
-            </ul>
-            <!-- /.dropdown-alerts -->
-        </li>
-        <!-- /.dropdown -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                <i class="fa fa-user fa-fw"></i> <span ng-bind="welcomeMessage"></span> <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
-                <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
-                </li>
+                <!--
+                <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a></li>
                 <li class="divider"></li>
-                <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                -->
+                <li><a ng-click="handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{isLoggedIn() ? "Logout" : "Login"}}</a>
                 </li>
             </ul>
             <!-- /.dropdown-user -->
@@ -300,7 +265,7 @@
 <script src="scripts/services/optimization/MetaDataOptimizationService.js"></script>
 <script src="scripts/services/cookie/CookieService.js"></script>
 
-<script src="scripts/services/authentificationService.js"></script>
+<script src="scripts/services/authenticationService.js"></script>
 <script src="scripts/services/upload/uploadLibraryService.js"></script>
 <script src="scripts/services/persistence/newsService.js"></script>
 
@@ -314,6 +279,7 @@
 
 <!-- controllers -->
 <script src="scripts/controllers/main.js"></script>
+<script src="scripts/controllers/authentication/authenticationController.js"></script>
 <script src="scripts/controllers/browser/spectraBrowserController.js"></script>
 <script src="scripts/controllers/browser/spectraDatabaseIndexController.js"></script>
 <script src="scripts/controllers/browser/spectrumViewerController.js"></script>

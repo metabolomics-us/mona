@@ -5,7 +5,7 @@
 /**
  * handles the upload of library spectra to the system
  */
-app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spectrum, gwMspService, gwChemifyService, AuthentificationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
+app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spectrum, gwMspService, gwChemifyService, AuthenticationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
     // Representing this service
     var self = this;
 
@@ -98,37 +98,33 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param additionalData
      */
     function workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData) {
-        //$log.debug('converting object:\n\n' + $filter('json')(spectrumObject));
-
         //if we have  a key or an inchi
         if (spectrumObject.inchiKey != null && spectrumObject.inchi != null) {
 
             self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData)
         }
+
         //we need to get a key or inchi code
         else {
             //get the key
             obtainKey(spectrumObject).then(function (spectrumWithKey) {
-                //$log.debug('submitting object:\n\n' + $filter('json')(spectrum));
-
                 //only if we have an inchi or a molfile we can submit this file
                 if (spectrumWithKey.inchi != null || spectrumWithKey.molFile != null) {
-                    $log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
+                    //$log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
                     self.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData)
                 }
+
                 else {
                     $log.warn('dropped object from submission, since it was declared invalid');
                     $log.debug( $filter('json')(spectrumWithKey));
-
+                    updateUploadProgress();
                 }
-
             }, function (reason) {
                 $log.error(reason);
                 $log.warn( $filter('json')(spectrumObject));
+                updateUploadProgress();
             });
         }
-        updateUploadProgress();
-
     }
 
 
@@ -343,7 +339,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         self.uploadedSpectraCount += files.length;
         broadcastUploadProgress();
 
-        AuthentificationService.getCurrentUser().then(function (submitter) {
+        AuthenticationService.getCurrentUser().then(function (submitter) {
             var uploadSpectrum = function (file) {
                 self.loadSpectraFile(file, function (data, origin) {
                     self.processData(data, function (spectrum) {
@@ -367,7 +363,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         self.uploadedSpectraCount += 1;
         broadcastUploadProgress();
 
-        AuthentificationService.getCurrentUser().then(function (submitter) {
+        AuthenticationService.getCurrentUser().then(function (submitter) {
             AsyncService.addToPool(wizardData, function (spectrum) {
                 workOnSpectra(submitter, saveSpectrumCallback, spectrum);
             });
@@ -376,22 +372,27 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
 
     /**
-     *
+     * Checks if spectra are being processed and uploaded
+     */
+    self.isUploading = function() {
+        return self.completedSpectraCount < self.uploadedSpectraCount;
+    };
+
+
+    /**
+     * Updates and broadcasts the upload progress
      */
     var updateUploadProgress = function () {
         self.completedSpectraCount++;
         broadcastUploadProgress();
-
-        if (self.completedSpectraCount == self.uploadedSpectraCount) {
-            self.completedSpectraCount = 0;
-            self.uploadedSpectraCount = 0;
-        }
     };
+
+
 
     /**
      * Requires separate function for broadcasting at start of upload
      */
     var broadcastUploadProgress = function () {
-        $rootScope.$broadcast('spectra:uploadprogress', parseInt(((self.completedSpectraCount / self.uploadedSpectraCount) * 100), 10));
+        $rootScope.$broadcast('spectra:uploadprogress', self.completedSpectraCount, self.uploadedSpectraCount);
     }
 });

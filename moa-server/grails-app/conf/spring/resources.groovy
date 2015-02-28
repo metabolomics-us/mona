@@ -1,3 +1,4 @@
+import auth.SubmitterRestAuthenticationTokenJsonRenderer
 import curation.CurationObject
 import curation.CurationWorkflow
 import curation.SubCurationWorkflow
@@ -25,6 +26,7 @@ import curation.rules.spectra.IsCleanSpectraRule
 import curation.rules.spectra.IsDuplicatedSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.tag.RemoveComputedTagRule
+import filter.CorsBasicAuth
 import persistence.metadata.filter.Filters
 import persistence.metadata.filter.NameDoesntMatchFilter
 import persistence.metadata.filter.NameMatchesFilter
@@ -36,6 +38,9 @@ import util.caching.SpectrumKeyGenerator
 
 // Place your Spring DSL code here
 beans = {
+    // Authentication beans
+    restAuthenticationTokenJsonRenderer( SubmitterRestAuthenticationTokenJsonRenderer )
+
 
     //rest service generation for client side stuff
     rest(grails.plugins.rest.client.RestBuilder)

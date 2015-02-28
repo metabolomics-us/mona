@@ -3,9 +3,10 @@
  */
 'use strict';
 
-moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibraryService) {
-    $scope.spectraUploaded = false;
-    $scope.spectraUploadProgress = 0.0;
+moaControllers.SpectraUploadController = function ($scope, $modal, AuthenticationService) {
+    $scope.isLoggedIn = function() {
+        return AuthenticationService.isLoggedIn();
+    };
 
 
     /**
@@ -26,7 +27,12 @@ moaControllers.SpectraUploadController = function ($scope, $modal, UploadLibrary
         });
     };
 
-    $scope.$on('spectra:uploadprogress', function(event, uploadProgress) {
-        $scope.spectraUploadProgress = uploadProgress;
-    });
+    /**
+     * Check whether the user is uploading, and open the upload dialog accordingly
+     */
+    (function() {
+        if ($scope.isLoggedIn() && !$scope.spectraUploaded) {
+            $scope.uploadSpectraDialog()
+        }
+    })();
 };

@@ -233,9 +233,27 @@ module.exports = function (grunt) {
         },
 
         // The following *-min tasks produce minified files in the dist folder
-        cssmin: {
-            options: {
-                //root: '<%= yeoman.app %>'
+        // cssmin: {
+        //     options: {
+        //         relativeTo: '<%= yeoman.dist %>'
+        //     }
+        // },
+
+        // Changes the icon font path in the scss
+        replace: {
+            bower_css: {
+                src: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+                overwrite: true,
+                replacements: [
+                    {
+                        from: '/bower_components/bootstrap/dist/fonts',
+                        to: '/fonts'
+                    },
+                    {
+                        from: '/bower_components/bootstrap-sass-official/assets/fonts/bootstrap',
+                        to: '/fonts'
+                    }
+                ]
             }
         },
 
@@ -482,7 +500,8 @@ module.exports = function (grunt) {
         //'uglify',
         'rev',
         'usemin',
-        'htmlmin'
+        'htmlmin',
+        'replace' // updates the css icon font path
     ]);
 
     grunt.registerTask('default', [
