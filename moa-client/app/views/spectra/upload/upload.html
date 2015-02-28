@@ -10,10 +10,15 @@
             <p>Please feel free to continue browsing the website.  You will be notified when your upload is complete.</p>
             <br /><br />
 
-            <spectra-upload-progress-bar></spectra-upload-progress-bar>
-            <hr />
-            <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra</button>
+        <spectra-upload-progress-bar></spectra-upload-progress-bar>
+        <hr />
+        <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Spectrum</button>
+
+        <div>
+            <h4>Recently uploaded spectra, from all over the world!</h4>
+            <div gw-news limit="100" type="upload"></div>
         </div>
+    </div>
 
         <div ng-show="isLoggedIn() && !spectraUploaded">
             <h3>Upload Mass Spectra Wizard</h3>
@@ -22,4 +27,6 @@
             <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
         </div>
     </div>
+
+
 </div>

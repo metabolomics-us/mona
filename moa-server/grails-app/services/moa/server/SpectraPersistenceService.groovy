@@ -21,6 +21,8 @@ class SpectraPersistenceService {
 
     CompoundService compoundService
 
+    NewsService newsService
+
     /**
      * creates a new spectrum and saves it in the database
      * @param params
@@ -128,6 +130,10 @@ class SpectraPersistenceService {
                 }
             }
         }
+
+
+
+        newsService.spectraCreatedNews(spectrum)
         return spectrum;
 
     }
