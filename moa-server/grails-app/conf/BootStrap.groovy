@@ -76,17 +76,6 @@ class BootStrap {
 
 */
 
-
-
-
-        if(News.getCount() == 0){
-            newsService.createNews("test","a simple test")
-            newsService.createNews("test2","a simple test 2")
-            newsService.createNews("test3","a simple test 3")
-            newsService.createNews("test4","a simple test 4")
-
-        }
-
     }
 
     def destroy = {
