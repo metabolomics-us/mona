@@ -29,7 +29,7 @@ app.factory('News', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
                 isArray: true
             },
             'listUpdates': {
-                url: REST_BACKEND_SERVER + '/rest/news/query/updates?max='+ MAX_OBJECTS,
+                url: REST_BACKEND_SERVER + '/rest/news/query/uploads?max='+ MAX_OBJECTS,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
