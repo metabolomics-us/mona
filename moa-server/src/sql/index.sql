@@ -27,3 +27,6 @@ CREATE INDEX "index-meta-name"
 
 CREATE INDEX "index-meta-name"
         ON "public"."meta_data"("name");
+
+CREATE INDEX "news_type_index"
+	ON "public"."news"("type");
