@@ -49,7 +49,7 @@ class SpectraUploadJob {
                     log.debug("stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}")
 
 
-                    SpectraValidationJob.triggerNow([spectraId: result.id])
+                    //SpectraValidationJob.triggerNow([spectraId: result.id])
 
                 }
                 catch (ValidationException e) {
