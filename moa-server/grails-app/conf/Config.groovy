@@ -90,8 +90,8 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
 
 
-        //logdirectory = "/var/log/mona/"
-        logdirectory = "/Volumes/ras/"
+        logdirectory = "/var/log/mona/"
+        //logdirectory = "/Volumes/ras/"
 
     }
 }
@@ -208,3 +208,13 @@ grails.cache.keyGenerator = "cacheKey"
 // Set additional config locations
 grails.config.locations = []
 grails.config.locations << SpringSecurityConfig
+
+cors.enabled=true
+cors.url.pattern = '/rest/*'
+cors.headers=[
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+        'Access-Control-Allow-Headers': 'origin, authorization, accept, content-type, x-requested-with, X-Auth-Token',
+        'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS',
+        'Access-Control-Max-Age': 3600
+]
