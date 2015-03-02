@@ -18,12 +18,6 @@
             <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra</button>
         </div>
 
-        <div>
-            <h4>Recently uploaded spectra, from all over the world!</h4>
-
-            <div gw-news limit="100" type="upload"></div>
-        </div>
-
         <div ng-show="isLoggedIn() && !spectraUploaded">
             <h3>Upload Mass Spectra Wizard</h3>
 
@@ -31,6 +25,12 @@
                 provide you with all the help you need.</p>
 
             <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
+        </div>
+
+        <br /><br />
+        <div>
+            <h4>Recently uploaded spectra, from all over the world!</h4>
+            <div gw-news limit="100" type="upload"></div>
         </div>
     </div>
 </div>
