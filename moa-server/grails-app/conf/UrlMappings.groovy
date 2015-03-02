@@ -164,6 +164,9 @@ class UrlMappings {
 
         "/rest/news/query/uploads"(controller: 'news',
                 action: 'listUploads')
+        "/rest/news/query/milestones"(controller: 'news',
+                action: 'listMilestones')
+
 
     }
 }
