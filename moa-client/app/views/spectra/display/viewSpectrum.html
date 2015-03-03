@@ -17,7 +17,6 @@
                         <li>
                             <a href="{{spectrum.id | spectraDownloadAsMsp}}" target="_blank">as MSP file</a>
                             <a href="{{spectrum.id | spectraDownload}}" target="_blank">as Mona record</a>
-
                         </li>
                     </ul>
                 </span>
@@ -77,6 +76,67 @@
                                     <!-- display this, if it's a computed value -->
                                     <i ng-show="ion.computed == true" class="fa fa-flask" tooltip-placement="top"
                                        tooltip="This value was computed via automated curation"></i>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </accordion-group>
+
+                <accordion-group is-open="accordionStatus.isSimilarSpectraOpen">
+                    <accordion-heading>
+                        <div ng-click="loadSimilarSpectra()">
+                            Similar Spectra<i class="pull-right glyphicon"
+                                             ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
+                                                       'glyphicon-chevron-right': !accordionStatus.isSimilarSpectraOpen}"></i>
+                        </div>
+                    </accordion-heading>
+
+                    <div class="text-center" ng-show="loadingSimilarSpectra">
+                        <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
+                    </div>
+
+                    <div class="text-center" ng-show="!loadingSimilarSpectra && !similarSpectra.length">
+                        <h4>No similar spectra found.</h4>
+                    </div>
+
+                    <div class="text-center" ng-show="!loadingSimilarSpectra && similarSpectra.length">
+                        <table class="table table-hover table-striped" style="table-layout: fixed;">
+                            <thead>
+                            <tr>
+                                <th class="text-center">Name</th>
+                                <th class="text-right" style="width: 110px">Bio. Structure</th>
+                                <th class="text-right" style="width: 110px">Chem. Structure</th>
+                                <th class="text-right" style="width: 110px">Spectrum</th>
+                                <th class="text-center">Similarity Score</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-show="spectra.length == 0">
+                            </tr>
+                            <tr ng-repeat="spectrum in similarSpectra" ng-click="viewSpectrum(spectrum.id)">
+                                <td>
+                                    <ul class="list-unstyled">
+                                        <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">{{name.name}}</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="center-block" chemical-sketcher readonly="true" width="100" height="100"
+                                         id="bioSketch_{{spectrum.id}}"
+                                         ng-model="spectrum.biologicalCompound"></div>
+                                </td>
+                                <td>
+                                    <div class="center-block" chemical-sketcher readonly="true" width="100" height="100"
+                                         id="chemSketch_{{spectrum.id}}"
+                                         ng-model="spectrum.chemicalCompound"></div>
+                                </td>
+                                <td>
+                                    <div class="masspec-mini">
+                                        <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-center">{{spectrum.similarity | number:0}} / 1000</p>
                                 </td>
                             </tr>
                             </tbody>
