@@ -25,5 +25,5 @@ moaControllers.NavigationController = function($scope, $rootScope, Authenticatio
         }
 
         return false;
-    }
+    };
 };
