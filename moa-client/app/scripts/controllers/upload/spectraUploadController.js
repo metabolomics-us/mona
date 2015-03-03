@@ -10,7 +10,7 @@ moaControllers.SpectraUploadController = function ($scope, $rootScope, $modal, A
 
     $scope.login = function() {
         $rootScope.$broadcast('auth:login');
-    }
+    };
 
 
     /**
@@ -37,7 +37,7 @@ moaControllers.SpectraUploadController = function ($scope, $rootScope, $modal, A
     (function() {
         if ($scope.isLoggedIn() && !$scope.spectraUploaded) {
             $scope.uploadSpectraDialog()
-        } else if(!$scope.isLoggedIn()) {
+        } else if(!$scope.isLoggedIn() && !AuthenticationService.isLoggingIn()) {
             $rootScope.$broadcast('auth:login');
         }
     })();
