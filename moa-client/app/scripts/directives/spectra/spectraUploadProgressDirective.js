@@ -11,14 +11,14 @@ app.directive('spectraUploadProgressBar', function () {
         restrict: 'E',
         replace: false,
         template:
-            '<div ng-if="running">'+
+            '<div ng-if="spectraUploadProgress != -1">'+
             '    <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} spectra.</i></div>'+
-            '    <progressbar ng-class="{active: running, \'progress-striped\': running}" max="100" value="spectraUploadProgress">'+
+            '    <progressbar ng-class="{active: spectraUploadProgress < 100, \'progress-striped\': spectraUploadProgress < 100, \'progress-bar-success\': spectraUploadProgress == 100}" max="100" value="spectraUploadProgress">'+
             '        <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" ng-bind="spectraUploadProgressString"></span>'+
             '    </progressbar>'+
             '    <div class="text-center">{{etaString}}</div>'+
             '</div>'+
-            '<div ng-if="!running"><i>No Upload Started</i></div>',
+            '<div ng-if="spectraUploadProgress == -1"><i>No Upload Started</i></div>',
 
         /**
          * watches for changes to the upload progress
@@ -64,8 +64,7 @@ app.directive('spectraUploadProgressBar', function () {
                 $scope.spectraUploadProgress = parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10);
                 $scope.spectraUploadProgressString = $scope.spectraUploadProgress +'%';
                 buildEtaString();
-
-                $scope.running = $scope.spectraUploadProgress != -1;
+                console.log($scope.spectraUploadProgress);
             });
 
             (function() {
@@ -76,7 +75,6 @@ app.directive('spectraUploadProgressBar', function () {
                 } else {
                     $scope.spectraUploadProgress = -1;
                     $scope.spectraUploadProgressString = 'Processing...';
-                    $scope.running = false;
                 }
 
                 buildEtaString();
