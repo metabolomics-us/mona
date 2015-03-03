@@ -53,6 +53,15 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
     });
 
     /**
+     * Listen for external calls to bring up the authentication modal
+     */
+    $scope.$on('auth:login', function(event) {
+        if (!$scope.isLoggedIn()) {
+            $scope.openAuthenticationDialog();
+        }
+    });
+
+    /**
      * Attempt to log in with authentication cookie stored in cookie
      */
     (function() {
@@ -64,11 +73,6 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
 moaControllers.AuthenticationModalController = function ($scope, $rootScope, $modalInstance, $timeout, AuthenticationService) {
     $scope.errors = [];
     $scope.state = 'login';
-
-    // Temporary
-    $scope.email = 'wohlgemuth@ucdavis.edu';
-    $scope.password = 'password';
-
 
     $scope.cancelDialog = function () {
         $modalInstance.dismiss('cancel');

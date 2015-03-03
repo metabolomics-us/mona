@@ -26,7 +26,6 @@ import curation.rules.spectra.IsCleanSpectraRule
 import curation.rules.spectra.IsDuplicatedSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.tag.RemoveComputedTagRule
-import filter.CorsBasicAuth
 import persistence.metadata.filter.Filters
 import persistence.metadata.filter.NameDoesntMatchFilter
 import persistence.metadata.filter.NameMatchesFilter

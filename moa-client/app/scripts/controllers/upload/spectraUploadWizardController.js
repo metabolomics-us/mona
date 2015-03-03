@@ -209,6 +209,7 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
         if(!UploadLibraryService.isUploading()) {
             UploadLibraryService.completedSpectraCount = 0;
             UploadLibraryService.uploadedSpectraCount = 0;
+            UploadLibraryService.uploadStartTime = new Date().getTime();
         }
 
         if($scope.batchUpload) {

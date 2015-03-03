@@ -12,6 +12,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     // Number of submitted spectra
     self.completedSpectraCount = 0;
     self.uploadedSpectraCount = 0;
+    self.uploadStartTime = -1;
 
 
     /**
@@ -386,7 +387,6 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         self.completedSpectraCount++;
         broadcastUploadProgress();
     };
-
 
 
     /**

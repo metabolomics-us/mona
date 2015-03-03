@@ -53,6 +53,7 @@ moaControllers.SubmitterModalController = function ($scope, Submitter, $modalIns
 		var submitter = new Submitter();
 		submitter.firstName = $scope.newSubmitter.firstName;
 		submitter.lastName = $scope.newSubmitter.lastName;
+		submitter.institution = $scope.newSubmitter.institution;
 		submitter.emailAddress = $scope.newSubmitter.emailAddress;
 		submitter.password = $scope.newSubmitter.password;
 
