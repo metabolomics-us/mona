@@ -74,11 +74,6 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
     $scope.errors = [];
     $scope.state = 'login';
 
-    // Temporary
-    $scope.email = 'wohlgemuth@ucdavis.edu';
-    $scope.password = 'password';
-
-
     $scope.cancelDialog = function () {
         $modalInstance.dismiss('cancel');
     };
