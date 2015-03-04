@@ -36,7 +36,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             });
         }
         else if (spectra.inchiKey) {
-            gwCtsService.convertInChIKeyToInChICode(spectra.inchiKey, function (inchi) {
+            gwCtsService.convertInchiKeyToMol(spectra.inchiKey, function (inchi) {
                 if (inchi == null && spectra.inchi == null) {
                     deferred.reject("sorry no key found, at convert inchi key to inchi code!");
                 }
