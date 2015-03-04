@@ -114,7 +114,7 @@
                             <tbody>
                             <tr ng-show="spectra.length == 0">
                             </tr>
-                            <tr ng-repeat="spectrum in similarSpectra" ng-click="viewSpectrum(spectrum.id)">
+                            <tr ng-repeat="spectrum in similarSpectra | orderBy:-similarity" ng-click="viewSpectrum(spectrum.id)">
                                 <td>
                                     <ul class="list-unstyled">
                                         <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">{{name.name}}</li>
