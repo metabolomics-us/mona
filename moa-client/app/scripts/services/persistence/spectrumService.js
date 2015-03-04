@@ -33,6 +33,18 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
             },
 
             /**
+             * searches for similar spectra
+             */
+            'searchSimilarSpectra': {
+                url: REST_BACKEND_SERVER + '/rest/spectra/similarity',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                isArray: false
+            },
+
+            /**
              * sends the object to the server to be processed and executed at their convenience. Meaning no intermediate feedback is provided or required.
              */
             'batchSave': {

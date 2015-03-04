@@ -3,9 +3,13 @@
  */
 'use strict';
 
-moaControllers.SpectraUploadController = function ($scope, $modal, AuthenticationService) {
+moaControllers.SpectraUploadController = function ($scope, $rootScope, $modal, AuthenticationService) {
     $scope.isLoggedIn = function() {
         return AuthenticationService.isLoggedIn();
+    };
+
+    $scope.login = function() {
+        $rootScope.$broadcast('auth:login');
     };
 
 
@@ -31,8 +35,13 @@ moaControllers.SpectraUploadController = function ($scope, $modal, Authenticatio
      * Check whether the user is uploading, and open the upload dialog accordingly
      */
     (function() {
+        console.log("$scope.isLoggedIn() "+ $scope.isLoggedIn())
+        console.log("!$scope.spectraUploaded "+ !$scope.spectraUploaded)
+        console.log("!AuthenticationService.isLoggingIn() "+ !AuthenticationService.isLoggingIn())
         if ($scope.isLoggedIn() && !$scope.spectraUploaded) {
             $scope.uploadSpectraDialog()
+        } else if(!$scope.isLoggedIn() && !AuthenticationService.isLoggingIn()) {
+            $rootScope.$broadcast('auth:login');
         }
     })();
 };

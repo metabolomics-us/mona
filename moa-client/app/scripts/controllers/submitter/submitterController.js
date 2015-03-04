@@ -90,7 +90,7 @@ moaControllers.SubmitterController = function ($scope, Submitter, $modal) {
 		$scope.submitters = Submitter.query(function (data) {
 		}, function (error) {
 			alert('failed: ' + error);
-		})
+		});
         console.log($scope.submitters)
 	}
 

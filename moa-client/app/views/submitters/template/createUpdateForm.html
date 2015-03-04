@@ -38,6 +38,22 @@
     </div>
 
     <div class="form-group"
+         ng-class="{ 'has-error' : submitterForm.institution.$invalid && !submitterForm.institution.$pristine}">
+        <label for="institution" class="control-label col-sm-3">Institution</label>
+
+        <div class="col-sm-9">
+
+            <input type="institution" class="form-control" placeholder="please enter your institution" id="institution"
+                   name="institution"
+                   ng-model="newSubmitter.institution"/>
+
+            <p ng-show="submitterForm.institution.$invalid && !submitterForm.institution.$pristine" class="help-block">Enter a
+                valid institution.</p>
+
+        </div>
+    </div>
+
+    <div class="form-group"
          ng-class="{ 'has-error' : submitterForm.email.$invalid && !submitterForm.email.$pristine}">
         <label for="email" class="control-label col-sm-3">Email
             Address</label>

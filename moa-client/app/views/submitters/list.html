@@ -2,7 +2,6 @@
     <div ng-value="error"></div>
 
     <form role="form">
-
         <div class="input-group">
             <span class="input-group-addon"> <label for="query">Filter</label></span>
             <input id="query" class="form-control" ng-model="submitter.query"
@@ -13,6 +12,7 @@
             <tr>
                 <th>First</th>
                 <th>Last</th>
+                <th>Institution</th>
                 <th>Email</th>
                 <th></th>
             </tr>
@@ -21,16 +21,15 @@
             <tr ng-repeat="submitter in submitters | filter:submitter.query" id="submitter_{{submitter.id}}">
                 <td>{{submitter.firstName}}</td>
                 <td>{{submitter.lastName}}</td>
+                <td>{{submitter.institution}}</td>
                 <td>{{submitter.emailAddress}}</td>
                 <td>
                     <button ng-click="displayEditDialog($index)" class="btn btn-default"><i
                             class="fa fa-pencil-square-o "></i></button>
                     <button ng-click="remove($index)" class="btn btn-default"><i
                             class="fa fa-minus-square"></i></button>
-
                     <input type="hidden" name="submitter.id" ng-value="submitter.id" value="{{submitter.id}}"/>
                 </td>
-
             </tr>
             </tbody>
         </table>
@@ -38,7 +37,5 @@
         <button ng-click="displayCreateDialog()" class="btn btn-default"><i
                 class="fa fa-user"></i>Add a new submitter
         </button>
-
     </form>
-
 </div>

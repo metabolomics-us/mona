@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div ng-show="!isLoggedIn()">
-            <h3><i class="fa fa-user fa-fw"></i> Please log in before uploading spectra!</h3>
+            <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="login()">log in</a> before uploading spectra!</h3>
         </div>
 
         <div ng-show="isLoggedIn() && spectraUploaded">
@@ -15,14 +15,7 @@
 
             <spectra-upload-progress-bar></spectra-upload-progress-bar>
             <hr/>
-            <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra
-            </button>
-        </div>
-
-        <div>
-            <h4>Recently uploaded spectra, from all over the world!</h4>
-
-            <div gw-news limit="100" type="upload"></div>
+            <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra</button>
         </div>
 
         <div ng-show="isLoggedIn() && !spectraUploaded">
@@ -33,7 +26,12 @@
 
             <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
         </div>
+
+        <br /><br />
+        <hr/>
+        <div>
+            <h4>Recently uploaded spectra from all over the world!</h4>
+            <div gw-news limit="100" type="upload"></div>
+        </div>
     </div>
-
-
 </div>

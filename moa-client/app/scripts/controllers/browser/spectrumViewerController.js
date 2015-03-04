@@ -6,7 +6,7 @@
  * @param massSpec
  * @constructor
  */
-moaControllers.ViewSpectrumController = function ($scope, $location, $log, delayedSpectrum, CookieService, SpectraQueryBuilderService) {
+moaControllers.ViewSpectrumController = function ($scope, $location, $log, delayedSpectrum, CookieService, Spectrum) {
     /**
      * Mass spectrum obtained from cache if it exists, otherwise from REST api
      */
@@ -23,7 +23,8 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
         isChemicalCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisChemicalCompoundOpen", false),
         isDerivatizedCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisDerivatizedCompoundOpen", false),
         isSpectraOpen: CookieService.getBooleanValue("DisplaySpectraisSpectraOpen", true),
-        isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false)
+        isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false),
+        isSimilarSpectraOpen: false
     };
 
     /**
@@ -47,16 +48,62 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
             $scope.ionTableSortReverse = ($scope.ionTableSort == '+ion') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '+ion';
         }
-
         else if (column == 'intensity') {
             $scope.ionTableSortReverse = ($scope.ionTableSort == '-intensity') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '-intensity';
         }
-
         else if (column == 'annotation') {
             $scope.ionTableSortReverse = ($scope.ionTableSort == '-annotation') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '-annotation';
         }
+    };
+
+
+    /**
+     * Loading of similar spectra
+     */
+    $scope.loadingSimilarSpectra = true;
+    $scope.similarityResult = {};
+    $scope.similarSpectra = [];
+
+    $scope.loadSimilarSpectra = function() {
+        if(!$scope.loadingSimilarSpectra)
+            return;
+
+
+        Spectrum.searchSimilarSpectra(
+            {spectra: $scope.spectrum.id, minSimilarity: 700, maxHits: 5},
+            function(data) {
+
+                $scope.similarityResult = data;
+                $scope.loadingSimilarSpectra = false;
+
+
+                for(var i = 0; i < data.result.length; i++) {
+                    Spectrum.get({id: data.result[i].id}, function(s) {
+                        for(var j = 0; j < $scope.similarityResult.result.length; j++) {
+                            if ($scope.similarityResult.result[j].id == s.id) {
+                                s.similarity = $scope.similarityResult.result[j].similarity;
+                                break;
+                            }
+                        }
+
+                        $scope.similarSpectra.push(s);
+                    });
+                }
+            }, function(data) {
+                $scope.loadingSimilarSpectra = false;
+            }
+        );
+    };
+
+    /**
+     * displays the spectrum for the given index
+     * @param id
+     * @param index
+     */
+    $scope.viewSpectrum = function (id) {
+        $location.path('/spectra/display/' + id);
     };
 
 
