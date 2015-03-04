@@ -1,6 +1,8 @@
 /**
  * Created by wohlgemuth on 7/11/14.
  */
+'use strict';
+
 moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, AuthenticationService) {
     $scope.welcomeMessage = '';
 
@@ -74,6 +76,11 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
     $scope.errors = [];
     $scope.state = 'login';
 
+    $scope.credentials = {
+        email: '',
+        password: ''
+    };
+
     $scope.cancelDialog = function () {
         $modalInstance.dismiss('cancel');
     };
@@ -84,17 +91,17 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
     $scope.submitLogin = function () {
         $scope.errors = [];
 
-        if ($scope.email == '') {
+        if ($scope.credentials.email == '') {
             $scope.errors.push('Please enter your email address');
         }
 
-        if ($scope.password == '') {
+        if ($scope.credentials.password == '') {
             $scope.errors.push('Please enter your password');
         }
 
         if($scope.errors.length == 0) {
             $scope.state = 'logging in';
-            AuthenticationService.login($scope.email, $scope.password);
+            AuthenticationService.login($scope.credentials.email, $scope.credentials.password);
         }
     };
 
