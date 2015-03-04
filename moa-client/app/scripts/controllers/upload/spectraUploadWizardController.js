@@ -24,7 +24,8 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
      * definition of all our steps
      * @type {string[]}
      */
-    $scope.steps = ['spectra', 'loading', 'compound', 'metadata', 'tags', 'comments', 'summary'];
+    // Removed compound editor after loading screen
+    $scope.steps = ['spectra', 'loading', 'metadata', 'tags', 'comments', 'summary'];
 
     /**
      * our current step where we are at
