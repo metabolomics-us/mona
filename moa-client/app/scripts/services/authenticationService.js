@@ -1,12 +1,13 @@
 /**
  * Created by wohlgemuth on 6/9/14.
  */
+'use strict';
 
 /**
  * a service to handle authentications and provides us with the currently logged in user
  */
 app.service('AuthenticationService', function (Submitter, $q, $http, $resource, $rootScope, CookieService, REST_BACKEND_SERVER) {
-    this.self = this;
+    var self = this;
     self.loggingIn = false;
 
     /**
@@ -15,10 +16,12 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
     this.login = function (emailAddress, password) {
         self.loggingIn = true;
 
-        $resource(REST_BACKEND_SERVER +'/rest/login',
-            {email: "@email", password: "@password"}, {
+        $resource(REST_BACKEND_SERVER +'/rest/login', {}, {
             post: {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             }
         }).post({
             email: emailAddress,
@@ -71,7 +74,8 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
                 $rootScope.$broadcast('auth:login-error', data, status, headers, config);
                 self.loggingIn = false;
             });
-        }
+        } else
+            self.loggingIn = false;
     };
 
     /**
