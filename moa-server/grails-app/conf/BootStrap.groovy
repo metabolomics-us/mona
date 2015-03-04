@@ -83,6 +83,8 @@ class BootStrap {
 
 */
 
+        //newsService.createNews("massbank upload","the upload of massbank was complete!","none")
+
     }
 
     def destroy = {
