@@ -13,7 +13,7 @@ grails {
                         // Protected urls
                         '/rest/**/create': protectedFilters,
                         '/rest/**/edit': protectedFilters,
-                        '/rest/spectra/batch/**': protectedFilters,
+//                        '/rest/spectra/batch/**': protectedFilters,
 
                         // Allow anonymous access in general
                         // Should have filterInvocationInterceptor at the end, but results in blank pages
@@ -25,7 +25,7 @@ grails {
                     // Protected urls
                     '/rest/**/create': ['ROLE_ADMIN'],
                     '/rest/**/edit': ['ROLE_ADMIN'],
-                    '/rest/spectra/batch/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+//                    '/rest/spectra/batch/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
 
                     // Allow anonymous access in general
                     // Should have filterInvocationInterceptor at the end, but results in blank pages
