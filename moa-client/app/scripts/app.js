@@ -11,20 +11,9 @@ var app = angular
         'wohlgemuth.massbank.parser',
         'wohlgemuth.cts',
         'angularMasspecPlotter',
-        'angularFileUpload',
         'infinite-scroll',
         'mgcrea.bootstrap.affix'
     ]);
-
-
-/**
- * location of our backend server
- */
-
-//app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/trashcan.fiehnlab.ucdavis.edu:8080');
-//app.constant('REST_BACKEND_SERVER', 'http://127.0.0.1:8080');
-//app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
-
 
 /**
  * Number of spectra/compounds to view
@@ -36,6 +25,12 @@ app.constant('MAX_OBJECTS', 20);
  * internally cached
  */
 app.constant('INTERNAL_CACHING', true);
+
+/**
+ * App name
+ */
+app.constant('APP_NAME', 'Massbank of North America');
+app.constant('APP_NAME_DIST', 'MoNA');
 
 
 /**
