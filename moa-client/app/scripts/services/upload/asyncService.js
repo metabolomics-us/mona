@@ -55,8 +55,8 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $timeout, $fil
      * @param runMe
      * @param executeFunction
      */
-    this.addToPool = function (runMe, executeFunction) {
-        pool.push({data: runMe, execute: executeFunction});
+    this.addToPool = function (executeFunction, data) {
+        pool.push({execute: executeFunction, data: data});
     };
 
     /**
