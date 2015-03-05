@@ -64,7 +64,6 @@ app.directive('spectraUploadProgressBar', function () {
                 $scope.spectraUploadProgress = parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10);
                 $scope.spectraUploadProgressString = $scope.spectraUploadProgress +'%';
                 buildEtaString();
-                console.log($scope.spectraUploadProgress);
             });
 
             (function() {
