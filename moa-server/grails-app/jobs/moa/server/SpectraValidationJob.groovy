@@ -7,14 +7,14 @@ import moa.server.curation.SpectraCurationService
  * Time: 1:30 PM
  */
 class SpectraValidationJob {
-    def concurrent = false
+    def concurrent = true
 
     /**
      * needs to be defined
      */
     static triggers = {}
 
-    def group = "curation"
+    def group = "validation-spectra"
 
     def description = "uploads spectra data in the background of the server"
 

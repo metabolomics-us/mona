@@ -167,6 +167,21 @@ class UrlMappings {
         "/rest/news/query/milestones"(controller: 'news',
                 action: 'listMilestones')
 
+        /**
+         * queue related items
+         */
+
+        "/rest/queue/spectra/validation"(controller: 'queue', action: 'spectraWaitingForValidation')
+        "/rest/queue/spectra/validation/count"(controller: 'queue', action: 'spectraWaitingForValidationCount')
+
+        "/rest/queue/spectra/import"(controller: 'queue', action: 'spectraWaitingForImport')
+        "/rest/queue/spectra/import/count"(controller: 'queue', action: 'spectraWaitingForImportCount')
+
+        "/rest/queue/compound/validation"(controller: 'queue', action: 'compoundsWaitingForValidation')
+        "/rest/queue/compound/validation/count"(controller: 'queue', action: 'compoundsWaitingForValidationCount')
+
+        "/rest/queue"(controller: 'queue', action: 'jobs')
+
 
     }
 }

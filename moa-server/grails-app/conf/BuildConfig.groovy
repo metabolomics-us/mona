@@ -15,7 +15,7 @@ grails.project.fork = [
         // configure settings for the test-app JVM, uses the daemon by default
         test   : [maxMemory: 8192, minMemory: 64, debug: false, maxPerm: 256, daemon: true],
         // configure settings for the run-app JVM
-        run    : [maxMemory: 16192, minMemory: 64, debug: false, maxPerm: 256, forkReserve: false],
+        run    : [maxMemory: 8192, minMemory: 8192, debug: false, maxPerm: 256, forkReserve: false],
         // configure settings for the run-war JVM
         war    : [maxMemory: 8192, minMemory: 64, debug: false, maxPerm: 256, forkReserve: false],
         // configure settings for the Console UI JVM
@@ -104,8 +104,6 @@ grails.project.dependency.resolution = {
         compile("xpp3:xpp3:1.1.4c")
         compile("java3d:vecmath:1.3.1")
         compile("net.sf.jni-inchi:jni-inchi:0.7")
-
-        //compile('net.sourceforge.owlapi:owlapi-distribution:4.0.0')
 
     }
 
