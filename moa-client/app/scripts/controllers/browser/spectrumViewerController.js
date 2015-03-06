@@ -72,7 +72,7 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
 
 
         Spectrum.searchSimilarSpectra(
-            {spectra: $scope.spectrum.id, minSimilarity: 700, maxHits: 5},
+            {spectra: $scope.spectrum.id, minSimilarity: 500, maxHits: 5},
             function(data) {
 
                 $scope.similarityResult = data;
