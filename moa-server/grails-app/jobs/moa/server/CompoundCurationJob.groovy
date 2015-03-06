@@ -14,7 +14,7 @@ class CompoundCurationJob {
      */
     static triggers = {}
 
-    def group = "curation"
+    def group = "validation-compound"
 
     def description = "curates compound data in the background of the server"
 

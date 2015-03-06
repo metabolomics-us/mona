@@ -116,6 +116,11 @@ class UrlMappings {
         "/rest/spectra/batch/save"(controller: 'spectrum', action: 'batchSave')
 
         /**
+         * delete all of these data
+         */
+        "/rest/spectra/batch/delete"(controller: 'spectraQuery', action: 'searchAndDelete')
+
+        /**
          * batch save method, to schedule lots of spectra to an internal queue.
          */
         "/rest/spectra/single/save"(controller: 'spectrum', action: 'singleSave', parseRequest: false)
@@ -131,6 +136,7 @@ class UrlMappings {
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
         "/rest/spectra/curateByQuery"(controller: 'spectraCuration', action: 'curateByQuery')
+
         /**
          * general limited public api
          */
@@ -166,6 +172,21 @@ class UrlMappings {
                 action: 'listUploads')
         "/rest/news/query/milestones"(controller: 'news',
                 action: 'listMilestones')
+
+        /**
+         * queue related items
+         */
+
+        "/rest/queue/spectra/validation"(controller: 'queue', action: 'spectraWaitingForValidation')
+        "/rest/queue/spectra/validation/count"(controller: 'queue', action: 'spectraWaitingForValidationCount')
+
+        "/rest/queue/spectra/import"(controller: 'queue', action: 'spectraWaitingForImport')
+        "/rest/queue/spectra/import/count"(controller: 'queue', action: 'spectraWaitingForImportCount')
+
+        "/rest/queue/compound/validation"(controller: 'queue', action: 'compoundsWaitingForValidation')
+        "/rest/queue/compound/validation/count"(controller: 'queue', action: 'compoundsWaitingForValidationCount')
+
+        "/rest/queue"(controller: 'queue', action: 'jobs')
 
 
     }
