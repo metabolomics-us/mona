@@ -200,7 +200,7 @@ grails.cache.config = {
 
 }
 
-grails.cache.enabled = true
+grails.cache.enabled = false
 
 grails.cache.keyGenerator = "cacheKey"
 

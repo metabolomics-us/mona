@@ -75,13 +75,23 @@ class CompoundService {
 
 
         compound.names.each {
-            nameService.addNameToCompound(it, myCompound)
+            if(it instanceof String) {
+                nameService.addNameToCompound(it, myCompound)
+            }
+            else if(it instanceof Map){
+                if(it.name != null){
+                    nameService.addNameToCompound(it.name, myCompound)
+                }
+            }
+            else{
+                log.error("unsupported name object! Ignoring it ${it}:${it.class}")
+            }
         }
 
         myCompound.save(flush:true)
 
         log.debug("added or updated compound with id: ${myCompound.id}")
-        CompoundCurationJob.triggerNow(compoundId: myCompound.id)
+        //CompoundCurationJob.triggerNow(compoundId: myCompound.id)
         return myCompound;
 
     }

@@ -81,6 +81,7 @@ class SpectrumController extends RestfulController<Spectrum> {
 
                 for (int i = 0; i < array.length(); i++) {
                     if (array.get(i) instanceof JSONObject) {
+                        log.info("trigger uploading spectra")
                         SpectraUploadJob.triggerNow([spectra: array.getJSONObject(i).toString()])
 
                     }
@@ -89,6 +90,8 @@ class SpectrumController extends RestfulController<Spectrum> {
                 render([message: "${array.length()} spectra submitted"] as JSON)
 
             } else {
+                log.info("trigger uploading spectra")
+
                 SpectraUploadJob.triggerNow([spectra: request.JSON.toString()])
                 render([message: "1 spectra submitted"] as JSON)
             }

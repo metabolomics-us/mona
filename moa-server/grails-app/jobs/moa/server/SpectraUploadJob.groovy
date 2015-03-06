@@ -10,7 +10,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class SpectraUploadJob {
 
-    def resubmit = false
+    def resubmit = true
     def concurrent = false
 
     /**
@@ -49,7 +49,7 @@ class SpectraUploadJob {
                     log.debug("stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}")
 
 
-                    //SpectraValidationJob.triggerNow([spectraId: result.id])
+                    SpectraValidationJob.triggerNow([spectraId: result.id, priority: 5])
 
                 }
                 catch (ValidationException e) {
@@ -67,7 +67,7 @@ class SpectraUploadJob {
                     log.debug(json, e)
 
                     if (resubmit) {
-                        log.warn("resubmitting failed job", e)
+                        log.warn("resubmitting failed job to the system", e)
 
                         SpectraUploadJob.triggerNow([spectra: data.spectra])
                     } else {
