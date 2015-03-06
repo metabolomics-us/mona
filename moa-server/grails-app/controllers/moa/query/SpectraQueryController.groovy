@@ -85,7 +85,7 @@ class SpectraQueryController {
 
             log.info("received delete request: " + json.delete)
 
-            DeleteSpectraJob.triggerNow([delete:json.delete])
+            DeleteSpectraJob.triggerNow([deleteSpectra:json.delete])
 
             render(['queued request for deletion'] as JSON)
         }

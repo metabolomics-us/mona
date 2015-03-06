@@ -28,16 +28,16 @@ class DeleteSpectraJob {
         Map data = context.mergedJobDataMap
 
         if (data != null) {
-            if(data.containsKey("delete")){
+            if(data.containsKey("deleteSpectra")){
 
                 def json = null
 
-                if(data.delete instanceof JSONObject){
+                if(data.deleteSpectra instanceof JSONObject){
 
                     json = data.delete
                 }
                 else{
-                    json = JSON.parse(data.delete)
+                    json = JSON.parse(data.deleteSpectra)
                 }
                 spectraQueryService.delete(json)
             }
