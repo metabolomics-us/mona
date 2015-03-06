@@ -37,7 +37,7 @@ class DeleteSpectraJob {
                     json = data.delete
                 }
                 else{
-                    json = JSON.parse(data.deleteSpectra)
+                    json = JSON.parse(data.deleteSpectra.toString())
                 }
                 spectraQueryService.delete(json)
             }
