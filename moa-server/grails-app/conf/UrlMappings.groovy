@@ -116,6 +116,11 @@ class UrlMappings {
         "/rest/spectra/batch/save"(controller: 'spectrum', action: 'batchSave')
 
         /**
+         * delete all of these data
+         */
+        "/rest/spectra/batch/delete"(controller: 'spectraQuery', action: 'searchAndDelete')
+
+        /**
          * batch save method, to schedule lots of spectra to an internal queue.
          */
         "/rest/spectra/single/save"(controller: 'spectrum', action: 'singleSave', parseRequest: false)
@@ -131,6 +136,7 @@ class UrlMappings {
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
         "/rest/spectra/curateByQuery"(controller: 'spectraCuration', action: 'curateByQuery')
+
         /**
          * general limited public api
          */
