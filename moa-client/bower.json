@@ -23,6 +23,8 @@
         "angular-msp-parser": "http://bitbucket.org/fiehnlab/angular-msp-parser.git#latest",
         "angular-massbank-parser": "http://bitbucket.org/fiehnlab/angular-massbank-parser.git#latest",
         "angular-masspec-plotter": "http://bitbucket.org/fiehnlab/angular-masspec-plotter.git#latest",
+        "ng-file-upload": "~1.4.0",
+        "ng-file-upload-shim": "~1.4.0",
         "metisMenu": "1.0.1"
     },
     "devDependencies": {
