@@ -107,6 +107,7 @@ log4j = {
         file name: 'monaFlushStatistics', file: "${logdirectory}monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaMemoryStatistics', file: "${logdirectory}monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaSpectraValidationStatistics', file: "${logdirectory}monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'monaDeleteStatistics', file: "${logdirectory}monaDelete.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
 
     }
 
@@ -145,6 +146,8 @@ log4j = {
     debug 'grails.app'
     debug monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
     debug monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
+    debug monaDeleteStatistics: ['grails.app.jobs.moa.server.DeleteSpectraJob']
+
     debug monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
     debug monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
 

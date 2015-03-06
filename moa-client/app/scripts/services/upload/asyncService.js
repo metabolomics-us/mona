@@ -10,8 +10,10 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $timeout, $fil
      */
     var pool = [];
 
-    var executionLimit = 4;
+    //how many jobs can run at the same time
+    var executionLimit = 10;
 
+    //timeout after completing the pool
     var poolRate = 500;
 
     /**

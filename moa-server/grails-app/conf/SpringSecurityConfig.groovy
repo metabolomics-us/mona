@@ -13,6 +13,8 @@ grails {
                         // Protected urls
                         '/rest/**/create': protectedFilters,
                         '/rest/**/edit': protectedFilters,
+              //          '/rest/**/delete': protectedFilters,
+
 //                        '/rest/spectra/batch/**': protectedFilters,
 
                         // Allow anonymous access in general
@@ -25,6 +27,8 @@ grails {
                     // Protected urls
                     '/rest/**/create': ['ROLE_ADMIN'],
                     '/rest/**/edit': ['ROLE_ADMIN'],
+            //        '/rest/**/delete': ['ROLE_ADMIN'],
+
 //                    '/rest/spectra/batch/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
 
                     // Allow anonymous access in general
