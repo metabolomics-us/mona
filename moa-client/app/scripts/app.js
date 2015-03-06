@@ -10,6 +10,7 @@ var app = angular
         'wohlgemuth.msp.parser',
         'wohlgemuth.massbank.parser',
         'wohlgemuth.cts',
+        'angularFileUpload',
         'angularMasspecPlotter',
         'infinite-scroll',
         'mgcrea.bootstrap.affix'
@@ -29,8 +30,10 @@ app.constant('INTERNAL_CACHING', true);
 /**
  * App name
  */
-app.constant('APP_NAME', 'Massbank of North America');
-app.constant('APP_NAME_DIST', 'MoNA');
+app.run(function($rootScope) {
+    $rootScope.APP_NAME = 'Massbank of North America';
+    $rootScope.APP_NAME_ABBR = 'MoNA';
+});
 
 
 /**
