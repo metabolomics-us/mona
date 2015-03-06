@@ -36,7 +36,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             });
         }
         else if (spectra.inchiKey) {
-            gwCtsService.convertInChIKeyToInChICode(spectra.inchiKey, function (inchi) {
+            gwCtsService.convertInchiKeyToMol(spectra.inchiKey, function (inchi) {
                 if (inchi == null && spectra.inchi == null) {
                     deferred.reject("sorry no key found, at convert inchi key to inchi code!");
                 }
@@ -101,7 +101,6 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
     function workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData) {
         //if we have  a key or an inchi
         if (spectrumObject.inchiKey != null && spectrumObject.inchi != null) {
-
             self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData)
         }
 
@@ -337,20 +336,19 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param wizardData
      */
     self.uploadSpectra = function (files, saveSpectrumCallback, wizardData) {
-        self.uploadedSpectraCount += files.length;
-        broadcastUploadProgress();
-
         AuthenticationService.getCurrentUser().then(function (submitter) {
-            var uploadSpectrum = function (file) {
-                self.loadSpectraFile(file, function (data, origin) {
-                    self.processData(data, function (spectrum) {
-                        workOnSpectra(submitter, saveSpectrumCallback, spectrum, wizardData);
-                    }, origin);
-                })
-            };
-
             for (var i = 0; i < files.length; i++) {
-                AsyncService.addToPool(files[i], uploadSpectrum);
+                self.loadSpectraFile(files[i], function (data, origin) {
+                    self.processData(data, function (spectrum) {
+                        AsyncService.addToPool(function() {
+                            workOnSpectra(submitter, saveSpectrumCallback, spectrum, wizardData);
+                        });
+
+                        self.uploadedSpectraCount += 1;
+                    }, origin);
+
+                    broadcastUploadProgress();
+                })
             }
         });
     };
@@ -365,8 +363,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         broadcastUploadProgress();
 
         AuthenticationService.getCurrentUser().then(function (submitter) {
-            AsyncService.addToPool(wizardData, function (spectrum) {
-                workOnSpectra(submitter, saveSpectrumCallback, spectrum);
+            AsyncService.addToPool(function () {
+                workOnSpectra(submitter, saveSpectrumCallback, wizardData);
             });
         });
     };
