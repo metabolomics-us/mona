@@ -35,9 +35,6 @@ moaControllers.SpectraUploadController = function ($scope, $rootScope, $modal, A
      * Check whether the user is uploading, and open the upload dialog accordingly
      */
     (function() {
-        console.log("$scope.isLoggedIn() "+ $scope.isLoggedIn())
-        console.log("!$scope.spectraUploaded "+ !$scope.spectraUploaded)
-        console.log("!AuthenticationService.isLoggingIn() "+ !AuthenticationService.isLoggingIn())
         if ($scope.isLoggedIn() && !$scope.spectraUploaded) {
             $scope.uploadSpectraDialog()
         } else if(!$scope.isLoggedIn() && !AuthenticationService.isLoggingIn()) {

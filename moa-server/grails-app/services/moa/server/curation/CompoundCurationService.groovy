@@ -5,7 +5,7 @@ import grails.plugin.cache.CacheEvict
 import grails.transaction.Transactional
 import moa.Compound
 
-@Transactional
+//@Transactional
 class CompoundCurationService {
 
     CurationWorkflow compoundCurationWorkflow
@@ -19,6 +19,11 @@ class CompoundCurationService {
     boolean validate(long id) {
         Compound c = Compound.get(id)
 
-        return compoundCurationWorkflow.runWorkflow(new CurationObject(c))
+        if (c) {
+            return compoundCurationWorkflow.runWorkflow(new CurationObject(c))
+        }
+        else{
+            throw new RuntimeException("compound with ${id} was not found!")
+        }
     }
 }

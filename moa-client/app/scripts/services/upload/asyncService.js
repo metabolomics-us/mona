@@ -12,7 +12,7 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $timeout, $fil
 
     var executionLimit = 4;
 
-    var poolRate = 1500;
+    var poolRate = 500;
 
     /**
      * a simple pool to ensure we are not using more than 'executionLimit' ajax calls while
@@ -55,8 +55,8 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $timeout, $fil
      * @param runMe
      * @param executeFunction
      */
-    this.addToPool = function (runMe, executeFunction) {
-        pool.push({data: runMe, execute: executeFunction});
+    this.addToPool = function (executeFunction, data) {
+        pool.push({execute: executeFunction, data: data});
     };
 
     /**

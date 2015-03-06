@@ -91,7 +91,6 @@ moaControllers.SubmitterController = function ($scope, Submitter, $modal) {
 		}, function (error) {
 			alert('failed: ' + error);
 		});
-        console.log($scope.submitters)
 	}
 
 };
