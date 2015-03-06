@@ -30,30 +30,29 @@ app.directive('spectraUploadProgressBar', function () {
             var buildEtaString = function() {
                 if (UploadLibraryService.uploadStartTime == -1 || !UploadLibraryService.isUploading()) {
                     $scope.etaString = '';
-                }
+                } else if ($scope.completedSpectraCount == 0) {
+                    $scope.etaString = 'Loading spectra for processing...'
 
-                if ($scope.completedSpectraCount == 0) {
-                    $scope.etaString = 'Starting upload...'
-                }
-
-                // Calculate estimated time remaining
-                var dt = new Date().getTime() - UploadLibraryService.uploadStartTime;
-                var eta = dt * ($scope.uploadedSpectraCount - $scope.completedSpectraCount) / $scope.completedSpectraCount / 1000;
-
-                var seconds = Math.floor(eta % 60);
-                var minutes = Math.floor((eta / 60) % 60);
-                var hours = Math.floor(eta / 3600);
-
-                var etaString = '';
-
-                if (hours > 0) etaString += ' '+ hours +' hours';
-                if (minutes > 0 || hours > 0) etaString += ' '+ minutes +' minutes';
-                if (seconds > 0 || minutes > 0 || hours > 0) etaString += ' '+ seconds +' seconds';
-
-                if (etaString != '') {
-                    $scope.etaString = 'Estimated' + etaString + ' remaining';
                 } else {
-                    $scope.etaString = '';
+                    // Calculate estimated time remaining
+                    var dt = new Date().getTime() - UploadLibraryService.uploadStartTime;
+                    var eta = dt * ($scope.uploadedSpectraCount - $scope.completedSpectraCount) / $scope.completedSpectraCount / 1000;
+
+                    var seconds = Math.floor(eta % 60);
+                    var minutes = Math.floor((eta / 60) % 60);
+                    var hours = Math.floor(eta / 3600);
+
+                    var etaString = '';
+
+                    if (hours > 0) etaString += ' ' + hours + ' hours';
+                    if (minutes > 0 || hours > 0) etaString += ' ' + minutes + ' minutes';
+                    if (seconds > 0 || minutes > 0 || hours > 0) etaString += ' ' + seconds + ' seconds';
+
+                    if (etaString != '') {
+                        $scope.etaString = 'Estimated' + etaString + ' remaining';
+                    } else {
+                        $scope.etaString = '';
+                    }
                 }
             };
 
