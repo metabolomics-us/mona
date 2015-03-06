@@ -394,4 +394,18 @@ class SpectraQueryService {
         return [updated: result.size()]
     }
 
+    /**
+     * delete the result of the given query, which can take a while
+     * @param deleteQuery
+     * @return
+     */
+    def delete(deleteQuery){
+
+        def result = query(deleteQuery)
+
+        result.each { Spectrum spectrum ->
+            spectrum.delete()
+        }
+    }
+
 }

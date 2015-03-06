@@ -7,9 +7,6 @@ class SubmitterController extends RestfulController {
 
 	static responseFormats = ['json']
 
-    def beforeInterceptor = {
-        log.info(params)
-    }
 
     public SubmitterController() {
 		super(Submitter)
@@ -24,7 +21,10 @@ class SubmitterController extends RestfulController {
 		if (request.JSON) {
 			params.putAll(request.JSON)
 		}
-		params
+
+        log.warn("received: ${params}")
+
+        params
 	}
 
 

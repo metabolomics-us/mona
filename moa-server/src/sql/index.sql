@@ -30,3 +30,10 @@ CREATE INDEX "index-meta-name"
 
 CREATE INDEX "news_type_index"
 	ON "public"."news"("type");
+
+
+CREATE INDEX supports_meta_data_tag_index
+	ON public.supports_meta_data_tag USING btree (supports_meta_data_tags_id, tag_id);
+
+  CREATE INDEX "ions_spectrum_id_index"
+	ON "public"."ion"("spectrum_id");

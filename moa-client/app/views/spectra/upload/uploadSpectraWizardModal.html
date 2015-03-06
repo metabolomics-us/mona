@@ -45,14 +45,14 @@
             </div>
 
             <!-- compound screen -->
-            <!--
+
             <div ng-switch-when="compound">
                 <fieldset>
                     <div class="form-group" ng-class="{'has-error' : uploadWizard.inchi.$invalid && !uploadWizard.inchi.$pristine}">
                         <label for="inchi">InChI:</label>
                         <input class="form-control"
                                type="text"
-                               ng-model="spectra.inchi"
+                               ng-model="spectrum.inchi"
                                name="inchi"
                                id="inchi"
                                ng-required
@@ -71,13 +71,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inchikey">InChI:</label>
+                        <label for="inchikey">InChI Key:</label>
                         <input class="form-control"
                                type="text"
-                               ng-model="spectra.inchikey"
+                               ng-model="spectrum.inchikey"
                                name="inchikey"
                                id="inchikey"
-                               ng-required
                                ng-pattern="/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])$/" fl-no-submit/>
 
                     </div>
@@ -95,20 +94,23 @@
                                 class="form-control form-control-small"
                                 typeahead="name.name for name in possibleBiologicalNames | limitTo:8"
                                 type="text"
-                                ng-model="spectra.biologicalCompound.names"/>
+                                ng-model="spectrum.biologicalCompound.names"/>
 
                         <p ng-show="uploadWizard.biologicalInChIName.$invalid && !uploadWizard.biologicalInChIName.$pristine"
                            class="help-block">
                             please make sure you provide a valid name
                         </p>
+
+                            <ul class="list-inline" ng-repeat="name in spectrum.names">
+                                <li>{{name}}</li>
+                            </ul>
                     </div>
-
+<!--
                     <div chemical-sketcher id="bioLogicalInChiSketcher" ng-model="spectra.biologicalCompound.inchiKey"></div>
-
+-->
                 </fieldset>
             </div>
-            -->
-
+            
             <!-- defines our metadata -->
             <div ng-switch-when="metadata">
                 <fieldset>

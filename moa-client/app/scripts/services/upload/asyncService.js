@@ -10,9 +10,11 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $timeout, $fil
      */
     var pool = [];
 
-    var executionLimit = 4;
+    //how many jobs can run at the same time
+    var executionLimit = 10;
 
-    var poolRate = 1500;
+    //timeout after completing the pool
+    var poolRate = 500;
 
     /**
      * a simple pool to ensure we are not using more than 'executionLimit' ajax calls while

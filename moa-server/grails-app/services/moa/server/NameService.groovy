@@ -4,7 +4,7 @@ import grails.transaction.Transactional
 import moa.Compound
 import moa.Name
 
-@Transactional
+//@Transactional
 class NameService {
 
     def addNameToCompound(String name, Compound compound) {
