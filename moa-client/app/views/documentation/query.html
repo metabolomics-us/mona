@@ -1,0 +1,193 @@
+<div ng-value="error"></div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>How to interact with {{APP_NAME}}
+
+            <small>executing queries against the system using curl or REST based clients</small>
+        </h3>
+
+        <div>
+
+            <h4>General query format</h4>
+
+
+            The general query format is a simple JSON object describing the wished object. You could call it query by
+            examples. For example the query bellow will be interpredted the folloing way:
+
+            <ol>
+                <li>Select all compounds, which have metadata objects containing a molecule formula (name) identical
+                    (eq) to C47H74O12S
+                </li>
+
+                <li>than limit it to spectra, who have a metadata object compoundclass (name) with a value identical
+                    (eq) to SQDG
+                </li>
+                <li>than limit these spectra to all spectra, which are tagged (tags) with the values 'virtual' and
+                    'lipidblast'
+                </li>
+            </ol>
+            <pre>
+                {
+                    "compound": {
+                        "metadata": [
+                            {
+                                "name": "molecule formula",
+                                "value": {
+                                    "eq": "C47H74O12S"
+                                }
+                            }
+                        ]
+                    },
+
+                    "metadata": [
+                        {
+                            "name": "compoundclass",
+                            "value": {
+                                "eq": "SQDG"
+                            }
+                        }
+                    ],
+
+                    "tags": [
+                        "virtual",
+                        "lipidblast"
+                    ]
+                }
+            </pre>
+
+            The return will be a list of spectra object, which all there associated values. You can execute this query
+            utilizing the software curl the following way
+
+            <p>
+                <samp>
+                    curl -H "Content-Type: application/json" -d '{"compound":{"metadata":[{"name":"molecule
+                    formula","value":{"eq":"C47H74O12S"}}]},"metadata":[{"name":"compoundclass","value":{"eq":"SQDG"}}],"tags":["virtual","lipidblast"],"offset":0}'
+                    http://mona.fiehnlab.ucdavis.edu/rest/spectra/search
+                </samp>
+
+            </p>
+
+            In case you like to receive your result directly as MSP data file, you can specify the format in the query.
+
+            The new query would than look like
+
+                        <pre>
+                {
+                    "compound": {
+                        "metadata": [
+                            {
+                                "name": "molecule formula",
+                                "value": {
+                                    "eq": "C47H74O12S"
+                                }
+                            }
+                        ]
+                    },
+
+                    "metadata": [
+                        {
+                            "name": "compoundclass",
+                            "value": {
+                                "eq": "SQDG"
+                            }
+                        }
+                    ],
+
+                    "tags": [
+                        "virtual",
+                        "lipidblast"
+                    ],
+
+                    "format" : "msp"
+                }
+            </pre>
+
+            and can be again invoked like this
+
+            <p>
+                <samp>
+                    curl -H "Content-Type: application/json" -d '{"compound":{"metadata":[{"name":"molecule
+                    formula","value":{"eq":"C47H74O12S"}}]},"metadata":[{"name":"compoundclass","value":{"eq":"SQDG"}}],"tags":["virtual","lipidblast"],"offset":0,"format":"msp"}'
+                    http://mona.fiehnlab.ucdavis.edu/rest/spectra/search
+                </samp>
+
+            </p>
+            <h5>Query options</h5>
+
+            <p>
+                The table bellow provides you with a quick overview of the following supported query options in the system.
+            </p>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr>
+                    <td>eq</td>
+                    <td>The value must be identical</td>
+                </tr>
+                <tr>
+                    <td>like</td>
+                    <td>a case sensitive text matching query</td>
+                </tr>
+                <tr>
+                    <td>ilike</td>
+                    <td>a none case sensitive text matching query</td>
+                </tr>
+                <tr>
+                    <td>gt</td>
+                    <td>the value is greater than</td>
+                </tr>
+                <tr>
+                    <td>lt</td>
+                    <td>the value is less than</td>
+                </tr>
+                <tr>
+                    <td>ge</td>
+                    <td>the value is greater or equals</td>
+                </tr>
+                <tr>
+                    <td>le</td>
+                    <td>the value is less or equals</td>
+                </tr>
+                <tr>
+                    <td>ne</td>
+                    <td>the value doesn't equal</td>
+                </tr>
+                <tr>
+                    <td>between</td>
+                    <td>the value is in between</td>
+                </tr>
+                <tr>
+                    <td>in</td>
+                    <td>the value is in a list of options</td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div>
+
+            <h4>Query</h4>
+
+        </div>
+        <div>
+
+            <h4>Deletes</h4>
+
+        </div>
+        <div>
+            <h4>Updates</h4>
+
+        </div>
+    </div>
+</div>

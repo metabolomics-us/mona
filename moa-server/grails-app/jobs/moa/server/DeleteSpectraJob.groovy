@@ -11,17 +11,18 @@ import net.minidev.json.JSONObject
  * Time: 12:48 PM
  */
 class DeleteSpectraJob {
-    SpectraQueryService spectraQueryService
+
+
 
     def concurrent = false
-
 
     def group = "delete"
 
     def description = "removes spectra from the system"
-    static triggers = {
-        cron name: 'news', startDelay: 60, cronExpression: '0 */1 * * * ?', priority: 10
-    }
+
+    static triggers = {}
+
+    SpectraQueryService spectraQueryService
 
     def execute(context) {
 
@@ -39,8 +40,16 @@ class DeleteSpectraJob {
                 else{
                     json = JSON.parse(data.deleteSpectra.toString())
                 }
-                spectraQueryService.delete(json)
+                log.info("calling delete service...")
+                spectraQueryService.searchAndDelete(json)
+                log.info("job finished!")
             }
+            else{
+                log.warn("we were missing the 'deleteSpectra' field in the data map")
+            }
+        }
+        else{
+            log.warn("no data were provided!")
         }
     }
 }

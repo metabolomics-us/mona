@@ -28,12 +28,12 @@ class SpectraQueryService {
      * @param countTopIons how many of the ions largest ions have to be shared to be considered a hit
      * @param maxResults how many results do we maximal want to have
      */
-    def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10){
+    def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
         Sql sql = new Sql(dataSource)
 
         def resultList = []
 
-        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a",[massSpectra,minSimilarity,countTopIons,maxResults] ){  row ->
+        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a", [massSpectra, minSimilarity, countTopIons, maxResults]) { row ->
 
             def hit = [:]
             hit.id = row.id
@@ -44,7 +44,6 @@ class SpectraQueryService {
 
         return resultList
     }
-
 
     /**
      * returns a list of similar spectra and similarity scores
@@ -53,12 +52,12 @@ class SpectraQueryService {
      * @param countTopIons how many of the ions largest ions have to be shared to be considered a hit
      * @param maxResults how many results do we maximal want to have
      */
-    def findSimilarSpectraIds(long id, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10){
+    def findSimilarSpectraIds(long id, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
         Sql sql = new Sql(dataSource)
 
         def resultList = []
 
-        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a",[id,minSimilarity,countTopIons,maxResults] ){  row ->
+        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a", [id, minSimilarity, countTopIons, maxResults]) { row ->
 
             def hit = [:]
             hit.id = row.id
@@ -69,7 +68,6 @@ class SpectraQueryService {
 
         return resultList
     }
-
 
     /**
      * returns a list of spectra data based on the given query
@@ -89,6 +87,27 @@ class SpectraQueryService {
         if (offset != -1) {
             params.offset = offset
         }
+
+        log.debug("pagination parameters: \n\n ${params}")
+
+        def queryOfDoom = null
+        def executionParams = null
+
+        (queryOfDoom, executionParams) = generateFinalQuery(json)
+
+        def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
+
+        log.debug("result count: ${result.size()}")
+
+        return result
+    }
+
+    /**
+     * generates the actual query to be executed for us
+     * @param json
+     * @return
+     */
+    private List generateFinalQuery(def json) {
 
         //completed query string
         String queryOfDoom = "select distinct s from Spectrum s "
@@ -113,13 +132,8 @@ class SpectraQueryService {
 
         log.debug("generated query: \n\n${queryOfDoom}\n\n")
         log.debug("parameter matrix:\n\n ${executionParams}")
-        log.debug("pagination parameters: \n\n ${params}")
 
-        def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
-
-        log.debug("result count: ${result.size()}")
-
-        return result
+        return [queryOfDoom, executionParams]
     }
 
     @Cacheable("spectrum")
@@ -395,17 +409,29 @@ class SpectraQueryService {
     }
 
     /**
-     * delete the result of the given query, which can take a while
+     * delete the result of the given query, which can take a while.
      * @param deleteQuery
      * @return
      */
-    def delete(deleteQuery){
+    def searchAndDelete(def deleteQuery) {
 
-        def result = query(deleteQuery)
+        log.info("query system for delete request: ${deleteQuery}")
 
+        def queryOfDoom = null
+        def executionParams = null
+
+        (queryOfDoom, executionParams) = generateFinalQuery(deleteQuery)
+
+
+        def result = Spectrum.executeQuery(queryOfDoom, executionParams)
+
+        log.info("have ${result.size()} spectra to remove in this batch")
         result.each { Spectrum spectrum ->
-            spectrum.delete()
+            log.info("deleting spectrum: ${spectrum.id}")
+            spectrum.delete(flush: true)
         }
+
+        log.info("finished delete operation")
     }
 
 }
