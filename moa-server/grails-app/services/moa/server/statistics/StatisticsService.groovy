@@ -1,6 +1,7 @@
 package moa.server.statistics
 
 import grails.transaction.Transactional
+import groovy.sql.Sql
 import moa.Compound
 import moa.MetaData
 import moa.MetaDataValue
@@ -8,11 +9,15 @@ import moa.Spectrum
 import moa.Submitter
 import moa.Tag
 
+import javax.sql.DataSource
+
 /**
  * provides us with uptodate statistics of the system
  */
 @Transactional
 class StatisticsService {
+
+    DataSource dataSource
 
     /**
      * counts the total number of all domain classes
@@ -20,12 +25,12 @@ class StatisticsService {
      */
     Map countAll() {
         return [
-                spectra: Spectrum.count(),
-                compounds: Compound.count(),
-                metadata: MetaData.count(),
+                spectra      : Spectrum.count(),
+                compounds    : Compound.count(),
+                metadata     : MetaData.count(),
                 metadataValue: MetaDataValue.count(),
-                tags: Tag.count(),
-                submitters: Submitter.count()
+                tags         : Tag.count(),
+                submitters   : Submitter.count()
         ]
     }
 
@@ -127,4 +132,49 @@ class StatisticsService {
 
         return res
     }
+
+    /**
+     * how many spectra have been imported today
+     * @return
+     */
+    int getSpectraImportCountForToday() {
+        Sql sql = Sql.newInstance(dataSource)
+        int spectra = sql.firstRow("select count(*) as spectra from supports_meta_data a, spectrum b where a.id = b.id and date_trunc('day', date_created) = date_trunc('day', now())").spectra
+
+        return spectra
+    }
+
+    /**
+     * how many spectra have been imported this week
+     * @return
+     */
+    int getSpectraImportCountForCurrentWeek() {
+        Sql sql = Sql.newInstance(dataSource)
+        int spectra = sql.firstRow("select count(*) as spectra from supports_meta_data a, spectrum b where a.id = b.id and date_trunc('week', date_created) = date_trunc('week', now())").spectra
+
+        return spectra
+    }
+
+    /**
+     * how many spectra have been imported this month
+     * @return
+     */
+    int getSpectraImportCountForCurrentMonth() {
+        Sql sql = Sql.newInstance(dataSource)
+        int spectra = sql.firstRow("select count(*) as spectra from supports_meta_data a, spectrum b where a.id = b.id and date_trunc('month', date_created) = date_trunc('month', now())").spectra
+
+        return spectra
+    }
+
+    /**
+     * how many spectra have been imported this year
+     * @return
+     */
+    int getSpectraImportCountForCurrentYear() {
+        Sql sql = Sql.newInstance(dataSource)
+        int spectra = sql.firstRow("select count(*) as spectra from supports_meta_data a, spectrum b where a.id = b.id and date_trunc('year', date_created) = date_trunc('year', now())").spectra
+
+        return spectra
+    }
+
 }
