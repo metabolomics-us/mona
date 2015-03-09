@@ -340,9 +340,14 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             for (var i = 0; i < files.length; i++) {
                 self.loadSpectraFile(files[i], function (data, origin) {
                     self.processData(data, function (spectrum) {
-                        AsyncService.addToPool(function() {
+                        AsyncService.addToPool(function(data) {
+                            var submitter = data[0];
+                            var saveSpectrumCallback = data[1];
+                            var spectrum = data[2];
+                            var wizardData = data[2];
+
                             workOnSpectra(submitter, saveSpectrumCallback, spectrum, wizardData);
-                        });
+                        }, [submitter, saveSpectrumCallback, spectrum, wizardData]);
 
                         self.uploadedSpectraCount += 1;
                     }, origin);
@@ -363,9 +368,13 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         broadcastUploadProgress();
 
         AuthenticationService.getCurrentUser().then(function (submitter) {
-            AsyncService.addToPool(function () {
+            AsyncService.addToPool(function (data) {
+                var submitter = data[0];
+                var saveSpectrumCallback = data[1];
+                var wizardData = data[2];
+
                 workOnSpectra(submitter, saveSpectrumCallback, wizardData);
-            });
+            }, [submitter, saveSpectrumCallback, wizardData]);
         });
     };
 
