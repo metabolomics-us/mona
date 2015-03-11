@@ -18,7 +18,7 @@ environments {
     development {
 
         dataSource {
-            dbCreate = "create-drop"
+            dbCreate = "update"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
             driverClassName="org.postgresql.Driver"
             username="compound"
@@ -57,7 +57,7 @@ environments {
             logSql = false
 
             properties {
-                maxActive = 100
+                maxActive = 60
                 minEvictableIdleTimeMillis=1800000
                 timeBetweenEvictionRunsMillis=1800000
                 numTestsPerEvictionRun=3
