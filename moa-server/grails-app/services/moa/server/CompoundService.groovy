@@ -18,7 +18,7 @@ import org.openscience.cdk.interfaces.IMolecule
 import org.openscience.cdk.io.MDLV2000Writer
 import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
-import org.springframework.transaction.annotation.Transactional
+import grails.transaction.Transactional
 
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -38,7 +38,20 @@ class CompoundService {
         //first get the compound we want
         Compound myCompound = null
 
-        myCompound = Compound.findOrCreateByInchiKey(compound.inchiKey.trim())
+        //new mona format has inchi key optional
+        if(compound.inchiKey == null){
+            if(compound.inchi == null){
+                throw new exception.ValidationException("sorry you need to provide an InChI or an InChI Key for a compound!")
+            }
+            else{
+                InChIGeneratorFactory fact = InChIGeneratorFactory.getInstance()
+                InChIToStructure structure = fact.getInChIToStructure(compound.inchi,DefaultChemObjectBuilder.newInstance())
+
+                compound.inchiKey = fact.getInChIGenerator(structure.getAtomContainer()).getInchiKey()
+
+            }
+        }
+        myCompound = Compound.findByInchiKey(compound.inchiKey.trim(), [lock: true])
 
         if (myCompound == null) {
             log.debug("compound not found -> adding it")
@@ -69,7 +82,25 @@ class CompoundService {
         }
 
         if (myCompound.validate()) {
-            myCompound.save(flush: true)
+
+            Compound existing = Compound.findByInchiKey(compound.inchiKey.trim(), [lock: true])
+
+            if (existing == null) {
+                myCompound.save()
+            }
+            else{
+                log.info("compound colission between ${existing.inchiKey} and ${myCompound.inchiKey}, merging properties!")
+
+                if(existing.molFile == null && myCompound.molFile != null){
+                    existing.molFile = myCompound.molFile
+                }
+                if(existing.inchi == null && myCompound.inchi !=null){
+                    existing.inchi = myCompound.inchi
+                }
+                existing.save()
+                myCompound = existing
+
+            }
         } else {
             throw new ValidationException("sorry this compound is not valid", myCompound.errors)
         }

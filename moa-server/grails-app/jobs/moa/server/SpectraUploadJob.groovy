@@ -12,7 +12,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class SpectraUploadJob {
 
     def resubmit = true
-    def concurrent = false
+    def concurrent = true
 
     def validation = true
 
