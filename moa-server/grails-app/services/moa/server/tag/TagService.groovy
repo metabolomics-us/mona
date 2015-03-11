@@ -15,8 +15,7 @@ class TagService {
     def addTagTo(String tagName, SupportsMetaData meta) {
 
         log.debug("adding tagName: ${tagName}")
-        Tag tag = getTag(tagName)
-        tag.lock()
+        Tag tag = Tag.findOrSaveByText(tagName, [lock: true])
 
         meta.addToTags(tag)
         tag.save()
@@ -32,7 +31,7 @@ class TagService {
     def removeTagFrom(String tagName, SupportsMetaData owner) {
 
 
-        Tag tag = getTag(tagName)
+        Tag tag = Tag.findOrSaveByText(tagName, [lock: true])
 
         if (owner != null && owner.getTags() != null) {
             if (owner.getTags().contains(tag)) {
@@ -46,26 +45,4 @@ class TagService {
         }
     }
 
-    /**
-     * gets or creates a new tag
-     * @param tagName
-     * @return
-     */
-    Tag getTag(String tagName) {
-
-        Tag tag = Tag.findByText(tagName)
-
-        if (tag) {
-            return tag
-        } else {
-
-            log.debug("creating new tag: ${tagName}")
-            tag = new Tag(text: tagName)
-
-            tag.save()
-
-
-        }
-        return tag
-    }
 }
