@@ -20,7 +20,7 @@ class AddStatisticsJob {
 
     def group = "statistics"
 
-    def description = "adds a new statitics item to the system"
+    def description = "adds a new statistics item to the system"
 
     def execute(context) {
         Map data = context.mergedJobDataMap
