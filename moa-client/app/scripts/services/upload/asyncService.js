@@ -6,8 +6,6 @@
 
 app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
 
-    var parallel = new Parallel('importer');
-
     var runningTasks = 0;
 
     var maxRunningTasks = 10;
@@ -16,46 +14,24 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
 
     var poolRate = 100;
 
+    var timeout = null;
+
     /**
      * adds a function, which takes one argument and our obect to the pool
      * @param runMe
      * @param executeFunction
      */
     this.addToPool = function (executeFunction, data) {
-        //$log.debug("adding work to pool");
-
-
         pool.push({execute: executeFunction, data: data});
 
+        if(timeout == null){
+            this.startPool();
+        }
     };
 
     this.startPool = function () {
 
-
-        /**
-         * small wrapper since parallel api exspects a string value as result
-         * @param object
-         * @returns {string}
-         */
-        var submit = function (object) {
-
-            runningTasks = runningTasks + 1;
-
-            //$log.debug("calling submit function...");
-            $log.debug("actually doing some work....");
-
-            object.execute(object.data).then(function (data) {
-                $log.info("done with my task...");
-
-                runningTasks = runningTasks - 1;
-            }).catch(function (error) {
-                $log.info("my task failed...");
-                runningTasks = runningTasks - 1;
-            });
-
-            return 'done';
-        };
-
+        $log.info("starting pool and waiting for jobs");
 
         //works over the pool
         var handlePool = function () {
@@ -63,22 +39,32 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
                 for (var i = 0; i < maxRunningTasks; i++) {
                     if (angular.isDefined(pool)) {
                         if (pool.length > 0) {
+                            runningTasks = runningTasks + 1;
 
-                            /**
-                             * spawn a new process to the server
-                             */
-                            parallel.spawn(submit(pool.pop()))
+                            var object = pool.pop();
+
+                            object.execute(object.data).then(function (data) {
+                                runningTasks--;
+                            }).catch(function (error) {
+                                runningTasks--;
+                            });
+
                         }
                     }
                 }
+            }
+            else if(pool.length == 0){
+                //stop the interval to save resources
+                $interval.cancel(timeout);
+                timeout = null;
+            }
+            else{
+                $log.debug("waiting for running tasks to finish (" + runningTasks + ")");
             }
         };
 
         //start the pull as interval
 
-        $interval(handlePool, poolRate);
+        timeout = $interval(handlePool, poolRate);
     };
-
-
-    this.startPool();
 });
