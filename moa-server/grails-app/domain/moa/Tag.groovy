@@ -12,6 +12,7 @@ class Tag implements Serializable{
 
     static mapping = {
         text index: true, indexAttributes: [unique: true]
+        version false
     }
 
     /**

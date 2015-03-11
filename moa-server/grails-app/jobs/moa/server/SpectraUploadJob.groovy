@@ -14,6 +14,8 @@ class SpectraUploadJob {
     def resubmit = true
     def concurrent = false
 
+    def validation = true
+
     /**
      * needs to be defined
      */
@@ -53,8 +55,9 @@ class SpectraUploadJob {
 
                     statisticsService.acquire(needed,"${result.id}","spectra import time","import")
 
-                    SpectraValidationJob.triggerNow([spectraId: result.id, priority: 5])
-
+                    if(validation) {
+                        SpectraValidationJob.triggerNow([spectraId: result.id, priority: 5])
+                    }
                 }
                 catch (ValidationException e) {
 

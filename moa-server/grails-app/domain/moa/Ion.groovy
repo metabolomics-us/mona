@@ -7,6 +7,10 @@ class Ion extends SupportsMetaData {
 
     static belongsTo = [spectrum:Spectrum]
 
+    static mapping = {
+        version false
+    }
+
     /**
      * intensity
      */
