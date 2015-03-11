@@ -2,6 +2,7 @@ package moa.server
 
 import grails.converters.JSON
 import grails.plugin.cache.CacheEvict
+import grails.transaction.Transactional
 import moa.Ion
 import moa.Spectrum
 import moa.server.metadata.MetaDataPersistenceService
@@ -10,7 +11,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.validation.ValidationException
 
-//@Transactional
+@Transactional
 class SpectraPersistenceService {
 
     MetaDataPersistenceService metaDataPersistenceService
