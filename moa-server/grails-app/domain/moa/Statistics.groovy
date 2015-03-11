@@ -3,7 +3,7 @@ package moa
 /**
  * simples object to track statistics in the system
  */
-class Statistics {
+class Statistics implements Serializable{
 
     static constraints = {
     }
