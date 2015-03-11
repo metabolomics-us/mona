@@ -17,6 +17,7 @@ class TagService {
         log.debug("adding tagName: ${tagName}")
         Tag tag = getTag(tagName)
         tag.lock()
+
         meta.addToTags(tag)
         tag.save()
 
