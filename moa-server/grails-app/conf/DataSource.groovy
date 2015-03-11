@@ -18,8 +18,8 @@ environments {
     development {
 
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:postgresql://localhost:5432/moa-devel"
+            dbCreate = "create-drop"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
             driverClassName="org.postgresql.Driver"
             username="compound"
             password="asdf"

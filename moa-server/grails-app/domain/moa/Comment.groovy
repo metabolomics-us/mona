@@ -14,6 +14,7 @@ class Comment {
 
     static mapping = {
         comment sqlType: "text"
+        version false
     }
 
     String comment
