@@ -83,7 +83,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
                 }
                 else {
                     if (molecule != null) {
-                        spectra.molecule = molecule;
+                        spectra.molFile = molecule;
                     }
                     deferred.resolve(spectra);
                 }
@@ -135,7 +135,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
                 else {
                     $log.error("invalid " + $filter('json')(spectrumWithKey));
-                    defer.reject(new Error('dropped object from submission, since it was declared invalid'));
+                    defer.reject(new Error('dropped object from submission, since it was declared invalid, it had neither an InChI or a Molfile, which means the provide InChI key most likely was not found!'));
                 }
             }).catch(function (error) {
 
