@@ -23,15 +23,13 @@ class CategoryNameFinderService {
             name = MetaDataCategory.DEFAULT_CATEGORY_NAME
         }
 
-        category = MetaDataCategory.findByName(name)
+        category = MetaDataCategory.findByName(name, [lock: true])
 
         //create a new category if it doesn't exit
-        if(category == null) {
+        if (category == null) {
             category = new MetaDataCategory()
             category.name = name
-//            category.save()
-//            category.lock()
-            category.save(flush: true)
+            category.save()
         }
         log.debug("found category: '${category.id} - ${category.name}'")
 
