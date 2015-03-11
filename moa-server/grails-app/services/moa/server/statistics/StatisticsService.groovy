@@ -6,6 +6,7 @@ import moa.Compound
 import moa.MetaData
 import moa.MetaDataValue
 import moa.Spectrum
+import moa.Statistics
 import moa.Submitter
 import moa.Tag
 
@@ -14,7 +15,6 @@ import javax.sql.DataSource
 /**
  * provides us with uptodate statistics of the system
  */
-@Transactional
 class StatisticsService {
 
     DataSource dataSource
@@ -177,4 +177,28 @@ class StatisticsService {
         return spectra
     }
 
+    /**
+     * aquires a new statistics object in the system and sends it as a job to quartz
+     * @param value
+     * @param title
+     * @param description
+     * @param category
+     * @return
+     */
+    def acquire(Double value, String title, String description = "none", String category = "runtime") {
+        Statistics statistics = new Statistics()
+
+        statistics.category = category
+        statistics.description = description
+        statistics.value = value
+        statistics.title = title
+
+        try {
+            AddStatisticsJob.triggerNow([object: statistics])
+
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e)
+        }
+    }
 }
