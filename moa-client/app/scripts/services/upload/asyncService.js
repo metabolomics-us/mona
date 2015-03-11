@@ -1,56 +1,20 @@
 /**
+ * simple async service utilizing hte parallel api internally
+ * for the heavy lifting
  * Created by wohlgemuth on 7/17/14.
  */
 
-app.service('AsyncService', function (ApplicationError, $log, $q, $timeout, $filter) {
+app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
 
-    /**
-     * contains our pooled data
-     * @type {Array}
-     */
+    var runningTasks = 0;
+
+    var maxRunningTasks = 10;
+
     var pool = [];
 
-    //how many jobs can run at the same time
-    var executionLimit = 10;
+    var poolRate = 100;
 
-    //timeout after completing the pool
-    var poolRate = 500;
-
-    /**
-     * a simple pool to ensure we are not using more than 'executionLimit' ajax calls while
-     * uploading data to the server
-
-     */
-    this.startPool = function () {
-
-        //keeps track of our pool
-        var poolRunning = false;
-
-        //how many parallel processes do we want
-        var poolLimit = executionLimit;
-
-        //works over the pool
-        var handlePool = function () {
-            if (poolRunning == false) {
-                try {
-                    poolRunning = true;
-                    for (var i = 0; i < poolLimit; i++) {
-                        if (pool.length > 0) {
-
-                            var object = pool.pop();
-                            object.execute(object.data);
-                        }
-                    }
-                }
-                finally {
-                    poolRunning = false;
-                    $timeout(handlePool, poolRate);
-                }
-            }
-        };
-
-        $timeout(handlePool, poolRate);
-    };
+    var timeout = null;
 
     /**
      * adds a function, which takes one argument and our obect to the pool
@@ -59,35 +23,48 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $timeout, $fil
      */
     this.addToPool = function (executeFunction, data) {
         pool.push({execute: executeFunction, data: data});
-    };
 
-    /**
-     * contains all tasks currently in the pool
-     * @returns {Array}
-     */
-    this.currentTaskList = function () {
-        return pool;
-    };
-
-    /**
-     * current tasks in the pool
-     * @returns {Number}
-     */
-    this.currentTaskCount = function () {
-        return pool.length;
-    };
-
-    /**
-     * clear this pool
-     */
-    this.clearPool = function(){
-
-        while(pool.length > 0){
-            pool.pop();
+        if(timeout == null){
+            this.startPool();
         }
     };
-    /**
-     * start our pool and get some work done
-     */
-    this.startPool();
+
+    this.startPool = function () {
+
+        $log.info("starting pool and waiting for jobs");
+
+        //works over the pool
+        var handlePool = function () {
+            if (runningTasks < maxRunningTasks) {
+                for (var i = 0; i < maxRunningTasks; i++) {
+                    if (angular.isDefined(pool)) {
+                        if (pool.length > 0) {
+                            runningTasks = runningTasks + 1;
+
+                            var object = pool.pop();
+
+                            object.execute(object.data).then(function (data) {
+                                runningTasks--;
+                            }).catch(function (error) {
+                                runningTasks--;
+                            });
+
+                        }
+                    }
+                }
+            }
+            else if(pool.length == 0){
+                //stop the interval to save resources
+                $interval.cancel(timeout);
+                timeout = null;
+            }
+            else{
+                $log.debug("waiting for running tasks to finish (" + runningTasks + ")");
+            }
+        };
+
+        //start the pull as interval
+
+        timeout = $interval(handlePool, poolRate);
+    };
 });

@@ -7,6 +7,7 @@ import grails.transaction.Transactional
 import moa.Spectrum
 import moa.server.metadata.MetaDataPersistenceService
 import moa.server.query.SpectraQueryService
+import moa.server.statistics.StatisticsService
 
 @Transactional
 class SpectraCurationService {
@@ -16,6 +17,8 @@ class SpectraCurationService {
     CurationWorkflow spectraCurationWorkflow
 
     MetaDataPersistenceService metaDataPersistenceService
+
+    StatisticsService statisticsService
 
     /**
      * runs the curation workflow for the given spectra
@@ -38,6 +41,8 @@ class SpectraCurationService {
             spectrum = Spectrum.get(spectrum.id)
             metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "validation date", value: new Date().format("dd-MMM-yyyy"), category: "computed", computed: true])
             metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "validation time", value: needed, unit: "ms", category: "computed", computed: true])
+
+            statisticsService.acquire(needed,"${id}","spectra validation time","validation")
 
             spectrum.save()
 
