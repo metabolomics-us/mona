@@ -16,6 +16,8 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 import org.openscience.cdk.tools.manipulator.MolecularFormulaManipulator
 import org.springframework.beans.factory.annotation.Autowired
 import util.chemical.Derivatizer
+import util.chemical.MolHelper
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -72,29 +74,7 @@ abstract class AbstractCurationRule implements CurationRule {
      */
     Molecule readMolecule(Compound compound) {
 
-        String molFile = compound.molFile
-
-        if(molFile != null) {
-            if (molFile.startsWith("\n") == false) {
-                molFile = "\n" + molFile
-            }
-
-            logger.debug("using mol file: ${molFile}")
-
-            def reader = new MDLV2000Reader(new StringReader(molFile))
-
-            Molecule mol = reader.read(new Molecule())
-
-
-            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
-            CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.newInstance()).addImplicitHydrogens(mol)
-            AtomContainerManipulator.convertImplicitToExplicitHydrogens(mol);
-
-            return mol
-        }
-        else {
-            throw new NullPointerException("there was no molfile provided for compound: ${compound}")
-        }
+        return new MolHelper().readMolecule(compound)
     }
 
     /**
@@ -104,11 +84,8 @@ abstract class AbstractCurationRule implements CurationRule {
      */
     String calculateInChICode(Molecule molecule) {
 
-        InChIGeneratorFactory factory = InChIGeneratorFactory.getInstance()
-        InChIGenerator gen = factory.getInChIGenerator(molecule);
-
-        return gen.inchi
-    }
+        return MolHelper.newInstance().convertToInChICode(molecule)
+   }
 
     /**
      * calculates the inchi key
@@ -116,11 +93,7 @@ abstract class AbstractCurationRule implements CurationRule {
      * @return
      */
     String calculateInChIKey(Molecule molecule) {
-
-        InChIGeneratorFactory factory = InChIGeneratorFactory.getInstance()
-        InChIGenerator gen = factory.getInChIGenerator(molecule);
-
-        return gen.inchiKey
+        return MolHelper.newInstance().convertToInChIKey(molecule)
     }
 
     IMolecularFormula calculateFormula(Molecule molecule) {

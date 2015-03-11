@@ -19,6 +19,7 @@ import org.openscience.cdk.io.MDLV2000Writer
 import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 import grails.transaction.Transactional
+import util.chemical.MolHelper
 
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -44,10 +45,7 @@ class CompoundService {
                 throw new exception.ValidationException("sorry you need to provide an InChI or an InChI Key for a compound!")
             }
             else{
-                InChIGeneratorFactory fact = InChIGeneratorFactory.getInstance()
-                InChIToStructure structure = fact.getInChIToStructure(compound.inchi,DefaultChemObjectBuilder.newInstance())
-
-                compound.inchiKey = fact.getInChIGenerator(structure.getAtomContainer()).getInchiKey()
+                compound.inchiKey = MolHelper.newInstance().convertToInChIKey(compound.inchi)
 
             }
         }
@@ -70,7 +68,9 @@ class CompoundService {
             myCompound.molFile = compound.molFile.trim()
 
             if (compound.inchi == null) {
-                log.debug("generating inchi code from mold file...")
+                log.debug("generating inchi code from mol file...")
+
+                myCompound.inchi = MolHelper.newInstance().convertToInChIKey(MolHelper.newInstance().readMolecule(myCompound))
 
             }
         } else if (myCompound.inchi != null) {
