@@ -3,6 +3,7 @@ package moa.server
 import exception.ValidationException
 import grails.converters.JSON
 import moa.Spectrum
+import moa.server.statistics.StatisticsService
 import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
@@ -23,6 +24,8 @@ class SpectraUploadJob {
     def description = "uploads spectra data in the background of the server"
 
     SpectraPersistenceService spectraPersistenceService
+
+    StatisticsService statisticsService
 
     def execute(context) {
         Map data = context.mergedJobDataMap
@@ -48,6 +51,7 @@ class SpectraUploadJob {
                     long needed = end - begin
                     log.debug("stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}")
 
+                    statisticsService.acquire(needed,"${result.id}","spectra import time","import")
 
                     SpectraValidationJob.triggerNow([spectraId: result.id, priority: 5])
 

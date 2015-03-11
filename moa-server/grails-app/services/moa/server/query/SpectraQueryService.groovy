@@ -4,6 +4,7 @@ import grails.transaction.Transactional
 import groovy.sql.Sql
 import moa.Spectrum
 import moa.Tag
+import moa.server.statistics.StatisticsService
 import org.hibernate.QueryException
 import org.springframework.cache.annotation.Cacheable
 
@@ -14,6 +15,8 @@ class SpectraQueryService {
     static transactional = false
 
     MetaDataQueryService metaDataQueryService
+
+    StatisticsService statisticsService
 
     @Transactional
     @Cacheable("spectrum")
@@ -31,6 +34,7 @@ class SpectraQueryService {
     def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
         Sql sql = new Sql(dataSource)
 
+        long begin = System.currentTimeMillis()
         def resultList = []
 
         sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a", [massSpectra, minSimilarity, countTopIons, maxResults]) { row ->
@@ -42,6 +46,8 @@ class SpectraQueryService {
             resultList.add(hit)
         }
 
+
+        statisticsService.acquire(System.currentTimeMillis() - begin,"similarity search","search duration","search")
         return resultList
     }
 
@@ -54,6 +60,7 @@ class SpectraQueryService {
      */
     def findSimilarSpectraIds(long id, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
         Sql sql = new Sql(dataSource)
+        long begin = System.currentTimeMillis()
 
         def resultList = []
 
@@ -66,6 +73,8 @@ class SpectraQueryService {
             resultList.add(hit)
         }
 
+
+        statisticsService.acquire(System.currentTimeMillis() - begin,"similarity search","search duration","search")
         return resultList
     }
 
@@ -77,6 +86,8 @@ class SpectraQueryService {
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
         log.info("received query: ${json}")
+
+        long begin = System.currentTimeMillis()
 
         def params = [:]
 
@@ -98,6 +109,9 @@ class SpectraQueryService {
         def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
 
         log.debug("result count: ${result.size()}")
+
+
+        statisticsService.acquire(System.currentTimeMillis() - begin,"text search","${json}","search")
 
         return result
     }
