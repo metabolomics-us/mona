@@ -193,12 +193,6 @@ class StatisticsService {
         statistics.value = value
         statistics.title = title
 
-        try {
-            AddStatisticsJob.triggerNow([object: statistics])
-
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e)
-        }
+        statistics.save()
     }
 }

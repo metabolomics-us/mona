@@ -18,10 +18,11 @@ import org.openscience.cdk.interfaces.IMolecule
 import org.openscience.cdk.io.MDLV2000Writer
 import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
+import org.springframework.transaction.annotation.Transactional
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-//@Transactional
+@Transactional
 class CompoundService {
 
     NameService nameService
@@ -68,27 +69,25 @@ class CompoundService {
         }
 
         if (myCompound.validate()) {
-            myCompound.save(flush:true)
+            myCompound.save(flush: true)
         } else {
             throw new ValidationException("sorry this compound is not valid", myCompound.errors)
         }
 
 
         compound.names.each {
-            if(it instanceof String) {
+            if (it instanceof String) {
                 nameService.addNameToCompound(it, myCompound)
-            }
-            else if(it instanceof Map){
-                if(it.name != null){
+            } else if (it instanceof Map) {
+                if (it.name != null) {
                     nameService.addNameToCompound(it.name, myCompound)
                 }
-            }
-            else{
+            } else {
                 log.error("unsupported name object! Ignoring it ${it}:${it.class}")
             }
         }
 
-        myCompound.save(flush:true)
+        myCompound.save(flush: true)
 
         log.debug("added or updated compound with id: ${myCompound.id}")
         //CompoundCurationJob.triggerNow(compoundId: myCompound.id)
@@ -132,7 +131,7 @@ class CompoundService {
             Iterator<IAtomContainer> iterator = set.molecules().iterator()
 
             AtomContainer result = new AtomContainer()
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 StructureDiagramGenerator sdg = new StructureDiagramGenerator();
 
                 sdg.setMolecule(iterator.next(), true)
@@ -145,7 +144,6 @@ class CompoundService {
 
             molecule = result
         }
-
 
         //ModelBuilder3D builder = ModelBuilder3D.getInstance()
         //molecule = builder.generate3DCoordinates(molecule, false)
