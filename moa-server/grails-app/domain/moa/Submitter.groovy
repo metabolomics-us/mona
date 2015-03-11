@@ -30,6 +30,7 @@ class Submitter {
 
     static mapping = {
         password column: '`password`'
+        version false
     }
 
     /**
