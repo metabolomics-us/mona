@@ -11,9 +11,19 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class SpectraUploadJob {
 
+    /**
+     * do we automatically want to resubmit failed jobs
+     */
     def resubmit = true
+
+    /**
+     * should this run concurrent over the whole cluster
+     */
     def concurrent = true
 
+    /**
+     * do we want to automatically validate the spectra after submission
+     */
     def validation = true
 
     /**
@@ -46,7 +56,7 @@ class SpectraUploadJob {
                     }
 
                     Spectrum result = spectraPersistenceService.create(json)
-                    //result.save(flush: true)
+                    result.save(flush: true)
 
                     long end = System.currentTimeMillis()
 
