@@ -32,4 +32,15 @@ class StatisticsController {
     def countOfSpectraForAllSubmitters() {
         render statisticsService.getSpectraCountForAllSubmitters() as JSON
     }
+
+    def statisticsForCategory() {
+
+        if (params.grouping == null) {
+            render statisticsService.getStatisticsForCategory(params.category) as JSON
+        } else {
+            render statisticsService.getStatisticsForCategory(params.category,params.grouping) as JSON
+
+        }
+    }
+
 }
