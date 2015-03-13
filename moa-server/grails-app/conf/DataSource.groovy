@@ -57,13 +57,18 @@ environments {
             logSql = false
 
             properties {
-                maxActive = 60
-                minEvictableIdleTimeMillis=1800000
-                timeBetweenEvictionRunsMillis=1800000
-                numTestsPerEvictionRun=3
-                testOnBorrow=true
-                testWhileIdle=true
-                testOnReturn=false
+                maxActive = 20
+                maxIdle = 5
+                minIdle = 1
+                initialSize = 1
+                minEvictableIdleTimeMillis = 60000
+                timeBetweenEvictionRunsMillis = 60000
+                numTestsPerEvictionRun = 3
+                maxWait = 10000
+
+                testOnBorrow = true
+                testWhileIdle = true
+                testOnReturn = false
                 validationQuery="SELECT 1"
                 jdbcInterceptors="ConnectionState"
             }
