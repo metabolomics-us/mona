@@ -83,10 +83,10 @@ class CompoundService {
 
         if (myCompound.validate()) {
 
-            Compound existing = Compound.findByInchiKey(compound.inchiKey.trim(), [lock: true])
+            Compound existing = Compound.findByInchiKey(myCompound.inchiKey, [lock: true])
 
             if (existing == null) {
-                myCompound.save()
+                myCompound.save(flush:true)
             }
             else{
                 log.info("compound colission between ${existing.inchiKey} and ${myCompound.inchiKey}, merging properties!")
