@@ -3,6 +3,7 @@ package moa.server
 import exception.ValidationException
 import grails.converters.JSON
 import moa.Spectrum
+import moa.server.curation.SpectraCurationService
 import moa.server.statistics.StatisticsService
 import org.codehaus.groovy.grails.web.json.JSONObject
 
@@ -65,8 +66,9 @@ class SpectraUploadJob {
 
                     statisticsService.acquire(needed,"${result.id}","spectra import time","import")
 
+                    //automatic validation
                     if(validation) {
-                        SpectraValidationJob.triggerNow([spectraId: result.id, priority: 5])
+                        SpectraValidationJob.triggerNow([spectraId: result.id, priority: 1])
                     }
                 }
                 catch (ValidationException e) {

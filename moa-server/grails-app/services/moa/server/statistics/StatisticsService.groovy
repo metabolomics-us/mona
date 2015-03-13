@@ -178,6 +178,27 @@ class StatisticsService {
     }
 
     /**
+     * returns the statistics for our given category name and optional time grouping
+     * @param categoryName
+     * @param grouping min | hour | week | month | year
+     * @return
+     */
+    def getStatisticsForCategory(String categoryName, String grouping = "hour"){
+
+        Sql sql = Sql.newInstance(dataSource)
+
+        def result = []
+
+        sql.eachRow("select count(value),avg(value), min(value), max(value),date_trunc($grouping, a.date_created)  as date  from statistics a where category = $categoryName group by date order by date desc"){
+
+            def data =[category:categoryName,grouping:grouping,count:it.count,avg:it.avg,min:it.min,max:it.max,date:it.date]
+
+            result.add(data)
+        }
+
+        return result
+    }
+    /**
      * aquires a new statistics object in the system and sends it as a job to quartz
      * @param value
      * @param title

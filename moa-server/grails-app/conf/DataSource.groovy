@@ -24,6 +24,28 @@ environments {
             username="compound"
             password="asdf"
             pooled = true
+
+            properties {
+
+                jmxEnabled = true
+                initialSize = 5
+                maxActive = 50
+                minIdle = 5
+                maxIdle = 10
+                maxWait = 10000
+                maxAge = 10 * 60000
+                timeBetweenEvictionRunsMillis = 5000
+                minEvictableIdleTimeMillis = 60000
+                validationQuery = "SELECT 1"
+                validationQueryTimeout = 3
+                validationInterval = 15000
+                testOnBorrow = true
+                testWhileIdle = true
+                testOnReturn = false
+                jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
+                defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
+            }
+
         }
 
     }
@@ -56,23 +78,29 @@ environments {
             pooled = true
             logSql = false
 
-            properties {
-                maxActive = 20
-                maxIdle = 5
-                minIdle = 1
-                initialSize = 1
-                minEvictableIdleTimeMillis = 60000
-                timeBetweenEvictionRunsMillis = 60000
-                numTestsPerEvictionRun = 3
-                maxWait = 10000
 
+            properties {
+
+                jmxEnabled = true
+                initialSize = 5
+
+                //quartz threads + 10!
+                maxActive = 50
+                minIdle = 5
+                maxIdle = 25
+                maxWait = 10000
+                maxAge = 10 * 60000
+                timeBetweenEvictionRunsMillis = 5000
+                minEvictableIdleTimeMillis = 60000
+                validationQuery = "SELECT 1"
+                validationQueryTimeout = 3
+                validationInterval = 15000
                 testOnBorrow = true
                 testWhileIdle = true
                 testOnReturn = false
-                validationQuery="SELECT 1"
-                jdbcInterceptors="ConnectionState"
+                jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
+                defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
             }
-
         }
 
     }

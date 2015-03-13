@@ -31,7 +31,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             if (spectra.name) {
                 gwChemifyService.nameToInChIKey(spectra.name, function (key) {
                     if (key == null) {
-                        deferred.reject("sorry no key found, at name to inchi key!");
+                        deferred.reject("sorry no InChI Key found for " + spectra.name + ", at name to InChI key!");
                     }
                     else {
                         spectra.inchiKey = key;
@@ -42,9 +42,10 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
             //if we have a bunch of names
             else if (spectra.names && spectra.names.length > 0) {
+
                 gwChemifyService.nameToInChIKey(spectra.names[0], function (key) {
                     if (key == null) {
-                        deferred.reject("sorry no key found, at names to inchi key!");
+                        deferred.reject("sorry no InChI Key found for " + specta.names[0] + ", at names to InChI key!");
                     }
                     else {
                         spectra.inchiKey = key;
@@ -54,7 +55,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             }
             //we got nothing so we give up
             else {
-                deferred.reject("sorry given object was invalid, we need a name, or an inchi code (inchi) or an array with names for this to work!")
+                deferred.reject("sorry given object was invalid, we need a name, or an InChI code, InChI Key or an array with names for this to work!")
             }
         };
 
@@ -157,18 +158,18 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param additionalData
      */
     self.submitSpectrum = function (spectra, submitter, saveSpectrumCallback, additionalData) {
-        $log.debug("submitting spectra...");
-        $log.debug($filter('json')(spectra));
+        //$log.debug("submitting spectra...");
+        //$log.debug($filter('json')(spectra));
 
-        $log.debug("additional data...");
-        $log.debug($filter('json')(additionalData));
+        //$log.debug("additional data...");
+        //$log.debug($filter('json')(additionalData));
 
         var deferred = $q.defer();
 
         //optimize all our metadata
         MetaDataOptimizationService.optimizeMetaData(spectra.meta).then(function (metaData) {
 
-            $log.debug("building final spectra...");
+            //$log.debug("building final spectra...");
 
             var s = self.buildSpectrum();
 
@@ -246,9 +247,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
             s.submitter = submitter;
 
-            $log.debug("submit to actual server");
-            $log.debug($filter('json')(s));
-            //$log.info($filter('json')(s));
+            //$log.debug("submit to actual server");
+            //$log.debug($filter('json')(s));
             saveSpectrumCallback(s);
 
 
