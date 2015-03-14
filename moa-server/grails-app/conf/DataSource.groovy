@@ -100,6 +100,8 @@ environments {
                 testOnReturn = false
                 jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
                 defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
+                removeAbandoned = true
+                logAbandoned = true
             }
         }
 
