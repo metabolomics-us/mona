@@ -159,6 +159,8 @@ class UrlMappings {
 
         "/rest/statistics/meta/spectra/count/$id"(controller: 'statistics', action: 'metaDataValueCountForMetadataValueId', id: id)
 
+        "/rest/statistics/category/$category/$grouping?"(controller: 'statistics', action: 'statisticsForCategory')
+
         /**
          * news related items
          */
