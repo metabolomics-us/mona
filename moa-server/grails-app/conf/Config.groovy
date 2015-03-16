@@ -79,9 +79,14 @@ environments {
 
         logdirectory = "/Volumes/ras/"
     }
-    lipid{
+    test {
+        grails.logging.jul.usebridge = true
         grails.converters.default.pretty.print = true
 
+        logdirectory = "/Volumes/ras/"
+    }
+    lipid{
+        grails.converters.default.pretty.print = true
 
         logdirectory = "/Volumes/ras/"
     }
@@ -89,10 +94,8 @@ environments {
         grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
 
-
         logdirectory = "/var/log/mona/"
         //logdirectory = "/Volumes/ras/"
-
     }
 }
 
