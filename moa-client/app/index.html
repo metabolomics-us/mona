@@ -53,7 +53,7 @@
     <ul class="nav navbar-top-links navbar-right">
         <!-- /.dropdown -->
         <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <a class="dropdown-toggle" href="#">
                 <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-tasks">
@@ -90,7 +90,7 @@
         </li>
         <!-- /.dropdown -->
         <li class="dropdown" ng-controller="AuthenticationController">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <a class="dropdown-toggle" href="#">
                 <i class="fa fa-user fa-fw"></i> <span ng-bind="welcomeMessage"></span> <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
@@ -153,7 +153,7 @@
                     <a href="#/news"><i class="fa fa-flag-o fa-fw"></i>Announcements</a>
                 </li>
 
-                <li ng-if="isAdmin()">
+                <li ng-show="isAdmin()">
                     <a href="#"><i class="fa fa-files-o fa-fw"></i>Administration<span class="fa arrow"></span></a>
 
                     <ul class="nav nav-second-level">
