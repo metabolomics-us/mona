@@ -29,9 +29,11 @@ environments {
 
                 jmxEnabled = true
                 initialSize = 5
+
+                //quartz threads + 10!
                 maxActive = 50
                 minIdle = 5
-                maxIdle = 10
+                maxIdle = 25
                 maxWait = 10000
                 maxAge = 10 * 60000
                 timeBetweenEvictionRunsMillis = 5000
@@ -44,6 +46,8 @@ environments {
                 testOnReturn = false
                 jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
                 defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
+                removeAbandoned = true
+                logAbandoned = true
             }
 
         }
