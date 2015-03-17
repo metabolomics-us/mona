@@ -154,7 +154,6 @@ class SubmitterControllerSpec extends IntegrationSpec {
         Submitter.count() == count + 2
 
 		// right way -- this is testing the content of the response.json object created by the controller
-		((JSONArray)controller.response.json).size() == count + 2
         controller.response.json.size() == count + 2
 
         Submitter.findByFirstNameAndLastName('Test', 'User') != null
