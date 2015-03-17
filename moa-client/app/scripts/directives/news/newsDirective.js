@@ -43,21 +43,25 @@ app.directive('gwNews', function (AppCache, News, $interval,$timeout) {
             $scope.loadData = function () {
                 if ($scope.type == 'announcements') {
                     News.listAnnouncements(function (data) {
+                        $scope.recentNews = [];
                         $scope.recentNews = data;
                     });
                 }
                 else if ($scope.type == 'upload') {
                     News.listUpdates(function (data) {
+                        $scope.recentNews = [];
                         $scope.recentNews = data;
                     });
                 }
                 else if ($scope.type == 'notification') {
                     News.listNotifications(function (data) {
+                        $scope.recentNews = [];
                         $scope.recentNews = data;
                     });
                 }
                 else {
                     News.query(function (data) {
+                        $scope.recentNews = [];
                         $scope.recentNews = data;
                     });
                 }
