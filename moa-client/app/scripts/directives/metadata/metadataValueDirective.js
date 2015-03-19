@@ -89,7 +89,8 @@ app.directive('gwMetaQueryInput', function ($compile) {
         restrict: 'A',
         scope: {
             query: '=',
-            editable: '=?'
+            editable: '=?',
+            fullText : '=?'
         },
         link: function ($scope, element, attrs, ngModel) {
 
@@ -107,15 +108,30 @@ app.directive('gwMetaQueryInput', function ($compile) {
              * @param value
              */
             $scope.queryMetadataValues = function (name, value) {
-                return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
-                    query: {
-                        name: name,
-                        value: {ilike: '%' + value + '%'},
-                        property: 'stringValue'
-                    }
-                }).then(function (data) {
-                    return data.data;
-                });
+
+                if(angular.isDefined($scope.fullText)){
+                    return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
+                        query: {
+                            name: name,
+                            value: {ilike:'%' + value + '%'},
+                            property: 'stringValue'
+                        }
+                    }).then(function (data) {
+                        return data.data;
+                    });
+                }
+                else{
+                    return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
+                        query: {
+                            name: name,
+                            value: {ilike: value + '%'},
+                            property: 'stringValue'
+                        }
+                    }).then(function (data) {
+                        return data.data;
+                    });
+                }
+
             };
 
             /**
