@@ -11,7 +11,12 @@ app.service('SpectrumCache', function ($log) {
     /**
      * Stored browser spectra
      */
-    this.spectra = null;
+    this.browserSpectra = null;
+
+    /**
+     * Stored browser scroll location
+     */
+    this.browserLocation = null;
 
     /**
      * Stored spectrum for viewing
@@ -24,21 +29,36 @@ app.service('SpectrumCache', function ($log) {
      */
     this.clear = function () {
         this.removeBrowserSpectra();
+        this.removeBrowserLocation();
         this.removeSpectrum();
     };
 
 
     this.hasBrowserSpectra = function () {
-        return this.spectra != null;
+        return this.browserSpectra != null;
     };
     this.getBrowserSpectra = function () {
-        return this.spectra;
+        return this.browserSpectra;
     };
-    this.setBrowserSpectra = function (spectra) {
-        this.spectra = spectra;
+    this.setBrowserSpectra = function (browserSpectra) {
+        this.browserSpectra = browserSpectra;
     };
     this.removeBrowserSpectra = function () {
-        this.spectra = null;
+        this.browserSpectra = null;
+    };
+
+
+    this.hasBrowserLocation = function () {
+        return this.browserLocation != null;
+    };
+    this.getBrowserLocation = function () {
+        return this.browserLocation;
+    };
+    this.setBrowserLocation = function (browserLocation) {
+        this.browserLocation = browserLocation;
+    };
+    this.removeBrowserLocation = function () {
+        this.browserLocation = null;
     };
 
 
@@ -91,9 +111,7 @@ app.service('QueryCache', function ($injector, $log, $rootScope) {
         // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
         if (this.query == null) {
             return $injector.get('SpectraQueryBuilderService').prepareQuery();
-        }
-
-        else {
+        } else {
             return this.query;
         }
     };
@@ -113,12 +131,4 @@ app.service('QueryCache', function ($injector, $log, $rootScope) {
     this.resetSpectraQuery = function () {
         this.clear();
     }
-});
-
-
-/**
- * In progress
- */
-app.factory('ScrollCache', function ($cacheFactory) {
-    return $cacheFactory('scroll');
 });
