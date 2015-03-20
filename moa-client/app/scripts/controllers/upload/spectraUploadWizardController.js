@@ -6,16 +6,18 @@
 /**
  * provides us with a spectra wizard controller to populate our database
  * @param $scope
+ * @param $q
  * @param $modalInstance
- * @param $window
  * @param $http
- * @param CTSService
+ * @param $window
+ * @param $filter
  * @param TaggingService
  * @param AuthenticationService
- * @param newSpectrum
+ * @param UploadLibraryService
+ * @param $log
  * @constructor
  */
-moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, AppCache, AuthenticationService, UploadLibraryService, $log) {
+moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInstance, $http, $window, $filter, TaggingService, AuthenticationService, UploadLibraryService, $log) {
     //
     // Define wizard steps
     //
@@ -303,8 +305,13 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
         $scope.filenames = '';
 
         // Get tags
-        AppCache.getTags(function(data) {
-            $scope.tags = data;
-        });
+        TaggingService.query(
+            function(data) {
+                $scope.tags = data;
+            },
+            function (error) {
+                $log.error('failed: ' + error);
+            }
+        );
     })();
 };
