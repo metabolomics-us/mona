@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraDatabaseIndexController = function($scope, $http, $location, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
+moaControllers.SpectraDatabaseIndexController = function($scope, $http, $location, SpectraQueryBuilderService, MetadataService, REST_BACKEND_SERVER) {
     /**
      * Metadata that we wish to display
      * @type {string[]}
