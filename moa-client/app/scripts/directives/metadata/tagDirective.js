@@ -5,7 +5,7 @@
 /**
  * disables automatic form submission when you press enter in an input element
  */
-app.directive('gwTag', function (AppCache) {
+app.directive('gwTag', function () {
     return {
         //must be an attribute
         restrict: 'A',
@@ -94,7 +94,7 @@ app.directive('gwTagDisplay', function () {
         },
 
         //controller to handle building of the queires
-        controller: function ($scope, $element, AppCache, $log) {
+        controller: function ($scope, $element, $log, TaggingService) {
 
             /**
              * List of tags loaded from the REST api
@@ -150,23 +150,31 @@ app.directive('gwTagDisplay', function () {
              * load initial data
              */
             (function list() {
-
-                AppCache.getTags(function (data) {
-                    $scope.tags = data;
-                });
-
-                AppCache.getTagsStatistics(function (data) {
-                    $scope.maxTagsCount = 0;
-                    $scope.tagsCount = {};
-
-                    for (var i = 0; i < data.length; i++) {
-                        $scope.tagsCount[data[i].tag] = data[i].count;
-
-                        if (data[i].count > $scope.maxTagsCount)
-                            $scope.maxTagsCount = data[i].count;
+                TaggingService.query(
+                    function (data) {
+                        $scope.tags = data;
+                    },
+                    function (error) {
+                        $log.error('failed: ' + error);
                     }
-                });
+                );
 
+                TaggingService.statistics(
+                    function (data) {
+                        $scope.maxTagsCount = 0;
+                        $scope.tagsCount = {};
+
+                        for (var i = 0; i < data.length; i++) {
+                            $scope.tagsCount[data[i].tag] = data[i].count;
+
+                            if (data[i].count > $scope.maxTagsCount)
+                                $scope.maxTagsCount = data[i].count;
+                        }
+                    },
+                    function (error) {
+                        $log.error('failed: ' + error);
+                    }
+                );
             })();
         }
     }

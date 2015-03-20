@@ -17,12 +17,11 @@
  * @param MetadataService
  * @param $log
  * @param $location
- * @param AppCache
  * @param SpectrumCache
  * @param QueryCache
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, $log, $location, AppCache, SpectrumCache, QueryCache, $rootScope, $window) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, QueryCache, $rootScope, $window) {
 
     /**
      * contains all local objects and is our model
@@ -140,8 +139,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         }
 
         // Scroll to top of the page
-        $window.scrollTo(0, 0)
-
+        $window.scrollTo(0, 0);
 
         $scope.loadMoreSpectra();
     };
@@ -254,9 +252,14 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     (function list() {
         // Get tags from cache
-        AppCache.getTags(function (data) {
-            $scope.tags = data;
-        });
+        TaggingService.query(
+            function (data) {
+                $scope.tags = data;
+            },
+            function (error) {
+                $log.error('failed: ' + error);
+            }
+        );
 
         // Load spectra if available
         if (SpectrumCache.hasBrowserSpectra()) {
