@@ -25,21 +25,29 @@ class NewsController extends RestfulController<News> {
 
     
     def listAnnouncements(){
-        render News.findAllByType(News.ANNOUNCEMENT,[sort: "id", order: "desc"]) as JSON
+        params.sort = "id"
+        params.order = "desc"
+        render News.findAllByType(News.ANNOUNCEMENT,params) as JSON
         
     }
     
     def listUploads(){
-        render News.findAllByType(News.UPLOAD,[sort: "id", order: "desc"]) as JSON
+        params.sort = "id"
+        params.order = "desc"
+        render News.findAllByType(News.UPLOAD,params) as JSON
         
     }
 
     def listNotifications(){
-        render News.findAllByType(News.NOTIFICATION,[sort: "id", order: "desc"]) as JSON
+        params.sort = "id"
+        params.order = "desc"
+        render News.findAllByType(News.NOTIFICATION,params) as JSON
     }
 
     def listMilestones(){
-        render News.findAllByType(News.MILESTONE,[sort: "id", order: "desc"]) as JSON
+        params.sort = "id"
+        params.order = "desc"
+        render News.findAllByType(News.MILESTONE,params) as JSON
     }
 
 }
