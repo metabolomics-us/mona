@@ -209,6 +209,7 @@ moaControllers.SpectraUploadWizardController = function ($scope, $q, $modalInsta
         // Reset the spectrum count if necessary
         if(!UploadLibraryService.isUploading()) {
             UploadLibraryService.completedSpectraCount = 0;
+            UploadLibraryService.failedSpectraCount = 0;
             UploadLibraryService.uploadedSpectraCount = 0;
             UploadLibraryService.uploadStartTime = new Date().getTime();
         }
