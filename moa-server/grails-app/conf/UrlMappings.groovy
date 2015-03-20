@@ -60,8 +60,6 @@ class UrlMappings {
          */
         "/rest/compounds/curateAll"(controller: 'compoundCuration', action: 'curateAll')
 
-        "/rest/spectra"(resources: 'Spectrum')
-
         /**
          * query all the metadata without category
          */
@@ -97,6 +95,11 @@ class UrlMappings {
                 "/value"(resources: 'MetaDataValue')
             }
         }
+
+        /**
+         * spectra based stuff
+         */
+        "/rest/spectra"(resources: 'Spectrum')
 
         /**
          * provides us with access to simple queries

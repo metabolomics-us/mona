@@ -8,11 +8,12 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
 
     var runningTasks = 0;
 
-    var maxRunningTasks = 10;
+    //firefox allows max 6,
+    var maxRunningTasks = 4;
 
     var pool = [];
 
-    var poolRate = 100;
+    var poolRate = 200;
 
     var timeout = null;
 

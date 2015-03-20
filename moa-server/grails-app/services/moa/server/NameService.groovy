@@ -11,5 +11,7 @@ class NameService {
 
         log.debug("checking if compound ${compound.inchiKey} has name ${name}")
         Name.findOrCreateByNameAndCompound(name, compound).save()
+
+
     }
 }

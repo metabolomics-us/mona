@@ -1,7 +1,7 @@
 <blockquote>
     <dl class="bg-info" ng-repeat="newsItem in recentNews">
         <dt>
-            {{newsItem.title}}
+            {{newsItem.dateCreated | date : short }} - {{newsItem.title}}
         </dt>
         <dd>
             <span ng-if="newsItem.url != 'none'">
