@@ -206,6 +206,7 @@ class StatisticsService {
      * @param category
      * @return
      */
+    @Transactional
     def acquire(Double value, String title, String description = "none", String category = "runtime") {
         Statistics statistics = new Statistics()
 

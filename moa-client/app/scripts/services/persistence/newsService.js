@@ -21,7 +21,7 @@ app.factory('News', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
              * connects to our service and executes a query
              */
             'listAnnouncements': {
-                url: REST_BACKEND_SERVER + '/rest/news/query/announcements?max='+ MAX_OBJECTS,
+                url: REST_BACKEND_SERVER + '/rest/news/query/announcements?max=25',
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -29,7 +29,7 @@ app.factory('News', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
                 isArray: true
             },
             'listUpdates': {
-                url: REST_BACKEND_SERVER + '/rest/news/query/uploads?max='+ MAX_OBJECTS,
+                url: REST_BACKEND_SERVER + '/rest/news/query/uploads?max=25',
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ app.factory('News', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
                 isArray: true
             },
             'listNotifications': {
-                url: REST_BACKEND_SERVER + '/rest/news/query/notifications?max='+ MAX_OBJECTS,
+                url: REST_BACKEND_SERVER + '/rest/news/query/notifications?max=25',
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
