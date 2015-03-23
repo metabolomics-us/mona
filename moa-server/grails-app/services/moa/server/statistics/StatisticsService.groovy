@@ -15,6 +15,7 @@ import javax.sql.DataSource
 /**
  * provides us with uptodate statistics of the system
  */
+@Transactional
 class StatisticsService {
 
     DataSource dataSource
