@@ -11,7 +11,10 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
     $scope.fields = [
         'instrument type',
         'ms type',
-        'ion mode'
+        'ion mode',
+        'instrument',
+        'derivative type',
+        'collision energy'
     ];
 
     /**

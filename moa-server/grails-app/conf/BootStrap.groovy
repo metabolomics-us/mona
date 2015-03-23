@@ -18,7 +18,7 @@ class BootStrap {
 
         def session = sessionFactory.currentSession
 
-        session.setFlushMode(FlushMode.COMMIT)
+        //session.setFlushMode(FlushMode.COMMIT)
 
         log.warn("in development mode, setting up users...")
 

@@ -65,6 +65,9 @@ app.config(function ($routeProvider) {
         .when('/documentation/query', {
             templateUrl: 'views/documentation/query.html'
         })
+        .when('/documentation/terms', {
+            templateUrl: 'views/documentation/terms.html'
+        })
 
         //any other page is redirected to the root page
         .otherwise({

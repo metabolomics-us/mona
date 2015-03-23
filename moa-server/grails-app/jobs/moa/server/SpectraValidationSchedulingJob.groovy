@@ -7,10 +7,10 @@ import moa.server.query.SpectraQueryService
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
- * Date: 9/30/14
- * Time: 1:30 PM
+ * Date: 3/23/15
+ * Time: 9:23 AM
  */
-class SpectraValidationJob {
+class SpectraValidationSchedulingJob  {
     def concurrent = true
 
     /**
@@ -20,25 +20,30 @@ class SpectraValidationJob {
 
     def group = "validation-spectra"
 
-    def description = "uploads spectra data in the background of the server"
+    def description = "schedules validation of spectra data in the background of the server"
 
     SpectraCurationService spectraCurationService
+
+    SpectraQueryService spectraQueryService
 
     def execute(context) {
         Map data = context.mergedJobDataMap
 
         if (data != null) {
-            if (data.containsKey('spectraId')) {
+            if (data.all) {
+                def ids = Spectrum.findAll()*.id
 
-                long begin = System.currentTimeMillis()
+                ids.each { long id ->
+                    SpectraValidationJob.triggerNow([spectraId: id])
+                }
 
-                boolean result = spectraCurationService.validateSpectra(data.spectraId as long)
+            } else if (data.query) {
 
-                long end = System.currentTimeMillis()
+                def spectra = spectraQueryService.query(data.query, data.params)
 
-                long needed = (end - begin)
-
-                log.debug("validated spectra with id: ${data.spectraId}, which took ${needed / 1000}, success: ${result} ")
+                spectra.each { Spectrum s ->
+                    SpectraValidationJob.triggerNow([spectraId: s.id])
+                }
 
 
             } else {

@@ -19,7 +19,6 @@ class SpectraQueryService {
     StatisticsService statisticsService
 
     @Transactional
-    @Cacheable("spectrum")
     def query(long id) {
         return Spectrum.get(id)
     }
@@ -82,7 +81,6 @@ class SpectraQueryService {
      * returns a list of spectra data based on the given query
      * @param json
      */
-    @Cacheable("spectrum")
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
         log.info("received query: ${json}")
@@ -150,7 +148,6 @@ class SpectraQueryService {
         return [queryOfDoom, executionParams]
     }
 
-    @Cacheable("spectrum")
     @Transactional
     def query(def json, def params) {
 

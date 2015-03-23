@@ -48,7 +48,6 @@ class NewsService {
                 "spectra"
         )
     }
-
     def createNews(String title, String message, String url = "none", long lifetime = Long.MAX_VALUE, String type = News.ANNOUNCEMENT, String iconClass = "none") {
 
         log.info("creating new news item: ${title}")

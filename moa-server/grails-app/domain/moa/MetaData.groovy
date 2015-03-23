@@ -6,7 +6,7 @@ class MetaData implements Comparable<MetaData> {
     Date lastUpdated
 
     static constraints = {
-        name blank: false
+        name blank: false,unique:true
         value nullable: true
         searchable nullable: true
         requiresUnit nullable: true

@@ -17,6 +17,7 @@ import curation.rules.compound.meta.DeletedComputedMetaDataRule
 import curation.rules.compound.inchi.VerifyInChIKeyAndMolFileMatchRule
 import curation.rules.instrument.GCMSSpectraIdentificationRule
 import curation.rules.instrument.LCMSSpectraIdentificationRule
+import curation.rules.meta.DerivativeTypeSpelling
 import curation.rules.meta.IsColumnValid
 import curation.rules.meta.PercentageValueRule
 import curation.rules.meta.ProvidedExactMassIsPossibleRule
@@ -38,8 +39,7 @@ import util.caching.SpectrumKeyGenerator
 // Place your Spring DSL code here
 beans = {
     // Authentication beans
-    restAuthenticationTokenJsonRenderer( SubmitterRestAuthenticationTokenJsonRenderer )
-
+    restAuthenticationTokenJsonRenderer(SubmitterRestAuthenticationTokenJsonRenderer)
 
     //rest service generation for client side stuff
     rest(grails.plugins.rest.client.RestBuilder)
@@ -199,6 +199,10 @@ beans = {
 
     }
 
+    derivativeTypeSpellingRule(DerivativeTypeSpelling){ bean ->
+        bean.autowire = 'byName'
+    }
+
 //set up metadata subcuration workflow
     metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") { bean ->
         bean.autowire = 'byName'
@@ -208,7 +212,9 @@ beans = {
                 flowGradientPercentageRule,
                 isColumnValid,
                 exactMassIsPossibleRule,
+                derivativeTypeSpellingRule,
                 gcmsDerivatizationRule
+
         ]
     }
 
@@ -217,25 +223,26 @@ beans = {
         bean.autowire = 'byName'
 
         rules = [
-//these rules should run first
-deleteRuleBasedTagRule,
-deleteMetaDataRule,
-lcmsSpectraIdentification,
-gcmsSpectraIdentification,
+                //these rules should run first
+                deleteRuleBasedTagRule,
+                deleteMetaDataRule,
+                lcmsSpectraIdentification,
+                gcmsSpectraIdentification,
 
-//order doesn't really matter here
-metadataCuration,
-isSpectraDuplicated,
-isAccurateMassSpectra,
-isSpectraDirty,
-lcmsAdductCuration,
-gcmsAdductCuration,
-gcmsPredictDerivatizedCompoundRule,
-gcmsValidateChemicalCompound,
-gcmsPredictMMinus15Rule,
-gcmsCompoundShouldBeDerivatized,
-//these rules should run last
-isAnnotatedSpectraRule
+                //order doesn't really matter here
+                metadataCuration,
+                isSpectraDuplicated,
+                isAccurateMassSpectra,
+                isSpectraDirty,
+                lcmsAdductCuration,
+                gcmsAdductCuration,
+                gcmsPredictDerivatizedCompoundRule,
+                gcmsValidateChemicalCompound,
+                gcmsPredictMMinus15Rule,
+                gcmsCompoundShouldBeDerivatized,
+
+                //these rules should run last
+                isAnnotatedSpectraRule
         ]
 //define and register our curation
     }
