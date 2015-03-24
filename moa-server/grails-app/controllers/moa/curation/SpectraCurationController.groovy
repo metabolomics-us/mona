@@ -9,14 +9,7 @@ import moa.server.query.SpectraQueryService
 
 class SpectraCurationController {
 
-    def sessionFactory
-
     static responseFormats = ['json']
-
-    SpectraCurationService spectraCurationService
-
-    SpectraQueryService spectraQueryService
-
 
     /**
      * validates the spectra for the given id
@@ -26,14 +19,9 @@ class SpectraCurationController {
 
         def id = params.id
 
-        //long id = params.id as long
-        boolean result = spectraCurationService.validateSpectra(id as long)
+        SpectraValidationJob.triggerNow([spectraId: id as long])
 
-        if (!result) {
-            render(status: 503, text: "curation of ${id} failed!")
-        } else {
-            render(text: "curation of ${id} succesful!")
-        }
+        render(text: "scheduling curation of ${id} succesful!")
     }
 
     /**
@@ -41,7 +29,7 @@ class SpectraCurationController {
      * @return
      */
     def curateAll() {
-        SpectraValidationSchedulingJob.triggerNow([all:true])
+        SpectraValidationSchedulingJob.triggerNow([all: true])
         render(text: "curating all spectra!")
 
     }
@@ -53,7 +41,7 @@ class SpectraCurationController {
 
         def query = request.getJSON()
 
-        SpectraValidationSchedulingJob.triggerNow([query:query,params:params])
+        SpectraValidationSchedulingJob.triggerNow([query: query, params: params])
 
         render(text: "curating all spectra, by query!")
 

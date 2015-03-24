@@ -18,9 +18,11 @@ import curation.rules.compound.inchi.VerifyInChIKeyAndMolFileMatchRule
 import curation.rules.instrument.GCMSSpectraIdentificationRule
 import curation.rules.instrument.LCMSSpectraIdentificationRule
 import curation.rules.meta.DerivativeTypeSpelling
+import curation.rules.meta.DropNoneNecessaryMetaDataRule
 import curation.rules.meta.IsColumnValid
 import curation.rules.meta.PercentageValueRule
 import curation.rules.meta.ProvidedExactMassIsPossibleRule
+import curation.rules.meta.lipidblast.LipidBlastAquisitionModeDetectionRule
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
@@ -199,7 +201,11 @@ beans = {
 
     }
 
-    derivativeTypeSpellingRule(DerivativeTypeSpelling){ bean ->
+    derivativeTypeSpellingRule(DerivativeTypeSpelling) { bean ->
+        bean.autowire = 'byName'
+    }
+
+    lipidBlastAquisitoinModeDetectionModeRule(LipidBlastAquisitionModeDetectionRule) { bean ->
         bean.autowire = 'byName'
     }
 
@@ -207,6 +213,7 @@ beans = {
     metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") { bean ->
         bean.autowire = 'byName'
         rules = [
+                lipidBlastAquisitoinModeDetectionModeRule,
                 collisionEnergyPercentageRule,
                 solventPercentageRule,
                 flowGradientPercentageRule,
@@ -218,6 +225,20 @@ beans = {
         ]
     }
 
+    //removes metadata we dont need
+    dropNoneWantedMetaDataRule(DropNoneNecessaryMetaDataRule) { bean ->
+        bean.autowire = 'byName'
+
+        dataToDrop = [
+                //all these data reflect compound, so no need in spectra objects to store them twice!
+                "smiles",
+                "inchi key",
+                "inchi",
+                //spectra propertie, which is not really needed
+                "num peaks"
+        ]
+    }
+
 //define our complete workflow here
     spectraCurationWorkflow(CurationWorkflow) { bean ->
         bean.autowire = 'byName'
@@ -226,6 +247,7 @@ beans = {
                 //these rules should run first
                 deleteRuleBasedTagRule,
                 deleteMetaDataRule,
+                dropNoneWantedMetaDataRule,
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,
 
@@ -251,6 +273,7 @@ beans = {
     metadataFilters(Filters) { bean ->
         bean.autowire = 'byName'
 
+        //saves us time deleting them later in the rules system
         filters = [
                 new NameDoesntMatchFilter("SCIENTIFIC_NAME"),
                 new NameDoesntMatchFilter("LINEAGE"),
@@ -272,6 +295,7 @@ beans = {
                 new NameDoesntMatchFilter("nikkaji"),
                 new NameDoesntMatchFilter("chempdb"),
                 new NameDoesntMatchFilter("inchikey"),
+                new NameDoesntMatchFilter("inchi key"),
                 new NameDoesntMatchFilter("casno"),
                 new NameDoesntMatchFilter("mv"),
                 new NameDoesntMatchFilter("comments"),

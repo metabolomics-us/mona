@@ -24,7 +24,7 @@ class SubCurationWorkflow extends CurationWorkflow implements CurationRule {
     SubCurationWorkflow(String tag, boolean abortOnFailure, String description) {
         super(new RemoveTagAction(tag), new AddTagAction(tag))
 
-        logger.debug("Starting subcuration workflow "+ description)
+        logger.debug("Starting sub curration workflow "+ description)
         this.abortOnFailure = abortOnFailure
         this.tag = tag
     }

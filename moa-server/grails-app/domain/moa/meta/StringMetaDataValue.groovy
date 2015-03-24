@@ -10,6 +10,7 @@ class StringMetaDataValue extends MetaDataValue {
 
     static mapping = {
         stringValue sqlType: "varchar(5000)"
+        version false
 
     }
 
@@ -24,4 +25,11 @@ class StringMetaDataValue extends MetaDataValue {
         this.stringValue = (String) o
     }
 
+    @Override
+    public String toString() {
+        return "StringMetaDataValue{" +
+                "stringValue='" + stringValue + '\'' +
+                ", metaData=" + metaData +
+                '}';
+    }
 }
