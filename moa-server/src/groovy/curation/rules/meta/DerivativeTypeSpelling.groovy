@@ -52,14 +52,14 @@ class DerivativeTypeSpelling extends AbstractMetaDataCentricRule {
             //reformat and update
             def matcher = (myValue =~ regexNearlyCorrect)
 
-            newValue = "${matcher[0]} TMS"
+            newValue = "${matcher[0][1]} TMS"
         } else if (myValue.matches(regexWrong)) {
 
             logger.info("value needs to be rewritten!")
             //reformat and update
             def matcher = (myValue =~ regexWrong)
 
-            newValue = "${matcher[0]} TMS"
+            newValue = "${matcher[0][1]} TMS"
         } else {
 
             logger.info("invalid value ($myValue) for ${FIELD}")
@@ -68,16 +68,14 @@ class DerivativeTypeSpelling extends AbstractMetaDataCentricRule {
             return false
         }
 
-        logger.info("adding new database metadata value")
+        logger.info("adding new database metadata value: ${newValue}")
         //create new metadata object and update it
         metaDataPersistenceService.generateMetaDataObject(value.owner, [name: value.getName(), value: newValue, category: value.getCategory()])
 
         logger.info("deleting outdated value")
         //delete the wrong object
 
-        value.metaData.removeFromValue(value)
-        value.metaData = null
-        value.delete()
+        metaDataPersistenceService.removeMetaDataValue(value)
 
         return true
     }

@@ -41,4 +41,10 @@ class MetaDataCategory {
      */
     boolean visible = true
 
+    @Override
+    public String toString() {
+        return "MetaDataCategory{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }
