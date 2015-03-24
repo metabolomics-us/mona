@@ -94,7 +94,7 @@ environments {
 
     test {
         dataSource {
-            dbCreate = "create-drop"
+            dbCreate = "update"// "create-drop"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-test"
             driverClassName = "org.postgresql.Driver"
             username = "compound"
@@ -177,4 +177,5 @@ environments {
         }
 
     }
+
 }
