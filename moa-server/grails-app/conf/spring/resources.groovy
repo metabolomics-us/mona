@@ -23,6 +23,7 @@ import curation.rules.meta.IsColumnValid
 import curation.rules.meta.PercentageValueRule
 import curation.rules.meta.ProvidedExactMassIsPossibleRule
 import curation.rules.meta.lipidblast.LipidBlastAquisitionModeDetectionRule
+import curation.rules.meta.lipidblast.LipidBlastMSMSDetectionRule
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
@@ -209,11 +210,16 @@ beans = {
         bean.autowire = 'byName'
     }
 
+    lipidBlastMSMSDectionRule(LipidBlastMSMSDetectionRule){ bean ->
+        bean.autowire = 'byName'
+    }
+
 //set up metadata subcuration workflow
     metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") { bean ->
         bean.autowire = 'byName'
         rules = [
                 lipidBlastAquisitoinModeDetectionModeRule,
+                lipidBlastMSMSDectionRule,
                 collisionEnergyPercentageRule,
                 solventPercentageRule,
                 flowGradientPercentageRule,
