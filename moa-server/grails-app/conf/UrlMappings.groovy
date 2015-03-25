@@ -141,6 +141,13 @@ class UrlMappings {
         "/rest/spectra/curateByQuery"(controller: 'spectraCuration', action: 'curateByQuery')
 
         /**
+         * scoring service
+         */
+        "/rest/spectra/score/$id"(controller: 'scoring',action: 'score',id:id)
+        "/rest/spectra/score/$id/explain"(controller: 'scoring',action: 'scoreExplain',id:id)
+
+
+        /**
          * general limited public api
          */
 
@@ -193,6 +200,11 @@ class UrlMappings {
 
         "/rest/queue"(controller: 'queue', action: 'jobs')
 
+        /**
+         * error related parts
+         */
+        "500"(controller: "error", action: "handle500")
+        "404"(controller: "error", action: "handle404")
 
     }
 }
