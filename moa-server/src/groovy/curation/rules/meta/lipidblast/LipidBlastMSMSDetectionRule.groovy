@@ -9,20 +9,20 @@ import org.apache.log4j.Logger
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
- * Date: 3/24/15
- * Time: 1:07 PM
+ * Date: 3/25/15
+ * Time: 10:57 AM
  */
-class LipidBlastAquisitionModeDetectionRule  extends AbstractMetaDataCentricRule {
+class LipidBlastMSMSDetectionRule extends AbstractMetaDataCentricRule {
 
     private Logger logger = Logger.getLogger(getClass())
 
     private static final String FIELD = "precursortype"
 
-    private static final String ION_MODE = "ion mode"
+    private static final String TO_CHECK = "ms type"
 
     MetaDataPersistenceService metaDataPersistenceService
 
-    LipidBlastAquisitionModeDetectionRule() {
+    LipidBlastMSMSDetectionRule() {
         super(new MetaDataSuspectAction(FIELD, false), new MetaDataSuspectAction(FIELD, true))
 
     }
@@ -30,26 +30,19 @@ class LipidBlastAquisitionModeDetectionRule  extends AbstractMetaDataCentricRule
     @Override
     protected boolean acceptMetaDataValue(MetaDataValue value) {
 
-        boolean hasIonModeSpecified = false
-        value.getOwner().metaData.each {MetaDataValue v ->
+        boolean hasFieldSpecified = false
+        value.getOwner().metaData.each { MetaDataValue v ->
 
-            if(v.getName() == "ion mode"){
-                hasIonModeSpecified = true
+            if (v.getName() == TO_CHECK) {
+                hasFieldSpecified = true
             }
         }
 
-        if(!hasIonModeSpecified) {
+        if (!hasFieldSpecified) {
             //positive mode
-            if (value.getValue().toString().trim().endsWith("+")) {
-                metaDataPersistenceService.generateMetaDataObject(value.owner,[name:ION_MODE,value:"positive",computed:true])
-            }
-            //negative mode
-            else if (value.getValue().toString().trim().endsWith("-")) {
-                metaDataPersistenceService.generateMetaDataObject(value.owner,[name:ION_MODE,value:"negative",computed:true])
-            }
-        }
-        else{
-            logger.info("ion mode was already specified")
+            metaDataPersistenceService.generateMetaDataObject(value.owner, [name: TO_CHECK, value: "MS2",computed:true])
+        } else {
+            logger.info("${TO_CHECK} was already specified")
         }
         return true
     }
@@ -75,7 +68,7 @@ class LipidBlastAquisitionModeDetectionRule  extends AbstractMetaDataCentricRule
 
     @Override
     String getDescription() {
-        return "this rule utilizes the precursor type to estimate if the data where acquired in positive or negative mode"
+        return "this rule utilizes the precursor type to add additional metadata to ensure spectra are marked correctly as MSMS"
     }
 
 }
