@@ -1,0 +1,128 @@
+package moa.server.scoring
+
+import curation.CurationObject
+import curation.scoring.ScoringWorkflow
+import grails.transaction.Transactional
+import moa.News
+import moa.Spectrum
+import moa.scoring.Impact
+import moa.scoring.Score
+import moa.server.NewsService
+import moa.server.metadata.MetaDataPersistenceService
+import moa.server.statistics.StatisticsService
+
+@Transactional
+class ScoringService {
+
+    NewsService newsService
+
+    StatisticsService statisticsService
+
+    ScoringWorkflow spectraScoringWorkflow
+
+    MetaDataPersistenceService metaDataPersistenceService
+
+    /**
+     * adjusts the score of the spectrum
+     * @param spectrum
+     * @param impact
+     * @return
+     */
+    def adjustScore(Spectrum spectrum, Impact impact) {
+
+        if (spectrum.score == null) {
+            Score score = new Score()
+            spectrum.score = score
+            spectrum.save()
+        }
+
+        Score score = spectrum.score
+
+        impact.score = score
+        score.addToImpacts(impact)
+
+        score.save()
+        log.info("adjusted score to ${score.score} for ${spectrum} using  ${impact}")
+    }
+
+    /**
+     * drops the score from the given spectrum
+     * @param spectrum
+     * @return
+     */
+    def dropScore(Spectrum spectrum) {
+        log.debug("remove existing score!")
+        Score score = spectrum.score
+        if (score) {
+            if (score.impacts != null) {
+                score.impacts.clear()
+            }
+            spectrum.score.delete()
+            spectrum.score = null
+            spectrum.save()
+        }
+    }
+
+    /**
+     * scores the provided spectra for us
+     * @param id
+     */
+    def score(long id) {
+        score(Spectrum.get(id))
+    }
+
+    /**
+     * scores the provided spectra for us
+     * @param spectrum
+     */
+    def score(Spectrum spectrum) {
+        long begin = System.currentTimeMillis()
+
+        if (spectrum) {
+
+            dropScore(spectrum)
+            boolean result = spectraScoringWorkflow.runWorkflow(new CurationObject(spectrum))
+
+            long end = System.currentTimeMillis()
+
+            long needed = (end - begin)
+
+            spectrum = Spectrum.get(spectrum.id)
+
+            //add some metadata that we did some cool stuff
+            metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "scoring date", value: new Date().format("dd-MMM-yyyy"), category: "computed", computed: true])
+            metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "scoring time", value: needed, unit: "ms", category: "computed", computed: true])
+
+            statisticsService.acquire(needed, "${spectrum.id}", "spectra scoring time", "scoring")
+
+            spectrum.save()
+
+            //some notification for other people
+            String message = "a spectrum was just scored for "
+
+            if (spectrum.chemicalCompound.names != null && spectrum.chemicalCompound.names.size() > 0) {
+                message += spectrum.chemicalCompound.names[0].name
+            } else {
+                message += spectrum.chemicalCompound.inchiKey
+            }
+
+            newsService.createNews(
+                    "spectrum scored: ${spectrum.id}",
+                    message,
+                    "/spectra/display/${spectrum.id}",
+                    60,
+                    News.NOTIFICATION,
+                    "spectra"
+            )
+
+            if (result) {
+                return spectrum.score.getScore()
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+
+    }
+}

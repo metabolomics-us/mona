@@ -75,4 +75,11 @@ class MetaData implements Comparable<MetaData> {
         return this.priority.compareTo(metaData.priority)
     }
 
+    @Override
+    public String toString() {
+        return "MetaData{" +
+                "name='" + name + '\'' +
+                ", category=" + category +
+                '}';
+    }
 }

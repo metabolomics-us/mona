@@ -3,6 +3,7 @@ package moa.server
 import moa.Spectrum
 import moa.server.curation.SpectraCurationService
 import moa.server.query.SpectraQueryService
+import moa.server.scoring.ScoringService
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,6 +14,7 @@ import moa.server.query.SpectraQueryService
 class SpectraValidationJob {
     def concurrent = true
 
+    boolean score = true
     /**
      * needs to be defined
      */
@@ -24,6 +26,7 @@ class SpectraValidationJob {
 
     SpectraCurationService spectraCurationService
 
+    ScoringService scoringService
     def execute(context) {
         Map data = context.mergedJobDataMap
 
@@ -40,6 +43,10 @@ class SpectraValidationJob {
 
                 log.debug("validated spectra with id: ${data.spectraId}, which took ${needed / 1000}, success: ${result} ")
 
+
+                if(score){
+                    scoringService.score(data.spectraId as long)
+                }
 
             } else {
                 log.info("\t=>\tno spectraId was provided!")

@@ -34,6 +34,12 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
             throw new Exception("please add at least 1 rule to be executed!")
         }
 
+        logger.info("running ${rules.size()} rules")
+
+        rules.each { CurationRule rule ->
+            logger.debug("having to run: ${rule.getDescription()}")
+        }
+
         boolean workflowResult = true;
 
         toValidate.refreshObject()
@@ -59,7 +65,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
                             }
                         }
                         catch (Exception e) {
-                            logger.debug(e.getMessage(),e)
+                            logger.warn(e.getMessage(),e)
                             return false
                         }
                     }
