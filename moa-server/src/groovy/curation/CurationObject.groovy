@@ -1,5 +1,6 @@
 package curation
 
+import curation.scoring.Scoreable
 import moa.Compound
 import moa.MetaDataValue
 import moa.Spectrum
@@ -35,6 +36,10 @@ final class CurationObject {
         return  object instanceof SupportsMetaData
     }
 
+    boolean isScoreable(){
+        object instanceof Scoreable
+    }
+
     void refreshObject(){
 
         this.object = this.object.get(this.object.id)
@@ -48,6 +53,13 @@ final class CurationObject {
         return object as Spectrum
     }
 
+    /**
+     * a scorable instance of an object
+     * @return
+     */
+    Scoreable getObjectAsScoreable(){
+        return object as Scoreable
+    }
     /**
      * provides us with the compound object
      * @return

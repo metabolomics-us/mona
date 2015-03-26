@@ -12,6 +12,12 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
      */
     $scope.spectrum = delayedSpectrum;
 
+    /**
+     * quality score of our spectrum
+     * @type {number}
+     */
+    $scope.score = 0;
+
     $scope.massSpec = [];
 
     /**
@@ -30,11 +36,11 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
     /**
      * watch the accordion status and updates related cookies
      */
-    $scope.$watch("accordionStatus", function(newVal) {
-        angular.forEach($scope.accordionStatus, function(value, key) {
-            CookieService.update("DisplaySpectra"+ key, value);
+    $scope.$watch("accordionStatus", function (newVal) {
+        angular.forEach($scope.accordionStatus, function (value, key) {
+            CookieService.update("DisplaySpectra" + key, value);
         });
-    },true);
+    }, true);
 
 
     /**
@@ -43,7 +49,7 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
     $scope.ionTableSort = 'ion';
     $scope.ionTableSortReverse = false;
 
-    $scope.sortIonTable = function(column) {
+    $scope.sortIonTable = function (column) {
         if (column == 'ion') {
             $scope.ionTableSortReverse = ($scope.ionTableSort == '+ion') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '+ion';
@@ -66,22 +72,22 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
     $scope.similarityResult = {};
     $scope.similarSpectra = [];
 
-    $scope.loadSimilarSpectra = function() {
-        if(!$scope.loadingSimilarSpectra)
+    $scope.loadSimilarSpectra = function () {
+        if (!$scope.loadingSimilarSpectra)
             return;
 
 
         Spectrum.searchSimilarSpectra(
             {spectra: $scope.spectrum.id, minSimilarity: 500, maxHits: 5},
-            function(data) {
+            function (data) {
 
                 $scope.similarityResult = data;
                 $scope.loadingSimilarSpectra = false;
 
 
-                for(var i = 0; i < data.result.length; i++) {
-                    Spectrum.get({id: data.result[i].id}, function(s) {
-                        for(var j = 0; j < $scope.similarityResult.result.length; j++) {
+                for (var i = 0; i < data.result.length; i++) {
+                    Spectrum.get({id: data.result[i].id}, function (s) {
+                        for (var j = 0; j < $scope.similarityResult.result.length; j++) {
                             if ($scope.similarityResult.result[j].id == s.id) {
                                 s.similarity = $scope.similarityResult.result[j].similarity;
                                 break;
@@ -91,7 +97,7 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
                         $scope.similarSpectra.push(s);
                     });
                 }
-            }, function(data) {
+            }, function (data) {
                 $scope.loadingSimilarSpectra = false;
             }
         );
@@ -204,10 +210,17 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
             // Store ion
             $scope.massSpec.push({
                 ion: parseFloat(match[1]),
-                intensity:parseFloat(match[2]),
+                intensity: parseFloat(match[2]),
                 annotation: annotation,
                 computed: computed
             });
+        }
+
+        //calcualte the score of our spectrum
+        if (angular.isDefined(delayedSpectrum.score) && delayedSpectrum.score != null) {
+            if (angular.isDefined(delayedSpectrum.score.scaledScore)) {
+                $scope.score = delayedSpectrum.score.scaledScore;
+            }
         }
     })();
 };
