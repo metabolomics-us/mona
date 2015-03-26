@@ -42,6 +42,7 @@ class SpectraCurationService {
             long needed = (end - begin)
 
             spectrum = Spectrum.get(spectrum.id)
+
             metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "validation date", value: new Date().format("dd-MMM-yyyy"), category: "computed", computed: true])
             metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "validation time", value: needed, unit: "ms", category: "computed", computed: true])
 

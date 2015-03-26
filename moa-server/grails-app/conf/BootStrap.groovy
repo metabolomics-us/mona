@@ -1,6 +1,8 @@
 import grails.converters.JSON
 import groovy.sql.Sql
 import moa.*
+import moa.scoring.Impact
+import moa.scoring.Score
 import moa.server.NewsService
 import moa.auth.Role
 import moa.auth.SubmitterRole
@@ -100,6 +102,14 @@ class BootStrap {
         JSON.registerObjectMarshaller(News,
                 DomainClassMarshaller.createExcludeMarshaller(News, ["class"])
         )
+        JSON.registerObjectMarshaller(Score,
+                DomainClassMarshaller.createExcludeMarshaller(Score, ["class","spectrum","id"])
+        )
+        JSON.registerObjectMarshaller(Impact,
+                DomainClassMarshaller.createExcludeMarshaller(Impact, ["class","score","id","scoringClass"])
+        )
+
+
 
         /*
         JSON.registerObjectMarshaller(Ion,

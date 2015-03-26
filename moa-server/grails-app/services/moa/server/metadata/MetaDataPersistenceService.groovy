@@ -26,6 +26,16 @@ class MetaDataPersistenceService {
     Converters metadataValueConverter
 
     /**
+     * deletes a metadata value object
+     * @param value
+     */
+    public void removeMetaDataValue(MetaDataValue value) {
+        log.info("deleting metadata value object: ${value}")
+        value.metaData.removeFromValue(value)
+        value.owner.removeFromMetaData(value)
+        value.delete(flush: true)
+    }
+    /**
      * generates our required metadata based on the json array of metadata
      * @param object
      * @param json a json array containing metadata objects
@@ -42,17 +52,18 @@ class MetaDataPersistenceService {
 
     /**
      * associates the defined metadata in the object with the associated object
-     * @param object
-     * @param current
+     * @param object object to attach the data to
+     * @param current current metadata value
+     * @param replace should we we replace already rexisting data
      */
-    public void generateMetaDataObject(SupportsMetaData object, Map current) {
+    public void generateMetaDataObject(SupportsMetaData object, Map current, boolean replace = false) {
         log.debug("received ${object} and map: ${current}")
 
-        if(current.name == null || current.value == null){
+        if (current.name == null || current.value == null) {
             log.warn("received null data for some reason, object was ${object}")
             return
         }
-        if(metadataFilters == null){
+        if (metadataFilters == null) {
             throw new ConfigurationError("sorry it looks like the filters were not injected!")
         }
         if (!metadataFilters.accept(current.name, current.value)) {
@@ -61,6 +72,23 @@ class MetaDataPersistenceService {
         }
 
         String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
+
+        //delete old object
+        if (replace) {
+
+            log.info("removing old objects, to avoid duplication")
+            def toDelete = []
+
+            object.metaData.each { MetaDataValue m ->
+                if (m.name == metaDataName) {
+                    toDelete.add(m)
+                }
+            }
+
+            toDelete.each { MetaDataValue v ->
+                removeMetaDataValue(v)
+            }
+        }
 
         //calculate our units
         Map calculatedValue = metadataValueConverter.convert(metaDataName, current.value.toString())

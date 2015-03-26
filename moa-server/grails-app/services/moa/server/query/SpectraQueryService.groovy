@@ -255,7 +255,8 @@ class SpectraQueryService {
 //if we have a compound
         if (json.compound) {
 
-            //if we have a compound name
+            //TODO NEEDS TO BE MORE DYNAMIC
+
             if (json.compound.name) {
 
                 queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
@@ -302,7 +303,7 @@ class SpectraQueryService {
 
             }
 
-//if we have an inchi key
+//if we have an id key
             if (json.compound.id) {
 
                 queryOfDoomJoins += " left join s.biologicalCompound as bc"

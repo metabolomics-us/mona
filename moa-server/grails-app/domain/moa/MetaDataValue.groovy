@@ -85,4 +85,11 @@ class MetaDataValue {
 
     static transients = ['value','type','name','category']
 
+    @Override
+    public String toString() {
+        return "MetaDataValue{" +
+                "value=" + value +
+                ", metaData=" + metaData +
+                '}';
+    }
 }
