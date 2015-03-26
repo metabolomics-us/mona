@@ -1,4 +1,4 @@
-package curation.scoring
+package curation.scoring.spectrum
 
 import moa.MetaDataValue
 import moa.Spectrum
@@ -12,14 +12,22 @@ import moa.Spectrum
 class HasFieldScoring extends curation.scoring.ScoringRule {
     String fieldToHave
 
-    HasFieldScoring(String field){
-        this(field, 1)
-    }
-
-    HasFieldScoring(String field,Double impact){
+    HasFieldScoring(String field,Double impact = 1.0, Double successScore = 0.1, Double failureScore = -0.1){
         fieldToHave = field
         this.scoreImpact = impact
+
+        if (impact != null) {
+            this.scoreImpact = impact
+        }
+        if (successScore != null) {
+            this.successScore = successScore
+        }
+
+        if (failureScore != null) {
+            this.failureScore = failureScore
+        }
     }
+
     @Override
     boolean scoreSpectrum(Spectrum spectrum) {
 

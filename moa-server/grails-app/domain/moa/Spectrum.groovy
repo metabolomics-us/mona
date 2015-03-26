@@ -1,8 +1,9 @@
 package moa
 
+import curation.scoring.Scoreable
 import moa.scoring.Score
 
-class Spectrum extends SupportsMetaData {
+class Spectrum extends SupportsMetaData implements Scoreable{
 
     static transients = [ "spectrum" ]
 
@@ -13,8 +14,7 @@ class Spectrum extends SupportsMetaData {
      * contains one biological compound and one chemical compound
      */
     static hasOne = [
-            submitter: Submitter,
-            score:Score
+            submitter: Submitter
     ]
 
     /**

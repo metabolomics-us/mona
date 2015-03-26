@@ -1,6 +1,7 @@
 package moa.server.scoring
 
 import curation.CurationObject
+import curation.scoring.Scoreable
 import curation.scoring.ScoringWorkflow
 import grails.transaction.Transactional
 import moa.News
@@ -28,21 +29,26 @@ class ScoringService {
      * @param impact
      * @return
      */
-    def adjustScore(Spectrum spectrum, Impact impact) {
+    def adjustScore(Scoreable scoreable, Impact impact) {
 
-        if (spectrum.score == null) {
-            Score score = new Score()
-            spectrum.score = score
-            spectrum.save()
+        if(impact.impactValue > 0 || impact.impactValue < 0) {
+            if (scoreable.score == null) {
+                Score score = new Score()
+                scoreable.setScore(score)
+                scoreable.save()
+            }
+
+            Score score = scoreable.score
+
+            impact.score = score
+            score.addToImpacts(impact)
+
+            score.save()
+            log.info("adjusted score to ${score.score} for ${scoreable} using  ${impact}")
         }
-
-        Score score = spectrum.score
-
-        impact.score = score
-        score.addToImpacts(impact)
-
-        score.save()
-        log.info("adjusted score to ${score.score} for ${spectrum} using  ${impact}")
+        else{
+            log.debug("impact's with value of 0, will always be ignored since they are not doing anything!")
+        }
     }
 
     /**
@@ -50,16 +56,17 @@ class ScoringService {
      * @param spectrum
      * @return
      */
-    def dropScore(Spectrum spectrum) {
+    def dropScore(Scoreable scoreable) {
         log.debug("remove existing score!")
-        Score score = spectrum.score
+        Score score = scoreable.score
         if (score) {
             if (score.impacts != null) {
                 score.impacts.clear()
             }
-            spectrum.score.delete()
-            spectrum.score = null
-            spectrum.save()
+
+            scoreable.score = null
+            score.delete()
+            scoreable.save()
         }
     }
 

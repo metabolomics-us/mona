@@ -1,4 +1,4 @@
-package curation.scoring
+package curation.scoring.spectrum
 
 import moa.MetaDataValue
 import moa.Spectrum
@@ -14,14 +14,20 @@ class HasAssociatedFieldsScoring extends curation.scoring.ScoringRule {
 
     String secondFieldToHave
 
-    public HasAssociatedFieldsScoring(String firstFieldToHave, String secondFieldToHave) {
-        this(firstFieldToHave, secondFieldToHave, 1.0)
-    }
-
-    public HasAssociatedFieldsScoring(String first, String second, Double impact) {
+    public HasAssociatedFieldsScoring(String first, String second, Double impact = 1.0, Double successScore = 0.1, Double failureScore = -0.1) {
         this.firstFieldToHave = first
         this.secondFieldToHave = second
-        this.scoreImpact = impact
+
+        if (impact != null) {
+            this.scoreImpact = impact
+        }
+        if (successScore != null) {
+            this.successScore = successScore
+        }
+
+        if (failureScore != null) {
+            this.failureScore = failureScore
+        }
     }
 
     @Override

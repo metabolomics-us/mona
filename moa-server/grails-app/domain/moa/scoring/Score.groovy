@@ -1,21 +1,16 @@
 package moa.scoring
 
-import moa.Spectrum
-
 class Score {
 
     static constraints = {
     }
 
     static mapping = {
-        impacts nullable:true
-        spectrum nullable:true
-        version:false
+        impacts nullable: true
+        version: false
     }
 
-    static belongsTo = [spectrum:Spectrum]
-
-    static hasMany =[ impacts:Impact]
+    static hasMany = [impacts: Impact]
 
     /**
      * all associated impacts to this object
@@ -23,55 +18,57 @@ class Score {
     Set<Impact> impacts
 
     /**
-     * owning spectrum object
+     * absolute score of all the impacts
      */
-    Spectrum spectrum
+    Double score
 
     /**
-     * calculates the actual score based on the impacts
-     * @return
+     * relative score of all the impacts
      */
-    Double getScore(){
-        if(impacts == null){
-            return 0
-        }
-        double score = 0
-
-        double max = 0
-
-        impacts.each {
-            score = score + it.impactValue
-            max = Math.abs(it.impactValue) + max
-        }
-
-        return score
-    }
+    Double relativeScore
 
     /**
-     * relative score for this object
-     * @return
+     * our scaled score between 0 and 10
      */
-    Double getRelativeScore(){
-        if(impacts == null){
-            return 0
-        }
-        double score = 0
-
-        double max = 0
-
-        impacts.each {
-            score = score + it.impactValue
-            max = Math.abs(it.impactValue) + max
-        }
-
-        return score/max
-    }
+    Double scaledScore
 
     @Override
     public String toString() {
         return "Score{" +
-                "impacts=" + impacts +  " score=" + score +
+                "impacts=" + impacts + " score=" + score +
                 '}';
     }
+
+    /**
+     * always update our score to relfect on the database level the quality of our spectra
+     * @return
+     */
+    def beforeValidate() {
+
+        //max possible score
+        double max = 0
+
+        score = 0
+        relativeScore = 0
+
+        if (impacts) {
+            impacts.each {
+                score = score + it.impactValue
+
+                if (it.impactValue > 0) {
+                    max = Math.abs(it.impactValue) + max
+                }
+            }
+
+            relativeScore = score / max
+
+            //should scaled to 0 - 10
+            scaledScore = (relativeScore + 1) * 5;
+
+
+        }
+
+    }
+
 
 }

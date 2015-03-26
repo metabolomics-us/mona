@@ -103,7 +103,7 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(News, ["class"])
         )
         JSON.registerObjectMarshaller(Score,
-                DomainClassMarshaller.createExcludeMarshaller(Score, ["class","spectrum","id"])
+                DomainClassMarshaller.createExcludeMarshaller(Score, ["class","id"])
         )
         JSON.registerObjectMarshaller(Impact,
                 DomainClassMarshaller.createExcludeMarshaller(Impact, ["class","score","id","scoringClass"])
