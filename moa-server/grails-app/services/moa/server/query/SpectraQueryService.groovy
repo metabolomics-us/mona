@@ -19,7 +19,6 @@ class SpectraQueryService {
     StatisticsService statisticsService
 
     @Transactional
-    @Cacheable("spectrum")
     def query(long id) {
         return Spectrum.get(id)
     }
@@ -82,7 +81,6 @@ class SpectraQueryService {
      * returns a list of spectra data based on the given query
      * @param json
      */
-    @Cacheable("spectrum")
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
         log.info("received query: ${json}")
@@ -150,7 +148,6 @@ class SpectraQueryService {
         return [queryOfDoom, executionParams]
     }
 
-    @Cacheable("spectrum")
     @Transactional
     def query(def json, def params) {
 
@@ -258,7 +255,8 @@ class SpectraQueryService {
 //if we have a compound
         if (json.compound) {
 
-            //if we have a compound name
+            //TODO NEEDS TO BE MORE DYNAMIC
+
             if (json.compound.name) {
 
                 queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
@@ -305,7 +303,7 @@ class SpectraQueryService {
 
             }
 
-//if we have an inchi key
+//if we have an id key
             if (json.compound.id) {
 
                 queryOfDoomJoins += " left join s.biologicalCompound as bc"

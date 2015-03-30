@@ -3,18 +3,13 @@ package moa.curation
 import grails.converters.JSON
 import moa.Spectrum
 import moa.server.SpectraValidationJob
+import moa.server.SpectraValidationSchedulingJob
 import moa.server.curation.SpectraCurationService
 import moa.server.query.SpectraQueryService
 
 class SpectraCurationController {
 
-    def sessionFactory
-
     static responseFormats = ['json']
-
-    SpectraCurationService spectraCurationService
-
-    SpectraQueryService spectraQueryService
 
     /**
      * validates the spectra for the given id
@@ -22,14 +17,11 @@ class SpectraCurationController {
      */
     def curate() {
 
-        //long id = params.id as long
-        boolean result = spectraCurationService.validateSpectra(id)
+        def id = params.id
 
-        if (!result) {
-            render(status: 503, text: "curation of ${id} failed!")
-        } else {
-            render(text: "curation of ${id} succesful!")
-        }
+        SpectraValidationJob.triggerNow([spectraId: id as long])
+
+        render(text: "scheduling curation of ${id} succesful!")
     }
 
     /**
@@ -37,12 +29,9 @@ class SpectraCurationController {
      * @return
      */
     def curateAll() {
+        SpectraValidationSchedulingJob.triggerNow([all: true])
+        render(text: "curating all spectra!")
 
-        def ids = Spectrum.findAll()*.id
-
-        ids.each { long id ->
-            SpectraValidationJob.triggerNow([spectraId: id])
-        }
     }
 
     /**
@@ -52,12 +41,9 @@ class SpectraCurationController {
 
         def query = request.getJSON()
 
-        def spectra = spectraQueryService.query(query, params)
+        SpectraValidationSchedulingJob.triggerNow([query: query, params: params])
 
-        spectra.each { Spectrum s ->
-            SpectraValidationJob.triggerNow([spectraId: s.id])
-        }
+        render(text: "curating all spectra, by query!")
 
-        render([message: "validating ${spectra.size()} spectra now"] as JSON)
     }
 }

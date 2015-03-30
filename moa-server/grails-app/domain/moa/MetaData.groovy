@@ -6,7 +6,7 @@ class MetaData implements Comparable<MetaData> {
     Date lastUpdated
 
     static constraints = {
-        name blank: false
+        name blank: false,unique:true
         value nullable: true
         searchable nullable: true
         requiresUnit nullable: true
@@ -75,4 +75,11 @@ class MetaData implements Comparable<MetaData> {
         return this.priority.compareTo(metaData.priority)
     }
 
+    @Override
+    public String toString() {
+        return "MetaData{" +
+                "name='" + name + '\'' +
+                ", category=" + category +
+                '}';
+    }
 }

@@ -4,17 +4,16 @@ import moa.MetaDataValue
 
 import static util.query.QueryHelper.buildComparisonField
 
+@Transactional
 class MetaDataQueryService {
 
     static transactional = false
 
     @Transactional
-    //@Cacheable("metadata")
     def query(long id) {
         return MetaDataValue.get(id)
     }
 
-   // @Cacheable("metadata")
     @Transactional
     def query(def json, def params) {
 
@@ -38,7 +37,6 @@ class MetaDataQueryService {
      * queries metadata and returns the result as json array of metadata types
      * @param json
      */
-   // @Cacheable("metadata")
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
 

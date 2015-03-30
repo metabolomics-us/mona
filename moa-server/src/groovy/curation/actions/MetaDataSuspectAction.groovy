@@ -69,26 +69,31 @@ class MetaDataSuspectAction implements CurationAction {
      * @param value
      */
     private void checkValue(MetaDataValue value) {
-        if (value.name.toLowerCase().equals(field)) {
-            logger.debug("Marking metadata " + value.name + " with value " + mark)
+        if(value.name != null) {
+            if (value.name.toLowerCase().equals(field)) {
+                logger.debug("Marking metadata " + value.name + " with value " + mark)
 
-            value.suspect = mark
+                value.suspect = mark
 
-            if (mark) {
-                value.reasonForSuspicion = reason
+                if (mark) {
+                    value.reasonForSuspicion = reason
+                } else {
+                    value.reasonForSuspicion = ""
+                }
+
+                value.save(flush: true)
+
+                if (value.suspect) {
+                    new AddTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
+                } else {
+                    new RemoveTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
+                }
             } else {
-                value.reasonForSuspicion = ""
+                logger.debug("ignoring ${value.name}, doesn't match the requested field ${field}")
             }
-
-            value.save(flush: true)
-
-            if (value.suspect) {
-                new AddTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
-            } else {
-                new RemoveTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
-            }
-        } else {
-            logger.debug("ignoring ${value.name}, doesn't match the requested field ${field}")
+        }
+        else{
+            logger.error("skipped ${value.id} since it had no name!")
         }
     }
 }

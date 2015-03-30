@@ -1,4 +1,6 @@
 package moa.server
+
+import moa.Compound
 import moa.server.curation.CompoundCurationService
 /**
  * Created with IntelliJ IDEA.
@@ -7,7 +9,7 @@ import moa.server.curation.CompoundCurationService
  * Time: 11:00 AM
  */
 class CompoundCurationJob {
-    def concurrent = false
+    def concurrent = true
 
     /**
      * needs to be defined
@@ -24,20 +26,30 @@ class CompoundCurationJob {
         Map data = context.mergedJobDataMap
 
         if (data != null) {
-            if (data.containsKey('compoundId') && data.compoundId != null) {
-                long begin = System.currentTimeMillis()
+            if(data.all){
+
+                def ids = Compound.findAll()*.id
+
+                ids.each {long id ->
+                    CompoundCurationJob.triggerNow([compoundId:id])
+                }
+            }
+            else {
+                if (data.containsKey('compoundId') && data.compoundId != null) {
+                    long begin = System.currentTimeMillis()
 
 
-                boolean result = compoundCurationService.validate(data.compoundId as long)
+                    boolean result = compoundCurationService.validate(data.compoundId as long)
 
-                long end = System.currentTimeMillis()
+                    long end = System.currentTimeMillis()
 
-                long needed = end - begin
-                log.debug( "validated compound with id: ${data.compoundId}, which took ${needed / 1000}, success: ${result} ")
+                    long needed = end - begin
+                    log.debug("validated compound with id: ${data.compoundId}, which took ${needed / 1000}, success: ${result} ")
 
 
-            } else {
-                log.info("\t=>\tno compoundId was provided!")
+                } else {
+                    log.info("\t=>\tno compoundId was provided!")
+                }
             }
         } else {
             log.info("\t=>\tno data was provided")
