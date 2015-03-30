@@ -98,7 +98,8 @@
                     </accordion-heading>
 
                     <div class="text-center" ng-show="loadingSimilarSpectra">
-                        <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
+                        <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span></p>
+                        <p>Please wait - this can take some time depending on server load.</p>
                     </div>
 
                     <div class="text-center" ng-show="!loadingSimilarSpectra && !similarSpectra.length">
