@@ -3,9 +3,14 @@
         <div class="col-md-8">
             <div class="h3">
                 Summary for Spectrum {{spectrum.id}}
+
             </div>
             <div class="h5">
                 {{spectrum.biologicalCompound.names[0].name}}
+            </div>
+
+            <div class="h6">
+                Rating: <rating ng-model="score" max="10" readonly="true" on-hover="hoveringOver(none)"></rating>
             </div>
         </div>
         <div class="col-md-4 text-right">

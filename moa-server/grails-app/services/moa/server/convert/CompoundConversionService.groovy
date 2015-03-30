@@ -10,9 +10,6 @@ import java.text.Normalizer
 @Transactional
 class CompoundConversionService {
 
-    def serviceMethod() {
-
-    }
 
     /**
      * converts the given compound to a mol file
