@@ -80,10 +80,7 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
         Spectrum.searchSimilarSpectra(
             {spectra: $scope.spectrum.id, minSimilarity: 500, maxHits: 5},
             function (data) {
-
                 $scope.similarityResult = data;
-                $scope.loadingSimilarSpectra = false;
-
 
                 for (var i = 0; i < data.result.length; i++) {
                     Spectrum.get({id: data.result[i].id}, function (s) {
@@ -95,6 +92,7 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
                         }
 
                         $scope.similarSpectra.push(s);
+                        $scope.loadingSimilarSpectra = false;
                     });
                 }
             }, function (data) {

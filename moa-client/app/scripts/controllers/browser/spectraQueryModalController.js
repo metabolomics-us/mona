@@ -1,7 +1,7 @@
 /**
  * Created by wohlgemuth on 7/11/14.
  */
-moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, SpectraQueryBuilderService, $log, $http, REST_BACKEND_SERVER, AppCache) {
+moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, SpectraQueryBuilderService) {
     /**
      * Store accordion status
      * @type {{name: boolean}}
