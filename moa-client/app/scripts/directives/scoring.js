@@ -3,7 +3,7 @@
  *
  * simple direcitve to calculate our score for us
  */
-app.directive('scoreSpectra', function ($compile) {
+app.directive('scoreSpectra', function ($compile, $filter) {
     return {
         //must be an attribute
         restrict: 'A',
@@ -41,6 +41,8 @@ app.directive('scoreSpectra', function ($compile) {
             if(!angular.isDefined($scope.score)){
                 $scope.score = 0;
             }
+
+            $scope.score = $filter('number')($scope.score, 0);
         }
     }
 });
