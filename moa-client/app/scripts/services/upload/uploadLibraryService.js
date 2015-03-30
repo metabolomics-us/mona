@@ -11,6 +11,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
     // Number of submitted spectra
     self.completedSpectraCount = 0;
+    self.failedSpectraCount = 0;
     self.uploadedSpectraCount = 0;
     self.uploadStartTime = -1;
 
@@ -397,18 +398,18 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
                 workOnSpectra(submitter, saveSpectrumCallback, wizardData,additionalData).then(function (data) {
                     defered.resolve(data);
-                    updateUploadProgress();
+                    updateUploadProgress(true);
                 }).catch(function (error) {
                     $log.error("found an error: " + error);
                     defered.reject(error);
-                    updateUploadProgress();
+                    updateUploadProgress(false);
                 });
 
                 return defered.promise;
             });
         });
-        broadcastUploadProgress();
 
+        broadcastUploadProgress();
     };
 
 
@@ -416,23 +417,29 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * Checks if spectra are being processed and uploaded
      */
     self.isUploading = function () {
-        return self.completedSpectraCount < self.uploadedSpectraCount;
+        return self.completedSpectraCount + self.failedSpectraCount < self.uploadedSpectraCount;
     };
 
 
     /**
      * Updates and broadcasts the upload progress
      */
-    var updateUploadProgress = function () {
-        self.completedSpectraCount++;
+    var updateUploadProgress = function (success) {
+        if (angular.isUndefined(success)) {
+            // do nothing
+        } else if (success) {
+            self.completedSpectraCount++;
+        } else if (!success) {
+            self.failedSpectraCount++;
+        }
+
         broadcastUploadProgress();
     };
-
 
     /**
      * Requires separate function for broadcasting at start of upload
      */
     var broadcastUploadProgress = function () {
-        $rootScope.$broadcast('spectra:uploadprogress', self.completedSpectraCount, self.uploadedSpectraCount);
+        $rootScope.$broadcast('spectra:uploadprogress', self.completedSpectraCount, self.failedSpectraCount, self.uploadedSpectraCount);
     }
 });

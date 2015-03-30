@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraDatabaseIndexController = function($scope, $http, $location, AppCache, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
+moaControllers.SpectraDatabaseIndexController = function($scope, $http, $location, SpectraQueryBuilderService, MetadataService, REST_BACKEND_SERVER) {
     /**
      * Metadata that we wish to display
      * @type {string[]}
@@ -73,16 +73,21 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
      * initialization and population of metadata values
      */
     (function list() {
-        AppCache.getMetadata(function(data) {
-            for(var i = 0; i < data.length; i++) {
-                for(var j = 0; j < $scope.fields.length; j++) {
-                    if(data[i].name == $scope.fields[j]) {
-                        queryMetadataValues(data[i].id);
-                        break;
+        MetadataService.metadata(
+            function(data) {
+                for(var i = 0; i < data.length; i++) {
+                    for(var j = 0; j < $scope.fields.length; j++) {
+                        if(data[i].name == $scope.fields[j]) {
+                            queryMetadataValues(data[i].id);
+                            break;
+                        }
                     }
                 }
+            },
+            function (error) {
+                $log.error('metadata failed: ' + error);
             }
-        });
+        );
 
         queryTotalStatistics();
     })();

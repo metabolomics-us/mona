@@ -1,5 +1,6 @@
 package moa.persistence
 
+import grails.converters.JSON
 import grails.test.spock.IntegrationSpec
 import moa.Submitter
 import org.apache.log4j.Logger
@@ -24,101 +25,138 @@ class SubmitterControllerSpec extends IntegrationSpec {
 	}
 
 	// test save action
-	void "save a submitter"() {
-		given:
-		int count = Submitter.count
-		Submitter t = new Submitter(firstName: 'one', lastName: 'person', emailAddress: 'yo@mail.com', password: 'dsaasd')
+    void "save a submitter from params"() {
+        given:
+        final int count = Submitter.count()
 
-		when: 'saving a new sumbitter'
-		controller.request.json = t
+        when: 'saving a new submitter'
+        controller.params.firstName = 'Test'
+        controller.params.lastName = 'User'
+        controller.params.institution = 'UC Davis'
+        controller.params.emailAddress = 'test.user@ucdavis.edu'
+        controller.params.password = 'password'
+        controller.save()
+
+        then: 'it should be persisted'
+        controller.response.status == CREATED.value
+        Submitter.count() == count + 1
+        Submitter.findByEmailAddress('test.user@ucdavis.edu').firstName == 'Test'
+        Submitter.findByEmailAddress('test.user@ucdavis.edu').lastName == 'User'
+    }
+
+	void "save a submitter from a json string"() {
+		given:
+		final int count = Submitter.count()
+
+		when: 'saving a new submitter'
+		controller.request.json = """
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "institution": "UC Davis",
+    "emailAddress": "test.user@ucdavis.edu",
+    "password": "password"
+}
+"""
 		controller.save()
 
 		then: 'it should be persisted'
 		controller.response.status == CREATED.value
-		count == 0
-		Submitter.findByEmailAddress('yo@mail.com').firstName == 'one'
-		Submitter.findByEmailAddress('yo@mail.com').lastName == 'person'
-		Submitter.count() == 1
+        Submitter.count() == count + 1
+		Submitter.findByEmailAddress('test.user@ucdavis.edu').firstName == 'Test'
+		Submitter.findByEmailAddress('test.user@ucdavis.edu').lastName == 'User'
 	}
 
+    void "save a submitter using domain object"() {
+        given:
+        final int count = Submitter.count()
+
+        when: 'saving a new submitter'
+        new Submitter(firstName: 'Test', lastName: 'User', institution: 'UC Davis', emailAddress: 'test.user@ucdavis.edu', password: 'password').save(flush: true)
+
+        then: 'it should be persisted'
+        Submitter.count() == count + 1
+        Submitter.findByEmailAddress('test.user@ucdavis.edu').firstName == 'Test'
+        Submitter.findByEmailAddress('test.user@ucdavis.edu').lastName == 'User'
+    }
+
+
 	// test show action
-	// TODO: add a spectra to test showing of full object
 	void "show a submitter"() {
-
 		given:
-		def tid = new Submitter(firstName: 'diego', lastName: 'pedrosa', emailAddress: 'mymail@hotmail.com', password: 'baba').save(flush: true)
+        final int count = Submitter.count()
+        def submitter = new Submitter(firstName: 'Test', lastName: 'User', institution: 'UC Davis', emailAddress: 'test.user@ucdavis.edu', password: 'password').save(flush: true)
 
-		when: 'showing one submitter'
-		controller.params.id = tid.id
+        when: 'showing one submitter'
+        controller.params.id = submitter.id
 		controller.show()
 
 		then: 'the response status should be 200(OK) and there should be 1 item in the json response'
-		Submitter.count() == 1
+		Submitter.count() == count + 1
 		controller.response.status == OK.value
-		((JSONArray) controller.response.json).containsAll([id: '2', firstName: 'diego', lastName: 'pedrosa', emailAddress: 'mymail@hotmail.com', password: 'baba'])
+
+        controller.response.json.containsKey('firstName') && controller.response.json.get('firstName') == 'Test'
+        controller.response.json.containsKey('lastName') && controller.response.json.get('lastName') == 'User'
+        controller.response.json.containsKey('emailAddress') && controller.response.json.get('emailAddress') == 'test.user@ucdavis.edu'
+        controller.response.json.containsKey('institution') && controller.response.json.get('institution') == 'UC Davis'
 	}
 
 	// test delete action
 	void "delete a submitter"() {
-
 		given:
-		int tid = new Submitter(firstName: 'looser', lastName: 'guy', emailAddress: 'byebye@byemail.com', password: 'badpass').save(flush: true).id
-		int count = Submitter.count()
+        def submitter = new Submitter(firstName: 'Test', lastName: 'User', institution: 'UC Davis', emailAddress: 'test.user@ucdavis.edu', password: 'password').save(flush: true)
+        final int count = Submitter.count()
 
 		when: 'calling the delete action with parameter id'
-		controller.params.id = tid
-		controller.delete()
+        controller.params.id = submitter.id
+        controller.delete()
 
 		then: 'the submitter will get deleted'
 		controller.response.status == NO_CONTENT.value
-		count == 1
-		Submitter.count() == 0
+		Submitter.count() == count - 1
 	}
 
 	// test update action
 	void "update a submitter"() {
 		given:
-		Submitter s = Submitter.findOrCreateWhere(firstName: "Pedro", lastName: "Diegosa", emailAddress: "linuxmant@gmail.com", password: "asd").save(flush: true)
+        final int count = Submitter.count()
+        def s = new Submitter(firstName: 'Test', lastName: 'User', institution: 'UC Davis', emailAddress: 'test.user@ucdavis.edu', password: 'password').save(flush: true)
 
 		when: 'updating the submitter'
-		s.firstName = 'Diego'
-		s.lastName = 'Pedrosa'
-		s.password = '4 b3tter p4ss'
 		controller.params.id = s.id
-		controller.params.firstName = s.firstName
-		controller.params.lastName = s.lastName
-		controller.params.password = s.password
-//		controller.request.json = s     // this doesn't work
+		controller.params.firstName = 'MoNA'
+		controller.params.lastName = 'Tester'
+        controller.params.institution = 'UC San Diego'
 		controller.update()
 
 		// response.status is coming back 404 when using request.json, but object seems updated --- o.O
 		then: 'it return the updated object in response.json and status should be 200'
 		controller.response.status == OK.value
-		Submitter.findByFirstNameAndLastName('Diego', 'Pedrosa') != null
-		Submitter.findByFirstNameAndLastName('Pedro', 'Diegosa') == null
-		Submitter.findByPassword("") == null
+		Submitter.findByFirstNameAndLastName('Test', 'User') == null
+		Submitter.findByFirstNameAndLastName('MoNA', 'Tester') != null
+        Submitter.findByInstitution('UC Davis') == null
+        Submitter.findByInstitution('UC San Diego') != null
 	}
 
 	// test index action
 	void "list 2 submitters"() {
 		given:
-		final int precount = Submitter.count
-		new Submitter(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "dasdsa", spectra: null).save()
-		new Submitter(firstName: "Diego", lastName: "Pedrosa", emailAddress: "linuxmant@gmail.com", password: "dsadasd", spectra: null).save()
+        final int count = Submitter.count()
+        new Submitter(firstName: 'Test', lastName: 'User', institution: 'UC Davis', emailAddress: 'test.user@ucdavis.edu', password: 'password').save(flush: true)
+        new Submitter(firstName: 'MoNA', lastName: 'Tester', institution: 'UC Davis', emailAddress: 'test.user.2@ucdavis.edu', password: 'password').save(flush: true)
 
 		when: 'calling index action'
 		controller.index()
 
 		then: 'there should be 2 submitters in the json array and response should be 200(OK)'
-		// before WE added items the table was empty
-		precount == 0
-		// check the response status
-		controller.response.status == OK.value
-		// right way -- this is testing the content of the response.json object created by the controller
-		((JSONArray)controller.response.json).size() == 2
-		// indirect way -- this is testing the domain class not the controller action
-		Submitter.count == 2
-	}
+        // check the response status
+        controller.response.status == OK.value
+        Submitter.count() == count + 2
 
-	// create and edit actions --  useless without web interface
+		// right way -- this is testing the content of the response.json object created by the controller
+        controller.response.json.size() == count + 2
+
+        Submitter.findByFirstNameAndLastName('Test', 'User') != null
+        Submitter.findByFirstNameAndLastName('MoNA', 'Tester') != null
+	}
 }
