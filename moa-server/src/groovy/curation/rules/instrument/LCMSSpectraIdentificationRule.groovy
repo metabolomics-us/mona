@@ -22,7 +22,7 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     def LCMSSpectraIdentificationRule() {
         super()
         this.successAction = new AddTagAction(LCMS_SPECTRA)
-        this.failureAction =new RemoveTagAction(LCMS_SPECTRA)
+        this.failureAction = new RemoveTagAction(LCMS_SPECTRA)
     }
 
     def LCMSSpectraIdentificationRule(CurationAction successAction, CurationAction failureAction) {
@@ -44,6 +44,8 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
         } else if (val.unit != null && val.unit.toLowerCase().equals(s.toLowerCase())) {
             return true
         } else if (value.matches(s)) {
+            return true
+        } else if (value.contains(s.toLowerCase())) {
             return true
         }
 
