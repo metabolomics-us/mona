@@ -5,7 +5,7 @@
 /**
  * used to render a metadata value field
  */
-app.directive('gwValue', function ($compile) {
+app.directive('gwValue', function () {
     return {
         templateUrl: '/views/templates/metaValue.html',
 
@@ -14,8 +14,6 @@ app.directive('gwValue', function ($compile) {
             value: '=value'
         },
         link: function ($scope, element, attrs, ngModel) {
-
-
             if ($scope.value.computed == true) {
                 element.append("<i class='fa fa-flask'></i>");
             }
@@ -26,7 +24,7 @@ app.directive('gwValue', function ($compile) {
 /**
  * links a metadata field to a query builder and executes the spectra query for us
  */
-app.directive('gwMetaQuery', function ($compile) {
+app.directive('gwMetaQuery', function () {
     return {
 
         replace: true,
@@ -80,7 +78,7 @@ app.directive('gwMetaQuery', function ($compile) {
 /**
  * defines a metadata text field combo with autocomplete and typeahead functionality
  */
-app.directive('gwMetaQueryInput', function ($compile) {
+app.directive('gwMetaQueryInput', function () {
     return {
 
         replace: true,
@@ -96,8 +94,8 @@ app.directive('gwMetaQueryInput', function ($compile) {
 
         },
 
-        //controller to handle building of the queires
-        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location, REST_BACKEND_SERVER, $http, AppCache) {
+        //controller to handle building of the queries
+        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location, REST_BACKEND_SERVER, $http, MetadataService) {
 
             $scope.metadata = {};
             $scope.metadataNames = [];
@@ -131,7 +129,6 @@ app.directive('gwMetaQueryInput', function ($compile) {
                         return data.data;
                     });
                 }
-
             };
 
             /**
@@ -161,25 +158,30 @@ app.directive('gwMetaQueryInput', function ($compile) {
                 }
 
                 // Get metadata
-                AppCache.getMetadata(function (data) {
-                    var metadataNames = {};
+                MetadataService.metadata(
+                    function (data) {
+                        var metadataNames = {};
 
-                    for (var i = 0; i < data.length; i++) {
-                        if (data[i].category.visible) {
-                            var name = data[i].category.name;
+                        for (var i = 0; i < data.length; i++) {
+                            if (data[i].category.visible) {
+                                var name = data[i].category.name;
 
-                            metadataNames[data[i].name] = true;
+                                metadataNames[data[i].name] = true;
 
-                            if (!$scope.metadata.hasOwnProperty(name)) {
-                                $scope.metadata[name] = [];
+                                if (!$scope.metadata.hasOwnProperty(name)) {
+                                    $scope.metadata[name] = [];
+                                }
+
+                                $scope.metadata[name].push(data[i]);
                             }
-
-                            $scope.metadata[name].push(data[i]);
                         }
-                    }
 
-                    $scope.metadataNames = Object.keys(metadataNames);
-                });
+                        $scope.metadataNames = Object.keys(metadataNames);
+                    },
+                    function (error) {
+                        $log.error('metadata failed: ' + error);
+                    }
+                );
             })();
         }
     }

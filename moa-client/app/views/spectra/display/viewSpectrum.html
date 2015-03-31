@@ -1,6 +1,6 @@
 <div>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-3">
             <div class="h3">
                 Summary for Spectrum {{spectrum.id}}
             </div>
@@ -8,8 +8,9 @@
                 {{spectrum.biologicalCompound.names[0].name}}
             </div>
         </div>
-        <div class="col-md-4 text-right">
-            <div class="h3">
+
+        <div class="col-md-9 text-right">
+            <div class="h5">
                 <span class="dropdown">
                     <a href class="dropdown-toggle"><i class="fa fa-cloud-download"></i> Download</a>
 
@@ -23,17 +24,51 @@
             </div>
         </div>
     </div>
-    <!-- mass spectral properties -->
     <div class="row">
+        <div class="col-md-12"
+             ng-click="showScore =! showScore" ng-init="showScore = false">
+            <span tooltip-placement="right" tooltip="please click, to see how the score was calculated"
+                  tooltip-trigger="mouseenter" tooltip-popup-delay='10' >
+            Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
+                </span>
+        </div>
+    </div>
+    <div class="row" ng-show="showScore" ng-class="animate-show">
 
         <div class="col-md-12">
-            <div ng-show="spectrum.tags.length" class="top30">
-                <ul class="list-inline">
-                    <li ng-repeat="tag in spectrum.tags">
-                        <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
-                    </li>
-                </ul>
+            <div class="panel top17">
+                Reasons for the obtained score of {{spectrum.score.score | number :4}} ({{spectrum.score.scaledScore | number :1}} stars)
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Impact</th>
+                        <th>Reason</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'">
+                        <td>{{impact.impactValue | number : 3}}</td>
+                        <td>{{impact.reason}}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
+    </div>
+    <div class="row top17">
+
+        <div ng-show="spectrum.tags.length" class="col-md-12">
+            <ul class="list-inline">
+                <li ng-repeat="tag in spectrum.tags">
+                    <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+    <!-- mass spectral properties -->
+    <div class="row">
+        <div class="col-md-12">
 
             <accordion close-others="false">
                 <accordion-group is-open="accordionStatus.isSpectraOpen">
@@ -68,8 +103,8 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="ion in massSpec | orderBy:ionTableSort:ionTableSortReverse">
-                                <td>{{ion.ion  | number : 4}}</td>
-                                <td>{{ion.intensity  | number : 4}}</td>
+                                <td>{{ion.ion | number : 4}}</td>
+                                <td>{{ion.intensity | number : 4}}</td>
                                 <td>
                                     {{ion.annotation}}
 
@@ -87,13 +122,14 @@
                     <accordion-heading>
                         <div ng-click="loadSimilarSpectra()">
                             Similar Spectra<i class="pull-right glyphicon"
-                                             ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
+                                              ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
                                                        'glyphicon-chevron-right': !accordionStatus.isSimilarSpectraOpen}"></i>
                         </div>
                     </accordion-heading>
 
                     <div class="text-center" ng-show="loadingSimilarSpectra">
-                        <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
+                        <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span></p>
+                        <p>Please wait - this can take some time depending on server load.</p>
                     </div>
 
                     <div class="text-center" ng-show="!loadingSimilarSpectra && !similarSpectra.length">
@@ -114,10 +150,13 @@
                             <tbody>
                             <tr ng-show="spectra.length == 0">
                             </tr>
-                            <tr ng-repeat="spectrum in similarSpectra | orderBy:-similarity" ng-click="viewSpectrum(spectrum.id)">
+                            <tr ng-repeat="spectrum in similarSpectra | orderBy:-similarity"
+                                ng-click="viewSpectrum(spectrum.id)">
                                 <td>
                                     <ul class="list-unstyled">
-                                        <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">{{name.name}}</li>
+                                        <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">
+                                            {{name.name}}
+                                        </li>
                                     </ul>
                                 </td>
                                 <td>
@@ -132,7 +171,8 @@
                                 </td>
                                 <td>
                                     <div class="masspec-mini">
-                                        <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
+                                        <mass-spec id="massSpec_{{spectrum.id}}" mini
+                                                   ng-model="spectrum.spectrum"></mass-spec>
                                     </div>
                                 </td>
                                 <td>

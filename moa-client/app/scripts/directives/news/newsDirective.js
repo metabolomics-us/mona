@@ -5,7 +5,7 @@
 /**
  * disables automatic form submission when you press enter in an input element
  */
-app.directive('gwNews', function (AppCache, News, $interval,$timeout) {
+app.directive('gwNews', function (News, $interval,$timeout) {
     return {
         //must be an attribute
         restrict: 'A',

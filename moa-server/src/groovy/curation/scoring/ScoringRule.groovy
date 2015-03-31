@@ -25,6 +25,16 @@ abstract class ScoringRule implements CurationRule {
      */
     double scoreImpact = 1.0
 
+    /**
+     * score adjustment in case of success
+     */
+    double successScore = 0.1;
+
+    /**
+     * score adjustment in case of failure
+     */
+    double failureScore = -0.1;
+
     @Autowired
     ScoringService scoringService
 
@@ -49,12 +59,12 @@ abstract class ScoringRule implements CurationRule {
 
     @Override
     final CurationAction getSuccessAction() {
-        return new ScoreAction(0.1 * getScoreImpact(), this, scoringService);
+        return new ScoringAction(getSuccessScore() * getScoreImpact(), this, scoringService);
     }
 
     @Override
     final CurationAction getFailureAction() {
-        return new ScoreAction(-0.1 * getScoreImpact(), this, scoringService)
+        return new ScoringAction(getFailureScore() * getScoreImpact(), this, scoringService)
     }
 
     @Override
@@ -62,47 +72,5 @@ abstract class ScoringRule implements CurationRule {
         return toValidate.isSpectra()
     }
 
-/**
- * modify the object
- */
-    protected class ScoreAction implements CurationAction {
-
-        double modifier = 1.0;
-        ScoringRule rule;
-        ScoringService service;
-
-        ScoreAction(double modifier, ScoringRule rule, ScoringService service) {
-            this.modifier = modifier
-            this.rule = rule;
-            this.service = service;
-        }
-
-        @Override
-        void doAction(CurationObject toValidate) {
-            Spectrum s = toValidate.getObjectAsSpectra()
-
-            Impact impact = new Impact()
-            impact.impactValue = modifier;
-            impact.reason = getDescription()
-            impact.scoringClass = rule.getClass().getName()
-
-            service.adjustScore(s, impact);
-        }
-
-        @Override
-        boolean actionAppliesToObject(CurationObject toValidate) {
-            return toValidate.isSpectra()
-        }
-
-        @Override
-        String getDescription() {
-            if(modifier > 0){
-                return "score was adjusted by '${modifier}' because object did have ${rule.getReasonForScore()}"
-            }
-            else{
-                return "score was adjusted by '${modifier}' because object failed to have ${rule.getReasonForScore()}"
-            }
-        }
-    }
 }
 

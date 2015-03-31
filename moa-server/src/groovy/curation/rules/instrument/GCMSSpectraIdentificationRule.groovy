@@ -14,11 +14,11 @@ import moa.MetaDataValue
  */
 class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
-    Map<String, String> listOfAcceptedField = ["instrument": "gcms", "instrument type": "gc", "ionization energy": "ev"]
+    Map<String, String> listOfAcceptedField = ["instrument": ".*gcms.*", "instrument type": ".*gc.*", "ionization energy": "ev"]
 
     def GCMSSpectraIdentificationRule() {
         this.successAction = new AddTagAction(GCMS_SPECTRA)
-        this.failureAction =  new RemoveTagAction(GCMS_SPECTRA)
+        this.failureAction = new RemoveTagAction(GCMS_SPECTRA)
     }
 
     def GCMSSpectraIdentificationRule(CurationAction successAction, CurationAction failureAction) {
@@ -40,8 +40,9 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
             return true
         } else if (value.matches(s)) {
             return true
+        } else if (value.contains(s.toLowerCase())) {
+            return true
         }
-
 
         return false
     }
