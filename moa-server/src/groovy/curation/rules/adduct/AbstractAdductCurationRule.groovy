@@ -5,6 +5,7 @@ import curation.CurationAction
 import curation.CurationObject
 import moa.MetaDataValue
 import moa.Spectrum
+import moa.SupportsMetaData
 import moa.server.metadata.MetaDataPersistenceService
 
 /**
@@ -89,47 +90,48 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
         return identifiedAdducts
     }
 
+    /**
+     * Searches through the metadata of a spectrum or compound object for a specific value
+     * @param object spectrum or compound object
+     * @param metaDataName name of metadata value to search for
+     * @return string value of metadata value if found, otherwise null
+     */
+    public String findMetaDataValue(SupportsMetaData object, String metaDataName) {
+        for (MetaDataValue metaDataValue : object.getMetaData()) {
+            logger.debug("checking for meta data value ${metaDataName} against field: ${metaDataValue.name}")
+
+            if (metaDataValue.name.toLowerCase() == metaDataName) {
+                logger.debug("\t=> found match " + metaDataValue.value.toString())
+                return metaDataValue.value.toString()
+            }
+        }
+
+        return null
+    }
 
     @Override
     final boolean executeRule(CurationObject toValidate) {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         if (isValidSpectraForRule(spectrum)) {
-            double compoundMass = -1;
-            String ionMode = "";
-
             // Get mass and ion mode
-            for (MetaDataValue metaDataValue : spectrum.getBiologicalCompound().getMetaData()) {
-                logger.debug("checking for correct biological compound meta data value field: ${metaDataValue.name}")
-
-                if (metaDataValue.name.toLowerCase() == "total exact mass") {
-                    compoundMass = Double.parseDouble(metaDataValue.value.toString());
-                    logger.debug("\t=> found mass " + compoundMass)
-                }
-            }
-
-            for (MetaDataValue metaDataValue : spectrum.getMetaData()) {
-                logger.debug("checking for correct meta data value field: ${metaDataValue.name}")
-
-                if (metaDataValue.name.toLowerCase() == "ion mode") {
-                    ionMode = metaDataValue.value.toString().toLowerCase();
-                    logger.debug("\t=> found ion mode " + ionMode)
-                }
-            }
+            def compoundMass = findMetaDataValue(spectrum.getBiologicalCompound(), "total exact mass");
+            def ionMode = findMetaDataValue(spectrum, "ion mode")
 
             // Check that mass and ion mode were found
-            if (compoundMass == -1) {
+            if (compoundMass == null) {
                 logger.debug("unable to find mass in biological compound meta data!")
+                return false;
+            } else {
+                compoundMass = Double.parseDouble(compoundMass.toString())
+            }
+
+            if (requiresIonMode() && ionMode == null) {
+                logger.debug("unable to find ion mode in meta data!")
                 return false;
             }
 
-            if (requiresIonMode()) {
-                if (ionMode == "") {
-                    logger.debug("unable to find ion mode in meta data!")
-                    return false;
-                }
-            }
-
+            // Get adduct table
             def adductTable = getAdductTable(ionMode, spectrum)
             adductTable.each { k, v ->
                 logger.info("registered adduct for search: ${k}")
