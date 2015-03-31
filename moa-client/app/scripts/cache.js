@@ -11,7 +11,12 @@ app.service('SpectrumCache', function ($log) {
     /**
      * Stored browser spectra
      */
-    this.spectra = null;
+    this.browserSpectra = null;
+
+    /**
+     * Stored browser scroll location
+     */
+    this.browserLocation = null;
 
     /**
      * Stored spectrum for viewing
@@ -24,21 +29,36 @@ app.service('SpectrumCache', function ($log) {
      */
     this.clear = function () {
         this.removeBrowserSpectra();
+        this.removeBrowserLocation();
         this.removeSpectrum();
     };
 
 
     this.hasBrowserSpectra = function () {
-        return this.spectra != null;
+        return this.browserSpectra != null;
     };
     this.getBrowserSpectra = function () {
-        return this.spectra;
+        return this.browserSpectra;
     };
-    this.setBrowserSpectra = function (spectra) {
-        this.spectra = spectra;
+    this.setBrowserSpectra = function (browserSpectra) {
+        this.browserSpectra = browserSpectra;
     };
     this.removeBrowserSpectra = function () {
-        this.spectra = null;
+        this.browserSpectra = null;
+    };
+
+
+    this.hasBrowserLocation = function () {
+        return this.browserLocation != null;
+    };
+    this.getBrowserLocation = function () {
+        return this.browserLocation;
+    };
+    this.setBrowserLocation = function (browserLocation) {
+        this.browserLocation = browserLocation;
+    };
+    this.removeBrowserLocation = function () {
+        this.browserLocation = null;
     };
 
 
@@ -91,9 +111,7 @@ app.service('QueryCache', function ($injector, $log, $rootScope) {
         // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
         if (this.query == null) {
             return $injector.get('SpectraQueryBuilderService').prepareQuery();
-        }
-
-        else {
+        } else {
             return this.query;
         }
     };
@@ -113,110 +131,4 @@ app.service('QueryCache', function ($injector, $log, $rootScope) {
     this.resetSpectraQuery = function () {
         this.clear();
     }
-});
-
-
-/**
- * Stores commonly used data obtained from the server to reduce load time
- * of certain views
- */
-app.service('AppCache', function (MetadataService, TaggingService, INTERNAL_CACHING, $log) {
-    /**
-     * Stored tags
-     */
-    this.tags = null;
-
-    /**
-     * Stored metadata
-     */
-    this.metadata = null;
-
-    /**
-     * Stored metadata categories
-     */
-    this.metadataCategories = null;
-
-
-    /**
-     * Clear all values stored in this cache factory
-     */
-    this.clear = function () {
-        this.tags = null;
-        this.metadata = null;
-        this.metadataCategories = null;
-    };
-
-
-    /**
-     * Retrieve tags either from the rest api or internal cache
-     */
-    this.getTags = function (callback) {
-        if (!INTERNAL_CACHING || this.tags == null) {
-            this.tags = TaggingService.query(
-                callback,
-                function (error) {
-                    $log.error('failed: ' + error);
-                }
-            );
-        } else {
-            callback(this.tags);
-        }
-    };
-
-
-    /**
-     * Retrieve tags statistics either from the rest api or internal cache
-     */
-    this.getTagsStatistics = function (callback) {
-        if (!INTERNAL_CACHING || this.tagsStatistics == null) {
-            this.tagsStatistics = TaggingService.statistics(
-                callback,
-                function (error) {
-                    $log.error('failed: ' + error);
-                }
-            );
-        } else {
-            callback(this.tagsStatistics);
-        }
-    };
-
-    /**
-     * Retrieve metadata fields either from the rest api or internal cache
-     */
-    this.getMetadata = function (callback) {
-        if (!INTERNAL_CACHING || this.metadata == null) {
-            this.metadata = MetadataService.metadata(
-                callback,
-                function (error) {
-                    $log.error('metadata failed: ' + error);
-                }
-            );
-        } else {
-            callback(this.metadata);
-        }
-    };
-
-    /**
-     * Retrieve metadata categories either from the rest api or internal cache
-     */
-    this.getMetadataCategories = function (callback) {
-        if (!INTERNAL_CACHING || this.metadataCategories == null) {
-            this.metadataCategories = MetadataService.categories(
-                callback,
-                function (error) {
-                    $log.error('metadata categories failed: ' + error);
-                }
-            );
-        } else {
-            callback(this.metadataCategories);
-        }
-    };
-});
-
-
-/**
- * In progress
- */
-app.factory('ScrollCache', function ($cacheFactory) {
-    return $cacheFactory('scroll');
 });

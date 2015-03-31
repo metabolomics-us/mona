@@ -6,7 +6,7 @@
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  *
  */
-app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) {
+app.service('SpectraQueryBuilderService', function (QueryCache,MetadataService) {
     /**
      * provides us with the current query
      * @returns {*|QueryCache.spectraQuery}
@@ -55,11 +55,17 @@ app.service('SpectraQueryBuilderService', function (AppCache, QueryCache, $log) 
 
         // Get all metadata in a single dictionary
         var meta = {};
-        AppCache.getMetadata(function (data) {
-            for (var i = 0; i < data.length; i++) {
-                meta[data[i].name] = data[i];
+
+        MetadataService.metadata(
+            function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    meta[data[i].name] = data[i];
+                }
+            },
+            function (error) {
+                $log.error('metadata failed: ' + error);
             }
-        });
+        );
 
 
         // Handle all query components

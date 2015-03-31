@@ -36,26 +36,23 @@ app.directive('queryPie', function(){
                 series: {
                     pie: {
                         show: true,
-                        radius: 3/4,
-                        label: {
-                            show: true,
-                            radius: 5/6,
-                            formatter: function(label, series){
-                                return '<div style="font-size: 8pt; text-align: center; padding: 2px; color: white;">'+ label +' ('+ Math.round(series.percent) +'%)</div>';
-                            },
-                            background: {
-                                opacity: 0.8
-                            },
-                            threshold: 0.01
-                        }
+                        //radius: 3/4
+                        //label: {
+                        //    show: true,
+                        //    radius: 1,
+                        //    formatter: function(label, series){
+                        //        return '<div style="font-size: 8pt; text-align: center; padding: 2px; color: white;">'+ label +' ('+ Math.round(series.percent) +'%)</div>';
+                        //    },
+                        //    background: {
+                        //        opacity: 0.8
+                        //    },
+                        //    threshold: 0.01
+                        //}
                     }
                 },
                 grid: {
                     hoverable: true,
                     clickable: true
-                },
-                legend: {
-                    show: false
                 }
             };
 
@@ -69,6 +66,7 @@ app.directive('queryPie', function(){
                     for (var i = 0; i < scope.data.length; i++)
                         lengths.push(scope.data[i].count)
 
+                    lengths.sort(function(a, b){return b-a});
                     minValue = lengths[9];
                 }
 

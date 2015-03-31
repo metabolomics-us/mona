@@ -56,20 +56,24 @@ app.directive('spectraUploadProgressBar', function () {
                 }
             };
 
-            $scope.$on('spectra:uploadprogress', function(event, completedSpectraCount, uploadedSpectraCount) {
-                $scope.completedSpectraCount = completedSpectraCount;
+            $scope.$on('spectra:uploadprogress', function(event, completedSpectraCount, failedSpectraCount, uploadedSpectraCount) {
+                $scope.completedSpectraCount = completedSpectraCount + failedSpectraCount;
+                $scope.failedSpectraCount = failedSpectraCount;
                 $scope.uploadedSpectraCount = uploadedSpectraCount;
 
-                $scope.spectraUploadProgress = parseInt(((completedSpectraCount / uploadedSpectraCount) * 100), 10);
+                $scope.spectraUploadProgress = parseInt((($scope.completedSpectraCount / $scope.uploadedSpectraCount) * 100), 10);
                 $scope.spectraUploadProgressString = $scope.spectraUploadProgress +'%';
                 buildEtaString();
             });
 
             (function() {
                 if (UploadLibraryService.isUploading()) {
-                    $scope.spectraUploadProgress = parseInt(((UploadLibraryService.completedSpectraCount / UploadLibraryService.uploadedSpectraCount) * 100), 10);
+                    // Temporarily counting completed and failed uploads together
+                    $scope.completedSpectraCount = UploadLibraryService.completedSpectraCount + UploadLibraryService.failedSpectraCount;
+                    $scope.uploadedSpectraCount = UploadLibraryService.uploadedSpectraCount;
+
+                    $scope.spectraUploadProgress = parseInt((($scope.completedSpectraCount / $scope.uploadedSpectraCount) * 100), 10);
                     $scope.spectraUploadProgressString = $scope.spectraUploadProgress +'%';
-                    $scope.running = $scope.spectraUploadProgress != -1;
                 } else {
                     $scope.spectraUploadProgress = -1;
                     $scope.spectraUploadProgressString = 'Processing...';
