@@ -129,6 +129,8 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
             if (requiresIonMode() && ionMode == null) {
                 logger.debug("unable to find ion mode in meta data!")
                 return false;
+            } else {
+                ionMode = ionMode.toString().toLowerCase()
             }
 
             // Get adduct table
