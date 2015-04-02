@@ -106,11 +106,12 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
             }
         }
 
+        logger.debug("unable to find metadata value ${metaDataName}")
         return null
     }
 
     @Override
-    final boolean executeRule(CurationObject toValidate) {
+    public boolean executeRule(CurationObject toValidate) {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         if (isValidSpectraForRule(spectrum)) {
