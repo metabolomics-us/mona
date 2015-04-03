@@ -69,9 +69,4 @@ class Score {
 
     }
 
-    def onLoad() {
-        beforeValidate()
-    }
-
-
 }
