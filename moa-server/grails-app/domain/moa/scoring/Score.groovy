@@ -50,14 +50,13 @@ class Score {
 
         score = 0
         relativeScore = 0
+        scaledScore = 0
 
         if (impacts) {
             impacts.each {
                 score = score + it.impactValue
 
-                if (it.impactValue > 0) {
-                    max = Math.abs(it.impactValue) + max
-                }
+                max = Math.abs(it.impactValue) + max
             }
 
             relativeScore = score / max
@@ -69,6 +68,5 @@ class Score {
         }
 
     }
-
 
 }

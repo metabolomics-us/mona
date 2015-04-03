@@ -1,11 +1,19 @@
 package moa
 
+import java.text.DecimalFormat
+import java.text.NumberFormat
+
 class Ion extends SupportsMetaData {
+
+    /**
+     * we are always formating to n digits
+     */
+    static NumberFormat formatter = new DecimalFormat("#.####");
 
     static constraints = {
     }
 
-    static belongsTo = [spectrum:Spectrum]
+    static belongsTo = [spectrum: Spectrum]
 
     static mapping = {
         version false
@@ -26,7 +34,7 @@ class Ion extends SupportsMetaData {
      */
     Spectrum spectrum
 
-    String toString(){
-        return "${mass}:${intensity}"
+    String toString() {
+        return "${formatter.format(mass)}:${formatter.format(intensity)}"
     }
 }
