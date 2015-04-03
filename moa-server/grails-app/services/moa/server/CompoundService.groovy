@@ -21,7 +21,6 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 import grails.transaction.Transactional
 import util.chemical.MolHelper
 
-import java.util.concurrent.atomic.AtomicBoolean
 
 @Transactional
 class CompoundService {

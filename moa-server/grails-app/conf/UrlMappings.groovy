@@ -60,8 +60,6 @@ class UrlMappings {
          */
         "/rest/compounds/curateAll"(controller: 'compoundCuration', action: 'curateAll')
 
-        "/rest/spectra"(resources: 'Spectrum')
-
         /**
          * query all the metadata without category
          */
@@ -97,6 +95,11 @@ class UrlMappings {
                 "/value"(resources: 'MetaDataValue')
             }
         }
+
+        /**
+         * spectra based stuff
+         */
+        "/rest/spectra"(resources: 'Spectrum')
 
         /**
          * provides us with access to simple queries
@@ -136,6 +139,13 @@ class UrlMappings {
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
         "/rest/spectra/curateByQuery"(controller: 'spectraCuration', action: 'curateByQuery')
+
+        /**
+         * scoring service
+         */
+        "/rest/spectra/score/$id"(controller: 'scoring',action: 'score',id:id)
+        "/rest/spectra/score/$id/explain"(controller: 'scoring',action: 'scoreExplain',id:id)
+
 
         /**
          * general limited public api
@@ -190,6 +200,11 @@ class UrlMappings {
 
         "/rest/queue"(controller: 'queue', action: 'jobs')
 
+        /**
+         * error related parts
+         */
+        "500"(controller: "error", action: "handle500")
+        "404"(controller: "error", action: "handle404")
 
     }
 }

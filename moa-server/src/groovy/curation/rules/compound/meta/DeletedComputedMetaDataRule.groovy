@@ -2,6 +2,7 @@ package curation.rules.compound.meta
 import curation.AbstractCurationRule
 import curation.CurationObject
 import moa.MetaDataValue
+import moa.server.metadata.MetaDataPersistenceService
 import org.apache.log4j.Logger
 /**
  * Created with IntelliJ IDEA.
@@ -12,6 +13,8 @@ import org.apache.log4j.Logger
 class DeletedComputedMetaDataRule extends AbstractCurationRule {
 
     private Logger logger = Logger.getLogger(getClass())
+
+    MetaDataPersistenceService metaDataPersistenceService
 
     @Override
     boolean executeRule(CurationObject toValidate) {
@@ -30,9 +33,17 @@ class DeletedComputedMetaDataRule extends AbstractCurationRule {
         logger.info("running rule on: ${mowner}")
 
 
+        def toDelete = []
+
         MetaDataValue.where {
             (computed == true && owner == mowner)
-        }.deleteAll()
+        }.each {
+            toDelete.add(it)
+        }
+
+        toDelete.each {
+            metaDataPersistenceService.removeMetaDataValue(it)
+        }
 
         return true
     }

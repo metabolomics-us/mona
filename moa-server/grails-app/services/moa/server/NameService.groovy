@@ -3,7 +3,6 @@ package moa.server
 import grails.transaction.Transactional
 import moa.Compound
 import moa.Name
-import org.apache.xpath.operations.String
 
 @Transactional
 class NameService {

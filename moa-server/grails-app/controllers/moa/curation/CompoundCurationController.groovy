@@ -34,10 +34,8 @@ class CompoundCurationController {
      */
     def curateAll(){
 
-        def ids = Compound.findAll()*.id
+        CompoundCurationJob.triggerNow([all:true])
 
-        ids.each {long id ->
-            CompoundCurationJob.triggerNow([compoundId:id])
-        }
+        render (text: "started curration of all compounds!")
     }
 }

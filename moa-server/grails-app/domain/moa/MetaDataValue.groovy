@@ -1,11 +1,15 @@
 package moa
+
+import curation.scoring.Scoreable
+import moa.scoring.Score
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
  * Date: 6/30/14
  * Time: 4:44 PM
  */
-class MetaDataValue {
+class MetaDataValue implements Scoreable {
 
     Date dateCreated
     Date lastUpdated
@@ -25,6 +29,7 @@ class MetaDataValue {
     /**
      * reason being for value being suspicious
      */
+    @Deprecated
     String reasonForSuspicion = ""
 
     /**
@@ -32,27 +37,33 @@ class MetaDataValue {
      */
     boolean computed = false
 
-    static belongsTo = [metaData: MetaData, owner:SupportsMetaData]
+    static belongsTo = [metaData: MetaData, owner: SupportsMetaData]
+
+    /**
+     * score of this object
+     */
+    Score score
 
     static mapping = {
         version false
-
     }
+
 
     static constraints = {
         metaData nullable: true
         owner nullable: true
         unit nullable: true
-        suspect nullable :true
-        computed nullable :true
+        suspect nullable: true
+        computed nullable: true
         reasonForSuspicion nullable: true
+        score nullable: true
     }
 
     /**
      * associated name of the metadata object
      * @return
      */
-    public String getName(){
+    public String getName() {
         return metaData?.name
 
     }
@@ -61,7 +72,7 @@ class MetaDataValue {
      * which type we are
      * @return
      */
-    public String getType(){
+    public String getType() {
         return metaData?.type
     }
 
@@ -79,10 +90,17 @@ class MetaDataValue {
     }
 
 
-    public String getCategory(){
+    public String getCategory() {
         return metaData?.category?.name
     }
 
-    static transients = ['value','type','name','category']
+    static transients = ['value', 'type', 'name', 'category']
 
+    @Override
+    public String toString() {
+        return "MetaDataValue{" +
+                "value=" + value +
+                ", metaData=" + metaData +
+                '}';
+    }
 }

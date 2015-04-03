@@ -15,6 +15,7 @@ import javax.sql.DataSource
 /**
  * provides us with uptodate statistics of the system
  */
+@Transactional
 class StatisticsService {
 
     DataSource dataSource
@@ -206,6 +207,7 @@ class StatisticsService {
      * @param category
      * @return
      */
+    @Transactional
     def acquire(Double value, String title, String description = "none", String category = "runtime") {
         Statistics statistics = new Statistics()
 
