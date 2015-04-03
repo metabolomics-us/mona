@@ -13,7 +13,7 @@ import org.apache.log4j.Logger
 import javax.sql.DataSource
 
 /**
- * tags a spectra, if it's a suspect duplicate of an existing spectra
+ * remove a spectra incase it's duplicated
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
  * Date: 2/26/15
