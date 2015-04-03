@@ -14,7 +14,7 @@ import moa.MetaDataValue
  */
 class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
-    Map<String, String> listOfAcceptedField = ["instrument": "gcms", "instrument type": "gc", "ionization energy": "ev"]
+    Map<String, String> listOfAcceptedField = ["instrument": ".*gcms.*", "instrument type": ".*gc.*", "ionization energy": "ev"]
 
     def GCMSSpectraIdentificationRule() {
         this.successAction = new AddTagAction(GCMS_SPECTRA)
