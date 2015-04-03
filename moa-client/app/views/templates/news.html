@@ -1,4 +1,5 @@
 <blockquote>
+
     <dl class="bg-info" ng-repeat="newsItem in recentNews">
         <dt>
             {{newsItem.dateCreated | date : short }} - {{newsItem.title}}
@@ -20,4 +21,7 @@
 
         </dd>
     </dl>
+    <div ng-show="!recentNews.length" class="bg-info">
+            waiting for news to report, right now everything is quiet!
+    </div>
 </blockquote>
