@@ -6,7 +6,7 @@
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  *
  */
-app.service('SpectraQueryBuilderService', function (QueryCache) {
+app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService) {
     /**
      * provides us with the current query
      * @returns {*|QueryCache.spectraQuery}
