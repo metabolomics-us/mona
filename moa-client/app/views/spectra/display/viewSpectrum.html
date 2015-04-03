@@ -36,7 +36,7 @@
     <div class="row" ng-show="showScore" ng-class="animate-show">
 
         <div class="col-md-12">
-            <div class="panel top17">
+            <div class="panel top17" ng-show="spectrum.score">
                 Reasons for the obtained score of {{spectrum.score.score | number :4}} ({{spectrum.score.scaledScore | number :1}} stars)
                 <table class="table">
                     <thead>
@@ -46,12 +46,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'">
+                    <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'" ng-class="impact.impactValue < 0 ? 'danger' : (impact.impactValue > 0 ? 'success' : 'warning')">
                         <td>{{impact.impactValue | number : 3}}</td>
                         <td>{{impact.reason}}</td>
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="panel top17" ng-hide="spectrum.score">
+                This spectrum hasn't been score yet, we submitted a request to the system to score it for you!
             </div>
         </div>
     </div>

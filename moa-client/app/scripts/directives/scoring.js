@@ -3,7 +3,7 @@
  *
  * simple direcitve to calculate our score for us
  */
-app.directive('scoreSpectra', function ($compile, $filter) {
+app.directive('scoreSpectra', function ($compile, $filter,Spectrum, $log) {
     return {
         //must be an attribute
         restrict: 'A',
@@ -40,6 +40,14 @@ app.directive('scoreSpectra', function ($compile, $filter) {
 
             if(!angular.isDefined($scope.score)){
                 $scope.score = 0;
+
+                //scoring the spectra on the fly if it hasn't been scored yet
+                Spectrum.score({id:delayedSpectrum.id},function(result){
+
+                    //adjusting the score with the just generated value
+                    $scope.score = result.explaination.scaledScore ;
+                });
+
             }
 
             $scope.score = $filter('number')($scope.score, 0);

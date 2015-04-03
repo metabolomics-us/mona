@@ -31,6 +31,14 @@ class SpectraQueryService {
      * @param maxResults how many results do we maximal want to have
      */
     def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
+
+        log.info("spectra: ${massSpectra}")
+        log.info("similarity: ${minSimilarity}")
+        log.info("top ions: ${countTopIons}")
+        log.info("max results: ${maxResults}")
+
+
+        log.info("start searching...")
         Sql sql = new Sql(dataSource)
 
         long begin = System.currentTimeMillis()
@@ -45,6 +53,9 @@ class SpectraQueryService {
             resultList.add(hit)
         }
 
+        log.info("finished search and found ${resultList.size()} hits")
+
+        log.info("hits:\n ${resultList}")
 
         statisticsService.acquire(System.currentTimeMillis() - begin,"similarity search","search duration","search")
         return resultList
