@@ -1,6 +1,9 @@
 package moa
 
-class Spectrum extends SupportsMetaData {
+import curation.scoring.Scoreable
+import moa.scoring.Score
+
+class Spectrum extends SupportsMetaData implements Scoreable{
 
     static transients = [ "spectrum" ]
 
@@ -35,6 +38,7 @@ class Spectrum extends SupportsMetaData {
         biologicalCompound nullable: true
         predictedCompound nullable: true
         submitter nullable: true
+        score nullable: true
     }
 
     static mapping = {
@@ -75,6 +79,11 @@ class Spectrum extends SupportsMetaData {
     Submitter submitter
 
     /**
+     * the score of this spectra
+     */
+    Score score
+
+    /**
      * bio logical compound
      */
     Compound chemicalCompound
@@ -88,4 +97,5 @@ class Spectrum extends SupportsMetaData {
      * a predicted possible compound by internal algorithms, based on available data
      */
     Compound predictedCompound
+
 }

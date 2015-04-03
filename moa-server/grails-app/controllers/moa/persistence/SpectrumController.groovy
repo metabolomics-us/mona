@@ -2,6 +2,7 @@ package moa.persistence
 
 import grails.converters.JSON
 import grails.rest.RestfulController
+import grails.transaction.Transactional
 import moa.Spectrum
 import moa.server.SpectraPersistenceService
 import moa.server.SpectraUploadJob
@@ -34,6 +35,11 @@ class SpectrumController extends RestfulController<Spectrum> {
         }
 
         params
+    }
+
+    @Transactional
+    def index(Integer max) {
+        respond listAllResources(params), model: [("${resourceName}Count".toString()): countResources()]
     }
 
     @Override
@@ -105,6 +111,7 @@ class SpectrumController extends RestfulController<Spectrum> {
      * @param params
      * @return
      */
+    @Override
     protected List<Spectrum> listAllResources(Map params) {
 
         log.info("params: ${params}")

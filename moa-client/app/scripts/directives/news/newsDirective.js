@@ -5,7 +5,7 @@
 /**
  * disables automatic form submission when you press enter in an input element
  */
-app.directive('gwNews', function (AppCache, News, $interval,$timeout) {
+app.directive('gwNews', function (News, $interval,$timeout) {
     return {
         //must be an attribute
         restrict: 'A',
@@ -43,25 +43,25 @@ app.directive('gwNews', function (AppCache, News, $interval,$timeout) {
             $scope.loadData = function () {
                 if ($scope.type == 'announcements') {
                     News.listAnnouncements(function (data) {
-                        $scope.recentNews = [];
+                        $scope.recentNews.length = 0;
                         $scope.recentNews = data;
                     });
                 }
                 else if ($scope.type == 'upload') {
                     News.listUpdates(function (data) {
-                        $scope.recentNews = [];
+                        $scope.recentNews.length = 0;
                         $scope.recentNews = data;
                     });
                 }
                 else if ($scope.type == 'notification') {
                     News.listNotifications(function (data) {
-                        $scope.recentNews = [];
+                        $scope.recentNews.length = 0;
                         $scope.recentNews = data;
                     });
                 }
                 else {
                     News.query(function (data) {
-                        $scope.recentNews = [];
+                        $scope.recentNews.length = 0;
                         $scope.recentNews = data;
                     });
                 }

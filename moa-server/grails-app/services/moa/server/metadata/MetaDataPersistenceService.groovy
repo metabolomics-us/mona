@@ -2,6 +2,7 @@ package moa.server.metadata
 
 import exception.ConfigurationError
 import grails.transaction.Transactional
+import grails.validation.ValidationException
 import moa.MetaData
 import moa.MetaDataCategory
 import moa.MetaDataValue
@@ -26,6 +27,16 @@ class MetaDataPersistenceService {
     Converters metadataValueConverter
 
     /**
+     * deletes a metadata value object
+     * @param value
+     */
+    public void removeMetaDataValue(MetaDataValue value) {
+        log.info("deleting metadata value object: ${value}")
+        value.metaData.removeFromValue(value)
+        value.owner.removeFromMetaData(value)
+        value.delete(flush: true)
+    }
+    /**
      * generates our required metadata based on the json array of metadata
      * @param object
      * @param json a json array containing metadata objects
@@ -42,17 +53,24 @@ class MetaDataPersistenceService {
 
     /**
      * associates the defined metadata in the object with the associated object
-     * @param object
-     * @param current
+     * @param object object to attach the data to
+     * @param current current metadata value
+     * @param replace should we we replace already rexisting data
      */
-    public void generateMetaDataObject(SupportsMetaData object, Map current) {
+    public void generateMetaDataObject(SupportsMetaData object, Map current, boolean replace = false) {
         log.debug("received ${object} and map: ${current}")
 
-        if(current.name == null || current.value == null){
+        if (current.name == null || current.value == null) {
             log.warn("received null data for some reason, object was ${object}")
             return
         }
-        if(metadataFilters == null){
+
+        if (current.name.toString().length() == 0 || current.value.toString().length() == null) {
+            log.warn("received null data for some reason, object was ${object}")
+            return
+        }
+
+        if (metadataFilters == null) {
             throw new ConfigurationError("sorry it looks like the filters were not injected!")
         }
         if (!metadataFilters.accept(current.name, current.value)) {
@@ -61,6 +79,23 @@ class MetaDataPersistenceService {
         }
 
         String metaDataName = metaDataDictionaryService.convertNameToBestMatch(current.name)
+
+        //delete old object
+        if (replace) {
+
+            log.info("removing old objects, to avoid duplication")
+            def toDelete = []
+
+            object.metaData.each { MetaDataValue m ->
+                if (m.name == metaDataName) {
+                    toDelete.add(m)
+                }
+            }
+
+            toDelete.each { MetaDataValue v ->
+                removeMetaDataValue(v)
+            }
+        }
 
         //calculate our units
         Map calculatedValue = metadataValueConverter.convert(metaDataName, current.value.toString())
@@ -78,9 +113,12 @@ class MetaDataPersistenceService {
 
 
         log.debug("generating metadata object...")
-        MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
-        metaData.category = category
+        MetaData metaData = MetaData.findOrSaveByName(metaDataName);
 
+        if (metaData.category == null) {
+            category.addToMetaDatas(metaData)
+            //metaData.category = category
+        }
         metaData.save()
         category.save()
 
@@ -136,11 +174,24 @@ class MetaDataPersistenceService {
             metaData.save()
             object.save()
 
-        } catch (Exception e) {
+        }
+        catch (exception.ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
             log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
         }
 
-        metaDataValue.save()
+
+        if (!metaData.validate()) {
+            throw new ValidationException("sorry a none recoverable error occurred, while creating a meta data object", metaData.errors)
+        }
+
+        if (!metaDataValue.validate()) {
+            throw new ValidationException("sorry a none recoverable error occurred, while creating a meta data value object ($metaDataValue.name - $metaDataValue.value)", metaDataValue.errors)
+
+        }
+        metaDataValue.save(flush:true)
 
         log.debug("done")
     }
