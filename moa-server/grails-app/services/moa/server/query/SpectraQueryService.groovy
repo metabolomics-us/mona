@@ -1,12 +1,10 @@
 package moa.server.query
-
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import moa.Spectrum
 import moa.Tag
 import moa.server.statistics.StatisticsService
 import org.hibernate.QueryException
-import org.springframework.cache.annotation.Cacheable
 
 class SpectraQueryService {
 
@@ -171,7 +169,7 @@ class SpectraQueryService {
         }
 
         if (json == null) {
-            throw new Exception("your query needs to contain some parameters!")
+	        throw new QueryException("your query needs to contain some parameters!")
         }
 
 
@@ -322,7 +320,7 @@ class SpectraQueryService {
                 queryOfDoomJoins += " left join s.predictedCompound as pc"
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                if (json.compound.id) {
+	            if (json.compound.id && !(json.compound.id instanceof Map)) {
                     queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
                     executionParams.compund_id = json.compound.id as long
                 } else if (json.compound.id.eq) {

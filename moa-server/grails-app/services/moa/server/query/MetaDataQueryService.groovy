@@ -56,7 +56,7 @@ class MetaDataQueryService {
         /**
          * if only one field is specifed
          */
-        if(json.property != null){
+	    if (json.property != null && json.property != []) {
             log.debug("add property limitation to query: ${json.property}")
             field = "m.${json.property}"
         }
@@ -185,6 +185,10 @@ class MetaDataQueryService {
                             def impl = estimateMetaDataValueImpl(current.value.between[0].toString())
 
                             (whereQuery, executionParams) = buildComparisonField(whereQuery, impl.name.toString(), [estimateMetaDataValueImpl(current.value.between[0]).value, estimateMetaDataValueImpl(current.value.between[1]).value], key, executionParams, index, valueTable)
+                        }
+                        // and unit inside value
+                        else if (key.equals("unit")) {
+	                        // implemented below -- code duplication warning!!!
                         } else {
                             def impl = estimateMetaDataValueImpl(current.value."${key}".toString())
 
@@ -213,7 +217,7 @@ class MetaDataQueryService {
         if (current.unit != null) {
             whereQuery = addRequiredAnd(whereQuery)
 
-            //short form
+	        //long form
             if (current.unit instanceof Map) {
                 current.unit.keySet().each { String key ->
                     if (current.unit."${key}") {
@@ -221,7 +225,7 @@ class MetaDataQueryService {
                     }
                 }
             }
-            //long form
+            //short form
             else {
                 (whereQuery, executionParams) = buildComparisonField(whereQuery, "unit", [current.unit], "eq", executionParams, index, valueTable)
             }
