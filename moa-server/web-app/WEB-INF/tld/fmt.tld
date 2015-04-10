@@ -13,7 +13,7 @@
 
   <validator>
     <description>
-        Provides core curation features for JSTL tags.
+        Provides core validation features for JSTL tags.
     </description>
     <validator-class>
         org.apache.taglibs.standard.tlv.JstlFmtTLV
