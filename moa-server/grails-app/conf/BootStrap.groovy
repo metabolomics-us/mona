@@ -62,7 +62,9 @@ class BootStrap {
         JSON.registerObjectMarshaller(Submitter,
                 DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra", "password", "dateCreated", "lastUpdated"])
         )
-        
+        JSON.registerObjectMarshaller(Role,
+                DomainClassMarshaller.createExcludeMarshaller(Role, ["class", "id"])
+        )
 
         JSON.registerObjectMarshaller(Spectrum,
                 DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class", "dateCreated", "ions"])
