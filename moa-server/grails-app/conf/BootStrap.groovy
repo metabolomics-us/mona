@@ -44,6 +44,7 @@ class BootStrap {
         addUser("Sajjan", "Mehta", "ssmehta@ucdavis.edu", "password", "University of California, Davis", true)
         addUser("Diego", "Pedrosa", "linuxmant@gmail.com", "password", "University of California, Davis", true)
         addUser("Megan", "Showalter", "mshowalter@ucdavis.edu", "password", "University of California, Davis", false)
+        addUser("Yan", "Ma", "yanma@ucdavis.edu", "password", "University of California, Davis", false)
 
         // RIKEN
         addUser("Hiroshi", "Tusgawa", "hiroshi.tsugawa@riken.jp", "password", "Riken, Japan", false)
