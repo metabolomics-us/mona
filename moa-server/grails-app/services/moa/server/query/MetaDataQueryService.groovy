@@ -99,7 +99,7 @@ class MetaDataQueryService {
      * @param index current join in case we have more than 1
      * @return
      */
-    protected String buildMetadataQueryString(String whereQuery, Map current, executionParams, String metaDataTableName, String valueTable, String categoryTable, int index = 0) {
+    protected String buildMetadataQueryString(String whereQuery, Map current, Map executionParams, String metaDataTableName, String valueTable, String categoryTable, int index = 0) {
 
         whereQuery = addRequiredAnd(whereQuery)
 

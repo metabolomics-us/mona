@@ -143,6 +143,7 @@
                         <table class="table table-hover table-striped" style="table-layout: fixed;">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th class="text-center">Name</th>
                                 <th class="text-right" style="width: 110px">Bio. Structure</th>
                                 <th class="text-right" style="width: 110px">Chem. Structure</th>
@@ -155,6 +156,7 @@
                             </tr>
                             <tr ng-repeat="spectrum in similarSpectra | orderBy:-similarity"
                                 ng-click="viewSpectrum(spectrum.id)">
+                                <td>{{spectrum.id}}</td>
                                 <td>
                                     <ul class="list-unstyled">
                                         <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">

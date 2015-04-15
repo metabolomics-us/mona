@@ -57,7 +57,7 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 		"le" | "inchiKey" | "PFTAWBLQPZVEMU-UKRRQHHQSA-N" | 5
 		"ne" | "inchiKey" | "PFTAWBLQPZVEMU-UKRRQHHQSA-N" | 5
 //		"in"    | "inchiKey" | "PFTAWBLQPZVEMU-UKRRQHHQSA-N"    | 5
-		"eq" | "id" | 58 | 5
+		"eq" | "id" | 11591 | 5
 		"gt" | "id" | 58 | 5
 		"lt" | "id" | 58 | 5
 		"ge" | "id" | 58 | 5
@@ -172,4 +172,45 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 		"eq" | "ne" | "id" | 58 | 0 | "name" | "ms type" | 0
 	}
 
+	@Unroll
+	void "find similar spectra to spectrum.id: 34129 using #type"() {
+
+		when:
+		def res = spectraQueryService.findSimilarSpectraIds(data, simil, ions, maxRes)
+
+		then:
+		assert res != null
+		assert 10 >= res.size()
+
+		where:
+		type << ["id", "spectra"]
+		simil << [500, 500]
+		ions << [3, 3]
+		maxRes << [10, 10]
+		data << [34129, "85.0000:0.0267 " +
+				"87.0000:0.0111 " +
+				"89.0000:0.0427 " +
+				"90.0000:0.0200 " +
+				"91.0000:0.0711 " +
+				"93.0000:0.0301 " +
+				"101.0000:0.0100 " +
+				"103.0000:0.0363 " +
+				"104.0000:0.0520 " +
+				"105.0000:0.0670 " +
+				"115.0000:0.0303 " +
+				"119.0000:0.0905 " +
+				"120.0000:0.0141 " +
+				"121.0000:0.0107 " +
+				"126.0000:0.0158 " +
+				"131.0000:0.0264 " +
+				"132.0000:0.0072 " +
+				"133.0000:0.0515 " +
+				"135.0000:0.0829 " +
+				"136.0000:0.0104 " +
+				"140.0000:0.0388 " +
+				"141.0000:0.0164 " +
+				"147.0000:1.0000 " +
+				"148.0000:0.1605 " +
+				"149.0000:0.0903"]
+	}
 }
