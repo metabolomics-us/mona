@@ -24,7 +24,8 @@ environments {
 
         dataSource {
             dbCreate = "update"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
+//            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
+	        url = "jdbc:postgresql://localhost:5432/mona-test"
 
             properties {
 
@@ -95,7 +96,7 @@ environments {
     test {
         dataSource {
             dbCreate = "update"// "create-drop"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-test"
+            url = "jdbc:postgresql://localhost:5432/mona-test"
             driverClassName = "org.postgresql.Driver"
             username = "compound"
             password = "asdf"
@@ -103,7 +104,7 @@ environments {
 
             cache.use_second_level_cache = false
             cache.use_query_cache = false
-            logSql = true
+            logSql = false
         }
     }
 
