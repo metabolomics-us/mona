@@ -11,7 +11,7 @@
                 <th class="text-right" style="width: 110px">Bio. Structure</th>
                 <th class="text-right" style="width: 110px">Chem. Structure</th>
 
-                <th class="text-right" style="width: 110px">Spectrum</th>
+                <th class="text-right" style="width: 200px">Spectrum</th>
                 <th class="text-center">Accurate Mass</th>
 
 
@@ -40,6 +40,9 @@
                 <td>
                     <div class="masspec-mini">
                         <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
+                    </div>
+                    <div>
+                        <span score-spectra ng-model="spectrum"></span>
                     </div>
                 </td>
                 <td>

@@ -2,6 +2,7 @@ package moa.server.metadata
 
 import exception.ConfigurationError
 import grails.transaction.Transactional
+import grails.validation.ValidationException
 import moa.MetaData
 import moa.MetaDataCategory
 import moa.MetaDataValue
@@ -63,6 +64,12 @@ class MetaDataPersistenceService {
             log.warn("received null data for some reason, object was ${object}")
             return
         }
+
+        if (current.name.toString().length() == 0 || current.value.toString().length() == null) {
+            log.warn("received null data for some reason, object was ${object}")
+            return
+        }
+
         if (metadataFilters == null) {
             throw new ConfigurationError("sorry it looks like the filters were not injected!")
         }
@@ -106,9 +113,12 @@ class MetaDataPersistenceService {
 
 
         log.debug("generating metadata object...")
-        MetaData metaData = MetaData.findOrSaveByNameAndCategory(metaDataName, category);
-        metaData.category = category
+        MetaData metaData = MetaData.findOrSaveByName(metaDataName);
 
+        if (metaData.category == null) {
+            category.addToMetaDatas(metaData)
+            //metaData.category = category
+        }
         metaData.save()
         category.save()
 
@@ -164,11 +174,24 @@ class MetaDataPersistenceService {
             metaData.save()
             object.save()
 
-        } catch (Exception e) {
+        }
+        catch (exception.ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
             log.warn("ignored metadata, due to an invalid type exception: ${e.message}", e);
         }
 
-        metaDataValue.save()
+
+        if (!metaData.validate()) {
+            throw new ValidationException("sorry a none recoverable error occurred, while creating a meta data object", metaData.errors)
+        }
+
+        if (!metaDataValue.validate()) {
+            throw new ValidationException("sorry a none recoverable error occurred, while creating a meta data value object ($metaDataValue.name - $metaDataValue.value)", metaDataValue.errors)
+
+        }
+        metaDataValue.save(flush:true)
 
         log.debug("done")
     }
