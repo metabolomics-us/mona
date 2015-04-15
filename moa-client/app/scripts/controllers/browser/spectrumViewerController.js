@@ -218,12 +218,6 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
             });
         }
 
-        //calcualte the score of our spectrum
-        if (angular.isDefined(delayedSpectrum.score) && delayedSpectrum.score != null) {
-            if (angular.isDefined(delayedSpectrum.score.scaledScore)) {
-                $scope.score = delayedSpectrum.score.scaledScore;
-            }
-        }
     })();
 };
 

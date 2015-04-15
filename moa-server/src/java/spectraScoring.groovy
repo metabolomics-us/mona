@@ -67,13 +67,15 @@ beans {
      */
 
     [
+
+            [first: 'instrument', second: 'instrument type', failure: 0.0],
+
             //retention time and column information
             [first: 'ri', second: 'column', failure: 0.0],
             [first: 'column', second: 'column temperature', failure: 0.0],
 
             //if we have a column, we might also have a guard column, but it's not that important
             [first: 'column', second: 'guard column', failure: 0.0, success: 0.05],
-            [first: 'column', second: 'column temperature', failure: 0.0, success: 0.05],
 
             //general injection information
             [first: 'injection', second: 'injection volume', failure: 0.0],

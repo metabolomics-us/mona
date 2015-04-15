@@ -57,7 +57,7 @@ class SpectraUploadJob {
                     }
 
                     Spectrum result = spectraPersistenceService.create(json)
-                    result.save(flush: true)
+                    result.save()
 
                     long end = System.currentTimeMillis()
 

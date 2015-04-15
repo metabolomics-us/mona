@@ -1,5 +1,8 @@
 package moa.server
 
+import grails.transaction.Transactional
+
+@Transactional
 class MetaDataDictionaryService {
 
     /**
