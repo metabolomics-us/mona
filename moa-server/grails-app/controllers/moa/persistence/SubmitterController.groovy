@@ -7,7 +7,6 @@ class SubmitterController extends RestfulController {
 
 	static responseFormats = ['json']
 
-
     public SubmitterController() {
 		super(Submitter)
 	}
@@ -26,6 +25,4 @@ class SubmitterController extends RestfulController {
 
         params
 	}
-
-
 }

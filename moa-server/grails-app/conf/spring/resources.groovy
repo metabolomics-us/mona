@@ -7,7 +7,7 @@ import curation.actions.RemoveTagAction
 import curation.rules.adduct.gcms.CompoundShouldBeDerivatizedRule
 import curation.rules.adduct.gcms.ConfirmGCMSDerivatizationRule
 import curation.rules.adduct.gcms.GCMSAdductCurationRule
-import curation.rules.adduct.LCMSAdductCurationRule
+import curation.rules.adduct.lcms.LCMSAdductCurationRule
 import curation.rules.adduct.gcms.GCMSDerivatizationDoesntMatchCompound
 import curation.rules.adduct.gcms.PredictGCMSCompoundRule
 import curation.rules.adduct.gcms.PredictedMMinus15Rule
