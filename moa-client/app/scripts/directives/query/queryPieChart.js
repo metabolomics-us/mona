@@ -35,19 +35,7 @@ app.directive('queryPie', function(){
             var opts  = {
                 series: {
                     pie: {
-                        show: true,
-                        //radius: 3/4
-                        //label: {
-                        //    show: true,
-                        //    radius: 1,
-                        //    formatter: function(label, series){
-                        //        return '<div style="font-size: 8pt; text-align: center; padding: 2px; color: white;">'+ label +' ('+ Math.round(series.percent) +'%)</div>';
-                        //    },
-                        //    background: {
-                        //        opacity: 0.8
-                        //    },
-                        //    threshold: 0.01
-                        //}
+                        show: true
                     }
                 },
                 grid: {
