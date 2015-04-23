@@ -1,4 +1,10 @@
 package moa.server.query
+
+import com.github.fge.jackson.JsonLoader
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import groovy.json.JsonBuilder
 import grails.transaction.Transactional
 import moa.MetaDataValue
 
@@ -40,7 +46,7 @@ class MetaDataQueryService {
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
 
-        log.info("received query: ${json}")
+        log.info("received query (${json.class?.canonicalName}): ${json}")
 
         def params = [:]
 
@@ -283,5 +289,27 @@ class MetaDataQueryService {
         }
           */
         return result;
+    }
+
+    /**
+     * checks the json query string against a schema
+     * @param jsonObj map containing the json object
+     * @return a ProcessingReport object containing the result of the validation
+     * and possible error messages explaining why the validation failed.
+     */
+    def final ProcessingReport validateQuery(Map query) {
+        def jsonObj = query
+
+        def jsonString = new JsonBuilder(jsonObj).toString()
+
+        def qsFile = new File("schemas/QuerySchema.json")
+
+        final JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+        final JsonSchema schema = factory.getJsonSchema(qsFile.toURI().toString().concat("#/definitions/metadata/items/0"))
+
+        ProcessingReport report
+        report = schema.validate(JsonLoader.fromString(jsonString))
+
+		return report
     }
 }
