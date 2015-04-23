@@ -95,7 +95,7 @@ app.directive('gwMetaQueryInput', function () {
         },
 
         //controller to handle building of the queries
-        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location, REST_BACKEND_SERVER, $http, MetadataService) {
+        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location, REST_BACKEND_SERVER, $http, MetadataService, $log) {
 
             $scope.metadata = {};
             $scope.metadataNames = [];
