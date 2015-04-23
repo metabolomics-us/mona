@@ -14,7 +14,8 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
         'ion mode',
         'instrument',
         'derivative type',
-        'collision energy'
+        'collision energy',
+        'precursor type'
     ];
 
     /**
