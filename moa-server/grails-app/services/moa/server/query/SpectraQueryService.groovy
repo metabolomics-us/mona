@@ -149,6 +149,8 @@ class SpectraQueryService {
 
         (queryOfDoomWhere, queryOfDoomJoins) = handleJsonTagsField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonSubmitterField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+
         //assemble the query of doom
         queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
@@ -175,6 +177,41 @@ class SpectraQueryService {
 
 
         return query(json, params.max as int, params.offset as int)
+    }
+
+    /**
+     * does searches by submitter field
+     * @param json
+     * @param queryOfDoomWhere
+     * @param queryOfDoomJoins
+     * @param executionParams
+     * @return
+     */
+    private List handleJsonSubmitterField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+        //handling submitter
+        if (json.submitter) {
+            queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+            //add our tag join
+            queryOfDoomJoins += " left join s.submitter as sub"
+
+            // handle id
+            try {
+                long id = Long.parseLong(json.submitter.toString())
+
+                queryOfDoomWhere += " sub.id = :submitterInfo"
+                executionParams.submitterInfo = id
+            }
+
+            // handle email address
+            catch(Exception e) {
+                //build our specific query
+                queryOfDoomWhere += " sub.emailAddress = :submitterInfo"
+                executionParams.submitterInfo = json.submitter.toString()
+            }
+        }
+
+        [queryOfDoomWhere, queryOfDoomJoins]
     }
 
     /**
@@ -226,7 +263,7 @@ class SpectraQueryService {
      * @return
      */
     private List handleSpectraJsonMetadataFields(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
-//if we have a metadata object specified
+        //if we have a metadata object specified
         if (json.metadata) {
 
             if (json.metadata.size() > 0) {
@@ -262,7 +299,7 @@ class SpectraQueryService {
     private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
         log.info("incomming query in compound method:\n\n$queryOfDoomWhere\n\n")
 
-//if we have a compound
+        //if we have a compound
         if (json.compound) {
 
             //TODO NEEDS TO BE MORE DYNAMIC
@@ -295,7 +332,7 @@ class SpectraQueryService {
 
             }
 
-//if we have an id key
+            //if we have an id key
             if (json.compound.id) {
 
                 queryOfDoomJoins += " left join s.biologicalCompound as bc"
@@ -345,9 +382,6 @@ class SpectraQueryService {
             }
 
         }
-
-
-
 
         [queryOfDoomWhere, queryOfDoomJoins]
     }

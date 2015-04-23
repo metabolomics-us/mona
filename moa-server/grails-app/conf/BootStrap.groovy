@@ -24,48 +24,31 @@ class BootStrap {
 
         log.warn("in development mode, setting up users...")
 
-        //harddcoded submiters for now
-        Submitter.findOrCreateWhere(firstName: "Gert", lastName: "Wohlgemuth", emailAddress: "wohlgemuth@ucdavis.edu", password: "password", institution: "University of California, Davis").save()
-        Submitter.findOrCreateWhere(firstName: "Sajjan", lastName: "Mehta", emailAddress: "ssmehta@ucdavis.edu", password: "password", institution: "University of California, Davis").save()
-        Submitter.findOrCreateWhere(firstName: "Diego", lastName: "Pedrosa", emailAddress: "linuxmant@gmail.com", password: "password", institution: "University of California, Davis").save()
-        Submitter.findOrCreateWhere(firstName: "Megan", lastName: "Showalter", emailAddress: "mshowalter@ucdavis.edu", password: "password", institution: "University of California, Davis").save()
-
-        //riken data
-        Submitter.findOrCreateWhere(firstName: "Hiroshi", lastName: "Tusgawa", emailAddress: "hiroshi.tsugawa@riken.jp", password: "password", institution: "Riken, Japan").save()
-        Submitter.findOrCreateWhere(firstName: "Akie", lastName: "Mejia", emailAddress: "rfmejia@gmail.com", password: "password", institution: "Riken, Japan").save()
-
-
         // Submitter roles
+        Role adminRole = Role.findOrCreateByAuthority('ROLE_ADMIN').save()
+        Role curatorRole = Role.findOrCreateByAuthority('ROLE_CURATOR').save()
+        Role userRole = Role.findOrCreateByAuthority('ROLE_USER').save()
 
-        def addRole = { String  email,boolean admin ->
-            Submitter s = Submitter.findOrCreateByEmailAddress("wohlgemuth@ucdavis.edu")
-            Role.findOrCreateByAuthority('ROLE_ADMIN').save()
-            Role.findOrCreateByAuthority('ROLE_CURATOR').save()
-            Role.findOrCreateByAuthority('ROLE_USER').save()
+        def addUser = { String firstName, String lastName, String emailAddress, String password, String institution, boolean isAdmin ->
+            Submitter s = Submitter.findOrCreateWhere(firstName: firstName, lastName: lastName, emailAddress: emailAddress, password: password, institution: institution).save()
+            SubmitterRole.create(s, userRole)
 
-            Role a = Role.findOrCreateByAuthority('ROLE_ADMIN')
-            Role u = Role.findOrCreateByAuthority('ROLE_USER')
-
-            if(admin) {
-                if (SubmitterRole.findBySubmitterAndRole(s, a) == null) {
-                    SubmitterRole.create(Submitter.findOrCreateByEmailAddress(email), Role.findOrCreateByAuthority('ROLE_ADMIN'))
-                }
+            if(isAdmin) {
+                SubmitterRole.create(s, curatorRole)
+                SubmitterRole.create(s, adminRole)
             }
-
-            if (SubmitterRole.findBySubmitterAndRole(s, u) == null) {
-                SubmitterRole.create(Submitter.findOrCreateByEmailAddress(email), Role.findOrCreateByAuthority('ROLE_USER'))
-            }
-
         }
 
-        addRole("wohlgemuth@ucdavis.edu",true)
-        addRole("ssmehta@ucdavis.edu",true)
-        addRole("linuxmant@gmail.com",true)
-        addRole("mshowalter@ucdavis.edu",false)
+        // Fiehnlab
+        addUser("Gert", "Wohlgemuth", "wohlgemuth@ucdavis.edu", "password", "University of California, Davis", true)
+        addUser("Sajjan", "Mehta", "ssmehta@ucdavis.edu", "password", "University of California, Davis", true)
+        addUser("Diego", "Pedrosa", "linuxmant@gmail.com", "password", "University of California, Davis", true)
+        addUser("Megan", "Showalter", "mshowalter@ucdavis.edu", "password", "University of California, Davis", false)
+        addUser("Yan", "Ma", "yanma@ucdavis.edu", "password", "University of California, Davis", false)
 
-
-        addRole("hiroshi.tsugawa@riken.jp",false)
-        addRole("rfmejia@gmail.com",false)
+        // RIKEN
+        addUser("Hiroshi", "Tusgawa", "hiroshi.tsugawa@riken.jp", "password", "Riken, Japan", false)
+        addUser("Akie", "Mejia", "rfmejia@gmail.com", "password", "Riken, Japan", false)
 
 
 
@@ -79,6 +62,9 @@ class BootStrap {
 
         JSON.registerObjectMarshaller(Submitter,
                 DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra", "password", "dateCreated", "lastUpdated"])
+        )
+        JSON.registerObjectMarshaller(Role,
+                DomainClassMarshaller.createExcludeMarshaller(Role, ["class", "id"])
         )
 
         JSON.registerObjectMarshaller(Spectrum,
@@ -109,17 +95,13 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(Impact, ["class","score","id","scoringClass"])
         )
 
-
-
         /*
         JSON.registerObjectMarshaller(Ion,
                 DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
         )
-
-*/
+        */
 
         //newsService.createNews("massbank upload","the upload of massbank was complete!","none")
-
     }
 
     def destroy = {
