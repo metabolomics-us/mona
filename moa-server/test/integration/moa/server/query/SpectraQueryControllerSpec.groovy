@@ -1,25 +1,29 @@
-package moa.query
+package moa.server.query
+
 import grails.test.spock.IntegrationSpec
 import org.apache.log4j.Logger
 import org.springframework.http.HttpMethod
+import spock.lang.Shared
+
 /**
  * Created by diego on 4/7/15.
  */
 class SpectraQueryControllerSpec extends IntegrationSpec {
 	def Logger log = Logger.getLogger(this.class)
 
+	@Shared
 	SpectraQueryController controller = new SpectraQueryController()
 	def spectraQueryService
 	def spectraConversionService
 
-	void setup() {
+	def setup() {
 		controller.spectraQueryService = spectraQueryService
 		controller.spectraConversionService = spectraConversionService
 	}
 
-	def "test controller Search"() {
+	void "test controller Search"() {
 		setup:
-		def json = '{"metadata":[{"name":{"like":"ms type}}]}'
+		def json = [metadata:[[name:[like:"ms type"]]]]
 		controller.request.contentType = 'text/json'
 		controller.request.format = 'json'
 		controller.response.format = 'json'
@@ -27,7 +31,7 @@ class SpectraQueryControllerSpec extends IntegrationSpec {
 		controller.request.requestMethod = HttpMethod.POST
 
 		when:
-		controller.request.content = json.getBytes()
+		controller.request.json = json
 		controller.search()
 		def res = controller.response.json
 

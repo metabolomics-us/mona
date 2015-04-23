@@ -1,4 +1,5 @@
 package moa.server.query
+
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import moa.Spectrum

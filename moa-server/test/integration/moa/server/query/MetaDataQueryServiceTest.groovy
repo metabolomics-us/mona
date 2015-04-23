@@ -3,6 +3,7 @@ package moa.server.query
 import grails.test.spock.IntegrationSpec
 import org.apache.log4j.Logger
 import spock.lang.Unroll
+
 /**
  * Created by diego on 3/31/15.
  */
@@ -85,4 +86,40 @@ class MetaDataQueryServiceTest extends IntegrationSpec {
 		"eq"  | "id"       | 58                    | 5    | 3
 	}
 
+
+	@Unroll
+	def "tests the validation method with valid queries"() {
+		expect:
+		def res = metaDataQueryService.validateQuery(query)
+
+		assert res != null
+		assert res.success
+
+		log.debug("RESULT: ${res}\n${res.properties.toMapString()}")
+		assert res[0] == null
+
+		where:
+		_ | query
+		_ | [name:[eq:'ms type']]
+		_ | [name:"ms type"]
+	}
+
+	@Unroll
+	def "tests the validation method with invalid queries"() {
+		expect:
+		def res = metaDataQueryService.validateQuery(query)
+
+		assert res != null
+		assert !res.success
+
+		log.debug("RESULT: $res\n${res[0].message}")
+		assert !res[0].message.isEmpty()
+		assert res[0].message.contains(error)
+
+		where:
+		query               | error
+		[value:[eq:'MS2']]  | "requires [\"name\"]; missing: [\"name\"]"
+		[value:"MS2"]       | "requires [\"name\"]; missing: [\"name\"]"
+		[category:43]       | "instance failed to match exactly one schema"
+	}
 }
