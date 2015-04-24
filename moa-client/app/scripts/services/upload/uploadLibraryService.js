@@ -66,9 +66,9 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             deferred.resolve(spectra);
 
         }
-        //in case we got a smile
-        else if (spectra.smile) {
-            gwCtsService.convertSmileToInChICode(spectra.smile, function (data) {
+        //in case we got a smiles
+        else if (spectra.smiles) {
+            gwCtsService.convertSmileToInChICode(spectra.smiles, function (data) {
                 spectra.inchi = data.inchicode;
                 spectra.inchiKey = data.inchikey;
 
@@ -372,12 +372,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         for (var i = 0; i < files.length; i++) {
             self.loadSpectraFile(files[i], function (data, origin) {
                 self.processData(data, function (spectrum) {
-
-                    self.uploadSpectrum(spectrum, saveSpectrumCallback,wizardData)
-
+                    self.uploadSpectrum(spectrum, saveSpectrumCallback,wizardData);
                 }, origin);
-
-
             })
         }
     };
@@ -387,10 +383,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param wizardData
      * @param saveSpectrumCallback
      */
-    self.uploadSpectrum = function (wizardData, saveSpectrumCallback,additionalData) {
-
+    self.uploadSpectrum = function (wizardData, saveSpectrumCallback, additionalData) {
         AuthenticationService.getCurrentUser().then(function (submitter) {
-
             self.uploadedSpectraCount += 1;
 
             AsyncService.addToPool(function () {
