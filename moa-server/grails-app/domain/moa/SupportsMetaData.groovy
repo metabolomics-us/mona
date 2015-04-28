@@ -14,6 +14,5 @@ class SupportsMetaData {
 
     Date dateCreated
     Date lastUpdated
-
     static hasMany = [metaData: MetaDataValue,tags:Tag]
 }
