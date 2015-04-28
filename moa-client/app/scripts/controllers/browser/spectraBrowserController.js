@@ -171,7 +171,8 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * @param id
      * @param index
      */
-    $scope.viewSpectrum = function (id, index) {        $location.path('/spectra/display/' + id);
+    $scope.viewSpectrum = function (id, index) {
+        $location.path('/spectra/display/' + id);
     };
 
 
