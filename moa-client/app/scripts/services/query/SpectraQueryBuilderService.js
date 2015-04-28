@@ -70,6 +70,10 @@ app.service('SpectraQueryBuilderService', function (QueryCache,MetadataService) 
 
         // Handle all query components
         Object.keys(query).forEach(function (element) {
+            if (element === "submitter" && query[element]) {
+                compiled.submitter = query[element];
+            }
+
             if (element === "nameFilter" && query[element]) {
                 compiled.compound.name = {like: query[element]};
             }
