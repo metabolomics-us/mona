@@ -34,7 +34,7 @@ class SpectraValidationSchedulingJob  {
                 def ids = Spectrum.findAll()*.id
 
                 ids.each { long id ->
-                    SpectraValidationJob.triggerNow([spectraId: id])
+                    SpectraValidationJob.triggerNow([spectraId: id, priority: 1])
                 }
 
             } else if (data.query) {
@@ -42,7 +42,7 @@ class SpectraValidationSchedulingJob  {
                 def spectra = spectraQueryService.query(data.query, data.params)
 
                 spectra.each { Spectrum s ->
-                    SpectraValidationJob.triggerNow([spectraId: s.id])
+                    SpectraValidationJob.triggerNow([spectraId: s.id, priority: 1])
                 }
 
 

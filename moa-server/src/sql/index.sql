@@ -25,8 +25,6 @@ CREATE INDEX "index-category-name"
 CREATE INDEX "index-meta-name"
         ON "public"."meta_data"("name");
 
-CREATE INDEX "index-meta-name"
-        ON "public"."meta_data"("name");
 
 CREATE INDEX "news_type_index"
 	ON "public"."news"("type");
@@ -38,9 +36,6 @@ CREATE INDEX supports_meta_data_tag_index
   CREATE INDEX "ions_spectrum_id_index"
 	ON "public"."ion"("spectrum_id");
 
-
-CREATE INDEX "ions_spectrum_id_index"
-	ON "public"."ion"("spectrum_id");
 
 
  CREATE INDEX "index_supports_metadata_tag_id"
