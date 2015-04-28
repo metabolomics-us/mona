@@ -56,6 +56,12 @@ app.config(function ($routeProvider) {
             controller: 'SpectraDatabaseIndexController'
         })
 
+        //spectrum cleaner
+        .when('/spectracleaner', {
+            templateUrl: 'views/spectra/cleanSpectraData.html',
+            controller: 'CleanSpectraDataController'
+        })
+
         .when('/documentation/license', {
             templateUrl: 'views/documentation/license.html'
         })
