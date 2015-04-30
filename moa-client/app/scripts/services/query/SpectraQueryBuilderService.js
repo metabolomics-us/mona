@@ -220,6 +220,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache,MetadataService) 
     /**
      * adds further metadata to the query
      * @param metadata
+     * @param compound
      */
     this.addMetaDataToQuery = function (metadata, compound) {
         if (metadata) {
