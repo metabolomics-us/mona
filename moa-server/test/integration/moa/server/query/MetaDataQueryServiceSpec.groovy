@@ -7,12 +7,12 @@ import spock.lang.Unroll
 /**
  * Created by diego on 3/31/15.
  */
-class MetaDataQueryServiceTest extends IntegrationSpec {
-	private Logger log = Logger.getLogger(this.class.name)
+class MetaDataQueryServiceSpec extends IntegrationSpec {
+	private final Logger log = Logger.getLogger(this.class.name)
 
 	def MetaDataQueryService metaDataQueryService = new MetaDataQueryService()
 
-	void testQueryNullJson() {
+	def testQueryNullJson() {
 
 		when:
 		metaDataQueryService.query(null, [:])
@@ -23,7 +23,7 @@ class MetaDataQueryServiceTest extends IntegrationSpec {
 	}
 
 	@Unroll
-	def "query spectra.metadata with #clazz #oper #value (max #size results)"() {
+	void "query spectra.metadata with #clazz #oper #value (max #size results)"() {
 
 		expect:
 		def res = metaDataQueryService.query([(clazz): [(oper): value]])
@@ -70,7 +70,7 @@ class MetaDataQueryServiceTest extends IntegrationSpec {
 	}
 
 	@Unroll
-	def "query metadata with limit of #limit"() {
+	void "query metadata with limit of #limit"() {
 
 		expect:
 		def res = metaDataQueryService.query([(clazz): [(oper1): value]], [max: limit])
@@ -88,36 +88,34 @@ class MetaDataQueryServiceTest extends IntegrationSpec {
 
 
 	@Unroll
-	def "tests the validation method with valid queries"() {
+	void "the validation should pass with #querie"() {
 		expect:
 		def res = metaDataQueryService.validateQuery(query)
 
 		assert res != null
 		assert res.success
 
-		log.debug("RESULT: ${res}\n${res.properties.toMapString()}")
 		assert res[0] == null
 
 		where:
 		_ | query
 		_ | [name:[eq:'ms type']]
-		_ | [name:"ms type"]
 	}
 
 	@Unroll
-	def "tests the validation method with invalid queries"() {
+	void "the validation should fail with #query"() {
 		expect:
 		def res = metaDataQueryService.validateQuery(query)
 
 		assert res != null
 		assert !res.success
 
-		log.debug("RESULT: $res\n${res[0].message}")
 		assert !res[0].message.isEmpty()
 		assert res[0].message.contains(error)
 
 		where:
 		query               | error
+		[name:"ms type"]    | "instance failed to match exactly one schema (matched 10 out of 10)"
 		[value:[eq:'MS2']]  | "requires [\"name\"]; missing: [\"name\"]"
 		[value:"MS2"]       | "requires [\"name\"]; missing: [\"name\"]"
 		[category:43]       | "instance failed to match exactly one schema"

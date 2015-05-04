@@ -4,12 +4,14 @@ import grails.test.spock.IntegrationSpec
 import moa.Tag
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.json.JSONArray
+import spock.lang.Ignore
 
 import static org.springframework.http.HttpStatus.*
 
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
+@Ignore
 class TagControllerSpec extends IntegrationSpec {
 	Logger logger = Logger.getLogger(this.class)
 	TagController controller = new TagController()
