@@ -24,24 +24,37 @@ class SpectraQueryController {
         def json = request.JSON
 
         def result = []
-        if (json.query) {
-            log.info("received query: " + json.query)
-            result = spectraQueryService.query(json.query, params);
-            json = json.query;
+        log.info(json as JSON)
+        log.info(json as Map)
+
+        def valid = spectraQueryService.validateQuery(json as Map)
+
+        if(valid.success) {
+
+            if (json.query) {
+                log.info("received query: " + json.query)
+                result = spectraQueryService.query(json.query, params);
+                json = json.query;
+            } else {
+                result = spectraQueryService.query(json, params);
+            }
+
+            switch (json.format) {
+                case "msp":
+                    for (Spectrum s : result) {
+                        render spectraConversionService.convertToMsp(s)
+
+                    }
+                    break
+                default:
+                    render(result as JSON)
+            }
         } else {
-            result = spectraQueryService.query(json, params);
+            StringBuilder res = new StringBuilder()
+            valid.each { res.append(it.message).append("\n") }
+            render(status: 400, text: res)
         }
 
-        switch (json.format) {
-            case "msp":
-                for (Spectrum s : result) {
-                    render spectraConversionService.convertToMsp(s)
-
-                }
-                break
-            default:
-                render(result as JSON)
-        }
     }
 
     /**

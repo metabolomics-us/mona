@@ -7,6 +7,7 @@
             <tr>
                 <th>Name</th>
                 <th>InChIKey</th>
+                <th>InChI Code</th>
                 <th class="text-center">Structure</th>
             </tr>
             </thead>
@@ -18,6 +19,7 @@
                     </ul>
                 </td>
                 <td><code>{{compound.inchiKey}}</code></td>
+                <td><code>{{compound.inchicode}}</code></td>
                 <td class="text-center">
                     <div chemical-sketcher readonly="true" width="100" height="100" id="chemSketch_{{compound.id}}"
                          ng-model="compound"></div>
