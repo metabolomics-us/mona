@@ -187,6 +187,21 @@ log4j = {
 
             info file: ['grails.app']
 
+//            error stdout:
+//                    'grails.app'
+
+
+            debug 'util.chemical'
+            debug 'curation'
+
+            debug 'grails.app'
+            debug 'moa'
+            //debug 'grails.plugin.cache'
+
+
+            info 'org.hibernate.SQL'
+            info 'org.hibernate.type.descriptor.sql.BasicBinder'
+
             error stdout: ['grails.app']
         }
     }
