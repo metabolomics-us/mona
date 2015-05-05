@@ -113,10 +113,12 @@
         "metadata": { "$ref": "#/definitions/metadata" }
       },
       "anyOf": [
+        {},
         { "required": ["name"] },
         { "required": ["inchiKey"] },
         { "required": ["metadata"] }
-      ]
+      ],
+      "additionalProperties": false
     },
 
     "metadata": {
