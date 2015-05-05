@@ -3,15 +3,7 @@
  */
 'use strict';
 
-moaControllers.SubmitterProfileController = function ($scope, $rootScope, $location, AuthenticationService, SpectraQueryBuilderService) {
-    $scope.isLoggedIn = function() {
-        return AuthenticationService.isLoggedIn();
-    };
-
-    $scope.login = function() {
-        $rootScope.$broadcast('auth:login');
-    };
-
+moaControllers.SubmitterProfileController = function ($scope, $location, AuthenticationService, SpectraQueryBuilderService) {
     $scope.$on('auth:login-success', function(event, data, status, headers, config) {
         AuthenticationService.getCurrentUser().then(function(data) {
             $scope.user = data;
