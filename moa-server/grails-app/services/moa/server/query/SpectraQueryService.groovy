@@ -151,13 +151,13 @@ class SpectraQueryService {
         //our defined execution parameters
         def executionParams = [:]
 
-        (queryOfDoomWhere, queryOfDoomJoins, errors) = handleJsonCompoundField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonCompoundField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
-        (queryOfDoomWhere, queryOfDoomJoins, errors) = handleSpectraJsonMetadataFields(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (queryOfDoomWhere, queryOfDoomJoins) = handleSpectraJsonMetadataFields(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
-        (queryOfDoomWhere, queryOfDoomJoins, errors) = handleJsonTagsField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonTagsField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
-        (queryOfDoomWhere, queryOfDoomJoins, errors) = handleJsonSubmitterField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonSubmitterField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
         //assemble the query of doom
         queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
@@ -165,7 +165,7 @@ class SpectraQueryService {
         log.debug("generated query: \n\n${queryOfDoom}\n")
         log.debug("parameter matrix:\n\n${executionParams}\n\n")
 
-        return [queryOfDoom, executionParams, errors]
+        return [queryOfDoom, executionParams]
     }
 
     @Transactional
@@ -219,9 +219,7 @@ class SpectraQueryService {
             }
         }
 
-        List errors = []
-
-        [queryOfDoomWhere, queryOfDoomJoins, errors]
+        [queryOfDoomWhere, queryOfDoomJoins]
     }
 
     /**
@@ -260,9 +258,7 @@ class SpectraQueryService {
             }
         }
 
-        List errors = []
-
-        [queryOfDoomWhere, queryOfDoomJoins, errors]
+        [queryOfDoomWhere, queryOfDoomJoins]
 
     }
 
@@ -298,9 +294,7 @@ class SpectraQueryService {
             }
         }
 
-        List errors = []
-
-        [queryOfDoomWhere, queryOfDoomJoins, errors]
+        [queryOfDoomWhere, queryOfDoomJoins]
     }
 
     /**
@@ -397,9 +391,7 @@ class SpectraQueryService {
             }
         }
 
-        def errors = []
-
-        [queryOfDoomWhere, queryOfDoomJoins, errors]
+        [queryOfDoomWhere, queryOfDoomJoins]
     }
 
     /**
@@ -500,14 +492,23 @@ class SpectraQueryService {
      * @return a ProcessingReport object containing the result of the validation
      * and possible error messages explaining why the validation failed.
      */
-    def final ProcessingReport validateQuery(Map query) {
+    def final ProcessingReport validateQuery(Map query, String type = 'search') {
         log.info("Validating: $query")
 
         def jsonObj = query
 
         def jsonString = new JsonBuilder(jsonObj).toString()
 
-        def qsFile = new File("schemas/QuerySchema.json")
+        def qsFile
+
+        switch (type) {
+            case 'similarity':
+                qsFile = new File("schemas/SimilarityQuerySchema.json")
+                break;
+            case 'search':
+            default:
+                qsFile = new File("schemas/QuerySchema.json")
+        }
 
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
         final JsonSchema schema = factory.getJsonSchema(qsFile.toURI().toString().concat("/"))

@@ -151,29 +151,29 @@ class SpectraQueryServiceSpec extends IntegrationSpec {
 
 		where:
 		oper1 | oper2   | clazz  | value     | size | clazz2  | val2  | total
-		"eq" | "eq"    | "name" | "ms type" | 5 | "value" | "MS2" | 1445
-		"eq" | "like"  | "name" | "ms type" | 5 | "value" | "MS2" | 1445
-		"eq" | "ilike" | "name" | "ms type" | 5 | "value" | "MS2" | 1445
+		"eq" | "eq"    | "name" | "ms type" | 5 | "value" | "MS2" | 1447
+		"eq" | "like"  | "name" | "ms type" | 5 | "value" | "MS2" | 1447
+		"eq" | "ilike" | "name" | "ms type" | 5 | "value" | "MS2" | 1447
 		"eq"  | "gt"    | "name" | "ms type" | 0    | "value" | "MS2" | 0
 		"eq"  | "lt"    | "name" | "ms type" | 5    | "value" | "MS2" | 1641
-		"eq" | "ge"    | "name" | "ms type" | 5 | "value" | "MS2" | 1445
-		"eq" | "le"    | "name" | "ms type" | 5 | "value" | "MS2" | 3086
+		"eq" | "ge"    | "name" | "ms type" | 5 | "value" | "MS2" | 1447
+		"eq" | "le"    | "name" | "ms type" | 5 | "value" | "MS2" | 3088
 		"eq"  | "ne"    | "name" | "ms type" | 5    | "value" | "MS2" | 1641
 //		"eq"    | "in"    | "name"     | "ms type"             | 5    | "value"    | "MS2"      | 5
 		"eq" | "eq" | "category" | "spectral properties" | 5 | "id" | 64 | 1401
-		"eq" | "gt" | "category" | "spectral properties" | 5 | "id" | 64 | 3216
+		"eq" | "gt" | "category" | "spectral properties" | 5 | "id" | 64 | 3218
 		"eq" | "lt" | "category" | "spectral properties" | 5 | "id" | 346269 | 1401
-		"eq" | "ge" | "category" | "spectral properties" | 5 | "id" | 64 | 3660
+		"eq" | "ge" | "category" | "spectral properties" | 5 | "id" | 64 | 3662
 		"eq" | "le" | "category" | "spectral properties" | 5 | "id" | 64 | 1401
-		"eq" | "ne" | "category" | "spectral properties" | 5 | "id" | 64 | 3216
+		"eq" | "ne" | "category" | "spectral properties" | 5 | "id" | 64 | 3218
 //		"eq"    | "in"    | "category" | "spectral properties" | 5    | "id"       | 64         | 5
-		"eq" | "eq" | "id" | 58 | 5 | "name" | "ms type" | 3086
-		"eq" | "like" | "id" | 58 | 5 | "name" | "ms type" | 3086
-		"eq" | "ilike" | "id" | 58 | 5 | "name" | "ms type" | 3086
+		"eq" | "eq" | "id" | 58 | 5 | "name" | "ms type" | 3088
+		"eq" | "like" | "id" | 58 | 5 | "name" | "ms type" | 3088
+		"eq" | "ilike" | "id" | 58 | 5 | "name" | "ms type" | 3088
 		"eq" | "gt" | "id" | 58 | 0 | "name" | "ms type" | 0
 		"eq" | "lt" | "id" | 58 | 0 | "name" | "ms type" | 0
-		"eq" | "ge" | "id" | 58 | 5 | "name" | "ms type" | 3086
-		"eq" | "le" | "id" | 58 | 5 | "name" | "ms type" | 3086
+		"eq" | "ge" | "id" | 58 | 5 | "name" | "ms type" | 3088
+		"eq" | "le" | "id" | 58 | 5 | "name" | "ms type" | 3088
 		"eq" | "ne" | "id" | 58 | 0 | "name" | "ms type" | 0
 	}
 
@@ -228,7 +228,6 @@ class SpectraQueryServiceSpec extends IntegrationSpec {
 		assert res != null
 		assert res.success
 
-		log.debug("RESULT: ${res}\n${res.properties.toMapString()}")
 		assert res[0] == null
 
 		where:

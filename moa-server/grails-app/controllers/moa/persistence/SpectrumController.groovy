@@ -30,8 +30,7 @@ class SpectrumController extends RestfulController<Spectrum> {
     protected Map getParametersToBind() {
 
         if (request.JSON) {
-            params.putAll(
-                    request.JSON)
+            params.putAll(request.JSON)
         }
 
         params

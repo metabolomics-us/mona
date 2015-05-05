@@ -4,17 +4,32 @@
   "type": "object",
   "properties": {
     "spectra": {
-      "type": "string"
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "(?:\\d+:\\d+){1,}(?: \\d+:\\d+)+"
+        },
+        {"type": "integer"}
+      ]
     },
     "minSimilarity": {
-      "type": "number"
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000
     },
     "commonIonCount": {
-      "type": "integer"
+      "type": "integer",
+      "minimum": 0
+    },
+    "maxHits": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 25
     }
   },
   "required": [
     "spectra",
     "minSimilarity"
-  ]
+  ],
+  "additionalProperties": false
 }

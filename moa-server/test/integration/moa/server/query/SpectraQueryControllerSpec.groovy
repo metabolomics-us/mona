@@ -3,7 +3,8 @@ package moa.server.query
 import grails.test.spock.IntegrationSpec
 import org.apache.log4j.Logger
 import org.springframework.http.HttpMethod
-import spock.lang.*
+import spock.lang.Shared
+import spock.lang.Unroll
 
 /**
  * Created by diego on 4/7/15.
@@ -56,7 +57,6 @@ class SpectraQueryControllerSpec extends IntegrationSpec {
 		expect:
 		callRest(query)
 
-		log.debug "RESPONSE: \n${controller.response.contentAsString}\n"
 		controller.response.status == 400
 		controller.response.contentAsString.contains(error)
 
