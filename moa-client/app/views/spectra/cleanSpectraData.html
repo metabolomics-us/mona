@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h3><i class="fa fa-pencil-square-o"></i> Mass Spectra Cleaner</h3>
+        <h3><i class="fa fa-pencil-square-o"></i> Mass Spectra Cleaner &amp; Uploader</h3>
 
         <div class="h5">
             Upload an MSP file and dynamically modify the mass spectra and metadata
@@ -63,7 +63,7 @@
                                            ng-model="ionCuts.nIons"
                                            placeholder="Number of ions"
                                            class="form-control" />
-                                    <span class="help-block">Keeps the <code>n</code> ions with the highest intensity</span>
+                                    <span class="help-block">Keeps at most the <code>n</code> ions with the highest intensity</span>
                                 </div>
                             </div>
 
@@ -78,22 +78,33 @@
                                     <span class="help-block">
                                         Removes all ions below the given percentage of the base peak intensity (where
                                         the value <code>0</code> will retain all ions while the value <code>100</code>
-                                        will retain only the base peak. If used in conjunction with the
-                                        top <code>n</code> Ions cut, the trim will yield at most <code>n</code> ions.
+                                        will retain only the base peak.
                                     </span>
                                 </div>
                             </div>
 
                             <div>
-                                <a class="btn btn-warning" ng-click="resetIonCuts()">Reset ions</a>
-                                <a class="btn btn-primary" ng-click="performIonCuts()">Trim ions</a>
+                                <div class="col-sm-3 form-group"><strong>Absolute Abundance Cut</strong></div>
+                                <div class="col-sm-9 form-group">
+                                    <input type="number"
+                                           ng-model="ionCuts.absAbundance"
+                                           placeholder="Absolute abundance"
+                                           class="form-control" />
+                                    <span class="help-block">Removes all ions below the given absolute abundance</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <a class="btn btn-warning" ng-click="resetIonCuts()">Reset Spectrum</a>
+                                <a class="btn btn-primary" ng-click="performIonCuts()">Trim Spectrum</a>
+                                <a class="btn btn-primary" ng-click="performAllIonCuts()">Trim <strong>All</strong> Spectra</a>
                             </div>
                         </div>
                     </tab>
 
                     <tab heading="Ion Table">
                         <div style="height: 400px; overflow: auto; margin-top: 10px;">
-                            <table class="table">
+                            <table class="table" ng-if="showIonTable">
                                 <thead>
                                 <tr>
                                     <th>&nbsp;</th>
@@ -104,7 +115,7 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="ion in currentSpectrum.ions | orderBy:ionTableSort:ionTableSortReverse">
-                                    <td><input type="checkbox" ng-model="ion.selected" ng-click="updateCurrentSpectrum()" /></td>
+                                    <td><input type="checkbox" ng-model="ion.selected" /></td>
                                     <td>{{ion.ion | number : 4}}</td>
                                     <td>{{ion.intensity | number : 4}}</td>
                                     <td>{{ion.annotation}}</td>
