@@ -4,25 +4,33 @@
 'use strict';
 
 moaControllers.CleanSpectraDataController = function ($scope, UploadLibraryService) {
+    // Loaded spectra data/status
     $scope.spectraLoaded = 0;
     $scope.currentSpectrum;
     $scope.spectra = [];
     $scope.spectraIndex = 0;
 
+    // Paramaters provided for trimming spectra
     $scope.ionCuts = {};
+
 
     /*
      * Handle switching between spectra
      */
-    $scope.previousSpectrum = function() {
-        $scope.spectraIndex = ($scope.spectraIndex + $scope.spectra.length - 1) % $scope.spectra.length;
+    var setSpectrum = function(index) {
+        $scope.spectraIndex = index;
         $scope.currentSpectrum = $scope.spectra[$scope.spectraIndex];
+        $scope.showIonTable = $scope.currentSpectrum.ions.length < 500;
+    };
+
+    $scope.previousSpectrum = function() {
+        setSpectrum(($scope.spectraIndex + $scope.spectra.length - 1) % $scope.spectra.length);
     };
 
     $scope.nextSpectrum = function() {
-        $scope.spectraIndex = ($scope.spectraIndex + 1) % $scope.spectra.length;
-        $scope.currentSpectrum = $scope.spectra[$scope.spectraIndex];
+        setSpectrum(($scope.spectraIndex + $scope.spectra.length + 1) % $scope.spectra.length);
     };
+
 
     /**
      * Sort order for the ion table - default m/z ascending
@@ -86,8 +94,8 @@ moaControllers.CleanSpectraDataController = function ($scope, UploadLibraryServi
 
                     $scope.$apply(function() {
                         $scope.spectra.push(spectrum);
-                        $scope.currentSpectrum = $scope.spectra[0];
                         $scope.spectraLoaded = 2;
+                        setSpectrum(0);
                     });
                 }, origin);
             },
@@ -96,35 +104,48 @@ moaControllers.CleanSpectraDataController = function ($scope, UploadLibraryServi
     };
 
 
-    $scope.performIonCuts = function() {
+    $scope.performIonCuts = function(index) {
+        if (angular.isUndefined(index)) {
+            index = $scope.spectraIndex;
+        }
+
         var cutIons = [];
         var retainedIons = [];
 
-        if(angular.isDefined($scope.ionCuts.basePeak)) {
-            var limit = $scope.ionCuts.basePeak * $scope.currentSpectrum.basePeak / 100;
+        var limit = 0;
 
-            for(var i = 0; i < $scope.currentSpectrum.ions.length; i++) {
-                if($scope.currentSpectrum.ions[i].intensity < limit) {
-                    $scope.currentSpectrum.ions[i].selected = false;
-                    cutIons.push(i);
-                } else {
-                    retainedIons.push(i);
-                }
-            }
-        } else {
-            for(var i = 0; i < $scope.currentSpectrum.ions.length; i++) {
+        if (angular.isDefined($scope.ionCuts.absAbundance)) {
+            limit = $scope.ionCuts.absAbundance;
+        }
+
+        if (angular.isDefined($scope.ionCuts.basePeak)) {
+            var basePeakCut = $scope.ionCuts.basePeak * $scope.spectra[index].basePeak / 100
+            limit = basePeakCut > limit ? basePeakCut : limit;
+        }
+
+        for(var i = 0; i < $scope.spectra[index].ions.length; i++) {
+            if($scope.spectra[index].ions[i].intensity < limit) {
+                $scope.spectra[index].ions[i].selected = false;
+                cutIons.push(i);
+            } else {
                 retainedIons.push(i);
             }
         }
 
-        if(angular.isDefined($scope.ionCuts.nIons) && $scope.currentSpectrum.ions.length - cutIons.length > $scope.ionCuts.nIons) {
+        if(angular.isDefined($scope.ionCuts.nIons) && $scope.spectra[index].ions.length - cutIons.length > $scope.ionCuts.nIons) {
             retainedIons.sort(function(a, b) {
-                return $scope.currentSpectrum.ions[b].intensity - $scope.currentSpectrum.ions[a].intensity;
+                return $scope.spectra[index].ions[b].intensity - $scope.spectra[index].ions[a].intensity;
             });
 
             for(var i = $scope.ionCuts.nIons; i < retainedIons.length; i++) {
-                $scope.currentSpectrum.ions[retainedIons[i]].selected = false;
+                $scope.spectra[index].ions[retainedIons[i]].selected = false;
             }
+        }
+    };
+
+    $scope.performAllIonCuts = function() {
+        for(var i = 0; i < $scope.spectra.length; i++) {
+            $scope.performIonCuts(i);
         }
     };
 
