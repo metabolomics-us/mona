@@ -1,4 +1,10 @@
 package moa.server.query
+
+import com.github.fge.jackson.JsonLoader
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
+import groovy.json.JsonBuilder
 import grails.transaction.Transactional
 import moa.MetaDataValue
 
@@ -40,7 +46,7 @@ class MetaDataQueryService {
     @Transactional
     def query(def json, int limit = -1, int offset = -1) {
 
-        log.info("received query: ${json}")
+        log.info("received query (${json.class?.canonicalName}): ${json}")
 
         def params = [:]
 
@@ -56,7 +62,7 @@ class MetaDataQueryService {
         /**
          * if only one field is specifed
          */
-        if(json.property != null){
+	    if (json.property != null && json.property != []) {
             log.debug("add property limitation to query: ${json.property}")
             field = "m.${json.property}"
         }
@@ -99,7 +105,7 @@ class MetaDataQueryService {
      * @param index current join in case we have more than 1
      * @return
      */
-    protected String buildMetadataQueryString(String whereQuery, Map current, executionParams, String metaDataTableName, String valueTable, String categoryTable, int index = 0) {
+    protected String buildMetadataQueryString(String whereQuery, Map current, Map executionParams, String metaDataTableName, String valueTable, String categoryTable, int index = 0) {
 
         whereQuery = addRequiredAnd(whereQuery)
 
@@ -185,6 +191,10 @@ class MetaDataQueryService {
                             def impl = estimateMetaDataValueImpl(current.value.between[0].toString())
 
                             (whereQuery, executionParams) = buildComparisonField(whereQuery, impl.name.toString(), [estimateMetaDataValueImpl(current.value.between[0]).value, estimateMetaDataValueImpl(current.value.between[1]).value], key, executionParams, index, valueTable)
+                        }
+                        // and unit inside value
+                        else if (key.equals("unit")) {
+	                        // implemented below -- code duplication warning!!!
                         } else {
                             def impl = estimateMetaDataValueImpl(current.value."${key}".toString())
 
@@ -213,7 +223,7 @@ class MetaDataQueryService {
         if (current.unit != null) {
             whereQuery = addRequiredAnd(whereQuery)
 
-            //short form
+	        //long form
             if (current.unit instanceof Map) {
                 current.unit.keySet().each { String key ->
                     if (current.unit."${key}") {
@@ -221,7 +231,7 @@ class MetaDataQueryService {
                     }
                 }
             }
-            //long form
+            //short form
             else {
                 (whereQuery, executionParams) = buildComparisonField(whereQuery, "unit", [current.unit], "eq", executionParams, index, valueTable)
             }
@@ -279,5 +289,27 @@ class MetaDataQueryService {
         }
           */
         return result;
+    }
+
+    /**
+     * checks the json query string against a schema
+     * @param jsonObj map containing the json object
+     * @return a ProcessingReport object containing the result of the validation
+     * and possible error messages explaining why the validation failed.
+     */
+    def final ProcessingReport validateQuery(Map query) {
+        def jsonObj = query
+
+        def jsonString = new JsonBuilder(jsonObj).toString()
+
+        def qsFile = new File("schemas/QuerySchema.json")
+
+        final JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+        final JsonSchema schema = factory.getJsonSchema(qsFile.toURI().toString().concat("#/definitions/metadata/items/0"))
+
+        ProcessingReport report
+        report = schema.validate(JsonLoader.fromString(jsonString))
+
+		return report
     }
 }

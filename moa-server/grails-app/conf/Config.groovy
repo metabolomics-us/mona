@@ -77,25 +77,25 @@ environments {
         grails.logging.jul.usebridge = true
         grails.converters.default.pretty.print = true
 
-        logdirectory = "/Volumes/ras/"
+	    logdirectory = "/var/log/mona/"
     }
     test {
         grails.logging.jul.usebridge = true
         grails.converters.default.pretty.print = true
 
-        logdirectory = "/Volumes/ras/"
+	    logdirectory = "/var/log/mona/"
     }
     lipid{
         grails.converters.default.pretty.print = true
 
         logdirectory = "/Volumes/ras/"
+	    logdirectory = "/var/log/mona/"
     }
     production {
         grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
 
-        //logdirectory = "/var/log/mona/"
-        logdirectory = "/Volumes/ras/"
+        logdirectory = "/var/log/mona/"
     }
 }
 
@@ -105,7 +105,8 @@ log4j = {
     //
     appenders {
         console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.ERROR
-        file name: 'file', file: "${logdirectory}mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.INFO
+
+        file name: 'file', file: "${logdirectory}mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'error', file: "${logdirectory}monaError.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.ERROR
 
         file name: 'monaImportStatistics', file: "${logdirectory}monaImport.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
@@ -120,7 +121,6 @@ log4j = {
         warn 'stdout'
         debug 'file'
         error 'error'
-
     }
 
     //info file: 'grails.app'
@@ -161,8 +161,10 @@ log4j = {
 
     environments {
         test {
-            debug stdout:
-                    'grails.app'
+	        debug 'stdout', additivity: false
+            debug stdout: ['grails.app', 'grails.app.services', 'util.query', 'moa.server.query'], additivity: false
+
+	        error 'org.springframework.security', 'grails.app.resourceMappers'
         }
 
         development {

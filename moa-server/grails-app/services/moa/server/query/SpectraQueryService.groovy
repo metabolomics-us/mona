@@ -6,7 +6,7 @@ import moa.Spectrum
 import moa.Tag
 import moa.server.statistics.StatisticsService
 import org.hibernate.QueryException
-import org.springframework.cache.annotation.Cacheable
+import util.query.QueryHelper
 
 class SpectraQueryService {
 
@@ -93,7 +93,7 @@ class SpectraQueryService {
      * @param json
      */
     @Transactional
-    def query(def json, int limit = -1, int offset = -1) {
+    def query(Map json, int limit = -1, int offset = -1) {
         log.info("received query: ${json}")
 
         long begin = System.currentTimeMillis()
@@ -108,7 +108,7 @@ class SpectraQueryService {
             params.offset = offset
         }
 
-        log.debug("pagination parameters: \n\n ${params}")
+//        log.debug("pagination parameters: \n\n ${params}")
 
         def queryOfDoom = null
         def executionParams = null
@@ -130,7 +130,7 @@ class SpectraQueryService {
      * @param json
      * @return
      */
-    private List generateFinalQuery(def json) {
+    private List generateFinalQuery(Map json) {
 
         //completed query string
         String queryOfDoom = "select distinct s from Spectrum s "
@@ -155,8 +155,8 @@ class SpectraQueryService {
         //assemble the query of doom
         queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
-        log.debug("generated query: \n\n${queryOfDoom}\n\n")
-        log.debug("parameter matrix:\n\n ${executionParams}")
+        log.debug("generated query: \n\n${queryOfDoom}\n")
+        log.debug("parameter matrix:\n\n${executionParams}\n\n")
 
         return [queryOfDoom, executionParams]
     }
@@ -173,7 +173,7 @@ class SpectraQueryService {
         }
 
         if (json == null) {
-            throw new Exception("your query needs to contain some parameters!")
+	        throw new QueryException("your query needs to contain some parameters!")
         }
 
 
@@ -223,8 +223,8 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonTagsField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
-        //handling tags
+    private List handleJsonTagsField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
+//handling tags
         if (json.tags) {
 
             if (json.tags.length() > 0) {
@@ -235,10 +235,10 @@ class SpectraQueryService {
                 json.tags.eachWithIndex { current, index ->
 
                     //add our tag join
-                    queryOfDoomJoins += " left join s.tags as t_${index}"
+                    queryOfDoomJoins += " left join s.links as t_${index}"
 
                     //build our specific query
-                    queryOfDoomWhere += " t_${index}.text = :tag_${index}"
+                    queryOfDoomWhere += " t_${index}.tag.text = :tag_${index}"
 
                     executionParams.put("tag_${index}".toString(), current.toString());
 
@@ -263,7 +263,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleSpectraJsonMetadataFields(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+    private List handleSpectraJsonMetadataFields(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
         //if we have a metadata object specified
         if (json.metadata) {
 
@@ -297,7 +297,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonCompoundField(json, String queryOfDoomWhere, String queryOfDoomJoins, LinkedHashMap executionParams) {
+    private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
         log.info("incomming query in compound method:\n\n$queryOfDoomWhere\n\n")
 
         //if we have a compound
@@ -305,29 +305,17 @@ class SpectraQueryService {
 
             //TODO NEEDS TO BE MORE DYNAMIC
 
-            if (json.compound.name) {
+	        if (json.compound.name) {
 
                 queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
                 queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
+                queryOfDoomJoins += " left join s.predictedCompound.names as pcn"
 
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                //if we have a like condition specified
-                if (json.compound.name.like) {
-                    queryOfDoomWhere += "(bcn.name like :compoundName or ccn.name like :compoundName)"
-                    executionParams.compoundName = "%${json.compound.name.like}%"
-                }
-
-                //if we have an equals condition specified
-                else if (json.compound.name.eq) {
-                    queryOfDoomWhere += "(bcn.name = :compoundName or ccn.name = :compoundName)"
-                    executionParams.compoundName = json.compound.name.eq
-
-                }
-                //well we don't know this, do we?
-                else {
-                    throw new QueryException("invalid query term: ${json.compound.name}")
-                }
+		        (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "bcn")
+		        (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "ccn")
+		        (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "pcn")
             }
 
             //if we have an inchi key
@@ -339,15 +327,9 @@ class SpectraQueryService {
 
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                if (json.compound.inchiKey.eq) {
-                    queryOfDoomWhere += "(bc.inchiKey = :inchiKey or cc.inchiKey = :inchiKey or pc.inchiKey = :inchiKey)"
-                    executionParams.inchiKey = json.compound.inchiKey.eq
-                } else if (json.compound.inchiKey.like) {
-                    queryOfDoomWhere += "(bc.inchiKey like :inchiKey or cc.inchiKey like :inchiKey or pc.inchiKey like :inchiKey)"
-                    executionParams.inchiKey = "%${json.compound.inchiKey.like}%"
-                } else {
-                    throw new QueryException("invalid query term: ${json.compound.inchiKey}")
-                }
+	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "bc")
+	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "cc")
+	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "pc")
 
             }
 
@@ -357,18 +339,24 @@ class SpectraQueryService {
                 queryOfDoomJoins += " left join s.biologicalCompound as bc"
                 queryOfDoomJoins += " left join s.chemicalCompound as cc"
                 queryOfDoomJoins += " left join s.predictedCompound as pc"
+
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                if (json.compound.id) {
-                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
-                    executionParams.compund_id = json.compound.id as long
-                } else if (json.compound.id.eq) {
-                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
-                    executionParams.compund_id = json.compound.id.eq as long
+	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "bc")
+	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "cc")
+	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "pc")
 
-                } else {
-                    throw new QueryException("invalid query term: ${json.compound.id}")
-                }
+//	            if (json.compound.id && !(json.compound.id instanceof Map)) {
+//                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
+//                    executionParams.compund_id = json.compound.id as long
+//                } else if (json.compound.id.eq) {
+//                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
+//                    executionParams.compund_id = json.compound.id.eq as long
+//
+//                } else {
+////                    throw new QueryException("invalid query term: ${json.compound.id}")
+//		            log.error("whats this dude? ${json.compound.id}")
+//                }
 
             }
 
