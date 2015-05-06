@@ -27,30 +27,7 @@ environments {
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
 //	        url = "jdbc:postgresql://localhost:5432/mona-test"
 
-            properties {
 
-                jmxEnabled = true
-                initialSize = 5
-
-                //quartz threads + 10!
-                maxActive = 50
-                minIdle = 5
-                maxIdle = 25
-                maxWait = 10000
-                maxAge = 10 * 6000
-                timeBetweenEvictionRunsMillis = 5000
-                minEvictableIdleTimeMillis = 60000
-                validationQuery = "SELECT 1"
-                validationQueryTimeout = 3
-                validationInterval = 15000
-                testOnBorrow = true
-                testWhileIdle = true
-                testOnReturn = false
-                jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
-                //defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
-                removeAbandoned = true
-                logAbandoned = true
-            }
         }
 
 
@@ -61,7 +38,7 @@ environments {
 
         dataSourceQuartz {
             dbCreate = "update"
-
+              /*
             properties {
 
                 jmxEnabled = true
@@ -86,6 +63,8 @@ environments {
                 removeAbandoned = true
                 logAbandoned = true
             }
+
+            */
 
         }
 
