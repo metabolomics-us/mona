@@ -15,13 +15,11 @@ class Tag implements Serializable{
         version false
     }
 
-    static belongsTo = [owner:SupportsMetaData]
-
+    static hasMany = [links:TagLink]
     /**
      * name of tag
      */
     String text
-
 
     /**
      * is this tag being applied from the rule based machine

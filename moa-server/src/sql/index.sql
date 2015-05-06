@@ -36,9 +36,3 @@ CREATE INDEX supports_meta_data_tag_index
   CREATE INDEX "ions_spectrum_id_index"
 	ON "public"."ion"("spectrum_id");
 
-
-
- CREATE INDEX "index_supports_metadata_tag_id"
-	ON "public"."supports_meta_data_tag"("supports_meta_data_tags_id");
-
-
