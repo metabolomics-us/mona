@@ -14,5 +14,19 @@ class SupportsMetaData {
 
     Date dateCreated
     Date lastUpdated
-    static hasMany = [metaData: MetaDataValue,tags:Tag]
+    static hasMany = [metaData: MetaDataValue,links:TagLink]
+
+    /**
+     * little helper method
+     * @return
+     */
+    Collection<Tag> getTags(){
+        def tags = []
+
+        links.each {
+            tags.add(it.tag)
+        }
+
+        Collections.unmodifiableCollection(tags)
+    }
 }
