@@ -2,6 +2,7 @@ package moa.persistence
 
 import grails.test.spock.IntegrationSpec
 import moa.Spectrum
+import org.junit.Ignore
 
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
@@ -22,6 +23,7 @@ class SpectrumControllerSpec extends IntegrationSpec {
         }
     }
 
+	@Ignore
     void "define a new spectrum"() {
 
         when:

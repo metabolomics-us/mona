@@ -1,0 +1,170 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tag": {
+      "id": "tag",
+      "title": "Tag Schema",
+      "name": "tag",
+      "type": "object",
+      "properties": {
+        "text": {"type": "string"},
+        "ruleBased": {"type": "boolean"}
+      },
+      "required": ["text"],
+      "additionalProperties": false
+    },
+    "metaData": {
+      "id": "metaData",
+      "name": "metaData",
+      "title": "MetaData Schema",
+      "type": "object",
+      "properties": {
+        "category": {"type": "string"},
+        "computed": {"type": "boolean"},
+        "name": {"type": "string"},
+        "suspect": {"type": "boolean"},
+        "reasonForSuspicion": {"type": "string"},
+        "type": {"type": "string"},
+        "unit": {
+          "anyOf": [
+            {"type": "string"},
+            {"type": "null"}
+          ]
+        },
+        "value": {"type": "string"},
+        "dateCreated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "compound": {
+      "id": "compound",
+      "title": "Compound Schema",
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer"},
+        "inchi": {
+          "type": "string",
+          "pattern": "^InChI=.*$"
+        },
+        "inchiKey": {
+          "type": "string",
+          "pattern": "[A-Z]{14}-[A-Z]{10}-[A-Z]"
+        },
+        "molFile": {"type": "string"},
+        "lastUpdated": {"$ref": "spectrum#/definitions/lastUpdated"},
+        "metaData": {"$ref": "spectrum#/definitions/metaData"},
+        "names": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "lastUpdated": {"$ref": "spectrum#/definitions/lastUpdated"},
+                "name": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          ],
+          "additionalItems": false
+        },
+        "tags": {
+          "type": "array",
+          "items": [
+            {"$ref": "spectrum#/definitions/tag"}
+          ]
+        },
+        "comments": {
+          "type": "array",
+          "items": [
+            {"text": {"type": "string"}}
+          ],
+          "additionalItems": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "authority": {
+      "id": "authority",
+      "name": "authority",
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer"},
+        "class": {"type": "string"},
+        "authority": {"type": "string"}
+      },
+      "aditionalProperties": false,
+      "required": [
+        "id",
+        "class",
+        "authority"
+      ]
+    },
+    "submitter": {
+      "id": "submitter",
+      "name": "submitter",
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer"},
+        "firstName": {"type": "string"},
+        "lastName": {"type": "string"},
+        "email": {"type": "string"},
+        "institution": {"type": "string"},
+        "accountExpired": {"type": "boolean"},
+        "accountEnabled": {"type": "boolean"},
+        "accountLocked": {"type": "boolean"},
+        "passwordExpired": {"type": "boolean"},
+        "authorities": {
+          "type": "array",
+          "items": [
+            {"$ref": "spectrum#/definitions/authority"}
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email"
+      ]
+    }
+  },
+  "id": "http://fiehnlab.ucdavis.edu/schema/Spectrum#",
+  "title": "Spectrum Schema",
+  "type": "object",
+  "properties": {
+    "id": {"type": "integer"},
+    "spectrum": {"type": "string"},
+    "biologicalCompound": {"$ref": "#/definitions/compound"},
+    "chemicalCompound": {"$ref": "#/definitions/compound"},
+    "predictedCompound": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/definitions/compound"}
+      ]
+    },
+    "metaData": {
+      "type": "array",
+      "items": [
+        {"$ref": "#/definitions/metaData"}
+      ]
+    },
+    "submitter": {"$ref": "#/definitions/submitter"},
+    "comments": {
+      "type": "array",
+      "items": [
+        {"type": "string"}
+      ]
+    }
+  },
+  "aditionalProperties": false
+}

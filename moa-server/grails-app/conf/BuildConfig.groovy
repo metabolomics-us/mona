@@ -13,7 +13,8 @@ grails.project.fork = [
         //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
 
         // configure settings for the test-app JVM, uses the daemon by default
-        test   : [maxMemory: 8192, minMemory: 64, debug: false, maxPerm: 256, daemon: true],
+//        test   : [maxMemory: 8192, minMemory: 64, debug: false, maxPerm: 256, daemon: true],
+        test: false,
         // configure settings for the run-app JVM
         run    : [maxMemory: 8192, minMemory: 8192, debug: false, maxPerm: 256, forkReserve: false],
         // configure settings for the run-war JVM
@@ -105,6 +106,9 @@ grails.project.dependency.resolution = {
         compile("java3d:vecmath:1.3.1")
         compile("net.sf.jni-inchi:jni-inchi:0.7")
 
+	    compile("com.fasterxml.jackson.core:jackson-core:2.3.2")
+	    compile("com.fasterxml.jackson.core:jackson-databind:2.3.0")
+	    compile("com.github.fge:json-schema-validator:2.2.6")
     }
 
     plugins {
@@ -132,7 +136,7 @@ grails.project.dependency.resolution = {
         // spring security
         compile ":spring-security-core:2.0-RC3"
         compile ":spring-security-rest:1.5.0.M1", {
-            excludes: 'spring-security-core'
+	        excludes "spring-security-core", "jackson-core"
         }
 
 

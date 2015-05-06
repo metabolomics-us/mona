@@ -1,0 +1,128 @@
+﻿{
+  "$schema": "http://mona.fiehnlab.ucdavis.edu/schema#",
+  "definitions": {
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tag": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "ruleBased": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "metaData": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "computed": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "suspect": {
+          "type": "boolean"
+        },
+        "reasonForSuspicion": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "dateCreated": {
+          "$ref": "#/definitions/lastUpdated"
+        },
+        "lastUpdated": {
+          "$ref": "#/definitions/lastUpdated"
+        }
+      }
+    }
+  },
+  "id": "http://fiehnlab.ucdavis.edu/schema/Compound#",
+  "title": "Compound Schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "inchi": {
+      "type": "string",
+      "pattern": "^InChI=.*$"
+    },
+    "inchiKey": {
+      "type": "string",
+      "pattern": "[A-Z]{14}-[A-Z]{10}-[A-Z]"
+    },
+    "molFile": {
+      "type": "string"
+    },
+    "lastUpdated": {
+      "$ref": "#/definitions/lastUpdated"
+    },
+    "metaData": {
+      "$ref": "#/definitions/metaData"
+    },
+    "names": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "lastUpdated": {
+              "$ref": "#/definitions/lastUpdated"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": [
+        {
+          "$ref": "#/definitions/tag"
+        }
+      ]
+    },
+    "comments": {
+      "type": "array",
+      "items": [
+        {
+          "text": {
+            "type": "string"
+          }
+        }
+      ],
+      "additionalItems": false
+    }
+  },
+  "additionalProperties": false
+}
