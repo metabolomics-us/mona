@@ -19,12 +19,12 @@
           </elementProp>
           <elementProp name="threads" elementType="Argument">
             <stringProp name="Argument.name">threads</stringProp>
-            <stringProp name="Argument.value">20</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="samples" elementType="Argument">
             <stringProp name="Argument.name">samples</stringProp>
-            <stringProp name="Argument.value">100</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="timeout" elementType="Argument">
@@ -285,6 +285,451 @@
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="spectra upload" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${samples}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <longProp name="ThreadGroup.start_time">1430940529000</longProp>
+        <longProp name="ThreadGroup.end_time">1430940529000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="submit single spectra for processing" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+  &quot;biologicalCompound&quot;: {&#xd;
+    &quot;dateCreated&quot;: &quot;2014-08-30T23:03:02Z&quot;,&#xd;
+    &quot;id&quot;: 509860,&#xd;
+    &quot;inchi&quot;: &quot;InChI=1S/C14H14N2O/c1-14(2,12-6-4-8-16-10-12)13(17)11-5-3-7-15-9-11/h3-10H,1-2H3&quot;,&#xd;
+    &quot;inchiKey&quot;: &quot;FJLBFSROUSIWMA-UHFFFAOYSA-N&quot;,&#xd;
+    &quot;lastUpdated&quot;: &quot;2014-08-30T23:03:02Z&quot;,&#xd;
+    &quot;metaData&quot;:&#xd;
+    [&#xd;
+      {&#xd;
+        &quot;category&quot;: &quot;computed&quot;,&#xd;
+        &quot;computed&quot;: true,&#xd;
+        &quot;name&quot;: &quot;molecule formula&quot;,&#xd;
+        &quot;suspect&quot;: false,&#xd;
+        &quot;type&quot;: &quot;string&quot;,&#xd;
+        &quot;unit&quot;: null,&#xd;
+        &quot;value&quot;: &quot;C14H14N2O&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;category&quot;: &quot;computed&quot;,&#xd;
+        &quot;computed&quot;: true,&#xd;
+        &quot;name&quot;: &quot;total exact mass&quot;,&#xd;
+        &quot;suspect&quot;: false,&#xd;
+        &quot;type&quot;: &quot;string&quot;,&#xd;
+        &quot;unit&quot;: null,&#xd;
+        &quot;value&quot;: &quot;226.110613068&quot;&#xd;
+      }&#xd;
+    ],&#xd;
+    &quot;molFile&quot;: &quot;\n OpenBabel10161406542D\n\n 17 18  0  0  0  0  0  0  0  0999 V2000\n    2.5981   -2.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2321   -2.8660    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7321   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7321   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2321   -1.1340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7321   -0.2679    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2321   -1.1340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2321   -1.1340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7321   -0.2679    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -0.2679    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1 14  1  0  0  0  0\n  2 14  1  0  0  0  0\n  3  5  2  0  0  0  0\n  3  7  1  0  0  0  0\n  4  6  2  0  0  0  0\n  4  8  1  0  0  0  0\n  5 11  1  0  0  0  0\n  6 12  1  0  0  0  0\n  7 15  2  0  0  0  0\n  8 16  2  0  0  0  0\n  9 11  2  0  0  0  0\n  9 15  1  0  0  0  0\n 10 12  2  0  0  0  0\n 10 16  1  0  0  0  0\n 11 13  1  0  0  0  0\n 12 14  1  0  0  0  0\n 13 14  1  0  0  0  0\n 13 17  2  0  0  0  0\nM  END\n&quot;,&#xd;
+    &quot;names&quot;:&#xd;
+    [&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;METYRAPONE&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;Metyrapone&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;2-METHYL-1,2-DI-3-PYRIDYL-1-PROPANONE&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;TYRAPONE&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;etyrapone&quot;&#xd;
+      }&#xd;
+    ],&#xd;
+    &quot;tags&quot;:&#xd;
+    [&#xd;
+    ]&#xd;
+  },&#xd;
+  &quot;chemicalCompound&quot;: {&#xd;
+    &quot;dateCreated&quot;: &quot;2014-08-30T23:03:02Z&quot;,&#xd;
+    &quot;id&quot;: 509860,&#xd;
+    &quot;inchi&quot;: &quot;InChI=1S/C14H14N2O/c1-14(2,12-6-4-8-16-10-12)13(17)11-5-3-7-15-9-11/h3-10H,1-2H3&quot;,&#xd;
+    &quot;inchiKey&quot;: &quot;FJLBFSROUSIWMA-UHFFFAOYSA-N&quot;,&#xd;
+    &quot;lastUpdated&quot;: &quot;2014-08-30T23:03:02Z&quot;,&#xd;
+    &quot;metaData&quot;:&#xd;
+    [&#xd;
+      {&#xd;
+        &quot;category&quot;: &quot;computed&quot;,&#xd;
+        &quot;computed&quot;: true,&#xd;
+        &quot;name&quot;: &quot;molecule formula&quot;,&#xd;
+        &quot;suspect&quot;: false,&#xd;
+        &quot;type&quot;: &quot;string&quot;,&#xd;
+        &quot;unit&quot;: null,&#xd;
+        &quot;value&quot;: &quot;C14H14N2O&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;category&quot;: &quot;computed&quot;,&#xd;
+        &quot;computed&quot;: true,&#xd;
+        &quot;name&quot;: &quot;total exact mass&quot;,&#xd;
+        &quot;suspect&quot;: false,&#xd;
+        &quot;type&quot;: &quot;string&quot;,&#xd;
+        &quot;unit&quot;: null,&#xd;
+        &quot;value&quot;: &quot;226.110613068&quot;&#xd;
+      }&#xd;
+    ],&#xd;
+    &quot;molFile&quot;: &quot;\n OpenBabel10161406542D\n\n 17 18  0  0  0  0  0  0  0  0999 V2000\n    2.5981   -2.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2321   -2.8660    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7321   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7321   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2321   -1.1340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7321   -0.2679    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2321   -1.1340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2321   -1.1340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7321   -0.2679    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -0.2679    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1 14  1  0  0  0  0\n  2 14  1  0  0  0  0\n  3  5  2  0  0  0  0\n  3  7  1  0  0  0  0\n  4  6  2  0  0  0  0\n  4  8  1  0  0  0  0\n  5 11  1  0  0  0  0\n  6 12  1  0  0  0  0\n  7 15  2  0  0  0  0\n  8 16  2  0  0  0  0\n  9 11  2  0  0  0  0\n  9 15  1  0  0  0  0\n 10 12  2  0  0  0  0\n 10 16  1  0  0  0  0\n 11 13  1  0  0  0  0\n 12 14  1  0  0  0  0\n 13 14  1  0  0  0  0\n 13 17  2  0  0  0  0\nM  END\n&quot;,&#xd;
+    &quot;names&quot;:&#xd;
+    [&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;METYRAPONE&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;Metyrapone&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;2-METHYL-1,2-DI-3-PYRIDYL-1-PROPANONE&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;TYRAPONE&quot;&#xd;
+      },&#xd;
+      {&#xd;
+        &quot;name&quot;: &quot;etyrapone&quot;&#xd;
+      }&#xd;
+    ],&#xd;
+    &quot;tags&quot;:&#xd;
+    [&#xd;
+    ]&#xd;
+  },&#xd;
+  &quot;comments&quot;: &quot;this spectra was added to the system, by utilizing a library upload.&quot;,&#xd;
+  &quot;dateCreated&quot;: &quot;2014-08-31T19:06:56Z&quot;,&#xd;
+  &quot;id&quot;: 545819,&#xd;
+  &quot;lastUpdated&quot;: &quot;2014-08-31T19:06:56Z&quot;,&#xd;
+  &quot;metaData&quot;:&#xd;
+  [&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;none&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;license&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;CC BY-NC-SA&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;none&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;authors&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;Ojima Y, Kakazu Y, Horai H, Soga T, Institute for Advanced Biosciences, Keio Univ.&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;none&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;instrument&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;LC/MSD Trap XCT, Agilent Technologies&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;focused ion&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;precursor m/z&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;227&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;none&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;origin&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;KO009045.txt&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;mass spectrometry&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;collision energy&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;0.65/0.65&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;none&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;exact mass&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;226.11061&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;mass spectrometry&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;ion mode&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;POSITIVE&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;annotation&quot;,&#xd;
+      &quot;computed&quot;: true,&#xd;
+      &quot;name&quot;: &quot;[M+H+NH4]+&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;122.3&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;focused ion&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;precursor m/z&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;121&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;focused ion&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;precursor type&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;[M+H]+&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;computed&quot;,&#xd;
+      &quot;computed&quot;: true,&#xd;
+      &quot;name&quot;: &quot;validation time&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: &quot;ms&quot;,&#xd;
+      &quot;value&quot;: &quot;781&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;mass spectrometry&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;ms type&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;MS3&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;none&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;instrument type&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;LC-ESI-IT&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;none&quot;,&#xd;
+      &quot;computed&quot;: false,&#xd;
+      &quot;name&quot;: &quot;data processing&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;WHOLE LC/MSD Trap Control and Data Analysis&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;category&quot;: &quot;computed&quot;,&#xd;
+      &quot;computed&quot;: true,&#xd;
+      &quot;name&quot;: &quot;validation date&quot;,&#xd;
+      &quot;suspect&quot;: false,&#xd;
+      &quot;type&quot;: &quot;string&quot;,&#xd;
+      &quot;unit&quot;: null,&#xd;
+      &quot;value&quot;: &quot;30-Oct-2014&quot;&#xd;
+    }&#xd;
+  ],&#xd;
+  &quot;predictedCompound&quot;: null,&#xd;
+  &quot;spectrum&quot;: &quot;79.1:0.996 80.1:0.061 92.0:0.104 93.1:10.106 94.0:0.047 103.1:0.049 106.1:100 107.1:1.42 107.7:0.019 109.0:0.069 110.1:0.022 120.1:0.431 121.1:1.295 122.3:0.145 153.1:0.018 158.1:0.02 187.2:0.021&quot;,&#xd;
+  &quot;submitter&quot;: {&#xd;
+    &quot;emailAddress&quot;: &quot;KO@MassBank.jp&quot;,&#xd;
+    &quot;firstName&quot;: &quot;Keio University&quot;,&#xd;
+    &quot;id&quot;: 1272913,&#xd;
+    &quot;lastName&quot;: &quot;Blank&quot;&#xd;
+  },&#xd;
+  &quot;tags&quot;:&#xd;
+  [&#xd;
+    {&#xd;
+      &quot;ruleBased&quot;: true,&#xd;
+      &quot;text&quot;: &quot;LCMS&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;ruleBased&quot;: true,&#xd;
+      &quot;text&quot;: &quot;relative spectra&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;ruleBased&quot;: false,&#xd;
+      &quot;text&quot;: &quot;library&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;ruleBased&quot;: true,&#xd;
+      &quot;text&quot;: &quot;dirty spectra&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;ruleBased&quot;: false,&#xd;
+      &quot;text&quot;: &quot;imported&quot;&#xd;
+    },&#xd;
+    {&#xd;
+      &quot;ruleBased&quot;: true,&#xd;
+      &quot;text&quot;: &quot;suspect value&quot;&#xd;
+    }&#xd;
+  ]&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${server}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">1000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${timeout}</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/rest/spectra/batch/save</stringProp>
+          <stringProp name="HTTPSampler.method">PUT</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">true</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="batch spectra upload" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${server}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">1000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${timeout}</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/rest/statistics/category/import/day</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">true</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -1695,22 +2140,197 @@
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="statistics queries" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="statistics service" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">1</stringProp>
+          <stringProp name="LoopController.loops">${samples}</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
-        <longProp name="ThreadGroup.start_time">1430940558000</longProp>
-        <longProp name="ThreadGroup.end_time">1430940558000</longProp>
+        <longProp name="ThreadGroup.start_time">1430940529000</longProp>
+        <longProp name="ThreadGroup.end_time">1430940529000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
-      <hashTree/>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="hourly import statistics" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${server}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">1000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${timeout}</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/rest/statistics/category/import/hour</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">true</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="dayly import statistics" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${server}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">1000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${timeout}</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/rest/statistics/category/import/day</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">true</boolProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Response Time Graph" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
       <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
