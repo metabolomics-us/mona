@@ -20,9 +20,6 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     SpectraConversionService spectraConversionService
 
-    def beforeInterceptor = {
-    }
-
     public SpectrumController() {
         super(Spectrum)
     }
