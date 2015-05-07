@@ -1,21 +1,22 @@
 package moa.server.query
-
 import grails.test.spock.IntegrationSpec
+import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.json.JSONArray
 import spock.lang.Unroll
-
 /**
  * Created by diego on 4/3/15.
  */
-class SpectraQueryServiceTest extends IntegrationSpec {
+class SpectraQueryServiceSpec extends IntegrationSpec {
+	private final Logger log = Logger.getLogger(this.class.name)
+
 	def spectraQueryService = new SpectraQueryService()
 	def metaDataQueryService = new MetaDataQueryService()
 
-	void setup() {
+	def setup() {
 		spectraQueryService.metaDataQueryService = metaDataQueryService
 	}
 
-	def "quering with null json"() {
+	void "quering with null json"() {
 
 		when: "call query with null object"
 		def res = spectraQueryService.query(null)
@@ -27,8 +28,9 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 		res == null
 	}
 
+//	@Ignore
 	@Unroll
-	def "query spectra.compound with #clazz #oper #value (max #size results)"() {
+	void "query spectra.compound with #clazz #oper #value (max #size results)"() {
 
 		expect:
 		def res = spectraQueryService.query([compound: [(clazz): [(oper): value]]])
@@ -65,8 +67,9 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 		"ne" | "id" | 58 | 5
 	}
 
+//	@Ignore
 	@Unroll
-	def "query spectra.tags #value (max #size results)"() {
+	void "query spectra.tags #value (max #size results)"() {
 
 		expect:
 		def res = spectraQueryService.query([tags: value as JSONArray])
@@ -78,7 +81,7 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 		where:
 		value             | limit | size
 		["megan"]         | 5     | 50
-		["LCMS"]          | 5     | 0
+		["LCMS"] | 5 | 2
 		["duplicated",
 		 "has M-15",
 		 "GCMS",
@@ -86,8 +89,9 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 		 "noisy spectra"] | 5     | 480
 	}
 
+//	@Ignore
 	@Unroll
-	def "query spectra.metadata with #clazz #oper #value (max #size results)"() {
+	void "query spectra.metadata with #clazz #oper #value (max #size results)"() {
 
 		expect:
 		def res = spectraQueryService.query([metadata: [[(clazz): [(oper): value]]]])
@@ -133,8 +137,9 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 		"ne" | "id" | 58 | 5 | 5
 	}
 
+//	@Ignore
 	@Unroll
-	def "query multiple spectra.metadata with #clazz #oper1 #value, #clazz2 #oper2 #val2 (max #size results)"() {
+	void "query multiple spectra.metadata with #clazz #oper1 #value, #clazz2 #oper2 #val2 (max #size results)"() {
 
 		expect:
 		def res = spectraQueryService.query([metadata: [[(clazz): [(oper1): value], (clazz2): [(oper2): val2]]]])
@@ -146,32 +151,33 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 
 		where:
 		oper1 | oper2   | clazz  | value     | size | clazz2  | val2  | total
-		"eq"  | "eq"    | "name" | "ms type" | 5    | "value" | "MS2" | 1441
-		"eq"  | "like"  | "name" | "ms type" | 5    | "value" | "MS2" | 1441
-		"eq"  | "ilike" | "name" | "ms type" | 5    | "value" | "MS2" | 1441
+		"eq" | "eq"    | "name" | "ms type" | 5 | "value" | "MS2" | 1447
+		"eq" | "like"  | "name" | "ms type" | 5 | "value" | "MS2" | 1447
+		"eq" | "ilike" | "name" | "ms type" | 5 | "value" | "MS2" | 1447
 		"eq"  | "gt"    | "name" | "ms type" | 0    | "value" | "MS2" | 0
 		"eq"  | "lt"    | "name" | "ms type" | 5    | "value" | "MS2" | 1641
-		"eq"  | "ge"    | "name" | "ms type" | 5    | "value" | "MS2" | 1441
-		"eq"  | "le"    | "name" | "ms type" | 5    | "value" | "MS2" | 3082
+		"eq" | "ge"    | "name" | "ms type" | 5 | "value" | "MS2" | 1447
+		"eq" | "le"    | "name" | "ms type" | 5 | "value" | "MS2" | 3088
 		"eq"  | "ne"    | "name" | "ms type" | 5    | "value" | "MS2" | 1641
 //		"eq"    | "in"    | "name"     | "ms type"             | 5    | "value"    | "MS2"      | 5
 		"eq" | "eq" | "category" | "spectral properties" | 5 | "id" | 64 | 1401
-		"eq" | "gt" | "category" | "spectral properties" | 5 | "id" | 64 | 3216
+		"eq" | "gt" | "category" | "spectral properties" | 5 | "id" | 64 | 3218
 		"eq" | "lt" | "category" | "spectral properties" | 5 | "id" | 346269 | 1401
-		"eq" | "ge" | "category" | "spectral properties" | 5 | "id" | 64 | 3660
+		"eq" | "ge" | "category" | "spectral properties" | 5 | "id" | 64 | 3662
 		"eq" | "le" | "category" | "spectral properties" | 5 | "id" | 64 | 1401
-		"eq" | "ne" | "category" | "spectral properties" | 5 | "id" | 64 | 3216
+		"eq" | "ne" | "category" | "spectral properties" | 5 | "id" | 64 | 3218
 //		"eq"    | "in"    | "category" | "spectral properties" | 5    | "id"       | 64         | 5
-		"eq" | "eq" | "id" | 58 | 5 | "name" | "ms type" | 3082
-		"eq" | "like" | "id" | 58 | 5 | "name" | "ms type" | 3082
-		"eq" | "ilike" | "id" | 58 | 5 | "name" | "ms type" | 3082
+		"eq" | "eq" | "id" | 58 | 5 | "name" | "ms type" | 3088
+		"eq" | "like" | "id" | 58 | 5 | "name" | "ms type" | 3088
+		"eq" | "ilike" | "id" | 58 | 5 | "name" | "ms type" | 3088
 		"eq" | "gt" | "id" | 58 | 0 | "name" | "ms type" | 0
 		"eq" | "lt" | "id" | 58 | 0 | "name" | "ms type" | 0
-		"eq" | "ge" | "id" | 58 | 5 | "name" | "ms type" | 3082
-		"eq" | "le" | "id" | 58 | 5 | "name" | "ms type" | 3082
+		"eq" | "ge" | "id" | 58 | 5 | "name" | "ms type" | 3088
+		"eq" | "le" | "id" | 58 | 5 | "name" | "ms type" | 3088
 		"eq" | "ne" | "id" | 58 | 0 | "name" | "ms type" | 0
 	}
 
+//	@Ignore
 	@Unroll
 	void "find similar spectra to spectrum.id: 34129 using #type"() {
 
@@ -212,5 +218,48 @@ class SpectraQueryServiceTest extends IntegrationSpec {
 				"147.0000:1.0000 " +
 				"148.0000:0.1605 " +
 				"149.0000:0.0903"]
+	}
+
+	@Unroll
+	void "the validation is OK with #query"() {
+		expect:
+		def res = spectraQueryService.validateQuery(query)
+
+		assert res != null
+		assert res.success
+
+		assert res[0] == null
+
+		where:
+		_ | query
+		_ | [compound: [:], metadata: [], tags: []]  // returns all spectra
+		_ | [compound:[name:[eq:'alanine']]]
+		_ | [metadata:[[name:[like:"ms type"], value:[eq:"MS2"]]]]
+		_ | [tags:["dirty", "fiehnlab"]]
+		_ | [compound: [name:[like:"alanine"]], metadata:[[name:[eq:"ms type"], value:[like:"MS2"]]], tags: ["dirty"]]
+	}
+
+	@Unroll
+	void "the validation should fail for #query"() {
+		expect:
+		def res = spectraQueryService.validateQuery(query)
+
+		assert res != null
+		assert !res.success
+
+		log.debug("RESULT: $res\n${res[0].message}")
+		assert !res[0].message.isEmpty()
+		assert res[0].message.contains(error)
+
+		where:
+		query                                               | error
+		[:]                                                 | "instance failed to match at least one required schema among 3"
+		[metadata:[[name:"ms type"]]]                       | "instance failed to match exactly one schema"
+		[metadata:[value:[eq:'MS2']]]                       | "instance type (object) does not match any allowed primitive type (allowed: [\"array\"])"
+		[metadata:[[value:[eq:'MS2']]]]                     | "requires [\"name\"]; missing: [\"name\"]"
+		[compound: [badkey: 'should break']] | "object instance has properties which are not allowed by the schema: [\"badkey\"]"
+		[tags:[43]]                                         | "instance type (integer) does not match any allowed primitive type (allowed: [\"string\"])"
+		[tags:"bad tags object"]                            | "instance type (string) does not match any allowed primitive type (allowed: [\"array\"])"
+		[compound:[name:'alanine'], extraprop:'invalid']    | "object instance has properties which are not allowed by the schema"
 	}
 }

@@ -1,12 +1,10 @@
 import grails.converters.JSON
-import groovy.sql.Sql
 import moa.*
+import moa.auth.Role
+import moa.auth.SubmitterRole
 import moa.scoring.Impact
 import moa.scoring.Score
 import moa.server.NewsService
-import moa.auth.Role
-import moa.auth.SubmitterRole
-import org.hibernate.FlushMode
 import util.DomainClassMarshaller
 
 class BootStrap {
@@ -42,7 +40,7 @@ class BootStrap {
         // Fiehnlab
         addUser("Gert", "Wohlgemuth", "wohlgemuth@ucdavis.edu", "password", "University of California, Davis", true)
         addUser("Sajjan", "Mehta", "ssmehta@ucdavis.edu", "password", "University of California, Davis", true)
-        addUser("Diego", "Pedrosa", "linuxmant@gmail.com", "password", "University of California, Davis", true)
+        addUser("Diego", "Pedrosa", "dpedrosa@ucdavis.edu", "password", "University of California, Davis", true)
         addUser("Megan", "Showalter", "mshowalter@ucdavis.edu", "password", "University of California, Davis", false)
         addUser("Yan", "Ma", "yanma@ucdavis.edu", "password", "University of California, Davis", false)
 

@@ -1,6 +1,10 @@
 package moa.server.query
-
+import com.github.fge.jackson.JsonLoader
+import com.github.fge.jsonschema.core.report.ProcessingReport
+import com.github.fge.jsonschema.main.JsonSchema
+import com.github.fge.jsonschema.main.JsonSchemaFactory
 import grails.transaction.Transactional
+import groovy.json.JsonBuilder
 import groovy.sql.Sql
 import moa.Spectrum
 import moa.Tag
@@ -141,6 +145,9 @@ class SpectraQueryService {
         //defines our where clause
         String queryOfDoomWhere = ""
 
+        //defines possible errors in json validation
+        List errors = []
+
         //our defined execution parameters
         def executionParams = [:]
 
@@ -265,6 +272,7 @@ class SpectraQueryService {
      * @return
      */
     private List handleSpectraJsonMetadataFields(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
+
         //if we have a metadata object specified
         if (json.metadata) {
 
@@ -299,7 +307,7 @@ class SpectraQueryService {
      * @return
      */
     private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
-        log.info("incomming query in compound method:\n\n$queryOfDoomWhere\n\n")
+        log.info("incomming query in compound method:\n\n${queryOfDoomWhere?:json.compound}\n\n")
 
         //if we have a compound
         if (json.compound) {
@@ -382,7 +390,6 @@ class SpectraQueryService {
                     }
                 }
             }
-
         }
 
         [queryOfDoomWhere, queryOfDoomJoins]
@@ -480,4 +487,36 @@ class SpectraQueryService {
         log.info("finished delete operation")
     }
 
+    /**
+     * checks the json query string against a schema
+     * @param jsonObj map containing the json object
+     * @return a ProcessingReport object containing the result of the validation
+     * and possible error messages explaining why the validation failed.
+     */
+    def final ProcessingReport validateQuery(Map query, String type = 'search') {
+        log.info("Validating: $query")
+
+        def jsonObj = query
+
+        def jsonString = new JsonBuilder(jsonObj).toString()
+
+        def qsFile
+
+        switch (type) {
+            case 'similarity':
+                qsFile = new File("schemas/SimilarityQuerySchema.json")
+                break;
+            case 'search':
+            default:
+                qsFile = new File("schemas/QuerySchema.json")
+        }
+
+        final JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+        final JsonSchema schema = factory.getJsonSchema(qsFile.toURI().toString().concat("/"))
+
+        ProcessingReport report
+        report = schema.validate(JsonLoader.fromString(jsonString))
+
+        return report
+    }
 }
