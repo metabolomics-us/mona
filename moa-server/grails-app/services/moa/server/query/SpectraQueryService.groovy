@@ -235,10 +235,11 @@ class SpectraQueryService {
                 json.tags.eachWithIndex { current, index ->
 
                     //add our tag join
-                    queryOfDoomJoins += " left join s.links as t_${index}"
+                    queryOfDoomJoins += " left join s.links as t_${index} "
+                    queryOfDoomJoins += " left join t_${index}.tag as tag_table_${index}"
 
                     //build our specific query
-                    queryOfDoomWhere += " t_${index}.tag.text = :tag_${index}"
+                    queryOfDoomWhere += " tag_table_${index}.text = :tag_${index}"
 
                     executionParams.put("tag_${index}".toString(), current.toString());
 

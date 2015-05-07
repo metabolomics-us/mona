@@ -122,7 +122,9 @@ grails.project.dependency.resolution = {
         compile ":hibernate:3.6.10.15"
         //compile ":hibernate4:4.3.5.4"
         compile ":rest-client-builder:2.0.0"
-        compile ":quartz:1.0-RC11"
+        //compile ":quartz:1.0-RC11"
+
+        compile ":quartz:1.0.2"
         compile ":cache:1.1.8"
         compile ":url-mappings-generator:0.1"
 
