@@ -183,7 +183,7 @@ log4j = {
 
         production {
 
-//            info file: 'grails.app'
+            info file: 'grails.app'
 
 //            error stdout:
 //                    'grails.app'
@@ -200,6 +200,7 @@ log4j = {
             info 'org.hibernate.SQL'
             info 'org.hibernate.type.descriptor.sql.BasicBinder'
 
+            error stdout: ['grails.app']
         }
     }
 }

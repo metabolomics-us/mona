@@ -15,7 +15,6 @@ class MetaDataQueryControllerSpec extends IntegrationSpec {
 	@Shared MetaDataQueryController controller = new MetaDataQueryController()
 
 	def setup() {
-		log.error("setting up")
 		controller.metaDataQueryService = metaDataQueryService
 	}
 
@@ -23,7 +22,6 @@ class MetaDataQueryControllerSpec extends IntegrationSpec {
 
 	void "Query metadata with good string"() {
 		setup:
-		log.error("first")
 		def json = [name:[like:"ms type"]]
 		controller.request.contentType = 'text/json'
 		controller.request.format = 'json'
@@ -38,7 +36,6 @@ class MetaDataQueryControllerSpec extends IntegrationSpec {
 		def res = controller.response.json
 
 		then:
-		log.info("RESULT: ${res}")
 
 		controller.response.status == 200
 		controller.response.contentAsString.contains("\"name\": \"ms type\",")
@@ -49,7 +46,6 @@ class MetaDataQueryControllerSpec extends IntegrationSpec {
 
 	void "Query metadata with bad string"() {
 		setup:
-		log.error("second")
 		def json = [value:"MS2"]
 		controller.request.contentType = 'text/json'
 		controller.request.format = 'json'
@@ -64,7 +60,6 @@ class MetaDataQueryControllerSpec extends IntegrationSpec {
 		def res = controller.response.json
 
 		then:
-		log.info("RESULT: ${res}")
 
 		controller.response.status == 400
 		controller.response.contentAsString.contains("schema requires [\\\"name\\\"]; missing: [\\\"name\\\"])")

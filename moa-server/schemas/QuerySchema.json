@@ -1,141 +1,98 @@
 ﻿{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Query schema",
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+
   "definitions": {
-    "metadata": {
-      "type": "array",
-      "title": "query metadata schema",
-      "items": [
-        {
-          "type": "object",
-          "properties": {
-            "name": {
-              "oneOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "like": {
-                      "type": "string"
-                    },
-                    "eq": {
-                      "type": "string"
-                    }
-                  },
-                  "oneOf": [
-                    {
-                      "required": [
-                        "eq"
-                      ]
-                    },
-                    {
-                      "required": [
-                        "like"
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            "value": {
-              "type": "object",
-              "properties": {
-                "eq": {
-                  "type": "string"
-                },
-                "like": {
-                  "type": "string"
-                },
-                "ne": {
-                  "type": "string"
-                }
-              },
-              "oneOf": [
-                {
-                  "required": [
-                    "eq"
-                  ]
-                },
-                {
-                  "required": [
-                    "like"
-                  ]
-                },
-                {
-                  "required": [
-                    "ne"
-                  ]
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            },
-            "category": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "integer"
-                }
-              },
-              "oneOf": [
-                {
-                  "required": [
-                    "name"
-                  ]
-                },
-                {
-                  "required": [
-                    "id"
-                  ]
-                }
-              ],
-              "additionalProperties": false
-            }
-          },
-          "dependencies": {
-            "value": [
-              "name"
-            ]
-          }
+
+    "strComp":{
+      "title": "String comparator schema",
+      "description": "Contains the valid operators for textual comparison in the query",
+      "type": "object",
+      "properties": {
+        "eq": { "type": "string" },
+        "ne": { "type": "string" },
+        "gt": { "type": "string" },
+        "lt": { "type": "string" },
+        "ge": { "type": "string" },
+        "le": { "type": "string" },
+        "like": { "type": "string" },
+        "ilike": { "type": "string" },
+        "between": {
+          "type": "array",
+          "items": [ {"type":"string"} ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "in": {
+          "type": "array",
+          "items": [ {"type":"string"} ],
+          "minItems": 2
         }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        { "required": ["eq"] },
+        { "required": ["ne"] },
+        { "required": ["gt"] },
+        { "required": ["lt"] },
+        { "required": ["ge"] },
+        { "required": ["le"] },
+        { "required": ["like"] },
+        { "required": ["ilike"] },
+        { "required": ["between"] },
+        { "required": ["in"] }
       ]
-    }
-  },
-  "type": "object",
-  "properties": {
+    },
+
+    "numComp":{
+      "title": "Numeric comparator schema",
+      "description": "Contains the valid operators for numeric comparison in the query",
+      "type": "object",
+      "properties": {
+        "eq": { "type": "number" },
+        "ne": { "type": "number" },
+        "gt": { "type": "number" },
+        "lt": { "type": "number" },
+        "ge": { "type": "number" },
+        "le": { "type": "number" },
+        "between": {
+          "type": "array",
+          "items": [ {"type":"number"} ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "in": {
+          "type": "array",
+          "items": [ {"type":"number"} ],
+          "minItems": 2
+        }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        { "required": ["eq"] },
+        { "required": ["ne"] },
+        { "required": ["gt"] },
+        { "required": ["lt"] },
+        { "required": ["ge"] },
+        { "required": ["le"] },
+        { "required": ["between"] },
+        { "required": ["in"] }
+      ]
+    },
+
+    "tags": {
+      "type": "array",
+      "title": "query tags schema",
+      "description": "An explanation about the purpose of this instance described by this schema.",
+      "items": [
+        { "type": "string" }
+      ]
+    },
+
     "compound": {
       "type": "object",
       "title": "query compound schema",
       "properties": {
-        "name": {
-          "type": "object",
-          "properties": {
-            "eq": {
-              "type": "string"
-            },
-            "like": {
-              "type": "string"
-            }
-          },
-          "oneOf": [
-            {
-              "required": [
-                "eq"
-              ]
-            },
-            {
-              "required": [
-                "like"
-              ]
-            }
-          ]
-        },
+        "name": { "$ref":"#/definitions/strComp" },
         "inchiKey": {
           "type": "object",
           "properties": {
@@ -149,79 +106,66 @@
             }
           },
           "oneOf": [
-            {
-              "required": [
-                "eq"
-              ]
-            },
-            {
-              "required": [
-                "like"
-              ]
-            }
+            { "required": ["eq"] },
+            { "required": ["like"] }
           ]
         },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        }
+        "metadata": { "$ref": "#/definitions/metadata" }
       },
       "anyOf": [
-        {
-          "required": [
-            "name"
-          ]
-        },
-        {
-          "required": [
-            "inchiKey"
-          ]
-        },
-        {
-          "required": [
-            "metadata"
-          ]
-        }
-      ]
+        {},
+        { "required": ["name"] },
+        { "required": ["inchiKey"] },
+        { "required": ["metadata"] }
+      ],
+      "additionalProperties": false
     },
+
     "metadata": {
-      "$ref": "#/definitions/metadata"
-    },
-    "tags": {
       "type": "array",
-      "title": "Tags schema.",
-      "description": "An explanation about the puropose of this instance described by this schema.",
-      "name": "tags",
+      "title": "query metadata schema",
       "items": [
         {
-          "type": "string"
+          "type": "object",
+          "properties": {
+            "name": { "$ref":"#/definitions/strComp" },
+            "value": { "$ref":"#/definitions/strComp" },
+            "category": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "id": { "type": "integer" }
+              },
+              "oneOf": [
+                { "required": ["name"] },
+                { "required": ["id"] }
+              ],
+              "additionalProperties": false
+            }
+          },
+          "dependencies": { "value": ["name"] }
         }
       ]
-    },
+    }
+  },
+
+  "type": "object",
+  "title": "Spectrum Query Schema",
+  "properties": {
+
+    "compound": { "$ref": "#/definitions/compound" },
+    "metadata": { "$ref": "#/definitions/metadata" },
+    "tags": { "$ref": "#/definitions/tags" },
+
     "offset": {
       "type": "integer",
       "default": 0
     }
   },
-  "required": [
-    "compound",
-    "metadata"
-  ],
   "anyOf": [
-    {
-      "required": [
-        "compound"
-      ]
-    },
-    {
-      "required": [
-        "metadata"
-      ]
-    },
-    {
-      "required": [
-        "tags"
-      ]
-    }
+    { "required": ["compound"] },
+    { "required": ["metadata"] },
+    { "required": ["tags"] }
   ],
   "additionalProperties": false
 }

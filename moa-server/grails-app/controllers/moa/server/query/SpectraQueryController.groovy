@@ -1,5 +1,6 @@
 package moa.server.query
 
+import com.github.fge.jsonschema.core.report.ProcessingReport
 import grails.converters.JSON
 import moa.Spectrum
 import moa.server.DeleteSpectraJob
@@ -24,24 +25,38 @@ class SpectraQueryController {
         def json = request.JSON
 
         def result = []
-        if (json.query) {
-            log.info("received query: " + json.query)
-            result = spectraQueryService.query(json.query, params);
-            json = json.query;
+        log.info(json as JSON)
+        log.info(json as Map)
+
+        def valid = spectraQueryService.validateQuery(json as Map)
+
+        if(valid.success) {
+
+            if (json.query) {
+                log.info("received query: " + json.query)
+                result = spectraQueryService.query(json.query, params);
+                json = json.query;
+            } else {
+                result = spectraQueryService.query(json, params);
+            }
+
+            switch (json.format) {
+                case "msp":
+                    for (Spectrum s : result) {
+                        render spectraConversionService.convertToMsp(s)
+
+                    }
+                    break
+                default:
+                    render(result as JSON)
+            }
         } else {
-            result = spectraQueryService.query(json, params);
+            log.info("received invalid query: " + json.query)
+            StringBuilder res = new StringBuilder()
+            valid.each { res.append(it.message).append("\n") }
+            render(status: 400, text: res)
         }
 
-        switch (json.format) {
-            case "msp":
-                for (Spectrum s : result) {
-                    render spectraConversionService.convertToMsp(s)
-
-                }
-                break
-            default:
-                render(result as JSON)
-        }
     }
 
     /**
@@ -95,10 +110,13 @@ class SpectraQueryController {
      */
     def similaritySearch() {
 
-        def json = request.JSON
+        Map json = request.JSON
 
         log.info("received request: ${json}")
-        if (json && json.spectra && json.minSimilarity) {
+
+        ProcessingReport valid = spectraQueryService.validateQuery(json as Map, "similarity")
+
+        if (valid.success) {
 
             if (json.maxHits == null) {
                 json.maxHits = 10
@@ -119,16 +137,19 @@ class SpectraQueryController {
             }
 
             long begin = System.currentTimeMillis()
-            def result = spectraQueryService.findSimilarSpectraIds(id, json.minSimilarity as Double, json.commonIonCount as Integer, json.maxHits as Integer)
+            def result = spectraQueryService.findSimilarSpectraIds(id as long, json.minSimilarity as Double, json.commonIonCount as Integer, json.maxHits as Integer)
 
 
-            def map = [result: result, statistics: [
-                    duration: (System.currentTimeMillis() - begin)
-            ], config        : json]
+            def map = [result: result, statistics: [duration: (System.currentTimeMillis() - begin)], config: json]
 
             render(map as JSON)
         } else {
-            render(status: 404, text: "please provide a provide the following payLoade {'spectra:string or id',minSimilarity:0-1000,maxHits:0-25,commonIonCount:0-n'}");
+            def errors = new StringBuilder()
+
+            valid.each { errors.append(it).append("\n") }
+
+            render(status: 404, text: errors);
+//            render(status: 404, text: "please provide a provide the following payload {'spectra:string or id', minSimilarity: 0-1000, maxHits: 0-25, commonIonCount: 0-n'}");
         }
 
     }

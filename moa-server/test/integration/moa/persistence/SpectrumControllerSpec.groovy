@@ -2,32 +2,33 @@ package moa.persistence
 
 import grails.test.spock.IntegrationSpec
 import moa.Spectrum
-import org.junit.Ignore
+import spock.lang.Ignore
 
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
+@Ignore
 class SpectrumControllerSpec extends IntegrationSpec {
 
-    SpectrumController spectrumController = new SpectrumController()
-    /**
-     * a simple spectrum
-     */
+	SpectrumController spectrumController = new SpectrumController()
+	/**
+	 * a simple spectrum
+	 */
 
-    def setup() {
-    }
+	def setup() {
+	}
 
-    def cleanup() {
-        Spectrum.list().each {
-            it.delete()
-        }
-    }
+	def cleanup() {
+		Spectrum.list().each {
+			it.delete()
+		}
+	}
 
 	@Ignore
-    void "define a new spectrum"() {
+	void "define a new spectrum"() {
 
-        when:
-        spectrumController.request.json = """
+		when:
+		spectrumController.request.json = """
 {
   "biologicalCompound": {
     "names": [
@@ -93,20 +94,19 @@ class SpectrumControllerSpec extends IntegrationSpec {
   }
 }
 """
-        spectrumController.save()
+		spectrumController.save()
 
-        then:
-        Spectrum.list().size() == 1
+		then:
+		Spectrum.list().size() == 1
 
-        Spectrum spec = Spectrum.list().get(0)
+		Spectrum spec = Spectrum.list().get(0)
 
-        spec.chemicalCompound.inchiKey == "OTMSDBZUPAUEDD-UHFFFAOYSA-N"
-        spec.biologicalCompound.inchiKey == "OTMSDBZUPAUEDD-UHFFFAOYSA-N"
+		spec.chemicalCompound.inchiKey == "OTMSDBZUPAUEDD-UHFFFAOYSA-N"
+		spec.biologicalCompound.inchiKey == "OTMSDBZUPAUEDD-UHFFFAOYSA-N"
 
-        spec.chemicalCompound.names.contains("N-acetyl-L-glutamic acid major TMS3")
-        spec.biologicalCompound.names.contains("N-acetyl-L-glutamic acid major TMS3")
+		spec.chemicalCompound.names.contains("N-acetyl-L-glutamic acid major TMS3")
+		spec.biologicalCompound.names.contains("N-acetyl-L-glutamic acid major TMS3")
 
 
-
-    }
+	}
 }
