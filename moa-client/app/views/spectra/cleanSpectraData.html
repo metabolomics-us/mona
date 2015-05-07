@@ -55,6 +55,8 @@
 
                 <tabset>
                     <tab heading="Trim Spectrum">
+                        <p class="lead">Removes low intensity ions from a mass spectrum.</p>
+
                         <div style="margin-top: 10px;">
                             <div>
                                 <div class="col-sm-3 form-group"><strong>Top <code>n</code> Ions</strong></div>
@@ -103,8 +105,8 @@
                     </tab>
 
                     <tab heading="Ion Table">
-                        <div style="height: 400px; overflow: auto; margin-top: 10px;">
-                            <table class="table" ng-if="showIonTable">
+                        <div style="height: 400px; overflow: auto; margin-top: 10px;" ng-if="showIonTable">
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>&nbsp;</th>
@@ -118,10 +120,22 @@
                                     <td><input type="checkbox" ng-model="ion.selected" /></td>
                                     <td>{{ion.ion | number : 4}}</td>
                                     <td>{{ion.intensity | number : 4}}</td>
-                                    <td>{{ion.annotation}}</td>
+                                    <td>
+                                        <input type="text"
+                                               ng-model="ion.annotation"
+                                               placeholder="Annotation"
+                                               class="form-control" />
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div style="margin-top: 10px;" ng-if="!showIonTable">
+                            <p class="lead">This mass spectrum is very large!</p>
+                            <p>It contains {{currentSpectrum.ions.length}} individual ions. Loading them all automatically can slow down your browser, but you can manually build the ion table:</p>
+                            <br />
+                            <p class="text-center"><a class="btn btn-primary" ng-click="$parent.showIonTable = true">Build Ion Table</a></p>
                         </div>
                     </tab>
 
@@ -188,10 +202,10 @@
                                            class="form-control" />
                                 </div>
                                 <div class="col-sm-2 form-group">
-                                    <button ng-click="removeMetadataField($index)" class="btn btn-default"><i
-                                            class="fa fa-minus-square"></i></button>
-                                    <button ng-click="applyMetadataToAll($index)" class="btn btn-default"><i
-                                            class="fa fa-files-o"></i></button>
+                                    <button ng-click="removeMetadataField($index)" class="btn btn-default"
+                                            tooltip="Remove this metadata value"><i class="fa fa-minus-square"></i></button>
+                                    <button ng-click="applyMetadataToAll($index)" class="btn btn-default"
+                                            tooltip="Copy this metadata value to all spectra"><i class="fa fa-files-o"></i></button>
                                 </div>
                             </div>
 
