@@ -1,6 +1,7 @@
-package curation.rules.adduct
+package curation.rules.adduct.lcms
 
 import curation.CommonTags
+import curation.rules.adduct.AbstractAdductCurationRule
 import moa.Spectrum
 import moa.Tag
 

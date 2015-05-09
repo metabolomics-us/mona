@@ -25,7 +25,7 @@ class SpectraUploadJob {
     /**
      * do we want to automatically validate the spectra after submission
      */
-    def validation = true
+    def validation = false
 
     /**
      * needs to be defined

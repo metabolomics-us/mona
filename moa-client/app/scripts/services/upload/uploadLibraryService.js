@@ -66,9 +66,9 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             deferred.resolve(spectra);
 
         }
-        //in case we got a smile
-        else if (spectra.smile) {
-            gwCtsService.convertSmileToInChICode(spectra.smile, function (data) {
+        //in case we got a smiles
+        else if (spectra.smiles) {
+            gwCtsService.convertSmileToInChICode(spectra.smiles, function (data) {
                 spectra.inchi = data.inchicode;
                 spectra.inchiKey = data.inchikey;
 
@@ -171,30 +171,11 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         MetaDataOptimizationService.optimizeMetaData(spectra.meta).then(function (metaData) {
 
             //$log.debug("building final spectra...");
-
             var s = self.buildSpectrum();
 
+            //assign structure information
             s.biologicalCompound.inchiKey = spectra.inchiKey;
             s.biologicalCompound.inchi = spectra.inchi;
-
-            //assign all the defined name of the spectra
-            if (angular.isDefined(spectra.name)) {
-                s.biologicalCompound.names = [];
-                s.chemicalCompound.names = [];
-
-                s.biologicalCompound.names.push(spectra.name);
-                s.chemicalCompound.names.push(spectra.name);
-
-            }
-
-            //assign all names of the spectra
-            else if (angular.isDefined(spectra.names)) {
-                for (var i = 0; i < spectra.names.length; i++) {
-                    s.biologicalCompound.names.push(spectra.names[i]);
-                    s.chemicalCompound.names.push(spectra.names[i]);
-                }
-            }
-            s.biologicalCompound.metaData = [];
 
             s.chemicalCompound.inchiKey = spectra.inchiKey;
             s.chemicalCompound.inchi = spectra.inchi;
@@ -204,6 +185,23 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
                 s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
             }
 
+            //assign all the defined names of the spectra
+            s.biologicalCompound.names = [];
+            s.chemicalCompound.names = [];
+
+            if (angular.isDefined(spectra.name)) {
+                s.biologicalCompound.names.push(spectra.name);
+                s.chemicalCompound.names.push(spectra.name);
+            }
+
+            if (angular.isDefined(spectra.names)) {
+                for (var i = 0; i < spectra.names.length; i++) {
+                    s.biologicalCompound.names.push(spectra.names[i]);
+                    s.chemicalCompound.names.push(spectra.names[i]);
+                }
+            }
+
+            s.biologicalCompound.metaData = [];
             s.chemicalCompound.metaData = [];
 
             s.spectrum = spectra.spectrum;
@@ -372,12 +370,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         for (var i = 0; i < files.length; i++) {
             self.loadSpectraFile(files[i], function (data, origin) {
                 self.processData(data, function (spectrum) {
-
-                    self.uploadSpectrum(spectrum, saveSpectrumCallback,wizardData)
-
+                    self.uploadSpectrum(spectrum, saveSpectrumCallback,wizardData);
                 }, origin);
-
-
             })
         }
     };
@@ -387,10 +381,8 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
      * @param wizardData
      * @param saveSpectrumCallback
      */
-    self.uploadSpectrum = function (wizardData, saveSpectrumCallback,additionalData) {
-
+    self.uploadSpectrum = function (wizardData, saveSpectrumCallback, additionalData) {
         AuthenticationService.getCurrentUser().then(function (submitter) {
-
             self.uploadedSpectraCount += 1;
 
             AsyncService.addToPool(function () {

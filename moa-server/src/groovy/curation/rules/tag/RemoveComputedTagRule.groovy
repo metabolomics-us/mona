@@ -22,8 +22,8 @@ class RemoveComputedTagRule extends AbstractCurationRule{
             object = toValidate.objectAsCompound
         }
 
-       object.tags.each {
-            if(it.ruleBased){
+       object.links.each {
+            if(it.tag.ruleBased){
                 toRemove.add(it)
             }
         }
@@ -31,7 +31,10 @@ class RemoveComputedTagRule extends AbstractCurationRule{
         toRemove.each {
             logger.debug("removing tag(${it.text}) from (${object.id})")
             object.removeFromTags(it)
+
+            tagService.removeLink(it)
         }
+
 
         return true
     }

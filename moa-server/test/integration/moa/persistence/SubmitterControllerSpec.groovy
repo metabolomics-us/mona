@@ -12,7 +12,7 @@ import static org.springframework.http.HttpStatus.*
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
 class SubmitterControllerSpec extends IntegrationSpec {
-	Logger logger = Logger.getLogger(this.class)
+	Logger log = Logger.getLogger(this.class)
 	SubmitterController controller = new SubmitterController()
 
 	def setup() {
