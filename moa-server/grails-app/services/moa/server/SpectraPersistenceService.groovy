@@ -65,9 +65,6 @@ class SpectraPersistenceService {
         //we build the metadata rather our self
         spectrum.metaData = [];
 
-        //we build the tags our self
-        spectrum.tags = [];
-
         log.info("valid: ${spectrum.validate()}")
         log.info(json)
 

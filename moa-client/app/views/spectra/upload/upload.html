@@ -1,10 +1,10 @@
 <div class="row">
     <div class="col-md-12">
-        <div ng-show="!isLoggedIn()">
-            <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="login()">log in</a> before uploading spectra!</h3>
+        <div ng-show="!auth.isLoggedIn()">
+            <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a> before uploading spectra!</h3>
         </div>
 
-        <div ng-show="isLoggedIn() && spectraUploaded">
+        <div ng-show="auth.isLoggedIn() && spectraUploaded">
             <h3>Thank you for your submission!</h3>
 
             <p>The bar below displays the upload progress. Please <b>do not close your browser</b> while your upload is
@@ -18,7 +18,7 @@
             <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra</button>
         </div>
 
-        <div ng-show="isLoggedIn() && !spectraUploaded">
+        <div ng-show="auth.isLoggedIn() && !spectraUploaded">
             <h3>Upload Mass Spectra Wizard</h3>
 
             <p>Please use the following wizard to upload a new mass spectra to the MoNA.<br/> It should guide you and

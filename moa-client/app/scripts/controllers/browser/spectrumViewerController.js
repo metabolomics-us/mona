@@ -82,6 +82,10 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
             function (data) {
                 $scope.similarityResult = data;
 
+                if(data.result.length == 0) {
+                    $scope.loadingSimilarSpectra = false;
+                }
+
                 for (var i = 0; i < data.result.length; i++) {
                     Spectrum.get({id: data.result[i].id}, function (s) {
                         for (var j = 0; j < $scope.similarityResult.result.length; j++) {
