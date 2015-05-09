@@ -15,7 +15,7 @@ class SpectraUploadJob {
     /**
      * do we automatically want to resubmit failed jobs
      */
-    def resubmit = false
+    def resubmit = true
 
     /**
      * should this run concurrent over the whole cluster
