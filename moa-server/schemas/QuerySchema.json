@@ -130,16 +130,12 @@
           "properties": {
             "name": { "$ref":"#/definitions/strComp" },
             "value": { "$ref":"#/definitions/strComp" },
+            "id": {"$ref": "#/definitions/numComp"},
             "category": {
               "type": "object",
               "properties": {
-                "name": { "type": "string" },
-                "id": { "type": "integer" }
+                "name": {"$ref": "#/definitions/strComp"}
               },
-              "oneOf": [
-                { "required": ["name"] },
-                { "required": ["id"] }
-              ],
               "additionalProperties": false
             }
           },
