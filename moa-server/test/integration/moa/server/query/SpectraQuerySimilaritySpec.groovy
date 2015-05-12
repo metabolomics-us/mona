@@ -5,7 +5,6 @@ import org.apache.log4j.Logger
 import org.springframework.http.HttpMethod
 import spock.lang.Shared
 import spock.lang.Unroll
-
 /**
  * Test specification related to similarity searches
  * Created by diego on 5/4/15.
@@ -73,18 +72,24 @@ class SpectraQuerySimilaritySpec extends IntegrationSpec {
 
 		json.result.size() <= results
 
-		def jres = json.result as ArrayList
+		def jres = json.result as ArrayList<HashMap>
 
-		jres.each {
-			others.contains(it)
-		}
+		jres[0].equals(others[0])
+		jres[1].equals(others[1])
 
+/*
+55298 	1,000
+52916 	825
+183252 	825
+75224 	817
+189532 	817
+ */
 		where:
 		query                                                                | results | others
-		[spectra: 444893, minSimilarity: 900]                                | 5       | [[id: 447803, similarity: 1000.0], [id: 819873, similarity: 978.649535066521], [id: 819791, similarity: 978.649535066521]]
-		[spectra: 444893, minSimilarity: 900, maxHits: 2]                    | 2       | [[id: 447803, similarity: 1000.0], [id: 819873, similarity: 978.649535066521], [id: 819791, similarity: 978.649535066521]]
-		[spectra: 444893, minSimilarity: 900, commonIonCount: 5]             | 5       | [[id: 447803, similarity: 1000.0], [id: 819873, similarity: 978.649535066521], [id: 819791, similarity: 978.649535066521]]
-		[spectra: 444893, minSimilarity: 900, maxHits: 2, commonIonCount: 5] | 2       | [[id: 447803, similarity: 1000.0], [id: 819873, similarity: 978.649535066521], [id: 819791, similarity: 978.649535066521]]
+		[spectra: 642302, minSimilarity: 820]                                | 10 | [[id: 55298, similarity: 1000.0], [id: 52916, similarity: 824.8519460256915], [id: 183252, similarity: 824.8519460256915]]
+		[spectra: 642302, minSimilarity: 820, maxHits: 2]                    | 2  | [[id: 55298, similarity: 1000.0], [id: 52916, similarity: 824.8519460256915], [id: 183252, similarity: 824.8519460256915]]
+		[spectra: 642302, minSimilarity: 820, commonIonCount: 5]             | 10 | [[id: 55298, similarity: 1000.0], [id: 52916, similarity: 824.8519460256915], [id: 183252, similarity: 824.8519460256915]]
+		[spectra: 642302, minSimilarity: 820, maxHits: 2, commonIonCount: 5] | 2  | [[id: 55298, similarity: 1000.0], [id: 52916, similarity: 824.8519460256915], [id: 183252, similarity: 824.8519460256915]]
 	}
 
 	private boolean callRest(Map query) {

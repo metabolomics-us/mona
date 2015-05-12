@@ -59,12 +59,12 @@ class SpectraQueryServiceSpec extends IntegrationSpec {
 		"le" | "inchiKey" | "PFTAWBLQPZVEMU-UKRRQHHQSA-N" | 5
 		"ne" | "inchiKey" | "PFTAWBLQPZVEMU-UKRRQHHQSA-N" | 5
 //		"in"    | "inchiKey" | "PFTAWBLQPZVEMU-UKRRQHHQSA-N"    | 5
-		"eq" | "id" | 11591 | 5
-		"gt" | "id" | 58 | 5
-		"lt" | "id" | 58 | 5
-		"ge" | "id" | 58 | 5
-		"le" | "id" | 58 | 5
-		"ne" | "id" | 58 | 5
+		"eq" | "id" | 349 | 5
+		"gt" | "id" | 349 | 5
+		"lt" | "id" | 349 | 5
+		"ge" | "id" | 349 | 5
+		"le" | "id" | 349 | 5
+		"ne" | "id" | 349 | 5
 	}
 
 //	@Ignore
@@ -80,13 +80,12 @@ class SpectraQueryServiceSpec extends IntegrationSpec {
 
 		where:
 		value             | limit | size
-		["megan"]         | 5     | 50
-		["LCMS"] | 5 | 2
+		["noisy spectra"] | 5 | 3953
+		["LCMS"]          | 5 | 4
 		["duplicated",
-		 "has M-15",
-		 "GCMS",
+		 "LCMS",
 		 "suspect value",
-		 "noisy spectra"] | 5     | 480
+		 "noisy spectra"] | 5 | 2
 	}
 
 //	@Ignore
@@ -129,21 +128,21 @@ class SpectraQueryServiceSpec extends IntegrationSpec {
 		"le" | "category" | "spectral properties" | 5 | 5
 		"ne" | "category" | "spectral properties" | 5 | 5
 //		"in"    | "category" | "spectral properties" | 5    | 5
-		"eq" | "id" | 58 | 5 | 5
-		"gt" | "id" | 58 | 5 | 5
-		"lt" | "id" | 58 | 5 | 5
-		"ge" | "id" | 58 | 5 | 5
-		"le" | "id" | 58 | 5 | 5
-		"ne" | "id" | 58 | 5 | 5
+		"eq" | "id" | 79 | 5 | 5
+		"gt" | "id" | 79 | 5 | 5
+		"lt" | "id" | 79 | 5 | 5
+		"ge" | "id" | 79 | 5 | 5
+		"le" | "id" | 79 | 5 | 5
+		"ne" | "id" | 79 | 5 | 5
 	}
 
 //	@Ignore
 	@Unroll
-	void "query multiple spectra.metadata with #clazz #oper1 #value, #clazz2 #oper2 #val2 (max #size results)"() {
+	void "query multiple spectra.metadata with #clazz #oper1 #value, #clazz2 #oper2 #val2"() {
 
 		expect:
 		def res = spectraQueryService.query([metadata: [[(clazz): [(oper1): value], (clazz2): [(oper2): val2]]]])
-		println "Total: ${res.size()}"
+		log.debug "Total: ${res.size()}"
 
 		assert res != null
 		assert res.size() >= size
@@ -151,30 +150,30 @@ class SpectraQueryServiceSpec extends IntegrationSpec {
 
 		where:
 		oper1 | oper2   | clazz  | value     | size | clazz2  | val2  | total
-		"eq" | "eq"    | "name" | "ms type" | 5 | "value" | "MS2" | 1447
-		"eq" | "like"  | "name" | "ms type" | 5 | "value" | "MS2" | 1447
-		"eq" | "ilike" | "name" | "ms type" | 5 | "value" | "MS2" | 1447
+		"eq"  | "eq"    | "name" | "ms type" | 5    | "value" | "MS2" | 2938
+		"eq"  | "like"  | "name" | "ms type" | 5    | "value" | "MS2" | 2938
+		"eq"  | "ilike" | "name" | "ms type" | 5    | "value" | "MS2" | 2938
 		"eq"  | "gt"    | "name" | "ms type" | 0    | "value" | "MS2" | 0
-		"eq"  | "lt"    | "name" | "ms type" | 5    | "value" | "MS2" | 1641
-		"eq" | "ge"    | "name" | "ms type" | 5 | "value" | "MS2" | 1447
-		"eq" | "le"    | "name" | "ms type" | 5 | "value" | "MS2" | 3088
-		"eq"  | "ne"    | "name" | "ms type" | 5    | "value" | "MS2" | 1641
-//		"eq"    | "in"    | "name"     | "ms type"             | 5    | "value"    | "MS2"      | 5
-		"eq" | "eq" | "category" | "spectral properties" | 5 | "id" | 64 | 1401
-		"eq" | "gt" | "category" | "spectral properties" | 5 | "id" | 64 | 3218
-		"eq" | "lt" | "category" | "spectral properties" | 5 | "id" | 346269 | 1401
-		"eq" | "ge" | "category" | "spectral properties" | 5 | "id" | 64 | 3662
-		"eq" | "le" | "category" | "spectral properties" | 5 | "id" | 64 | 1401
-		"eq" | "ne" | "category" | "spectral properties" | 5 | "id" | 64 | 3218
-//		"eq"    | "in"    | "category" | "spectral properties" | 5    | "id"       | 64         | 5
-		"eq" | "eq" | "id" | 58 | 5 | "name" | "ms type" | 3088
-		"eq" | "like" | "id" | 58 | 5 | "name" | "ms type" | 3088
-		"eq" | "ilike" | "id" | 58 | 5 | "name" | "ms type" | 3088
-		"eq" | "gt" | "id" | 58 | 0 | "name" | "ms type" | 0
-		"eq" | "lt" | "id" | 58 | 0 | "name" | "ms type" | 0
-		"eq" | "ge" | "id" | 58 | 5 | "name" | "ms type" | 3088
-		"eq" | "le" | "id" | 58 | 5 | "name" | "ms type" | 3088
-		"eq" | "ne" | "id" | 58 | 0 | "name" | "ms type" | 0
+		"eq"  | "lt"    | "name" | "ms type" | 5    | "value" | "MS2" | 1624
+		"eq"  | "ge"    | "name" | "ms type" | 5    | "value" | "MS2" | 2938
+		"eq"  | "le"    | "name" | "ms type" | 5    | "value" | "MS2" | 4562
+		"eq"  | "ne"    | "name" | "ms type" | 5    | "value" | "MS2" | 1624
+//		"eq"  | "in"    | "name"     | "ms type"            | 5    | "value" | "MS2"     | 5
+		"eq" | "eq" | "category" | "chromatography" | 4 | "id" | 323384 | 4
+		"eq" | "gt" | "category" | "chromatography" | 4 | "id" | 323384 | 4
+		"eq" | "lt" | "category" | "chromatography" | 4 | "id" | 323384 | 4
+		"eq" | "ge" | "category" | "chromatography" | 4 | "id" | 323384 | 4
+		"eq" | "le" | "category" | "chromatography" | 4 | "id" | 323384 | 4
+		"eq" | "ne" | "category" | "chromatography" | 4 | "id" | 323384 | 4
+//		"eq"  | "in"    | "category" | "chromatography"     | 5    | "id"    | 323384    | 1
+		"eq" | "eq" | "id" | 113 | 5 | "name" | "ms type" | 4562
+		"eq" | "like" | "id" | 113 | 5 | "name" | "ms type" | 4562
+		"eq" | "ilike" | "id" | 113 | 5 | "name" | "ms type" | 4562
+		"eq" | "gt" | "id" | 113 | 0 | "name" | "ms type" | 0
+		"eq" | "lt" | "id" | 113 | 0 | "name" | "ms type" | 0
+		"eq" | "ge" | "id" | 113 | 5 | "name" | "ms type" | 4562
+		"eq" | "le" | "id" | 113 | 5 | "name" | "ms type" | 4562
+		"eq" | "ne" | "id" | 113 | 0 | "name" | "ms type" | 0
 	}
 
 //	@Ignore
@@ -182,42 +181,28 @@ class SpectraQueryServiceSpec extends IntegrationSpec {
 	void "find similar spectra to spectrum.id: 34129 using #type"() {
 
 		when:
-		def res = spectraQueryService.findSimilarSpectraIds(data, simil, ions, maxRes)
+		def res = spectraQueryService.findSimilarSpectraIds(spectrum, simil, ions, maxRes)
 
 		then:
 		assert res != null
-		assert 10 >= res.size()
+		assert 2 == res.size()
 
 		where:
-		type << ["id", "spectra"]
-		simil << [500, 500]
-		ions << [3, 3]
-		maxRes << [10, 10]
-		data << [34129, "85.0000:0.0267 " +
-				"87.0000:0.0111 " +
-				"89.0000:0.0427 " +
-				"90.0000:0.0200 " +
-				"91.0000:0.0711 " +
-				"93.0000:0.0301 " +
-				"101.0000:0.0100 " +
-				"103.0000:0.0363 " +
-				"104.0000:0.0520 " +
-				"105.0000:0.0670 " +
-				"115.0000:0.0303 " +
-				"119.0000:0.0905 " +
-				"120.0000:0.0141 " +
-				"121.0000:0.0107 " +
-				"126.0000:0.0158 " +
-				"131.0000:0.0264 " +
-				"132.0000:0.0072 " +
-				"133.0000:0.0515 " +
-				"135.0000:0.0829 " +
-				"136.0000:0.0104 " +
-				"140.0000:0.0388 " +
-				"141.0000:0.0164 " +
-				"147.0000:1.0000 " +
-				"148.0000:0.1605 " +
-				"149.0000:0.0903"]
+		type = "spectra"
+		simil = 500
+		ions = 3
+		maxRes = 10
+		spectrum = "225.1853:0.6006 " +
+				"379.1246:0.5005 " +
+				"395.3887:0.6006 " +
+				"397.1352:1.0000 " +
+				"415.1457:0.2002 " +
+				"605.3176:0.3003 " +
+				"623.3281:0.3003 " +
+				"775.5209:0.3003 " +
+				"793.5314:0.3003 " +
+				"1001.7140:0.5005 " +
+				"1047.7195:0.1001"
 	}
 
 	@Unroll

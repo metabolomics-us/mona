@@ -61,12 +61,12 @@ class MetaDataQueryServiceSpec extends IntegrationSpec {
 		"le" | "category" | "spectral properties" | 5 | 5
 		"ne" | "category" | "spectral properties" | 5 | 5
 //		"in"    | "category" | "spectral properties" | 5    | 5
-		"eq" | "id" | 58 | 5 | 5
-		"gt" | "id" | 58 | 5 | 5
-		"lt" | "id" | 58 | 5 | 5
-		"ge" | "id" | 58 | 5 | 5
-		"le" | "id" | 58 | 5 | 5
-		"ne" | "id" | 58 | 5 | 5
+		"eq" | "id" | 79 | 5 | 5
+		"gt" | "id" | 79 | 5 | 5
+		"lt" | "id" | 79 | 5 | 5
+		"ge" | "id" | 79 | 5 | 5
+		"le" | "id" | 79 | 5 | 5
+		"ne" | "id" | 79 | 5 | 5
 	}
 
 	@Unroll
@@ -83,7 +83,7 @@ class MetaDataQueryServiceSpec extends IntegrationSpec {
 		oper1 | clazz      | value                 | size | limit
 		"eq"  | "name"     | "ms type"             | 5    | 3
 		"eq"  | "category" | "spectral properties" | 5    | 3
-		"eq"  | "id"       | 58                    | 5    | 3
+		"eq" | "id" | 79 | 5 | 3
 	}
 
 
@@ -118,6 +118,6 @@ class MetaDataQueryServiceSpec extends IntegrationSpec {
 		[name:"ms type"]    | "instance failed to match exactly one schema (matched 10 out of 10)"
 		[value:[eq:'MS2']]  | "requires [\"name\"]; missing: [\"name\"]"
 		[value:"MS2"]       | "requires [\"name\"]; missing: [\"name\"]"
-		[category:43]       | "instance failed to match exactly one schema"
+		[category: 43] | "instance type (integer) does not match any allowed primitive type"
 	}
 }
