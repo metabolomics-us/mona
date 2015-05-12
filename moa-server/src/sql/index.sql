@@ -38,7 +38,7 @@ CREATE INDEX supports_meta_data_tag_index
 
 
 CREATE INDEX "tag_link_tag"
-	ON "public"."tag_link"("tag_id")
+ON "public"."tag_link" ("tag_id");
 
 CREATE INDEX "tag_link_owner_tag"
 	ON "public"."tag_link"("owner_id", "tag_id")
