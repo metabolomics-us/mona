@@ -9,6 +9,8 @@ class IntegerMetaDataValue extends MetaDataValue{
     }
 
     static mapping = {
+        metaData lazy: false
+        score lazy: false
     }
 
 

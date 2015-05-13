@@ -3,7 +3,7 @@ package moa
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
-class Ion extends SupportsMetaData {
+class Ion extends SupportsMetaData implements Comparable<Ion> {
 
     /**
      * we are always formating to n digits
@@ -17,6 +17,7 @@ class Ion extends SupportsMetaData {
 
     static mapping = {
         version false
+        spectrum fetch: 'join'
     }
 
     /**
@@ -36,5 +37,14 @@ class Ion extends SupportsMetaData {
 
     String toString() {
         return "${formatter.format(mass)}:${formatter.format(intensity)}"
+    }
+
+    @Override
+    int compareTo(Ion o) {
+        if (o != null && this.getMass() != null) {
+            return Double.compare(o.getMass(), this.getMass());
+        } else {
+            return -1;
+        }
     }
 }
