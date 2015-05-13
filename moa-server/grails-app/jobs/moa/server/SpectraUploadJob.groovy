@@ -15,7 +15,7 @@ class SpectraUploadJob {
     /**
      * do we automatically want to resubmit failed jobs
      */
-    def resubmit = false
+    def resubmit = true
 
     /**
      * should this run concurrent over the whole cluster
@@ -25,7 +25,7 @@ class SpectraUploadJob {
     /**
      * do we want to automatically validate the spectra after submission
      */
-    def validation = true
+    def validation = false
 
     /**
      * needs to be defined
