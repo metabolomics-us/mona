@@ -3,9 +3,9 @@ package moa
 import curation.scoring.Scoreable
 import moa.scoring.Score
 
-class Spectrum extends SupportsMetaData implements Scoreable{
+class Spectrum extends SupportsMetaData implements Scoreable {
 
-    static transients = [ "spectrum" ]
+    static transients = ["spectrum"]
 
     Date dateCreated
     Date lastUpdated
@@ -20,7 +20,10 @@ class Spectrum extends SupportsMetaData implements Scoreable{
     /**
      * contains many metadata
      */
-    static hasMany = [ comments:Comment, ions:Ion]
+    static hasMany = [
+            comments: Comment,
+            ions: Ion
+    ]
 
     /**
      * we belong to these
@@ -29,11 +32,11 @@ class Spectrum extends SupportsMetaData implements Scoreable{
             submitter         : Submitter,
             chemicalCompound  : Compound,
             biologicalCompound: Compound,
-            predictedCompound: Compound
+            predictedCompound : Compound
     ]
 
     static constraints = {
-	    comments nullable: true
+        comments nullable: true
         chemicalCompound nullable: true
         biologicalCompound nullable: true
         predictedCompound nullable: true
@@ -42,25 +45,27 @@ class Spectrum extends SupportsMetaData implements Scoreable{
     }
 
     static mapping = {
-        spectrum sqlType: "text"
         version false
-        tags batchSize: 20
-        comments batchSize: 20,  cascade: 'all-delete-orphan'
+        comments fetch: 'join', cascade: 'all-delete-orphan'
+        ions fetch: 'join', lazy:false
+        chemicalCompound fetch: 'join'
+        biologicalCompound fetch: 'join'
+        predictedCompound fetch: 'join'
+        score fetch: 'join'
+        metaData fetch: 'join'
+        links fetch: 'join'
+        submitter fetch: 'join'
     }
 
-    /**
-     * raw data: (m/z, intensity) pairs
-     */
-    //String spectrum
 
-    String getSpectrum(){
-        if(ions == null){
+    String getSpectrum() {
+        if (ions == null) {
             return ""
         }
         return ions.join(" ")
     }
 
-    void setSpectrum(String spectrum){
+    void setSpectrum(String spectrum) {
 
     }
     /**

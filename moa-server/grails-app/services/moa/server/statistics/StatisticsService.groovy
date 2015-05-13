@@ -209,13 +209,17 @@ class StatisticsService {
      */
     @Transactional
     def acquire(Double value, String title, String description = "none", String category = "runtime") {
-        Statistics statistics = new Statistics()
+        boolean  enabled = false
 
-        statistics.category = category
-        statistics.description = description
-        statistics.value = value
-        statistics.title = title
+        if(enabled) {
+            Statistics statistics = new Statistics()
 
-        statistics.save()
+            statistics.category = category
+            statistics.description = description
+            statistics.value = value
+            statistics.title = title
+
+            statistics.save()
+        }
     }
 }

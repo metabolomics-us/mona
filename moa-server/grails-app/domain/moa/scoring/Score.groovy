@@ -6,7 +6,7 @@ class Score {
     }
 
     static mapping = {
-        impacts nullable: true
+        impacts nullable: true, fetch: 'join'
         version: false
     }
 

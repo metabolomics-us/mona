@@ -7,6 +7,7 @@ class Name  {
 
     static mapping = {
         name sqlType: "text"
+        compound fetch: 'join'
     }
 
     static constraints = {

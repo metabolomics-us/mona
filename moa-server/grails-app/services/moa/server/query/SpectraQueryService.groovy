@@ -5,7 +5,10 @@ import groovy.sql.Sql
 import moa.Spectrum
 import moa.Tag
 import moa.server.statistics.StatisticsService
+import net.sf.ehcache.search.expression.Criteria
+import org.hibernate.FetchMode
 import org.hibernate.QueryException
+import org.hibernate.criterion.CriteriaSpecification
 import util.query.QueryHelper
 
 class SpectraQueryService {
@@ -57,7 +60,7 @@ class SpectraQueryService {
 
         log.info("hits:\n ${resultList}")
 
-        statisticsService.acquire(System.currentTimeMillis() - begin,"similarity search","search duration","search")
+        statisticsService.acquire(System.currentTimeMillis() - begin, "similarity search", "search duration", "search")
         return resultList
     }
 
@@ -84,7 +87,7 @@ class SpectraQueryService {
         }
 
 
-        statisticsService.acquire(System.currentTimeMillis() - begin,"similarity search","search duration","search")
+        statisticsService.acquire(System.currentTimeMillis() - begin, "similarity search", "search duration", "search")
         return resultList
     }
 
@@ -102,11 +105,13 @@ class SpectraQueryService {
 
         if (limit != -1) {
             params.max = limit
+
         }
 
         if (offset != -1) {
             params.offset = offset
         }
+
 
 //        log.debug("pagination parameters: \n\n ${params}")
 
@@ -115,12 +120,18 @@ class SpectraQueryService {
 
         (queryOfDoom, executionParams) = generateFinalQuery(json)
 
-        def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
+        println "executing criteria - query"
 
-        log.debug("result count: ${result.size()}")
+        def result = Spectrum.executeQuery(queryOfDoom,executionParams,params)
+        println "execution ended - received: ${result.size()} spectra"
+        println "${json}"
+        //println "$queryOfDoom"
+
+      //  log.debug("result count: ${result.size()}")
 
 
-        statisticsService.acquire(System.currentTimeMillis() - begin,"text search","${json}","search")
+        statisticsService.acquire(System.currentTimeMillis() - begin, "text search", "${json}", "search")
+
 
         return result
     }
@@ -133,7 +144,7 @@ class SpectraQueryService {
     private List generateFinalQuery(Map json) {
 
         //completed query string
-        String queryOfDoom = "select distinct s from Spectrum s "
+        String queryOfDoom = "select distinct s from Spectrum s"
 
         //defines all our joins
         String queryOfDoomJoins = ""
@@ -173,7 +184,7 @@ class SpectraQueryService {
         }
 
         if (json == null) {
-	        throw new QueryException("your query needs to contain some parameters!")
+            throw new QueryException("your query needs to contain some parameters!")
         }
 
 
@@ -189,12 +200,13 @@ class SpectraQueryService {
      * @return
      */
     private List handleJsonSubmitterField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+
         //handling submitter
         if (json.submitter) {
+
             queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-            //add our tag join
-            queryOfDoomJoins += " left join s.submitter as sub"
+            queryOfDoomJoins += "  inner join s.submitter as sub"
 
             // handle id
             try {
@@ -205,7 +217,7 @@ class SpectraQueryService {
             }
 
             // handle email address
-            catch(Exception e) {
+            catch (Exception e) {
                 //build our specific query
                 queryOfDoomWhere += " sub.emailAddress = :submitterInfo"
                 executionParams.submitterInfo = json.submitter.toString()
@@ -235,8 +247,8 @@ class SpectraQueryService {
                 json.tags.eachWithIndex { current, index ->
 
                     //add our tag join
-                    queryOfDoomJoins += " left join s.links as t_${index} "
-                    queryOfDoomJoins += " left join t_${index}.tag as tag_table_${index}"
+                    queryOfDoomJoins += "  inner join s.links as t_${index} "
+                    queryOfDoomJoins += "  inner join t_${index}.tag as tag_table_${index}"
 
                     //build our specific query
                     queryOfDoomWhere += " tag_table_${index}.text = :tag_${index}"
@@ -275,10 +287,10 @@ class SpectraQueryService {
                 json.metadata.eachWithIndex { Map current, int index ->
                     def impl = [:];
 
-                    //build the join for each metadata object link
-                    queryOfDoomJoins += " left join s.metaData as mdv_${index}"
-                    queryOfDoomJoins += " left join mdv_${index}.metaData as md_${index}"
-                    queryOfDoomJoins += " left join md_${index}.category as mdc_${index}"
+                    //build the   join for each metadata object link
+                    queryOfDoomJoins += "  inner join s.metaData as mdv_${index}"
+                    queryOfDoomJoins += "  inner join mdv_${index}.metaData as md_${index}"
+                    queryOfDoomJoins += "  inner join md_${index}.category as mdc_${index}"
 
 
                     queryOfDoomWhere = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "md_${index}", "mdv_${index}", "mdc_${index}", index)
@@ -304,48 +316,47 @@ class SpectraQueryService {
         //if we have a compound
         if (json.compound) {
 
+
+            queryOfDoomJoins += " inner join s.biologicalCompound as bc"
+            queryOfDoomJoins += " inner join s.chemicalCompound as cc"
+            queryOfDoomJoins += " left join s.predictedCompound as pc"
+
+
             //TODO NEEDS TO BE MORE DYNAMIC
+            if (json.compound.name) {
 
-	        if (json.compound.name) {
 
-                queryOfDoomJoins += " left join s.biologicalCompound.names as bcn"
-                queryOfDoomJoins += " left join s.chemicalCompound.names as ccn"
-                queryOfDoomJoins += " left join s.predictedCompound.names as pcn"
+
+                queryOfDoomJoins += " left join bc.names as bcn"
+                queryOfDoomJoins += " left join cc.names as ccn"
+                queryOfDoomJoins += " left join pc.names as pcn"
 
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-		        (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "bcn")
-		        (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "ccn")
-		        (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "pcn")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "bcn")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "ccn")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "pcn")
             }
 
             //if we have an inchi key
             if (json.compound.inchiKey) {
 
-                queryOfDoomJoins += " left join s.biologicalCompound as bc"
-                queryOfDoomJoins += " left join s.chemicalCompound as cc"
-                queryOfDoomJoins += " left join s.predictedCompound as pc"
-
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "bc")
-	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "cc")
-	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "pc")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "bc")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "cc")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "pc")
 
             }
 
             //if we have an id key
             if (json.compound.id) {
 
-                queryOfDoomJoins += " left join s.biologicalCompound as bc"
-                queryOfDoomJoins += " left join s.chemicalCompound as cc"
-                queryOfDoomJoins += " left join s.predictedCompound as pc"
-
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "bc")
-	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "cc")
-	            (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "pc")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "bc")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "cc")
+                (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "pc")
 
 //	            if (json.compound.id && !(json.compound.id instanceof Map)) {
 //                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
@@ -372,15 +383,16 @@ class SpectraQueryService {
                         def impl = [:];
 
                         //build the join for each metadata object link
-                        queryOfDoomJoins += " left join s.biologicalCompound.metaData as cmdv_${index}"
-                        queryOfDoomJoins += " left join cmdv_${index}.metaData as cmd_${index}"
-                        queryOfDoomJoins += " left join cmd_${index}.category as cmdc_${index}"
+                        queryOfDoomJoins += " inner join bc.metaData as cmdv_${index}"
+                        queryOfDoomJoins += " inner join cmdv_${index}.metaData as cmd_${index}"
+                        queryOfDoomJoins += " inner join cmd_${index}.category as cmdc_${index}"
 
 
                         queryOfDoomWhere = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "cmd_${index}", "cmdv_${index}", "cmdc_${index}", index)
 
                     }
                 }
+
             }
 
         }

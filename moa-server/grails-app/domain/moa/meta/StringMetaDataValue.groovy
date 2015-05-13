@@ -11,6 +11,9 @@ class StringMetaDataValue extends MetaDataValue {
     static mapping = {
         stringValue sqlType: "varchar(5000)"
         version false
+        metaData fetch: 'join'
+        score  fetch: 'join'
+        owner fetch: 'join'
 
     }
 

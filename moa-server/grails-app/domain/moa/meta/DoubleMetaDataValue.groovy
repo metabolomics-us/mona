@@ -9,6 +9,8 @@ class DoubleMetaDataValue extends MetaDataValue {
 
     }
     static mapping = {
+        metaData lazy: false
+        score lazy: false
     }
 
 

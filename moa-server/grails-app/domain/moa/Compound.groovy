@@ -15,13 +15,16 @@ class Compound extends SupportsMetaData {
         inchiKey index: true, indexAttributes: [unique: true]
         molFile sqlType: "text"
         version false
-        names batchSize: 20
         inchi sqlType: "text"
+        comments fetch: 'join'
+        names fetch: 'join'
+        metaData fetch: 'join'
     }
     /**
+
      * this compound belongs to one spectrum
      */
-    static hasMany = [names: Name, comments:Comment]
+    static hasMany = [names: Name, comments: Comment]
 
     /**
      * inchiKey of this compound
