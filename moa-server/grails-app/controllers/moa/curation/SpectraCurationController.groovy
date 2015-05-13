@@ -11,6 +11,8 @@ class SpectraCurationController {
 
     static responseFormats = ['json']
 
+    SpectraCurationService spectraCurationService
+
     /**
      * validates the spectra for the given id
      * @param id
@@ -23,6 +25,18 @@ class SpectraCurationController {
 
         render(text: "scheduling curation of ${id} succesful!")
     }
+
+    def curateNow() {
+
+        def id = params.id
+
+        SpectraValidationJob.triggerNow([spectraId: id as long])
+
+
+        render (success: spectraCurationService.validateSpectra(id as long))
+
+    }
+
 
     /**
      * validate all spectrums

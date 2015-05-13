@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h3><i class="fa fa-pencil-square-o"></i> Mass Spectra Cleaner</h3>
+        <h3><i class="fa fa-pencil-square-o"></i> Mass Spectra Cleaner &amp; Uploader</h3>
 
         <div class="h5">
             Upload an MSP file and dynamically modify the mass spectra and metadata
@@ -55,6 +55,8 @@
 
                 <tabset>
                     <tab heading="Trim Spectrum">
+                        <p class="lead">Removes low intensity ions from a mass spectrum.</p>
+
                         <div style="margin-top: 10px;">
                             <div>
                                 <div class="col-sm-3 form-group"><strong>Top <code>n</code> Ions</strong></div>
@@ -63,7 +65,7 @@
                                            ng-model="ionCuts.nIons"
                                            placeholder="Number of ions"
                                            class="form-control" />
-                                    <span class="help-block">Keeps the <code>n</code> ions with the highest intensity</span>
+                                    <span class="help-block">Keeps at most the <code>n</code> ions with the highest intensity</span>
                                 </div>
                             </div>
 
@@ -78,21 +80,32 @@
                                     <span class="help-block">
                                         Removes all ions below the given percentage of the base peak intensity (where
                                         the value <code>0</code> will retain all ions while the value <code>100</code>
-                                        will retain only the base peak. If used in conjunction with the
-                                        top <code>n</code> Ions cut, the trim will yield at most <code>n</code> ions.
+                                        will retain only the base peak.
                                     </span>
                                 </div>
                             </div>
 
                             <div>
-                                <a class="btn btn-warning" ng-click="resetIonCuts()">Reset ions</a>
-                                <a class="btn btn-primary" ng-click="performIonCuts()">Trim ions</a>
+                                <div class="col-sm-3 form-group"><strong>Absolute Abundance Cut</strong></div>
+                                <div class="col-sm-9 form-group">
+                                    <input type="number"
+                                           ng-model="ionCuts.absAbundance"
+                                           placeholder="Absolute abundance"
+                                           class="form-control" />
+                                    <span class="help-block">Removes all ions below the given absolute abundance</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <a class="btn btn-warning" ng-click="resetIonCuts()">Reset Spectrum</a>
+                                <a class="btn btn-primary" ng-click="performIonCuts()">Trim Spectrum</a>
+                                <a class="btn btn-primary" ng-click="performAllIonCuts()">Trim <strong>All</strong> Spectra</a>
                             </div>
                         </div>
                     </tab>
 
                     <tab heading="Ion Table">
-                        <div style="height: 400px; overflow: auto; margin-top: 10px;">
+                        <div style="height: 400px; overflow: auto; margin-top: 10px;" ng-if="showIonTable">
                             <table class="table">
                                 <thead>
                                 <tr>
@@ -104,13 +117,25 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="ion in currentSpectrum.ions | orderBy:ionTableSort:ionTableSortReverse">
-                                    <td><input type="checkbox" ng-model="ion.selected" ng-click="updateCurrentSpectrum()" /></td>
+                                    <td><input type="checkbox" ng-model="ion.selected" /></td>
                                     <td>{{ion.ion | number : 4}}</td>
                                     <td>{{ion.intensity | number : 4}}</td>
-                                    <td>{{ion.annotation}}</td>
+                                    <td>
+                                        <input type="text"
+                                               ng-model="ion.annotation"
+                                               placeholder="Annotation"
+                                               class="form-control" />
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div style="margin-top: 10px;" ng-if="!showIonTable">
+                            <p class="lead">This mass spectrum is very large!</p>
+                            <p>It contains {{currentSpectrum.ions.length}} individual ions. Loading them all automatically can slow down your browser, but you can manually build the ion table:</p>
+                            <br />
+                            <p class="text-center"><a class="btn btn-primary" ng-click="$parent.showIonTable = true">Build Ion Table</a></p>
                         </div>
                     </tab>
 
@@ -177,10 +202,10 @@
                                            class="form-control" />
                                 </div>
                                 <div class="col-sm-2 form-group">
-                                    <button ng-click="removeMetadataField($index)" class="btn btn-default"><i
-                                            class="fa fa-minus-square"></i></button>
-                                    <button ng-click="applyMetadataToAll($index)" class="btn btn-default"><i
-                                            class="fa fa-files-o"></i></button>
+                                    <button ng-click="removeMetadataField($index)" class="btn btn-default"
+                                            tooltip="Remove this metadata value"><i class="fa fa-minus-square"></i></button>
+                                    <button ng-click="applyMetadataToAll($index)" class="btn btn-default"
+                                            tooltip="Copy this metadata value to all spectra"><i class="fa fa-files-o"></i></button>
                                 </div>
                             </div>
 

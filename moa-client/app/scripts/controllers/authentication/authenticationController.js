@@ -4,32 +4,47 @@
 'use strict';
 
 moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, AuthenticationService) {
-    $scope.welcomeMessage = '';
+    var ADMIN_ROLE_NAME = 'ROLE_ADMIN';
+    var self = this;
+
+    self.currentUser = null;
+    self.welcomeMessage = '';
 
 
     /**
      * Returns whether or not the user is logged in
      * @returns {*}
      */
-    $scope.isLoggedIn = function() {
+    self.isLoggedIn = function() {
         return AuthenticationService.isLoggedIn();
+    };
+
+    self.isAdmin = function() {
+        if (AuthenticationService.isLoggedIn()) {
+            for (var i = 0; i < $rootScope.currentUser.roles.length; i++) {
+                if ($rootScope.currentUser.roles[i].authority == ADMIN_ROLE_NAME)
+                    return true;
+            }
+        }
+
+        return false;
     };
 
     /**
      * Handle login
      */
-    $scope.handleLogin = function() {
-        if ($scope.isLoggedIn()) {
+    self.handleLogin = function() {
+        if (self.isLoggedIn()) {
             AuthenticationService.logout();
         } else {
-            $scope.openAuthenticationDialog();
+            self.openAuthenticationDialog();
         }
     };
 
     /**
      * Opens the authentication modal dialog
      */
-    $scope.openAuthenticationDialog = function () {
+    self.openAuthenticationDialog = function () {
         var modalInstance = $modal.open({
             templateUrl: '/views/authentication/authenticationModal.html',
             controller: moaControllers.AuthenticationModalController,
@@ -43,7 +58,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
      */
     $scope.$on('auth:login-success', function(event, data, status, headers, config) {
         AuthenticationService.getCurrentUser().then(function(data) {
-            $scope.welcomeMessage = "Welcome "+ data.firstName +"!";
+            self.welcomeMessage = "Welcome "+ data.firstName +"!";
         });
     });
 
@@ -51,15 +66,15 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
      * Remove the welcome message on logout
      */
     $scope.$on('auth:logout', function(event, data, status, headers, config) {
-        $scope.welcomeMessage = '';
+        self.welcomeMessage = '';
     });
 
     /**
      * Listen for external calls to bring up the authentication modal
      */
     $scope.$on('auth:login', function(event) {
-        if (!$scope.isLoggedIn()) {
-            $scope.openAuthenticationDialog();
+        if (self.isLoggedIn()) {
+            self.openAuthenticationDialog();
         }
     });
 

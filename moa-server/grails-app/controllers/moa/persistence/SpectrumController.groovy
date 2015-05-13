@@ -102,6 +102,15 @@ class SpectrumController extends RestfulController<Spectrum> {
             render([errors: "sorry missing JSON request"]);
         }
     }
+
+    /**
+     * uploads a spectra to the service without queuing
+     * @return
+     */
+    def upload(){
+
+        render spectraPersistenceService.create(request.JSON)
+    }
     /**
      * dynamic query methods to deal with different url mappings based on mapping ids
      * @param params

@@ -118,6 +118,9 @@ class UrlMappings {
          */
         "/rest/spectra/batch/save"(controller: 'spectrum', action: 'batchSave')
 
+        "/rest/spectra/upload"(controller: 'spectrum', action: 'upload')
+
+
         /**
          * delete all of these data
          */
@@ -132,6 +135,8 @@ class UrlMappings {
          * curation services
          */
         "/rest/spectra/curate/$id"(controller: 'spectraCuration', action: 'curate', id: id)
+
+        "/rest/spectra/curateNow/$id"(controller: 'spectraCuration', action: 'curateNow', id: id)
 
         /**
          * curation services

@@ -56,6 +56,12 @@ app.config(function ($routeProvider) {
             controller: 'SpectraDatabaseIndexController'
         })
 
+        //user profile page
+        .when('/profile', {
+            templateUrl: 'views/submitters/profile.html',
+            controller: 'SubmitterProfileController'
+        })
+
         //spectrum cleaner
         .when('/spectracleaner', {
             templateUrl: 'views/spectra/cleanSpectraData.html',
