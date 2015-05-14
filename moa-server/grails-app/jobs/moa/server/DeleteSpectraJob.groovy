@@ -13,7 +13,9 @@ import net.minidev.json.JSONObject
  */
 class DeleteSpectraJob {
 
+    def max = 25
 
+    def force = false
 
     def concurrent = false
 
@@ -22,7 +24,7 @@ class DeleteSpectraJob {
     def description = "removes spectra from the system"
 
     static triggers = {
-        cron name: 'deleteDuplicates', cronExpression: '0 */1 * * * ?', priority: 1
+        cron name: 'deleteDuplicates', cronExpression: '0 */1 * * * ?', priority: 10
 
     }
 
@@ -49,13 +51,12 @@ class DeleteSpectraJob {
                 log.info("job finished!")
             }
             else{
-                log.warn("we were missing the 'deleteSpectra' field in the data map")
+                log.warn("we were missing the 'deleteSpectra' - so we delete outdated max ${max} spectra by tag")
+                spectraQueryService.searchAndDelete([tags:[ RemoveIdenticalSpectraRule.REQUIRES_DELETE ]],[forceRemoval:force,max:max])
             }
         }
         else{
-            log.warn("no data were provided - deleting by tag instead")
-
-            spectraQueryService.searchAndDelete([tags:RemoveIdenticalSpectraRule.REQUIRES_DELETE])
+            log.warn("no data were provided")
         }
     }
 }

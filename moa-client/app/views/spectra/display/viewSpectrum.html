@@ -29,7 +29,7 @@
         <div class="col-md-12"
              ng-click="showScore =! showScore" ng-init="showScore = false">
             <span tooltip-placement="right" tooltip="please click, to see how the score was calculated"
-                  tooltip-trigger="mouseenter" tooltip-popup-delay='10' >
+                  tooltip-trigger="mouseenter" tooltip-popup-delay='10'>
             Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
                 </span>
         </div>
@@ -38,7 +38,8 @@
 
         <div class="col-md-12">
             <div class="panel top17" ng-show="spectrum.score">
-                Reasons for the obtained score of {{spectrum.score.score | number :4}} ({{spectrum.score.scaledScore | number :1}} stars)
+                Reasons for the obtained score of {{spectrum.score.score | number :4}} ({{spectrum.score.scaledScore |
+                number :1}} stars)
                 <table class="table">
                     <thead>
                     <tr>
@@ -47,7 +48,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'" ng-class="impact.impactValue < 0 ? 'danger' : (impact.impactValue > 0 ? 'success' : 'warning')">
+                    <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'"
+                        ng-class="impact.impactValue < 0 ? 'danger' : (impact.impactValue > 0 ? 'success' : 'warning')">
                         <td>{{impact.impactValue | number : 3}}</td>
                         <td>{{impact.reason}}</td>
                     </tr>
@@ -84,7 +86,10 @@
                     </accordion-heading>
 
                     <div class="masspec-modal">
-                        <h5>{{spectrum.hash}}</h5>
+                        <h5>
+                            <span gw-spectra-id-query value="spectrum.hash">{{spectrum.hash}}</span>
+                        </h5>
+
                         <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
                     </div>
                 </accordion-group>
@@ -133,7 +138,9 @@
                     </accordion-heading>
 
                     <div class="text-center" ng-show="loadingSimilarSpectra">
-                        <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span></p>
+                        <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span>
+                        </p>
+
                         <p>Please wait - this can take some time depending on server load.</p>
                     </div>
 
@@ -247,7 +254,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | orderBy: 'category': true">
+                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | orderBy: ['category','name']">
                         <td>
                             <span gw-meta-query value="meta"> {{meta.category}}</span>
                         </td>

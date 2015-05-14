@@ -116,7 +116,8 @@
             <h5>Query options</h5>
 
             <p>
-                The table bellow provides you with a quick overview of the following supported query options in the system.
+                The table bellow provides you with a quick overview of the following supported query options in the
+                system.
             </p>
             <table class="table table-striped">
                 <thead>
@@ -178,6 +179,29 @@
         <div>
 
             <h4>Query</h4>
+
+            <p>
+                The mona database system utilizes an internal id, which should generally not be queried or utilized.
+                This is the numeric id, you see in the top of your browser sometimes. Instead
+                it's always better to utilize the mona-key, which is an unique hash code. Think about it like an
+                InChI-Key for spectra, which can be easily utilized to test if two spectra are identical.
+
+            </p>
+
+            <h5>
+                An example query to get all spectra, associated with a given id would be:
+            </h5>
+            <pre>
+                {
+                    "id":["mona-00d6aa5242967963fb9f34005b1ff071"]
+                }
+            </pre>
+
+            Which would return any spectrum with the exact same hashcode.
+
+            Currently can receive more than just one result with this, since we do allow duplicate submission of spectra
+            to the system. These duplicates will automatically removed during validation and curration tasks of the
+            system.
 
         </div>
         <div>
