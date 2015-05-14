@@ -14,6 +14,7 @@ class ExpireNewsJob {
 
     def concurrent = false
 
+    def group = "delete"
 
     def description = "removes outdated news"
     static triggers = {

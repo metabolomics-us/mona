@@ -6,7 +6,7 @@
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  *
  */
-app.service('SpectraQueryBuilderService', function (QueryCache,MetadataService) {
+app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService) {
     /**
      * provides us with the current query
      * @returns {*|QueryCache.spectraQuery}
@@ -152,6 +152,45 @@ app.service('SpectraQueryBuilderService', function (QueryCache,MetadataService) 
         QueryCache.setSpectraQuery(query);
     };
 
+    /**
+     * adds the given id || hash to the query
+     * @param id
+     */
+    this.addSpectraIdToQuery = function (id) {
+
+        var query = this.getQuery();
+
+        if (!query.id) {
+            query.id = [];
+        }
+
+        query.id.push(id);
+
+        QueryCache.setSpectraQuery(query);
+
+    };
+    /**
+     * removes this spectra id from the query
+     * @param id
+     */
+    this.removeSpectraIdFromQuery = function (id) {
+
+        var query = this.getQuery();
+
+        if (query.id) {
+
+            //create a metadata query object
+
+            for (var i = 0; i < query.id.length; i++) {
+                if (query.id[i] == id) {
+                    query.id.splice(i, 1);
+                }
+            }
+        }
+
+        QueryCache.setSpectraQuery(query);
+
+    };
 
     /**
      * adds a tag to the query

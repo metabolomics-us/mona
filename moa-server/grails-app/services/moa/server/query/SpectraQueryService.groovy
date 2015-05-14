@@ -5,11 +5,14 @@ import groovy.sql.Sql
 import moa.Spectrum
 import moa.Tag
 import moa.server.statistics.StatisticsService
+import moa.server.tag.TagService
 import net.sf.ehcache.search.expression.Criteria
 import org.hibernate.FetchMode
 import org.hibernate.QueryException
 import org.hibernate.criterion.CriteriaSpecification
 import util.query.QueryHelper
+
+import static util.query.QueryHelper.buildComparisonField
 
 class SpectraQueryService {
 
@@ -20,6 +23,8 @@ class SpectraQueryService {
     MetaDataQueryService metaDataQueryService
 
     StatisticsService statisticsService
+
+    TagService tagService
 
     @Transactional
     def query(long id) {
@@ -112,7 +117,6 @@ class SpectraQueryService {
             params.offset = offset
         }
 
-
 //        log.debug("pagination parameters: \n\n ${params}")
 
         def queryOfDoom = null
@@ -122,12 +126,12 @@ class SpectraQueryService {
 
         println "executing criteria - query"
 
-        def result = Spectrum.executeQuery(queryOfDoom,executionParams,params)
+        def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
         println "execution ended - received: ${result.size()} spectra"
         println "${json}"
         //println "$queryOfDoom"
 
-      //  log.debug("result count: ${result.size()}")
+        //  log.debug("result count: ${result.size()}")
 
 
         statisticsService.acquire(System.currentTimeMillis() - begin, "text search", "${json}", "search")
@@ -155,6 +159,8 @@ class SpectraQueryService {
         //our defined execution parameters
         def executionParams = [:]
 
+        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonSpectraData(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+
         (queryOfDoomWhere, queryOfDoomJoins) = handleJsonCompoundField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
         (queryOfDoomWhere, queryOfDoomJoins) = handleSpectraJsonMetadataFields(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
@@ -172,8 +178,61 @@ class SpectraQueryService {
         return [queryOfDoom, executionParams]
     }
 
+    /**
+     * works on the json spectra data itself and creates an or query based on the provided id's or hashes
+     *
+     *{*  id : [1235 || id : "mona-hashcode" ]
+     *}* @param json
+     * @param queryOfDoomWhere
+     * @param queryOfDoomJoins
+     * @param executionParams
+     * @return
+     */
+    private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
+
+
+
+        if (json.id) {
+            if(json.id.size() > 0) {
+
+                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                //handle brackets
+                queryOfDoomWhere += "( "
+                json.id.eachWithIndex { String current, int index ->
+
+                    // handle id
+                    try {
+                        long id = Long.parseLong(current)
+
+                        queryOfDoomWhere += " s.id = :spectraId_${index}"
+                        executionParams."spectraId_${index}" = id
+                    }
+
+                    // handle email address
+                    catch (NumberFormatException e) {
+                        //build our specific query
+                        queryOfDoomWhere += " s.hash = :spectraId_${index}"
+                        executionParams."spectraId_${index}" = current
+                    }
+
+
+                    //add or statement
+                    if(index < json.id.size()-1){
+                        queryOfDoomWhere += " OR "
+                    }
+                }
+
+                //handle brackets
+                queryOfDoomWhere += " )"
+            }
+        }
+
+        [queryOfDoomWhere, queryOfDoomJoins]
+    }
+
     @Transactional
-    def query(def json, def params) {
+    def query(Map json, def params) {
 
         if (!params.max) {
             params.max = -1
@@ -199,7 +258,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonSubmitterField(json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+    private List handleJsonSubmitterField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
 
         //handling submitter
         if (json.submitter) {
@@ -217,7 +276,7 @@ class SpectraQueryService {
             }
 
             // handle email address
-            catch (Exception e) {
+            catch (NumberFormatException e) {
                 //build our specific query
                 queryOfDoomWhere += " sub.emailAddress = :submitterInfo"
                 executionParams.submitterInfo = json.submitter.toString()
@@ -228,6 +287,15 @@ class SpectraQueryService {
     }
 
     /**
+     * {
+     *  tags: [
+     *      tag: {
+     *          name :  {
+     *              "eq" : "tada"
+     *          }
+     *      }
+     *  ]
+     *  }
      * does searches by tag field
      * @param json
      * @param queryOfDoomWhere
@@ -239,11 +307,10 @@ class SpectraQueryService {
 //handling tags
         if (json.tags) {
 
-            if (json.tags.length() > 0) {
-
-                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+            if (json.tags.size() > 0) {
 
 
+  /*
                 json.tags.eachWithIndex { current, index ->
 
                     //add our tag join
@@ -255,11 +322,33 @@ class SpectraQueryService {
 
                     executionParams.put("tag_${index}".toString(), current.toString());
 
-                    if (index < json.tags.length() - 1) {
+                    if (index < json.tags.size() - 1) {
                         queryOfDoomWhere += " and "
                     }
                 }
+*/
 
+                json.tags.eachWithIndex { current, index ->
+
+                    queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                    queryOfDoomJoins += "  inner join s.links as t_${index} "
+                    queryOfDoomJoins += "  inner join t_${index}.tag as tag_table_${index}"
+
+                    //deprecated short form - should not be used anymore
+                    if(current instanceof  String) {
+                        log.warn("using outdated query model!")
+                        (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "text", [current], "eq", executionParams,index,"tag_table_${index}")
+
+                    }
+                    else{
+                        if(current.name) {
+                            current.name.keySet().each { String key ->
+                                (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "text", [current.name."${key}"], key, executionParams,index,"tag_table_${index}")
+                            }
+                        }
+                    }
+                }
 
             }
         }
@@ -321,10 +410,8 @@ class SpectraQueryService {
             queryOfDoomJoins += " inner join s.chemicalCompound as cc"
             queryOfDoomJoins += " left join s.predictedCompound as pc"
 
-
             //TODO NEEDS TO BE MORE DYNAMIC
             if (json.compound.name) {
-
 
 
                 queryOfDoomJoins += " left join bc.names as bcn"
@@ -420,6 +507,15 @@ class SpectraQueryService {
 
     /**
      * queries the system and updates all the values, based on the payload
+     *
+     * update json:
+     *
+     *
+     *{*     update:{*         tags:[
+     *              tagName //to add a new tagname
+     *              -tagName //to remove this tagname
+     *          ]
+     *}*}* }
      * @param json
      */
     def update(queryContent, update) {
@@ -437,26 +533,17 @@ class SpectraQueryService {
 
                         String nameToDelete = t.substring(1, t.length())
                         def deleteMe = []
-                        spectrum.tags.each {
 
-                            if (it.text == nameToDelete) {
-                                deleteMe.add(it)
-                            }
-                        }
 
-                        deleteMe.each { Tag tag ->
-                            log.info("removing tag from spectra: ${tag}")
-                            spectrum.removeFromTags(tag)
-                        }
+                        tagService.removeTagFrom(nameToDelete, spectrum)
                     }
                     //else we want to add it
                     else {
-                        Tag tag = Tag.findOrSaveByText(t);
-
-
-                        spectrum.addToTags(tag)
+                        tagService.addTagTo(t, spectrum)
                     }
                 }
+            } else {
+                throw new RuntimeException("sorry invalid update string: ${update}")
             }
 
             //save the now modified spectra
@@ -471,7 +558,7 @@ class SpectraQueryService {
      * @param deleteQuery
      * @return
      */
-    def searchAndDelete(def deleteQuery) {
+    def searchAndDelete(def deleteQuery, def params = [:]) {
 
         log.info("query system for delete request: ${deleteQuery}")
 
@@ -481,12 +568,34 @@ class SpectraQueryService {
         (queryOfDoom, executionParams) = generateFinalQuery(deleteQuery)
 
 
-        def result = Spectrum.executeQuery(queryOfDoom, executionParams)
+        def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
 
         log.info("have ${result.size()} spectra to remove in this batch")
         result.each { Spectrum spectrum ->
             log.info("deleting spectrum: ${spectrum.id}")
-            spectrum.delete(flush: true)
+
+            long begin = System.currentTimeMillis()
+
+            if(params.forceRemoval == true) {
+
+
+                def links = []
+                spectrum.links.each {
+                    links.add(it)
+                }
+
+                links.each {
+                    tagService.removeLink(it)
+                }
+
+                statisticsService.acquire(System.currentTimeMillis() - begin, "deleted a spectra", "${spectrum.hash}", "delete")
+
+                spectrum.delete(flush: true)
+            }
+            else{
+                tagService.addTagTo("deleted",spectrum)
+                spectrum.save()
+            }
         }
 
         log.info("finished delete operation")

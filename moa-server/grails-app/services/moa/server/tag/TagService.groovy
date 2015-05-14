@@ -16,13 +16,18 @@ class TagService {
     def addTagTo(String tagName, SupportsMetaData meta) {
 
         log.debug("adding tagName: ${tagName}")
+
         Tag tag = Tag.findOrSaveByText(tagName/*, [lock: true]*/)
 
-        TagLink link = new TagLink()
-        link.owner = meta
-        link.tag = tag
+        //avoids duplicated tagging
+        if (TagLink.findOrSaveByTagAndOwner(tag, meta) == null) {
 
-        link.save()
+            TagLink link = new TagLink()
+            link.owner = meta
+            link.tag = tag
+
+            link.save()
+        }
 
     }
 
@@ -36,7 +41,7 @@ class TagService {
 
         Tag tag = Tag.findOrSaveByText(tagName/*, [lock: true]*/)
 
-        def links = TagLink.findAllByOwnerAndTag(owner,tag);
+        def links = TagLink.findAllByOwnerAndTag(owner, tag);
 
         def toDelete = []
 
@@ -49,7 +54,7 @@ class TagService {
         }
     }
 
-    def removeLink(TagLink link){
+    def removeLink(TagLink link) {
         link.owner.removeFromLinks(link)
         link.tag.removeFromLinks(link)
         link.delete()
