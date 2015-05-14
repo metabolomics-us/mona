@@ -46,8 +46,8 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
 
         //add tags to query
         for (var key in $scope.selectedTags) {
-            if ($scope.selectedTags.hasOwnProperty(key) && $scope.selectedTags[key]) {
-                SpectraQueryBuilderService.addTagToQuery(key);
+            if ($scope.selectedTags.hasOwnProperty(key) ) {
+                    SpectraQueryBuilderService.addTagToQuery(key,false,$scope.selectedTags[key]);
             }
         }
 
