@@ -44,7 +44,7 @@ class CompoundService {
                 throw new exception.ValidationException("sorry you need to provide an InChI or an InChI Key for a compound!")
             }
             else{
-                compound.inchiKey = MolHelper.newInstance().convertToInChIKey(compound.inchi)
+                compound.inchiKey = MolHelper.newInstance().convertToInChIKey(compound.inchi.trim())
 
             }
         }
