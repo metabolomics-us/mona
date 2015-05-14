@@ -34,7 +34,9 @@ class SpectraCurationService {
 
         Spectrum spectrum = spectraQueryService.query(id)
 
+        log.info("loaded spectrum: ${spectrum}")
         if (spectrum) {
+            log.info("starting curation for: ${spectraCurationWorkflow}")
             boolean result = spectraCurationWorkflow.runWorkflow(new CurationObject(spectrum))
 
             long end = System.currentTimeMillis()

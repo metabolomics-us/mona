@@ -31,7 +31,7 @@ class SpectraValidationSchedulingJob  {
 
         if (data != null) {
             if (data.all) {
-                def ids = Spectrum.findAll()*.id
+                def ids = Spectrum.executeQuery("select s.id from Spectrum s")
 
                 ids.each { long id ->
                     SpectraValidationJob.triggerNow([spectraId: id, priority: 1])

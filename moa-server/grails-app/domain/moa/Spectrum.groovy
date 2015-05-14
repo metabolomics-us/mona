@@ -42,19 +42,22 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         predictedCompound nullable: true
         submitter nullable: true
         score nullable: true
+        hash nullable: true
     }
 
     static mapping = {
+
+        batchSize(50)
         version false
         comments fetch: 'join', cascade: 'all-delete-orphan'
-        ions fetch: 'join', lazy:false
-        chemicalCompound fetch: 'join'
-        biologicalCompound fetch: 'join'
-        predictedCompound fetch: 'join'
-        score fetch: 'join'
-        metaData fetch: 'join'
-        links fetch: 'join'
-        submitter fetch: 'join'
+       // ions fetch: 'join', lazy:false
+       // chemicalCompound fetch: 'join'
+       // biologicalCompound fetch: 'join'
+       // predictedCompound fetch: 'join'
+       // score fetch: 'join'
+       // metaData fetch: 'join'
+       // links fetch: 'join'
+       // submitter fetch: 'join'
     }
 
 
@@ -103,4 +106,8 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      */
     Compound predictedCompound
 
+    /**
+     * dedicated spectra hashcode
+     */
+    String hash
 }

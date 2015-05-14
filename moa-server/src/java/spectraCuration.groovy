@@ -26,6 +26,7 @@ import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
 import curation.rules.spectra.IsDuplicatedSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
+import curation.rules.spectra.RemoveIdenticalSpectraRule
 
 beans {
 
@@ -163,6 +164,10 @@ beans {
         bean.autowire = 'byName'
     }
 
+    requiresRemoval(RemoveIdenticalSpectraRule) { bean ->
+        bean.autowire = 'byName'
+    }
+
 //set up metadata subcuration workflow
     metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") { bean ->
         bean.autowire = 'byName'
@@ -198,7 +203,7 @@ beans {
     spectraCurationWorkflow(CurationWorkflow) { bean ->
         bean.autowire = 'byName'
 
-        rules = [
+        rules = [      /*
                 //these rules should run first
                 deleteRuleBasedTagRule,
                 deleteMetaDataRule,
@@ -208,7 +213,7 @@ beans {
 
                 //order doesn't really matter here
                 metadataCuration,
-                isSpectraDuplicated,
+                //isSpectraDuplicated,
                 isAccurateMassSpectra,
                 isSpectraDirty,
                 lcmsAdductCuration,
@@ -219,7 +224,8 @@ beans {
                 gcmsCompoundShouldBeDerivatized,
 
                 //these rules should run last
-                isAnnotatedSpectraRule
+                isAnnotatedSpectraRule,   */
+                requiresRemoval
         ]
 //define and register our curation
     }
