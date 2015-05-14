@@ -27,6 +27,9 @@ public interface CommonTags {
 
     public static final String DUPLICATED_SPECTRA = "duplicated"
 
+    public static final String REQUIRES_DELETE = "to be deleted"
+
+
 
 
 }

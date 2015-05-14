@@ -7,6 +7,7 @@
             <div class="h5">
                 {{spectrum.biologicalCompound.names[0].name}}
             </div>
+
         </div>
 
         <div class="col-md-9 text-right">
@@ -83,6 +84,7 @@
                     </accordion-heading>
 
                     <div class="masspec-modal">
+                        <h5>{{spectrum.hash}}</h5>
                         <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
                     </div>
                 </accordion-group>

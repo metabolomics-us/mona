@@ -32,6 +32,7 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
                 isArray: true
             },
 
+
             /**
              * searches for similar spectra
              */

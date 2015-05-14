@@ -45,7 +45,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
         toValidate.refreshObject()
 
         for (CurationRule rule : rules) {
-            logger.info("executing rule: ${rule.getClass().getName()}")
+            logger.info("STARTED - executing rule: ${rule.getClass().getName()}")
 
             try {
 
@@ -79,6 +79,9 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
             }
             catch (Exception e) {
                 throw e;
+            }
+            finally {
+                logger.info("FINSIHED - executing rule: ${rule.getClass().getName()}")
             }
         }
 
