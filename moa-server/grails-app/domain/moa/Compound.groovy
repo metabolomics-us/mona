@@ -18,7 +18,7 @@ class Compound extends SupportsMetaData {
         inchi sqlType: "text"
         comments fetch: 'join'
         names fetch: 'join'
-        metaData fetch: 'join'
+       // metaData fetch: 'join'
     }
     /**
 

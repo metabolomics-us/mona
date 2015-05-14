@@ -1,5 +1,6 @@
 package moa.server
 
+import curation.rules.spectra.RemoveIdenticalSpectraRule
 import grails.converters.JSON
 import moa.server.query.SpectraQueryService
 import net.minidev.json.JSONObject
@@ -20,7 +21,10 @@ class DeleteSpectraJob {
 
     def description = "removes spectra from the system"
 
-    static triggers = {}
+    static triggers = {
+        cron name: 'deleteDuplicates', cronExpression: '0 */1 * * * ?', priority: 1
+
+    }
 
     SpectraQueryService spectraQueryService
 
@@ -49,7 +53,9 @@ class DeleteSpectraJob {
             }
         }
         else{
-            log.warn("no data were provided!")
+            log.warn("no data were provided - deleting by tag instead")
+
+            spectraQueryService.searchAndDelete([tags:RemoveIdenticalSpectraRule.REQUIRES_DELETE])
         }
     }
 }
