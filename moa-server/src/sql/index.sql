@@ -1,3 +1,7 @@
+--required for internal spectra hashing
+CREATE EXTENSION pgcrypto;
+
+
 CREATE INDEX "metadata_value_metadata_id_index"
 	ON "public"."meta_data_value"("meta_data_id");
 
@@ -42,4 +46,14 @@ CREATE INDEX "tag_link_tag"
 
 CREATE INDEX "tag_link_owner_tag"
 	ON "public"."tag_link"("owner_id", "tag_id")
+
+CREATE INDEX "impact_index_score_id_id"
+	ON "public"."impact"("score_id","id")
+
+CREATE INDEX "spectrum_index_hash"
+	ON "public"."spectrum"("hash")
+
+
+
+
 

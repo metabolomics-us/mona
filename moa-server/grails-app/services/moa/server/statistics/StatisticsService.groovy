@@ -209,7 +209,7 @@ class StatisticsService {
      */
     @Transactional
     def acquire(Double value, String title, String description = "none", String category = "runtime") {
-        boolean  enabled = false
+        boolean  enabled = true
 
         if(enabled) {
             Statistics statistics = new Statistics()

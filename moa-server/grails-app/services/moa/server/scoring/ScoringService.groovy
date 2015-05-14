@@ -61,7 +61,18 @@ class ScoringService {
         Score score = scoreable.score
         if (score) {
             if (score.impacts != null) {
-                score.impacts.clear()
+
+                def toDelete = []
+
+                score.impacts.each {
+                    toDelete.add(it)
+                }
+
+                toDelete.each { Impact impact1 ->
+                    impact1.score = null
+                    score.removeFromImpacts(impact1)
+                    impact1.delete()
+                }
             }
 
             scoreable.score = null

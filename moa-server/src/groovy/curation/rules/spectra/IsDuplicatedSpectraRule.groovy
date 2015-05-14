@@ -65,6 +65,6 @@ class IsDuplicatedSpectraRule extends AbstractCurationRule {
 
     @Override
     String getDescription() {
-        return "this rule calculates if this given spectra is duplicated or not"
+        return "this rule calculates if this given spectra is very similar to other spectra. The similarity is estimated based on the dot product approach"
     }
 }
