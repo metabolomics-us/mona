@@ -3,7 +3,7 @@ package moa.server
 import curation.rules.spectra.RemoveIdenticalSpectraRule
 import grails.converters.JSON
 import moa.server.query.SpectraQueryService
-import net.minidev.json.JSONObject
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,6 +15,10 @@ class DeleteSpectraJob {
 
     def max = 25
 
+    /**
+     * force true forces instant deletion
+     * force false marks the element as deleted
+     */
     def force = false
 
     def concurrent = false
@@ -35,27 +39,42 @@ class DeleteSpectraJob {
         Map data = context.mergedJobDataMap
 
         if (data != null) {
-            if(data.containsKey("deleteSpectra")){
+            if (data.containsKey("deleteSpectra")) {
 
                 def json = null
 
-                if(data.deleteSpectra instanceof JSONObject){
+                if (data.deleteSpectra instanceof JSONObject) {
 
                     json = data.delete
-                }
-                else{
+                } else {
                     json = JSON.parse(data.deleteSpectra.toString())
                 }
                 log.info("calling delete service...")
                 spectraQueryService.searchAndDelete(json)
                 log.info("job finished!")
-            }
-            else{
+            } else {
                 log.warn("we were missing the 'deleteSpectra' - so we delete outdated max ${max} spectra by tag")
-                spectraQueryService.searchAndDelete([tags:[ RemoveIdenticalSpectraRule.REQUIRES_DELETE ]],[forceRemoval:force,max:max])
+                spectraQueryService.searchAndDelete(
+                        [tags:
+                                 [
+                                         //we only want spectra which requires deletion
+                                         [name:
+                                                  [
+                                                          eq: RemoveIdenticalSpectraRule.REQUIRES_DELETE
+                                                  ]
+                                         ],
+                                         //but which not have been marked as deleted yet
+                                         [name:
+                                                  [
+                                                          ne: RemoveIdenticalSpectraRule.DELETED
+                                                  ]
+                                         ],
+
+                                 ]
+                        ]
+                        , [forceRemoval: force, max: max])
             }
-        }
-        else{
+        } else {
             log.warn("no data were provided")
         }
     }
