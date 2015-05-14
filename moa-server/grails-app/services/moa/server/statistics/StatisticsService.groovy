@@ -222,4 +222,25 @@ class StatisticsService {
             statistics.save()
         }
     }
+
+    /**
+     * simple statistics how busy the system is currently
+     * @return
+     */
+    def getCountForPendingJobs(){
+        Sql sql = Sql.newInstance(dataSource)
+
+        def result = []
+
+        sql.eachRow("select count(*) as c, job_group as type from qrtz_triggers group by job_group"){
+
+            def data =[
+                    it.type : it.c
+            ]
+
+            result.add(data)
+        }
+
+        return result
+    }
 }

@@ -6,7 +6,7 @@
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  *
  */
-app.service('SpectraQueryBuilderService', function (QueryCache,MetadataService) {
+app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService) {
     /**
      * provides us with the current query
      * @returns {*|QueryCache.spectraQuery}
@@ -152,13 +152,58 @@ app.service('SpectraQueryBuilderService', function (QueryCache,MetadataService) 
         QueryCache.setSpectraQuery(query);
     };
 
+    /**
+     * adds the given id || hash to the query
+     * @param id
+     */
+    this.addSpectraIdToQuery = function (id) {
+
+        var query = this.getQuery();
+
+        if (!query.id) {
+            query.id = [];
+        }
+
+        query.id.push(id);
+
+        QueryCache.setSpectraQuery(query);
+
+    };
+    /**
+     * removes this spectra id from the query
+     * @param id
+     */
+    this.removeSpectraIdFromQuery = function (id) {
+
+        var query = this.getQuery();
+
+        if (query.id) {
+
+            //create a metadata query object
+
+            for (var i = 0; i < query.id.length; i++) {
+                if (query.id[i] == id) {
+                    query.id.splice(i, 1);
+                }
+            }
+        }
+
+        QueryCache.setSpectraQuery(query);
+
+    };
 
     /**
      * adds a tag to the query
+     * tag: {
+     *          name :  {
+     *              "eq" : "tada"
+     *          }
+     *      }
+     *
      * @param tag
      * @param isCompound is this a tag of a compound
      */
-    this.addTagToQuery = function (tag, isCompound) {
+    this.addTagToQuery = function (tag, isCompound, includeExclude) {
         if (tag) {
             this.removeTagFromQuery(tag);
             var query = this.getQuery();
@@ -170,7 +215,28 @@ app.service('SpectraQueryBuilderService', function (QueryCache,MetadataService) 
                 query.compounds.tags.push(tag);
             }
             else {
-                query.tags.push(tag);
+
+                if(includeExclude == '+'){
+
+                    query.tags.push(
+                        {
+                            name:{
+                                eq:tag
+                            }
+                        }
+                    );
+                }
+                else if(includeExclude == '-'){
+
+                    query.tags.push(
+                        {
+                            name:{
+                                ne:tag
+                            }
+                        }
+                    );
+                }
+
             }
             QueryCache.setSpectraQuery(query);
         }

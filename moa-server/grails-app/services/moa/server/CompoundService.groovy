@@ -48,7 +48,7 @@ class CompoundService {
 
             }
         }
-        myCompound = Compound.findByInchiKey(compound.inchiKey.trim(), [lock: true])
+        myCompound = Compound.findByInchiKey(compound.inchiKey.trim()/*, [lock: true]*/)
 
         if (myCompound == null) {
             log.debug("compound not found -> adding it")
@@ -82,7 +82,7 @@ class CompoundService {
 
         if (myCompound.validate()) {
 
-            Compound existing = Compound.findByInchiKey(myCompound.inchiKey, [lock: true])
+            Compound existing = Compound.findByInchiKey(myCompound.inchiKey/*, [lock: true]*/)
 
             if (existing == null) {
                 myCompound.save(flush:true)

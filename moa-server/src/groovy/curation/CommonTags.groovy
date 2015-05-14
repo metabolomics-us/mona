@@ -29,6 +29,7 @@ public interface CommonTags {
 
     public static final String REQUIRES_DELETE = "to be deleted"
 
+    public static final String DELETED = "deleted"
 
 
 

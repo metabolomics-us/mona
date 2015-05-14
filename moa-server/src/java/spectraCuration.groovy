@@ -203,7 +203,7 @@ beans {
     spectraCurationWorkflow(CurationWorkflow) { bean ->
         bean.autowire = 'byName'
 
-        rules = [      /*
+        rules = [
                 //these rules should run first
                 deleteRuleBasedTagRule,
                 deleteMetaDataRule,
@@ -224,7 +224,9 @@ beans {
                 gcmsCompoundShouldBeDerivatized,
 
                 //these rules should run last
-                isAnnotatedSpectraRule,   */
+                isAnnotatedSpectraRule,
+
+                //must be the last rule
                 requiresRemoval
         ]
 //define and register our curation

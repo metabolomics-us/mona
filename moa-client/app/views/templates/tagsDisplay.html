@@ -1,10 +1,18 @@
 <div>
-  <ul class="list-inline" style="text-align: center;">
-    <li ng-repeat="tag in tags">
-      <button type="button" class="btn" ng-class="tagClass(tag)" ng-click="selectTag(tag)">
-        {{tag.text}}
-        <i class="fa fa-flask" ng-show="tag.ruleBased"></i>
-      </button>
-    </li>
-  </ul>
+    <ul class="list-inline" style="text-align: center;">
+        <li ng-repeat="tag in tags">
+            <div class="btn-group" dropdown>
+
+                <button type="button" class="btn dropdown-toggle" ng-class="tagClass(tag)" ng-click="selectTag(tag)">
+                    {{tag.text}}
+                    <i class="fa fa-flask" ng-show="tag.ruleBased"></i>
+
+                    <span class="caret left30"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="opt in options"><a ng-click="opt.action(tag, status)">{{opt.name}}</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
 </div>
