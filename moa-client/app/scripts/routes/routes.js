@@ -19,16 +19,10 @@ app.config(function ($routeProvider) {
             controller: 'CompoundBrowserController'
         })
 
-        //displaying all submitters
-        .when('/submitters', {
-            templateUrl: 'views/submitters/list.html',
-            controller: 'SubmitterController'
-        })
-
-        //uploading a massspec
-        .when('/spectra/upload', {
-            templateUrl: 'views/spectra/upload/upload.html',
-            controller: 'SpectraUploadController'
+        //uploading a mass spec
+        .when('/upload', {
+            templateUrl: 'views/spectra/cleanSpectraData.html',
+            controller: 'CleanSpectraDataController'
         })
 
         //displaying a single compound
@@ -62,11 +56,12 @@ app.config(function ($routeProvider) {
             controller: 'SubmitterProfileController'
         })
 
-        //spectrum cleaner
-        .when('/spectracleaner', {
-            templateUrl: 'views/spectra/cleanSpectraData.html',
-            controller: 'CleanSpectraDataController'
+        //displaying all submitters
+        .when('/admin/submitters', {
+            templateUrl: 'views/submitters/list.html',
+            controller: 'SubmitterController'
         })
+
 
         .when('/documentation/license', {
             templateUrl: 'views/documentation/license.html'
