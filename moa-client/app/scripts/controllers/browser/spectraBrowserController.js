@@ -118,7 +118,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
 
         if (query.compound.hasOwnProperty('name')) {
-            $scope.nameFilter = query.compound.name.like;
+            $scope.nameFilter = query.compound.name.ilike.replace(/%/g, '');
         }
 
         if (query.compound.hasOwnProperty('inchiKey')) {
@@ -248,7 +248,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         );
 
         $scope.spectra = [];
-
 
         // Submit our initial query
         $scope.submitQuery();

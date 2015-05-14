@@ -112,7 +112,7 @@
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
                 <li class="sidebar-search" ng-controller="SearchBoxController">
-                    <form name="searchBox">
+                    <form name="searchBox" ng-submit="searchBoxQuery = ''">
                         <div class="input-group custom-search-form">
                             <input type="text"
                                    class="form-control"
