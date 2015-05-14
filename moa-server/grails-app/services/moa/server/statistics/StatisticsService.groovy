@@ -234,8 +234,8 @@ class StatisticsService {
 
         sql.eachRow("select count(*) as c, job_group as type from qrtz_triggers group by job_group"){
 
-            def data =[
-                    it.type : it.c
+            def data = [
+                    "${it.type}" : "${it.c}"
             ]
 
             result.add(data)
