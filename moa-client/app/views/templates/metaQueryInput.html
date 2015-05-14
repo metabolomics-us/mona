@@ -1,12 +1,20 @@
 <div>
     <div ng-repeat="meta in query">
-        <div class="col-sm-6 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
+        <div class="col-sm-4 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
             <input type="text"
                    ng-model="meta.name"
                    placeholder="Metadata Name"
                    typeahead="x for x in metadataNames | filter:$viewValue| limitTo:10"
                    typeahead-editable="editable"
                    class="form-control" />
+        </div>
+        <div class="col-sm-2 form-group">
+            <select
+                    ng-model="meta.selected"
+                    ng-options="item.name for item in select"
+                    class="form-control"
+
+                    ></select>
         </div>
         <div class="col-sm-6 form-group">
             <input type="text"

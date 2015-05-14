@@ -35,6 +35,8 @@ app.constant('INTERNAL_CACHING', true);
 app.run(function($rootScope) {
     $rootScope.APP_NAME = 'Massbank of North America';
     $rootScope.APP_NAME_ABBR = 'MoNA';
+    $rootScope.APP_VERSION = 'alpha-2';
+
 });
 
 
