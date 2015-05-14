@@ -111,17 +111,24 @@
     <div class="navbar-default navbar-static-side" role="navigation">
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
-                <li class="sidebar-search">
-                    <div class="input-group custom-search-form">
-                        <input type="text" class="form-control" placeholder="Search..."/>
-                                <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">
+                <li class="sidebar-search" ng-controller="SearchBoxController">
+                    <form name="searchBox">
+                        <div class="input-group custom-search-form">
+                            <input type="text"
+                                   class="form-control"
+                                   ng-model="searchBoxQuery"
+                                   placeholder="Search..."
+                                   tooltip="Search by Name, InChIKey or MoNA ID"
+                                   tooltip-trigger="focus"
+                                   tooltip-placement="bottom" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit" ng-click="performSimpleQuery(searchBoxQuery)">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>
-
-                    </div>
-                    <!-- /input-group -->
+                        </div>
+                        <p class="text-right"><span class="help-block"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></span></p>
+                    </form>
                 </li>
 
 
@@ -196,7 +203,7 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="top17">
-            <div ng-view=""></div>
+            <div ng-view="" autoscroll="true"></div>
         </div>
     </div>
     <!-- /.row -->
@@ -298,6 +305,7 @@
 <script src="scripts/controllers/submitter/submitterProfileController.js"></script>
 <script src="scripts/controllers/upload/spectraUploadWizardController.js"></script>
 <script src="scripts/controllers/upload/spectraUploadController.js"></script>
+<script src="scripts/controllers/searchBoxController.js"></script>
 
 
 <!-- directives -->
