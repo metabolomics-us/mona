@@ -1,5 +1,6 @@
 package moa.server.query
 
+import curation.CommonTags
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import moa.Spectrum
@@ -310,24 +311,6 @@ class SpectraQueryService {
             if (json.tags.size() > 0) {
 
 
-  /*
-                json.tags.eachWithIndex { current, index ->
-
-                    //add our tag join
-                    queryOfDoomJoins += "  inner join s.links as t_${index} "
-                    queryOfDoomJoins += "  inner join t_${index}.tag as tag_table_${index}"
-
-                    //build our specific query
-                    queryOfDoomWhere += " tag_table_${index}.text = :tag_${index}"
-
-                    executionParams.put("tag_${index}".toString(), current.toString());
-
-                    if (index < json.tags.size() - 1) {
-                        queryOfDoomWhere += " and "
-                    }
-                }
-*/
-
                 json.tags.eachWithIndex { current, index ->
 
                     queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
@@ -335,11 +318,8 @@ class SpectraQueryService {
                     queryOfDoomJoins += "  inner join s.links as t_${index} "
                     queryOfDoomJoins += "  inner join t_${index}.tag as tag_table_${index}"
 
-                    //deprecated short form - should not be used anymore
                     if(current instanceof  String) {
-                        log.warn("using outdated query model!")
                         (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "text", [current], "eq", executionParams,index,"tag_table_${index}")
-
                     }
                     else{
                         if(current.name) {
@@ -593,7 +573,7 @@ class SpectraQueryService {
                 spectrum.delete(flush: true)
             }
             else{
-                tagService.addTagTo("deleted",spectrum)
+                tagService.addTagTo(CommonTags.DELETED,spectrum)
                 spectrum.save()
             }
         }
