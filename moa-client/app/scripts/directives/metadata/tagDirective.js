@@ -109,6 +109,12 @@ app.directive('gwTagDisplay', function () {
             $scope.tagsCount = {};
 
             /**
+             * associated options
+             * @type {Array}
+             */
+            $scope.options = [];
+
+            /**
              * calculate the tag class
              * @param tag
              * @returns {Array}
@@ -116,13 +122,19 @@ app.directive('gwTagDisplay', function () {
             $scope.tagClass = function (tag) {
                 var tagClass = [];
 
-                if ($scope.selectedTags[tag.text]) {
-                    tagClass.push('btn-primary');
-                } else {
+                //if something is selected
+                if ($scope.selectedTags[tag.text] == '+') {
+                    tagClass.push('btn-success');
+                }
+                else if ($scope.selectedTags[tag.text] == '-') {
+                    tagClass.push('btn-danger');
+                }
+                else {
                     tagClass.push('btn-default');
                     $scope.selectedTags[tag.text] = false;
                 }
 
+                //size of our actual tagging value
                 if ($scope.maxTagsCount > 0 && $scope.tagsCount.hasOwnProperty(tag.text)) {
                     if ($scope.tagsCount[tag.text] / $scope.maxTagsCount < 0.25) {
                         tagClass.push('btn-xs');
@@ -137,19 +149,33 @@ app.directive('gwTagDisplay', function () {
             };
 
             /**
-             * select the tags we would like to use
+             * selects and highlights the selected tag
              * @param tag
+             * @parm what + | - | undefiend
              */
-            $scope.selectTag = function (tag) {
-
-                $scope.selectedTags[tag.text] = $scope.selectedTags[tag.text] ? false : true;
-
+            $scope.selectTag = function (tag, what) {
+                $scope.selectedTags[tag.text] = what;
             };
 
             /**
              * load initial data
              */
             (function list() {
+                $scope.options = [
+                    {
+                        name: '+ has tag',
+                        action: function (tag, status) {
+                            $scope.selectTag(tag, '+');
+                        }
+                    },
+                    {
+                        name: '- does not have tag',
+                        action: function (tag, status) {
+                            $scope.selectTag(tag, '-');
+                        }
+                    }
+                ];
+
                 TaggingService.query(
                     function (data) {
                         $scope.tags = data;

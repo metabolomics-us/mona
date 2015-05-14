@@ -33,6 +33,9 @@ class StatisticsController {
         render statisticsService.getSpectraCountForAllSubmitters() as JSON
     }
 
+    def statisticsForPendingJobs(){
+        render statisticsService.getCountForPendingJobs() as JSON
+    }
     def statisticsForCategory() {
 
         if (params.grouping == null) {

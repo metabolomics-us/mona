@@ -176,6 +176,8 @@ class UrlMappings {
 
         "/rest/statistics/category/$category/$grouping?"(controller: 'statistics', action: 'statisticsForCategory')
 
+        "/rest/statistics/jobs/pending"(controller: 'statistics', action: 'statisticsForPendingJobs')
+
         /**
          * news related items
          */
