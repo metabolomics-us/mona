@@ -12,9 +12,7 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
         'instrument type',
         'ms type',
         'ion mode',
-        'instrument',
         'derivative type',
-        'collision energy',
         'precursor type'
     ];
 
@@ -96,7 +94,7 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
 
 app.filter('titlecase', function() {
     return function(s) {
-        s = ( s === undefined || s === null ) ? '' : s;
+        s = ( angular.isUndefined(s) || s === null ) ? '' : s;
         return s.toString().toLowerCase().replace( /\b([a-z])/g, function(ch) {
             return ch.toUpperCase();
         });
