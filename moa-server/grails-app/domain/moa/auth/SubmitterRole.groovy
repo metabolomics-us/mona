@@ -14,6 +14,8 @@ class SubmitterRole implements Serializable {
 
     static mapping = {
         id composite: ['role', 'submitter']
+        submitter lazy: false, fetch: 'join'
+        role lazy: false, fetch: 'join'
         version false
     }
 

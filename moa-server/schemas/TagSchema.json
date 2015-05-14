@@ -1,0 +1,12 @@
+﻿{
+  "$schema": "http://mona.fiehnlab.ucdavis.edu/schema#",
+  "id": "#Tag",
+  "title": "Tag Schema",
+  "type": "object",
+  "properties": {
+    "text": {"type": "string"},
+    "ruleBased": {"type": "boolean"}
+  },
+  "required": ["text"],
+  "additionalProperties": false
+}

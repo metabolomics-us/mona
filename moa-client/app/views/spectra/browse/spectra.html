@@ -7,9 +7,10 @@
         <table class="table table-hover table-striped" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()">
             <thead>
             <tr>
+                <th class="text-center">Id</th>
                 <th class="text-center">Name</th>
-                <th class="text-right" style="width: 110px">Bio. Structure</th>
-                <th class="text-right" style="width: 110px">Chem. Structure</th>
+                <th class="text-right" style="width: 160px">Bio. Structure</th>
+                <th class="text-right" style="width: 160px">Chem. Structure</th>
 
                 <th class="text-right" style="width: 200px">Spectrum</th>
                 <th class="text-center">Accurate Mass</th>
@@ -23,17 +24,20 @@
             <tr ng-repeat="spectrum in spectra"
                 ng-click="viewSpectrum(spectrum.id, $index)">
                 <td>
+                    {{spectrum.id}}
+                </td>
+                <td>
                     <ul class="list-unstyled">
                         <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">{{name.name}}</li>
                     </ul>
                 </td>
                 <td>
-                    <div class="center-block" chemical-sketcher readonly="true" width="100" height="100"
+                    <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
                          id="bioSketch_{{spectrum.id}}"
                          ng-model="spectrum.biologicalCompound"></div>
                 </td>
                 <td>
-                    <div class="center-block" chemical-sketcher readonly="true" width="100" height="100"
+                    <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
                          id="chemSketch_{{spectrum.id}}"
                          ng-model="spectrum.chemicalCompound"></div>
                 </td>

@@ -18,8 +18,10 @@ var app = angular
 
 /**
  * Number of spectra/compounds to view
+ *
+ * 7 fills out a screen nicely and has a decent response time at the same time
  */
-app.constant('MAX_OBJECTS', 20);
+app.constant('MAX_OBJECTS', 7);
 
 /**
  * Toggle for whether commonly used data (tags, metadata, etc) should be

@@ -5,7 +5,7 @@
 
 import curation.CurationWorkflow
 import curation.SubCurationWorkflow
-import curation.rules.adduct.LCMSAdductCurationRule
+import curation.rules.adduct.lcms.LCMSAdductCurationRule
 import curation.rules.adduct.gcms.CompoundShouldBeDerivatizedRule
 import curation.rules.adduct.gcms.ConfirmGCMSDerivatizationRule
 import curation.rules.adduct.gcms.GCMSAdductCurationRule

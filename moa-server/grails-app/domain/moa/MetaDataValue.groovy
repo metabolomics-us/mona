@@ -46,6 +46,9 @@ class MetaDataValue implements Scoreable {
 
     static mapping = {
         version false
+        metaData fetch: 'join'
+        score fetch: 'join'
+        owner fetch: 'join'
     }
 
 

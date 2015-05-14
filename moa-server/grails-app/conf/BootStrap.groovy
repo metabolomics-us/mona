@@ -53,11 +53,11 @@ class BootStrap {
 
 
         JSON.registerObjectMarshaller(Tag,
-                DomainClassMarshaller.createExcludeMarshaller(Tag, ["class", "id", "tagCachingService", "dateCreated", "lastUpdated"])
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["links","class", "id", "tagCachingService", "dateCreated", "lastUpdated","owner"])
         )
 
         JSON.registerObjectMarshaller(Compound,
-                DomainClassMarshaller.createExcludeMarshaller(Compound, ["class", "spectra", "dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(Compound, ["links","class", "spectra", "dateCreated"])
         )
 
         JSON.registerObjectMarshaller(Submitter,
@@ -68,7 +68,7 @@ class BootStrap {
         )
 
         JSON.registerObjectMarshaller(Spectrum,
-                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["class", "dateCreated", "ions"])
+                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["links","class", "dateCreated", "ions"])
         )
         JSON.registerObjectMarshaller(Name,
                 DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound", "dateCreated"])
@@ -94,6 +94,8 @@ class BootStrap {
         JSON.registerObjectMarshaller(Impact,
                 DomainClassMarshaller.createExcludeMarshaller(Impact, ["class","score","id","scoringClass"])
         )
+
+
 
         /*
         JSON.registerObjectMarshaller(Ion,

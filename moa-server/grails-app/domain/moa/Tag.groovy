@@ -15,6 +15,7 @@ class Tag implements Serializable{
         version false
     }
 
+    static hasMany = [links:TagLink]
     /**
      * name of tag
      */

@@ -8,12 +8,25 @@ class SupportsMetaData {
     static mapping = {
         tablePerSubclass true
         version false
-        //tags  cascade: 'all-delete-orphan'
-        metaData  cascade: 'all-delete-orphan'
+        metaData cascade: 'all-delete-orphan', fetch: 'join'
+        links  fetch: 'join'
     }
 
     Date dateCreated
     Date lastUpdated
+    static hasMany = [metaData: MetaDataValue, links: TagLink]
 
-    static hasMany = [metaData: MetaDataValue,tags:Tag]
+    /**
+     * little helper method
+     * @return
+     */
+    Collection<Tag> getTags() {
+        def tags = []
+
+        links.each {
+            tags.add(it.tag)
+        }
+
+        Collections.unmodifiableCollection(tags)
+    }
 }

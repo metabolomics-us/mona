@@ -4,6 +4,7 @@ import grails.converters.JSON
 import grails.test.spock.IntegrationSpec
 import moa.MetaDataValue
 import moa.Spectrum
+import org.junit.Ignore
 import moa.SupportsMetaData
 import moa.Tag
 import org.apache.log4j.Logger
