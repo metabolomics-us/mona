@@ -8,6 +8,8 @@ class BooleanMetaDataValue extends MetaDataValue{
     }
 
     static mapping = {
+        metaData lazy: false
+        score lazy: false
     }
 
     String booleanValue

@@ -109,18 +109,8 @@ class MetaDataPersistenceService {
                 current.value = calculatedValue.value
             }
         }
-        MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
 
-
-        log.debug("generating metadata object...")
-        MetaData metaData = MetaData.findOrSaveByName(metaDataName);
-
-        if (metaData.category == null) {
-            category.addToMetaDatas(metaData)
-            //metaData.category = category
-        }
-        metaData.save()
-        category.save()
+        MetaData metaData = createMetadataObject(metaDataName, current)
 
         log.debug("generating metadata value object...")
         MetaDataValue metaDataValue = new StringMetaDataValue(stringValue: current.value.toString())
@@ -194,5 +184,21 @@ class MetaDataPersistenceService {
         metaDataValue.save(flush:true)
 
         log.debug("done")
+    }
+
+    def MetaData createMetadataObject(String metaDataName, Map current) {
+        MetaDataCategory category = categoryNameFinderService.findCategoryForMetaDataKey(metaDataName, current.category)
+
+
+        log.debug("generating metadata object...")
+        MetaData metaData = MetaData.findOrSaveByName(metaDataName);
+
+        if (metaData.category == null) {
+            category.addToMetaDatas(metaData)
+            //metaData.category = category
+        }
+        metaData.save()
+        category.save()
+        metaData
     }
 }

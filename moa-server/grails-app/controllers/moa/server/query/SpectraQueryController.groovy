@@ -1,10 +1,9 @@
-package moa.query
+package moa.server.query
 
 import grails.converters.JSON
 import moa.Spectrum
 import moa.server.DeleteSpectraJob
 import moa.server.convert.SpectraConversionService
-import moa.server.query.SpectraQueryService
 
 class SpectraQueryController {
 
