@@ -4,18 +4,14 @@
     <div class="col-md-9 col-sm-6 col-lg-9">
         <div show-query></div>
 
-        <table class="table table-hover table-striped" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="3">
+        <table class="table table-hover table-striped" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="0.5">
             <thead>
             <tr>
-                <th class="text-left">Id</th>
-                <th class="text-left">Name</th>
-                <th class="text-left" style="width: 160px">Bio. Structure</th>
-                <th class="text-left" style="width: 160px">Chem. Structure</th>
-
-                <th class="text-left" style="width: 200px">Spectrum</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th class="text-center" style="width: 160px">Structure</th>
+                <th class="text-center" style="width: 200px">Mass Spectrum</th>
                 <th class="text-center">Accurate Mass</th>
-
-
             </tr>
             </thead>
             <tbody>
@@ -31,17 +27,12 @@
                         <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">{{name.name}}</li>
                     </ul>
                 </td>
-                <td>
+                <td class="text-center">
                     <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
                          id="bioSketch_{{spectrum.id}}"
                          ng-model="spectrum.biologicalCompound"></div>
                 </td>
-                <td>
-                    <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
-                         id="chemSketch_{{spectrum.id}}"
-                         ng-model="spectrum.chemicalCompound"></div>
-                </td>
-                <td>
+                <td class="text-center">
                     <div class="masspec-mini">
                         <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
                     </div>
@@ -79,7 +70,7 @@
             </button>
             <br/><br/>
 
-            <button class="btn btn-primary" ng-click="resetQuery()">
+            <button class="btn btn-warning" ng-click="resetQuery()">
                 <i class="fa fa-search fa-fw"></i>Reset Current Query
             </button>
             <br/><br/>
