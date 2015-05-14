@@ -3,14 +3,14 @@
  */
 'use strict';
 
-moaControllers.CleanSpectraDataController = function ($scope, UploadLibraryService) {
+moaControllers.CleanSpectraDataController = function ($scope, $window, UploadLibraryService) {
     // Loaded spectra data/status
     $scope.spectraLoaded = 0;
     $scope.currentSpectrum;
     $scope.spectra = [];
     $scope.spectraIndex = 0;
 
-    // Paramaters provided for trimming spectra
+    // Parameters provided for trimming spectra
     $scope.ionCuts = {};
 
 
@@ -147,6 +147,9 @@ moaControllers.CleanSpectraDataController = function ($scope, UploadLibraryServi
         $scope.spectraLoaded = 0;
         $scope.spectraIndex = 0;
         $scope.spectra = [];
+
+        // Scroll to top of the page
+        $window.scrollTo(0, 0);
     };
 
 
