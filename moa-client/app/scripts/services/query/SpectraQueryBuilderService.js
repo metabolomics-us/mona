@@ -194,10 +194,16 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
     /**
      * adds a tag to the query
+     * tag: {
+     *          name :  {
+     *              "eq" : "tada"
+     *          }
+     *      }
+     *
      * @param tag
      * @param isCompound is this a tag of a compound
      */
-    this.addTagToQuery = function (tag, isCompound) {
+    this.addTagToQuery = function (tag, isCompound, includeExclude) {
         if (tag) {
             this.removeTagFromQuery(tag);
             var query = this.getQuery();
@@ -209,7 +215,28 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
                 query.compounds.tags.push(tag);
             }
             else {
-                query.tags.push(tag);
+
+                if(includeExclude == '+'){
+
+                    query.tags.push(
+                        {
+                            name:{
+                                eq:tag
+                            }
+                        }
+                    );
+                }
+                else if(includeExclude == '-'){
+
+                    query.tags.push(
+                        {
+                            name:{
+                                ne:tag
+                            }
+                        }
+                    );
+                }
+
             }
             QueryCache.setSpectraQuery(query);
         }
