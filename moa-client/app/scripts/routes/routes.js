@@ -117,7 +117,9 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/documentation/query.html'
         })
         .when('/documentation/terms', {
-            templateUrl: 'views/documentation/terms.html'
+            templateUrl: 'views/documentation/terms.html',
+            controller: 'DocumentationTermController'
+
         })
 
         //any other page is redirected to the root page
