@@ -127,16 +127,19 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                                 var molFile = ChemDoodle.writeMOL(mol);
 
                                 //$log.debug('received click event and trying to generate inchi for: ' + molFile);
-                                gwCtsService.convertToInchiKey(molFile, function (result) {
+                                //gwCtsService.convertToInchiKey(molFile, function (result) {
+                                //
+                                //    //$log.debug('received result: ' + result);
+                                //    $scope.bindModel = result.inchikey;
+                                //
+                                //});
 
-                                    //$log.debug('received result: ' + result);
-                                    $scope.bindModel = result.inchikey;
+                                console.log(molFile);
 
-                                });
+                                // Export as MOL file
+                                $scope.bindModel = molFile;
                             }
                         );
-
-
                     };
                 }
 
