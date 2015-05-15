@@ -52,11 +52,11 @@
 
     <ul class="nav navbar-top-links navbar-right">
         <!-- /.dropdown -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" href="#">
+        <li class="dropdown" dropdown>
+            <a class="dropdown-toggle" dropdown-toggle href="">
                 <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
             </a>
-            <ul class="dropdown-menu dropdown-tasks">
+            <ul class="dropdown-menu dropdown-tasks" role="menu">
                 <li>
                     <a href="#">
                         <div>
@@ -89,11 +89,11 @@
             <!-- /.dropdown-tasks -->
         </li>
         <!-- /.dropdown -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" href="#">
+        <li class="dropdown" dropdown>
+            <a class="dropdown-toggle" dropdown-toggle href="">
                 <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i class="fa fa-caret-down"></i>
             </a>
-            <ul class="dropdown-menu dropdown-user">
+            <ul class="dropdown-menu dropdown-user" role="menu">
 
                 <li ng-show="auth.isLoggedIn()">
                     <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
@@ -130,7 +130,6 @@
                         <p class="text-right"><span class="help-block"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></span></p>
                     </form>
                 </li>
-
 
                 <li>
                     <a href="#/spectra/browse"><i class="fa fa-table fa-fw"></i>Browse Mass Spectra</a>
