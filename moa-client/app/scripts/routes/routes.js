@@ -55,6 +55,37 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/statistics/statistics.html',
             controller: 'SpectraDatabaseIndexController'
         })
+        .when('/statistics/import', {
+            templateUrl: 'views/statistics/times.html',
+            controller: 'StatisticsController',
+
+            resolve: {
+                statistics : function(StatisticsService){
+                    return StatisticsService.executionTime({time:"day",method:"import",max:100});
+                }
+            }
+        })
+        .when('/statistics/validation', {
+            templateUrl: 'views/statistics/times.html',
+            controller: 'StatisticsController',
+
+            resolve: {
+                statistics : function(StatisticsService){
+                    return StatisticsService.executionTime({time:"day",method:"validation",max:100});
+                }
+            }
+        })
+        .when('/statistics/query', {
+            templateUrl: 'views/statistics/times.html',
+            controller: 'StatisticsController',
+
+            resolve: {
+                statistics : function(StatisticsService){
+                    return StatisticsService.executionTime({time:"day",method:"search",max:100});
+                }
+            }
+        })
+
 
         //user profile page
         .when('/profile', {
