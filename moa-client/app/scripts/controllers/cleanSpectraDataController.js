@@ -204,6 +204,15 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, $location
                             }
                         });
 
+                        // Get structure from InChIKey if no InChI is provided
+                        if (angular.isDefined(spectrum.inchiKey) && angular.isUndefined(spectrum.inchi)) {
+                            gwCtsService.convertInchiKeyToMol(spectrum.inchiKey, function (molecule) {
+                                if (molecule != null) {
+                                    spectrum.molFile = molecule;
+                                }
+                            });
+                        }
+
                         // Remove annotations and origin from metadata
                         spectrum.meta = spectrum.meta.filter(function(metadata) {
                             if (metadata.name == 'origin') {
