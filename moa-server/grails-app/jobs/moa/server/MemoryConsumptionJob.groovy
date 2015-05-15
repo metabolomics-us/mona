@@ -9,6 +9,8 @@ class MemoryConsumptionJob {
 
     def concurrent = false
 
+    def group = "maintenance"
+
     def description = "keeps track of memory consumption of the system"
     static triggers = {
         cron name: 'memoryConsumption', cronExpression: '0 */1 * * * ?', priority: 10

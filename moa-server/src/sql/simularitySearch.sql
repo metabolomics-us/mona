@@ -1,5 +1,5 @@
 -- our view to do the binning, should be replaced with a materialized view once we switch to postgres 9.4 --
-create or replace VIEW binned_ions as (select spectrum_id,round(mass) as mass, sum(intensity) as intensity from ion  where intensity > 0.05 group by mass, spectrum_id );
+create or replace VIEW binned_ions as (select spectrum_id,round(mass) as mass, sum(intensity) as intensity,hash from ion a, spectrum b where b.id = a.spectrum_id  and intensity > 0.05 group by mass, a.spectrum_id,b.hash );
 
 --calculates the similarity between 2 mass spectra--
 create or replace function calculateSimilarity(unknownMasses float8[], unknownIntensities float8[], knownMasses float8[], knownIntensities float8[]) returns float8 AS $$
@@ -201,12 +201,15 @@ create or replace function findSimularSpectra(unknownSpectra int8, minSimilarity
   DECLARE
     sql text := 'select calculateSimilarity(a.id,$1) as similarity, a.id as id from spectrum a, binned_ions b ' ||
                 'where a.id = b.spectrum_id and a.id in ' ||
-                '(select spectrum_id from binned_ions where spectrum_id != $1 and mass in (select mass from binned_ions ' ||
+                '(select spectrum_id from binned_ions where spectrum_id != $1 and hash != $5 and mass in (select mass from binned_ions ' ||
                 'where spectrum_id = $1 order by intensity desc limit $2) group by spectrum_id having count(spectrum_id) = $2) group by a.id ' ||
                 'having count(b.spectrum_id) < 2 * (select count(*)  from binned_ions where spectrum_id = $1) and calculateSimilarity(a.id,$1) > $3 order by similarity DESC limit $4';
 
    sourceMasses int8 := 0;
+   hashCode text :='';
   BEGIN
+
+    select "hash" into hashCode from spectrum a where a.id = unknownSpectra;
 
     select count(spectrum_id) as masses into sourceMasses from binned_ions where spectrum_id = unknownSpectra;
 
@@ -216,7 +219,7 @@ create or replace function findSimularSpectra(unknownSpectra int8, minSimilarity
       identicalMassCount = sourceMasses;
     end if;
 
-    RETURN QUERY EXECUTE sql USING unknownSpectra,identicalMassCount,minSimilarity,resultCount;
+    RETURN QUERY EXECUTE sql USING unknownSpectra,identicalMassCount,minSimilarity,resultCount,hashCode;
   end
 
   $$ LANGUAGE plpgsql;
