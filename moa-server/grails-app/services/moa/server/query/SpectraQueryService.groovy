@@ -126,10 +126,10 @@ class SpectraQueryService {
         (queryOfDoom, executionParams) = generateFinalQuery(json)
 
 
-        def ids = Spectrum.executeQuery(queryOfDoom, executionParams)
+        def ids = Spectrum.executeQuery(queryOfDoom, executionParams,params)
 
 
-        def result = Spectrum.findAllByIdInList(ids,params)
+        def result = Spectrum.findAllByIdInList(ids)
 
         //println "$queryOfDoom"
 
