@@ -92,8 +92,8 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
     $scope.state = 'login';
 
     $scope.credentials = {
-        email: 'wohlgemuth@ucdavis.edu',
-        password: 'password'
+        email: '',
+        password: ''
     };
 
     $scope.cancelDialog = function () {

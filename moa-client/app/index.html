@@ -52,13 +52,13 @@
 
     <ul class="nav navbar-top-links navbar-right">
         <!-- /.dropdown -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" href="#">
+        <li class="dropdown" dropdown>
+            <a class="dropdown-toggle" dropdown-toggle href="">
                 <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
             </a>
-            <ul class="dropdown-menu dropdown-tasks">
+            <ul class="dropdown-menu dropdown-tasks" role="menu">
                 <li>
-                    <a href="#">
+                    <a href="#/uploadstatus">
                         <div>
                             <p><strong>Upload Progress</strong><span class="pull-right text-muted">&nbsp;</span></p>
                             <spectra-upload-progress-bar></spectra-upload-progress-bar>
@@ -106,11 +106,11 @@
             <!-- /.dropdown-tasks -->
         </li>
         <!-- /.dropdown -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" href="#">
+        <li class="dropdown" dropdown>
+            <a class="dropdown-toggle" dropdown-toggle href="">
                 <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i class="fa fa-caret-down"></i>
             </a>
-            <ul class="dropdown-menu dropdown-user">
+            <ul class="dropdown-menu dropdown-user" role="menu">
 
                 <li ng-show="auth.isLoggedIn()">
                     <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
@@ -129,42 +129,40 @@
     <div class="navbar-default navbar-static-side" role="navigation">
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
-                <li class="sidebar-search">
-                    <div class="input-group custom-search-form">
-                        <input type="text" class="form-control" placeholder="Search..."/>
-                                <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">
+                <li class="sidebar-search" ng-controller="SearchBoxController">
+                    <form name="searchBox" ng-submit="searchBoxQuery = ''">
+                        <div class="input-group custom-search-form">
+                            <input type="text"
+                                   class="form-control"
+                                   ng-model="searchBoxQuery"
+                                   placeholder="Search..."
+                                   tooltip="Search by Name, InChIKey or MoNA ID"
+                                   tooltip-trigger="focus"
+                                   tooltip-placement="bottom" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit" ng-click="performSimpleQuery(searchBoxQuery)">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>
-
-                    </div>
-                    <!-- /input-group -->
+                        </div>
+                        <p class="text-right"><span class="help-block"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></span></p>
+                    </form>
                 </li>
 
                 <li>
-                    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Spectra<span class="fa arrow"></span></a>
-
-                    <ul class="nav nav-second-level in">
-                        <li>
-                            <a href="#/spectra/browse"><i class="fa fa-table fa-fw"></i>Browse Spectra</a>
-                        </li>
-                        <li>
-                            <a href="#/spectra/dbindex"><i class="fa fa-list-alt fa-fw"></i>Database Index</a>
-                        </li>
-                        <li>
-                            <a href="#/spectra/upload"><i class="fa fa-file-o fa-fw"></i>Upload Spectra</a>
-                        </li>
-                    </ul>
-                    <!-- /.nav-second-level -->
+                    <a href="#/spectra/browse"><i class="fa fa-table fa-fw"></i>Browse Mass Spectra</a>
                 </li>
 
                 <li>
-                    <a href="#/compounds"><i class="fa fa-flask fa-fw"></i>Compounds</a>
+                    <a href="#/compounds"><i class="fa fa-flask fa-fw"></i>Browse Compounds</a>
                 </li>
 
                 <li>
-                    <a href="#/spectracleaner"><i class="fa fa-pencil-square-o fa-fw"></i>Mass Spectra Cleaner</a>
+                    <a href="#/spectra/dbindex"><i class="fa fa-list-alt fa-fw"></i>Database Index</a>
+                </li>
+
+                <li>
+                    <a href="#/upload"><i class="fa fa-pencil-square-o fa-fw"></i>Spectrum Cleaner & Uploader</a>
                 </li>
 
                 <li>
@@ -180,7 +178,13 @@
 
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="#/submitters">Manage Submitters</a>
+                            <a href="#/admin/submitters">Manage Submitters</a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="#/admin/news">News</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->
@@ -216,7 +220,7 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="top17">
-            <div ng-view=""></div>
+            <div ng-view="" autoscroll="true"></div>
         </div>
     </div>
     <!-- /.row -->
@@ -322,7 +326,7 @@
 <script src="scripts/controllers/upload/spectraUploadWizardController.js"></script>
 <script src="scripts/controllers/upload/spectraUploadController.js"></script>
 <script src="scripts/controllers/statistics/statisticsController.js"></script>
-
+<script src="scripts/controllers/searchBoxController.js"></script>
 
 
 <!-- directives -->

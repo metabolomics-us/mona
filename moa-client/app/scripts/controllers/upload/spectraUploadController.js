@@ -26,7 +26,7 @@ moaControllers.SpectraUploadController = function ($scope, $rootScope, $modal, A
      * Check whether the user is uploading, and open the upload dialog accordingly
      */
     (function() {
-        $scope.spectraUploaded = UploadLibraryService.isUploading();
+        $scope.spectraUploaded = UploadLibraryService.uploadedSpectraCount > 0;
 
         if (AuthenticationService.isLoggedIn() && !$scope.spectraUploaded) {
             $scope.uploadSpectraDialog()

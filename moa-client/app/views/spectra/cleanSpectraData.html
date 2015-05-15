@@ -15,26 +15,29 @@
                 <div class="input-group">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" ng-file-select="parseFile($files)" />
+                            Browse&hellip; <input type="file" ng-file-select="parseFile($files)" multiple />
                         </span>
                     </span>
 
                     <input id="spectrumFile" type="text" class="form-control" ng-model="filenames" readonly />
                 </div>
 
-                <span class="help-block">Supports MSP mass spectral library files</span>
+                <span class="help-block">Supports MSP and MGF mass spectral library files and MassBank Records Format</span>
             </div>
         </div>
+
 
         <div ng-if="spectraLoaded == 1" class="panel panel-default">
             <div class="panel-heading"><strong>Loading and parsing data</strong></div>
             <div class="panel-body text-center"><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span></div>
         </div>
 
+
         <div ng-if="spectraLoaded == 2 && spectra.length == 0" class="panel panel-default">
             <div class="panel-heading"><strong>Loading and parsing data</strong></div>
-            <div class="panel-body text-center">No valid mass spectra found in </div>
+            <div class="panel-body text-center"><p class="lead">No valid mass spectra found in the uploaded file(s)!</p></div>
         </div>
+
 
         <div ng-if="spectraLoaded == 2 && spectra.length > 0" class="panel panel-default">
             <div class="panel-heading">
@@ -48,12 +51,156 @@
             </div>
 
             <div class="panel-body">
+                <div class="alert alert-danger" role="alert" ng-show="currentSpectrum.errors.length">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    The following issues have been found in this spectrum:
+                    <ul>
+                        <li ng-repeat="error in currentSpectrum.errors">{{error}}</li>
+                    </ul>
+                </div>
+
                 <div class="masspec-modal">
                     <mass-spec ng-model="currentSpectrum.ions"></mass-spec>
                 </div>
                 <br />
 
                 <tabset>
+                    <tab heading="Identifiers">
+                        <div class="container-fluid" style="height: 500px; overflow: auto; margin-top: 10px;">
+                            <div class="row form-group">
+                                <div class="col-lg-3"><label>Names</label></div>
+                                <div class="col-lg-9">
+                                    <input type="text"
+                                           ng-repeat="name in currentSpectrum.names"
+                                           ng-model="name"
+                                           placeholder="Name"
+                                           class="form-control" />
+                                    <button type="button" class="btn btn-default btn-xs" ng-click="addName()">+</button>
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col-md-3 col-lg-3"><label>InChIKey</label></div>
+                                <div class="col-md-9 col-lg-9">
+                                    <input type="text"
+                                           ng-model="currentSpectrum.inchiKey"
+                                           placeholder="InChIKey"
+                                           class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col-md-3 col-lg-3"><label>InChI Code</label></div>
+                                <div class="col-md-9 col-lg-9">
+                                    <input type="text"
+                                           ng-model="currentSpectrum.inchi"
+                                           placeholder="InChI Code"
+                                           class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col-md-3 col-lg-3"><label>SMILES Code</label></div>
+                                <div class="col-md-9 col-lg-9">
+                                    <input type="text"
+                                           ng-model="currentSpectrum.smiles"
+                                           placeholder="SMILES Code"
+                                           class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <accordion class="col-sm-12 col-lg-12">
+                                    <accordion-group>
+                                        <accordion-heading>Import MOL/SDF File</accordion-heading>
+
+                                        <div>
+                                            Convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
+                                            will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                            using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                                        </div>
+                                        <hr />
+
+                                        <div class="form-group">
+                                            <label>Copy and paste a molecular structure or upload a MOL/SDF file.</label>
+                                            <textarea class="form-control" ng-model="currentSpectrum.molFile" rows="10"></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-primary btn-file">
+                                                        Browse&hellip; <input type="file" ng-file-select="parseMolFile($files)" />
+                                                    </span>
+                                                </span>
+
+                                                <input id="molFile" type="text" class="form-control" ng-model="filenames" readonly />
+                                            </div>
+                                            <div class="input-group">
+
+                                            </div>
+                                        </div>
+
+                                        <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
+                                            file with multiple structures, only the first structure will be read.</span>
+
+                                        <div class="form-group text-center">
+                                            <button ng-click="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                                        </div>
+                                    </accordion-group>
+
+                                    <accordion-group>
+                                        <accordion-heading>Draw a Molecular Structure</accordion-heading>
+
+                                        <div>
+                                            Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
+                                            will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                            using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                                        </div>
+                                        <hr />
+
+                                        <div class="text-center" chemical-sketcher id="molSketcher" ng-model="currentSpectrum.molFile"></div>
+
+                                        <div class="form-group text-center">
+                                            <button ng-click="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                                        </div>
+                                    </accordion-group>
+                                </accordion>
+                            </div>
+                        </div>
+                    </tab>
+
+                    <tab heading="Metadata">
+                        <div id="metadata_editor" style="height: 500px; overflow: auto; margin-top: 10px;">
+                            <div ng-repeat="meta in currentSpectrum.meta">
+                                <div class="col-sm-5 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
+                                    <input type="text"
+                                           ng-model="meta.name"
+                                           placeholder="Metadata Name"
+                                           class="form-control" />
+                                </div>
+                                <div class="col-sm-5 form-group">
+                                    <input type="text"
+                                           ng-model="meta.value"
+                                           ng-disabled="!meta.name || meta.name == ''"
+                                           placeholder="Metadata Value"
+                                           class="form-control" />
+                                </div>
+                                <div class="col-sm-2 form-group">
+                                    <button ng-click="removeMetadataField($index)" class="btn btn-default"
+                                            tooltip="Remove this metadata field"><i class="fa fa-minus-square"></i></button>
+                                    <button ng-click="applyMetadataToAll($index)" class="btn btn-default"
+                                            tooltip="Copy this metadata value to all spectra"><i class="fa fa-files-o"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-default btn-xs" ng-click="addMetadataField()" tooltip="Add a new metadata field">+</button>
+                            </div>
+                        </div>
+                    </tab>
+
                     <tab heading="Trim Spectrum">
                         <p class="lead">Removes low intensity ions from a mass spectrum.</p>
 
@@ -105,7 +252,7 @@
                     </tab>
 
                     <tab heading="Ion Table">
-                        <div style="height: 400px; overflow: auto; margin-top: 10px;" ng-if="showIonTable">
+                        <div style="height: 500px; overflow: auto; margin-top: 10px;" ng-if="showIonTable">
                             <table class="table">
                                 <thead>
                                 <tr>
@@ -139,80 +286,9 @@
                         </div>
                     </tab>
 
-                    <tab heading="Identifiers">
-                        <div style="height: 400px; overflow: auto; margin-top: 10px;">
-                            <div>
-                                <div class="col-sm-3 form-group"><strong>Names</strong></div>
-                                <div class="col-sm-9 form-group">
-                                    <input type="text"
-                                           ng-repeat="name in currentSpectrum.names"
-                                           ng-model="name"
-                                           placeholder="Name"
-                                           class="form-control" />
-                                    <button type="button" class="btn btn-default btn-xs" ng-click="addName()">+</button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="col-sm-3 form-group"><strong>InChIKey</strong></div>
-                                <div class="col-sm-9 form-group">
-                                    <input type="text"
-                                           ng-model="currentSpectrum.inchiKey"
-                                           placeholder="InChIKey"
-                                           class="form-control" />
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="col-sm-3 form-group"><strong>InChI Code</strong></div>
-                                <div class="col-sm-9 form-group">
-                                    <input type="text"
-                                           ng-model="currentSpectrum.inchi"
-                                           placeholder="InChI Code"
-                                           class="form-control" />
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="col-sm-3 form-group"><strong>SMILES Code</strong></div>
-                                <div class="col-sm-9 form-group">
-                                    <input type="text"
-                                           ng-model="currentSpectrum.smiles"
-                                           placeholder="SMILES Code"
-                                           class="form-control" />
-                                </div>
-                            </div>
-                        </div>
-                    </tab>
-
-                    <tab heading="Edit Metadata">
-                        <div id="metadata_editor" style="height: 400px; overflow: auto; margin-top: 10px;">
-                            <div ng-repeat="meta in currentSpectrum.meta">
-                                <div class="col-sm-5 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
-                                    <input type="text"
-                                           ng-model="meta.name"
-                                           placeholder="Metadata Name"
-                                           class="form-control" />
-                                </div>
-                                <div class="col-sm-5 form-group">
-                                    <input type="text"
-                                           ng-model="meta.value"
-                                           ng-disabled="!meta.name || meta.name == ''"
-                                           placeholder="Metadata Value"
-                                           class="form-control" />
-                                </div>
-                                <div class="col-sm-2 form-group">
-                                    <button ng-click="removeMetadataField($index)" class="btn btn-default"
-                                            tooltip="Remove this metadata value"><i class="fa fa-minus-square"></i></button>
-                                    <button ng-click="applyMetadataToAll($index)" class="btn btn-default"
-                                            tooltip="Copy this metadata value to all spectra"><i class="fa fa-files-o"></i></button>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-12">
-                                <button type="button" class="btn btn-default btn-xs" ng-click="addMetadataField()">+</button>
-                            </div>
-                        </div>
+                    <tab heading="Delete Spectrum">
+                        <p class="lead">Are you sure you wish to remove this spectrum?</p>
+                        <a class="btn btn-danger" ng-click="removeCurrentSpectrum()">Remove</a>
                     </tab>
                 </tabset>
             </div>
@@ -230,7 +306,10 @@
 
                 <div class="text-center">
                     <a class="btn btn-warning" ng-click="resetFile()">Restart</a>
-                    <a class="btn btn-primary" ng-click="exportFile()">Export</a>
+                    <a class="btn btn-primary" ng-click="exportFile()">Export as MSP</a>
+
+                    <a ng-show="!auth.isLoggedIn()" class="btn btn-primary" ng-click="waitForLogin(); auth.handleLogin()">Login to Upload to MoNA</a>
+                    <a ng-show="auth.isLoggedIn()" class="btn btn-primary" ng-click="uploadFile()">Upload to MoNA</a>
                 </div>
             </div>
         </div>
