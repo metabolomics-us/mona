@@ -33,7 +33,8 @@
     "karma-ng-scenario": "latest",
     "load-grunt-tasks": "~0.4.0",
     "time-grunt": "~0.2.1",
-    "grunt-contrib-compress": "~0.13.0"
+    "grunt-contrib-compress": "~0.13.0",
+    "grunt-angular-templates": "~0.5.7"
   },
   "engines": {
     "node": ">=0.10.0"
