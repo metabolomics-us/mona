@@ -126,7 +126,11 @@ class SpectraQueryService {
         (queryOfDoom, executionParams) = generateFinalQuery(json)
 
 
-        def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
+        def ids = Spectrum.executeQuery(queryOfDoom, executionParams)
+
+
+        def result = Spectrum.findAllByIdInList(ids,params)
+
         //println "$queryOfDoom"
 
         //  log.debug("result count: ${result.size()}")
@@ -146,7 +150,7 @@ class SpectraQueryService {
     private List generateFinalQuery(Map json) {
 
         //completed query string
-        String queryOfDoom = "select distinct s from Spectrum s"
+        String queryOfDoom = "select s.id from Spectrum s"
 
         //defines all our joins
         String queryOfDoomJoins = ""
@@ -168,7 +172,7 @@ class SpectraQueryService {
         (queryOfDoomWhere, queryOfDoomJoins) = handleJsonSubmitterField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
         //assemble the query of doom
-        queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
+        queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere + " group by s.id"
 
         log.debug("generated query: \n\n${queryOfDoom}\n")
         log.debug("parameter matrix:\n\n${executionParams}\n\n")
@@ -548,11 +552,12 @@ class SpectraQueryService {
         def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
 
         log.info("have ${result.size()} spectra to remove in this batch")
-        result.each { Spectrum spectrum ->
-            log.info("deleting spectrum: ${spectrum.id}")
+        result.each { long id ->
+            log.info("deleting spectrum: ${id}")
 
             long begin = System.currentTimeMillis()
 
+            Spectrum spectrum = Spectrum.get(id)
             if(params.forceRemoval == true) {
 
 
@@ -565,7 +570,6 @@ class SpectraQueryService {
                     tagService.removeLink(it)
                 }
 
-                statisticsService.acquire(System.currentTimeMillis() - begin, "deleted a spectra", "${spectrum.hash}", "delete")
 
                 spectrum.delete(flush: true)
             }
@@ -573,6 +577,8 @@ class SpectraQueryService {
                 tagService.addTagTo(CommonTags.DELETED,spectrum)
                 spectrum.save()
             }
+            statisticsService.acquire(System.currentTimeMillis() - begin, "deleted a spectra", "${spectrum.hash}", "delete")
+
         }
 
         log.info("finished delete operation")
