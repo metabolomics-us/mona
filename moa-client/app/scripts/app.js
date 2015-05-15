@@ -21,7 +21,10 @@ var app = angular
  *
  * 7 fills out a screen nicely and has a decent response time at the same time
  */
-app.constant('MAX_OBJECTS', 7);
+app.constant('MAX_SPECTRA', 7);
+app.constant('MAX_COMPOUNDS', 20);
+app.constant('MAX_OBJECTS', 15);
+
 
 /**
  * Toggle for whether commonly used data (tags, metadata, etc) should be
