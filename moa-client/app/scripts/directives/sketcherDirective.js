@@ -111,9 +111,9 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                  */
                 var moleculeType = 'mol';
 
-                //if (angular.isDefined($scope.bindModel)) {
-                //    moleculeType = getMoleculeForModel($scope.bindModel);
-                //}
+                if (angular.isDefined($scope.bindModel) && $scope.readonly === true) {
+                    moleculeType = getMoleculeForModel($scope.bindModel);
+                }
 
                 /**
                  * get the actual molecule information and tell our parent scope that this value needs updating. Obviously in case of a read only sketcher we ignore it
