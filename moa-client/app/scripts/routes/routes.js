@@ -24,6 +24,10 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/spectra/cleanSpectraData.html',
             controller: 'CleanSpectraDataController'
         })
+        .when('/uploadstatus', {
+            templateUrl: 'views/spectra/upload/upload.html',
+            controller: 'SpectraUploadController'
+        })
 
         //displaying a single compound
         .when('/spectra/browse', {
