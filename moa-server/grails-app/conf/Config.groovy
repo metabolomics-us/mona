@@ -88,7 +88,6 @@ environments {
     lipid{
         grails.converters.default.pretty.print = true
 
-        logdirectory = "/Volumes/ras/"
 	    logdirectory = "/var/log/mona/"
     }
     production {
@@ -183,10 +182,10 @@ log4j = {
 
         production {
 
-//            info file: 'grails.app'
+            info file: 'grails.app'
 
-//            error stdout:
-//                    'grails.app'
+            error stdout:
+                   'grails.app'
 
 
             debug 'util.chemical'
