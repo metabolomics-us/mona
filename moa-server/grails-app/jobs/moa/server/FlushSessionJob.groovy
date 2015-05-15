@@ -9,6 +9,8 @@ class FlushSessionJob {
 
     def concurrent = false
 
+    def group = "maintenance"
+
     def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
 
     def description = "flushes and clears the hibernate session to keep performance up for mass inserts/updates"
