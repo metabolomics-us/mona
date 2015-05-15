@@ -154,6 +154,15 @@ app.directive('gwMetaQueryInput', function () {
             $scope.metadata = {};
             $scope.metadataNames = [];
 
+            //our select options, should be based on metadata value
+            //should be based on received data type for metadata fields
+            $scope.select = [
+                {name:"equals", value:"eq"},
+                {name:"does not equal", value:"ne"}
+            ];
+
+            $scope.metadata.selected = $scope.select[0];
+
             /**
              * queries our values
              * @param name

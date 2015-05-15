@@ -304,8 +304,14 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
                     query.metadata = [];
                 }
 
+
                 //build query data object
-                var meta = {'name': metadata.name, 'value': {'eq': metadata.value}};
+
+                var options = {};
+                options[metadata.selected.value] = metadata.value;
+
+
+                var meta = {'name': metadata.name, 'value': options};
 
                 if (metadata.unit != null) {
                     meta.unit = {'eq': metadata.unit};
