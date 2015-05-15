@@ -20,7 +20,7 @@ app.directive('statistics', function ($compile, $filter,StatisticsService, $log)
          */
         controller: function ($scope) {
 
-            $scope.executionTime = 100;
+            $scope.executionTime = "loading...";
             $scope.unit = "ms";
 
         },

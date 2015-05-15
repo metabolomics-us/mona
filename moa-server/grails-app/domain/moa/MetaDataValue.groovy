@@ -48,7 +48,6 @@ class MetaDataValue implements Scoreable {
         version false
         metaData fetch: 'join'
         score fetch: 'join'
-        owner fetch: 'join'
     }
 
 
