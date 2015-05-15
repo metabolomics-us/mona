@@ -3,13 +3,13 @@
  */
 'use strict';
 
-app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
+app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
 
     /**
      * creates a new resources, we can work with
      */
     return $resource(
-        REST_BACKEND_SERVER + '/rest/spectra/:id?max=' + MAX_OBJECTS + ':offset',
+        REST_BACKEND_SERVER + '/rest/spectra/:id?max=' + MAX_SPECTRA + ':offset',
         {id: "@id", offset: "@offset"},
         {
             /**
@@ -24,7 +24,7 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
              * connects to our service and executes a query
              */
             'searchSpectra': {
-                url: REST_BACKEND_SERVER + '/rest/spectra/search?max=' + MAX_OBJECTS,
+                url: REST_BACKEND_SERVER + '/rest/spectra/search?max=' + MAX_SPECTRA,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
              * searches for similar spectra
              */
             'searchSimilarSpectra': {
-                url: REST_BACKEND_SERVER + '/rest/spectra/similarity',
+                url: REST_BACKEND_SERVER + '/rest/spectra/similarity?max='+MAX_SPECTRA,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

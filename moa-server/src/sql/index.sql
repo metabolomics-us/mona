@@ -55,6 +55,12 @@ CREATE INDEX "spectrum_index_hash"
 
 create index name_index_like_compound on name (compound_id,name text_pattern_ops);
 
+GO
+
+CREATE INDEX tag_link_tag_id
+	ON public.tag_link USING btree (tag_id,id)
+GO
+CREATE INDEX tag_deleted ON tag(text) WHERE text <> 'deleted'
 
 
 
