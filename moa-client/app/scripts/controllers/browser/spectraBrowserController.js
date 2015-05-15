@@ -138,9 +138,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             }
         }
 
-        // Scroll to top of the page
-        $window.scrollTo(0, 0);
-
         $scope.loadMoreSpectra();
     };
 
