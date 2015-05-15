@@ -44,8 +44,6 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
 
             //only render if we got an id object
             if (angular.isDefined($scope.id)) {
-
-
                 var myId = $scope.id + '_sketcher';
 
                 element.append('<canvas id="' + myId + '"></canvas>');
@@ -77,9 +75,8 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
 
                     if (angular.isDefined(model)) {
                         if (angular.isDefined(model.molFile)) {
-
                             try {
-//                $log.debug('rendering mol file: \n' + model.molFile);
+                                //$log.debug('rendering mol file: \n' + model.molFile);
                                 if (model.molFile.indexOf('\n') > 0) {
                                     var mol = ChemDoodle.readMOL("\n" + model.molFile + "\n");
                                     sketcher.loadMolecule(mol);
@@ -89,31 +86,33 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                                     sketcher.loadMolecule(mol);
 
                                 }
-                            }
-                            catch (e) {
+                            } catch (e) {
                                 $log.warn('problem rendering mol file:\n\n'+ model.molFile);
                             }
+
+                            return 'mol';
                         }
 
                         else {
-//                $log.debug('converting from inchi: ' + model);
+                            //$log.debug('converting from inchi: ' + model);
                             gwCtsService.convertInchiKeyToMol(model, function (molecule) {
-
                                 var mol = ChemDoodle.readMOL(molecule);
                                 sketcher.loadMolecule(mol);
-
-
                             });
+
+                            return 'inchikey';
                         }
                     }
 
                 };
 
                 /**
-                 * get an intial value, which was set in our model.
+                 * get an initial value, which was set in our model.
                  */
+                var moleculeType = 'mol';
+
                 if (angular.isDefined($scope.bindModel)) {
-                    getMoleculeForModel($scope.bindModel);
+                    moleculeType = getMoleculeForModel($scope.bindModel);
                 }
 
                 /**
@@ -121,26 +120,26 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                  */
                 if ($scope.readonly == false) {
                     sketcher.click = function () {
-
-
-                        //make sure everything is in the angluar context
-
+                        //make sure everything is in the angular context
                         $scope.$apply(
                             function () {
                                 var mol = sketcher.getMolecule();
                                 var molFile = ChemDoodle.writeMOL(mol);
 
                                 //$log.debug('received click event and trying to generate inchi for: ' + molFile);
-                                gwCtsService.convertToInchiKey(molFile, function (result) {
+                                //gwCtsService.convertToInchiKey(molFile, function (result) {
+                                //
+                                //    //$log.debug('received result: ' + result);
+                                //    $scope.bindModel = result.inchikey;
+                                //
+                                //});
 
-                                    //$log.debug('received result: ' + result);
-                                    $scope.bindModel = result.inchikey;
+                                console.log(molFile);
 
-                                });
+                                // Export as MOL file
+                                $scope.bindModel = molFile;
                             }
                         );
-
-
                     };
                 }
 

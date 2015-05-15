@@ -83,7 +83,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             }
 
             if (element === "nameFilter" && query[element]) {
-                compiled.compound.name = {like: query[element]};
+                compiled.compound.name = {ilike: '%'+ query[element] +'%'};
             }
 
             else if (element === "inchiFilter" && query[element]) {

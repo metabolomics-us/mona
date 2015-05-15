@@ -118,7 +118,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
 
         if (query.compound.hasOwnProperty('name')) {
-            $scope.nameFilter = query.compound.name.like;
+            $scope.nameFilter = query.compound.name.ilike.replace(/%/g, '');
         }
 
         if (query.compound.hasOwnProperty('inchiKey')) {
@@ -153,12 +153,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             templateUrl: '/views/spectra/query/query.html',
             controller: moaControllers.QuerySpectrumModalController,
             size: 'lg',
-            backdrop: 'true',
-            resolve: {
-                tags: function () {
-                    return $scope.tags;
-                }
-            }
+            backdrop: 'true'
         });
 
         modalInstance.result.then(function (query) {
@@ -177,7 +172,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
 
     /**
-     * TODO remove
      * Get natural mass as accurate mass of spectrum
      */
     $scope.addAccurateMass = function (spectra) {
@@ -187,6 +181,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
                 if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
                     mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
+                    break;
                 }
             }
 
@@ -253,7 +248,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         );
 
         $scope.spectra = [];
-
 
         // Submit our initial query
         $scope.submitQuery();

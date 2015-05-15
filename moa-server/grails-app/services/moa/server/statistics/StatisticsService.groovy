@@ -103,7 +103,7 @@ class StatisticsService {
         def result = []
 
         Spectrum.withSession { session ->
-            def res = session.createSQLQuery("select count(*) as item_count, b.name, string_value from meta_data_value a, meta_data b where a.meta_data_id = b.id and b.id = ?  group by name, string_value").setLong(0, id).list()
+            def res = session.createSQLQuery("select count(*) as item_count, b.name, UPPER(string_value) from meta_data_value a, meta_data b where a.meta_data_id = b.id and b.id = ?  group by name, UPPER(string_value)").setLong(0, id).list()
 
             for (Object[] o : res) {
                 result.add([count: o[0], name: o[1], value: o[2]])
