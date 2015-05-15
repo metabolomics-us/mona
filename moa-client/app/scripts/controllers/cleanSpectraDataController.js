@@ -3,11 +3,12 @@
  */
 'use strict';
 
-moaControllers.CleanSpectraDataController = function ($scope, $window, UploadLibraryService) {
+moaControllers.CleanSpectraDataController = function ($scope, $window, $location, UploadLibraryService, gwCtsService) {
     // Loaded spectra data/status
     $scope.spectraLoaded = 0;
     $scope.currentSpectrum;
     $scope.spectra = [];
+    $scope.spectrumErrors = {};
     $scope.spectraIndex = 0;
 
     // Parameters provided for trimming spectra
@@ -29,6 +30,27 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, UploadLib
 
     $scope.nextSpectrum = function() {
         setSpectrum(($scope.spectraIndex + $scope.spectra.length + 1) % $scope.spectra.length);
+    };
+
+    $scope.removeCurrentSpectrum = function() {
+        $scope.spectra.splice($scope.spectraIndex, 1);
+
+        if($scope.spectra.length == 0) {
+            $scope.resetFile();
+        } else if ($scope.spectraIndex == $scope.spectra.length) {
+            setSpectrum($scope.spectraIndex - 1);
+        } else {
+            setSpectrum($scope.spectraIndex);
+        }
+    };
+
+    $scope.resetFile = function() {
+        $scope.spectraLoaded = 0;
+        $scope.spectraIndex = 0;
+        $scope.spectra = [];
+
+        // Scroll to top of the page
+        $window.scrollTo(0, 0);
     };
 
 
@@ -143,15 +165,6 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, UploadLib
         }
     };
 
-    $scope.resetFile = function() {
-        $scope.spectraLoaded = 0;
-        $scope.spectraIndex = 0;
-        $scope.spectra = [];
-
-        // Scroll to top of the page
-        $window.scrollTo(0, 0);
-    };
-
 
     /**
      * Parse spectra
@@ -220,7 +233,48 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, UploadLib
 
 
     /**
-     *
+     * Handle MOL file input
+     */
+    $scope.parseMolFile = function(file) {
+        if (file.length > 0) {
+            var fileReader = new FileReader();
+
+            fileReader.onload = function (event) {
+                var data = event.target.result;
+                console.log(data);
+
+                // Accept only the first MOL file
+                var sep1 = data.indexOf('$$$$'), sep2 = data.indexOf('M  END');
+                console.log(sep1 +" "+ sep2)
+
+                if (sep1 > -1 || sep2 > -1) {
+                    if (sep1 == -1 || (sep1 > -1 && sep2 > -1 && sep1 > sep2)) {
+                        sep1 = sep2;
+                    }
+
+                    data = data.substring(0, sep1);
+                }
+
+                $scope.currentSpectrum.molFile = data;
+                $scope.$apply();
+            };
+
+            fileReader.readAsText(file[0]);
+        }
+    };
+
+    $scope.convertMolToInChI = function() {
+        if (angular.isDefined($scope.currentSpectrum.molFile) && $scope.currentSpectrum.molFile != '') {
+            gwCtsService.convertToInchiKey($scope.currentSpectrum.molFile, function (result) {
+                console.log(result);
+                $scope.currentSpectrum.inchiKey = result.inchikey;
+            });
+        }
+    };
+
+
+    /**
+     * Export a file as MSP
      */
     $scope.exportFile = function() {
         var msp = '';
@@ -285,5 +339,78 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, UploadLib
         document.body.appendChild(pom);
         pom.click();
         document.body.removeChild(pom);
+    };
+
+
+    /**
+     *
+     */
+    $scope.waitForLogin = function() {
+        $scope.$on('auth:login-success', function(event, data, status, headers, config) {
+            if ($scope.spectraLoaded == 2) {
+                $scope.uploadFile();
+            }
+        });
+    };
+
+
+    /**
+     * Upload current data
+     */
+    var validateSpectra = function() {
+        var invalid = [];
+
+        for(var i = 0; i < $scope.spectra.length; i++) {
+            $scope.spectra[i].errors = [];
+
+            var ionCount = 0;
+
+            for (var j = 0; j < $scope.spectra[i].ions.length; j++) {
+                if ($scope.spectra[i].ions[j].selected) {
+                    ionCount++;
+                }
+            }
+
+            if (ionCount == 0) {
+                $scope.spectra[i].errors.push('This spectrum has no selected ions!  It cannot be uploaded.');
+            }
+
+            if ((angular.isUndefined($scope.spectra[i].inchi) || $scope.spectra[i].inchi == '') &&
+                    (angular.isUndefined($scope.spectra[i].molFile) || $scope.spectra[i].molFile == '')) {
+                $scope.spectra[i].errors.push('This spectrum requires a structure in order to upload. Please provide a MOL file or InChI code!');
+            }
+
+
+            if ($scope.spectra[i].errors.length > 0) {
+                invalid.push(i);
+            }
+        }
+
+        if (invalid.length > 0) {
+            setSpectrum(invalid[0]);
+            $scope.error = 'There are some errors in the data you have provided.  The';
+            $window.scrollTo(0, 0);
+        }
+
+        return (invalid.length == 0);
+    };
+
+
+    $scope.uploadFile = function() {
+        if(validateSpectra()) {
+            // Reset the spectrum count if necessary
+            if(!UploadLibraryService.isUploading()) {
+                UploadLibraryService.completedSpectraCount = 0;
+                UploadLibraryService.failedSpectraCount = 0;
+                UploadLibraryService.uploadedSpectraCount = 0;
+                UploadLibraryService.uploadStartTime = new Date().getTime();
+            }
+
+            UploadLibraryService.uploadSpectra($scope.spectra, function (spectrum) {
+                spectrum.$batchSave();
+            }, $scope.spectrum);
+
+            $location.path('/uploadstatus');
+        }
     };
 };
