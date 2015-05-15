@@ -53,6 +53,8 @@ CREATE INDEX "impact_index_score_id_id"
 CREATE INDEX "spectrum_index_hash"
 	ON "public"."spectrum"("hash")
 
+create index name_index_like_compound on name (compound_id,name text_pattern_ops);
+
 
 
 

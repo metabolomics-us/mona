@@ -25,10 +25,18 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
      * prepares an empty query to avoid null pointer exceptions
      */
     this.prepareQuery = function () {
+
+        var defaultTags = {};
+
+        defaultTags.name = {};
+        defaultTags.name.ne = "delete";
+
         var query = {
             compound: {},
             metadata: [],
-            tags: []
+            tags: [
+                defaultTags
+            ]
         };
 
         QueryCache.setSpectraQuery(query);
@@ -236,6 +244,15 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
                         }
                     );
                 }
+                else{
+                    query.tags.push(
+                        {
+                            name:{
+                                eq:tag
+                            }
+                        }
+                    );
+                }
 
             }
             QueryCache.setSpectraQuery(query);
@@ -308,6 +325,11 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
                 //build query data object
 
                 var options = {};
+
+                if(!angular.isDefined(metadata.selected)){
+                    metadata.selected = {};
+                    metadata.selected.value = "eq";
+                }
                 options[metadata.selected.value] = metadata.value;
 
 

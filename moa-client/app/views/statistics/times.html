@@ -9,7 +9,9 @@
         </div>
     </div>
 </div>
-<div class="row">
+
+
+<div ng-repeat="row in data" class="row">
     <div class="col-lg-12">
 
         <table class="table table-hover table-striped" >
@@ -25,8 +27,8 @@
             </tr>
             </thead>
 
-            <tr ng-repeat="entry in data">
-                <td>{{entry.date | date : short}}</td>
+            <tr ng-repeat="entry in row">
+                <td>{{entry.date }}</td>
                 <td>{{entry.category}}</td>
                 <td>{{entry.grouping}}</td>
                 <td>{{entry.count | number:0}}</td>
@@ -36,5 +38,6 @@
 
             </tr>
         </table>
-        </div>
+    </div>
 </div>
+
