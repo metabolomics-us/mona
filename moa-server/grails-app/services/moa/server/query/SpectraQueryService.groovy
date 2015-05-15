@@ -125,11 +125,8 @@ class SpectraQueryService {
 
         (queryOfDoom, executionParams) = generateFinalQuery(json)
 
-        println "executing criteria - query"
 
         def result = Spectrum.executeQuery(queryOfDoom, executionParams, params)
-        println "execution ended - received: ${result.size()} spectra"
-        println "${json}"
         //println "$queryOfDoom"
 
         //  log.debug("result count: ${result.size()}")
