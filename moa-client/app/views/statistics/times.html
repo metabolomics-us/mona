@@ -11,29 +11,40 @@
 
 <div ng-repeat="row in data" class="row">
     <div class="col-lg-12">
-        <table class="table table-hover table-striped" >
-            <thead>
-            <tr>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Grouping</th>
-                <th>Events</th>
-                <th>avg (ms)</th>
-                <th>min (ms)</th>
-                <th>max (ms)</th>
-            </tr>
-            </thead>
+        <h3>{{$index == 0 ? 'Daily' : 'Hourly'}} Statistics</h3>
+        <tabset>
+            <tab heading="Chart">
+                <div style="height: 300px">
+                    <query-line-chart style="display: none; width: 100%; height: 100%;" ng-model="row"></query-line-chart>
+                </div>
+            </tab>
 
-            <tr ng-repeat="entry in row">
-                <td>{{entry.date }}</td>
-                <td>{{entry.category}}</td>
-                <td>{{entry.grouping}}</td>
-                <td>{{entry.count | number:0}}</td>
-                <td>{{entry.avg | number:2}}</td>
-                <td>{{entry.min | number:0}}</td>
-                <td>{{entry.max | number:0}}</td>
-            </tr>
-        </table>
+            <tab heading="Table">
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Grouping</th>
+                        <th>Events</th>
+                        <th>avg (ms)</th>
+                        <th>min (ms)</th>
+                        <th>max (ms)</th>
+                    </tr>
+                    </thead>
+
+                    <tr ng-repeat="entry in row">
+                        <td>{{entry.date }}</td>
+                        <td>{{entry.category}}</td>
+                        <td>{{entry.grouping}}</td>
+                        <td>{{entry.count | number:0}}</td>
+                        <td>{{entry.avg | number:2}}</td>
+                        <td>{{entry.min | number:0}}</td>
+                        <td>{{entry.max | number:0}}</td>
+                    </tr>
+                </table>
+            </tab>
+        </tabset>
     </div>
 </div>
 
