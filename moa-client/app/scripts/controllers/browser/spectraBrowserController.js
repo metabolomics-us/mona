@@ -23,7 +23,7 @@
  */
 moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, QueryCache, $rootScope, $window) {
 
-    $scope.table = false;
+    $scope.table = true;
     /**
      * contains all local objects and is our model
      * @type {Array}
