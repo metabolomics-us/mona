@@ -1,17 +1,13 @@
 <div>
     <div class="row">
-        <div class="col-md-3">
-            <div class="h3">
-                Summary for Spectrum {{spectrum.id}}
-            </div>
-            <div class="h5">
-                {{spectrum.biologicalCompound.names[0].name}}
-            </div>
-
+        <div class="col-md-6">
+            <div class="h3">Summary for Spectrum {{spectrum.id}}</div>
+            <div class="h5"><span gw-spectra-id-query value="spectrum.hash">{{spectrum.hash}}</span></div>
+            <div class="h5">{{spectrum.biologicalCompound.names[0].name}}</div>
         </div>
 
-        <div class="col-md-9 text-right">
-            <div class="h5">
+        <div class="col-md-6 text-right">
+            <div class="h3">
                 <span class="dropdown">
                     <a href class="dropdown-toggle"><i class="fa fa-cloud-download"></i> Download</a>
 
@@ -25,17 +21,18 @@
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-12"
              ng-click="showScore =! showScore" ng-init="showScore = false">
-            <span tooltip-placement="right" tooltip="please click, to see how the score was calculated"
+            <span tooltip-placement="right" tooltip="Please click to view how the score was calculated"
                   tooltip-trigger="mouseenter" tooltip-popup-delay='10'>
             Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
                 </span>
         </div>
     </div>
-    <div class="row" ng-show="showScore" ng-class="animate-show">
 
+    <div class="row" ng-show="showScore" ng-class="animate-show">
         <div class="col-md-12">
             <div class="panel top17" ng-show="spectrum.score">
                 Reasons for the obtained score of {{spectrum.score.score | number :4}} ({{spectrum.score.scaledScore |
@@ -61,8 +58,8 @@
             </div>
         </div>
     </div>
-    <div class="row top17">
 
+    <div class="row top17">
         <div ng-show="spectrum.tags.length" class="col-md-12">
             <ul class="list-inline">
                 <li ng-repeat="tag in spectrum.tags">
@@ -70,12 +67,11 @@
                 </li>
             </ul>
         </div>
-
     </div>
+
     <!-- mass spectral properties -->
     <div class="row">
         <div class="col-md-12">
-
             <accordion close-others="false">
                 <accordion-group is-open="accordionStatus.isSpectraOpen">
                     <accordion-heading>
@@ -86,10 +82,6 @@
                     </accordion-heading>
 
                     <div class="masspec-modal">
-                        <h5>
-                            <span gw-spectra-id-query value="spectrum.hash">{{spectrum.hash}}</span>
-                        </h5>
-
                         <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
                     </div>
                 </accordion-group>
