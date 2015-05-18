@@ -1,10 +1,17 @@
-<div>
-    <div class="row">
+<div class="panel panel-default">
+    <div class="panel-heading">
+
+        <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}
+
+        </h3>
+        <!--
         <div class="col-md-6">
             <div class="h3">Summary for Spectrum {{spectrum.id}}</div>
             <div class="h5"><span gw-spectra-id-query value="spectrum.hash">{{spectrum.hash}}</span></div>
             <div class="h5">{{spectrum.biologicalCompound.names[0].name}}</div>
         </div>
+
+
 
         <div class="col-md-6 text-right">
             <div class="h3">
@@ -20,8 +27,11 @@
                 </span>
             </div>
         </div>
+
+-->
     </div>
 
+    <div class="panel-body">
     <div class="row">
         <div class="col-md-12"
              ng-click="showScore =! showScore" ng-init="showScore = false">
@@ -30,13 +40,20 @@
             Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
                 </span>
         </div>
+
     </div>
 
     <div class="row" ng-show="showScore" ng-class="animate-show">
         <div class="col-md-12">
-            <div class="panel top17" ng-show="spectrum.score">
-                Reasons for the obtained score of {{spectrum.score.score | number :4}} ({{spectrum.score.scaledScore |
-                number :1}} stars)
+            <div class="panel top17 panel-default" ng-show="spectrum.score">
+                <div class="panel-heading">
+                    Explanation for the score of  {{spectrum.score.score | number :4}}/({{spectrum.score.scaledScore |
+                    number :1}} stars
+                    </div>
+                <div class="panel-body">
+
+                    Green elements show that this had a positive impact, while red elements display a negative impact.
+                </div>
                 <table class="table">
                     <thead>
                     <tr>
@@ -59,17 +76,29 @@
         </div>
     </div>
 
-    <div class="row top17">
-        <div ng-show="spectrum.tags.length" class="col-md-12">
-            <ul class="list-inline">
-                <li ng-repeat="tag in spectrum.tags">
-                    <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
-                </li>
-            </ul>
-        </div>
-    </div>
+        <div class="row top17">
 
-    <!-- mass spectral properties -->
+            <div ng-show="spectrum.tags.length" class="col-md-12">
+                <ul class="list-inline">
+                    <li ng-repeat="tag in spectrum.tags">
+                        <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row top5">
+
+            <div ng-show="spectrum.tags.length" class="col-md-12">
+                <ul class="list-inline">
+                    <li>
+                        <div class="h5"><span gw-spectra-id-query value="spectrum.hash">{{spectrum.hash}}</span></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- mass spectral properties -->
     <div class="row">
         <div class="col-md-12">
             <accordion close-others="false">
@@ -271,4 +300,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>
