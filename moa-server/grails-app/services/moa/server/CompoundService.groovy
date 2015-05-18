@@ -44,8 +44,12 @@ class CompoundService {
                 throw new exception.ValidationException("sorry you need to provide an InChI or an InChI Key for a compound!")
             }
             else{
-                compound.inchiKey = MolHelper.newInstance().convertToInChIKey(compound.inchi.trim())
+                // Fix for InChIs without the InChI= prefix
+                if (compound.inchi.indexOf("InChI=") != 0) {
+                    compound.inchi = "InChI="+ compound.inchi
+                }
 
+                compound.inchiKey = MolHelper.newInstance().convertToInChIKey(compound.inchi.trim())
             }
         }
         myCompound = Compound.findByInchiKey(compound.inchiKey.trim()/*, [lock: true]*/)
