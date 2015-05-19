@@ -29,7 +29,8 @@ moaControllers.SpectraUploadController = function ($scope, $rootScope, $modal, A
         $scope.spectraUploaded = UploadLibraryService.uploadedSpectraCount > 0;
 
         if (AuthenticationService.isLoggedIn() && !$scope.spectraUploaded) {
-            $scope.uploadSpectraDialog()
+            // Not using the old upload wizard anymore
+            //$scope.uploadSpectraDialog()
         } else if(!AuthenticationService.isLoggedIn() && !AuthenticationService.isLoggingIn()) {
             $rootScope.$broadcast('auth:login');
         }

@@ -1,6 +1,12 @@
 <div ng-value="error"></div>
 
-<div class="row">
+<div class="row" ng-show="!auth.isLoggedIn()">
+    <div class="col-md-12">
+        <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a>!</h3>
+    </div>
+</div>
+
+<div class="row" ng-show="auth.isLoggedIn()">
     <div class="col-md-12">
         <table class="table table-hover" style="table-layout: fixed;" infinite-scroll="loadMoreCompounds()" infinite-scroll-distance="0.5">
             <thead>
@@ -19,8 +25,7 @@
                 </td>
                 <td><code>{{compound.inchiKey}}</code></td>
                 <td class="text-center">
-                    <div chemical-sketcher readonly="true" width="150" height="150" id="chemSketch_{{compound.id}}"
-                         ng-model="compound"></div>
+                    <div chemical-sketcher readonly="true" width="200" height="200" id="chemSketch_{{compound.id}}"  ng-model="compound"></div>
                 </td>
             </tr>
             </tbody>
