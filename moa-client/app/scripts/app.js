@@ -23,7 +23,7 @@ var app = angular
  */
 app.constant('MAX_SPECTRA', 7);
 app.constant('MAX_COMPOUNDS', 20);
-app.constant('MAX_OBJECTS', 15);
+app.constant('MAX_OBJECTS', 20);
 
 
 /**
