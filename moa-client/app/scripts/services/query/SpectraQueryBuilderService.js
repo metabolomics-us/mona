@@ -29,7 +29,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         var defaultTags = {};
 
         defaultTags.name = {};
-        defaultTags.name.ne = "delete";
+        defaultTags.name.ne = "deleted";
 
         var query = {
             compound: {},

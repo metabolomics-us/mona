@@ -68,7 +68,7 @@ class SpectraUploadJob {
 
                     //automatic validation
                     if(validation) {
-                        SpectraValidationJob.triggerNow([spectraId: result.id, priority: 1])
+                        SpectraValidationJob.triggerNow([spectraId: result.id, priority: 3])
                     }
                 }
                 catch (ValidationException e) {

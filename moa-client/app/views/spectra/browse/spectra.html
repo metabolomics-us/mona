@@ -10,10 +10,10 @@
     <div class="col-md-9 col-sm-6 col-lg-9">
         <div show-query></div>
         <div class="form-group">
-            <label>
-                <input type="checkbox" ng-model="table"
-                       ng-true-value="true" ng-false-value="false"> Change View
-            </label>
+            <i class="fa fa-2x fa-table fa-fw" ng-click="table = true"></i>
+            <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
+
+
         </div>
 
         <!-- display it as boxes -->
@@ -24,52 +24,58 @@
 
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title">Spectra: {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}</h3>
+                            <h3 class="panel-title">Spectra: {{spectrum.id}} for
+                                {{spectrum.biologicalCompound.names[0].name}}</h3>
                         </div>
                         <div class="panel-body">
 
                             <div class="row">
-                                <div class="col-md-5">
-                                    <div class="row">
-                                        <div class="col-md-6"></div>
-                                        <div class="masspec-mini">
-                                            <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
+
+                                        <div class="col-md-3">
+                                            <div class="masspec-medium">
+                                                <mass-spec id="massSpec_{{spectrum.id}}"
+                                                           ng-model="spectrum.spectrum"></mass-spec>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
-                                             id="bioSketch_{{spectrum.id}}"
-                                             ng-model="spectrum.biologicalCompound"></div>
-                                    </div>
-
-                                </div>
 
 
+                                        <div class="col-md-3">
+                                            <div chemical-sketcher readonly="true" width="250"
+                                                 height="250"
+                                                 id="bioSketch_{{spectrum.id}}_false"
+                                                 ng-model="spectrum.biologicalCompound"></div>
+                                        </div>
 
-                                <div class="col-md-7">
 
-                                    <div ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {category: '!computed'} | orderBy: ['name']">
-                                        <div>{{meta.name}}<span class="badge">{{meta.value}}</span></div>
+                                <div class="col-md-6">
+                                        <div class="row" ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {category: '!computed'} | orderBy: ['name']">
 
-                                    </div>
-                                    <div>Spectrum Hash <span class="badge">{{spectrum.hash}}</span></div>
+                                                <div class="col-md-4">
+                                                {{meta.name}}
+                                                </div>
+                                                <div class="col-md-8">
+                                                {{meta.value | limitTo : 25}}
+                                                    </div>
 
+                                        </div>
                                 </div>
 
                             </div>
                         </div>
 
-                        <div class="panel-footer">Score:  <span score-spectra ng-model="spectrum"></span>
+                        <div class="panel-footer">Score: <span score-spectra ng-model="spectrum"></span>
                         </div>
                     </div>
 
-                </div></div>
+                </div>
+            </div>
         </div>
 
         <!-- display it as table-->
         <div ng-show="table == true">
 
-            <table class="table table-hover table-striped" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="0.5">
+            <table class="table table-hover table-striped" style="table-layout: fixed;"
+                   infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="0.5">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -94,7 +100,7 @@
                     </td>
                     <td class="text-center">
                         <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
-                             id="bioSketch_{{spectrum.id}}"
+                             id="bioSketch_{{spectrum.id}}_true"
                              ng-model="spectrum.biologicalCompound"></div>
                     </td>
                     <td class="text-center">

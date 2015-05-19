@@ -8,8 +8,8 @@ class SupportsMetaData {
     static mapping = {
         tablePerSubclass true
         version false
-        metaData cascade: 'all-delete-orphan', fetch: 'join'
-        links  fetch: 'join'
+        metaData cascade: 'all-delete-orphan',lazy:false
+        links  lazy:false
     }
 
     Date dateCreated
