@@ -1,16 +1,20 @@
 <div ng-value="error"></div>
-<div class="row">
+
+<div class="row" ng-show="!auth.isLoggedIn()">
     <div class="col-md-12">
+        <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a>!</h3>
+    </div>
+</div>
+
+<div class="row" ng-show="auth.isLoggedIn()">    <div class="col-md-12">
         <h3>General performance statistics of {{APP_NAME}}</h3>
 
         <div>
             <p>Dear User, this table provides you with some general statistics of the performance of your selected criteria</p>
         </div>
     </div>
-</div>
 
-<div ng-repeat="row in data" class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-12" ng-repeat="row in data">
         <h3>{{$index == 0 ? 'Daily' : 'Hourly'}} Statistics</h3>
         <tabset>
             <tab heading="Chart">

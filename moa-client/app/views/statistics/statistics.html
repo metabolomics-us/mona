@@ -1,4 +1,10 @@
-<div class="row">
+<div class="row" ng-show="!auth.isLoggedIn()">
+    <div class="col-md-12">
+        <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a>!</h3>
+    </div>
+</div>
+
+<div class="row" ng-show="auth.isLoggedIn()">
     <div class="col-md-12">
         <h3>Statistics</h3>
         <p>View the distributions of metadata values and perform simple queries on the individual spectrum attributes.</p>
