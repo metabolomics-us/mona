@@ -1,126 +1,123 @@
 <div ng-value="error"></div>
 
-        <div class="row">
-<div class="col-md-9 col-sm-6 col-lg-9">
-
-    <div show-query></div>
-    <div class="form-group">
-        <label>
-    <input type="checkbox" ng-model="table"
-           ng-true-value="true" ng-false-value="false"> Change View
-        </label>
+<div class="row">
+    <div class="col-md-9 col-sm-6 col-lg-9">
+        <div show-query></div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" ng-model="table"
+                       ng-true-value="true" ng-false-value="false"> Change View
+            </label>
         </div>
-    <!-- display it as boxes -->
+
+        <!-- display it as boxes -->
         <div ng-show="table == false">
 
-
             <div infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="0.5">
-            <div ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
+                <div ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
 
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Spectra: {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}</h3>
+                        </div>
+                        <div class="panel-body">
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Spectra: {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}</h3>
-                    </div>
-                    <div class="panel-body">
-
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="row">
-                                    <div class="col-md-6"></div>
-                                    <div class="masspec-mini">
-                                        <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <div class="col-md-6"></div>
+                                        <div class="masspec-mini">
+                                            <mass-spec id="massSpec_{{spectrum.id}}" ng-model="spectrum.spectrum"></mass-spec>
+                                        </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
+                                             id="bioSketch_{{spectrum.id}}"
+                                             ng-model="spectrum.biologicalCompound"></div>
+                                    </div>
+
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
-                                         id="bioSketch_{{spectrum.id}}"
-                                         ng-model="spectrum.biologicalCompound"></div>
+
+
+
+                                <div class="col-md-7">
+
+                                    <div ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {category: '!computed'} | orderBy: ['name']">
+                                        <div>{{meta.name}}<span class="badge">{{meta.value}}</span></div>
+
+                                    </div>
+                                    <div>Spectrum Hash <span class="badge">{{spectrum.hash}}</span></div>
+
                                 </div>
 
                             </div>
+                        </div>
 
-
-
-                            <div class="col-md-7">
-
-                                <div ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {category: '!computed'} | orderBy: ['name']">
-                                    <div>{{meta.name}}<span class="badge">{{meta.value}}</span></div>
-
-                                </div>
-                                <div>Spectrum Hash <span class="badge">{{spectrum.hash}}</span></div>
-
-                            </div>
-
+                        <div class="panel-footer">Score:  <span score-spectra ng-model="spectrum"></span>
                         </div>
                     </div>
 
-                    <div class="panel-footer">Score:  <span score-spectra ng-model="spectrum"></span>
-                    </div>
-                </div>
-
-            </div></div>
+                </div></div>
         </div>
+
         <!-- display it as table-->
         <div ng-show="table == true">
 
-
             <table class="table table-hover table-striped" style="table-layout: fixed;" infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="0.5">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th class="text-center" style="width: 160px">Structure</th>
-                <th class="text-center" style="width: 200px">Mass Spectrum</th>
-                <th class="text-center">Accurate Mass</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-show="spectra.length == 0">
-            </tr>
-            <tr ng-repeat="spectrum in spectra"
-                ng-click="viewSpectrum(spectrum.id, $index)">
-                <td>
-                    {{spectrum.id}}
-                </td>
-                <td>
-                    <ul class="list-unstyled">
-                        <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">{{name.name}}</li>
-                    </ul>
-                </td>
-                <td class="text-center">
-                    <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
-                         id="bioSketch_{{spectrum.id}}"
-                         ng-model="spectrum.biologicalCompound"></div>
-                </td>
-                <td class="text-center">
-                    <div class="masspec-mini">
-                        <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
-                    </div>
-                    <div>
-                        <span score-spectra ng-model="spectrum"></span>
-                    </div>
-                </td>
-                <td>
-                    <p class="text-center">{{spectrum.accurateMass}}</p>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th class="text-center" style="width: 160px">Structure</th>
+                    <th class="text-center" style="width: 200px">Mass Spectrum</th>
+                    <th class="text-center">Accurate Mass</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-show="spectra.length == 0">
+                </tr>
+                <tr ng-repeat="spectrum in spectra"
+                    ng-click="viewSpectrum(spectrum.id, $index)">
+                    <td>
+                        {{spectrum.id}}
+                    </td>
+                    <td>
+                        <ul class="list-unstyled">
+                            <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">{{name.name}}</li>
+                        </ul>
+                    </td>
+                    <td class="text-center">
+                        <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
+                             id="bioSketch_{{spectrum.id}}"
+                             ng-model="spectrum.biologicalCompound"></div>
+                    </td>
+                    <td class="text-center">
+                        <div class="masspec-mini">
+                            <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
+                        </div>
+                        <div>
+                            <span score-spectra ng-model="spectrum"></span>
+                        </div>
+                    </td>
+                    <td>
+                        <p class="text-center">{{spectrum.accurateMass}}</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-        <div class="text-center" ng-show="loadingMore">
-            <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
+            <div class="text-center" ng-show="loadingMore">
+                <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
+            </div>
+
+            <div class="text-center" ng-show="spectra.length > 0 && !dataAvailable">
+                <h4>All results loaded</h4>
+            </div>
+
+            <div class="text-center" ng-show="spectra.length == 0 && !dataAvailable">
+                <h4>No results found!</h4>
+            </div>
         </div>
-
-        <div class="text-center" ng-show="spectra.length > 0 && !dataAvailable">
-            <h4>All results loaded</h4>
-        </div>
-
-        <div class="text-center" ng-show="spectra.length == 0 && !dataAvailable">
-            <h4>No results found!</h4>
-        </div>
-    </div>
-
     </div>
 
     <div class="col-md-3 col-sm-6 col-lg-3">
