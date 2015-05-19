@@ -1,4 +1,4 @@
-<form role="form" name="authentication" autocomplete="off" novalidate>
+<form role="form" name="authentication" autocomplete="off" novalidate ng-submit="submitLogin()">
     <div class="modal-header" ng-if="state == 'login' || state == 'success'">
         <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true">×</button>
         <h4 class="modal-title">Log into MoNA</h4>
@@ -39,6 +39,6 @@
 
 
     <div class="modal-footer" ng-if="state == 'login'">
-        <a class="btn btn-primary btn-block" type="submit" ng-click="submitLogin()">Log In</a>
+        <button class="btn btn-primary btn-block" type="submit">Log In</button>
     </div>
 </form>
