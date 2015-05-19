@@ -1,11 +1,15 @@
-<div class="row">
+<div class="row" ng-show="!auth.isLoggedIn()">
+    <div class="col-md-12">
+        <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a>!</h3>
+    </div>
+</div>
+
+<div class="row" ng-show="auth.isLoggedIn()">
     <div class="col-md-12">
         <h3>Statistics</h3>
         <p>View the distributions of metadata values and perform simple queries on the individual spectrum attributes.</p>
     </div>
-</div>
 
-<div class="row">
     <div class="col-md-12">
         <h5>Database Information</h5>
 
@@ -38,10 +42,8 @@
             </tbody>
         </table>
     </div>
-</div>
 
-<div class="row" ng-repeat="(name, data) in fieldData">
-    <div class="col-md-12">
+    <div class="col-md-12" ng-repeat="(name, data) in fieldData">
         <h4 class="page-header">{{name | titlecase}} <span ng-show="data.length > 10">(Top 10)</span></h4>
 
         <div style="display: block; height: 400px;">
