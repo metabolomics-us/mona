@@ -34,7 +34,7 @@ class CompoundCurationController {
      */
     def curateAll(){
 
-        CompoundCurationJob.triggerNow([all:true])
+        CompoundCurationJob.triggerNow([all:true, priority: 4])
 
         render (text: "started curration of all compounds!")
     }
