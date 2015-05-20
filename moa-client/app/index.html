@@ -222,7 +222,13 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="top17">
-            <div ng-view="" autoscroll="true"></div>
+            <div ng-view="" autoscroll="true" ng-show="auth.isLoggedIn()"></div>
+
+            <div class="row" ng-show="!auth.isLoggedIn()">
+                <div class="col-md-12">
+                    <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a>!</h3>
+                </div>
+            </div>
         </div>
     </div>
     <!-- /.row -->
