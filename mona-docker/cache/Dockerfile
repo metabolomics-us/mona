@@ -13,7 +13,7 @@ RUN apt-get -qq install bash
 
 # Install awstats
 
-RUN apt-get install awstats -y
+RUN apt-get install awstats vim -y
 RUN apt-get install -y libnet-ip-perl
 RUN apt-get install -y libgeo-ipfree-perl
 
@@ -35,6 +35,8 @@ RUN   echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 ADD start.sh /opt/start.sh
 RUN chmod +x /opt/start.sh
 
+RUN mkdir /data
+ADD www/* /data/
 
 # Run nginx
 CMD ["/opt/start.sh"]
