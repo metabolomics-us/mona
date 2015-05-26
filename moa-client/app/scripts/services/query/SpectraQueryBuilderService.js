@@ -28,8 +28,9 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
         var defaultTags = {};
 
-        defaultTags.name = {};
-        defaultTags.name.ne = "delete";
+        // Remove temporarily until issues are resolved on the server side
+        //defaultTags.name = {};
+        //defaultTags.name.ne = "delete";
 
         var query = {
             compound: {},
@@ -38,6 +39,8 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
                 defaultTags
             ]
         };
+
+        console.log(JSON.stringify(query));
 
         QueryCache.setSpectraQuery(query);
 
@@ -323,7 +326,6 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
 
                 //build query data object
-
                 var options = {};
 
                 if(!angular.isDefined(metadata.selected)){
