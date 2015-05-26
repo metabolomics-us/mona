@@ -30,7 +30,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
         // Remove temporarily until issues are resolved on the server side
         //defaultTags.name = {};
-        //defaultTags.name.ne = "delete";
+        //defaultTags.name.ne = "deleted";
 
         var query = {
             compound: {},

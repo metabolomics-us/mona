@@ -50,14 +50,13 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         batchSize(50)
         version false
         comments fetch: 'join', cascade: 'all-delete-orphan'
-       // ions fetch: 'join', lazy:false
-       // chemicalCompound fetch: 'join'
-       // biologicalCompound fetch: 'join'
-       // predictedCompound fetch: 'join'
-       // score fetch: 'join'
-       // metaData fetch: 'join'
-       // links fetch: 'join'
-       // submitter fetch: 'join'
+       // ions lazy:false
+        chemicalCompound lazy:false
+        biologicalCompound lazy:false
+        predictedCompound lazy:false
+        //score lazy:false
+        //links lazy:false
+        submitter lazy:false
     }
 
 

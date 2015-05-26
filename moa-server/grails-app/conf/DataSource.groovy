@@ -24,7 +24,7 @@ environments {
 
         dataSource {
             dbCreate = "update"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-prod"
 //	        url = "jdbc:postgresql://localhost:5432/mona-test"
 
 
@@ -91,6 +91,8 @@ environments {
     		}
 
     		*/
+
+            logSql = true
 
 
             properties {

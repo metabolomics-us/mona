@@ -21,7 +21,7 @@ class SpectraCurationController {
 
         def id = params.id
 
-        SpectraValidationJob.triggerNow([spectraId: id as long])
+        SpectraValidationJob.triggerNow([spectraId: id as long, priority: 3])
 
         render(text: "scheduling curation of ${id} succesful!")
     }
@@ -30,7 +30,7 @@ class SpectraCurationController {
 
         def id = params.id
 
-        SpectraValidationJob.triggerNow([spectraId: id as long])
+        SpectraValidationJob.triggerNow([spectraId: id as long, priority: 3])
 
 
         render (success: spectraCurationService.validateSpectra(id as long))
@@ -43,7 +43,7 @@ class SpectraCurationController {
      * @return
      */
     def curateAll() {
-        SpectraValidationSchedulingJob.triggerNow([all: true])
+        SpectraValidationSchedulingJob.triggerNow([all: true, priority: 3])
         render(text: "curating all spectra!")
 
     }
@@ -55,7 +55,7 @@ class SpectraCurationController {
 
         def query = request.getJSON()
 
-        SpectraValidationSchedulingJob.triggerNow([query: query, params: params])
+        SpectraValidationSchedulingJob.triggerNow([query: query, params: params, priority: 3])
 
         render(text: "curating all spectra, by query!")
 
