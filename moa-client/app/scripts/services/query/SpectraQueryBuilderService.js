@@ -26,9 +26,9 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
      */
     this.prepareQuery = function () {
 
-        var defaultTags = {};
-
         // Remove temporarily until issues are resolved on the server side
+        //var defaultTags = {};
+        //
         //defaultTags.name = {};
         //defaultTags.name.ne = "deleted";
 
@@ -36,11 +36,9 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             compound: {},
             metadata: [],
             tags: [
-                defaultTags
+                //defaultTags
             ]
         };
-
-        console.log(JSON.stringify(query));
 
         QueryCache.setSpectraQuery(query);
 
