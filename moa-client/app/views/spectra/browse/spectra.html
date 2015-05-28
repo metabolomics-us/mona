@@ -12,7 +12,6 @@
 
         <!-- display it as boxes -->
         <div ng-show="table == false">
-
             <div infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="0.5">
                 <div ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
 
@@ -60,8 +59,19 @@
                         <div class="panel-footer">Score: <span score-spectra ng-model="spectrum"></span>
                         </div>
                     </div>
-
                 </div>
+            </div>
+
+            <div class="text-center" ng-show="loadingMore">
+                <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
+            </div>
+
+            <div class="text-center" ng-show="spectra.length > 0 && !dataAvailable">
+                <h4>All results loaded</h4>
+            </div>
+
+            <div class="text-center" ng-show="spectra.length == 0 && !dataAvailable">
+                <h4>No results found!</h4>
             </div>
         </div>
 
