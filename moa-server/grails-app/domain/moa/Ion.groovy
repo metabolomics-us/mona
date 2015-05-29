@@ -17,7 +17,7 @@ class Ion extends SupportsMetaData implements Comparable<Ion> {
 
     static mapping = {
         version false
-        spectrum fetch: 'join'
+        //spectrum fetch: 'join'
     }
 
     /**

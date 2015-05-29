@@ -35,8 +35,8 @@ RUN   echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 ADD start.sh /opt/start.sh
 RUN chmod +x /opt/start.sh
 
-RUN mkdir /data
-ADD www/* /data/
+#RUN mkdir /data
+#ADD www/* /data/
 
 # Run nginx
 CMD ["/opt/start.sh"]

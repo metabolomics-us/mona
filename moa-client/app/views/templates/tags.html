@@ -1,6 +1,6 @@
 <div>
     <div ng-if="options.length == 0">
-        <div class="btn-group">
+        <div class="btn-group top5">
             <button type="button" class="btn btn-sm" ng-class="{active: status.active, 'btn-info' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}" disabled="true">
 
                 <span ng-if="tag.ruleBased">
@@ -15,7 +15,7 @@
     </div>
 
     <div ng-if="options.length > 0">
-        <div class="btn-group" dropdown>
+        <div class="btn-group top5" dropdown>
             <button type="button" class="btn dropdown-toggle btn-sm" dropdown-toggle
                     ng-class="{active: status.active, 'btn-info' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}">
 

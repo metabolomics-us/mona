@@ -10,6 +10,7 @@ import moa.server.NewsService
 import moa.server.metadata.MetaDataPersistenceService
 import moa.server.query.SpectraQueryService
 import moa.server.statistics.StatisticsService
+import util.FireJobs
 
 @Transactional
 class SpectraCurationService {
@@ -23,6 +24,7 @@ class SpectraCurationService {
     StatisticsService statisticsService
 
     NewsService newsService
+
 
     /**
      * runs the curation workflow for the given spectra
@@ -69,6 +71,11 @@ class SpectraCurationService {
                     News.NOTIFICATION,
                     "spectra"
             )
+
+
+            FireJobs.fireCompoundCurationJob([compoundId:spectrum.biologicalCompound.id])
+            FireJobs.fireCompoundCurationJob([compoundId:spectrum.chemicalCompound.id])
+
 
             return result
         } else {

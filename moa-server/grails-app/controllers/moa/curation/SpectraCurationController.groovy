@@ -1,11 +1,7 @@
 package moa.curation
 
-import grails.converters.JSON
-import moa.Spectrum
-import moa.server.SpectraValidationJob
-import moa.server.SpectraValidationSchedulingJob
 import moa.server.curation.SpectraCurationService
-import moa.server.query.SpectraQueryService
+import util.FireJobs
 
 class SpectraCurationController {
 
@@ -21,7 +17,7 @@ class SpectraCurationController {
 
         def id = params.id
 
-        SpectraValidationJob.triggerNow([spectraId: id as long, priority: 3])
+        FireJobs.fireSpectraCurationJob([spectraId: id as long])
 
         render(text: "scheduling curation of ${id} succesful!")
     }
@@ -30,7 +26,7 @@ class SpectraCurationController {
 
         def id = params.id
 
-        SpectraValidationJob.triggerNow([spectraId: id as long, priority: 3])
+        FireJobs.fireSpectraCurationJob([spectraId: id as long])
 
 
         render (success: spectraCurationService.validateSpectra(id as long))
@@ -43,9 +39,8 @@ class SpectraCurationController {
      * @return
      */
     def curateAll() {
-        SpectraValidationSchedulingJob.triggerNow([all: true, priority: 3])
+        FireJobs.fireSpectraCurationJob([all: true])
         render(text: "curating all spectra!")
-
     }
 
     /**
@@ -55,7 +50,7 @@ class SpectraCurationController {
 
         def query = request.getJSON()
 
-        SpectraValidationSchedulingJob.triggerNow([query: query, params: params, priority: 3])
+        FireJobs.fireSpectraCurationJob([query: query, params: params])
 
         render(text: "curating all spectra, by query!")
 

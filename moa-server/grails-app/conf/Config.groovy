@@ -113,6 +113,7 @@ log4j = {
         file name: 'monaMemoryStatistics', file: "${logdirectory}monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaSpectraValidationStatistics', file: "${logdirectory}monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaDeleteStatistics', file: "${logdirectory}monaDelete.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        file name: 'sql',   file: "${logdirectory}sql.log", append: false, layout: pattern(conversionPattern: '%-5c{1} %d{HH:mm:ss.SSS} %n%n%m%n%n'), threshold: org.apache.log4j.Level.TRACE
 
     }
 
@@ -147,7 +148,7 @@ log4j = {
 
     //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
-    warn 'org.quartz.plugins'
+    debug 'org.quartz.plugins'
     debug 'grails.app'
     debug monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
     debug monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
@@ -155,6 +156,9 @@ log4j = {
 
     debug monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
     debug monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
+
+    debug sql: ['org.hibernate.SQL']
+    trace sql: ['org.hibernate.type.descriptor.sql.BasicBinder']
 
     //debug 'org.hibernate'
 
@@ -193,11 +197,10 @@ log4j = {
 
             debug 'grails.app'
             debug 'moa'
+            trace 'org.hibernate.type.descriptor.sql.BasicBinder'
+            debug 'org.hibernate.SQL'
+
             //debug 'grails.plugin.cache'
-
-
-            info 'org.hibernate.SQL'
-            info 'org.hibernate.type.descriptor.sql.BasicBinder'
 
         }
     }

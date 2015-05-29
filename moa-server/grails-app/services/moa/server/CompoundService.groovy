@@ -38,11 +38,18 @@ class CompoundService {
         //first get the compound we want
         Compound myCompound = null
 
+        //workaround for Nils wrongly generate format
+        //TODO fix in schema and make sure it gets rejected
+        if(compound.inchiCode != null){
+            compound.inchi = compound.inchiCode
+        }
+
         //new mona format has inchi key optional
         if(compound.inchiKey == null){
             if(compound.inchi == null){
                 throw new exception.ValidationException("sorry you need to provide an InChI or an InChI Key for a compound!")
             }
+
             else{
                 // Fix for InChIs without the InChI= prefix
                 if (compound.inchi.indexOf("InChI=") != 0) {
@@ -52,6 +59,7 @@ class CompoundService {
                 compound.inchiKey = MolHelper.newInstance().convertToInChIKey(compound.inchi.trim())
             }
         }
+
         myCompound = Compound.findByInchiKey(compound.inchiKey.trim()/*, [lock: true]*/)
 
         if (myCompound == null) {
@@ -63,6 +71,7 @@ class CompoundService {
             log.debug("compound already existed")
         }
 
+        //updating inchi
         myCompound.inchi = compound.inchi
 
         //validate the mol file or try to generate it
@@ -82,6 +91,7 @@ class CompoundService {
             log.debug("generated: ${myCompound.molFile}")
         } else {
             //give up and toss an exception in the next step
+            throw new RuntimeException("sorry we were not able to find an InChi or Key or MolFile")
         }
 
         if (myCompound.validate()) {
@@ -105,6 +115,10 @@ class CompoundService {
 
             }
         } else {
+
+            myCompound.errors.each {
+                log.error(it)
+            }
             throw new ValidationException("sorry this compound is not valid", myCompound.errors)
         }
 

@@ -107,27 +107,7 @@ class SpectraQueryService {
 
         long begin = System.currentTimeMillis()
 
-        def params = [:]
-
-        if (limit != -1) {
-            params.max = limit
-
-        }
-
-        if (offset != -1) {
-            params.offset = offset
-        }
-
-//        log.debug("pagination parameters: \n\n ${params}")
-
-        def queryOfDoom = null
-        def executionParams = null
-
-        (queryOfDoom, executionParams) = generateFinalQuery(json)
-
-
-        def ids = Spectrum.executeQuery(queryOfDoom, executionParams,params)
-
+        def ids = queryForIds(json,limit,offset)
 
         def result = Spectrum.findAllByIdInList(ids)
 
@@ -140,6 +120,37 @@ class SpectraQueryService {
 
 
         return result
+    }
+
+    /**
+     * queries for the given id's
+     * @param json
+     * @param limit
+     * @param offset
+     * @return
+     */
+    @Transactional
+    def queryForIds(Map json, int limit = -1, int offset = -1){
+
+        def params = [:]
+
+        if (limit != -1) {
+            params.max = limit
+
+        }
+
+        if (offset != -1) {
+            params.offset = offset
+        }
+
+        def queryOfDoom = null
+        def executionParams = null
+
+        (queryOfDoom, executionParams) = generateFinalQuery(json)
+
+
+        return Spectrum.executeQuery(queryOfDoom, executionParams,params)
+
     }
 
     /**
@@ -574,6 +585,7 @@ class SpectraQueryService {
                 spectrum.delete(flush: true)
             }
             else{
+                tagService.removeTagFrom(CommonTags.REQUIRES_DELETE,spectrum)
                 tagService.addTagTo(CommonTags.DELETED,spectrum)
                 spectrum.save()
             }

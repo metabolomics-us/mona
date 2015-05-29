@@ -31,6 +31,9 @@ class MetaDataPersistenceService {
      * @param value
      */
     public void removeMetaDataValue(MetaDataValue value) {
+        if(value.isDirty()){
+            value.refresh()
+        }
         log.info("deleting metadata value object: ${value}")
         value.metaData.removeFromValue(value)
         value.owner.removeFromMetaData(value)

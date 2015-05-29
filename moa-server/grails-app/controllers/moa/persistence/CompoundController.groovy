@@ -4,13 +4,17 @@ import grails.converters.JSON
 import grails.rest.RestfulController
 import moa.Compound
 import moa.Name
+import moa.Spectrum
 import moa.server.convert.CompoundConversionService
+import moa.server.query.CompoundQueryService
 
 class CompoundController extends RestfulController {
 
     static responseFormats = ['json']
 
     CompoundConversionService compoundConversionService
+
+    CompoundQueryService compoundQueryService
 
     def beforeInterceptor = {
         log.info(params)
@@ -81,4 +85,51 @@ class CompoundController extends RestfulController {
                 render compound as JSON
         }
     }
+
+    /**
+     * dynamic query methods to deal with different url mappings based on mapping ids
+     * @param params
+     * @return
+     */
+    @Override
+    protected List<Spectrum> listAllResources(Map params) {
+
+        log.info("params: ${params}")
+
+        def query = [:]
+
+        query.metadata = []
+
+        //if a category is specified
+        if (params.MetaDataId) {
+
+            def object = [id: params.MetaDataId]
+
+            //if we also have a category
+
+            /**
+             *
+             * IGNORE FOR NOW, SICNE IT AINT WORKING
+             if (params.MetaDataCategoryId) {object.category = [:]
+
+             object.category.id = params.MetaDataCategoryId}**/
+
+            query.metadata.add(object)
+        } else if (params.MetaDataCategoryId) {
+            def object = [:]
+
+            object.category = [:]
+
+            object.category.id = params.MetaDataCategoryId
+
+
+            query.metadata.add(object)
+        }
+
+
+
+        return compoundQueryService.query(query, params)
+    }
+
+
 }

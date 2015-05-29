@@ -26,7 +26,7 @@ class StatisticsService {
      */
     Map countAll() {
         return [
-                spectra      : Spectrum.count(),
+                spectra      : getSpectraCount(),
                 compounds    : Compound.count(),
                 metadata     : MetaData.count(),
                 metadataValue: MetaDataValue.count(),
@@ -55,6 +55,24 @@ class StatisticsService {
     }
 
     /**
+     * returns the spectrum count
+     * @return
+     */
+    int getSpectraCount(){
+        int count = 0;
+
+        Spectrum.withSession {session ->
+
+            def result = session.createSQLQuery(" select a.a - b.b from( select count(*) a from spectrum )a, ( select count(*) b from tag_link a, tag b where a.tag_id = b.id and b.text = 'deleted') b").list()
+
+            if (!result.isEmpty()) {
+                count = result[0]
+            }
+        }
+
+        return count
+    }
+    /**
      * spectra count for all tags
      * @return
      */
@@ -73,6 +91,8 @@ class StatisticsService {
 
         return res
     }
+
+
 
     /**
      * compound count for the specified tag
@@ -113,7 +133,6 @@ class StatisticsService {
 
         return result
     }
-
     /**
      *
      * @return

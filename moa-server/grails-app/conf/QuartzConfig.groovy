@@ -13,7 +13,7 @@ quartz {
 */
 
 quartz {
-    autoStartup = false
+    autoStartup = true
     jdbcStore = true
     waitForJobsToCompleteOnShutdown = true
 
@@ -27,7 +27,8 @@ quartz {
         scheduler.idleWaitTime = 1000
 
         threadPool.'class' = 'org.quartz.simpl.SimpleThreadPool'
-        threadPool.threadCount = 10
+        //use n-2 threads or 2 otherwise
+        threadPool.threadCount = Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors()/2 : 2
         threadPool.threadPriority = 7
 
         jobStore.misfireThreshold = 60000

@@ -22,6 +22,7 @@ import curation.rules.meta.ProvidedExactMassIsPossibleRule
 import curation.rules.meta.lipidblast.LipidBlastAquisitionModeDetectionRule
 import curation.rules.meta.lipidblast.LipidBlastMSMSDetectionRule
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
+import curation.rules.spectra.GenerateHashKeyRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
 import curation.rules.spectra.IsDuplicatedSpectraRule
@@ -29,6 +30,11 @@ import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.spectra.RemoveIdenticalSpectraRule
 
 beans {
+
+    //generate our hashkeys for unique spectra identification
+    generateHashKeyRule(GenerateHashKeyRule){ bean ->
+        bean.autowire = 'byName'
+    }
 
 //Spectra curation workflow
     lcmsSpectraIdentification(LCMSSpectraIdentificationRule) { bean ->
@@ -207,6 +213,7 @@ beans {
                 //these rules should run first
                 deleteRuleBasedTagRule,
                 deleteMetaDataRule,
+                generateHashKeyRule,
                 dropNoneWantedMetaDataRule,
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,

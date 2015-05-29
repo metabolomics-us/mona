@@ -1,72 +1,112 @@
 <div ng-value="error"></div>
 
-<div class="row">
-    <div class="col-md-9 col-sm-6 col-lg-9">
-        <div show-query></div>
-        <div class="form-group">
-            <i class="fa fa-2x fa-table fa-fw" ng-click="table = true"></i>
-            <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
+        <div class="row">
+         <div class="col-md-12">
+             <div show-query></div>
+             <div class="form-group">
+                 <button class="btn btn-primary" ng-click="table = true">
+                     <i class="fa fa-2x fa-table fa-fw"></i>
+                 </button>
 
+                 <button class="btn btn-primary" ng-click="table = false">
+                     <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
+                 </button>
 
+                 <button class="btn btn-primary" ng-click="querySpectraDialog()">
+                     <i class="fa fa-2x fa-search fa-fw"></i>
+                 </button>
+
+             </div>
+
+         </div>
         </div>
-
-        <!-- display it as boxes -->
+    <div class="row">
+    <!-- display it as list -->
         <div ng-show="table == false">
+            <div class="col-md-12">
 
             <div infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="0.5">
-                <div ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
+                <div ng-repeat="spectrum in spectra" >
 
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title">Spectra: {{spectrum.id}} for
-                                {{spectrum.biologicalCompound.names[0].name}}</h3>
+                            <a ng-href="#/spectra/display/{{spectrum.id}}">
+
+                                <div class="panel-title">
+
+                                <i class="fa fa-external-link fa-fw"></i> Spectra: {{spectrum.id}} for
+                                {{spectrum.biologicalCompound.names[0].name}}</a>
+
+
+                            <span class="pull-right">
+                                Score: <span score-spectra ng-model="spectrum"></span>
+                            </span>
+
+                            </div>
                         </div>
+
                         <div class="panel-body">
 
-                            <div class="row">
+                            <div class="row ">
 
-                                        <div class="col-md-3">
+                                <div class="col-lg-6 col-md-5 col-sm-3">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-12">
                                             <div class="masspec-medium">
                                                 <mass-spec id="massSpec_{{spectrum.id}}"
                                                            ng-model="spectrum.spectrum"></mass-spec>
                                             </div>
                                         </div>
 
-
-                                        <div class="col-md-3">
+                                        <div class="col-lg-6 col-sm-12 ">
                                             <div chemical-sketcher readonly="true" width="250"
                                                  height="250"
                                                  id="bioSketch_{{spectrum.id}}_false"
-                                                 ng-model="spectrum.biologicalCompound"></div>
+                                                 ng-model="spectrum.biologicalCompound">
+                                            </div>
                                         </div>
-
-
-                                <div class="col-md-6">
-                                        <div class="row top5" ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {category: '!computed'} | orderBy: ['name']">
-
-                                                <div class="col-md-4 ">
-                                                {{meta.name}}
-                                                </div>
-                                                <div class="col-md-8">
-                                                {{meta.value | limitTo : 25}}
-                                                    </div>
-
-                                        </div>
+                                    </div>
                                 </div>
 
+
+                                <div class="col-lg-6 col-md-7 col-sm-9">
+                                    <div class="row top5" ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {category: '!computed'} | orderBy: ['name']">
+
+                                        <div class="col-lg-5 col-md-5 col-sm-6">
+                                            <span gw-meta-query value="meta">
+                                                {{meta.name}}
+                                            </span>
+                                        </div>
+                                        <div class="col-lg-7 col-md-7 col-sm-6">
+                                            {{meta.value | limitTo : 25}}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="panel-footer">Score: <span score-spectra ng-model="spectrum"></span>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div ng-show="spectrum.tags.length" class="col-md-12">
+                                    <ul class="list-inline">
+                                        <li class="pull-left" ng-repeat="tag in spectrum.tags">
+                                            <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                 </div>
             </div>
+                </div>
         </div>
 
         <!-- display it as table-->
         <div ng-show="table == true">
+            <div class="col-md-12">
+
 
             <table class="table table-hover table-striped" style="table-layout: fixed;"
                    infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="0.5">
@@ -112,84 +152,22 @@
                 </tbody>
             </table>
 
-            <div class="text-center" ng-show="loadingMore">
-                <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
-            </div>
-
-            <div class="text-center" ng-show="spectra.length > 0 && !dataAvailable">
-                <h4>All results loaded</h4>
-            </div>
-
-            <div class="text-center" ng-show="spectra.length == 0 && !dataAvailable">
-                <h4>No results found!</h4>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-3 col-sm-6 col-lg-3">
-        <div id="filterBar" bs-affix data-offset-top="-80">
-
-            <!-- search bar -->
-            <button class="btn btn-primary" ng-click="querySpectraDialog()">
-                <i class="fa fa-search fa-fw"></i>Open Query Dialog
-            </button>
-            <br/><br/>
-
-            <button class="btn btn-warning" ng-click="resetQuery()">
-                <i class="fa fa-search fa-fw"></i>Reset Current Query
-            </button>
-            <br/><br/>
-
-            <div class="top17"></div>
-            <!-- filter by tags -->
-            <form name="spectraQuery" role="form" class="form-vertical">
-                <fieldset>
-                    <legend>Refine Results</legend>
-
-                    <div class="form-group" ng-class="{ 'has-error': spectraQuery.newNameFilter.$invalid }">
-                        <label class="control-label" for="nameFilter">Filter by Name</label>
-
-                        <input id="nameFilter"
-                               name="nameFilter"
-                               ng-model="nameFilter"
-                               placeholder="Compound Name"
-                               class="form-control"
-                               ng-keyup="$event.keyCode == 13 ? refineQuery() : null">
-                    </div>
-
-                    <div class="form-group" ng-class="{ 'has-error': spectraQuery.inchiFilter.$invalid }">
-                        <label class="control-label" for="inchiFilter">Filter by InChI Key</label>
-
-                        <input id="inchiFilter"
-                               name="inchiFilter"
-                               ng-model="inchiFilter"
-                               placeholder="InChIKey"
-                               class="form-control"
-                               ng-keyup="$event.keyCode == 13 ? refineQuery() : null"
-                               ng-pattern="/^[A-Z,0-9,\-]+$/">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tags-select" class=" control-label">Filter By Tags</label>
-                        <br/>
-
-                        <select id="tags-select"
-                                name="tags-select"
-                                class="form-control"
-                                data-placeholder="Select Tags"
-                                ng-model="tagsSelection"
-                                ng-options="tag.text for tag in tags"
-                                ng-multiple="true"
-                                multiple
-                                multiselect-dropdown></select>
-                    </div>
 
 
-                    <button class="btn btn-primary" ng-click="refineQuery()">
-                        <i class="fa fa-search fa-fw"></i>Refine Query
-                    </button>
-                </fieldset>
-            </form>
+        <div class="text-center" ng-show="loadingMore">
+            <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span>
         </div>
+
+        <div class="text-center" ng-show="spectra.length > 0 && !dataAvailable">
+            <h4>All results loaded</h4>
+        </div>
+
+        <div class="text-center" ng-show="spectra.length == 0 && !dataAvailable">
+            <h4>No results found!</h4>
+        </div>
+
     </div>
+
 </div>

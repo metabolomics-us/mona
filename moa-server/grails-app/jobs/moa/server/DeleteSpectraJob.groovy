@@ -13,7 +13,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class DeleteSpectraJob {
 
-    def max = 25
+    def max = 1000
 
     /**
      * force true forces instant deletion
@@ -62,13 +62,7 @@ class DeleteSpectraJob {
                                                   [
                                                           eq: RemoveIdenticalSpectraRule.REQUIRES_DELETE
                                                   ]
-                                         ],
-                                         //but which not have been marked as deleted yet
-                                         [name:
-                                                  [
-                                                          ne: RemoveIdenticalSpectraRule.DELETED
-                                                  ]
-                                         ],
+                                         ]
 
                                  ]
                         ]

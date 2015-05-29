@@ -19,7 +19,7 @@ class MetaData implements Comparable<MetaData> {
         version false
         priority defaultValue : 0
         value  cascade: 'all-delete-orphan'
-        category fetch:'join'
+        //category fetch:'join'
 
     }
 
