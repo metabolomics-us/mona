@@ -5,6 +5,7 @@
         <table class="table table-hover" style="table-layout: fixed;" infinite-scroll="loadMoreCompounds()" infinite-scroll-distance="0.5">
             <thead>
             <tr>
+                <th>Id</th>
                 <th>Name</th>
                 <th>InChIKey</th>
                 <th class="text-center">Structure</th>
@@ -12,6 +13,9 @@
             </thead>
             <tbody>
             <tr ng-repeat="compound in compounds" ng-click="viewSpectra(compound.inchiKey)">
+                <td>
+                    {{compound.id}}
+                </td>
                 <td>
                     <ul>
                         <li ng-repeat="name in compound.names">{{name.name}}</li>

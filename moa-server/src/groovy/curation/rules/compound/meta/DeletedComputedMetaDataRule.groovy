@@ -35,9 +35,7 @@ class DeletedComputedMetaDataRule extends AbstractCurationRule {
 
         def toDelete = []
 
-        MetaDataValue.where {
-            (computed == true && owner == mowner)
-        }.each {
+        MetaDataValue.findAllByComputedAndOwner(true,mowner).each {
             toDelete.add(it)
         }
 

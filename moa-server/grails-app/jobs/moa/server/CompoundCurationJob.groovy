@@ -31,6 +31,7 @@ class CompoundCurationJob {
                 def ids = Compound.findAll()*.id
 
                 ids.each {long id ->
+
                     CompoundCurationJob.triggerNow([compoundId:id])
                 }
             }

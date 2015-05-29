@@ -16,9 +16,6 @@ class Compound extends SupportsMetaData {
         molFile sqlType: "text"
         version false
         inchi sqlType: "text"
-       // comments fetch: 'join'
-       // names fetch: 'join'
-       // metaData fetch: 'join'
     }
     /**
 

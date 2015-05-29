@@ -75,7 +75,7 @@ environments {
         dataSource {
 	     pooled = true
             dbCreate = "update"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-prod"
+            url = "jdbc:postgresql://128.120.143.126:5432/moa-prod"
 
             /*
 		 properties {
@@ -92,7 +92,7 @@ environments {
 
     		*/
 
-            logSql = true
+            logSql = false
 
 
             properties {
@@ -111,7 +111,7 @@ environments {
                 testOnBorrow = true
                 testWhileIdle = true
                 testOnReturn = false
-                jdbcInterceptors = "ConnectionState"
+                jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
                 defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
             }
 

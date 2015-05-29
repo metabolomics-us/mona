@@ -88,13 +88,11 @@
         </div>
         <div class="row top5">
 
-            <div ng-show="spectrum.tags.length" class="col-md-12">
                 <ul class="list-inline">
                     <li>
                         <div class="h5"><span gw-spectra-id-query value="spectrum.hash">{{spectrum.hash}}</span></div>
                     </li>
                 </ul>
-            </div>
         </div>
 
 
@@ -276,13 +274,13 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | orderBy: ['category','name']">
-                        <td>
+                        <td class="col-lg-3 col-md-4">
                             <span gw-meta-query value="meta"> {{meta.category}}</span>
                         </td>
-                        <td>
+                        <td class="col-lg-3 col-md-4">
                             {{meta.name}}
                         </td>
-                        <td>
+                        <td class="col-lg-6 col-md-4">
                             <span gw-value value="meta">{{meta.value | number:4 }} {{meta.unit}}</span>
                         </td>
                     </tr>

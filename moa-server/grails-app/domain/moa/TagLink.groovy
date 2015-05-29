@@ -11,8 +11,6 @@ class TagLink {
 
     static mapping = {
         version false
-        //tag fetch: 'join'
-        //owner fetch: 'join'
 
     }
 }

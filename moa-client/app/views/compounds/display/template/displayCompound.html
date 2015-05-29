@@ -28,13 +28,13 @@
 
                     <tr ng-repeat="meta in compound.metaData | unique:'name' | orderBy : 'name':true ">
 
-                        <td>
+                        <td class="col-lg-4 col-md-6" >
                             <span gw-meta-query value="meta" compound="true">
 
                             {{meta.name}}
                             </span>
-                        </td>
-                        <td>
+                        </td >
+                        <td class="col-lg-8 col-md-6">
                             {{meta.value}} {{meta.unit}}
 
                             <!-- display this, if there seems to be something odd with this value -->
