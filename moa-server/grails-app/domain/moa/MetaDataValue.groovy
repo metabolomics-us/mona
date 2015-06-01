@@ -37,6 +37,8 @@ class MetaDataValue implements Scoreable {
      */
     boolean computed = false
 
+    Boolean deleted = false
+
     static belongsTo = [metaData: MetaData, owner: SupportsMetaData]
 
     /**
@@ -46,6 +48,7 @@ class MetaDataValue implements Scoreable {
 
     static mapping = {
         version false
+        deleted defaultValue: "false"
     }
 
 
@@ -57,6 +60,7 @@ class MetaDataValue implements Scoreable {
         computed nullable: true
         reasonForSuspicion nullable: true
         score nullable: true
+        deleted nullable:true
     }
 
     /**

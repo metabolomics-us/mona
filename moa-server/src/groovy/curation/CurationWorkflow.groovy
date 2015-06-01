@@ -34,7 +34,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
             throw new Exception("please add at least 1 rule to be executed!")
         }
 
-        logger.info("running ${rules.size()} rules")
+        logger.debug("running ${rules.size()} rules")
 
         rules.each { CurationRule rule ->
             logger.debug("having to run: ${rule.getDescription()}")
@@ -45,6 +45,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
         toValidate.refreshObject()
 
         for (CurationRule rule : rules) {
+            long time = System.currentTimeMillis();
             logger.info("STARTED - executing rule: ${rule.getClass().getName()}")
 
             try {
@@ -81,7 +82,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
                 throw e;
             }
             finally {
-                logger.info("FINSIHED - executing rule: ${rule.getClass().getName()}")
+                logger.info("FINSIHED - executing rule: ${rule.getClass().getName()}, duration:" + ((System.currentTimeMillis() - time)/1000))
             }
         }
 

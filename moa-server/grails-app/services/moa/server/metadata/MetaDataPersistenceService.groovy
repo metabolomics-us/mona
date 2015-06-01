@@ -28,16 +28,24 @@ class MetaDataPersistenceService {
 
     /**
      * deletes a metadata value object
-     * @param value
+     * @param value our value
+     * @param deleteNow should it deleted this instance or just marked as invisible
      */
-    public void removeMetaDataValue(MetaDataValue value) {
+    public void removeMetaDataValue(MetaDataValue value, def deleteNow = false) {
         if(value.isDirty()){
             value.refresh()
         }
         log.info("deleting metadata value object: ${value}")
-        value.metaData.removeFromValue(value)
-        value.owner.removeFromMetaData(value)
-        value.delete(flush: true)
+
+        if(deleteNow) {
+            value.metaData.removeFromValue(value)
+            value.owner.removeFromMetaData(value)
+            value.delete()
+        }
+        else {
+            value.deleted = true
+            value.save()
+        }
     }
     /**
      * generates our required metadata based on the json array of metadata
