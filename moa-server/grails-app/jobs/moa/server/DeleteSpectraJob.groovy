@@ -67,6 +67,23 @@ class DeleteSpectraJob {
                                  ]
                         ]
                         , [forceRemoval: force, max: max])
+
+                if(force){
+                    spectraQueryService.searchAndDelete(
+                            [tags:
+                                     [
+                                             //we only want spectra which requires deletion
+                                             [name:
+                                                      [
+                                                              eq: RemoveIdenticalSpectraRule.DELETED
+                                                      ]
+                                             ]
+
+                                     ]
+                            ]
+                            , [forceRemoval: force, max: max])
+
+                }
             }
         } else {
             log.warn("no data were provided")
