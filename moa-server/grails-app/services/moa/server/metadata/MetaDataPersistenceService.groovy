@@ -38,6 +38,7 @@ class MetaDataPersistenceService {
         log.info("deleting metadata value object: ${value}")
 
         if(deleteNow) {
+            value.merge()
             value.metaData.removeFromValue(value)
             value.owner.removeFromMetaData(value)
             value.delete()

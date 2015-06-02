@@ -273,7 +273,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | orderBy: ['category','name']">
+                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | orderBy: ['category','name']">
                         <td class="col-lg-3 col-md-4">
                             <span gw-meta-query value="meta"> {{meta.category}}</span>
                         </td>

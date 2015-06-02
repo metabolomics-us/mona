@@ -92,7 +92,7 @@ class SpectraConversionService {
      * @param writer
      * @param closure
      */
-    private void writeName(Set<Name> names, StringBuffer writer, def closure, String category = null) {
+    private void writeName(Collection<Name> names, StringBuffer writer, def closure, String category = null) {
         if (names) {
             if (!names.isEmpty()) {
                 Iterator<Name> nameIterator = names.iterator()
@@ -107,7 +107,7 @@ class SpectraConversionService {
 
     }
 
-    private void writeTags(Set<Tag> tags, StringBuffer writer, def closure, String category = null) {
+    private void writeTags(Collection<Tag> tags, StringBuffer writer, def closure, String category = null) {
         if (tags) {
             if (!tags.isEmpty()) {
                 Iterator<Tag> nameIterator = tags.iterator()
@@ -121,7 +121,7 @@ class SpectraConversionService {
 
     }
 
-    private void writeMetaData(Set<MetaDataValue> values, StringBuffer writer, def closure, String category = null) {
+    private void writeMetaData(Collection<MetaDataValue> values, StringBuffer writer, def closure, String category = null) {
         if (values) {
             if (!values.isEmpty()) {
                 Iterator<MetaDataValue> nameIterator = values.iterator()

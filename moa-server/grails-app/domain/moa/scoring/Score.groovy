@@ -6,8 +6,8 @@ class Score {
     }
 
     static mapping = {
-        impacts nullable: true, fetch: 'join'
-        version: false
+        impacts nullable: true
+        version false
     }
 
     static hasMany = [impacts: Impact]

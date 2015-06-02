@@ -42,25 +42,22 @@ CREATE INDEX supports_meta_data_tag_index
 
 
 CREATE INDEX "tag_link_tag"
-	ON "public"."tag_link"("tag_id")
+	ON "public"."tag_link"("tag_id");
 
 CREATE INDEX "tag_link_owner_tag"
-	ON "public"."tag_link"("owner_id", "tag_id")
+	ON "public"."tag_link"("owner_id", "tag_id");
 
 CREATE INDEX "impact_index_score_id_id"
-	ON "public"."impact"("score_id","id")
+	ON "public"."impact"("score_id","id");
 
 CREATE INDEX "spectrum_index_hash"
-	ON "public"."spectrum"("hash")
-
+	ON "public"."spectrum"("hash");
 create index name_index_like_compound on name (compound_id,name text_pattern_ops);
 
-GO
-
 CREATE INDEX tag_link_tag_id
-	ON public.tag_link USING btree (tag_id,id)
-GO
-CREATE INDEX tag_deleted ON tag(text) WHERE text <> 'deleted'
+	ON public.tag_link USING btree (tag_id,id)  ;
+CREATE INDEX tag_deleted ON tag(text) WHERE text <> 'deleted'     ;
+
 
 
 

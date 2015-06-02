@@ -21,6 +21,8 @@ class DeleteMetaDataValueJob {
 
     def description = "removes deleted metadata from the system"
 
+    def concurrent = false
+
     static triggers = {
         cron name: 'deleteMetadataValues', cronExpression: '0 */1 * * * ?', priority: 10
 

@@ -20,6 +20,8 @@
                 <th>Last</th>
                 <th>Institution</th>
                 <th>Email</th>
+                <th>Avg Score</th>
+                <th>Uploaded Spectra</th>
                 <th></th>
             </tr>
             </thead>
@@ -29,6 +31,8 @@
                 <td>{{submitter.lastName}}</td>
                 <td>{{submitter.institution}}</td>
                 <td>{{submitter.emailAddress}}</td>
+                <td><span spectra-score-for-user user="submitter"></span></td>
+                <td><span spectra-count-for-user user="submitter"></span></td>
                 <td>
                     <button ng-click="displayEditDialog($index)" class="btn btn-default"><i
                             class="fa fa-pencil-square-o "></i></button>
