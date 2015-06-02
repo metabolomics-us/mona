@@ -28,7 +28,7 @@ quartz {
 
         threadPool.'class' = 'org.quartz.simpl.SimpleThreadPool'
         //use n-2 threads or 2 otherwise
-        threadPool.threadCount = Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() - 2 : 2
+        threadPool.threadCount = Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() -2 : 2
         threadPool.threadPriority = 7
 
         jobStore.misfireThreshold = 60000

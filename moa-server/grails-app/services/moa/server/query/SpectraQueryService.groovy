@@ -109,8 +109,7 @@ class SpectraQueryService {
 
         def ids = queryForIds(json,limit,offset)
 
-        def result = Spectrum.findAllByIdInList(ids)
-
+        def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc",[ids:ids])
         //println "$queryOfDoom"
 
         //  log.debug("result count: ${result.size()}")

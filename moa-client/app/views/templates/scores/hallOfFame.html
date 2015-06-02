@@ -1,0 +1,21 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Institute</th>
+        <th>Average Score</th>
+        <th>scored spectra count</th>
+    </tr>
+    </thead>
+
+    <tbody>
+        <tr ng-repeat="score in scores | orderBy :'-score' ">
+            <td> <span gw-submitter-query submitter="score.submitter"  >{{score.submitter.firstName}} {{score.submitter.lastName}}</span>
+            </td>
+            <td>{{score.submitter.institution}}</td>
+            <td>    <rating ng-model="score.score" max="10" readonly="true"></rating>
+            </td>
+            <td>{{score.count}}</td>
+        </tr>
+    </tbody>
+</table>

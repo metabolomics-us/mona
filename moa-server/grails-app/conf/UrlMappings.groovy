@@ -170,6 +170,12 @@ class UrlMappings {
 
         "/rest/statistics/submitters/countAll"(controller: 'statistics', action: 'countOfSpectraForAllSubmitters')
 
+        "/rest/statistics/submitters/count/$id "(controller: 'statistics', action: 'countOfSpectraForSubmitter', id:id)
+
+        "/rest/statistics/submitters/score/$id "(controller: 'statistics', action: 'qualityOfSpectraForSubmitter', id:id)
+
+        "/rest/statistics/submitters/scores "(controller: 'statistics', action: 'scoringStatisticsBySubmitters')
+
         "/rest/statistics/tags/compound/count/$id"(controller: 'statistics', action: 'countOfCompoundsForTag', id: id)
 
         "/rest/statistics/meta/spectra/count/$id"(controller: 'statistics', action: 'metaDataValueCountForMetadataValueId', id: id)
