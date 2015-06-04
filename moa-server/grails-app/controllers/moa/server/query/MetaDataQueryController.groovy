@@ -26,7 +26,7 @@ class MetaDataQueryController {
         def valid = true//metaDataQueryService.validateQuery(json as HashMap)
 
         // metadata query is valid
-        if(valid.success) {
+        if(valid/*valid.success*/) {
             if (json.query) {
 
                 result = metaDataQueryService.query(json.query, params)
