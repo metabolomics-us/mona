@@ -98,7 +98,16 @@ class MetaDataValue implements Scoreable {
         return metaData?.category?.name
     }
 
-    static transients = ['value', 'type', 'name', 'category']
+    public String getMetaDataId(){
+        return metaData?.id
+    }
+
+    public boolean getHidden(){
+        return metaData?.hidden
+    }
+
+
+    static transients = ['value', 'type', 'name', 'category','metaDataId','hidden']
 
     @Override
     public String toString() {

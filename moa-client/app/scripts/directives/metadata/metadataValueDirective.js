@@ -75,6 +75,64 @@ app.directive('gwMetaQuery', function () {
     }
 });
 
+
+/**
+ * allows us to easily modify meta data on the fly
+ */
+app.directive('gwMetaEdit', function () {
+    return {
+
+        replace: true,
+        transclude: true,
+        templateUrl: '/views/templates/meta/editMeta.html',
+        restrict: 'A',
+        scope: {
+            value: '=value'
+        },
+        link: function ($scope, element, attrs, ngModel) {
+
+        },
+
+        //controller to handle building new queries
+        controller: function ($scope, $element, MetaData, $filter) {
+
+            //receive a click
+            $scope.hide = function () {
+
+
+                MetaData.get({id: $scope.value.metaDataId}, function (value) {
+
+                    value.hidden = true;
+
+                    console.log($filter('json')(value));
+
+                    value.$update(function () {
+                        $scope.value.hidden = true;
+
+                    });
+                });
+            };
+
+            //receive a click
+            $scope.unhide = function () {
+
+                MetaData.get({id: $scope.value.metaDataId}, function (value) {
+
+                    value.hidden = false;
+
+                    console.log($filter('json')(value));
+
+                    value.$update(function () {
+                        $scope.value.hidden = false;
+                    });
+                });
+            };
+
+        }
+    }
+});
+
+
 /**
  * adds the given id to the query or removes it
  */
@@ -128,6 +186,44 @@ app.directive('gwSpectraIdQuery', function () {
     }
 });
 
+/**
+ * simple directive to help populating the type ahead views on focis
+ */
+app.directive('typeaheadFocus', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attr, ngModel) {
+
+            //trigger the popup on 'click' because 'focus'
+            //is also triggered after the item selection
+            element.bind('click', function () {
+
+                var viewValue = ngModel.$viewValue;
+
+                //restore to null value so that the typeahead can detect a change
+                if (ngModel.$viewValue == ' ') {
+                    ngModel.$setViewValue(null);
+                }
+
+                //force trigger the popup
+                ngModel.$setViewValue(' ');
+
+                //set the actual value in case there was already a value in the input
+                ngModel.$setViewValue(viewValue || ' ');
+            });
+
+            //compare function that treats the empty space as a match
+            scope.emptyOrMatch = function (actual, expected) {
+                if (expected == ' ') {
+                    return true;
+                }
+                return actual.indexOf(expected) > -1;
+            };
+        }
+    };
+});
+
+
 
 /**
  * defines a metadata text field combo with autocomplete and typeahead functionality
@@ -149,19 +245,37 @@ app.directive('gwMetaQueryInput', function () {
         },
 
         //controller to handle building of the queries
-        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location, REST_BACKEND_SERVER, $http, MetadataService, $log) {
+        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location, REST_BACKEND_SERVER, $http, $filter, $log,limitToFilter) {
 
-            $scope.metadata = {};
-            $scope.metadataNames = [];
+            $scope.metadata = [];
+            //$scope.metadataNames = [];
 
             //our select options, should be based on metadata value
             //should be based on received data type for metadata fields
             $scope.select = [
-                {name:"equals", value:"eq"},
-                {name:"does not equal", value:"ne"}
+                {name: "equals", value: "eq"},
+                {name: "does not equal", value: "ne"}
             ];
 
             $scope.metadata.selected = $scope.select[0];
+
+            /**
+             * tries to find meta data names for us
+             * @param value
+             */
+            $scope.queryMetadataNames = function(value){
+                if(angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') == '') {
+                    return $http.get(REST_BACKEND_SERVER + '/rest/meta/searchNames/', {}).then(function (data) {
+                        return limitToFilter(data.data,50);
+                    });
+
+                }
+                else {
+                    return $http.get(REST_BACKEND_SERVER + '/rest/meta/searchNames/' + value + "?max=10", {}).then(function (data) {
+                        return limitToFilter(data.data,25);
+                    });
+                }
+            };
 
             /**
              * queries our values
@@ -170,28 +284,45 @@ app.directive('gwMetaQueryInput', function () {
              */
             $scope.queryMetadataValues = function (name, value) {
 
-                if (angular.isDefined($scope.fullText)) {
-                    return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
+                if(angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') == ''){
+                    return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search', {
                         query: {
                             name: name,
-                            value: {ilike: '%' + value + '%'},
-                            property: 'stringValue'
+                            value: {isNotNull: ''},
+                            property: 'stringValue',
+                            deleted: false
                         }
                     }).then(function (data) {
-                        return data.data;
+                        return limitToFilter(data.data,25);
                     });
+
                 }
-                else {
-                    return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
-                        query: {
-                            name: name,
-                            value: {ilike: value + '%'},
-                            property: 'stringValue'
-                        }
-                    }).then(function (data) {
-                        return data.data;
-                    });
-                }
+                else if (angular.isDefined($scope.fullText)) {
+                        return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
+                            query: {
+                                name: name,
+                                value: {ilike: '%' + value + '%'},
+                                property: 'stringValue',
+                                deleted: false
+                            }
+                        }).then(function (data) {
+                            return limitToFilter(data.data,25);
+                        });
+                    }
+                    else {
+                        return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
+                            query: {
+                                name: name,
+                                value: {ilike: value + '%'},
+                                property: 'stringValue',
+                                deleted: false
+
+                            }
+                        }).then(function (data) {
+                            return limitToFilter(data.data,25);
+                        });
+                    }
+
             };
 
             /**
@@ -220,6 +351,7 @@ app.directive('gwMetaQueryInput', function () {
                     $scope.editable = false;
                 }
 
+                /*
                 // Get metadata
                 MetadataService.metadata(
                     function (data) {
@@ -245,6 +377,8 @@ app.directive('gwMetaQueryInput', function () {
                         $log.error('metadata failed: ' + error);
                     }
                 );
+
+                */
             })();
         }
     }

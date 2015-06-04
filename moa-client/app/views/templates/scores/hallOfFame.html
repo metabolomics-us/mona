@@ -1,6 +1,7 @@
 <table class="table">
     <thead>
     <tr>
+        <th>Rank</th>
         <th>Name</th>
         <th>Institute</th>
         <th>Average Score</th>
@@ -10,6 +11,7 @@
 
     <tbody>
         <tr ng-repeat="score in scores | orderBy :'-score' ">
+            <td>{{$index+1}}</td>
             <td> <span gw-submitter-query submitter="score.submitter"  >{{score.submitter.firstName}} {{score.submitter.lastName}}</span>
             </td>
             <td>{{score.submitter.institution}}</td>

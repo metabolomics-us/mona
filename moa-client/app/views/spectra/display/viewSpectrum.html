@@ -273,14 +273,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | orderBy: ['category','name']">
-                        <td class="col-lg-3 col-md-4">
+                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: ['category','name']">
+                        <td class="col-lg-2 col-md-4">
                             <span gw-meta-query value="meta"> {{meta.category}}</span>
                         </td>
-                        <td class="col-lg-3 col-md-4">
-                            {{meta.name}}
+                        <td class="col-lg-2 col-md-4">
+                            <span gw-meta-edit value="meta"> {{meta.name}}</span>
                         </td>
-                        <td class="col-lg-6 col-md-4">
+                        <td class="col-lg-8 col-md-4">
                             <span gw-value value="meta">{{meta.value | number:4 }} {{meta.unit}}</span>
                         </td>
                     </tr>

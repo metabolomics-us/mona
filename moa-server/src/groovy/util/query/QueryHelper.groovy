@@ -60,6 +60,12 @@ class QueryHelper {
 			case "in":
 				conditionTranslation = "in"
 				break
+			case "isNotNull":
+				conditionTranslation = "isNotNull"
+				break
+			case "isNull":
+				conditionTranslation = "isNull"
+				break
 			default:
 				throw new RuntimeException("unknown condition specified: ${condition}, skipping!")
 		}
@@ -85,6 +91,14 @@ class QueryHelper {
 
 			executionParams.put("${fieldName}_value_${index}".toString(), value.toString().toLowerCase())
 		}
+		else if(conditionTranslation.equals("isNotNull")){
+			query += "${qualifierTable}${fieldName} is not null"
+		}
+
+		else if(conditionTranslation.equals("isNull")){
+			query += "${qualifierTable}${fieldName} is null"
+		}
+
 		/**
 		 * general handling for everything else
 		 */

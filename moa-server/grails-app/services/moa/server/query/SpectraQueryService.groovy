@@ -109,16 +109,26 @@ class SpectraQueryService {
 
         def ids = queryForIds(json,limit,offset)
 
-        def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc",[ids:ids])
-        //println "$queryOfDoom"
+        try {
+            if(ids.isEmpty()){
+                return []
+            }
+            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc", [ids: ids])
+            //println "$queryOfDoom"
 
-        //  log.debug("result count: ${result.size()}")
+            //  log.debug("result count: ${result.size()}")
 
 
-        statisticsService.acquire(System.currentTimeMillis() - begin, "text search", "${json}", "search")
+            statisticsService.acquire(System.currentTimeMillis() - begin, "text search", "${json}", "search")
 
 
-        return result
+            return result
+        }
+        catch (Exception e){
+            log.error("query: ${json}")
+            log.error("ids: ${ids}")
+            throw e;
+        }
     }
 
     /**

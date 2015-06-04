@@ -34,6 +34,12 @@ beans = {
     loadBeans('classpath*:spectraScoring.groovy')
 
 
+    /**
+     * scoring of the system
+     */
+    loadBeans('classpath*:associateAccounts.groovy')
+
+
 //metadata filter, we only care for certain fields
     metadataFilters(Filters) { bean ->
         bean.autowire = 'byName'

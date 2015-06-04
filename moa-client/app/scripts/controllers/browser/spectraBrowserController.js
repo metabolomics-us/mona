@@ -59,6 +59,8 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
 
     /**
+     *
+     * TODO remove
      * refine the current query by submitting an updates query
      */
     $scope.refineQuery = function () {

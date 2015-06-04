@@ -58,6 +58,10 @@ CREATE INDEX tag_link_tag_id
 	ON public.tag_link USING btree (tag_id,id)  ;
 CREATE INDEX tag_deleted ON tag(text) WHERE text <> 'deleted'     ;
 
+create index index_meta_data_values_deleted on meta_data_value(deleted,string_value,owner_id) where deleted = true and string_value is not null;
+
+create index index_meta_data_values_deleted on meta_data_value(deleted,string_value,owner_id) where deleted = true;
+
 
 
 
