@@ -68,10 +68,22 @@ class UrlMappings {
             "/value"(resources: 'MetaDataValue')
         }
 
+
         /**
          * query all metadata by a given search term and category
          */
         "/rest/meta/data/search"(controller: 'metaDataQuery', action: 'query')
+
+        /**
+         * fetches all the metadata objects, which can be used for searches or autocomplete
+         */
+        "/rest/meta/searchNames/$name?"(controller: 'metaDataQuery', action: 'listMetaDataForQueries')
+
+        /**
+         * returns all values for the given name
+         */
+        "/rest/meta/searchValues/$name"(controller: 'metaDataQuery', action: 'listValuesForMetaDataName')
+
 
         /**
          * query by category
@@ -138,12 +150,18 @@ class UrlMappings {
 
         "/rest/spectra/curateNow/$id"(controller: 'spectraCuration', action: 'curateNow', id: id)
 
-        /**
-         * curation services
-         */
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
         "/rest/spectra/curateByQuery"(controller: 'spectraCuration', action: 'curateByQuery')
+
+        /**
+         * association services, use with care!
+         * they will reassign users to
+         */
+        "/rest/spectra/associate/$id"(controller: 'spectraCuration', action: 'associate', id: id)
+
+        "/rest/spectra/associateAll"(controller: 'spectraCuration', action: 'associateAll')
+
 
         /**
          * scoring service

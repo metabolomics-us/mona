@@ -48,7 +48,7 @@ environments {
                 defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
             }
 
-            logSql = true
+            logSql = false
 
         }
     }

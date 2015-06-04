@@ -3,6 +3,7 @@ package util
 import grails.plugins.quartz.TriggerUtils
 import groovy.time.TimeCategory
 import moa.server.CompoundCurationJob
+import moa.server.SpectraAssociationJob
 import moa.server.SpectraUploadJob
 import moa.server.SpectraValidationJob
 
@@ -34,6 +35,17 @@ class FireJobs {
             schedule = date + 5.seconds
         }
         SpectraUploadJob.triggerNow(data)
+        //SpectraUploadJob.schedule(schedule,data)
+    }
+
+    static fireSpectraAssociationJob(Map data){
+        Date date = new Date()
+
+        Date schedule = null;
+        use(TimeCategory) {
+            schedule = date + 5.seconds
+        }
+        SpectraAssociationJob.triggerNow(data)
         //SpectraUploadJob.schedule(schedule,data)
     }
 

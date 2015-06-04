@@ -1,0 +1,12 @@
+<span class="dropdown" dropdown>
+    <a href class="" dropdown-toggle>
+        <i class='fa fa-pencil-square-o'></i>
+        <span class="left7"></span>
+        <span ng-transclude></span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu">
+        <li ng-show="value.hidden != true"><a ng-click="hide()">hide</a></li>
+        <li ng-show="value.hidden != false"><a ng-click="unhide()">show</a></li>
+    </ul>
+</span>

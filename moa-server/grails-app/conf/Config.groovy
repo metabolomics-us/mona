@@ -139,13 +139,6 @@ log4j = {
             //'net.sf.ehcache.hibernate',
             //'org.quartz.plugins.history.LoggingTriggerHistoryPlugin'
 
-    debug  'com.odobo',
-            'grails.app.controllers.com.odobo',
-            'grails.app.services.com.odobo',
-            'org.pac4j',
-            'org.springframework.security'
-
-
     //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
     debug 'org.quartz.plugins'
@@ -157,8 +150,9 @@ log4j = {
     debug monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
     debug monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
 
-    debug sql: ['org.hibernate.SQL']
-    trace sql: ['org.hibernate.type.descriptor.sql.BasicBinder']
+
+    debug additivity: false, sql: ['org.hibernate.SQL']
+    trace additivity: false, sql: ['org.hibernate.type.descriptor.sql.BasicBinder']
 
     //debug 'org.hibernate'
 
@@ -180,6 +174,13 @@ log4j = {
             //debug 'grails.plugin.cache'
 
 
+            debug  'com.odobo',
+                    'grails.app.controllers.com.odobo',
+                    'grails.app.services.com.odobo',
+                    'org.pac4j'
+
+
+
             info 'org.hibernate.SQL'
             info 'org.hibernate.type.descriptor.sql.BasicBinder'
         }
@@ -197,10 +198,11 @@ log4j = {
 
             debug 'grails.app'
             debug 'moa'
-            trace 'org.hibernate.type.descriptor.sql.BasicBinder'
-            debug 'org.hibernate.SQL'
+//            trace 'org.hibernate.type.descriptor.sql.BasicBinder'
+//            debug 'org.hibernate.SQL'
 
             //debug 'grails.plugin.cache'
+
 
         }
     }

@@ -46,7 +46,7 @@ app.factory('StatisticsService', function ($resource, REST_BACKEND_SERVER, $http
                 isArray: false
             },
             'spectraTopScores':{
-                url: REST_BACKEND_SERVER + '/rest/statistics/submitters/scores',
+                url: REST_BACKEND_SERVER + '/rest/statistics/submitters/scores?max=:max',
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

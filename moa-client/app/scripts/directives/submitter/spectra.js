@@ -52,11 +52,14 @@ app.directive('spectraTopScoresForUsers', function($compile,StatisticsService, S
     return {
         replace: true,
 
+        scope: {
+            limit: '@'
+        },
         controller: function ($scope) {
 
         },
         link: function ($scope, element, attrs, ngModel) {
-            StatisticsService.spectraTopScores({},
+            StatisticsService.spectraTopScores({max:$scope.limit},
                 function(data){
                     var scores = data;
 

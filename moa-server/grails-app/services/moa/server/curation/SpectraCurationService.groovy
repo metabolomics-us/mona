@@ -19,6 +19,7 @@ class SpectraCurationService {
 
     CurationWorkflow spectraCurationWorkflow
 
+
     MetaDataPersistenceService metaDataPersistenceService
 
     StatisticsService statisticsService
@@ -81,6 +82,6 @@ class SpectraCurationService {
         } else {
             return false
         }
-
     }
+
 }

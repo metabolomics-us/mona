@@ -1,6 +1,7 @@
 package moa.server
 
 import curation.rules.spectra.RemoveIdenticalSpectraRule
+import grails.converters.JSON
 import moa.Spectrum
 import moa.server.curation.SpectraCurationService
 import moa.server.query.SpectraQueryService
@@ -54,28 +55,21 @@ class SpectraValidationJob {
 
             }
             else if (data.all) {
+                //get all id's in the system
                 def ids = spectraQueryService.queryForIds(
-                        [tags:
-                                 [
-                                         //we only want spectra which requires deletion
-                                         [name:
-                                                  [
-                                                          ne: RemoveIdenticalSpectraRule.DELETED
-                                                  ]
-                                         ]
-
-                                 ]
+                        [:
                         ]
                 );
 
-                ids.each { long id ->
+                log.debug("found: ${ids.size()} spectra to validate...")
+                ids.eachParallel { long id ->
                     log.debug("scheduling spectra for curration with id: ${id}")
                     FireJobs.fireSpectraCurationJob([spectraId: id])
                 }
 
             } else if (data.query) {
 
-                def spectra = spectraQueryService.query(data.query, data.params)
+                def spectra = spectraQueryService.query(JSON.parse(data.query))
 
                 spectra.each { Spectrum s ->
                     FireJobs.fireSpectraCurationJob([spectraId: s.id])

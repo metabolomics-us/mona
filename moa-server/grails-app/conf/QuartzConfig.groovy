@@ -53,4 +53,10 @@ environments {
             autoStartup = false
         }
     }
+    development {
+        quartz {
+            autoStartup = false
+        }
+    }
+
 }

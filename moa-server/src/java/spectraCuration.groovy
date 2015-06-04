@@ -28,6 +28,7 @@ import curation.rules.spectra.IsCleanSpectraRule
 import curation.rules.spectra.IsDuplicatedSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.spectra.RemoveIdenticalSpectraRule
+import curation.rules.tree.GenerateFragmentationTreesRuleForMassBank
 
 beans {
 
@@ -174,6 +175,7 @@ beans {
         bean.autowire = 'byName'
     }
 
+
 //set up metadata subcuration workflow
     metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") { bean ->
         bean.autowire = 'byName'
@@ -205,6 +207,11 @@ beans {
         ]
     }
 
+    generateFragmentationTreesRuleForMassBank(GenerateFragmentationTreesRuleForMassBank){ bean ->
+        bean.autowire = 'byName'
+    }
+
+
 //define our complete workflow here
     spectraCurationWorkflow(CurationWorkflow) { bean ->
         bean.autowire = 'byName'
@@ -232,6 +239,9 @@ beans {
 
                 //these rules should run last
                 isAnnotatedSpectraRule,
+
+                //fragmentation tree generation
+                generateFragmentationTreesRuleForMassBank,
 
                 //must be the last rule
                 requiresRemoval
