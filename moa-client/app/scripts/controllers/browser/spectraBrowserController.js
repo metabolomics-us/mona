@@ -21,7 +21,7 @@
  * @param QueryCache
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, QueryCache, $rootScope, $window) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, QueryCache, $rootScope, $timeout) {
 
     $scope.table = false;
     /**
@@ -165,6 +165,8 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * @param index
      */
     $scope.viewSpectrum = function (id, index) {
+        SpectrumCache.setBrowserSpectra($scope.spectra);
+
         $location.path('/spectra/display/' + id);
     };
 
@@ -193,10 +195,11 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
-        if ($scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
+        if (!$scope.loadingMore && $scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
             //search utilizing our compiled query so that it can be easily refined over time
             $scope.loadingMore = true;
             $scope.calculateOffsets();
+            console.log('loading...')
 
             Spectrum.searchSpectra(QueryCache.getSpectraQuery(), function (data) {
                 if (data.length == 0) {
@@ -245,9 +248,22 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             }
         );
 
-        $scope.spectra = [];
+        console.log(SpectrumCache.hasBrowserSpectra())
 
-        // Submit our initial query
-        $scope.submitQuery();
+        if (SpectrumCache.hasBrowserSpectra()) {
+            var scrollPos = SpectrumCache.getBrowserSpectraScrollLocation();
+
+            $scope.spectra = SpectrumCache.getBrowserSpectra();
+            SpectrumCache.removeBrowserSpectra();
+
+            $timeout(function () {
+                $(window).scrollTop(scrollPos ? scrollPos : 0);
+            }, 0);
+        } else {
+            $scope.spectra = [];
+
+            // Submit our initial query
+            $scope.submitQuery();
+        }
     })();
 };
