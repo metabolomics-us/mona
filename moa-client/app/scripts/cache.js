@@ -1,4 +1,4 @@
-/**
++/**
  * Created by sajjan on 8/21/14.
  */
 
@@ -7,11 +7,16 @@
  * Stores spectra browser data, individual spectrum, and query data for
  * persistence between controllers and views
  */
-app.service('SpectrumCache', function ($log) {
+app.service('SpectrumCache', function ($log, $window) {
     /**
      * Stored browser spectra
      */
     this.browserSpectra = null;
+
+    /**
+     * Stored browser spectra scoll location
+     */
+    this.browserSpectraScroll = null;
 
     /**
      * Stored browser scroll location
@@ -41,10 +46,17 @@ app.service('SpectrumCache', function ($log) {
         return this.browserSpectra;
     };
     this.setBrowserSpectra = function (browserSpectra) {
+        this.browserSpectraScroll = $(window).scrollTop();
+        console.log(this.browserSpectraScroll)
         this.browserSpectra = browserSpectra;
     };
     this.removeBrowserSpectra = function () {
+        this.browserSpectraScroll = null;
         this.browserSpectra = null;
+    };
+
+    this.getBrowserSpectraScrollLocation = function () {
+        return this.browserSpectraScroll;
     };
 
 
