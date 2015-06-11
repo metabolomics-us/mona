@@ -63,3 +63,20 @@ app.factory('MetadataService', function ($resource, REST_BACKEND_SERVER, $http) 
         }
     );
 });
+
+
+app.factory('MetaData', function ($resource, REST_BACKEND_SERVER, $http) {
+    $http.defaults.useXDomain = true;
+
+    return $resource(
+        REST_BACKEND_SERVER + '/rest/meta/data/:id',{id:"@id"},{
+            'update': {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        }
+    );
+});
+

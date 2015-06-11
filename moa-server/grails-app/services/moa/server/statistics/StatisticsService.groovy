@@ -26,7 +26,7 @@ class StatisticsService {
      */
     Map countAll() {
         return [
-                spectra      : Spectrum.count(),
+                spectra      : getSpectraCount(),
                 compounds    : Compound.count(),
                 metadata     : MetaData.count(),
                 metadataValue: MetaDataValue.count(),
@@ -55,6 +55,91 @@ class StatisticsService {
     }
 
     /**
+     * returns how many spectra this submitter provided
+     * @param email
+     * @return
+     */
+    int getSpectraCountForSubmitter(long id){
+
+        int count = 0
+
+        Spectrum.withSession { session ->
+
+            def result = session.createSQLQuery("select count(*) from spectrum a where a.submitter_id = ? ").setLong(0,id).list()
+
+            if (!result.isEmpty()) {
+                count = result[0]
+            }
+        }
+
+        return count
+    }
+
+    /**
+     * returns our average score for the given
+     * @param id
+     * @return
+     */
+    Map getSpectraQualityForSubmitter(long id){
+
+        double score = 0.0
+
+        Spectrum.withSession { session ->
+
+            def result = session.createSQLQuery("select avg(scaled_score) from spectrum a, score b where a.score_id = b.id and a.submitter_id = ? ").setLong(0,id).list()
+
+            if (!result.isEmpty()) {
+                score = result[0]
+
+            }
+        }
+
+        if(score){
+        return [score: score]
+
+        }
+        else{
+            return [:]
+        }
+    }
+
+    List getSpectraScoringBySubmitters(){
+
+        def result = []
+
+        Spectrum.withSession {session ->
+
+            session.createSQLQuery("select scaled_score, submitter_id, count from spectra_scores_by_submitter").list().each{
+                result.add([
+                        score:it[0],
+                        submitter:it[1],
+                        count:it[2]
+                ])
+            }
+        }
+
+        return result
+    }
+
+    /**
+     * returns the spectrum count
+     * @return
+     */
+    int getSpectraCount(){
+        int count = 0;
+
+        Spectrum.withSession {session ->
+
+            def result = session.createSQLQuery(" select a.a - b.b from( select count(*) a from spectrum )a, ( select count(*) b from tag_link a, tag b where a.tag_id = b.id and b.text = 'deleted') b").list()
+
+            if (!result.isEmpty()) {
+                count = result[0]
+            }
+        }
+
+        return count
+    }
+    /**
      * spectra count for all tags
      * @return
      */
@@ -73,6 +158,8 @@ class StatisticsService {
 
         return res
     }
+
+
 
     /**
      * compound count for the specified tag
@@ -113,7 +200,6 @@ class StatisticsService {
 
         return result
     }
-
     /**
      *
      * @return

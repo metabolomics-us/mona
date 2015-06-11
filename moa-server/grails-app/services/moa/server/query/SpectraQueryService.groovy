@@ -107,6 +107,40 @@ class SpectraQueryService {
 
         long begin = System.currentTimeMillis()
 
+        def ids = queryForIds(json,limit,offset)
+
+        try {
+            if(ids.isEmpty()){
+                return []
+            }
+            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc", [ids: ids])
+            //println "$queryOfDoom"
+
+            //  log.debug("result count: ${result.size()}")
+
+
+            statisticsService.acquire(System.currentTimeMillis() - begin, "text search", "${json}", "search")
+
+
+            return result
+        }
+        catch (Exception e){
+            log.error("query: ${json}")
+            log.error("ids: ${ids}")
+            throw e;
+        }
+    }
+
+    /**
+     * queries for the given id's
+     * @param json
+     * @param limit
+     * @param offset
+     * @return
+     */
+    @Transactional
+    def queryForIds(Map json, int limit = -1, int offset = -1){
+
         def params = [:]
 
         if (limit != -1) {
@@ -118,28 +152,14 @@ class SpectraQueryService {
             params.offset = offset
         }
 
-//        log.debug("pagination parameters: \n\n ${params}")
-
         def queryOfDoom = null
         def executionParams = null
 
         (queryOfDoom, executionParams) = generateFinalQuery(json)
 
 
-        def ids = Spectrum.executeQuery(queryOfDoom, executionParams,params)
+        return Spectrum.executeQuery(queryOfDoom, executionParams,params)
 
-
-        def result = Spectrum.findAllByIdInList(ids)
-
-        //println "$queryOfDoom"
-
-        //  log.debug("result count: ${result.size()}")
-
-
-        statisticsService.acquire(System.currentTimeMillis() - begin, "text search", "${json}", "search")
-
-
-        return result
     }
 
     /**
@@ -574,6 +594,7 @@ class SpectraQueryService {
                 spectrum.delete(flush: true)
             }
             else{
+                tagService.removeTagFrom(CommonTags.REQUIRES_DELETE,spectrum)
                 tagService.addTagTo(CommonTags.DELETED,spectrum)
                 spectrum.save()
             }

@@ -356,4 +356,29 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             }
         }
     };
+
+    /**
+     * adds the user to query
+     * @param emailAddress
+     */
+    this.addUserToQuery = function(emailAddress){
+        var query = this.getQuery();
+
+        query.submitter = emailAddress;
+
+        QueryCache.setSpectraQuery(query);
+
+    };
+
+    /**
+     * removes the user from the query
+     */
+    this.removeUserFromQuery = function(){
+        var query = this.getQuery();
+
+        query.submitter = null;
+
+        QueryCache.setSpectraQuery(query);
+
+    };
 });

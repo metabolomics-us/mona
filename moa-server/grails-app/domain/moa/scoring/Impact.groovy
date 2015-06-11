@@ -10,8 +10,7 @@ class Impact {
     }
 
     static mapping = {
-        version: false
-        score fetch:'join'
+        version false
     }
 
     static belongsTo = [score:Score]
