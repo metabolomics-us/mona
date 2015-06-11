@@ -6,6 +6,7 @@ import moa.Spectrum
 import moa.server.curation.SpectraCurationService
 import moa.server.statistics.StatisticsService
 import org.codehaus.groovy.grails.web.json.JSONObject
+import util.FireJobs
 
 /**
  * used to upload a spectra in the background
@@ -25,7 +26,7 @@ class SpectraUploadJob {
     /**
      * do we want to automatically validate the spectra after submission
      */
-    def validation = false
+    def validation = true
 
     /**
      * needs to be defined
@@ -37,6 +38,8 @@ class SpectraUploadJob {
     def description = "uploads spectra data in the background of the server"
 
     SpectraPersistenceService spectraPersistenceService
+
+    SpectraCurationService spectraCurationService
 
     StatisticsService statisticsService
 
@@ -68,7 +71,7 @@ class SpectraUploadJob {
 
                     //automatic validation
                     if(validation) {
-                        SpectraValidationJob.triggerNow([spectraId: result.id, priority: 3])
+                        spectraCurationService.validateSpectra(result.id)
                     }
                 }
                 catch (ValidationException e) {

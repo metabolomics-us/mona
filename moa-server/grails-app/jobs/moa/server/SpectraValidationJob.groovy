@@ -1,9 +1,12 @@
 package moa.server
 
+import curation.rules.spectra.RemoveIdenticalSpectraRule
+import grails.converters.JSON
 import moa.Spectrum
 import moa.server.curation.SpectraCurationService
 import moa.server.query.SpectraQueryService
 import moa.server.scoring.ScoringService
+import util.FireJobs
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,9 +25,11 @@ class SpectraValidationJob {
 
     def group = "validation-spectra"
 
-    def description = "uploads spectra data in the background of the server"
+    def description = "validates spectra data in the background of the server"
 
     SpectraCurationService spectraCurationService
+
+    SpectraQueryService spectraQueryService
 
     ScoringService scoringService
     def execute(context) {
@@ -47,6 +52,29 @@ class SpectraValidationJob {
                 if(score){
                     scoringService.score(data.spectraId as long)
                 }
+
+            }
+            else if (data.all) {
+                //get all id's in the system
+                def ids = spectraQueryService.queryForIds(
+                        [:
+                        ]
+                );
+
+                log.debug("found: ${ids.size()} spectra to validate...")
+                ids.eachParallel { long id ->
+                    log.debug("scheduling spectra for curration with id: ${id}")
+                    FireJobs.fireSpectraCurationJob([spectraId: id])
+                }
+
+            } else if (data.query) {
+
+                def spectra = spectraQueryService.query(JSON.parse(data.query))
+
+                spectra.each { Spectrum s ->
+                    FireJobs.fireSpectraCurationJob([spectraId: s.id])
+                }
+
 
             } else {
                 log.info("\t=>\tno spectraId was provided!")

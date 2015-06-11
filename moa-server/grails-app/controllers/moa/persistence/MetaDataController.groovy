@@ -1,6 +1,11 @@
 package moa.persistence
+
 import grails.rest.RestfulController
 import moa.MetaData
+import org.codehaus.groovy.grails.web.servlet.HttpHeaders
+
+import static org.springframework.http.HttpStatus.OK
+
 //@Cacheable("metadata")
 class MetaDataController extends RestfulController<MetaData> {
 
@@ -8,11 +13,10 @@ class MetaDataController extends RestfulController<MetaData> {
 
 
     def beforeInterceptor = {
-        log.info(params)
     }
 
     public MetaDataController() {
-        super(MetaData, true)
+        super(MetaData, false)
     }
 
     /**
@@ -20,12 +24,15 @@ class MetaDataController extends RestfulController<MetaData> {
      * @return
      */
     protected Map getParametersToBind() {
+             /*
+
+if we add the json it breaks the update function of the rest controller
 
         if (request.JSON) {
             params.putAll(
                     request.JSON)
         }
-
+               */
         params
     }
 
@@ -48,6 +55,8 @@ class MetaDataController extends RestfulController<MetaData> {
                 }
 
             }
+
+            eq("hidden",false)
         }
     }
 

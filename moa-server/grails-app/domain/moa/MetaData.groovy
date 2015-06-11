@@ -11,7 +11,7 @@ class MetaData implements Comparable<MetaData> {
         searchable nullable: true
         requiresUnit nullable: true
         priority nullable: true
-
+        hidden nullable: true
     }
 
     static mapping = {
@@ -19,7 +19,8 @@ class MetaData implements Comparable<MetaData> {
         version false
         priority defaultValue : 0
         value  cascade: 'all-delete-orphan'
-        category fetch:'join'
+
+        //category fetch:'join'
 
     }
 
@@ -64,13 +65,18 @@ class MetaData implements Comparable<MetaData> {
     /**
      * is this metadata object searchable
      */
-    boolean searchable = true
+    boolean searchable
 
     /**
      * does this metadata object requires a unit or is the unit optional
      */
-    boolean requiresUnit = false
+    boolean requiresUnit
 
+    /**
+     * should this object be hidden
+     */
+
+    boolean hidden
     @Override
     int compareTo(MetaData metaData) {
         return this.priority.compareTo(metaData.priority)

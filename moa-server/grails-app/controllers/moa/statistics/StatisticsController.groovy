@@ -33,6 +33,19 @@ class StatisticsController {
         render statisticsService.getSpectraCountForAllSubmitters() as JSON
     }
 
+    def countOfSpectraForSubmitter(){
+        render ([count:statisticsService.getSpectraCountForSubmitter(params.id as long)] as JSON )
+    }
+
+    def scoringStatisticsBySubmitters(){
+        render statisticsService.getSpectraScoringBySubmitters() as JSON
+    }
+
+    def qualityOfSpectraForSubmitter(){
+        render statisticsService.getSpectraQualityForSubmitter(params.id as long) as JSON
+    }
+
+
     def statisticsForPendingJobs(){
         render statisticsService.getCountForPendingJobs() as JSON
     }

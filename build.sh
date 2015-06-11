@@ -4,6 +4,10 @@
 
 #build client module
 cd moa-client
+
+npm install
+bower update
+
 grunt dist
 cd ..
 

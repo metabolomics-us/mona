@@ -1,11 +1,7 @@
 package moa.curation
 
-import grails.converters.JSON
-import moa.Spectrum
-import moa.server.SpectraValidationJob
-import moa.server.SpectraValidationSchedulingJob
 import moa.server.curation.SpectraCurationService
-import moa.server.query.SpectraQueryService
+import util.FireJobs
 
 class SpectraCurationController {
 
@@ -21,7 +17,7 @@ class SpectraCurationController {
 
         def id = params.id
 
-        SpectraValidationJob.triggerNow([spectraId: id as long, priority: 3])
+        FireJobs.fireSpectraCurationJob([spectraId: id as long])
 
         render(text: "scheduling curation of ${id} succesful!")
     }
@@ -29,9 +25,6 @@ class SpectraCurationController {
     def curateNow() {
 
         def id = params.id
-
-        SpectraValidationJob.triggerNow([spectraId: id as long, priority: 3])
-
 
         render (success: spectraCurationService.validateSpectra(id as long))
 
@@ -43,19 +36,33 @@ class SpectraCurationController {
      * @return
      */
     def curateAll() {
-        SpectraValidationSchedulingJob.triggerNow([all: true, priority: 3])
+        FireJobs.fireSpectraCurationJob([all: true])
         render(text: "curating all spectra!")
-
     }
 
+    def associateAll(){
+        FireJobs.fireSpectraAssociationJob([all: true])
+
+        render(text: "associating all spectra!")
+    }
+
+    def associate(){
+        def id = params.id
+
+        FireJobs.fireSpectraAssociationJob([spectraId: id as long])
+
+        render(text: "scheduling association of ${id} succesful!")
+    }
     /**
      * curates spectra found by the given query the format is the same as in the query service
      */
     def curateByQuery() {
 
-        def query = request.getJSON()
+        def query = request.getJSON().toString()
 
-        SpectraValidationSchedulingJob.triggerNow([query: query, params: params, priority: 3])
+        log.info("received query: ${query}")
+
+        FireJobs.fireSpectraCurationJob([query: query])
 
         render(text: "curating all spectra, by query!")
 

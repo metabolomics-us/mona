@@ -37,6 +37,8 @@ class MetaDataValue implements Scoreable {
      */
     boolean computed = false
 
+    Boolean deleted = false
+
     static belongsTo = [metaData: MetaData, owner: SupportsMetaData]
 
     /**
@@ -46,8 +48,7 @@ class MetaDataValue implements Scoreable {
 
     static mapping = {
         version false
- //       metaData fetch: 'join'
- //       score fetch: 'join'
+        deleted defaultValue: "false"
     }
 
 
@@ -59,6 +60,7 @@ class MetaDataValue implements Scoreable {
         computed nullable: true
         reasonForSuspicion nullable: true
         score nullable: true
+        deleted nullable:true
     }
 
     /**
@@ -96,7 +98,16 @@ class MetaDataValue implements Scoreable {
         return metaData?.category?.name
     }
 
-    static transients = ['value', 'type', 'name', 'category']
+    public String getMetaDataId(){
+        return metaData?.id
+    }
+
+    public boolean getHidden(){
+        return metaData?.hidden
+    }
+
+
+    static transients = ['value', 'type', 'name', 'category','metaDataId','hidden']
 
     @Override
     public String toString() {

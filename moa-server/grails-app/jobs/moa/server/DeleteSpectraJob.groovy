@@ -13,13 +13,13 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class DeleteSpectraJob {
 
-    def max = 25
+    def max = 1000
 
     /**
      * force true forces instant deletion
      * force false marks the element as deleted
      */
-    def force = false
+    def force = true
 
     def concurrent = false
 
@@ -62,17 +62,28 @@ class DeleteSpectraJob {
                                                   [
                                                           eq: RemoveIdenticalSpectraRule.REQUIRES_DELETE
                                                   ]
-                                         ],
-                                         //but which not have been marked as deleted yet
-                                         [name:
-                                                  [
-                                                          ne: RemoveIdenticalSpectraRule.DELETED
-                                                  ]
-                                         ],
+                                         ]
 
                                  ]
                         ]
                         , [forceRemoval: force, max: max])
+
+                if(force){
+                    spectraQueryService.searchAndDelete(
+                            [tags:
+                                     [
+                                             //we only want spectra which requires deletion
+                                             [name:
+                                                      [
+                                                              eq: RemoveIdenticalSpectraRule.DELETED
+                                                      ]
+                                             ]
+
+                                     ]
+                            ]
+                            , [forceRemoval: force, max: max])
+
+                }
             }
         } else {
             log.warn("no data were provided")

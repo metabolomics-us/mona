@@ -48,7 +48,7 @@ environments {
                 defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
             }
 
-            logSql = true
+            logSql = false
 
         }
     }
@@ -75,7 +75,7 @@ environments {
         dataSource {
 	     pooled = true
             dbCreate = "update"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-prod"
+            url = "jdbc:postgresql://128.120.143.126:5432/moa-prod"
 
             /*
 		 properties {
@@ -92,13 +92,13 @@ environments {
 
     		*/
 
-            logSql = true
+            logSql = false
 
 
             properties {
                 jmxEnabled = true
                 initialSize = 5
-                maxActive = 50
+                maxActive = 100
                 minIdle = 5
                 maxIdle = 25
                 maxWait = 10000
@@ -111,7 +111,7 @@ environments {
                 testOnBorrow = true
                 testWhileIdle = true
                 testOnReturn = false
-                jdbcInterceptors = "ConnectionState"
+                jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
                 defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
             }
 
