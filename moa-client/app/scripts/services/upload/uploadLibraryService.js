@@ -5,7 +5,7 @@
 /**
  * handles the upload of library spectra to the system
  */
-app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spectrum, gwMspService, gwChemifyService, AuthenticationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
+app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService, gwChemifyService, AuthenticationService, gwCtsService, $log, $q, $timeout, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
     // Representing this service
     var self = this;
 
@@ -315,6 +315,9 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             if (origin.toLowerCase().indexOf(".msp") > 0) {
                 return gwMspService.countSpectra(data);
             }
+            if (origin.toLowerCase().indexOf(".mgf") > 0) {
+                return gwMgfService.countSpectra(data);
+            }
             else if (origin.toLowerCase().indexOf(".txt") > 0) {
                 return gwMassbankService.countSpectra(data);
             }
@@ -347,6 +350,10 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             if (origin.toLowerCase().indexOf(".msp") > 0) {
                 $log.debug("uploading msp file...");
                 gwMspService.convertFromData(data, addOriginMetadata);
+            }
+            if (origin.toLowerCase().indexOf(".mgf") > 0) {
+                $log.debug("uploading mgf file...");
+                gwMgfService.convertFromData(data, addOriginMetadata);
             }
             else if (origin.toLowerCase().indexOf(".txt") > 0) {
                 $log.debug("uploading massbank file...");

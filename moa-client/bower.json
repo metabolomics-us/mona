@@ -21,6 +21,7 @@
     "ngInfiniteScroll": "1.0.0",
     "angular-cts-service": "http://bitbucket.org/fiehnlab/angular-cts-service.git#latest",
     "angular-msp-parser": "http://bitbucket.org/fiehnlab/angular-msp-parser.git#latest",
+    "angular-mgf-parser": "http://bitbucket.org/fiehnlab/angular-mgf-parser.git#latest",
     "angular-massbank-parser": "http://bitbucket.org/fiehnlab/angular-massbank-parser.git#latest",
     "angular-masspec-plotter": "http://bitbucket.org/fiehnlab/angular-masspec-plotter.git#latest",
     "ng-file-upload": "~1.4.0",
