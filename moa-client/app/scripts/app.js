@@ -8,6 +8,7 @@ var app = angular
         'ui.bootstrap',
         'ngTagsInput',
         'wohlgemuth.msp.parser',
+        'wohlgemuth.mgf.parser',
         'wohlgemuth.massbank.parser',
         'wohlgemuth.cts',
         'angularFileUpload',
