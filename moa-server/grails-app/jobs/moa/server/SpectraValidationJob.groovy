@@ -62,7 +62,7 @@ class SpectraValidationJob {
                 );
 
                 log.debug("found: ${ids.size()} spectra to validate...")
-                ids.eachParallel { long id ->
+                ids.each { long id ->
                     log.debug("scheduling spectra for curration with id: ${id}")
                     FireJobs.fireSpectraCurationJob([spectraId: id])
                 }
