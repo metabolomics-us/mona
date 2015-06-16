@@ -27,6 +27,13 @@ moaControllers.SearchBoxController = function ($scope, $modal, $location, $route
             path = '/spectra/display/'+ searchBoxQuery;
         }
 
+        // Handle MoNA hash
+        else if (searchBoxQuery.indexOf('mona-') == 0) {
+            SpectraQueryBuilderService.prepareQuery();
+            SpectraQueryBuilderService.addSpectraIdToQuery(searchBoxQuery);
+            path = '/spectra/browse';
+        }
+
         // Handle name query
         else {
             SpectraQueryBuilderService.compileQuery({nameFilter: searchBoxQuery});
