@@ -4,22 +4,29 @@
     <div class="col-md-12">
         <div show-query></div>
         <div class="form-group">
-            <button class="btn btn-primary" ng-click="table = true">
-                <i class="fa fa-2x fa-table fa-fw"></i>
+            <button class="btn btn-primary" ng-click="table = true" tooltip-placement="right" tooltip="click, to display the data in tabular mode"
+                    tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+                <i class="fa fa-2x fa-table fa-fw" ></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="table = false">
-                <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
+            <button class="btn btn-primary" ng-click="table = false" tooltip-placement="right" tooltip="click, to display the data in grid mode"
+                    tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+                <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"  ></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="querySpectraDialog()">
-                <i class="fa fa-2x fa-search fa-fw"></i>
+            <button class="btn btn-primary" ng-click="querySpectraDialog()" tooltip-placement="right" tooltip="click, to open the advanced query dialog"
+                    tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+                <i class="fa fa-2x fa-search fa-fw"  ></i>
             </button>
+
+
+            <div spectra-download></div>
         </div>
     </div>
 </div>
 
 <div class="row">
+
     <!-- display it as list -->
     <div ng-show="table == false">
         <div class="col-md-12">
