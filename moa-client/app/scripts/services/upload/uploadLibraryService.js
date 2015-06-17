@@ -315,7 +315,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             if (origin.toLowerCase().indexOf(".msp") > 0) {
                 return gwMspService.countSpectra(data);
             }
-            if (origin.toLowerCase().indexOf(".mgf") > 0) {
+            else if (origin.toLowerCase().indexOf(".mgf") > 0) {
                 return gwMgfService.countSpectra(data);
             }
             else if (origin.toLowerCase().indexOf(".txt") > 0) {
@@ -351,7 +351,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
                 $log.debug("uploading msp file...");
                 gwMspService.convertFromData(data, addOriginMetadata);
             }
-            if (origin.toLowerCase().indexOf(".mgf") > 0) {
+            else if (origin.toLowerCase().indexOf(".mgf") > 0) {
                 $log.debug("uploading mgf file...");
                 gwMgfService.convertFromData(data, addOriginMetadata);
             }
