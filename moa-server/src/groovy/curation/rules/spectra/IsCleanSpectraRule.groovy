@@ -56,16 +56,26 @@ class IsCleanSpectraRule extends AbstractCurationRule {
             }
         }
 
-        double ratio = countOfNoisyPeaks / countOfPeaks * 100
+        try {
+            double ratio = countOfNoisyPeaks / countOfPeaks * 100
 
-        logger.info("noise ratio: ${ratio}, spectra is")
+            logger.info("noise ratio: ${ratio}, spectra is")
 
-        if (ratio > percentOfSpectraIsNoise) {
-            logger.info("\t => dirty!")
-            return false
-        } else {
-            logger.info("\t => clean!")
-            return true
+            if (ratio > percentOfSpectraIsNoise) {
+                logger.info("\t => dirty!")
+                return false
+            } else {
+                logger.info("\t => clean!")
+                return true
+            }
+
+        }
+        catch (Exception e){
+            logger.error("something wrong with this spectrum: ${spectrum.id}")
+            logger.error(spectrum.spectrum)
+            logger.error(e.getMessage(),e);
+            //something odd, but not dirty
+            return true;
         }
 
     }

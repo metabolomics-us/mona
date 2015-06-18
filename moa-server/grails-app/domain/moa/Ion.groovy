@@ -36,7 +36,7 @@ class Ion extends SupportsMetaData implements Comparable<Ion> {
     Spectrum spectrum
 
     String toString() {
-        return "${formatter.format(mass)}:${formatter.format(intensity)}"
+        return "${formatter.format(mass)}:${formatter.format(intensity*100)}"
     }
 
     @Override

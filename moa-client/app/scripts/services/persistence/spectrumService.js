@@ -78,6 +78,15 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
                     'Content-Type': 'application/json'
                 },
                 isArray: false
+            },
+
+            'curateSpectraByQuery' : {
+                url: REST_BACKEND_SERVER + '/rest/curate/spectra/curateAllByQuery',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                isArray: false
             }
 
 

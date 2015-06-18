@@ -161,7 +161,7 @@ class UrlMappings {
 
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
-        "/rest/spectra/curateByQuery"(controller: 'spectraCuration', action: 'curateByQuery')
+        "/rest/curate/spectra/curateAllByQuery"(controller: 'spectraCuration',action:  'curateAllByQuery')
 
         /**
          * association services, use with care!
@@ -245,6 +245,11 @@ class UrlMappings {
          */
         "500"(controller: "error", action: "handle500")
         "404"(controller: "error", action: "handle404")
+
+        /**
+         * outdated links, will be removed at some point in time
+         */
+
 
     }
 }
