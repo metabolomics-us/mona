@@ -19,7 +19,7 @@ class DeleteSpectraJob {
      * force true forces instant deletion
      * force false marks the element as deleted
      */
-    def force = true
+    def force = false
 
     def concurrent = false
 

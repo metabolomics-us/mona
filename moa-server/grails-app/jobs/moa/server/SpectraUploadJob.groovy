@@ -71,7 +71,12 @@ class SpectraUploadJob {
 
                     //automatic validation
                     if(validation) {
-                        spectraCurationService.validateSpectra(result.id)
+                        try {
+                            spectraCurationService.validateSpectra(result.id)
+                        }
+                        catch (Exception e){
+                            log.warn("none fatal exception, but spectra submission was succcessful: ${e.getMessage()}",e)
+                        }
                     }
                 }
                 catch (ValidationException e) {
@@ -89,7 +94,7 @@ class SpectraUploadJob {
                     log.debug(json, e)
 
                     if (resubmit) {
-                        log.warn("resubmitting failed job to the system", e)
+                        log.error("resubmitting failed job to the system", e)
 
                         SpectraUploadJob.triggerNow([spectra: data.spectra])
                     } else {
