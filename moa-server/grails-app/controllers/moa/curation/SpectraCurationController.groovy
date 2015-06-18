@@ -5,6 +5,15 @@ import util.FireJobs
 
 class SpectraCurationController {
 
+    static allowedMethods = [
+            curate:"GET",
+            curateNow:"GET",
+            curateAll:"GET",
+            curateAllByQuery: ["POST","GET"],
+            associate: "GET",
+            associateAll: "GET"
+    ]
+
     static responseFormats = ['json']
 
     SpectraCurationService spectraCurationService
@@ -56,7 +65,7 @@ class SpectraCurationController {
     /**
      * curates spectra found by the given query the format is the same as in the query service
      */
-    def curateByQuery() {
+    def curateAllByQuery() {
 
         def query = request.getJSON().toString()
 

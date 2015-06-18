@@ -7,6 +7,8 @@ import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import curation.rules.AbstractMetaDataCentricRule
 
+import java.util.regex.Pattern
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -16,7 +18,7 @@ import curation.rules.AbstractMetaDataCentricRule
 class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     private Logger logger = Logger.getLogger(getClass())
 
-    Map<String, String> listOfAcceptedField = ["instrument": ".*lcms.*", "instrument type": ".*lc.*", "solvent": ".*"]
+    Map<String, List<String>> listOfAcceptedField = ["instrument": [".*lcms.*",".*ltq.*"], "instrument type": [".*lc.*"], "solvent": [".*"], "*": ["direct infusion"] ]
 
 
     def LCMSSpectraIdentificationRule() {
@@ -34,19 +36,28 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
         String value = val.value.toString().toLowerCase()
 
 
-        String s = listOfAcceptedField.get(val.name.toLowerCase())
+        List<String> list = listOfAcceptedField.get(val.name.toLowerCase())
 
-        logger.info("checking ${s} vs ${val.value} - ${val.unit}")
+        for(String s : list) {
+            logger.info("checking ${s} vs ${val.value} - ${val.unit}")
 
-        if (value.equals(s.toLowerCase())) {
+            if (value.equals(s.toLowerCase())) {
+                return true
+            } else if (val.unit != null && val.unit.toLowerCase().equals(s.toLowerCase())) {
+                return true
+            } else if (value.matches(s)) {
+                return true
+            } else if (value.contains(s.toLowerCase())) {
+                return true
+            }
+            else{
+                Pattern p = Pattern.compile(s, Pattern.CASE_INSENSITIVE);
 
-            return true
-        } else if (val.unit != null && val.unit.toLowerCase().equals(s.toLowerCase())) {
-            return true
-        } else if (value.matches(s)) {
-            return true
-        } else if (value.contains(s.toLowerCase())) {
-            return true
+                if(p.matcher(value)) {
+                    return  true
+                }
+
+            }
         }
 
         return false
@@ -67,12 +78,21 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
             }
         }
 
+        //any field
+        if("*" in listOfAcceptedField.keySet()){
+            return true
+        }
+
         return false;
     }
 
 
     @Override
     String getDescription() {
-        return "this rule calculates if the Spectrum comes from a LCMS system"
+        return "this rule calculates if the Spectrum comes from a LCMS system, based on the following patterns for fields: ${listOfAcceptedField}"
+    }
+
+    protected boolean failOnInvalidValue() {
+        return false
     }
 }
