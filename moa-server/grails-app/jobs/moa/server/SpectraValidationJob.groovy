@@ -69,10 +69,10 @@ class SpectraValidationJob {
 
             } else if (data.query) {
 
-                def spectra = spectraQueryService.query(JSON.parse(data.query))
+                def spectra = spectraQueryService.queryForIds(JSON.parse(data.query))
 
-                spectra.each { Spectrum s ->
-                    FireJobs.fireSpectraCurationJob([spectraId: s.id])
+                spectra.each { id ->
+                    FireJobs.fireSpectraCurationJob([spectraId: id])
                 }
 
 

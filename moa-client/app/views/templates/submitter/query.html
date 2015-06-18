@@ -10,8 +10,8 @@
         <li><a ng-click="addToQuery()">Add to query</a></li>
         <li><a ng-click="removeFromQuery()">Remove from query</a></li>
 
-        <li class="divider"></li>
-        <li><a ng-click="curateSpectra()">curate submitters spectra</a></li>
+        <li ng-show="$parent.auth.isAdmin()" class="divider"></li>
+        <li ng-show="$parent.auth.isAdmin()"><a ng-click="curateSpectra()">curate submitters spectra</a></li>
 
     </ul>
 </span>

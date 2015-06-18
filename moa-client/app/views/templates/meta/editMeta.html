@@ -6,7 +6,7 @@
     </a>
 
     <ul class="dropdown-menu" role="menu">
-        <li ng-show="value.hidden != true"><a ng-click="hide()">hide</a></li>
-        <li ng-show="value.hidden != false"><a ng-click="unhide()">show</a></li>
+        <li ng-show="value.hidden != true && $parent.auth.isAdmin()"><a ng-click="hide()">hide</a></li>
+        <li ng-show="value.hidden != false && $parent.auth.isAdmin()"><a ng-click="unhide()">show</a></li>
     </ul>
 </span>
