@@ -109,6 +109,15 @@ class UrlMappings {
         }
 
         /**
+         * location for predefined queries and to add or remove queries on the fly
+         */
+        "/rest/stored/query"(resources: "Query")
+
+        /**
+         * finds a simple query by it's associated label
+         */
+        "/rest/stored/query/find/$label"(controller: 'query', action: 'getQueryByLabel')
+        /**
          * spectra based stuff
          */
         "/rest/spectra"(resources: 'Spectrum')

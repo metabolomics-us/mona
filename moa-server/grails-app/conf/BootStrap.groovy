@@ -1,13 +1,13 @@
 import grails.converters.JSON
-import groovy.sql.Sql
 import moa.*
+import moa.query.Query
 import moa.scoring.Impact
 import moa.scoring.Score
 import moa.server.NewsService
 import moa.auth.Role
 import moa.auth.SubmitterRole
-import org.hibernate.FlushMode
 import util.DomainClassMarshaller
+import util.query.StaticQueries
 
 class BootStrap {
 
@@ -41,16 +41,6 @@ class BootStrap {
 
         // Fiehnlab
         addUser("Gert", "Wohlgemuth", "wohlgemuth@ucdavis.edu", "password", "University of California, Davis", true)
-        addUser("Sajjan", "Mehta", "ssmehta@ucdavis.edu", "password", "University of California, Davis", true)
-        addUser("Diego", "Pedrosa", "linuxmant@gmail.com", "password", "University of California, Davis", true)
-        addUser("Megan", "Showalter", "mshowalter@ucdavis.edu", "password", "University of California, Davis", false)
-        addUser("Yan", "Ma", "yanma@ucdavis.edu", "password", "University of California, Davis", false)
-
-        // RIKEN
-        addUser("Hiroshi", "Tusgawa", "hiroshi.tsugawa@riken.jp", "password", "Riken, Japan", false)
-        addUser("Akie", "Mejia", "rfmejia@gmail.com", "password", "Riken, Japan", false)
-
-
 
         JSON.registerObjectMarshaller(Tag,
                 DomainClassMarshaller.createExcludeMarshaller(Tag, ["links","class", "id", "tagCachingService", "dateCreated", "lastUpdated","owner"])
@@ -94,6 +84,14 @@ class BootStrap {
         JSON.registerObjectMarshaller(Impact,
                 DomainClassMarshaller.createExcludeMarshaller(Impact, ["class","score","id","scoringClass"])
         )
+        JSON.registerObjectMarshaller(Query,
+                DomainClassMarshaller.createExcludeMarshaller(Query, ["class"])
+        )
+
+
+
+
+        StaticQueries.register()
 
 
 
