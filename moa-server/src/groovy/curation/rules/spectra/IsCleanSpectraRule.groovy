@@ -48,10 +48,10 @@ class IsCleanSpectraRule extends AbstractCurationRule {
         int countOfPeaks = 0
         int countOfNoisyPeaks = 0
 
-        spectrum.spectrum.split(" ").each {
+        spectrum.ions.each {
             countOfPeaks++
 
-            if (Double.parseDouble(it.split(":")[1]) < noisePercentage) {
+            if (Double.parseDouble(it.intensity) < noisePercentage) {
                 countOfNoisyPeaks++
             }
         }
