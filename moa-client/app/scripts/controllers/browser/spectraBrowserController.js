@@ -18,10 +18,9 @@
  * @param $log
  * @param $location
  * @param SpectrumCache
- * @param QueryCache
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, QueryCache, $rootScope, $timeout) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, $rootScope, $timeout, $filter) {
 
     $scope.table = false;
     /**
@@ -57,38 +56,11 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.dataAvailable = true;
 
-
     /**
-     *
-     * TODO remove
-     * refine the current query by submitting an updates query
+     * how many results are loaded
+     * @type {number}
      */
-    $scope.refineQuery = function () {
-        var query = {};
-        var tags = [];
-
-        // Add name and inchikey to query if provided
-        if ($scope.nameFilter != '') {
-            query.nameFilter = $scope.nameFilter;
-        }
-
-        if ($scope.inchiFilter != '') {
-            query.inchiFilter = $scope.inchiFilter;
-        }
-        if ($scope.tagsSelection.length > 0) {
-            SpectraQueryBuilderService.clearTagsFromQuery();
-
-            // Add selected tags to query
-            for (var i = 0; i < $scope.tagsSelection.length; i++) {
-                SpectraQueryBuilderService.addTagToQuery($scope.tagsSelection[i].text);
-            }
-        }
-        // Reset spectra and perform the query
-
-        SpectraQueryBuilderService.updateQuery(query, tags);
-
-        $scope.submitQuery();
-    };
+    $scope.queryResultCount = 0;
 
     /**
      * reset the current query
@@ -120,15 +92,18 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         var query = SpectraQueryBuilderService.getQuery();
 
 
+        //TODO why are we doing this?????
         if (query.compound.hasOwnProperty('name')) {
             $scope.nameFilter = query.compound.name.ilike.replace(/%/g, '');
         }
 
+        //TODO or this?
         if (query.compound.hasOwnProperty('inchiKey')) {
             $scope.inchiFilter = query.compound.inchiKey.hasOwnProperty('eq') ?
                 query.compound.inchiKey.eq : query.compound.inchiKey.like;
         }
 
+        //TODO or this?
         // Add tags from query to refine query tags
         $scope.tagsSelection = [];
 
@@ -141,9 +116,30 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             }
         }
 
+        $scope.calculateResultCount();
+        //actually load our data
         $scope.loadMoreSpectra();
     };
 
+    /**
+     * fires an event for directives to show the current query
+     */
+    $scope.displayQuery = function(){
+        $rootScope.$broadcast('spectra:query:show');
+    };
+
+    /**
+     * calculates how my results this current query will return
+     */
+    $scope.calculateResultCount = function(){
+
+        //reports the count for the complete query response
+        $scope.queryResultCount = "loading...";
+        Spectrum.searchSpectraCount(SpectraQueryBuilderService.getQuery(), function (data) {
+            $scope.queryResultCount = data.count;
+        });
+
+    };
 
     /**
      * opens our modal dialog to query spectra against the system
@@ -197,13 +193,16 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
+
+        //inform other controllers that we are starting to load spectra
+        $rootScope.$broadcast('spectra:starting:query');
+
         if (!$scope.loadingMore && $scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
             //search utilizing our compiled query so that it can be easily refined over time
             $scope.loadingMore = true;
             $scope.calculateOffsets();
-            console.log('loading...')
 
-            Spectrum.searchSpectra(QueryCache.getSpectraQuery(), function (data) {
+            Spectrum.searchSpectra(SpectraQueryBuilderService.getQuery(), function (data) {
                 if (data.length == 0) {
                     $scope.dataAvailable = false;
                 } else {
@@ -215,7 +214,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             });
         }
 
-        //let other parts know that we loaded more spectra
+        //inform other controllers that we finished loading spectra
         if ($scope.spectra) {
             $rootScope.$broadcast('spectra:loaded', $scope.spectra);
         }
@@ -227,12 +226,11 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.calculateOffsets = function () {
         $scope.spectraLoadLength = $scope.spectra.length;
 
-        var query = QueryCache.getSpectraQuery();
+        var query = SpectraQueryBuilderService.getQuery();
 
         //assign the offset
         query.offset = $scope.spectra.length;
 
-        QueryCache.setSpectraQuery(query);
     };
 
 
@@ -249,8 +247,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
                 $log.error('failed: ' + error);
             }
         );
-
-        console.log(SpectrumCache.hasBrowserSpectra())
 
         if (SpectrumCache.hasBrowserSpectra()) {
             var scrollPos = SpectrumCache.getBrowserSpectraScrollLocation();

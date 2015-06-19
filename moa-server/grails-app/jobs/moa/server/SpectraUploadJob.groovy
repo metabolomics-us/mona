@@ -4,6 +4,7 @@ import exception.ValidationException
 import grails.converters.JSON
 import moa.Spectrum
 import moa.server.curation.SpectraCurationService
+import moa.server.scoring.ScoringService
 import moa.server.statistics.StatisticsService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import util.FireJobs
@@ -43,6 +44,8 @@ class SpectraUploadJob {
 
     StatisticsService statisticsService
 
+    ScoringService scoringService
+
     def execute(context) {
         Map data = context.mergedJobDataMap
 
@@ -67,15 +70,24 @@ class SpectraUploadJob {
                     long needed = end - begin
                     log.debug("stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}")
 
-                    statisticsService.acquire(needed,"${result.id}","spectra import time","import")
+                    statisticsService.acquire(needed, "${result.id}", "spectra import time", "import")
 
+                    //automatic scoring, so we have some score at least, even if it's null
+                    try {
+
+                        scoringService.score(result)
+                    }
+                    catch (Exception e) {
+                        log.warn("none fatal exception, but spectra submission was succcessful: ${e.getMessage()}", e)
+
+                    }
                     //automatic validation
-                    if(validation) {
+                    if (validation) {
                         try {
                             spectraCurationService.validateSpectra(result.id)
                         }
-                        catch (Exception e){
-                            log.warn("none fatal exception, but spectra submission was succcessful: ${e.getMessage()}",e)
+                        catch (Exception e) {
+                            log.warn("none fatal exception, but spectra submission was succcessful: ${e.getMessage()}", e)
                         }
                     }
                 }

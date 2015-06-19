@@ -173,7 +173,7 @@ class SpectraQueryService {
         def queryOfDoom = null
         def executionParams = null
 
-        (queryOfDoom, executionParams) = generateFinalQuery(json)
+        (queryOfDoom, executionParams) = generateFinalQuery(json,true)
 
 
         return Spectrum.executeQuery(queryOfDoom, executionParams)[0]
@@ -191,7 +191,7 @@ class SpectraQueryService {
         String queryOfDoom = ""
 
         if(count){
-            queryOfDoom = "select count(s.id) from Spectrum s"
+            queryOfDoom = "select count(distinct s.id) from Spectrum s"
         }
         else {
          queryOfDoom = "select s.id from Spectrum s"
@@ -216,8 +216,13 @@ class SpectraQueryService {
         (queryOfDoomWhere, queryOfDoomJoins) = handleJsonSubmitterField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
         //assemble the query of doom
-        queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere + " group by s.id"
+        if(count){
+            queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
+        }
+        else {
+            queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere + " group by s.id"
+        }
         log.debug("generated query: \n\n${queryOfDoom}\n")
         log.debug("parameter matrix:\n\n${executionParams}\n\n")
 

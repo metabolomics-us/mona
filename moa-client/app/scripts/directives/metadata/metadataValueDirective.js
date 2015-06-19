@@ -40,7 +40,7 @@ app.directive('gwMetaQuery', function () {
         },
 
         //controller to handle building new queries
-        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location) {
+        controller: function ($scope, $element, SpectraQueryBuilderService, $location) {
 
             //receive a click
             $scope.newQuery = function () {
@@ -151,7 +151,7 @@ app.directive('gwSpectraIdQuery', function () {
         },
 
         //controller to handle building new queries
-        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location) {
+        controller: function ($scope, $element, SpectraQueryBuilderService, $location) {
 
             //receive a click
             $scope.newQuery = function () {
@@ -245,7 +245,7 @@ app.directive('gwMetaQueryInput', function () {
         },
 
         //controller to handle building of the queries
-        controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location, REST_BACKEND_SERVER, $http, $filter, $log,limitToFilter) {
+        controller: function ($scope, $element, SpectraQueryBuilderService, $location, REST_BACKEND_SERVER, $http, $filter, $log,limitToFilter) {
 
             $scope.metadata = [];
             //$scope.metadataNames = [];
