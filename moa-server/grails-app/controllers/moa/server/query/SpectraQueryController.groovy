@@ -44,6 +44,21 @@ class SpectraQueryController {
         }
     }
 
+    def countForSearch(){
+        def json = request.JSON
+
+        int result = 0
+        if (json.query) {
+            log.info("received query: " + json.query)
+            result = spectraQueryService.getCountForQuery(json.query);
+            json = json.query;
+        } else {
+            result = spectraQueryService.getCountForQuery(json);
+        }
+
+        render ([count:result] as JSON)
+    }
+
     /**
      * runs the given search and executes a mass update against the database
      */

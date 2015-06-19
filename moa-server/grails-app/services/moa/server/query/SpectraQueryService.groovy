@@ -163,15 +163,39 @@ class SpectraQueryService {
     }
 
     /**
-     * generates the actual query to be executed for us
+     * returns the exspected count for the query
      * @param json
      * @return
      */
-    private List generateFinalQuery(Map json) {
+    Integer getCountForQuery(Map json){
+
+
+        def queryOfDoom = null
+        def executionParams = null
+
+        (queryOfDoom, executionParams) = generateFinalQuery(json)
+
+
+        return Spectrum.executeQuery(queryOfDoom, executionParams)[0]
+    }
+
+    /**
+     * generates the actual query to be executed for us
+     * @param json
+     * @params count returns the count instead of the actual objects
+     * @return
+     */
+    private List generateFinalQuery(Map json,boolean count=false) {
 
         //completed query string
-        String queryOfDoom = "select s.id from Spectrum s"
+        String queryOfDoom = ""
 
+        if(count){
+            queryOfDoom = "select count(s.id) from Spectrum s"
+        }
+        else {
+         queryOfDoom = "select s.id from Spectrum s"
+        }
         //defines all our joins
         String queryOfDoomJoins = ""
 

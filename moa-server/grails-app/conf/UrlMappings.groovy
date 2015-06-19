@@ -127,6 +127,14 @@ class UrlMappings {
          */
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
 
+        /**
+         * how many spectra will this query return
+         */
+        "/rest/spectra/searchCount"(controller: 'spectraQuery', action: 'countForSearch')
+
+        /**
+         * similarity search for a specta
+         */
         "/rest/spectra/similarity/"(controller: 'spectraQuery', action: 'similaritySearch')
 
         /**

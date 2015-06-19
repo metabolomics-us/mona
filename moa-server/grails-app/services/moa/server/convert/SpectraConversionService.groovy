@@ -23,9 +23,9 @@ class SpectraConversionService {
         writeName(spectrum.biologicalCompound?.names, buffer, converter, "COMPOUND")
 
         if (spectrum.biologicalCompound.inchi)
-            converter('InChI', spectrum.biologicalCompound.inchi)
+            converter('InChI', spectrum.biologicalCompound.inchi,buffer,null)
         if (spectrum.biologicalCompound.inchiKey)
-            converter('InChIKey', spectrum.biologicalCompound.inchiKey)
+            converter('InChIKey', spectrum.biologicalCompound.inchiKey,buffer,null)
 
         writeMetaData(spectrum.biologicalCompound?.metaData, buffer, converter, "COMPOUND")
         writeTags(spectrum.biologicalCompound?.tags, buffer, converter, "COMPOUND")
@@ -51,7 +51,7 @@ class SpectraConversionService {
         for (String ion : ionPairs) {
             String[] values = ion.split(":")
 
-            massSpectraConverter(values[0], values[1], buffer)
+            massSpectraConverter(values[0], values[1], buffer,null)
         }
 
         buffer.append("\n")
@@ -77,7 +77,7 @@ class SpectraConversionService {
             writer.append("\n")
         }
 
-        def massSpectraConverter = { def ion, def intensity, StringBuffer writer ->
+        def massSpectraConverter = { def ion, def intensity, StringBuffer writer, String category ->
 //            if (category) {
 //                writer.append(category.toUpperCase())
 //                writer.append("\$")
@@ -134,15 +134,17 @@ class SpectraConversionService {
                 while (nameIterator.hasNext()) {
                     MetaDataValue value = nameIterator.next()
 
-                    String myCat = category
-                    if (myCat != null) {
-                        if (myCat != value.category) {
-                            myCat = myCat + "_" + value.category
+                    if(!value.hidden && !value.deleted) {
+                        String myCat = category
+                        if (myCat != null) {
+                            if (myCat != value.category) {
+                                myCat = myCat + "_" + value.category
+                            }
+                        } else {
+                            myCat = value.category
                         }
-                    } else {
-                        myCat = value.category
+                        closure(value.name, value.value, writer, myCat)
                     }
-                    closure(value.name, value.value, writer, myCat)
                 }
             }
         }
