@@ -37,6 +37,9 @@ class MetaDataValue implements Scoreable {
      */
     boolean computed = false
 
+    /**
+     * a flag that this value was alreay deleted and should be ignored
+     */
     Boolean deleted = false
 
     static belongsTo = [metaData: MetaData, owner: SupportsMetaData]

@@ -31,6 +31,14 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
                 },
                 isArray: true
             },
+            'searchSpectraCount': {
+                url: REST_BACKEND_SERVER + '/rest/spectra/searchCount',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                isArray: false
+            },
 
 
             /**

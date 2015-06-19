@@ -11,7 +11,13 @@
 
     <tbody>
         <tr ng-repeat="score in scores | orderBy :'-score' ">
-            <td>{{$index+1}}</td>
+            <td>
+                <i class="fa fa-trophy" ng-show="$index == 0"  style="color:#ffd700"></i>
+                <i class="fa fa-trophy" ng-show="$index == 1"  style="color:#C0C0C0"></i>
+                <i class="fa fa-trophy" ng-show="$index == 2"  style="color:#CD7F32"></i>
+
+
+                <span ng-hide="$index < 3"> {{$index+1}}</span></td>
             <td> <span gw-submitter-query submitter="score.submitter"  >{{score.submitter.firstName}} {{score.submitter.lastName}}</span>
             </td>
             <td>{{score.submitter.institution}}</td>

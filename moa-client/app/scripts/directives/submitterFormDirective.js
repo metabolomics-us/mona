@@ -29,7 +29,7 @@ app.directive('gwSubmitterQuery', function () {
 		},
 
 		//controller to handle building new queries
-		controller: function ($scope, $element, SpectraQueryBuilderService, QueryCache, $location, Spectrum) {
+		controller: function ($scope, $element, SpectraQueryBuilderService, $location, Spectrum) {
 
 			//receive a click
 			$scope.newQuery = function () {

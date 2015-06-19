@@ -1,7 +1,7 @@
 <div>
     <accordion close-others="true"  tooltip-placement="right" tooltip="click, to display the currently executed query"
                tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
-        <accordion-group heading="display generated query">
+        <accordion-group heading="display generated query" is-open="status.isOpen" ng-click="status.isOpen != status.isOpen">
 
             <div>
                 Generated Query to use in third party software
