@@ -201,6 +201,27 @@
                         </div>
                     </tab>
 
+                    <tab heading="Tags">
+                        <p class="lead">
+                            Please add any 'tags' here, you consider useful for other people. <br />
+                            Tags provide an easy way to find and label spectra.
+                        </p>
+
+                        <div style="margin-top: 10px;">
+                            <tags-input ng-model="currentSpectrum.tags"
+                                        min-length="3"
+                                        replace-spaces-with-dashes="false">
+
+                                <auto-complete source="loadTags($query)"
+                                               min-length="1"
+                                               load-on-empty="true"
+                                               load-on-down-arrow="true"
+                                               load-on-focus="true"></auto-complete>
+                            </tags-input>
+                            <button ng-click="applyTagsToAll()" class="btn btn-default"><i class="fa fa-files-o"></i> Apply these tags to all spectra</button>
+                        </div>
+                    </tab>
+
                     <tab heading="Trim Spectrum">
                         <p class="lead">Removes low intensity ions from a mass spectrum.</p>
 

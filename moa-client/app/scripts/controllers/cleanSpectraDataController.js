@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.CleanSpectraDataController = function ($scope, $window, $location, UploadLibraryService, gwCtsService) {
+moaControllers.CleanSpectraDataController = function ($scope, $window, $location, UploadLibraryService, gwCtsService, TaggingService, $q, $filter) {
     // Loaded spectra data/status
     $scope.spectraLoaded = 0;
     $scope.currentSpectrum;
@@ -161,6 +161,33 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, $location
         for(var i = 0; i < $scope.spectra.length; i++) {
             if(i != $scope.spectraIndex) {
                 $scope.spectra[i].meta.push(metadata);
+            }
+        }
+    };
+
+    $scope.applyTagsToAll = function() {
+        var tags = $scope.currentSpectrum.tags;
+
+        for(var i = 0; i < $scope.spectra.length; i++) {
+            if(i != $scope.spectraIndex) {
+                if(!$scope.spectra[i].tags) {
+                    $scope.spectra[i].tags = [];
+                }
+
+                for(var j = 0; j < tags.length; j++) {
+                    var hasTag = false;
+
+                    for(var k = 0; k < $scope.spectra[i].tags.length; k++) {
+                        if($scope.spectra[i].tags[k].text == tags[j].text) {
+                            hasTag = true;
+                            break
+                        }
+                    }
+
+                    if(!hasTag) {
+                        $scope.spectra[i].tags.push(tags[j]);
+                    }
+                }
             }
         }
     };
@@ -422,4 +449,37 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, $location
             $location.path('/uploadstatus');
         }
     };
+
+
+
+    /**
+     * provides us with an overview of all our tags
+     * @param query
+     * @returns {*}
+     * Performs initialization and acquisition of data used by the wizard
+     */
+    $scope.loadTags = function (query) {
+        var deferred = $q.defer();
+
+        // First filters by the query and then removes any tags already selected
+        deferred.resolve($filter('filter')($scope.tags, query));
+
+        return deferred.promise;
+    };
+
+
+    /**
+     * Performs initialization and acquisition of data used by the wizard
+     */
+    (function() {
+        // Get tags
+        TaggingService.query(
+            function(data) {
+                $scope.tags = data;
+            },
+            function (error) {
+                $log.error('failed: ' + error);
+            }
+        );
+    })();
 };
