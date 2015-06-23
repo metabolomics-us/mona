@@ -81,7 +81,7 @@ class MetaDataPersistenceService {
             return
         }
 
-        if (current.name.toString().length() == 0 || current.value.toString().length() == null) {
+        if (current.name.toString().length() == 0 || current.value.toString().trim().length() == 0) {
             log.warn("received null data for some reason, object was ${object}")
             return
         }
