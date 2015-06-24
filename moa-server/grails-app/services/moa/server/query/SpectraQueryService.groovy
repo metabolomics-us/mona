@@ -107,10 +107,10 @@ class SpectraQueryService {
 
         long begin = System.currentTimeMillis()
 
-        def ids = queryForIds(json,limit,offset)
+        def ids = queryForIds(json, limit, offset)
 
         try {
-            if(ids.isEmpty()){
+            if (ids.isEmpty()) {
                 return []
             }
             def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc", [ids: ids])
@@ -124,7 +124,7 @@ class SpectraQueryService {
 
             return result
         }
-        catch (Exception e){
+        catch (Exception e) {
             log.error("query: ${json}")
             log.error("ids: ${ids}")
             throw e;
@@ -139,7 +139,7 @@ class SpectraQueryService {
      * @return
      */
     @Transactional
-    def queryForIds(Map json, int limit = -1, int offset = -1){
+    def queryForIds(Map json, int limit = -1, int offset = -1) {
 
         def params = [:]
 
@@ -158,7 +158,7 @@ class SpectraQueryService {
         (queryOfDoom, executionParams) = generateFinalQuery(json)
 
 
-        return Spectrum.executeQuery(queryOfDoom, executionParams,params)
+        return Spectrum.executeQuery(queryOfDoom, executionParams, params)
 
     }
 
@@ -167,13 +167,13 @@ class SpectraQueryService {
      * @param json
      * @return
      */
-    Integer getCountForQuery(Map json){
+    Integer getCountForQuery(Map json) {
 
 
         def queryOfDoom = null
         def executionParams = null
 
-        (queryOfDoom, executionParams) = generateFinalQuery(json,true)
+        (queryOfDoom, executionParams) = generateFinalQuery(json, true)
 
 
         return Spectrum.executeQuery(queryOfDoom, executionParams)[0]
@@ -185,16 +185,15 @@ class SpectraQueryService {
      * @params count returns the count instead of the actual objects
      * @return
      */
-    private List generateFinalQuery(Map json,boolean count=false) {
+    private List generateFinalQuery(Map json, boolean count = false) {
 
         //completed query string
         String queryOfDoom = ""
 
-        if(count){
+        if (count) {
             queryOfDoom = "select count(distinct s.id) from Spectrum s"
-        }
-        else {
-         queryOfDoom = "select s.id from Spectrum s"
+        } else {
+            queryOfDoom = "select s.id from Spectrum s"
         }
         //defines all our joins
         String queryOfDoomJoins = ""
@@ -216,11 +215,10 @@ class SpectraQueryService {
         (queryOfDoomWhere, queryOfDoomJoins) = handleJsonSubmitterField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
 
         //assemble the query of doom
-        if(count){
+        if (count) {
             queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
-        }
-        else {
+        } else {
             queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere + " group by s.id"
         }
         log.debug("generated query: \n\n${queryOfDoom}\n")
@@ -242,35 +240,72 @@ class SpectraQueryService {
     private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
 
 
-
         if (json.id) {
-            if(json.id.size() > 0) {
+            if (json.id instanceof Collection && json.id.size() > 0) {
 
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 //handle brackets
                 queryOfDoomWhere += "( "
-                json.id.eachWithIndex { String current, int index ->
 
-                    // handle id
-                    try {
-                        long id = Long.parseLong(current)
 
-                        queryOfDoomWhere += " s.id = :spectraId_${index}"
-                        executionParams."spectraId_${index}" = id
+                json.id.eachWithIndex { Object current, int index ->
+
+                    log.info("current: ${current}")
+                    //long form
+                    if (current instanceof Map) {
+                        if (current.value) {
+                            current.value.keySet().each { String key ->
+                                (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "id", [current.value."${key}"], key, executionParams)
+                            }
+                        }
                     }
+                    //short form
+                    else {
+                        // handle id
+                        try {
+                            long id = Long.parseLong(current)
 
-                    // handle email address
-                    catch (NumberFormatException e) {
-                        //build our specific query
-                        queryOfDoomWhere += " s.hash = :spectraId_${index}"
-                        executionParams."spectraId_${index}" = current
+                            queryOfDoomWhere += " s.id = :spectraId_${index}"
+                            executionParams."spectraId_${index}" = id
+                        }
+
+                        // handle email address
+                        catch (NumberFormatException e) {
+                            //build our specific query
+                            queryOfDoomWhere += " s.hash = :spectraId_${index}"
+                            executionParams."spectraId_${index}" = current
+                        }
+
+                        //add or statement
+                        if (index < json.id.size() - 1) {
+                            queryOfDoomWhere += " OR "
+                        }
                     }
+                }
+
+                //handle brackets
+                queryOfDoomWhere += " )"
+            }
 
 
-                    //add or statement
-                    if(index < json.id.size()-1){
-                        queryOfDoomWhere += " OR "
+        }
+
+        if (json.hash) {
+            if (json.hash instanceof Collection && json.hash.size() > 0) {
+
+                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                //handle brackets
+                queryOfDoomWhere += "( "
+
+                json.hash.eachWithIndex { Object current, int index ->
+
+                    //long form
+                    if (current.value) {
+                        current.value.keySet().each { String key ->
+                            (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "hash", [current.value."${key}"], key, executionParams)
+                        }
                     }
                 }
 
@@ -338,16 +373,10 @@ class SpectraQueryService {
     }
 
     /**
-     * {
-     *  tags: [
-     *      tag: {
-     *          name :  {
-     *              "eq" : "tada"
-     *          }
-     *      }
-     *  ]
-     *  }
-     * does searches by tag field
+     *{*  tags: [
+     *      tag: {*          name :  {*              "eq" : "tada"
+     *}*}*  ]
+     *}* does searches by tag field
      * @param json
      * @param queryOfDoomWhere
      * @param queryOfDoomJoins
@@ -368,13 +397,12 @@ class SpectraQueryService {
                     queryOfDoomJoins += "  inner join s.links as t_${index} "
                     queryOfDoomJoins += "  inner join t_${index}.tag as tag_table_${index}"
 
-                    if(current instanceof  String) {
-                        (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "text", [current], "eq", executionParams,index,"tag_table_${index}")
-                    }
-                    else{
-                        if(current.name) {
+                    if (current instanceof String) {
+                        (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "text", [current], "eq", executionParams, index, "tag_table_${index}")
+                    } else {
+                        if (current.name) {
                             current.name.keySet().each { String key ->
-                                (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "text", [current.name."${key}"], key, executionParams,index,"tag_table_${index}")
+                                (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "text", [current.name."${key}"], key, executionParams, index, "tag_table_${index}")
                             }
                         }
                     }
@@ -549,10 +577,15 @@ class SpectraQueryService {
      * @param json
      */
     def update(queryContent, update) {
-        def result = query(queryContent);
+        def result = queryForIds(queryContent);
+
 
         //go over all spectra
-        result.each { Spectrum spectrum ->
+
+        result.each { def id ->
+
+            log.info("id: ${id.class}")
+            Spectrum spectrum = Spectrum.get(id)
 
             //if we have tags specified
             if (update.tags) {
@@ -607,7 +640,7 @@ class SpectraQueryService {
             long begin = System.currentTimeMillis()
 
             Spectrum spectrum = Spectrum.get(id)
-            if(params.forceRemoval == true) {
+            if (params.forceRemoval == true) {
 
 
                 def links = []
@@ -621,10 +654,9 @@ class SpectraQueryService {
 
 
                 spectrum.delete(flush: true)
-            }
-            else{
-                tagService.removeTagFrom(CommonTags.REQUIRES_DELETE,spectrum)
-                tagService.addTagTo(CommonTags.DELETED,spectrum)
+            } else {
+                tagService.removeTagFrom(CommonTags.REQUIRES_DELETE, spectrum)
+                tagService.addTagTo(CommonTags.DELETED, spectrum)
                 spectrum.save()
             }
             statisticsService.acquire(System.currentTimeMillis() - begin, "deleted a spectra", "${spectrum.hash}", "delete")

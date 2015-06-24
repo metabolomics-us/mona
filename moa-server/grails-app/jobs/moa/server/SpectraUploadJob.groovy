@@ -63,7 +63,7 @@ class SpectraUploadJob {
                     }
 
                     Spectrum result = spectraPersistenceService.create(json)
-                    result.save(flush:true)
+                    result.save(flush: true)
 
                     long end = System.currentTimeMillis()
 
@@ -106,9 +106,13 @@ class SpectraUploadJob {
                     log.debug(json, e)
 
                     if (resubmit) {
-                        log.error("resubmitting failed job to the system", e)
+                        if (e instanceof IllegalArgumentException) {
+                            log.error("fatal error - no resubmission possible", e)
+                        } else {
+                            log.error("resubmitting failed job to the system", e)
 
-                        SpectraUploadJob.triggerNow([spectra: data.spectra])
+                            SpectraUploadJob.triggerNow([spectra: data.spectra])
+                        }
                     } else {
                         log.error("upload fatally failed: ${e.getMessage()}", e)
                     }
