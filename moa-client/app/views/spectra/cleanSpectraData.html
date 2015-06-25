@@ -9,13 +9,20 @@
         </div>
         <br />
 
+        <!-- Message indicating loading in background -->
+        <div class="h5 text-center" ng-if="spectraLoaded == 2 && isLoadingSpectra()">
+            <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading additional spectra in background...</span>
+        </div>
+
+
+        <!-- Select files to upload -->
         <div ng-if="spectraLoaded == 0" class="panel panel-default">
             <div class="panel-heading"><strong>Select a file clean</strong></div>
             <div class="panel-body">
                 <div class="input-group">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" ng-file-select="parseFile($files)" multiple />
+                            Browse&hellip; <input type="file" ng-file-select="parseFiles($files)" multiple />
                         </span>
                     </span>
 
@@ -27,18 +34,21 @@
         </div>
 
 
+        <!-- Loading message -->
         <div ng-if="spectraLoaded == 1" class="panel panel-default">
             <div class="panel-heading"><strong>Loading and parsing data</strong></div>
-            <div class="panel-body text-center"><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</span></div>
+            <div class="panel-body text-center"><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Uploading and parsing file...</span></div>
         </div>
 
 
+        <!-- Error message if no spectra are found -->
         <div ng-if="spectraLoaded == 2 && spectra.length == 0" class="panel panel-default">
             <div class="panel-heading"><strong>Loading and parsing data</strong></div>
             <div class="panel-body text-center"><p class="lead">No valid mass spectra found in the uploaded file(s)!</p></div>
         </div>
 
 
+        <!-- Show cleaner/uploader if spectra are found -->
         <div ng-if="spectraLoaded == 2 && spectra.length > 0" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
@@ -218,7 +228,11 @@
                                                load-on-down-arrow="true"
                                                load-on-focus="true"></auto-complete>
                             </tags-input>
-                            <button ng-click="applyTagsToAll()" class="btn btn-default"><i class="fa fa-files-o"></i> Apply these tags to all spectra</button>
+                            <br />
+
+                            <div class="text-center">
+                                <button ng-click="applyTagsToAll()" class="btn btn-default btn-sm"><i class="fa fa-files-o"></i> Apply these tags to all spectra</button>
+                            </div>
                         </div>
                     </tab>
 

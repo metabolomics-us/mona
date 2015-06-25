@@ -37,7 +37,7 @@ app.constant('INTERNAL_CACHING', true);
  * App name
  */
 app.run(function($rootScope) {
-    $rootScope.APP_NAME = 'Massbank of North America';
+    $rootScope.APP_NAME = 'MassBank of North America';
     $rootScope.APP_NAME_ABBR = 'MoNA';
     $rootScope.APP_VERSION = 'alpha-2';
 
