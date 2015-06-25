@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.CleanSpectraDataController = function ($scope, $window, $location, UploadLibraryService, gwCtsService, TaggingService, $q, $filter) {
+moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, TaggingService, $q, $filter, AsyncService, $log, $timeout) {
     // Loaded spectra data/status
     $scope.spectraLoaded = 0;
     $scope.currentSpectrum;
@@ -48,6 +48,9 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, $location
         $scope.spectraLoaded = 0;
         $scope.spectraIndex = 0;
         $scope.spectra = [];
+
+        // Clear pool
+        AsyncService.resetPool();
 
         // Scroll to top of the page
         $window.scrollTo(0, 0);
@@ -137,7 +140,9 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, $location
      */
 
     $scope.addName = function() {
-        $scope.currentSpectrum.names.push('');
+        if ($scope.currentSpectrum.names[$scope.currentSpectrum.names.length - 1] != '') {
+            $scope.currentSpectrum.names.push('');
+        }
     };
 
 
@@ -197,68 +202,73 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, $location
      * Parse spectra
      * @param files
      */
-    $scope.parseFile = function(files) {
+    $scope.parseFiles = function(files) {
         $scope.spectraLoaded = 1;
+
+        $scope.loadedSpectra = 0;
+        $scope.totalSpectra = 0;
 
         for (var i = 0; i < files.length; i++) {
             UploadLibraryService.loadSpectraFile(files[i],
                 function (data, origin) {
                     UploadLibraryService.processData(data, function (spectrum) {
-                        // Create list of ions
-                        spectrum.basePeak = 0;
+                        AsyncService.addToPool(function () {
+                            // Create list of ions
+                            spectrum.basePeak = 0;
 
-                        spectrum.ions = spectrum.spectrum.split(' ').map(function (x) {
-                            x = x.split(':');
-                            var annotation = '';
+                            spectrum.ions = spectrum.spectrum.split(' ').map(function (x) {
+                                x = x.split(':');
+                                var annotation = '';
 
-                            for (var i = 0; i < spectrum.meta.length; i++) {
-                                if (spectrum.meta[i].category == 'annotation' && spectrum.meta[i].value == x[0]) {
-                                    annotation = spectrum.meta[i].name;
+                                for (var i = 0; i < spectrum.meta.length; i++) {
+                                    if (spectrum.meta[i].category == 'annotation' && spectrum.meta[i].value == x[0]) {
+                                        annotation = spectrum.meta[i].name;
+                                    }
                                 }
-                            }
 
-                            var intensity = parseFloat(x[1]);
+                                var intensity = parseFloat(x[1]);
 
-                            if (intensity > spectrum.basePeak) {
-                                spectrum.basePeak = intensity;
-                            }
+                                if (intensity > spectrum.basePeak) {
+                                    spectrum.basePeak = intensity;
+                                }
 
-                            return {
-                                ion: parseFloat(x[0]),
-                                intensity: intensity,
-                                annotation: annotation,
-                                selected: true
-                            }
-                        });
-
-                        // Get structure from InChIKey if no InChI is provided
-                        if (angular.isDefined(spectrum.inchiKey) && angular.isUndefined(spectrum.inchi)) {
-                            gwCtsService.convertInchiKeyToMol(spectrum.inchiKey, function (molecule) {
-                                if (molecule != null) {
-                                    spectrum.molFile = molecule;
+                                return {
+                                    ion: parseFloat(x[0]),
+                                    intensity: intensity,
+                                    annotation: annotation,
+                                    selected: true
                                 }
                             });
-                        }
 
-                        // Remove annotations and origin from metadata
-                        spectrum.meta = spectrum.meta.filter(function(metadata) {
-                            if (metadata.name == 'origin') {
-                                spectrum.origin = metadata.name;
-                                return false;
-                            } else {
-                                return angular.isUndefined(metadata.category) || metadata.category != 'annotation';
+                            // Get structure from InChIKey if no InChI is provided
+                            if (angular.isDefined(spectrum.inchiKey) && angular.isUndefined(spectrum.inchi)) {
+                                gwCtsService.convertInchiKeyToMol(spectrum.inchiKey, function (molecule) {
+                                    if (molecule != null) {
+                                        spectrum.molFile = molecule;
+                                    }
+                                });
                             }
-                        });
 
-                        // Add an empty metadata field if none exist
-                        if (spectrum.meta.length == 0) {
-                            spectrum.meta.push({name: '', value: ''});
-                        }
+                            // Remove annotations and origin from metadata
+                            spectrum.meta = spectrum.meta.filter(function(metadata) {
+                                if (metadata.name == 'origin') {
+                                    spectrum.origin = metadata.name;
+                                    return false;
+                                } else {
+                                    return angular.isUndefined(metadata.category) || metadata.category != 'annotation';
+                                }
+                            });
 
-                        $scope.$apply(function () {
-                            $scope.spectra.push(spectrum);
-                            $scope.spectraLoaded = 2;
-                            setSpectrum(0);
+                            // Add an empty metadata field if none exist
+                            if (spectrum.meta.length == 0) {
+                                spectrum.meta.push({name: '', value: ''});
+                            }
+
+                            $scope.$broadcast('AddSpectrum', spectrum);
+
+                            var defered = $q.defer();
+                            defered.resolve(true);
+                            return defered.promise;
                         });
                     }, origin);
                 },
@@ -412,7 +422,8 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, $location
             }
 
             if ((angular.isUndefined($scope.spectra[i].inchi) || $scope.spectra[i].inchi == '') &&
-                    (angular.isUndefined($scope.spectra[i].molFile) || $scope.spectra[i].molFile == '')) {
+                    (angular.isUndefined($scope.spectra[i].molFile) || $scope.spectra[i].molFile == '') &&
+                    (angular.isUndefined($scope.spectra[i].smiles) || $scope.spectra[i].smiles == '')) {
                 $scope.spectra[i].errors.push('This spectrum requires a structure in order to upload. Please provide a MOL file or InChI code!');
             }
 
@@ -448,6 +459,23 @@ moaControllers.CleanSpectraDataController = function ($scope, $window, $location
 
             $location.path('/uploadstatus');
         }
+    };
+
+
+    /**
+     *
+     */
+    $scope.$on('AddSpectrum', function(event, spectrum) {
+        $scope.spectra.push(spectrum);
+        $scope.loadedSpectra++;
+        $scope.spectraLoaded = 2;
+
+        // Force update of current spectrum if needed
+        setSpectrum($scope.spectraIndex);
+    });
+
+    $scope.isLoadingSpectra = function() {
+        return AsyncService.hasPooledTasks();
     };
 
 
