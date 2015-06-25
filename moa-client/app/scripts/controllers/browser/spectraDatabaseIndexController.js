@@ -72,21 +72,28 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
      * initialization and population of metadata values
      */
     (function list() {
-        MetadataService.metadata(
-            function(data) {
-                for(var i = 0; i < data.length; i++) {
-                    for(var j = 0; j < $scope.fields.length; j++) {
-                        if(data[i].name == $scope.fields[j]) {
-                            queryMetadataValues(data[i].id);
-                            break;
-                        }
-                    }
-                }
-            },
-            function (error) {
-                $log.error('metadata failed: ' + error);
-            }
-        );
+        //MetadataService.metadata(
+        //    function(data) {
+        //        for(var i = 0; i < data.length; i++) {
+        //            for(var j = 0; j < $scope.fields.length; j++) {
+        //                if(data[i].name == $scope.fields[j]) {
+        //                    queryMetadataValues(data[i].id);
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //    },
+        //    function (error) {
+        //        $log.error('metadata failed: ' + error);
+        //    }
+        //);
+
+        // Temporary fix
+        queryMetadataValues(148); // ion mode
+        queryMetadataValues(138); // instrument type
+        queryMetadataValues(233); // ms type
+        queryMetadataValues(770); // precursor type
+        queryMetadataValues(8792); // derivative type
 
         queryTotalStatistics();
     })();
