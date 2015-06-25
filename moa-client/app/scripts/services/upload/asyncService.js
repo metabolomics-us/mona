@@ -68,4 +68,13 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
 
         timeout = $interval(handlePool, poolRate);
     };
+
+    this.hasPooledTasks = function() {
+        return pool.length > 0;
+    };
+
+    this.resetPool = function() {
+        pool = [];
+        timeout = null;
+    }
 });
