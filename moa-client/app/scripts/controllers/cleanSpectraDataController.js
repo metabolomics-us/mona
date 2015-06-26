@@ -453,6 +453,11 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
                 UploadLibraryService.uploadStartTime = new Date().getTime();
             }
 
+            // Re-add origin to metadata:
+            for (var i = 0; i < $scope.spectra.length; i++) {
+                $scope.spectra[i].meta.push({name: 'origin', value: $scope.spectra[i].origin})
+            }
+
             UploadLibraryService.uploadSpectra($scope.spectra, function (spectrum) {
                 spectrum.$batchSave();
             }, $scope.spectrum);
