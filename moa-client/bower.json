@@ -18,7 +18,7 @@
     "es5-shim": "~2.1.0",
     "components-font-awesome": "~4.1.0",
     "ng-tags-input": "~2.1.1",
-    "ngInfiniteScroll": "1.0.0",
+    "ngInfiniteScroll": "1.2.1",
     "angular-cts-service": "http://bitbucket.org/fiehnlab/angular-cts-service.git#latest",
     "angular-msp-parser": "http://bitbucket.org/fiehnlab/angular-msp-parser.git#latest",
     "angular-mgf-parser": "http://bitbucket.org/fiehnlab/angular-mgf-parser.git#latest",
