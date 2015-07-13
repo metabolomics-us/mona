@@ -26,7 +26,8 @@ RUN apt-get install -y libnet-ip-perl
 RUN apt-get install -y libgeo-ipfree-perl
 
 # Install Jetty
-ADD http://eclipse.org/downloads/download.php?file=/jetty/stable-8/dist/jetty-distribution-8.1.17.v20150415.tar.gz&r=1 /opt/jetty.tar.gz
+ADD http://eclipse.org/downloads/download.php?file=/jetty/8.1.17.v20150415/dist/jetty-distribution-8.1.17.v20150415.tar.gz&r=1 /opt/jetty.tar.gz
+#ADD http://eclipse.org/downloads/download.php?file=/jetty/stable-8/dist/jetty-distribution-8.1.17.v20150415.tar.gz&r=1 /opt/jetty.tar.gz
 #ADD http://eclipse.org/downloads/download.php?file=/jetty/stable-8/dist/jetty-distribution-8.1.16.v20140903.tar.gz&r=1 /opt/jetty.tar.gz
 RUN tar -xvf /opt/jetty.tar.gz -C /opt/
 RUN rm /opt/jetty.tar.gz
