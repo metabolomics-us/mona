@@ -250,13 +250,12 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
                             }
 
                             // Remove annotations and origin from metadata
+                            spectrum.hiddenMetadata = spectrum.meta.filter(function(metadata) {
+                                return metadata.name == 'origin' || (angular.isDefined(metadata.category) && metadata.category == 'annotation');
+                            });
+
                             spectrum.meta = spectrum.meta.filter(function(metadata) {
-                                if (metadata.name == 'origin') {
-                                    spectrum.origin = metadata.name;
-                                    return false;
-                                } else {
-                                    return angular.isUndefined(metadata.category) || metadata.category != 'annotation';
-                                }
+                                return metadata.name != 'origin' && (angular.isUndefined(metadata.category) || metadata.category != 'annotation');
                             });
 
                             // Add an empty metadata field if none exist
@@ -451,6 +450,11 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
                 UploadLibraryService.failedSpectraCount = 0;
                 UploadLibraryService.uploadedSpectraCount = 0;
                 UploadLibraryService.uploadStartTime = new Date().getTime();
+            }
+
+            // Re-add origin and annotations to metadata:
+            for (var i = 0; i < $scope.spectra.length; i++) {
+                $scope.spectra[i].meta.push.apply($scope.spectra[i].meta, $scope.spectra[i].hiddenMetadata);
             }
 
             UploadLibraryService.uploadSpectra($scope.spectra, function (spectrum) {
