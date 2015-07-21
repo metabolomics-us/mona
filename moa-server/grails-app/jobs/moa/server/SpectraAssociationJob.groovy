@@ -1,5 +1,6 @@
 package moa.server
 
+import grails.converters.JSON
 import moa.Spectrum
 import moa.server.curation.SpectraAssociationService
 import moa.server.curation.SpectraCurationService
@@ -62,7 +63,19 @@ class SpectraAssociationJob {
                     FireJobs.fireSpectraAssociationJob([spectraId: id])
                 }
 
-            } else {
+            }
+            else if (data.query) {
+
+                def spectra = spectraQueryService.queryForIds(JSON.parse(data.query))
+
+                spectra.each { id ->
+                    log.debug("scheduling spectra for association with id: ${id}")
+                    FireJobs.fireSpectraAssociationJob([spectraId: id])
+                }
+
+
+            }
+            else {
                 log.info("\t=>\tno spectraId was provided!")
             }
         }

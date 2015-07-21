@@ -8,6 +8,7 @@ import moa.Compound
 import moa.Name
 import moa.Spectrum
 import moa.Submitter
+import moa.Tag
 import org.apache.log4j.Logger
 import org.hibernate.exception.LockAcquisitionException
 import util.FireJobs
@@ -25,80 +26,90 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
     static final massbankSubmiters = [
             'BML': 'Washington State University',
             'BSU': 'Boise State University',
-            'CA': 'Kyoto University',
-            'CE': 'MPI for Chemical Ecology',
-            'CO': 'University of Connecticut',
-            'EA': 'Eawag',
-            'EQ': 'Eawag',
+            'CA' : 'Kyoto University',
+            'CE' : 'MPI for Chemical Ecology',
+            'CO' : 'University of Connecticut',
+            'EA' : 'Eawag',
+            'EQ' : 'Eawag',
             'FFF': 'PFOS Research Group',
             'FIO': 'CPqRR/FIOCRUZ',
-            'FU': 'Fukuyama University',
+            'FU' : 'Fukuyama University',
             'GLS': 'GL Sciences Inc.',
             'JEL': 'JEOL Ltd.',
-            'JP': 'University of Tokyo',
+            'JP' : 'University of Tokyo',
             'KNA': 'NAIST',
-            'KO': 'Keio University',
-            'KZ': 'Kazusa DNA Research Institute',
+            'KO' : 'Keio University',
+            'KZ' : 'Kazusa DNA Research Institute',
             'MCH': 'Osaka MCHRI',
             'MSJ': 'Mass Spectrometry Society of Japan',
-            'MT': 'Metabolon, Inc.',
-            'NU': 'Nihon University',
+            'MT' : 'Metabolon, Inc.',
+            'NU' : 'Nihon University',
             'OUF': 'Osaka University',
-            'PB': 'IPB Halle',
-            'PR': 'RIKEN',
-            'TT': 'Tottori University',
-            'TY': 'University of Toyama',
-            'UF': 'Helmholtz Centre for Environmental Research',
-            'UO': 'University of Occupational and Environmental Health',
-            'UT': 'Chubu University',
-            'WA': 'Nihon Waters K.K.'
+            'PB' : 'IPB Halle',
+            'PR' : 'RIKEN',
+            'TT' : 'Tottori University',
+            'TY' : 'University of Toyama',
+            'UF' : 'Helmholtz Centre for Environmental Research',
+            'UO' : 'University of Occupational and Environmental Health',
+            'UT' : 'Chubu University',
+            'WA' : 'Nihon Waters K.K.'
     ]
 
     @Override
     boolean executeRule(CurationObject toValidate) {
         Spectrum s = toValidate.getObjectAsSpectra()
 
-
         // Get massbank origin filename
         String filename = null;
 
         String authors = null;
 
-        for(metaData in s.getMetaData()) {
-            if(metaData.getName() == "origin") {
+        boolean isMB = false;
+        for (metaData in s.getMetaData()) {
+            if (metaData.getName() == "origin") {
+                filename = metaData.getValue();
+            } else if (metaData.getName() == "accession") {
                 filename = metaData.getValue();
             }
-            if(metaData.getName() == "authors") {
+
+            if (metaData.getName() == "authors") {
                 authors = metaData.getValue();
+
+                for (Tag tag : s.getTags()) {
+                    if (tag.text.equalsIgnoreCase("massbank")) {
+                        isMB = true;
+                    }
+                }
             }
 
         }
 
         // Fail this curation step if no origin is given or if it does not exist in the data table
-        if(filename == null)  {
+        if (filename == null && !isMB) {
             logger.info("No filename for spectrum ${s.getId()}")
             return false
         }
 
 
-        filename = filename.replaceAll("\\s", "").substring(0, 4).replaceAll("\\d", "");
+        if (filename != null) {
+            filename = filename.replaceAll("\\s", "").substring(0, 4).replaceAll("\\d", "");
+        }
 
         // Update submitter for massbank records
-        if(s.submitter.firstName == 'Gert' || s.submitter.emailAddress == filename + '@MassBank.jp') {
+        if (s.submitter.firstName == 'Gert' || s.submitter.emailAddress == filename + '@MassBank.jp') {
 
-            if(massbankSubmiters[filename] != null) {
+            if (isMB || massbankSubmiters[filename] != null) {
                 Spectrum.withTransaction {
 
 
                     try {
 
                         associate(authors, s, filename)
-                    } catch (LockAcquisitionException e){
-                        FireJobs.fireSpectraAssociationJob([spectraId:s.id])
+                    } catch (LockAcquisitionException e) {
+                        FireJobs.fireSpectraAssociationJob([spectraId: s.id])
                     }
                 }
-            }
-            else{
+            } else {
                 logger.error("not a massbank file: ${filename}")
             }
         }
@@ -109,35 +120,46 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
 
     private void associate(String authors, Spectrum s, String filename) {
 
-        Submitter submitter = Submitter.findOrSaveByEmailAddress(filename + '@MassBank.jp');
+        Submitter submitter = Submitter.findOrCreateByEmailAddress(filename + '@MassBank.jp');
 
-        //try to get the first name out of the authors field
-        def names = authors.split(",");
+        if (!submitter.validate()) {
+            //first last name
+            if (authors.contains(",")) {
+                //try to get the first name out of the authors field
+                def names = authors.split(",");
 
-        if (names.length > 0) {
-            names = names[0].split(" ")
+                if (names.length > 0) {
+                    names = names[0].split(" ")
 
-            if (names.length >= 2) {
-                submitter.firstName = names[0]
-                submitter.lastName = names[1]
+                    if (names.length >= 2) {
+                        submitter.firstName = names[0]
+                        submitter.lastName = names[1]
+                    }
+                }
             }
+            //no known pattern
+            else {
+                submitter.firstName = authors;
+                submitter.lastName = authors;
+            }
+
+
+            if (filename == null) {
+                submitter.institution = authors
+            } else {
+                submitter.institution = massbankSubmiters[filename]
+            }
+
+            submitter.password = "password-${System.currentTimeMillis()}"
+            submitter.accountEnabled = false
         }
 
-
-
-        submitter.institution = massbankSubmiters[filename]
-        submitter.password = "password-${System.currentTimeMillis()}"
-        submitter.accountEnabled = false
         submitter.addToSpectra(s)
         s.submitter = submitter
 
-        if (submitter.validate()) {
-            submitter.save()
-            s.save()
+        submitter.save()
+        s.save()
 
-        } else {
-            throw new ValidationException("sorry there were some errors", submitter.errors)
-        }
     }
 
     @Override
