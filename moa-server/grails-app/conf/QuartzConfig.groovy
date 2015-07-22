@@ -24,13 +24,13 @@ quartz {
         scheduler.skipUpdateCheck = true
         scheduler.instanceName = 'mon'
         scheduler.instanceId = 'AUTO'
-        scheduler.idleWaitTime = 5000
+        scheduler.idleWaitTime = 1000
         scheduler.makeSchedulerThreadDaemon = true
 
         threadPool.'class' = 'org.quartz.simpl.SimpleThreadPool'
         //use n-2 threads or 2 otherwise
         threadPool.threadCount = Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() -2 : 2
-        threadPool.threadPriority = 7
+        //threadPool.threadPriority = 7
         threadPool.makeThreadsDaemons = true
 
         jobStore.misfireThreshold = 60000
@@ -59,7 +59,7 @@ environments {
     }
     development {
         quartz {
-            autoStartup = false
+            autoStartup = true
         }
     }
 
