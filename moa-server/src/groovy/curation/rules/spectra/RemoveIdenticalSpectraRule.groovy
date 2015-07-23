@@ -34,7 +34,7 @@ class RemoveIdenticalSpectraRule extends AbstractCurationRule{
             }
         }
 
-        identical.sort(new Comparator<Spectrum>() {
+        Collections.sort(identical,new Comparator<Spectrum>() {
             @Override
             int compare(Spectrum o1, Spectrum o2) {
                 return o2.score.getRelativeScore().compareTo(o1.score.getRelativeScore())
