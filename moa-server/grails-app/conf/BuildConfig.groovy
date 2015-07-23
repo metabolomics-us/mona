@@ -119,28 +119,27 @@ grails.project.dependency.resolution = {
         compile ":jetty:2.0.3"
 
         // plugins for the compile step
-        //compile ":hibernate:3.6.10.15"
-        compile ":hibernate4:4.3.5.4"
-        compile ":rest-client-builder:2.0.0"
-        //compile ":quartz:1.0-RC11"
+        compile ":hibernate4:4.3.5.2"
+        compile ":rest-client-builder:2.1.1"
 
-        compile ":quartz:1.0.2"
+        compile ":quartz:1.0.3-SNAPSHOT"
         compile ":cache:1.1.8"
         compile ":url-mappings-generator:0.1"
 
         // plugins needed at runtime but not for compilation
-        runtime ":database-migration:1.3.8"
-        runtime ":resources:1.2.1"
-        //runtime ":cors:1.1.4"
+        runtime ":database-migration:1.4.1-SNAPSHOT"
+        runtime ":resources:1.2.8"
         runtime ":jquery:1.11.1"
-        runtime ':twitter-bootstrap:3.1.1.3'
+        runtime ':twitter-bootstrap:3.3.4'
 
         // spring security
-        compile ":spring-security-core:2.0-RC3"
-        compile ":spring-security-rest:1.5.0.M1", {
+        compile ":spring-security-core:2.0-RC5"
+        compile ":spring-security-rest:1.5.1"
+        /*
+        , {
 	        excludes "spring-security-core", "jackson-core"
         }
-
+          */
         compile ":grails-melody:1.56.0"
 
 
