@@ -166,8 +166,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * @param id
      * @param index
      */
-    $scope.viewSpectrum = function (id, index) {
+    $scope.viewSpectrum = function (id, $index) {
         SpectrumCache.setBrowserSpectra($scope.spectra);
+        SpectrumCache.setSpectrum($scope.spectra[$index]);
 
         $location.path('/spectra/display/' + id);
     };
@@ -235,12 +236,17 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         QueryCache.setSpectraQuery(query);
     };
 
+    $scope.$on('$viewContentLoaded', function(){
+        $timeout(function () {
+            $(window).scrollTop($scope.spectraScrollStartLocation);
+        }, 1);
+    });
+
 
     /**
      * our list view and default view
      */
     (function list() {
-        // Get tags from cache
         TaggingService.query(
             function (data) {
                 $scope.tags = data;
@@ -253,15 +259,11 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         console.log(SpectrumCache.hasBrowserSpectra())
 
         if (SpectrumCache.hasBrowserSpectra()) {
-            var scrollPos = SpectrumCache.getBrowserSpectraScrollLocation();
-
+            $scope.spectraScrollStartLocation = SpectrumCache.getBrowserSpectraScrollLocation();
             $scope.spectra = SpectrumCache.getBrowserSpectra();
             SpectrumCache.removeBrowserSpectra();
-
-            $timeout(function () {
-                $(window).scrollTop(scrollPos ? scrollPos : 0);
-            }, 0);
         } else {
+            $scope.spectraScrollStartLocation = 0;
             $scope.spectra = [];
 
             // Submit our initial query
