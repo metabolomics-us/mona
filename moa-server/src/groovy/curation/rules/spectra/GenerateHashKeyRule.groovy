@@ -21,9 +21,6 @@ class GenerateHashKeyRule extends AbstractCurationRule {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
-        Sql sql = Sql.newInstance(dataSource)
-
-        sql.execute("select calculateHash(?)",[spectrum.id])
 
         return true
     }
@@ -35,6 +32,6 @@ class GenerateHashKeyRule extends AbstractCurationRule {
 
     @Override
     String getDescription() {
-        return "generates an unique hash key for a provided spectra"
+        return "generates the splash"
     }
 }
