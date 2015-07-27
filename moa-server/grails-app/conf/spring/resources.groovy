@@ -10,7 +10,7 @@ import util.caching.SpectrumKeyGenerator
 // Place your Spring DSL code here
 beans = {
     // Authentication beans
-    restAuthenticationTokenJsonRenderer(SubmitterRestAuthenticationTokenJsonRenderer)
+    accessTokenJsonRenderer(SubmitterRestAuthenticationTokenJsonRenderer)
 
     //rest service generation for client side stuff
     rest(grails.plugins.rest.client.RestBuilder)
