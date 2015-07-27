@@ -29,9 +29,9 @@
     <div class="col-md-12" ng-show="table == false">
         <div ng-repeat="spectrum in spectra" >
             <div class="panel panel-default">
-                <div class="panel-heading">
+                <div class="panel-heading" ng-click="viewSpectrum(spectrum.id, $index)">
                     <div class="panel-title">
-                        <a ng-href="#/spectra/display/{{spectrum.id}}">
+                        <a href="">
                             <i class="fa fa-external-link fa-fw"></i> Spectrum {{spectrum.id}}:
                             {{spectrum.biologicalCompound.names[0].name}}
                         </a>
@@ -110,8 +110,7 @@
             <tbody>
             <tr ng-show="spectra.length == 0">
             </tr>
-            <tr ng-repeat="spectrum in spectra"
-                ng-click="viewSpectrum(spectrum.id, $index)">
+            <tr ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
                 <td>
                     {{spectrum.id}}
                 </td>
