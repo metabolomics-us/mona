@@ -28,9 +28,14 @@ import curation.rules.spectra.IsCleanSpectraRule
 import curation.rules.spectra.IsDuplicatedSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.spectra.RemoveIdenticalSpectraRule
+import curation.rules.spectra.RemoveTinyIonRule
 import curation.rules.tree.GenerateFragmentationTreesRuleForMassBank
 
 beans {
+
+    removeTinyIonRule(RemoveTinyIonRule){ bean ->
+        bean.autowire = 'byName'
+    }
 
     //generate our hashkeys for unique spectra identification
     generateHashKeyRule(GenerateHashKeyRule){ bean ->
@@ -222,8 +227,10 @@ beans {
                 deleteMetaDataRule,
                 generateHashKeyRule,
                 dropNoneWantedMetaDataRule,
+                removeTinyIonRule,
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,
+
 
                 //order doesn't really matter here
                 metadataCuration,

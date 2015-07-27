@@ -1,0 +1,17 @@
+<span class="dropdown" dropdown>
+    <a href class="" dropdown-toggle>
+        <i class='fa fa-search'></i>
+        <span class="left7"></span>
+        <span ng-transclude></span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu">
+        <li><a ng-click="newQuery()">Create new query</a></li>
+        <li><a ng-click="addToQuery()">Add to query</a></li>
+        <li><a ng-click="removeFromQuery()">Remove from query</a></li>
+
+        <li ng-show="$parent.auth.isAdmin()" class="divider"></li>
+        <li ng-show="$parent.auth.isAdmin()"><a ng-click="curateSpectra()">curate submitters spectra</a></li>
+
+    </ul>
+</span>

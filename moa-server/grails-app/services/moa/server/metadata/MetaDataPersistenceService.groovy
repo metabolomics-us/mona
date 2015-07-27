@@ -32,15 +32,19 @@ class MetaDataPersistenceService {
      * @param deleteNow should it deleted this instance or just marked as invisible
      */
     public void removeMetaDataValue(MetaDataValue value, def deleteNow = false) {
-        if(value.isDirty()){
+        //if(value.isDirty()){
             value.refresh()
-        }
+        //}
         log.info("deleting metadata value object: ${value}")
 
         if(deleteNow) {
+            log.info("deleting: ${value}")
+
+
             value.merge()
             value.metaData.removeFromValue(value)
             value.owner.removeFromMetaData(value)
+
             value.delete()
         }
         else {
@@ -77,7 +81,7 @@ class MetaDataPersistenceService {
             return
         }
 
-        if (current.name.toString().length() == 0 || current.value.toString().length() == null) {
+        if (current.name.toString().length() == 0 || current.value.toString().trim().length() == 0) {
             log.warn("received null data for some reason, object was ${object}")
             return
         }

@@ -1,6 +1,7 @@
 package curation.rules.spectra
 
 import curation.CurationObject
+import moa.Ion
 import moa.Spectrum
 import org.apache.log4j.Logger
 import curation.AbstractCurationRule
@@ -28,15 +29,12 @@ class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
 
         logger.debug("checking precision of mass spec...")
 
-        String spectra = spectrum.spectrum
-
         boolean result = false
 
         def pattern = /[0-9]+.[0-9]{${minPrecision}}/
-        spectra.split(" ").each { String ionPair ->
+        spectrum.ions.each { Ion i ->
 
-
-            String ion = ionPair.split(":")[0]
+            String ion = i.mass.toString()
 
             def matcher = (ion =~ pattern)
             if(matcher.matches()){

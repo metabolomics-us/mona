@@ -5,6 +5,17 @@ import util.FireJobs
 
 class SpectraCurationController {
 
+    static allowedMethods = [
+            curate:"GET",
+            curateNow:"GET",
+            curateAll:"GET",
+            curateAllByQuery: ["POST","GET"],
+            associateByQuery: ["POST","GET"],
+
+            associate: "GET",
+            associateAll: "GET"
+    ]
+
     static responseFormats = ['json']
 
     SpectraCurationService spectraCurationService
@@ -53,10 +64,21 @@ class SpectraCurationController {
 
         render(text: "scheduling association of ${id} succesful!")
     }
+
+    def associateByQuery(){
+
+        def query = request.getJSON().toString()
+
+        log.info("received query: ${query}")
+
+        FireJobs.fireSpectraAssociationJob([query: query])
+
+        render(text: "associating all spectra, by query!")
+    }
     /**
      * curates spectra found by the given query the format is the same as in the query service
      */
-    def curateByQuery() {
+    def curateAllByQuery() {
 
         def query = request.getJSON().toString()
 

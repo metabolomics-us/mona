@@ -12,12 +12,15 @@ app.directive('showQuery', function ($compile) {
         /**
          * watches for changes and is used to modify the query terms on the fly
          * @param $scope
-         * @param QueryCache
          * @param $log
          * @param $rootScope
          */
-        controller: function ($scope, QueryCache, $log, $rootScope) {
-            $scope.query = QueryCache.getSpectraQuery();
+        controller: function ($scope, $log, $rootScope,SpectraQueryBuilderService) {
+            $scope.status = {
+                isOpen : false
+            };
+
+            $scope.query = SpectraQueryBuilderService.getQuery();
             $scope.result = [];
 
             $scope.$on('spectra:query', function (event, data) {
@@ -29,6 +32,9 @@ app.directive('showQuery', function ($compile) {
             });
 
 
+            $scope.$on('spectra:query:show', function(event, data) {
+                $scope.status.isOpen = !$scope.status.isOpen;
+            });
         },
 
         //decorate our elements based on there properties

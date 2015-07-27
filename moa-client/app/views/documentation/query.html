@@ -172,6 +172,15 @@
                     <td>in</td>
                     <td>the value is in a list of options</td>
                 </tr>
+                <tr>
+                    <td>isNull</td>
+                    <td>any value or blank string</td>
+                </tr>
+                <tr>
+                    <td>isNotNull</td>
+                    <td>any value or blank string</td>
+                </tr>
+
 
                 </tbody>
             </table>
@@ -212,6 +221,49 @@
         <div>
             <h4>Updates</h4>
 
+            <p>
+                To run updates against the system, you can utilize the same approach as running queries. But currently the update is very limited to added or removing tags.
+
+                <h5>
+                    An example to add a tag for a number of specified spectra ids
+                </h5>
+
+                <pre>
+
+                    {
+                        query:
+
+                        {
+                            id:
+                                [
+                                    {
+                                        value:
+                                            {
+                                                in: [199]
+                                            }
+                                    }
+                                ]
+                        }
+
+                        update:
+
+                        {
+                            tags :
+                                [
+                                    'addMyTag',
+                                    '-removeMyTag'
+                                ]
+                        }
+                    }
+                </pre>
+
+                The endpoint for this would be
+
+                <pre>
+                    http://mona.fiehnlab.ucdavis.edu/rest/spectra/batch/update
+                </pre>
+
+            </p>
         </div>
     </div>
 </div>
