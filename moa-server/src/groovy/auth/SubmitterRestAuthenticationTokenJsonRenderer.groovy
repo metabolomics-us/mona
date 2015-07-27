@@ -1,16 +1,16 @@
 package auth
 
-import com.odobo.grails.plugin.springsecurity.rest.RestAuthenticationToken
-import com.odobo.grails.plugin.springsecurity.rest.token.rendering.RestAuthenticationTokenJsonRenderer
+import grails.plugin.springsecurity.rest.token.AccessToken
+import grails.plugin.springsecurity.rest.token.rendering.AccessTokenJsonRenderer
 import groovy.json.JsonBuilder
 import moa.Submitter
 
 /**
  * Created by sajjan on 2/27/15.
  */
-class SubmitterRestAuthenticationTokenJsonRenderer implements RestAuthenticationTokenJsonRenderer {
+class SubmitterRestAuthenticationTokenJsonRenderer implements AccessTokenJsonRenderer {
     @Override
-    String generateJson(RestAuthenticationToken restAuthenticationToken) {
+    String generateJson(AccessToken restAuthenticationToken) {
         def submitter = Submitter.findByEmailAddress(restAuthenticationToken.principal.username);
 
         def response = new AuthResponse(
@@ -19,7 +19,7 @@ class SubmitterRestAuthenticationTokenJsonRenderer implements RestAuthentication
                 firstName: submitter.firstName,
                 lastName: submitter.lastName,
                 institution: submitter.institution,
-                access_token: restAuthenticationToken.tokenValue,
+                access_token: restAuthenticationToken.accessToken,
                 roles: restAuthenticationToken.authorities
         )
 

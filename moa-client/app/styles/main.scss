@@ -4,6 +4,21 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstr
 @import "../bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
 // endbower
 
+/**
+ * rotate it by 45 degrees to make it a hash
+ */
+i.fa-slack {
+  -ms-transform: rotate(19deg);
+  -webkit-transform: rotate(19deg);
+  transform: rotate(19deg);
+}
+
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;

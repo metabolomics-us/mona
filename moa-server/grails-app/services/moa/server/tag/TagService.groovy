@@ -20,7 +20,7 @@ class TagService {
         Tag tag = Tag.findOrSaveByText(tagName/*, [lock: true]*/)
 
         //avoids duplicated tagging
-        if (TagLink.findOrSaveByTagAndOwner(tag, meta) == null) {
+        if (TagLink.findByTagAndOwner(tag, meta) == null) {
 
             TagLink link = new TagLink()
             link.owner = meta

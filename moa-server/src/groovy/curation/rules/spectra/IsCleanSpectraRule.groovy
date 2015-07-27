@@ -40,6 +40,10 @@ class IsCleanSpectraRule extends AbstractCurationRule {
         return toValidate.isSpectra()
     }
 
+    protected boolean failByDefault() {
+        return false;
+    }
+
     @Override
     boolean executeRule(CurationObject toValidate) {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
@@ -48,24 +52,35 @@ class IsCleanSpectraRule extends AbstractCurationRule {
         int countOfPeaks = 0
         int countOfNoisyPeaks = 0
 
+        logger.info("having: ${spectrum.spectrum}")
         spectrum.ions.each {
             countOfPeaks++
 
-            if (Double.parseDouble(it.intensity) < noisePercentage) {
+            if (it.intensity < noisePercentage) {
                 countOfNoisyPeaks++
             }
         }
 
-        double ratio = countOfNoisyPeaks / countOfPeaks * 100
+        try {
+            double ratio = countOfNoisyPeaks / countOfPeaks * 100
 
-        logger.info("noise ratio: ${ratio}, spectra is")
+            logger.info("noise ratio: ${ratio}, spectra is")
 
-        if (ratio > percentOfSpectraIsNoise) {
-            logger.info("\t => dirty!")
-            return false
-        } else {
-            logger.info("\t => clean!")
-            return true
+            if (ratio > percentOfSpectraIsNoise) {
+                logger.info("\t => dirty!")
+                return false
+            } else {
+                logger.info("\t => clean!")
+                return true
+            }
+
+        }
+        catch (Exception e){
+            logger.error("something wrong with this spectrum: ${spectrum.id}")
+            logger.error("spectra: " + spectrum.spectrum)
+            logger.error(e.getMessage(),e);
+            //something odd, but not dirty
+            return true;
         }
 
     }
