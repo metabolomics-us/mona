@@ -273,7 +273,7 @@ class SpectraQueryService {
                         // handle email address
                         catch (NumberFormatException e) {
                             //build our specific query
-                            queryOfDoomWhere += " s.hash = :spectraId_${index}"
+                            queryOfDoomWhere += " s.splash.splash = :spectraId_${index}"
                             executionParams."spectraId_${index}" = current
                         }
 

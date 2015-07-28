@@ -77,18 +77,18 @@ environments {
         grails.logging.jul.usebridge = true
         grails.converters.default.pretty.print = true
 
-	    logdirectory = "/var/log/mona/"
+        logdirectory = "/var/log/mona/"
     }
     test {
         grails.logging.jul.usebridge = true
         grails.converters.default.pretty.print = true
 
-	    logdirectory = "/var/log/mona/"
+        logdirectory = "/var/log/mona/"
     }
-    lipid{
+    lipid {
         grails.converters.default.pretty.print = true
 
-	    logdirectory = "/var/log/mona/"
+        logdirectory = "/var/log/mona/"
     }
     production {
         grails.logging.jul.usebridge = false
@@ -113,42 +113,42 @@ log4j = {
         file name: 'monaMemoryStatistics', file: "${logdirectory}monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaSpectraValidationStatistics', file: "${logdirectory}monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaDeleteStatistics', file: "${logdirectory}monaDelete.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'sql',   file: "${logdirectory}sql.log", append: false, layout: pattern(conversionPattern: '%-5c{1} %d{HH:mm:ss.SSS} %n%n%m%n%n'), threshold: org.apache.log4j.Level.TRACE
+        file name: 'sql', file: "${logdirectory}sql.log", append: false, layout: pattern(conversionPattern: '%-5c{1} %d{HH:mm:ss.SSS} %n%n%m%n%n'), threshold: org.apache.log4j.Level.TRACE
 
     }
 
     root {
-        warn 'stdout'
+        error 'stdout'
         debug 'file'
         error 'error'
     }
 
     //info file: 'grails.app'
+    debug 'grails.app'
 
 
-    error 'org.codehaus.groovy.grails.web.servlet',        // controllers
+    error 'org.codehaus.groovy.grails.web.mapping',        // URL mapping
             'org.codehaus.groovy.grails.web.pages',          // GSP
             'org.codehaus.groovy.grails.web.sitemesh',       // layouts
-            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-            'org.codehaus.groovy.grails.web.mapping',        // URL mapping
             'org.codehaus.groovy.grails.commons',            // core / classloading
-            'org.codehaus.groovy.grails.plugins',            // plugins
-            'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
-            'org.springframework'
+            'org.springframework',
+            'org.codehaus.groovy.grails.orm.hibernate'      // hibernate integration
+
+    debug 'org.codehaus.groovy.grails.web.servlet',        // controllers
+            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+            'org.codehaus.groovy.grails.plugins'            // plugins
             //'org.hibernate',
             //'net.sf.ehcache.hibernate',
             //'org.quartz.plugins.history.LoggingTriggerHistoryPlugin'
 
-    //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
+            //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
-    debug 'org.quartz.plugins'
-    debug 'grails.app'
-    debug monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
-    debug monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
-    debug monaDeleteStatistics: ['grails.app.jobs.moa.server.DeleteSpectraJob']
+    debug additivity: false, monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
+    debug additivity: false, monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
+    debug additivity: false, monaDeleteStatistics: ['grails.app.jobs.moa.server.DeleteSpectraJob']
 
-    debug monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
-    debug monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
+    debug additivity: false, monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
+    debug additivity: false, monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
 
 
     debug additivity: false, sql: ['org.hibernate.SQL']
@@ -158,28 +158,18 @@ log4j = {
 
     environments {
         test {
-	        debug 'stdout', additivity: false
+            debug 'stdout', additivity: false
             debug stdout: ['grails.app', 'grails.app.services', 'util.query', 'moa.server.query'], additivity: false
 
-	        error 'org.springframework.security', 'grails.app.resourceMappers'
+            error 'org.springframework.security', 'grails.app.resourceMappers'
         }
 
         development {
 
             debug 'util.chemical'
             debug 'curation'
-
-            debug 'grails.app'
             debug 'moa'
             //debug 'grails.plugin.cache'
-
-
-            debug  'com.odobo',
-                    'grails.app.controllers.com.odobo',
-                    'grails.app.services.com.odobo',
-                    'org.pac4j'
-
-
 
             info 'org.hibernate.SQL'
             info 'org.hibernate.type.descriptor.sql.BasicBinder'
@@ -190,7 +180,7 @@ log4j = {
             info file: 'grails.app'
 
             error stdout:
-                   'grails.app'
+                    'grails.app'
 
 
             debug 'util.chemical'
@@ -232,17 +222,16 @@ grails.cache.enabled = false
 
 grails.cache.keyGenerator = "cacheKey"
 
-
 // Set additional config locations
 grails.config.locations = []
 grails.config.locations << SpringSecurityConfig
 
-cors.enabled=true
+cors.enabled = true
 cors.url.pattern = '/rest/*'
-cors.headers=[
-        'Access-Control-Allow-Origin': '*',
+cors.headers = [
+        'Access-Control-Allow-Origin'     : '*',
         'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Headers': 'origin, authorization, accept, content-type, x-requested-with, X-Auth-Token',
-        'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS',
-        'Access-Control-Max-Age': 3600
+        'Access-Control-Allow-Headers'    : 'origin, authorization, accept, content-type, x-requested-with, X-Auth-Token',
+        'Access-Control-Allow-Methods'    : 'GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS',
+        'Access-Control-Max-Age'          : 3600
 ]
