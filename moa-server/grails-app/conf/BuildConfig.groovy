@@ -109,6 +109,9 @@ grails.project.dependency.resolution = {
 	    compile("com.fasterxml.jackson.core:jackson-core:2.3.2")
 	    compile("com.fasterxml.jackson.core:jackson-databind:2.3.0")
 	    compile("com.github.fge:json-schema-validator:2.2.6")
+
+        compile "edu.ucdavis.fiehnlab.splash:java:1.0-SNAPSHOT"
+
     }
 
     plugins {
@@ -141,7 +144,6 @@ grails.project.dependency.resolution = {
         }
           */
         compile ":grails-melody:1.56.0"
-
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0.1"

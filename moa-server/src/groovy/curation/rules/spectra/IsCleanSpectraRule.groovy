@@ -52,11 +52,14 @@ class IsCleanSpectraRule extends AbstractCurationRule {
         int countOfPeaks = 0
         int countOfNoisyPeaks = 0
 
+        logger.info("noise percentage: ${noisePercentage}" )
         logger.info("having: ${spectrum.spectrum}")
+
         spectrum.ions.each {
             countOfPeaks++
 
-            if (it.intensity < noisePercentage) {
+            logger.info("intensity: ${it.intensity}")
+            if (it.intensity * 100 < noisePercentage) {
                 countOfNoisyPeaks++
             }
         }

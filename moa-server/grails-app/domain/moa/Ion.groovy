@@ -8,7 +8,7 @@ class Ion extends SupportsMetaData implements Comparable<Ion> {
     /**
      * we are always formating to n digits
      */
-    static NumberFormat formatter = new DecimalFormat("#.####");
+    static NumberFormat formatter = new DecimalFormat("#.######");
 
     static constraints = {
     }
