@@ -2,10 +2,11 @@ package moa
 
 import curation.scoring.Scoreable
 import moa.scoring.Score
+import moa.splash.Splash
 
 class Spectrum extends SupportsMetaData implements Scoreable {
 
-    static transients = ["spectrum"]
+    static transients = ["spectrum","hash"]
 
     Date dateCreated
     Date lastUpdated
@@ -22,7 +23,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      */
     static hasMany = [
             comments: Comment,
-            ions: Ion
+            ions    : Ion
     ]
 
     /**
@@ -50,7 +51,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         batchSize(50)
         version false
         comments /*fetch: 'join',*/ cascade: 'all-delete-orphan'
-       // ions lazy:false
+        // ions lazy:false
         //chemicalCompound lazy:false
         //biologicalCompound lazy:false
         //predictedCompound lazy:false
@@ -59,12 +60,20 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         //submitter lazy:false
     }
 
-
+    /**
+     * returns a sorted spectra for us
+     * @return
+     */
     String getSpectrum() {
         if (ions == null) {
             return ""
         }
-        return ions.join(" ")
+        return ions.sort(false, new Comparator<Ion>() {
+            @Override
+            int compare(Ion o1, Ion o2) {
+                return o1.getMass().compareTo(o2.getMass())
+            }
+        }).join(" ")
     }
 
     void setSpectrum(String spectrum) {
@@ -106,7 +115,20 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     Compound predictedCompound
 
     /**
-     * dedicated spectra hashcode
+     * related splash code
      */
-    String hash
+    Splash splash
+
+    /**
+     * quick access method to not change existing format
+     * @return
+     */
+    String getHash(){
+        if(splash != null){
+            return  splash.getSplash();
+
+        }
+
+        return "not yet calculated!"
+    }
 }

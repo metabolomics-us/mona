@@ -2,8 +2,10 @@ package curation.rules.spectra
 
 import curation.AbstractCurationRule
 import curation.CurationObject
-import groovy.sql.Sql
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
+import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import moa.Spectrum
+import moa.splash.Splash
 
 import javax.sql.DataSource
 
@@ -21,6 +23,17 @@ class GenerateHashKeyRule extends AbstractCurationRule {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
+        Splash splash = spectrum.getSplash();
+
+        if(splash == null){
+            splash = new Splash();
+            splash.spectrum = spectrum
+            spectrum.splash = splash
+        }
+
+        splash.splash = (SplashUtil.splash(spectrum.getSpectrum(),SpectraType.MS))
+
+        splash.save()
 
         return true
     }
