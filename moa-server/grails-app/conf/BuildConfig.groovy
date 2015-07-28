@@ -140,7 +140,6 @@ grails.project.dependency.resolution = {
 	        excludes "spring-security-core", "jackson-core"
         }
           */
-        compile ":grails-melody:1.56.0"
 
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
