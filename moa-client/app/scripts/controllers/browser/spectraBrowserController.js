@@ -254,16 +254,16 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             }
         );
 
-        if (SpectrumCache.hasBrowserSpectra()) {
-            $scope.spectraScrollStartLocation = SpectrumCache.getBrowserSpectraScrollLocation();
-            $scope.spectra = SpectrumCache.getBrowserSpectra();
-            SpectrumCache.removeBrowserSpectra();
-        } else {
+        //if (SpectrumCache.hasBrowserSpectra()) {
+        //    $scope.spectraScrollStartLocation = SpectrumCache.getBrowserSpectraScrollLocation();
+        //    $scope.spectra = SpectrumCache.getBrowserSpectra();
+        //    SpectrumCache.removeBrowserSpectra();
+        //} else {
             $scope.spectraScrollStartLocation = 0;
             $scope.spectra = [];
 
             // Submit our initial query
             $scope.submitQuery();
-        }
+        //}
     })();
 };
