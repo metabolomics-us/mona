@@ -30,6 +30,7 @@ class SpectraConversionService {
         writeMetaData(spectrum.biologicalCompound?.metaData, buffer, converter, "COMPOUND")
         writeTags(spectrum.biologicalCompound?.tags, buffer, converter, "COMPOUND")
 
+// Ignore all but the biological compound to conform to export standard
 //        writeName(spectrum.chemicalCompound?.names, buffer, converter, "DERIVATIZED")
 //        writeMetaData(spectrum.chemicalCompound?.metaData, buffer, converter, "DERIVATIZED")
 //        writeTags(spectrum.chemicalCompound?.tags, buffer, converter, "DERIVATIZED")
@@ -38,8 +39,15 @@ class SpectraConversionService {
 //        writeMetaData(spectrum.predictedCompound?.metaData, buffer, converter, "VIRTUAL_DERIVATIZED")
 //        writeTags(spectrum.predictedCompound?.tags, buffer, converter, "VIRTUAL_DERIVATIZED")
 
-        writeMetaData(spectrum.metaData, buffer, converter)
+        // Separate annotations from metadata
+        Collection<MetaDataValue> metadata = spectrum.metaData.findAll { it.category != 'annotation' };
+        Collection<MetaDataValue> annotations = spectrum.metaData.findAll { it.category == 'annotation' };
+
+
+        writeMetaData(metadata, buffer, converter)
         writeTags(spectrum.tags, buffer, converter)
+
+        log.error(annotations)
 
 
         String ms = spectrum.spectrum
@@ -50,8 +58,7 @@ class SpectraConversionService {
 
         for (String ion : ionPairs) {
             String[] values = ion.split(":")
-
-            massSpectraConverter(values[0], values[1], buffer,null)
+            massSpectraConverter(values[0], values[1], buffer, annotations)
         }
 
         buffer.append("\n")
@@ -66,7 +73,6 @@ class SpectraConversionService {
      * @return
      */
     String convertToMsp(Spectrum spectrum) {
-
         /**
          * converts data into MSP
          */
@@ -77,14 +83,21 @@ class SpectraConversionService {
             writer.append("\n")
         }
 
-        def massSpectraConverter = { def ion, def intensity, StringBuffer writer, String category ->
-//            if (category) {
-//                writer.append(category.toUpperCase())
-//                writer.append("\$")
-//            }
+        def massSpectraConverter = { def ion, def intensity, StringBuffer writer, Collection<MetaDataValue> annotations ->
             writer.append(ion)
             writer.append(" ")
             writer.append(intensity)
+
+            if (annotations) {
+                for (MetaDataValue metaDataValue in annotations) {
+                    if (Math.abs(Double.parseDouble(metaDataValue.value) - Double.parseDouble(ion)) < 0.0001) {
+                        writer.append(" \"")
+                        writer.append(metaDataValue.name)
+                        writer.append("\"")
+                    }
+                }
+            }
+
             writer.append("\n")
         }
 
@@ -148,7 +161,5 @@ class SpectraConversionService {
                 }
             }
         }
-
     }
-
 }
