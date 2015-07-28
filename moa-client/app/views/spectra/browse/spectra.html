@@ -3,6 +3,11 @@
 <div class="row">
     <div class="col-md-12">
         <div show-query></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
         <div class="form-group">
             <button class="btn btn-primary" ng-click="table = true" tooltip-placement="right" tooltip="click, to display the data in tabular mode"
                     tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
@@ -18,8 +23,18 @@
                     tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-search fa-fw"  ></i>
             </button>
+        </div>
+    </div>
 
-            <div spectra-download></div>
+    <div class="col-md-4 ">
+        <div class="pull-right">
+            <!--<div spectra-download class=""></div>-->
+
+            <button class="btn btn-primary" ng-click="displayQuery()" tooltip-placement="left"
+                    tooltip="this is the number of your received results, click to see more query details">
+
+                <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{queryResultCount}}
+            </button>
         </div>
     </div>
 </div>
