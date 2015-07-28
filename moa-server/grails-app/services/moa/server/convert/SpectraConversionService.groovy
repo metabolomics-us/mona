@@ -47,12 +47,8 @@ class SpectraConversionService {
         writeMetaData(metadata, buffer, converter)
         writeTags(spectrum.tags, buffer, converter)
 
-        log.error(annotations)
-
-
-        String ms = spectrum.spectrum
-
-        String[] ionPairs = ms.split(" ")
+        
+        String[] ionPairs = spectrum.spectrum.split(" ")
 
         converter("Num Peaks", ionPairs.length, buffer, null)
 
