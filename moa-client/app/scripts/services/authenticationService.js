@@ -10,6 +10,18 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
     var self = this;
     self.loggingIn = false;
 
+    var handleLoginSuccess = function(response) {
+        // In progress to handle errors more gracefully
+        if (response.status == 200) {
+
+        }
+        $rootScope.currentUser = response.data;
+        $http.defaults.headers.common['X-Auth-Token'] = response.data.access_token;
+        CookieService.update('AuthorizationToken', response.data.access_token);
+
+        $rootScope.$broadcast('auth:login-success', data, status, headers, config);
+    };
+
     /**
      * log us in
      */
