@@ -255,12 +255,7 @@ class UrlMappings {
          * error related parts
          */
         "500"(controller: "error", action: "handle500")
+        "403"(controller: "error", action: "handle403")
         "404"(controller: "error", action: "handle404")
-
-        /**
-         * outdated links, will be removed at some point in time
-         */
-
-
     }
 }

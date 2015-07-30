@@ -4,6 +4,10 @@ import grails.converters.JSON
 
 class ErrorController {
 
+    def handle403() {
+        response.status = 403
+        render([message: "this endpoint is only accessible with a valid authentication token!"] as JSON)
+    }
 
     def handle404() {
         response.status = 404
