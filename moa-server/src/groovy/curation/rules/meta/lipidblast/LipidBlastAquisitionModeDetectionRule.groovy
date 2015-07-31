@@ -1,4 +1,5 @@
 package curation.rules.meta.lipidblast
+import static util.MetaDataFieldNames.*
 
 import curation.actions.MetaDataSuspectAction
 import curation.rules.AbstractMetaDataCentricRule
@@ -16,14 +17,13 @@ class LipidBlastAquisitionModeDetectionRule  extends AbstractMetaDataCentricRule
 
     private Logger logger = Logger.getLogger(getClass())
 
-    private static final String FIELD = "precursortype"
 
-    private static final String ION_MODE = "ion mode"
 
     MetaDataPersistenceService metaDataPersistenceService
 
     LipidBlastAquisitionModeDetectionRule() {
-        super(new MetaDataSuspectAction(FIELD, false), new MetaDataSuspectAction(FIELD, true))
+        this.successAction = (new MetaDataSuspectAction(PRECURSORTYPE, false))
+        this.failureAction = new MetaDataSuspectAction(PRECURSORTYPE, true)
 
     }
 
@@ -33,7 +33,7 @@ class LipidBlastAquisitionModeDetectionRule  extends AbstractMetaDataCentricRule
         boolean hasIonModeSpecified = false
         value.getOwner().metaData.each {MetaDataValue v ->
 
-            if(v.getName() == "ion mode"){
+            if(v.getName() == IONMODE){
                 hasIonModeSpecified = true
             }
         }
@@ -41,11 +41,11 @@ class LipidBlastAquisitionModeDetectionRule  extends AbstractMetaDataCentricRule
         if(!hasIonModeSpecified) {
             //positive mode
             if (value.getValue().toString().trim().endsWith("+")) {
-                metaDataPersistenceService.generateMetaDataObject(value.owner,[name:ION_MODE,value:"positive",computed:true])
+                metaDataPersistenceService.generateMetaDataObject(value.owner,[name:IONMODE,value:"positive",computed:true])
             }
             //negative mode
             else if (value.getValue().toString().trim().endsWith("-")) {
-                metaDataPersistenceService.generateMetaDataObject(value.owner,[name:ION_MODE,value:"negative",computed:true])
+                metaDataPersistenceService.generateMetaDataObject(value.owner,[name:IONMODE,value:"negative",computed:true])
             }
         }
         else{
@@ -60,8 +60,8 @@ class LipidBlastAquisitionModeDetectionRule  extends AbstractMetaDataCentricRule
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue value) {
-        logger.debug("checking ${value.name} against defined field ${FIELD}")
-        if (value.name.toLowerCase().equals(FIELD.toLowerCase())) {
+        logger.debug("checking ${value.name} against defined field ${PRECURSORTYPE}")
+        if (value.name.toLowerCase().equals(PRECURSORTYPE.toLowerCase())) {
             return true
         }
         return false

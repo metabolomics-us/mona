@@ -1,4 +1,7 @@
 package curation
+
+import util.MetaDataFieldNames
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth

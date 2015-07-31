@@ -48,7 +48,7 @@ class GCMSAdductCurationRule extends AbstractAdductCurationRule {
     @Override
     boolean isValidSpectraForRule(Spectrum spectrum) {
         for (Tag s : spectrum.getTags()) {
-            if (s.text == CommonTags.GCMS_SPECTRA) {
+            if (s.text == GCMS_SPECTRA) {
                 return true
             }
         }
