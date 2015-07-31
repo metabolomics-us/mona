@@ -5,6 +5,7 @@ import curation.rules.AbstractMetaDataCentricRule
 import moa.MetaDataValue
 import moa.server.metadata.MetaDataPersistenceService
 import org.apache.log4j.Logger
+import static util.MetaDataFieldNames.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,14 +17,11 @@ class LipidBlastMSMSDetectionRule extends AbstractMetaDataCentricRule {
 
     private Logger logger = Logger.getLogger(getClass())
 
-    private static final String FIELD = "precursortype"
-
-    private static final String TO_CHECK = "ms type"
-
     MetaDataPersistenceService metaDataPersistenceService
 
     LipidBlastMSMSDetectionRule() {
-        super(new MetaDataSuspectAction(FIELD, false), new MetaDataSuspectAction(FIELD, true))
+        this.successAction = new MetaDataSuspectAction(PRECURSORTYPE, false)
+        this.failureAction = new MetaDataSuspectAction(PRECURSORTYPE, true)
 
     }
 
@@ -33,16 +31,16 @@ class LipidBlastMSMSDetectionRule extends AbstractMetaDataCentricRule {
         boolean hasFieldSpecified = false
         value.getOwner().metaData.each { MetaDataValue v ->
 
-            if (v.getName() == TO_CHECK) {
+            if (v.getName() == MS_LEVEL) {
                 hasFieldSpecified = true
             }
         }
 
         if (!hasFieldSpecified) {
             //positive mode
-            metaDataPersistenceService.generateMetaDataObject(value.owner, [name: TO_CHECK, value: "MS2",computed:true])
+            metaDataPersistenceService.generateMetaDataObject(value.owner, [name: MS_LEVEL, value: "MS2", computed: true])
         } else {
-            logger.info("${TO_CHECK} was already specified")
+            logger.info("${MS_LEVEL} was already specified")
         }
         return true
     }
@@ -53,8 +51,8 @@ class LipidBlastMSMSDetectionRule extends AbstractMetaDataCentricRule {
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue value) {
-        logger.debug("checking ${value.name} against defined field ${FIELD}")
-        if (value.name.toLowerCase().equals(FIELD.toLowerCase())) {
+        logger.debug("checking ${value.name} against defined field ${PRECURSORTYPE}")
+        if (value.name.toLowerCase().equals(PRECURSORTYPE.toLowerCase())) {
             return true
         }
         return false

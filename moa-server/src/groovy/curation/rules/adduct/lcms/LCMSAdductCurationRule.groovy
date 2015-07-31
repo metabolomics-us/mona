@@ -5,6 +5,7 @@ import curation.rules.adduct.AbstractAdductCurationRule
 import moa.Spectrum
 import moa.Tag
 import util.chemical.AdductBuilder
+import static util.MetaDataFieldNames.*
 
 /**
  * Created by sajjan on 10/1/14.
@@ -32,7 +33,7 @@ class LCMSAdductCurationRule extends AbstractAdductCurationRule {
     @Override
     boolean isValidSpectraForRule(Spectrum spectrum) {
         for(Tag s : spectrum.getTags()){
-            if(s.text == CommonTags.LCMS_SPECTRA){
+            if(s.text ==LCMS_SPECTRA){
                 return true
             }
         }

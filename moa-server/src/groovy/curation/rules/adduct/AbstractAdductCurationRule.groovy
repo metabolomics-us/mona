@@ -8,6 +8,8 @@ import moa.Spectrum
 import moa.SupportsMetaData
 import moa.server.metadata.MetaDataPersistenceService
 
+import static util.MetaDataFieldNames.*
+
 /**
  * Created by sajjan on 10/9/14.
  */
@@ -116,8 +118,8 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
 
         if (isValidSpectraForRule(spectrum)) {
             // Get mass and ion mode
-            def compoundMass = findMetaDataValue(spectrum.getBiologicalCompound(), "total exact mass");
-            def ionMode = findMetaDataValue(spectrum, "ion mode")
+            def compoundMass = findMetaDataValue(spectrum.getBiologicalCompound(), TOTALT_EXACT_MASS);
+            def ionMode = findMetaDataValue(spectrum, IONMODE)
 
             // Check that mass and ion mode were found
             if (compoundMass == null) {

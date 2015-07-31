@@ -5,6 +5,7 @@ import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import curation.rules.AbstractMetaDataCentricRule
 import moa.MetaDataValue
+import static util.MetaDataFieldNames.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,16 +15,19 @@ import moa.MetaDataValue
  */
 class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
-    Map<String, String> listOfAcceptedField = ["instrument": ".*gcms.*", "instrument type": ".*gc.*", "ionization energy": "ev"]
+    static Map<String, String> listOfAcceptedField = new HashMap<>();
+
+    static {
+        listOfAcceptedField.put(INSTRUMENT, ".*gcms.*")
+        listOfAcceptedField.put(INSTRUMENT_TYPE, ".*gc.*")
+        listOfAcceptedField.put(IONIZATION_ENERGY, "ev")
+    }
 
     def GCMSSpectraIdentificationRule() {
-        this.successAction = new AddTagAction(GCMS_SPECTRA)
+        this.successAction = (new AddTagAction(GCMS_SPECTRA))
         this.failureAction = new RemoveTagAction(GCMS_SPECTRA)
     }
 
-    def GCMSSpectraIdentificationRule(CurationAction successAction, CurationAction failureAction) {
-        super(successAction, failureAction)
-    }
 
     @Override
     protected boolean acceptMetaDataValue(MetaDataValue val) {
@@ -56,6 +60,7 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
         for (String s in listOfAcceptedField.keySet()) {
             if (field.name.toLowerCase().equals(s.toLowerCase())) {
+                logger.info("found field: ${field.name}")
                 return true
             }
         }
@@ -66,7 +71,7 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
     @Override
     String getDescription() {
-        return "this rule calculates if the Spectrum comes from a GCMS system"
+        return "this rule calculates if the Spectrum comes from a GCMS system, the utilized fields are: ${listOfAcceptedField}"
     }
 
     @Override

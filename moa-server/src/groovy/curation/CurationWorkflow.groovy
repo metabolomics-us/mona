@@ -37,7 +37,7 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
         logger.debug("running ${rules.size()} rules")
 
         rules.each { CurationRule rule ->
-            logger.debug("having to run: ${rule.getDescription()}")
+            logger.debug("having to run: ${rule.getClass().getName()}:${rule.getDescription()}")
         }
 
         boolean workflowResult = true;
