@@ -26,7 +26,7 @@ class RemoveIdenticalSpectraRule extends AbstractCurationRule{
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
-        def identical = Spectrum.findAllByHashAndChemicalCompound(spectrum.hash,spectrum.biologicalCompound)
+        def identical = Spectrum.findAllBySplashAndChemicalCompound(spectrum.splash,spectrum.biologicalCompound)
 
         identical.each {Spectrum compare ->
             if(compare.score == null) {

@@ -6,6 +6,8 @@ import moa.Spectrum
 import moa.server.metadata.MetaDataPersistenceService
 import org.openscience.cdk.Molecule
 
+import static util.MetaDataFieldNames.*
+
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
@@ -68,7 +70,7 @@ class PredictedMMinus15Rule extends AbstractCurationRule {
 
                 addTag(toValidate, "has M-15")
 
-                metaDataPersistenceService.generateMetaDataObject(spectrum, [name: "M-15", value: (mMinus15), category: "annotation", computed: true])
+                metaDataPersistenceService.generateMetaDataObject(spectrum, [name: MOLECULAR_MASS_MINUS_15, value: (mMinus15), category: "annotation", computed: true])
 
 
                 return true

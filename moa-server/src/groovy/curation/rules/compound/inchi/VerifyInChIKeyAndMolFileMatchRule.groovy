@@ -8,6 +8,8 @@ import moa.server.metadata.MetaDataPersistenceService
 import org.openscience.cdk.Molecule
 import org.openscience.cdk.inchi.InChIGenerator
 import org.openscience.cdk.inchi.InChIGeneratorFactory
+import static util.MetaDataFieldNames.*
+
 /**
  * computes the InChI Key from the mol file and check's if it's identical with the provided one.
  *
@@ -16,6 +18,7 @@ import org.openscience.cdk.inchi.InChIGeneratorFactory
  * Time: 9:42 AM
  */
 class VerifyInChIKeyAndMolFileMatchRule extends AbstractCompoundRule {
+
     MetaDataPersistenceService metaDataPersistenceService
 
     VerifyInChIKeyAndMolFileMatchRule() {
@@ -43,8 +46,8 @@ class VerifyInChIKeyAndMolFileMatchRule extends AbstractCompoundRule {
         logger.debug("\t=> match(${equals}")
 
 
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "calculated InChI Code", value: gen.inchi, category: "computed", computed: true])
-        metaDataPersistenceService.generateMetaDataObject(compound, [name: "calculated InChI Key", value: gen.inchiKey, category: "computed", computed: true])
+        metaDataPersistenceService.generateMetaDataObject(compound, [name: CALCULATED_INCHI_CODE, value: gen.inchi, category: "computed", computed: true])
+        metaDataPersistenceService.generateMetaDataObject(compound, [name: CALCULATED_INCHI_KEY, value: gen.inchiKey, category: "computed", computed: true])
 
 
         def compoundKey = compound.inchiKey.split("-")

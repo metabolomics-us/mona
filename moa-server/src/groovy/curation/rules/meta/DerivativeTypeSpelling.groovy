@@ -6,6 +6,7 @@ import moa.MetaData
 import moa.MetaDataValue
 import moa.server.metadata.MetaDataPersistenceService
 import org.apache.log4j.Logger
+import static util.MetaDataFieldNames.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,12 +17,12 @@ import org.apache.log4j.Logger
 class DerivativeTypeSpelling extends AbstractMetaDataCentricRule {
 
     private Logger logger = Logger.getLogger(getClass())
-    private static final String FIELD = "derivative type"
 
     MetaDataPersistenceService metaDataPersistenceService
 
     DerivativeTypeSpelling() {
-        super(new MetaDataSuspectAction(FIELD, false), new MetaDataSuspectAction(FIELD, true))
+        this.successAction = (new MetaDataSuspectAction(DERIVATISATION_TYPE, false))
+        this.failureAction = new MetaDataSuspectAction(DERIVATISATION_TYPE, true)
 
     }
 
@@ -62,7 +63,7 @@ class DerivativeTypeSpelling extends AbstractMetaDataCentricRule {
             newValue = "${matcher[0][1]} TMS"
         } else {
 
-            logger.info("invalid value ($myValue) for ${FIELD}")
+            logger.info("invalid value ($myValue) for ${DERIVATISATION_TYPE}")
             this.getFailureAction().setReason(("provide value, doesn't match any known regular expression"))
 
             return false
@@ -86,8 +87,8 @@ class DerivativeTypeSpelling extends AbstractMetaDataCentricRule {
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue value) {
-        logger.debug("checking ${value.name} against defined field ${FIELD}")
-        if (value.name.toLowerCase().equals(FIELD.toLowerCase())) {
+        logger.debug("checking ${value.name} against defined field ${DERIVATISATION_TYPE}")
+        if (value.name.toLowerCase().equals(DERIVATISATION_TYPE.toLowerCase())) {
             return true
         }
         return false
