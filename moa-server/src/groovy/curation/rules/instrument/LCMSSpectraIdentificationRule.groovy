@@ -8,6 +8,7 @@ import curation.actions.RemoveTagAction
 import curation.rules.AbstractMetaDataCentricRule
 
 import java.util.regex.Pattern
+import static util.MetaDataFieldNames.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,35 +19,16 @@ import java.util.regex.Pattern
 class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     private Logger logger = Logger.getLogger(getClass())
 
-    Map<String, List<String>> listOfAcceptedField = [
-            "instrument":
-                    [
-                            ".*lcms.*", ".*ltq.*"
-                    ],
-            "instrument type":
-                    [
-                            ".*lc.*"
-                    ],
-            "solvent":
-                    [
-                            ".*"
-                    ]
-            , "*":
-                    [
-                            "direct infusion"
-                    ],
-              "mobile phase a":
-                    [
-                            ".*"
-                    ]
-            ,
-            "mobile phase b":
-                    [
-                            ".*"
-                    ]
+    static Map<String, List<String>> listOfAcceptedField = new HashMap<>()
 
-    ]
+    static {
+        listOfAcceptedField.put INSTRUMENT, [".*lcms.*", ".*ltq.*"]
+        listOfAcceptedField.put INSTRUMENT_TYPE, [".*lc.*"]
+        listOfAcceptedField.put SOLVENT, [".*"]
+        listOfAcceptedField.put "*", ["direct infusion"]
+        listOfAcceptedField.put MOBILE_PHASE_A, [","]
 
+    }
 
     def LCMSSpectraIdentificationRule() {
         super()
@@ -54,9 +36,6 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
         this.failureAction = new RemoveTagAction(LCMS_SPECTRA)
     }
 
-    def LCMSSpectraIdentificationRule(CurationAction successAction, CurationAction failureAction) {
-        super(successAction, failureAction)
-    }
 
     @Override
     protected boolean acceptMetaDataValue(MetaDataValue val) {

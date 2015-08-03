@@ -6,6 +6,7 @@ import moa.Spectrum
 import moa.server.metadata.MetaDataPersistenceService
 import moa.server.query.SpectraQueryService
 import util.FireJobs
+import static util.MetaDataFieldNames.*
 
 /**
  * attempts to create a fragementation tree for given spectra
@@ -17,6 +18,7 @@ class GenerateFragmentationTreesRuleForMassBank extends AbstractCurationRule{
     /**
      * attempts to build the tree up
      */
+
     private boolean buildTreeToTop = true
 
     /**
@@ -25,7 +27,6 @@ class GenerateFragmentationTreesRuleForMassBank extends AbstractCurationRule{
     private boolean buildTreeToBottom = true
 
 
-    public static final String PARENT_SCAN = "parentScan"
     SpectraQueryService spectraQueryService
 
     MetaDataPersistenceService metaDataPersistenceService
@@ -48,13 +49,13 @@ class GenerateFragmentationTreesRuleForMassBank extends AbstractCurationRule{
         String parent;
 
         for (metaData in spectrum.getMetaData()) {
-            if (metaData.getName().trim() == "accession") {
+            if (metaData.getName().trim() == ACCESSION) {
                 accession = metaData.getValue();
             }
-            if (metaData.getName().trim() == "tms type") {
+            if (metaData.getName().trim() == TMS_TYPE) {
                 msType = metaData.getValue();
             }
-            if (metaData.getName().trim() == "comment") {
+            if (metaData.getName().trim() == COMMENT) {
                 logger.info("checking value: " + metaData.getValue())
 
                 def group = (metaData.getValue().toString() =~ /\[.*\]\s+([A-Z]{2}[0-9]+)/)
@@ -78,7 +79,7 @@ class GenerateFragmentationTreesRuleForMassBank extends AbstractCurationRule{
             def spectra = spectraQueryService.queryForIds([
                     metadata: [
                             [
-                                    name : "accession",
+                                    name : ACCESSION,
                                     value: [
                                             eq: parent
                                     ]

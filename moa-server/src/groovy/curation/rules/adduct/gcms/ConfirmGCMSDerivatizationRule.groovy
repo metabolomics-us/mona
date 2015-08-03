@@ -17,6 +17,8 @@ import util.chemical.FunctionalGroupBuilder
  * Date: 10/15/14
  * Time: 1:15 PM
  */
+import static util.MetaDataFieldNames.*
+
 class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
 
     String field
@@ -27,13 +29,9 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
     boolean enableTagging = true
 
     ConfirmGCMSDerivatizationRule() {
-
-        this("derivative type")
-    }
-
-    ConfirmGCMSDerivatizationRule(String field) {
-        super(new MetaDataSuspectAction(field, false), new MetaDataSuspectAction(field, true))
-        this.field = field
+        this.successAction = (new MetaDataSuspectAction(DERIVATISATION_TYPE, false))
+        this.failureAction = new MetaDataSuspectAction(DERIVATISATION_TYPE, true)
+        field = DERIVATISATION_TYPE
     }
 
     /**
@@ -52,8 +50,7 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
             int count = Integer.parseInt(matcher[0][1].toString())
 
             return count
-        }
-        else if( (stringValue =~ /n+.*TMS/).matches()){
+        } else if ((stringValue =~ /n+.*TMS/).matches()) {
             return Integer.MAX_VALUE
         }
 
@@ -85,7 +82,7 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
             //hydroxyl groups always get all derivatized at once!
             if (count < hydroxylGroups) {
                 if (enableTagging) {
-                    addTag(new CurationObject(spectrum),INVALID_DERIVATIZATION)
+                    addTag(new CurationObject(spectrum), INVALID_DERIVATIZATION)
                 } else {
                     logger.debug("automatic tagging is disabled")
                 }

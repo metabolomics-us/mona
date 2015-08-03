@@ -15,7 +15,7 @@ import org.apache.log4j.Logger
 class RemoveTinyIonRule  extends AbstractCurationRule {
 
     Logger logger = Logger.getLogger(getClass())
-    double maxIntensitity = 0.0001;
+    double maxIntensitity = 0.000001;
 
     @Override
     boolean ruleAppliesToObject(CurationObject toValidate) {

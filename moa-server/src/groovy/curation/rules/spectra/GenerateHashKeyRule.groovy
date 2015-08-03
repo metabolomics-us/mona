@@ -17,8 +17,6 @@ import javax.sql.DataSource
  */
 class GenerateHashKeyRule extends AbstractCurationRule {
 
-    DataSource dataSource
-
     boolean executeRule(CurationObject toValidate) {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()

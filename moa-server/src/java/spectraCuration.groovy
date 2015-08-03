@@ -19,8 +19,10 @@ import curation.rules.meta.DropNoneNecessaryMetaDataRule
 import curation.rules.meta.IsColumnValid
 import curation.rules.meta.PercentageValueRule
 import curation.rules.meta.ProvidedExactMassIsPossibleRule
+import curation.rules.meta.RemapMetadataNames
 import curation.rules.meta.lipidblast.LipidBlastAquisitionModeDetectionRule
 import curation.rules.meta.lipidblast.LipidBlastMSMSDetectionRule
+import curation.rules.spectra.CalculateMassAccuracyRule
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
 import curation.rules.spectra.GenerateHashKeyRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
@@ -30,15 +32,39 @@ import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.spectra.RemoveIdenticalSpectraRule
 import curation.rules.spectra.RemoveTinyIonRule
 import curation.rules.tree.GenerateFragmentationTreesRuleForMassBank
+import static util.MetaDataFieldNames.*
 
 beans {
 
-    removeTinyIonRule(RemoveTinyIonRule){ bean ->
+    remapMetadataNames(RemapMetadataNames) { bean ->
+        bean.autowire = 'byName'
+        mapping = [
+                "precursormz"             : PRECURSOR_MASS,
+                "precursortype"           : PRECURSORTYPE,
+                "adductionname"           : PRECURSORTYPE,
+                "retentiontime"           : RETENTION_TIME,
+                "transfarline temperature": TRANSFER_LINE_TEMPERATURE,
+                "mslevel"                 : MS_LEVEL,
+                "ionmode"                 : IONMODE,
+                "compoundclass"           : COMPOUND_CLASS,
+                "author"                  : AUTHORS,
+                "adduct"                  : ADDUCT,
+                "adductionname"           : ADDUCT,
+                "column"                  : COLUMN_NAME,
+                "derivative form"         : DERIVATIVE_SUM_FORMULA,
+                "molecule formula"        : MOLECULAR_SUM_FORMULA,
+                "molecular formula"       : MOLECULAR_SUM_FORMULA,
+                "mz exact"                : EXACT_MASS
+
+        ]
+    }
+
+    removeTinyIonRule(RemoveTinyIonRule) { bean ->
         bean.autowire = 'byName'
     }
 
     //generate our hashkeys for unique spectra identification
-    generateHashKeyRule(GenerateHashKeyRule){ bean ->
+    generateHashKeyRule(GenerateHashKeyRule) { bean ->
         bean.autowire = 'byName'
     }
 
@@ -180,6 +206,9 @@ beans {
         bean.autowire = 'byName'
     }
 
+    calculateMassAccuracyRule(CalculateMassAccuracyRule) { bean ->
+        bean.autowire = 'byName'
+    }
 
 //set up metadata subcuration workflow
     metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") { bean ->
@@ -212,10 +241,9 @@ beans {
         ]
     }
 
-    generateFragmentationTreesRuleForMassBank(GenerateFragmentationTreesRuleForMassBank){ bean ->
+    generateFragmentationTreesRuleForMassBank(GenerateFragmentationTreesRuleForMassBank) { bean ->
         bean.autowire = 'byName'
     }
-
 
 //define our complete workflow here
     spectraCurationWorkflow(CurationWorkflow) { bean ->
@@ -227,10 +255,11 @@ beans {
                 deleteMetaDataRule,
                 generateHashKeyRule,
                 dropNoneWantedMetaDataRule,
+                remapMetadataNames,
                 removeTinyIonRule,
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,
-
+                calculateMassAccuracyRule,
 
                 //order doesn't really matter here
                 metadataCuration,
@@ -252,6 +281,7 @@ beans {
 
                 //must be the last rule
                 requiresRemoval
+
         ]
 //define and register our curation
     }

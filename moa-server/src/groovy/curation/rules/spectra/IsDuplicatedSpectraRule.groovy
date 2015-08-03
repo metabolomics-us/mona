@@ -9,8 +9,10 @@ import moa.Spectrum
 import moa.Tag
 import moa.server.query.SpectraQueryService
 import org.apache.log4j.Logger
+import static util.MetaDataFieldNames.*
 
 import javax.sql.DataSource
+import static util.MetaDataFieldNames.*
 
 /**
  * remove a spectra incase it's duplicated
@@ -27,18 +29,10 @@ class IsDuplicatedSpectraRule extends AbstractCurationRule {
 
     private Logger logger = Logger.getLogger(getClass())
 
-    /**
-     * noise in percent in relation to the basepeak
-     */
-    double noisePercentage = 2
-
-    /**
-     * how many percent of peaks are in the noise range
-     */
-    double percentOfSpectraIsNoise = 50
 
 
     IsDuplicatedSpectraRule() {
+
         this.successAction = new RemoveTagAction(DUPLICATED_SPECTRA)
         this.failureAction = new AddTagAction(DUPLICATED_SPECTRA)
     }
