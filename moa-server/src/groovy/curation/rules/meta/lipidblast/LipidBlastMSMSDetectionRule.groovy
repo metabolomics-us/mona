@@ -29,7 +29,7 @@ class LipidBlastMSMSDetectionRule extends AbstractMetaDataCentricRule {
     protected boolean acceptMetaDataValue(MetaDataValue value) {
 
         boolean hasFieldSpecified = false
-        value.getOwner().metaData.each { MetaDataValue v ->
+        value.getOwner().listAvailableValues().each { MetaDataValue v ->
 
             if (v.getName() == MS_LEVEL) {
                 hasFieldSpecified = true

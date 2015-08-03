@@ -36,7 +36,7 @@ class HasAssociatedFieldsScoring extends curation.scoring.ScoringRule {
         boolean hasFirst = false;
         boolean hasSecond = false;
 
-        spectrum.metaData.each { MetaDataValue v ->
+        spectrum.listAvailableValues().each { MetaDataValue v ->
             if (v.getName().toLowerCase().equals(firstFieldToHave.toLowerCase())) {
                 hasFirst = true;
             } else if (v.getName().toLowerCase().equals(secondFieldToHave.toLowerCase())) {

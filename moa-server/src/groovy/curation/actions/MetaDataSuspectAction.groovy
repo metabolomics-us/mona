@@ -70,13 +70,15 @@ class MetaDataSuspectAction implements CurationAction {
      */
     private void checkValue(MetaDataValue value) {
         if(value.name != null) {
-            if (value.name.toLowerCase().equals(field)) {
+            if (value.name.toLowerCase().equals(field.toLowerCase())) {
                 logger.debug("Marking metadata " + value.name + " with value " + mark)
 
                 value.suspect = mark
 
                 if (mark) {
                     value.reasonForSuspicion = reason
+
+                    logger.info("reason: ${reason}")
                 } else {
                     value.reasonForSuspicion = ""
                 }

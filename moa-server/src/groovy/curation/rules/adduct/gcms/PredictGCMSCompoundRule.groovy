@@ -37,7 +37,7 @@ class PredictGCMSCompoundRule extends AbstractCurationRule {
         //let's figure our how many tms groups we have
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
-        for (MetaDataValue val : spectrum.metaData) {
+        for (MetaDataValue val : spectrum.listAvailableValues()) {
 
             if (val.getName() == confirmGCMSDerivatizationRule.getField()) {
 

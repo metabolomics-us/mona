@@ -22,13 +22,13 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
 
-        String precursorType = ""
+        String precursorType = null
 
         Double exactMass = null
         Double theoreticalMass = null
 
 
-        spectrum.chemicalCompound.metaData.each { MetaDataValue value ->
+        spectrum.chemicalCompound.listAvailableValues().each { MetaDataValue value ->
 
             for (String option : ["total exact mass"]) {
                 if (value.getName().toLowerCase().equals(option)) {
@@ -41,25 +41,25 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
 
         }
 
-        spectrum.metaData.each { MetaDataValue value ->
+        spectrum.listAvailableValues().each { MetaDataValue value ->
 
-            for (String option : [EXACT_MASS]) {
-                if (value.getName().toLowerCase().equals(option)) {
+            logger.info("value: ${value.getName()} - ${value.getValue()} - ${value.hidden} - ${value.deleted}")
+
+            if (exactMass == null) {
+                if (value.getName().toLowerCase().equals(EXACT_MASS)) {
                     exactMass = Double.parseDouble(value.getValue().toString())
-
-                    break
                 }
             }
 
-            for (String option : [PRECURSORTYPE]) {
+            if (value.getName().toLowerCase().equals(PRECURSOR_MASS.toLowerCase().trim())) {
+                exactMass = Double.parseDouble(value.getValue().toString())
 
-
-                if (value.getName().toLowerCase().equals(option)) {
-                    precursorType = (value.getValue().toString())
-
-                    break
-                }
             }
+
+            if (value.getName().toLowerCase().equals(PRECURSORTYPE.toLowerCase().trim())) {
+                precursorType = (value.getValue().toString())
+            }
+
         }
 
         if (theoreticalMass != null) {
@@ -95,11 +95,11 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
                     }
 
                     Double massError = exactMass - computedMass;
-                    Double accuracy = Math.abs(massError)/exactMass  * 1000000
+                    Double accuracy = Math.abs(massError) / exactMass * 1000000
                     logger.info("accuracy mass: ${accuracy}")
 
-                    metaDataPersistenceService.generateMetaDataObject(spectrum, [name: MASS_ACCURACY, value: accuracy, category: "mass spectrometry", unit:"ppm", computed: true])
-                    metaDataPersistenceService.generateMetaDataObject(spectrum, [name: MASS_ERROR, value: massError*1000, category: "mass spectrometry", unit:"mDa", computed: true])
+                    metaDataPersistenceService.generateMetaDataObject(spectrum, [name: MASS_ACCURACY, value: accuracy, category: "mass spectrometry", unit: "ppm", computed: true])
+                    metaDataPersistenceService.generateMetaDataObject(spectrum, [name: MASS_ERROR, value: massError * 1000, category: "mass spectrometry", unit: "mDa", computed: true])
 
                 } else {
                     logger.warn("no precursor found for this spectra")
