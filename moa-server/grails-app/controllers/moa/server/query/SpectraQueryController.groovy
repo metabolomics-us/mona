@@ -2,7 +2,10 @@ package moa.server.query
 
 import grails.converters.JSON
 import moa.Spectrum
+import moa.auth.AuthenticationToken
 import moa.server.DeleteSpectraJob
+import moa.server.SpectraQueryDownloadJob
+import moa.server.auth.AuthenticationService
 import moa.server.convert.SpectraConversionService
 
 class SpectraQueryController {
@@ -10,6 +13,9 @@ class SpectraQueryController {
     static responseFormats = ['json']
 
     SpectraConversionService spectraConversionService
+
+    AuthenticationService authenticationService
+
 
     /**
      * service to query the backend
@@ -20,7 +26,6 @@ class SpectraQueryController {
      * search function for the query controller
      */
     def search() {
-
         def json = request.JSON
 
         def result = []
@@ -36,13 +41,31 @@ class SpectraQueryController {
             case "msp":
                 for (Spectrum s : result) {
                     render spectraConversionService.convertToMsp(s)
-
                 }
                 break
             default:
                 render(result as JSON)
         }
     }
+
+    /**
+     * download function for query controller
+     */
+    def download() {
+        def json = request.JSON
+        def emailAddress = authenticationService.getSubmitterEmailAddressFromRequest(request)
+
+        if (json.query) {
+            log.info("received query download request: " + json.query +" from "+ emailAddress)
+            SpectraQueryDownloadJob.triggerNow([query: json.query.toString(), emailAddress: emailAddress, max: params.max, offset: params.offset])
+        } else {
+            log.info("received query download request: " + json +" from "+ emailAddress)
+            SpectraQueryDownloadJob.triggerNow([query: json.toString(), emailAddress: emailAddress, max: params.max, offset: params.offset])
+        }
+
+        render([message: "scheduling of download job successful, results will be emailed to "+ emailAddress] as JSON)
+    }
+
 
     def countForSearch(){
         def json = request.JSON

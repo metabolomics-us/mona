@@ -1,5 +1,5 @@
 import auth.SubmitterRestAuthenticationTokenJsonRenderer
-
+import grails.plugins.rest.client.RestBuilder
 import persistence.metadata.filter.Filters
 import persistence.metadata.filter.NameDoesntMatchFilter
 import persistence.metadata.filter.unit.BasicUnitConverter
@@ -9,11 +9,11 @@ import util.caching.SpectrumKeyGenerator
 
 // Place your Spring DSL code here
 beans = {
-    // Authentication beans
+    //authentication beans
     accessTokenJsonRenderer(SubmitterRestAuthenticationTokenJsonRenderer)
 
     //rest service generation for client side stuff
-    rest(grails.plugins.rest.client.RestBuilder)
+    rest(RestBuilder)
 
     //key generation for caching
     cacheKey(SpectrumKeyGenerator)
