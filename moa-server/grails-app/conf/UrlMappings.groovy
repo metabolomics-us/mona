@@ -128,6 +128,11 @@ class UrlMappings {
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
 
         /**
+         * provides us with access to download queries
+         */
+        "/rest/spectra/search/download"(controller: 'spectraQuery', action: 'download')
+
+        /**
          * how many spectra will this query return
          */
         "/rest/spectra/searchCount"(controller: 'spectraQuery', action: 'countForSearch')
