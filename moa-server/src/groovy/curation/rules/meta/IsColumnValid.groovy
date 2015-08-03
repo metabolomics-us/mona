@@ -32,8 +32,8 @@ class IsColumnValid extends AbstractMetaDataCentricRule {
         logger.debug('Diameter and Length: ' + diameterAndLength)
         logger.debug('Length only: ' + onlyLength)
 
-        if (onlyLength == false && diameterAndLength == false) {
-            this.getFailureAction().setReason("length and diameter were not specified!")
+        if (!onlyLength && !diameterAndLength) {
+            ((MetaDataSuspectAction) this.getFailureAction()).setReason("length and diameter were not specified!")
         }
         return (diameterAndLength || onlyLength)
     }

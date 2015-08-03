@@ -29,4 +29,20 @@ class SupportsMetaData {
 
         Collections.unmodifiableCollection(tags)
     }
+
+    /**
+     * provides us access with the avaialbe values
+     * @return
+     */
+    Collection<MetaDataValue> listAvailableValues(){
+        Set data = new HashSet()
+
+        metaData.each {
+            if(it.deleted == false){
+                data.add(it)
+            }
+        }
+
+        return data
+    }
 }

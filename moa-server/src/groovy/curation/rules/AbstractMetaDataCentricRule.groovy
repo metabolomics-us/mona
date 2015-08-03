@@ -41,7 +41,7 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
-        for (MetaDataValue metaDataValue : spectrum.getMetaData()) {
+        for (MetaDataValue metaDataValue : spectrum.listAvailableValues()) {
 
             logger.debug("checking for correct meta data value field: ${metaDataValue.name}")
             if (isCorrectMetaDataField(metaDataValue)) {
