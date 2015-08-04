@@ -70,7 +70,8 @@ grails.exceptionresolver.params.exclude = ['password']
 // configure auto-caching of queries by default (if false you can cache individual queries with 'cache: true')
 grails.hibernate.cache.queries = false
 
-def logdirectory = "./"
+logdirectory = "./"
+queryDownloadDirectory = './query_export/'
 
 environments {
     development {
@@ -95,6 +96,7 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
 
         logdirectory = "/var/log/mona/"
+        queryDownloadDirectory = "/var/data/query_export/"
     }
 }
 
@@ -114,7 +116,6 @@ log4j = {
         file name: 'monaSpectraValidationStatistics', file: "${logdirectory}monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaDeleteStatistics', file: "${logdirectory}monaDelete.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'sql', file: "${logdirectory}sql.log", append: false, layout: pattern(conversionPattern: '%-5c{1} %d{HH:mm:ss.SSS} %n%n%m%n%n'), threshold: org.apache.log4j.Level.TRACE
-
     }
 
     root {
@@ -165,7 +166,6 @@ log4j = {
         }
 
         development {
-
             debug 'util.chemical'
             debug 'curation'
             debug 'moa'
@@ -176,7 +176,6 @@ log4j = {
         }
 
         production {
-
             info file: 'grails.app'
 
             error stdout:
@@ -192,8 +191,6 @@ log4j = {
 //            debug 'org.hibernate.SQL'
 
             //debug 'grails.plugin.cache'
-
-
         }
     }
 }
@@ -214,9 +211,8 @@ grails.cache.config = {
     cache {
         name 'tag'
     }
-
-
 }
+
 
 grails.cache.enabled = false
 

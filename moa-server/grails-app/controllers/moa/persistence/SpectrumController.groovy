@@ -25,10 +25,8 @@ class SpectrumController extends RestfulController<Spectrum> {
     }
 
     protected Map getParametersToBind() {
-
         if (request.JSON) {
-            params.putAll(
-                    request.JSON)
+            params.putAll(request.JSON)
         }
 
         params
@@ -41,7 +39,6 @@ class SpectrumController extends RestfulController<Spectrum> {
 
     @Override
     def show() {
-
         def spectrum = spectraQueryService.query(params.id as long)
 
         switch (params.format) {
@@ -68,8 +65,7 @@ class SpectrumController extends RestfulController<Spectrum> {
         return spectraPersistenceService.create(params)
     }
 
-    def singleSave(){
-
+    def singleSave() {
         String text = request.getReader().text
 
         SpectraUploadJob.triggerNow([spectra: text])
@@ -77,7 +73,6 @@ class SpectrumController extends RestfulController<Spectrum> {
     }
 
     def batchSave() {
-
         if (request.JSON) {
             if (request.JSON instanceof JSONArray) {
                 JSONArray array = request.JSON
@@ -86,7 +81,6 @@ class SpectrumController extends RestfulController<Spectrum> {
                     if (array.get(i) instanceof JSONObject) {
                         log.info("trigger uploading spectra")
                         SpectraUploadJob.triggerNow([spectra: array.getJSONObject(i).toString()])
-
                     }
                 }
 
@@ -108,10 +102,10 @@ class SpectrumController extends RestfulController<Spectrum> {
      * uploads a spectra to the service without queuing
      * @return
      */
-    def upload(){
-
+    def upload() {
         render spectraPersistenceService.create(request.JSON)
     }
+
     /**
      * dynamic query methods to deal with different url mappings based on mapping ids
      * @param params
@@ -119,7 +113,6 @@ class SpectrumController extends RestfulController<Spectrum> {
      */
     @Override
     protected List<Spectrum> listAllResources(Map params) {
-
         log.info("params: ${params}")
 
         def query = [:]
@@ -136,7 +129,6 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         //if a category is specified
         if (params.MetaDataId) {
-
             def object = [id: params.MetaDataId]
 
             //if we also have a category
@@ -160,11 +152,7 @@ class SpectrumController extends RestfulController<Spectrum> {
             query.metadata.add(object)
         }
 
-
-
         log.info("build query: ${query as JSON}")
         return spectraQueryService.query(query, params)
     }
-
-
 }

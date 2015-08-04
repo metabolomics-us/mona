@@ -36,7 +36,6 @@ grails.project.dependency.resolution = {
     // whether to do a secondary resolve on plugin installation, not advised and here for backwards compatibility
 
     repositories {
-
         grailsPlugins()
         grailsHome()
         mavenLocal()
@@ -110,8 +109,10 @@ grails.project.dependency.resolution = {
 	    compile("com.fasterxml.jackson.core:jackson-databind:2.3.0")
 	    compile("com.github.fge:json-schema-validator:2.2.6")
 
-        compile "edu.ucdavis.fiehnlab.splash:java:1.0-SNAPSHOT"
+        compile("edu.ucdavis.fiehnlab.splash:java:1.0-SNAPSHOT")
 
+        compile("javax.mail:mail:1.4")
+        compile("com.sun.mail:smtp:1.5.4")
     }
 
     plugins {
@@ -140,9 +141,9 @@ grails.project.dependency.resolution = {
         compile ":spring-security-rest:1.5.1"
         /*
         , {
-	        excludes "spring-security-core", "jackson-core"
+            excludes "spring-security-core", "jackson-core"
         }
-          */
+        */
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0.1"

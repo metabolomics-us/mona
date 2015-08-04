@@ -114,13 +114,11 @@ class SpectraQueryService {
                 return []
             }
             def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc", [ids: ids])
+
             //println "$queryOfDoom"
-
-            //  log.debug("result count: ${result.size()}")
-
+            //log.debug("result count: ${result.size()}")
 
             statisticsService.acquire(System.currentTimeMillis() - begin, "text search", "${json}", "search")
-
 
             return result
         }
@@ -140,7 +138,6 @@ class SpectraQueryService {
      */
     @Transactional
     def queryForIds(Map json, int limit = -1, int offset = -1) {
-
         def params = [:]
 
         if (limit != -1) {
@@ -157,9 +154,7 @@ class SpectraQueryService {
 
         (queryOfDoom, executionParams) = generateFinalQuery(json)
 
-
         return Spectrum.executeQuery(queryOfDoom, executionParams, params)
-
     }
 
     /**
@@ -168,8 +163,6 @@ class SpectraQueryService {
      * @return
      */
     Integer getCountForQuery(Map json) {
-
-
         def queryOfDoom = null
         def executionParams = null
 
@@ -217,10 +210,10 @@ class SpectraQueryService {
         //assemble the query of doom
         if (count) {
             queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
-
         } else {
             queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere + " group by s.id"
         }
+
         log.debug("generated query: \n\n${queryOfDoom}\n")
         log.debug("parameter matrix:\n\n${executionParams}\n\n")
 
@@ -238,8 +231,6 @@ class SpectraQueryService {
      * @return
      */
     private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
-
-
         if (json.id) {
             if (json.id instanceof Collection && json.id.size() > 0) {
 
@@ -287,8 +278,6 @@ class SpectraQueryService {
                 //handle brackets
                 queryOfDoomWhere += " )"
             }
-
-
         }
 
         if (json.hash) {
@@ -384,14 +373,12 @@ class SpectraQueryService {
      * @return
      */
     private List handleJsonTagsField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
-//handling tags
+        //handling tags
         if (json.tags) {
 
             if (json.tags.size() > 0) {
 
-
                 json.tags.eachWithIndex { current, index ->
-
                     queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                     queryOfDoomJoins += "  inner join s.links as t_${index} "
@@ -412,7 +399,6 @@ class SpectraQueryService {
         }
 
         [queryOfDoomWhere, queryOfDoomJoins]
-
     }
 
     /**
@@ -462,16 +448,12 @@ class SpectraQueryService {
 
         //if we have a compound
         if (json.compound) {
-
-
             queryOfDoomJoins += " inner join s.biologicalCompound as bc"
             queryOfDoomJoins += " inner join s.chemicalCompound as cc"
             queryOfDoomJoins += " left join s.predictedCompound as pc"
 
             //TODO NEEDS TO BE MORE DYNAMIC
             if (json.compound.name) {
-
-
                 queryOfDoomJoins += " left join bc.names as bcn"
                 queryOfDoomJoins += " left join cc.names as ccn"
                 queryOfDoomJoins += " left join pc.names as pcn"
@@ -485,25 +467,22 @@ class SpectraQueryService {
 
             //if we have an inchi key
             if (json.compound.inchiKey) {
-
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "bc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "cc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "pc")
-
             }
 
             //if we have an id key
             if (json.compound.id) {
-
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "bc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "cc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "pc")
 
-//	            if (json.compound.id && !(json.compound.id instanceof Map)) {
+//                if (json.compound.id && !(json.compound.id instanceof Map)) {
 //                    queryOfDoomWhere += "(bc.id = :compund_id or cc.id = :compund_id or pc.id = :compund_id)"
 //                    executionParams.compund_id = json.compound.id as long
 //                } else if (json.compound.id.eq) {
@@ -511,10 +490,9 @@ class SpectraQueryService {
 //                    executionParams.compund_id = json.compound.id.eq as long
 //
 //                } else {
-////                    throw new QueryException("invalid query term: ${json.compound.id}")
-//		            log.error("whats this dude? ${json.compound.id}")
+//                    throw new QueryException("invalid query term: ${json.compound.id}")
+//                    log.error("whats this dude? ${json.compound.id}")
 //                }
-
             }
 
             //if we have metadata
@@ -537,9 +515,7 @@ class SpectraQueryService {
 
                     }
                 }
-
             }
-
         }
 
         [queryOfDoomWhere, queryOfDoomJoins]
@@ -551,7 +527,6 @@ class SpectraQueryService {
      * @return
      */
     private String handleWhereAndAnd(String queryOfDoomWhere) {
-
         if (queryOfDoomWhere.empty) {
             log.info("using where!")
             queryOfDoomWhere += " where "
@@ -579,9 +554,7 @@ class SpectraQueryService {
     def update(queryContent, update) {
         def result = queryForIds(queryContent);
 
-
         //go over all spectra
-
         result.each { def id ->
 
             log.info("id: ${id.class}")
@@ -665,5 +638,4 @@ class SpectraQueryService {
 
         log.info("finished delete operation")
     }
-
 }
