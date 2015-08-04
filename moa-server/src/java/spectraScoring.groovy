@@ -3,6 +3,8 @@ import curation.scoring.spectrum.HasAssociatedFieldsScoring
 import curation.scoring.spectrum.HasFieldScoring
 import curation.scoring.ScoringWorkflow
 
+import static util.MetaDataFieldNames.*
+
 /**
  * configuration of all the scorings to be done in the system
  */
@@ -18,17 +20,17 @@ beans {
      */
     [
             'ri',
-            'ion mode',
+            IONMODE,
             'injection',
             'injection volume',
-            'column',
+            COLUMN_NAME,
             'mass resolution',
-            'instrument',
-            'instrument type',
-            'derivative type',
-            'exact mass',
+            INSTRUMENT,
+            INSTRUMENT_TYPE,
+            DERIVATISATION_TYPE,
+            EXACT_MASS,
             'collision energy',
-            'ms type',
+            MS_LEVEL,
             [field: 'fragmentation method', impact: 0.1],
             'data processing',
             'column temperature'
@@ -68,38 +70,35 @@ beans {
 
     [
 
-            [first: 'instrument', second: 'instrument type', failure: 0.0],
+            [first: INSTRUMENT, second: INSTRUMENT_TYPE, failure: 0.0],
 
             //retention time and column information
-            [first: 'ri', second: 'column', failure: 0.0],
-            [first: 'column', second: 'column temperature', failure: 0.0],
+            [first: 'ri', second: COLUMN_NAME, failure: 0.0],
+            [first: COLUMN_NAME, second: 'column temperature', failure: 0.0],
 
             //if we have a column, we might also have a guard column, but it's not that important
-            [first: 'column', second: 'guard column', failure: 0.0, success: 0.05],
+            [first: COLUMN_NAME, second: 'guard column', failure: 0.0, success: 0.05],
 
             //general injection information
             [first: 'injection', second: 'injection volume', failure: 0.0],
             [first: 'injection', second: 'injection temperature', failure: 0.0],
 
-            //instrument data
-            [first: 'instrument', second: 'instrument type', failure: 0.0],
-
             //if we have a gradient specified, we should have also mobile phases defined
-            [first: 'gradient', second: 'mobile phase a', failure: 0.0],
-            [first: 'gradient', second: 'mobile phase b', failure: 0.0],
-            [first: 'mobile phase a', second: 'mobile phase b', failure: 0.0],
+            [first: 'gradient', second: MOBILE_PHASE_A, failure: 0.0],
+            [first: 'gradient', second: MOBILE_PHASE_B, failure: 0.0],
+            [first: MOBILE_PHASE_A, second: MOBILE_PHASE_B, failure: 0.0],
 
             //if we have a column, we might have a mobile phase
-            [first: 'column', second: 'mobile phase', failure: 0.0],
+            [first: COLUMN_NAME, second: 'mobile phase', failure: 0.0],
 
             //if we have a precursir type, we should also have a mass
-            [first: 'precursortype', second: 'precursormz', failure: 0.0],
+            [first: PRECURSORTYPE, second: PRECURSOR_MASS, failure: 0.0],
 
             //if we have a MS type, we should always have an ion mode
-            [first: 'ms type', second: 'ion mode', failure: 0.0],
+            [first: MS_LEVEL, second: IONMODE, failure: 0.0],
 
             //if we have a MS type, we should always have a collision energy
-            [first: 'ms type', second: 'collision energy', failure: 0.0],
+            [first: MS_LEVEL, second: 'collision energy', failure: 0.0],
 
 
     ]
