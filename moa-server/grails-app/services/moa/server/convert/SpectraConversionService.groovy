@@ -18,8 +18,6 @@ class SpectraConversionService {
     private String convert(Spectrum spectrum, def converter, def massSpectraConverter) {
         StringBuffer buffer = new StringBuffer()
 
-        Set<Name> names = spectrum.biologicalCompound.names
-
         writeName(spectrum.biologicalCompound?.names, buffer, converter, "COMPOUND")
 
         if (spectrum.biologicalCompound.inchi)
@@ -47,7 +45,7 @@ class SpectraConversionService {
         writeMetaData(metadata, buffer, converter)
         writeTags(spectrum.tags, buffer, converter)
 
-        
+
         String[] ionPairs = spectrum.spectrum.split(" ")
 
         converter("Num Peaks", ionPairs.length, buffer, null)

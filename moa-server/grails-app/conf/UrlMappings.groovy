@@ -128,6 +128,11 @@ class UrlMappings {
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
 
         /**
+         * provides us with access to download queries
+         */
+        "/rest/spectra/search/download"(controller: 'spectraQuery', action: 'download')
+
+        /**
          * how many spectra will this query return
          */
         "/rest/spectra/searchCount"(controller: 'spectraQuery', action: 'countForSearch')
@@ -255,12 +260,7 @@ class UrlMappings {
          * error related parts
          */
         "500"(controller: "error", action: "handle500")
+        "403"(controller: "error", action: "handle403")
         "404"(controller: "error", action: "handle404")
-
-        /**
-         * outdated links, will be removed at some point in time
-         */
-
-
     }
 }
