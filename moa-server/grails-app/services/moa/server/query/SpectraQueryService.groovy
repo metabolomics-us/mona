@@ -280,27 +280,47 @@ class SpectraQueryService {
             }
         }
 
+        //these direct queries are not longer supported
         if (json.hash) {
-            if (json.hash instanceof Collection && json.hash.size() > 0) {
+            throw new RuntimeException("this is not longer supported!")
+        }
 
-                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+        /**
+         * matching based
+         */
+        if(json.match){
 
-                //handle brackets
-                queryOfDoomWhere += "( "
 
-                json.hash.eachWithIndex { Object current, int index ->
+            queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                    //long form
-                    if (current.value) {
-                        current.value.keySet().each { String key ->
-                            (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "hash", [current.value."${key}"], key, executionParams)
-                        }
-                    }
+            //handle brackets
+            queryOfDoomWhere += "( "
+
+            if(json.match.exact){
+                queryOfDoomWhere += " s.splash.splash = :matchExact"
+                executionParams."matchExact" = json.match.exact
+            }
+            else if(json.match.top10){
+                queryOfDoomWhere += " s.splash.block1 = :top10"
+                executionParams."top10" = json.match.top10
+            }
+            else if(json.match.similar){
+
+                def cutOff = 0.8
+
+                if(json.match.score){
+                    cutOff = json.match.score
                 }
 
-                //handle brackets
-                queryOfDoomWhere += " )"
+                queryOfDoomWhere += " postgresTextQuery(s.splash.block4,:similarSpectra) > ${cutOff}"
+                executionParams."similarSpectra" = json.match.similar
             }
+            else{
+                throw new RuntimeException("none supported arguments...")
+            }
+
+            //handle brackets
+            queryOfDoomWhere += " )"
         }
 
         [queryOfDoomWhere, queryOfDoomJoins]
