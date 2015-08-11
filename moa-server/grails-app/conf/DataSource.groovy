@@ -6,6 +6,7 @@ dataSource {
     driverClassName = "org.postgresql.Driver"
     username = "compound"
     password = "asdf"
+    dialect = "dialect.CustomPostgresDialect"
 }
 
 hibernate {

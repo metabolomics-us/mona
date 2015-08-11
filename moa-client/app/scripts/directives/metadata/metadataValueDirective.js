@@ -141,7 +141,7 @@ app.directive('gwSpectraIdQuery', function () {
 
         replace: true,
         transclude: true,
-        templateUrl: '/views/templates/metaQuery.html',
+        templateUrl: '/views/templates/spectra/spectraHashQuery.html',
         restrict: 'A',
         scope: {
             value: '=value'
@@ -173,6 +173,14 @@ app.directive('gwSpectraIdQuery', function () {
                 $location.path("/spectra/browse/");
             };
 
+            //finds related spectra to this spectra
+            $scope.findSimilarSpectra = function(){
+
+                SpectraQueryBuilderService.removeSpectraIdFromQuery($scope.value);
+
+                SpectraQueryBuilderService.addSimilarSpectraToQuery($scope.value.split("-")[3]);
+                $location.path("/spectra/browse/");
+            };
 
             //receive a click
             $scope.removeFromQuery = function () {

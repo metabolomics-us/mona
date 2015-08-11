@@ -178,6 +178,24 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         QueryCache.setSpectraQuery(query);
 
     };
+
+    /**
+     * finds similar spectra for this histogram
+     * @param id
+     */
+    this.addSimilarSpectraToQuery = function (value) {
+
+        var query = this.getQuery();
+
+        if (!query.match) {
+            query.match = {};
+        }
+
+        query.match.similar = value;
+
+        QueryCache.setSpectraQuery(query);
+
+    };
     /**
      * removes this spectra id from the query
      * @param id
