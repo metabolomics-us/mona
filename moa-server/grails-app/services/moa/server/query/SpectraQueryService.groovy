@@ -1,6 +1,8 @@
 package moa.server.query
 
 import curation.CommonTags
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
+import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import moa.Spectrum
@@ -184,7 +186,9 @@ class SpectraQueryService {
         (queryOfDoom, executionParams) = generateFinalQuery(json, true)
 
 
-        return Spectrum.executeQuery(queryOfDoom, executionParams)[0]
+        def result =  Spectrum.executeQuery(queryOfDoom, executionParams)
+
+        return result.size()
     }
 
     /**
@@ -249,7 +253,7 @@ class SpectraQueryService {
 
         //count negates all internally added fields since there is no point in more than 1 value to be returned
         if (count) {
-            fields = "select count(distinct s.id) from Spectrum s $joins $where $group $having"
+            fields = "select count(s.id) from Spectrum s $joins $where $group $having"
         } else {
             //assemble
             fields = " select new map($fields) from Spectrum s $joins $where $group $having $orderBy"
@@ -345,7 +349,10 @@ class SpectraQueryService {
             } else if (json.match.top10) {
                 queryOfDoomWhere += " s.splash.block1 = :top10"
                 executionParams."top10" = json.match.top10
-            } else if (json.match.histogram) {
+
+            }
+            //simialrity based searches
+            else if (json.match.histogram || json.match.spectra) {
 
                 def histogramScore = 0.8
                 def spectraScore = 0.3
@@ -360,6 +367,11 @@ class SpectraQueryService {
 
                 //build the similarity query
                 if (json.match.spectra) {
+
+                    //if no histogram provided, we generated it on the fly, utilizing the latest splash version
+                    if(!json.match.histogram){
+                        json.match.histogram = SplashUtil.splash(json.match.spectra,SpectraType.MS).split("-")[3]
+                    }
 
                     having = "$having, spectramatch(:spectra,s.id) > ${spectraScore}"
                     executionParams."spectra" = json.match.spectra
