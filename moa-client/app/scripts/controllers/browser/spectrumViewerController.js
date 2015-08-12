@@ -106,6 +106,7 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
     };
 
     /**
+     * @Deprecated
      * displays the spectrum for the given index
      * @param id
      * @param index
