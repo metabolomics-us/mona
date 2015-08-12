@@ -84,7 +84,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             }
 
             else if (element === "nameFilter" && query[element]) {
-                compiled.compound.name = {ilike: '%'+ query[element] +'%'};
+                compiled.compound.name = {ilike: '%' + query[element] + '%'};
             }
 
             else if (element === "inchiFilter" && query[element]) {
@@ -183,7 +183,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
      * finds similar spectra for this histogram
      * @param id
      */
-    this.addSimilarSpectraToQuery = function (value) {
+    this.addSimilarSpectraToQuery = function (value, spectra) {
 
         var query = this.getQuery();
 
@@ -191,7 +191,11 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             query.match = {};
         }
 
-        query.match.similar = value;
+        if (angular.isDefined(spectra)) {
+            query.match.spectra = spectra;
+        }
+        query.match.histogram = value;
+        query.match.score = 0.5;
 
         QueryCache.setSpectraQuery(query);
 
@@ -243,31 +247,31 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             }
             else {
 
-                if(includeExclude == '+'){
+                if (includeExclude == '+') {
 
                     query.tags.push(
                         {
-                            name:{
-                                eq:tag
+                            name: {
+                                eq: tag
                             }
                         }
                     );
                 }
-                else if(includeExclude == '-'){
+                else if (includeExclude == '-') {
 
                     query.tags.push(
                         {
-                            name:{
-                                ne:tag
+                            name: {
+                                ne: tag
                             }
                         }
                     );
                 }
-                else{
+                else {
                     query.tags.push(
                         {
-                            name:{
-                                eq:tag
+                            name: {
+                                eq: tag
                             }
                         }
                     );
@@ -344,7 +348,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
                 //build query data object
                 var options = {};
 
-                if(!angular.isDefined(metadata.selected)){
+                if (!angular.isDefined(metadata.selected)) {
                     metadata.selected = {};
                     metadata.selected.value = "eq";
                 }
@@ -379,7 +383,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
      * adds the user to query
      * @param emailAddress
      */
-    this.addUserToQuery = function(emailAddress){
+    this.addUserToQuery = function (emailAddress) {
         var query = this.getQuery();
 
         query.submitter = emailAddress;
@@ -391,7 +395,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
     /**
      * removes the user from the query
      */
-    this.removeUserFromQuery = function(){
+    this.removeUserFromQuery = function () {
         var query = this.getQuery();
 
         query.submitter = null;

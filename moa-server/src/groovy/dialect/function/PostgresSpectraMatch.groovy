@@ -10,10 +10,10 @@ import org.hibernate.type.Type
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
- * Date: 8/11/15
- * Time: 1:29 PM
+ * Date: 8/12/15
+ * Time: 1:34 PM
  */
-class PostgresTextQuery implements SQLFunction {
+class PostgresSpectraMatch  implements SQLFunction {
     @Override
     boolean hasArguments() {
         return true
@@ -37,7 +37,7 @@ class PostgresTextQuery implements SQLFunction {
         }
 
         if (args.size() == 2) {
-            return "similarity(${args.get(0)},${args.get(1)})";
+            return "calculatesimilarity(${args.get(0)},${args.get(1)})/1000";
         }
         return null;
     }
