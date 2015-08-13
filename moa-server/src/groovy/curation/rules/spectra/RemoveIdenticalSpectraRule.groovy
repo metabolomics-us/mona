@@ -44,7 +44,7 @@ class RemoveIdenticalSpectraRule extends AbstractCurationRule {
                             ]
                     ]
 
-            ])
+            ],-1,-1,"")
 
             logger.info("found ${identical.size()} spectra")
             identical.each { Spectrum compare ->

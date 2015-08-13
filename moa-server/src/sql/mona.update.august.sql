@@ -389,16 +389,26 @@ create or replace function findSimularSpectra(unknownSpectra text, minSimilarity
 
 -- adjust columns--
 
-update spectrum set deleted = false
+update spectrum set deleted = false;
 
 -- delete outdated meta data values --
-delete from meta_data_value where deleted = true
+delete from meta_data_value where deleted = true;
 
 -- new indexes --
 create index splash_block4_index on splash using gist (block4 gist_trgm_ops);
 
 CREATE INDEX "index-spectrum-deleted"
         ON "public"."spectrum"("deleted");
+
+CREATE INDEX "metavalue_score_index"
+ON "public"."meta_data_value"("score_id");
+CREATE INDEX "spectrum_score_id_index"
+ON "public"."spectrum"("score_id");
+CREATE INDEX "spectrum_splash_id_index"
+ON "public"."spectrum"("splash_id");
+CREATE INDEX "spectrum_submitter_id_index"
+ON "public"."spectrum"("submitter_id");
+
 
 -- drop none longer required hashcode column
 ALTER TABLE public.spectrum
@@ -435,7 +445,6 @@ delete from score;
 
 update spectrum set splash_id = null;
 delete from splash;
-
 
 
 

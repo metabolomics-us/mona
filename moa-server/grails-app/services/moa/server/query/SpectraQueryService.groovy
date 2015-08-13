@@ -87,7 +87,7 @@ class SpectraQueryService {
      * @param json
      */
     @Transactional
-    def query(Map json, int limit = -1, int offset = -1) {
+    def query(Map json, int limit = -1, int offset = -1, String order = "order by s.score.scaledScore desc") {
         log.info("received query: ${json}")
 
 
@@ -99,7 +99,7 @@ class SpectraQueryService {
                 return []
             }
 
-            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc", [ids: ids.collect({
+            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) " /*$order*/, [ids: ids.collect({
                 it.id
             })], [readOnly: true])
 
@@ -187,7 +187,7 @@ class SpectraQueryService {
         String joins = ""
 
         //defines our where clause
-        String where = "where s.deleted = false"
+        String where = "where s.deleted = :deleted"
 
         String orderBy = ""
 
@@ -197,6 +197,8 @@ class SpectraQueryService {
 
         //our defined execution parameters
         def executionParams = [:]
+
+        executionParams.put("deleted",new Boolean(false))
 
         (where, joins, fields, orderBy, group, having) = handleJsonSpectraData(json, where, joins, executionParams, fields, orderBy, group, having)
 
@@ -529,8 +531,10 @@ class SpectraQueryService {
     private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         log.info("incomming query in compound method:\n\n$queryOfDoomWhere\n\n")
 
+
         //if we have a compound
         if (json.compound) {
+
             queryOfDoomJoins += " inner join s.biologicalCompound as bc"
             queryOfDoomJoins += " inner join s.chemicalCompound as cc"
             queryOfDoomJoins += " left join s.predictedCompound as pc"
@@ -543,23 +547,32 @@ class SpectraQueryService {
 
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
+                queryOfDoomWhere+= "("
+
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "bcn")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "ccn")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "pcn")
+                queryOfDoomWhere+= ")"
+
             }
 
             //if we have an inchi key
             if (json.compound.inchiKey) {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+                queryOfDoomWhere+= "("
 
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "bc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "cc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "pc")
+                queryOfDoomWhere+= ")"
+
             }
 
             //if we have an id key
             if (json.compound.id) {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+                queryOfDoomWhere+= "("
 
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "bc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "cc")
@@ -576,6 +589,8 @@ class SpectraQueryService {
 //                    throw new QueryException("invalid query term: ${json.compound.id}")
 //                    log.error("whats this dude? ${json.compound.id}")
 //                }
+
+                queryOfDoomWhere+= ")"
             }
 
             //if we have metadata
