@@ -11,6 +11,8 @@ import moa.Spectrum
 class Splash {
 
 
+    static belongsTo = [spectrum:Spectrum]
+
     static constraints = {
     }
 

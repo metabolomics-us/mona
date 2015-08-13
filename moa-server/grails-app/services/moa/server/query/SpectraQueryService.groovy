@@ -52,7 +52,7 @@ class SpectraQueryService {
         long begin = System.currentTimeMillis()
         def resultList = []
 
-        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash where similarity(block4,?) > 0.8 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
+        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false similarity(block4,?) > 0.8 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
 
             def hit = [:]
             hit.id = row.id
@@ -187,7 +187,7 @@ class SpectraQueryService {
         String joins = ""
 
         //defines our where clause
-        String where = ""
+        String where = "where s.deleted = false"
 
         String orderBy = ""
 
@@ -513,6 +513,8 @@ class SpectraQueryService {
             }
         }
 
+
+
         [queryOfDoomWhere, queryOfDoomJoins, fields, orderBy, group, having]
     }
 
@@ -709,8 +711,7 @@ class SpectraQueryService {
 
                 spectrum.delete(flush: true)
             } else {
-                tagService.removeTagFrom(CommonTags.REQUIRES_DELETE, spectrum)
-                tagService.addTagTo(CommonTags.DELETED, spectrum)
+                spectrum.deleted = true
                 spectrum.save()
             }
             statisticsService.acquire(System.currentTimeMillis() - begin, "deleted a spectra", "${spectrum.hash}", "delete")
