@@ -111,7 +111,7 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
                     }
                 }
             } else {
-                logger.error("not a massbank file: ${filename}")
+                logger.warn("not a massbank file: ${filename}")
             }
         }
 

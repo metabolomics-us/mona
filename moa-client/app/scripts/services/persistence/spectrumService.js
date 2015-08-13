@@ -95,6 +95,15 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
                     'Content-Type': 'application/json'
                 },
                 isArray: false
+            },
+
+            'associateSpectraByQuery' : {
+                url: REST_BACKEND_SERVER + '/rest/spectra/associate/allByQuery',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                isArray: false
             }
 
 
