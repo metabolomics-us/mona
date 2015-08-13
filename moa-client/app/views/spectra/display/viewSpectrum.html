@@ -1,9 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-
-        <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}
-
-        </h3>
+        <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}</h3>
     </div>
 
     <div class="panel-body">
@@ -15,7 +12,6 @@
             Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
                 </span>
             </div>
-
         </div>
 
         <div class="row" ng-show="showScore" ng-class="animate-show">
@@ -24,11 +20,12 @@
                     <div class="panel-heading">
                         Explanation for the score of {{spectrum.score.score | number :4}}/({{spectrum.score.scaledScore | number :1}} stars
                     </div>
-                    <div class="panel-body">
 
+                    <div class="panel-body">
                         Green elements show that this had a positive impact, while red elements display a negative
                         impact.
                     </div>
+
                     <table class="table">
                         <thead>
                         <tr>
@@ -45,6 +42,7 @@
                         </tbody>
                     </table>
                 </div>
+
                 <div class="panel top17" ng-hide="spectrum.score">
                     This spectrum hasn't been score yet, we submitted a request to the system to score it for you!
                 </div>
@@ -61,13 +59,11 @@
             </div>
 
             <div class="col-md-4 text-right">
-
                 <div spectra-download spectra="spectrum"></div>
-
             </div>
         </div>
-        <div class="row top5">
 
+        <div class="row top5">
             <div class="col-md-12">
                 <ul class="list-inline">
                     <li>
@@ -79,7 +75,6 @@
                 </ul>
             </div>
         </div>
-
 
         <!-- mass spectral properties -->
         <div class="row">
