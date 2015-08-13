@@ -24,7 +24,6 @@ class FireJobs {
         }
 
         SpectraValidationJob.triggerNow(data)
-        //SpectraValidationJob.schedule(schedule,data)
     }
 
     static fireSpectraUploadJob(Map data){
@@ -35,7 +34,6 @@ class FireJobs {
             schedule = date + 5.seconds
         }
         SpectraUploadJob.triggerNow(data)
-        //SpectraUploadJob.schedule(schedule,data)
     }
 
     static fireSpectraAssociationJob(Map data){
@@ -46,11 +44,9 @@ class FireJobs {
             schedule = date + 5.seconds
         }
         SpectraAssociationJob.triggerNow(data)
-        //SpectraUploadJob.schedule(schedule,data)
     }
 
     static fireCompoundCurationJob(Map data){
-        //CompoundCurationJob.triggerNow(data)
 
         Date date = new Date()
 
@@ -59,6 +55,5 @@ class FireJobs {
             schedule = date + 5.seconds
         }
         CompoundCurationJob.triggerNow(data)
-        //CompoundCurationJob.schedule(schedule,data)
     }
 }

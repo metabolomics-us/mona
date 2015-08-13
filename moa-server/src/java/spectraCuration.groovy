@@ -18,7 +18,6 @@ import curation.rules.meta.DerivativeTypeSpelling
 import curation.rules.meta.DropNoneNecessaryMetaDataRule
 import curation.rules.meta.IsColumnValid
 import curation.rules.meta.PercentageValueRule
-import curation.rules.meta.ProvidedExactMassIsPossibleRule
 import curation.rules.meta.RemapMetadataNames
 import curation.rules.meta.lipidblast.LipidBlastAquisitionModeDetectionRule
 import curation.rules.meta.lipidblast.LipidBlastMSMSDetectionRule
