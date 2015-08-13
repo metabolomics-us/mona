@@ -447,4 +447,5 @@ update spectrum set splash_id = null;
 delete from splash;
 
 
-
+--update all names to be none computed--
+update name set computed = false

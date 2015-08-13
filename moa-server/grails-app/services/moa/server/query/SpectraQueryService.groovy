@@ -99,7 +99,7 @@ class SpectraQueryService {
                 return []
             }
 
-            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) " /*$order*/, [ids: ids.collect({
+            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) $order", [ids: ids.collect({
                 it.id
             })], [readOnly: true])
 
