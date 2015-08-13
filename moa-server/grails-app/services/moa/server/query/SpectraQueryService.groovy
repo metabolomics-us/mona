@@ -1,6 +1,8 @@
 package moa.server.query
 
 import curation.CommonTags
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
+import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import moa.Spectrum
@@ -39,12 +41,9 @@ class SpectraQueryService {
      * @param countTopIons how many of the ions largest ions have to be shared to be considered a hit
      * @param maxResults how many results do we maximal want to have
      */
-    def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
+    def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int maxResults = 10) {
 
-        log.info("spectra: ${massSpectra}")
-        log.info("similarity: ${minSimilarity}")
-        log.info("top ions: ${countTopIons}")
-        log.info("max results: ${maxResults}")
+        String histogram = SplashUtil.splash(massSpectra, SpectraType.MS).split("-")[3]
 
 
         log.info("start searching...")
@@ -53,7 +52,7 @@ class SpectraQueryService {
         long begin = System.currentTimeMillis()
         def resultList = []
 
-        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a", [massSpectra, minSimilarity, countTopIons, maxResults]) { row ->
+        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash where similarity(block4,?) > 0.8 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
 
             def hit = [:]
             hit.id = row.id
@@ -77,24 +76,10 @@ class SpectraQueryService {
      * @param countTopIons how many of the ions largest ions have to be shared to be considered a hit
      * @param maxResults how many results do we maximal want to have
      */
-    def findSimilarSpectraIds(long id, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
-        Sql sql = new Sql(dataSource)
-        long begin = System.currentTimeMillis()
+    def findSimilarSpectraIds(long id, double minSimilarity = 500, int maxResults = 10) {
 
-        def resultList = []
+        return findSimilarSpectraIds(Spectrum.get(id).getSpectrum(), minSimilarity, maxResults);
 
-        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a", [id, minSimilarity, countTopIons, maxResults]) { row ->
-
-            def hit = [:]
-            hit.id = row.id
-            hit.similarity = row.similarity
-
-            resultList.add(hit)
-        }
-
-
-        statisticsService.acquire(System.currentTimeMillis() - begin, "similarity search", "search duration", "search")
-        return resultList
     }
 
     /**
@@ -105,20 +90,33 @@ class SpectraQueryService {
     def query(Map json, int limit = -1, int offset = -1) {
         log.info("received query: ${json}")
 
-        long begin = System.currentTimeMillis()
 
         def ids = queryForIds(json, limit, offset)
 
         try {
+
             if (ids.isEmpty()) {
                 return []
             }
-            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc", [ids: ids])
 
-            //println "$queryOfDoom"
-            //log.debug("result count: ${result.size()}")
+            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) order by s.score.scaledScore desc", [ids: ids.collect({
+                it.id
+            })], [readOnly: true])
 
-            statisticsService.acquire(System.currentTimeMillis() - begin, "text search", "${json}", "search")
+            //add known fields to the spectrum
+            result.each { Spectrum s ->
+                ids.each { Map m ->
+
+                    if (s.id.equals(m.id)) {
+                        m.keySet().each {
+                            if (!it.equals("id"))
+                                s.addQueryOption(it, m.get(it))
+                        }
+                    }
+                }
+            }
+
+            log.debug("result count: ${result.size()}")
 
             return result
         }
@@ -149,10 +147,12 @@ class SpectraQueryService {
             params.offset = offset
         }
 
+        params.readOnly = true
+
         def queryOfDoom = null
         def executionParams = null
 
-        (queryOfDoom, executionParams) = generateFinalQuery(json)
+        (queryOfDoom, executionParams) = generateFinalQuery(json, false, "s.id as id")
 
         return Spectrum.executeQuery(queryOfDoom, executionParams, params)
     }
@@ -169,55 +169,85 @@ class SpectraQueryService {
         (queryOfDoom, executionParams) = generateFinalQuery(json, true)
 
 
-        return Spectrum.executeQuery(queryOfDoom, executionParams)[0]
+        def result = Spectrum.executeQuery(queryOfDoom, executionParams)
+
+        return result.size()
     }
 
     /**
      * generates the actual query to be executed for us
      * @param json
      * @params count returns the count instead of the actual objects
+     * @params fields specify which fields to return
      * @return
      */
-    private List generateFinalQuery(Map json, boolean count = false) {
+    private List generateFinalQuery(Map json, boolean count = false, String fields = "s.id as id") {
 
-        //completed query string
-        String queryOfDoom = ""
-
-        if (count) {
-            queryOfDoom = "select count(distinct s.id) from Spectrum s"
-        } else {
-            queryOfDoom = "select s.id from Spectrum s"
-        }
         //defines all our joins
-        String queryOfDoomJoins = ""
+        String joins = ""
 
         //defines our where clause
-        String queryOfDoomWhere = ""
+        String where = ""
+
+        String orderBy = ""
+
+        String group = "s.id"
+
+        String having = ""
 
         //our defined execution parameters
         def executionParams = [:]
 
-        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonSpectraData(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (where, joins, fields, orderBy, group, having) = handleJsonSpectraData(json, where, joins, executionParams, fields, orderBy, group, having)
 
-        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonCompoundField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (where, joins, fields, orderBy, group, having) = handleJsonCompoundField(json, where, joins, executionParams, fields, orderBy, group, having)
 
-        (queryOfDoomWhere, queryOfDoomJoins) = handleSpectraJsonMetadataFields(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (where, joins, fields, orderBy, group, having) = handleSpectraJsonMetadataFields(json, where, joins, executionParams, fields, orderBy, group, having)
 
-        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonTagsField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (where, joins, fields, orderBy, group, having) = handleJsonTagsField(json, where, joins, executionParams, fields, orderBy, group, having)
 
-        (queryOfDoomWhere, queryOfDoomJoins) = handleJsonSubmitterField(json, queryOfDoomWhere, queryOfDoomJoins, executionParams)
+        (where, joins, fields, orderBy, group, having) = handleJsonSubmitterField(json, where, joins, executionParams, fields, orderBy, group, having)
 
-        //assemble the query of doom
-        if (count) {
-            queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
-        } else {
-            queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere + " group by s.id"
+        //working on the ordering
+        if (orderBy.length() > 0) {
+            if (orderBy.startsWith(",")) {
+                orderBy = orderBy.substring(1, orderBy.length())
+            }
+
+            orderBy = "order by ${orderBy}"
         }
 
-        log.debug("generated query: \n\n${queryOfDoom}\n")
+        //working on the grouping
+        if (group.length() > 0) {
+            if (group.startsWith(",")) {
+                group = group.substring(1, group.length())
+            }
+
+            group = "group by ${group}"
+        }
+
+        //working on having
+        if (having.length() > 0) {
+            if (having.startsWith(",")) {
+                having = having.substring(1, having.length())
+            }
+            having = "having $having"
+        }
+
+        //count negates all internally added fields since there is no point in more than 1 value to be returned
+        if (count) {
+            fields = "select count(s.id) from Spectrum s $joins $where $group $having"
+        } else {
+            //assemble
+            fields = " select new map($fields) from Spectrum s $joins $where $group $having $orderBy"
+        }
+
+
+        log.debug("generated query: \n\n${fields}\n")
         log.debug("parameter matrix:\n\n${executionParams}\n\n")
 
-        return [queryOfDoom, executionParams]
+
+        return [fields, executionParams]
     }
 
     /**
@@ -230,7 +260,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
+    private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         if (json.id) {
             if (json.id instanceof Collection && json.id.size() > 0) {
 
@@ -280,30 +310,81 @@ class SpectraQueryService {
             }
         }
 
+        //these direct queries are not longer supported
         if (json.hash) {
-            if (json.hash instanceof Collection && json.hash.size() > 0) {
-
-                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
-
-                //handle brackets
-                queryOfDoomWhere += "( "
-
-                json.hash.eachWithIndex { Object current, int index ->
-
-                    //long form
-                    if (current.value) {
-                        current.value.keySet().each { String key ->
-                            (queryOfDoomWhere, executionParams) = buildComparisonField(queryOfDoomWhere, "hash", [current.value."${key}"], key, executionParams)
-                        }
-                    }
-                }
-
-                //handle brackets
-                queryOfDoomWhere += " )"
-            }
+            throw new RuntimeException("this is not longer supported!")
         }
 
-        [queryOfDoomWhere, queryOfDoomJoins]
+        /**
+         * matching based
+         */
+        if (json.match) {
+
+
+            queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
+            //handle brackets
+            queryOfDoomWhere += "( "
+
+            if (json.match.exact) {
+                queryOfDoomWhere += " s.splash.splash = :matchExact"
+                executionParams."matchExact" = json.match.exact
+            } else if (json.match.top10) {
+                queryOfDoomWhere += " s.splash.block1 = :top10"
+                executionParams."top10" = json.match.top10
+
+            }
+            //simialrity based searches
+            else if (json.match.histogram || json.match.spectra) {
+
+                def histogramScore = 0.8
+                def spectraScore = 0.3
+
+                //score, which needs to be reached, by default 0.5
+                if (json.match.histogramScore) {
+                    histogramScore = json.match.histogramScore
+                }
+                if (json.match.score) {
+                    spectraScore = json.match.score
+                }
+
+                //build the similarity query
+                if (json.match.spectra) {
+
+                    //if no histogram provided, we generated it on the fly, utilizing the latest splash version
+                    if (!json.match.histogram) {
+                        json.match.histogram = SplashUtil.splash(json.match.spectra, SpectraType.MS).split("-")[3]
+                    }
+
+                    having = "$having, spectramatch(:spectra,s.id) > ${spectraScore}"
+                    executionParams."spectra" = json.match.spectra
+
+                    fields = "$fields, spectramatch(:spectra,s.id) as spectralSimilarity"
+
+                    orderBy = "$orderBy, spectramatch(:spectra,s.id) DESC"
+
+                    group = "$group, spectramatch(:spectra,s.id)"
+
+                }
+
+                //build the histgram query
+                queryOfDoomWhere += " histmatch(s.splash.block4,:histogramBlock) > ${histogramScore}"
+                executionParams."histogramBlock" = json.match.histogram
+
+
+                fields = "$fields, histmatch(s.splash.block4,:histogramBlock) as histogramSimilarity"
+                orderBy = "$orderBy, histmatch(s.splash.block4,:histogramBlock) DESC"
+                group = "$group, histmatch(s.splash.block4,:histogramBlock), s.splash.block4"
+
+            } else {
+                throw new RuntimeException("none supported arguments...")
+            }
+
+            //handle brackets
+            queryOfDoomWhere += " )"
+        }
+
+        [queryOfDoomWhere, queryOfDoomJoins, fields, orderBy, group, having]
     }
 
     @Transactional
@@ -333,7 +414,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonSubmitterField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams) {
+    private List handleJsonSubmitterField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams, String fields, String orderBy, String group, String having) {
 
         //handling submitter
         if (json.submitter) {
@@ -358,7 +439,7 @@ class SpectraQueryService {
             }
         }
 
-        [queryOfDoomWhere, queryOfDoomJoins]
+        [queryOfDoomWhere, queryOfDoomJoins, fields, orderBy, group, having]
     }
 
     /**
@@ -372,7 +453,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonTagsField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
+    private List handleJsonTagsField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         //handling tags
         if (json.tags) {
 
@@ -398,7 +479,7 @@ class SpectraQueryService {
             }
         }
 
-        [queryOfDoomWhere, queryOfDoomJoins]
+        [queryOfDoomWhere, queryOfDoomJoins, fields, orderBy, group, having]
     }
 
     /**
@@ -409,7 +490,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleSpectraJsonMetadataFields(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
+    private List handleSpectraJsonMetadataFields(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         //if we have a metadata object specified
         if (json.metadata) {
 
@@ -432,7 +513,7 @@ class SpectraQueryService {
             }
         }
 
-        [queryOfDoomWhere, queryOfDoomJoins]
+        [queryOfDoomWhere, queryOfDoomJoins, fields, orderBy, group, having]
     }
 
     /**
@@ -443,7 +524,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams) {
+    private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         log.info("incomming query in compound method:\n\n$queryOfDoomWhere\n\n")
 
         //if we have a compound
@@ -518,7 +599,7 @@ class SpectraQueryService {
             }
         }
 
-        [queryOfDoomWhere, queryOfDoomJoins]
+        [queryOfDoomWhere, queryOfDoomJoins, fields, orderBy, group, having]
     }
 
     /**

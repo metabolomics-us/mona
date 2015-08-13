@@ -29,7 +29,7 @@ class CompoundComputeMetaDataRule extends AbstractCurationRule{
 
         compoundPropertyService.calculateMetaData(compound)
         //drop all the computed metadata for this compound
-        compound.getMetaData().each {MetaDataValue value ->
+        compound.listAvailableValues().each {MetaDataValue value ->
 
             logger.info("${value.getCategory()} - ${value.getName()} - ${value.getValue()} - ${value.isComputed()}}")
         }

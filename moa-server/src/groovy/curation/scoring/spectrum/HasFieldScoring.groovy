@@ -32,7 +32,7 @@ class HasFieldScoring extends curation.scoring.ScoringRule {
     boolean scoreSpectrum(Spectrum spectrum) {
 
         boolean result = false;
-        spectrum.metaData.each { MetaDataValue v ->
+        spectrum.listAvailableValues().each { MetaDataValue v ->
             if (v.getName().toLowerCase().equals(fieldToHave.toLowerCase())) {
                 result = true;
             }

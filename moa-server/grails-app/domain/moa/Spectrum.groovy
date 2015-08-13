@@ -6,7 +6,7 @@ import moa.splash.Splash
 
 class Spectrum extends SupportsMetaData implements Scoreable {
 
-    static transients = ["spectrum","hash"]
+    static transients = ["spectrum","hash","queryOptions"]
 
     Date dateCreated
     Date lastUpdated
@@ -130,5 +130,11 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         }
 
         return "not yet calculated!"
+    }
+
+    Map queryOptions = [:]
+
+    def addQueryOption(def key, def value){
+        queryOptions.put(key,value)
     }
 }
