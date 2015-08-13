@@ -25,7 +25,7 @@ class MetaDataNameCurationRule extends AbstractCurationRule{
     boolean executeRule(CurationObject toValidate) {
         if(toValidate.isSpectra()){
 
-            toValidate.objectAsSpectra.metaData.each {MetaDataValue m ->
+            toValidate.objectAsSpectra.listAvailableValues().each {MetaDataValue m ->
                 checkValue(m)
             }
         }

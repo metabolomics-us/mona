@@ -64,4 +64,6 @@ interface MetaDataFieldNames {
     public static final String DERIVATIVE_SUM_FORMULA = "derivative sum formula"
 
     public static final String MOLECULAR_SUM_FORMULA = "sum formula"
+
+    public static final String RETENTION_INDEX = "retention index"
 }

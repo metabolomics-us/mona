@@ -99,7 +99,7 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
      * @return string value of metadata value if found, otherwise null
      */
     public String findMetaDataValue(SupportsMetaData object, String metaDataName) {
-        for (MetaDataValue metaDataValue : object.getMetaData()) {
+        for (MetaDataValue metaDataValue : object.listAvailableValues()) {
             logger.debug("checking for meta data value ${metaDataName} against field: ${metaDataValue.name}")
 
             if (metaDataValue.name.toLowerCase() == metaDataName) {

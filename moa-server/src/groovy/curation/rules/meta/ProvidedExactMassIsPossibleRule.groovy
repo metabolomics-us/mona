@@ -10,6 +10,7 @@ import moa.Spectrum
  * Date: 10/15/14
  * Time: 3:10 PM
  */
+@Deprecated
 class ProvidedExactMassIsPossibleRule extends AbstractMetaDataCentricRule{
 
     String field
@@ -51,7 +52,7 @@ class ProvidedExactMassIsPossibleRule extends AbstractMetaDataCentricRule{
                 return true
             }
             else{
-                this.getFailureAction().setReason(("accuracy is now high enough, should be less than ${accuracyInDalton}"))
+                this.getFailureAction().setReason(("accuracy is not high enough, should be less than ${accuracyInDalton}"))
             }
 
         }

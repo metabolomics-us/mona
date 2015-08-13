@@ -72,7 +72,7 @@ class SpectraValidationJob {
                 def spectra = spectraQueryService.queryForIds(JSON.parse(data.query))
 
                 spectra.each { id ->
-                    FireJobs.fireSpectraCurationJob([spectraId: id])
+                    FireJobs.fireSpectraCurationJob([spectraId: id.id])
                 }
 
 

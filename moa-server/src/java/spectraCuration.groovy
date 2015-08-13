@@ -24,6 +24,7 @@ import curation.rules.meta.lipidblast.LipidBlastAquisitionModeDetectionRule
 import curation.rules.meta.lipidblast.LipidBlastMSMSDetectionRule
 import curation.rules.spectra.CalculateMassAccuracyRule
 import curation.rules.spectra.ConvertMassspectraToRelativeSpectraRule
+import curation.rules.spectra.ExactMassIsCorrectRule
 import curation.rules.spectra.GenerateHashKeyRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
@@ -40,7 +41,6 @@ beans {
         bean.autowire = 'byName'
         mapping = [
                 "precursormz"             : PRECURSOR_MASS,
-                "precursortype"           : PRECURSORTYPE,
                 "adductionname"           : PRECURSORTYPE,
                 "retentiontime"           : RETENTION_TIME,
                 "transfarline temperature": TRANSFER_LINE_TEMPERATURE,
@@ -50,11 +50,17 @@ beans {
                 "author"                  : AUTHORS,
                 "adduct"                  : ADDUCT,
                 "adductionname"           : ADDUCT,
+                "adduct ion name"         : ADDUCT,
                 "column"                  : COLUMN_NAME,
                 "derivative form"         : DERIVATIVE_SUM_FORMULA,
                 "molecule formula"        : MOLECULAR_SUM_FORMULA,
                 "molecular formula"       : MOLECULAR_SUM_FORMULA,
-                "mz exact"                : EXACT_MASS
+                "mz exact"                : EXACT_MASS,
+                "ms type"                 : MS_LEVEL,
+                "submituser"              : AUTHORS,
+                "source instrument"       : INSTRUMENT,
+                "ri"                      : RETENTION_INDEX,
+                "pi"                      : AUTHORS
 
         ]
     }
@@ -174,7 +180,7 @@ beans {
     }
 
 //checks if the provided accurate mass is actuall possible
-    exactMassIsPossibleRule(ProvidedExactMassIsPossibleRule) { bean ->
+    exactMassIsPossibleRule(ExactMassIsCorrectRule) { bean ->
         bean.autowire = 'byName'
     }
 
@@ -189,6 +195,8 @@ beans {
 //   failureAction = new RemoveTagAction("accurate")
 
     }
+
+
 
     derivativeTypeSpellingRule(DerivativeTypeSpelling) { bean ->
         bean.autowire = 'byName'
@@ -237,7 +245,8 @@ beans {
                 "inchi key",
                 "inchi",
                 //spectra propertie, which is not really needed
-                "num peaks"
+                "num peaks",
+                "inchiaux"
         ]
     }
 

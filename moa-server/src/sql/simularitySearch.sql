@@ -167,6 +167,43 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+
+-- calculates the similarity between an unknown spectra and a library spectra--
+create or replace function calculateSimilarity( unknown spectra,  library int8) returns float8 AS $$
+
+DECLARE
+
+  knownMasses float8[];
+  knownIntensities float8[];
+  result float8;
+
+BEGIN
+
+  --raise notice 'calculating % vs %', unknown, library;
+  SELECT  array_agg(mass) as masses, array_agg(intensity) INTO knownMasses, knownIntensities from binned_ions where spectrum_id = library order by masses;
+
+  return calculateSimilarity(unknown.ions, unknown.intensities,knownMasses,knownIntensities);
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- calculates the similarity between an unknown spectra and a library spectra--
+create or replace function calculateSimilarity( unknown text,  library int8) returns float8 AS $$
+
+DECLARE
+
+
+BEGIN
+
+  return calculatesimilarity(convertspectra(unknown,true,50),library);
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
 -- calculates the similarity between 2 spectra ids--
 create or replace function calculateSimilarity( unknown int8,  library int8) returns float8 AS $$
 
@@ -349,21 +386,3 @@ create or replace function findSimularSpectra(unknownSpectra text, minSimilarity
 
   $$ LANGUAGE plpgsql;
 
-
---calculates a unique hash code for the given spectra id and can be used to find 100% identical spectra very quickly --
-create or replace function calculateHash( spectraId int8) returns text AS $$
-
-DECLARE
-
-    result text;
-
-BEGIN
-
-    --raise notice 'calculating % vs %', unknown, library;
-
-    SELECT   md5(array_to_string(array_agg(mass),'-') || array_to_string(array_agg(intensity),'-')) INTO result from ( select mass, intensity, spectrum_id from ion where spectrum_id = spectraId order by spectrum_id, mass ) as ions ;
-
-    return result;
-
-END;
-$$ LANGUAGE plpgsql;

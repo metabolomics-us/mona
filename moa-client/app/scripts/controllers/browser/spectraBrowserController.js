@@ -158,6 +158,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     };
 
     /**
+     * @Deprecated
      * displays the spectrum for the given index
      * @param id
      * @param index
