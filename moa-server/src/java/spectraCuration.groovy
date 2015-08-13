@@ -259,7 +259,7 @@ beans {
         bean.autowire = 'byName'
 
         rules = [
-                /*
+
                 //these rules should run first
                 deleteRuleBasedTagRule,
                 deleteMetaDataRule,
@@ -289,7 +289,6 @@ beans {
                 //fragmentation tree generation
                 generateFragmentationTreesRuleForMassBank,
 
-*/
                 //must be the last rule
                 requiresRemoval
 
