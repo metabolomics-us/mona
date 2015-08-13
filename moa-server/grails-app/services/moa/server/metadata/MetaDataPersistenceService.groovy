@@ -197,7 +197,7 @@ class MetaDataPersistenceService {
             throw new ValidationException("sorry a none recoverable error occurred, while creating a meta data value object ($metaDataValue.name - $metaDataValue.value)", metaDataValue.errors)
 
         }
-        metaDataValue.save(flush:true)
+        metaDataValue.save()
 
         log.debug("done")
     }
