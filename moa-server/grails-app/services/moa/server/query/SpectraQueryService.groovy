@@ -41,12 +41,9 @@ class SpectraQueryService {
      * @param countTopIons how many of the ions largest ions have to be shared to be considered a hit
      * @param maxResults how many results do we maximal want to have
      */
-    def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
+    def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int maxResults = 10) {
 
-        log.info("spectra: ${massSpectra}")
-        log.info("similarity: ${minSimilarity}")
-        log.info("top ions: ${countTopIons}")
-        log.info("max results: ${maxResults}")
+        String histogram = SplashUtil.splash(massSpectra, SpectraType.MS).split("-")[3]
 
 
         log.info("start searching...")
@@ -55,7 +52,7 @@ class SpectraQueryService {
         long begin = System.currentTimeMillis()
         def resultList = []
 
-        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a", [massSpectra, minSimilarity, countTopIons, maxResults]) { row ->
+        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash where similarity(block4,?) > 0.8 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
 
             def hit = [:]
             hit.id = row.id
@@ -79,24 +76,10 @@ class SpectraQueryService {
      * @param countTopIons how many of the ions largest ions have to be shared to be considered a hit
      * @param maxResults how many results do we maximal want to have
      */
-    def findSimilarSpectraIds(long id, double minSimilarity = 500, int countTopIons = 5, int maxResults = 10) {
-        Sql sql = new Sql(dataSource)
-        long begin = System.currentTimeMillis()
+    def findSimilarSpectraIds(long id, double minSimilarity = 500, int maxResults = 10) {
 
-        def resultList = []
+        return findSimilarSpectraIds(Spectrum.get(id).getSpectrum(), minSimilarity, maxResults);
 
-        sql.eachRow("select similarity, id from findSimularSpectra(?,?,?,?) a", [id, minSimilarity, countTopIons, maxResults]) { row ->
-
-            def hit = [:]
-            hit.id = row.id
-            hit.similarity = row.similarity
-
-            resultList.add(hit)
-        }
-
-
-        statisticsService.acquire(System.currentTimeMillis() - begin, "similarity search", "search duration", "search")
-        return resultList
     }
 
     /**
@@ -186,7 +169,7 @@ class SpectraQueryService {
         (queryOfDoom, executionParams) = generateFinalQuery(json, true)
 
 
-        def result =  Spectrum.executeQuery(queryOfDoom, executionParams)
+        def result = Spectrum.executeQuery(queryOfDoom, executionParams)
 
         return result.size()
     }
@@ -369,8 +352,8 @@ class SpectraQueryService {
                 if (json.match.spectra) {
 
                     //if no histogram provided, we generated it on the fly, utilizing the latest splash version
-                    if(!json.match.histogram){
-                        json.match.histogram = SplashUtil.splash(json.match.spectra,SpectraType.MS).split("-")[3]
+                    if (!json.match.histogram) {
+                        json.match.histogram = SplashUtil.splash(json.match.spectra, SpectraType.MS).split("-")[3]
                     }
 
                     having = "$having, spectramatch(:spectra,s.id) > ${spectraScore}"
