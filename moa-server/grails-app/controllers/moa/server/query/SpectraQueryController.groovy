@@ -142,10 +142,6 @@ class SpectraQueryController {
                 json.maxHits = 10
             }
 
-            if (json.commonIonCount == null) {
-                json.commonIonCount = 3
-            }
-
             log.info("modified request: ${json}")
             def id = null
             try {
@@ -157,7 +153,7 @@ class SpectraQueryController {
             }
 
             long begin = System.currentTimeMillis()
-            def result = spectraQueryService.findSimilarSpectraIds(id, json.minSimilarity as Double, json.commonIonCount as Integer, json.maxHits as Integer)
+            def result = spectraQueryService.findSimilarSpectraIds(id, json.minSimilarity as Double, json.maxHits as Integer)
 
 
             def map = [result: result, statistics: [
@@ -166,7 +162,7 @@ class SpectraQueryController {
 
             render(map as JSON)
         } else {
-            render(status: 404, text: "please provide a provide the following payLoade {'spectra:string or id',minSimilarity:0-1000,maxHits:0-25,commonIonCount:0-n'}");
+            render(status: 404, text: "please provide a provide the following payLoade {'spectra:string or id',minSimilarity:0-1000,maxHits:0-25'}");
         }
 
     }
