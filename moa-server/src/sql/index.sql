@@ -69,6 +69,16 @@ CREATE INDEX "index-spectrum-deleted"
         ON "public"."spectrum"("deleted");
 
 
+CREATE INDEX "metavalue_score_index"
+	ON "public"."meta_data_value"("score_id");
+CREATE INDEX "spectrum_score_id_index"
+	ON "public"."spectrum"("score_id");
+CREATE INDEX "spectrum_splash_id_index"
+	ON "public"."spectrum"("splash_id");
+CREATE INDEX "spectrum_submitter_id_index"
+	ON "public"."spectrum"("submitter_id");
+
+
 
 
 
