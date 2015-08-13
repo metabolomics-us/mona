@@ -58,7 +58,8 @@ class SpectraAssociationJob {
                 );
 
                 log.debug("found: ${ids.size()} spectra to associate...")
-                ids.each { long id ->
+                ids.each { def id ->
+                    id = id.id
                     log.debug("scheduling spectra for association with id: ${id}")
                     FireJobs.fireSpectraAssociationJob([spectraId: id])
                 }
@@ -69,6 +70,7 @@ class SpectraAssociationJob {
                 def spectra = spectraQueryService.queryForIds(JSON.parse(data.query))
 
                 spectra.each { id ->
+                    id = id.id
                     log.debug("scheduling spectra for association with id: ${id}")
                     FireJobs.fireSpectraAssociationJob([spectraId: id])
                 }
