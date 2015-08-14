@@ -146,7 +146,7 @@
                             </span>
                         </div>
                         <p class="text-right">
-                            <span class="help-block"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></span>
+                            <span><a href="" ng-click="querySpectraDialog()">Advanced Query</a></span>
                         </p>
                     </form>
                 </li>
@@ -161,6 +161,10 @@
 
                 <li>
                     <a href="#/spectra/dbindex"><i class="fa fa-list-alt fa-fw"></i>Database Index</a>
+                </li>
+
+                <li>
+                    <a href="#/spectra/similarity"><i class="fa fa-search fa-fw"></i>Similarity Query</a>
                 </li>
 
                 <li>
@@ -310,7 +314,7 @@
 <script src="scripts/services/query/SpectraQueryBuilderService.js"></script>
 <script src="scripts/services/optimization/MetaDataOptimizationService.js"></script>
 <script src="scripts/services/cookie/CookieService.js"></script>
-
+<script src="scripts/services/splashService.js"></script>
 <script src="scripts/services/authenticationService.js"></script>
 <script src="scripts/services/upload/uploadLibraryService.js"></script>
 <script src="scripts/services/persistence/newsService.js"></script>
@@ -330,8 +334,9 @@
 <script src="scripts/controllers/browser/spectraBrowserController.js"></script>
 <script src="scripts/controllers/browser/spectraDatabaseIndexController.js"></script>
 <script src="scripts/controllers/browser/spectrumViewerController.js"></script>
-<script src="scripts/controllers/browser/spectraQueryModalController.js"></script>
 <script src="scripts/controllers/browser/compoundBrowserController.js"></script>
+<script src="scripts/controllers/query/spectraQueryModalController.js"></script>
+<script src="scripts/controllers/query/spectraSimilarityQueryController.js"></script>
 <script src="scripts/controllers/submitter/submitterController.js"></script>
 <script src="scripts/controllers/submitter/submitterModalController.js"></script>
 <script src="scripts/controllers/submitter/submitterProfileController.js"></script>
