@@ -7,10 +7,14 @@ import moa.Name
 @Transactional
 class NameService {
 
-    def addNameToCompound(String name, Compound compound) {
+    def addNameToCompound(String name, Compound compound, boolean computed = false, String source = "user provided") {
 
         log.debug("checking if compound ${compound.inchiKey} has name ${name}")
-        Name.findOrCreateByNameAndCompound(name, compound).save()
+        Name n = Name.findOrCreateByNameAndCompound(name, compound)
+
+        n.computed = computed
+        n.source = source
+        n.save()
 
 
     }

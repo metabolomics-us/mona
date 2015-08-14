@@ -66,4 +66,8 @@ interface MetaDataFieldNames {
     public static final String MOLECULAR_SUM_FORMULA = "sum formula"
 
     public static final String RETENTION_INDEX = "retention index"
+
+    public static final String MOLECULAR_WEIGHT = "molecular weight"
+
+    public static final String FLOW_RATE = "flow rate"
 }
