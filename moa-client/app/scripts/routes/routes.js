@@ -21,11 +21,11 @@ app.config(function ($routeProvider) {
 
         //uploading a mass spec
         .when('/upload', {
-            templateUrl: 'views/spectra/cleanSpectraData.html',
+            templateUrl: 'views/spectra/upload/cleanAndUploadSpectra.html',
             controller: 'CleanSpectraDataController'
         })
         .when('/uploadstatus', {
-            templateUrl: 'views/spectra/upload/upload.html',
+            templateUrl: 'views/spectra/upload/uploadStatus.html',
             controller: 'SpectraUploadController'
         })
 
@@ -46,6 +46,12 @@ app.config(function ($routeProvider) {
         .when('/spectra/dbindex', {
             templateUrl: 'views/spectra/dbindex/dbindex.html',
             controller: 'SpectraDatabaseIndexController'
+        })
+
+        //query by similarity
+        .when('/spectra/similarity', {
+            templateUrl: 'views/spectra/query/similarityQuery.html',
+            controller: 'SpectraSimilarityQueryController'
         })
 
         //statistics page
