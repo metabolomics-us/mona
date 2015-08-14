@@ -57,6 +57,13 @@
                     <li class="pull-left" ng-repeat="tag in spectrum.tags">
                         <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
                     </li>
+
+                    <li class="pull-right">
+                        <button class="btn btn-success" ng-click="viewSpectrum()" tooltip-placement="left" tooltip="click, to display all the spectra information">
+
+                            <i class="fa fa-external-link fa-fw"></i>display full information
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>

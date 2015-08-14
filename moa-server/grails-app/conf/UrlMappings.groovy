@@ -182,7 +182,7 @@ class UrlMappings {
          */
         "/rest/spectra/associate/$id"(controller: 'spectraCuration', action: 'associate', id: id)
 
-        "/rest/spectra/associate/byAllByQuery"(controller: 'spectraCuration', action: 'associateByQuery', id: id)
+        "/rest/spectra/associate/allByQuery"(controller: 'spectraCuration', action: 'associateByQuery', id: id)
 
 
         "/rest/spectra/associateAll"(controller: 'spectraCuration', action: 'associateAll')
