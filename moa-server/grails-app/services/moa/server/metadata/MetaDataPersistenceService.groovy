@@ -136,6 +136,11 @@ class MetaDataPersistenceService {
         } else {
             metaDataValue.computed = false
         }
+
+        if(current.url != null){
+            metaDataValue.url = current.url
+        }
+
         //if an unit is associated let's update it
         if (current.unit != null) {
             metaDataValue.unit = current.unit

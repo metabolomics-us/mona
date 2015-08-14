@@ -1,8 +1,9 @@
-
 /**
  * defines the workflow for our compound curation tasks
  */
 import curation.CurationWorkflow
+import curation.rules.compound.DeleteComputedNamesRule
+import curation.rules.compound.cts.MergeCTSDataForCompound
 import curation.rules.compound.inchi.VerifyInChIKeyAndMolFileMatchRule
 import curation.rules.compound.meta.CompoundComputeMetaDataRule
 import curation.rules.compound.meta.DeletedComputedMetaDataRule
@@ -27,6 +28,14 @@ beans {
         bean.autowire = 'byName'
     }
 
+    mergeCtsData(MergeCTSDataForCompound) { bean ->
+        bean.autowire = 'byName'
+    }
+
+    deleteNameRule(DeleteComputedNamesRule) { bean ->
+        bean.autowire = 'byName'
+    }
+
 /**
  * actual workflow to be executed
  */
@@ -34,10 +43,12 @@ beans {
         bean.autowire = 'byName'
 
         rules = [
+                deleteNameRule,
                 deleteMetaDataRule,
                 deleteRuleBasedTagRule,
                 computeCompoundValidationData,
-                inchiKeyMatchesMolFile
+                inchiKeyMatchesMolFile,
+                mergeCtsData
         ]
     }
 }
