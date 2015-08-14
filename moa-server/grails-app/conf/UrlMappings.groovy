@@ -223,6 +223,8 @@ class UrlMappings {
 
         "/rest/statistics/meta/spectra/count/$id"(controller: 'statistics', action: 'metaDataValueCountForMetadataValueId', id: id)
 
+        "/rest/statistics/meta/distribution"(controller: 'statistics', action: 'getMetaDataValueDistribution')
+
         "/rest/statistics/category/$category/$grouping?"(controller: 'statistics', action: 'statisticsForCategory')
 
         "/rest/statistics/jobs/pending"(controller: 'statistics', action: 'statisticsForPendingJobs')

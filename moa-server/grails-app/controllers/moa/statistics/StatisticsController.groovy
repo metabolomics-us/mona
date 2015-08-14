@@ -45,6 +45,9 @@ class StatisticsController {
         render statisticsService.getSpectraQualityForSubmitter(params.id as long) as JSON
     }
 
+    def getMetaDataValueDistribution(){
+        render statisticsService.getMetaDataValueDistribution() as JSON
+    }
 
     def statisticsForPendingJobs(){
         render statisticsService.getCountForPendingJobs() as JSON
