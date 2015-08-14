@@ -59,7 +59,10 @@ beans {
                 "submituser"              : AUTHORS,
                 "source instrument"       : INSTRUMENT,
                 "ri"                      : RETENTION_INDEX,
-                "pi"                      : AUTHORS
+                "pi"                      : AUTHORS,
+                "mw"                      : MOLECULAR_WEIGHT,
+                "rate"                    : FLOW_RATE
+
 
         ]
     }

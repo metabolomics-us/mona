@@ -186,7 +186,7 @@ class StatisticsService {
      * @param id
      * @return
      */
-    List getSpectraCountForMetaDataId(long id) {
+    List<Map> getSpectraCountForMetaDataId(long id) {
         def result = []
 
         Spectrum.withSession { session ->
@@ -199,6 +199,22 @@ class StatisticsService {
         }
 
         return result
+    }
+
+    List<Map> getMetaDataValueDistribution(){
+        def result = []
+
+        Spectrum.withSession { session ->
+            def res = session.createSQLQuery("select count(*), a.name from meta_data a, meta_data_value b, meta_data_category c where c.id = a.category_id and a.id = b.meta_data_id and c.name != 'annotation' group by a.name").list()
+
+            for (Object[] o : res) {
+                result.add([count: o[0], name: o[1]])
+
+            }
+        }
+
+        return result
+
     }
     /**
      *

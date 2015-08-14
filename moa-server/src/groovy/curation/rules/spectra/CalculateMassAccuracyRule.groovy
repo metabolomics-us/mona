@@ -41,24 +41,41 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
 
         }
 
-        spectrum.listAvailableValues().each { MetaDataValue value ->
+        try {
+            spectrum.listAvailableValues().each { MetaDataValue value ->
 
-            logger.info("value: ${value.getName()} - ${value.getValue()} - ${value.hidden} - ${value.deleted}")
+                logger.info("value: ${value.getName()} - ${value.getValue()} - ${value.hidden} - ${value.deleted}")
 
-            if (exactMass == null) {
-                if (value.getName().toLowerCase().equals(EXACT_MASS)) {
-                    exactMass = Double.parseDouble(value.getValue().toString())
+                if (exactMass == null) {
+                    if (value.getName().toLowerCase().equals(EXACT_MASS)) {
+
+                        try {
+                            exactMass = Double.parseDouble(value.getValue().toString())
+                        }
+                        catch (NumberFormatException e){
+
+                            logger.warn(e.getMessage(),e)
+                            value.suspect = true
+                            value.reasonForSuspicion = "should be a numeric value!"
+                            value.save()
+                        }
+                    }
                 }
+
+                if (value.getName().toLowerCase().equals(PRECURSOR_MASS.toLowerCase().trim())) {
+
+                    exactMass = Double.parseDouble(value.getValue().toString())
+
+                }
+
+                if (value.getName().toLowerCase().equals(PRECURSORTYPE.toLowerCase().trim())) {
+                    precursorType = (value.getValue().toString())
+                }
+
             }
 
-            if (value.getName().toLowerCase().equals(PRECURSOR_MASS.toLowerCase().trim())) {
-                exactMass = Double.parseDouble(value.getValue().toString())
-
-            }
-
-            if (value.getName().toLowerCase().equals(PRECURSORTYPE.toLowerCase().trim())) {
-                precursorType = (value.getValue().toString())
-            }
+        }
+        catch (NumberFormatException e){
 
         }
 
