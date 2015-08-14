@@ -15,7 +15,7 @@ class Name implements Scoreable {
     static constraints = {
         computed nullable: true
         score nullable: true
-
+        source nullable: true
     }
 
     static belongsTo = [compound: Compound]
@@ -32,6 +32,7 @@ class Name implements Scoreable {
      */
     Score score
 
+    String source
     /**
      * set deleted to false as default value
      * @return
