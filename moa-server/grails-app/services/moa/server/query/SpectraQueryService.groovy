@@ -3,6 +3,7 @@ package moa.server.query
 import curation.CommonTags
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
+import grails.converters.JSON
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import moa.Spectrum
@@ -183,6 +184,8 @@ class SpectraQueryService {
      */
     private List generateFinalQuery(Map json, boolean count = false, String fields = "s.id as id") {
 
+        log.debug("provided json query: \n ${json as JSON}")
+
         //defines all our joins
         String joins = ""
 
@@ -198,17 +201,22 @@ class SpectraQueryService {
         //our defined execution parameters
         def executionParams = [:]
 
-        executionParams.put("deleted",new Boolean(false))
+        executionParams.put("deleted", new Boolean(false))
 
         (where, joins, fields, orderBy, group, having) = handleJsonSpectraData(json, where, joins, executionParams, fields, orderBy, group, having)
+        debugModification(joins, fields, orderBy, group, having, where,executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonCompoundField(json, where, joins, executionParams, fields, orderBy, group, having)
+        debugModification(joins, fields, orderBy, group, having, where,executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleSpectraJsonMetadataFields(json, where, joins, executionParams, fields, orderBy, group, having)
+        debugModification(joins, fields, orderBy, group, having, where,executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonTagsField(json, where, joins, executionParams, fields, orderBy, group, having)
+        debugModification(joins, fields, orderBy, group, having, where,executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonSubmitterField(json, where, joins, executionParams, fields, orderBy, group, having)
+        debugModification(joins, fields, orderBy, group, having, where,executionParams)
 
         //working on the ordering
         if (orderBy.length() > 0) {
@@ -264,6 +272,9 @@ class SpectraQueryService {
      */
     private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         if (json.id) {
+
+            log.debug("debug analyzing id query part:\n ${json.match as JSON}")
+
             if (json.id instanceof Collection && json.id.size() > 0) {
 
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
@@ -321,6 +332,8 @@ class SpectraQueryService {
          * matching based
          */
         if (json.match) {
+
+            log.debug("debug analyzing match query part:\n ${json.match as JSON}")
 
 
             queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
@@ -459,6 +472,8 @@ class SpectraQueryService {
         //handling tags
         if (json.tags) {
 
+            log.debug("debug analyzing tag query part:\n ${json.tags as JSON}")
+
             if (json.tags.size() > 0) {
 
                 json.tags.eachWithIndex { current, index ->
@@ -496,28 +511,31 @@ class SpectraQueryService {
         //if we have a metadata object specified
         if (json.metadata) {
 
+            log.debug("debug analyzing spectra metadata query part:\n ${json.metadata as JSON}")
+
             if (json.metadata.size() > 0) {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 //go over each metadata definition
                 json.metadata.eachWithIndex { Map current, int index ->
-                    def impl = [:];
 
                     //build the   join for each metadata object link
                     queryOfDoomJoins += "  inner join s.metaData as mdv_${index}"
                     queryOfDoomJoins += "  inner join mdv_${index}.metaData as md_${index}"
                     queryOfDoomJoins += "  inner join md_${index}.category as mdc_${index}"
 
-
-                    queryOfDoomWhere = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "md_${index}", "mdv_${index}", "mdc_${index}", index)
+                    (queryOfDoomWhere,executionParams) = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "md_${index}", "mdv_${index}", "mdc_${index}", index,"spectra")
 
                 }
             }
+
         }
 
-
-
         [queryOfDoomWhere, queryOfDoomJoins, fields, orderBy, group, having]
+    }
+
+    private void debugModification(String queryOfDoomJoins, String fields, String orderBy, String group, String having, String where, def params) {
+        log.debug("modified query: \n $queryOfDoomJoins \n $where\n $fields \n$orderBy \n$group \n$having\n$params")
     }
 
     /**
@@ -531,9 +549,10 @@ class SpectraQueryService {
     private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         log.info("incomming query in compound method:\n\n$queryOfDoomWhere\n\n")
 
-
         //if we have a compound
         if (json.compound) {
+
+            log.debug("debug analyzing compound query part:\n ${json.compound as JSON}")
 
             queryOfDoomJoins += " inner join s.biologicalCompound as bc"
             queryOfDoomJoins += " inner join s.chemicalCompound as cc"
@@ -547,24 +566,24 @@ class SpectraQueryService {
 
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                queryOfDoomWhere+= "("
+                queryOfDoomWhere += "("
 
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "bcn")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "ccn")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "pcn")
-                queryOfDoomWhere+= ")"
+                queryOfDoomWhere += ")"
 
             }
 
             //if we have an inchi key
             if (json.compound.inchiKey) {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
-                queryOfDoomWhere+= "("
+                queryOfDoomWhere += "("
 
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "bc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "cc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "pc")
-                queryOfDoomWhere+= ")"
+                queryOfDoomWhere += ")"
 
             }
 
@@ -572,7 +591,7 @@ class SpectraQueryService {
             if (json.compound.id) {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                queryOfDoomWhere+= "("
+                queryOfDoomWhere += "("
 
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "bc")
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField("$queryOfDoomWhere or ", "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "cc")
@@ -590,7 +609,7 @@ class SpectraQueryService {
 //                    log.error("whats this dude? ${json.compound.id}")
 //                }
 
-                queryOfDoomWhere+= ")"
+                queryOfDoomWhere += ")"
             }
 
             //if we have metadata
@@ -609,7 +628,7 @@ class SpectraQueryService {
                         queryOfDoomJoins += " inner join cmd_${index}.category as cmdc_${index}"
 
 
-                        queryOfDoomWhere = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "cmd_${index}", "cmdv_${index}", "cmdc_${index}", index)
+                        (queryOfDoomWhere,executionParams) = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "cmd_${index}", "cmdv_${index}", "cmdc_${index}", index,"compound")
 
                     }
                 }

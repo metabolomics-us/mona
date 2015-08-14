@@ -78,6 +78,8 @@ CREATE INDEX "spectrum_splash_id_index"
 CREATE INDEX "spectrum_submitter_id_index"
 	ON "public"."spectrum"("submitter_id");
 
+create index name_gist_index on name using gist (name gist_trgm_ops);
+
 
 
 
