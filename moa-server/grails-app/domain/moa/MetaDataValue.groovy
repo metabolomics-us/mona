@@ -22,6 +22,11 @@ class MetaDataValue implements Scoreable {
     String unit
 
     /**
+     * optional url
+     */
+    String url
+
+    /**
      * something might be wrong with this value
      */
     boolean suspect = false
@@ -64,6 +69,7 @@ class MetaDataValue implements Scoreable {
         reasonForSuspicion nullable: true
         score nullable: true
         deleted nullable:true
+        url nullable: true
     }
 
     /**
