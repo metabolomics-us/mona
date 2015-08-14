@@ -44,7 +44,7 @@ class StatisticsService {
         int count = 0
 
         Tag.withSession { session ->
-            def result = session.createSQLQuery(" select count(*) as count  from spectrum a, tag b, tag_link c where a.id = c.owner_id and c.tag_id = b.id and text = ? group by text").setString(0, text).list()
+            def result = session.createSQLQuery(" select count(*) as count  from spectrum a, tag b, tag_link c where a.deleted = false and a.id = c.owner_id and c.tag_id = b.id and text = ? group by text").setString(0, text).list()
 
             if (!result.isEmpty()) {
                 count = result[0]
@@ -65,7 +65,7 @@ class StatisticsService {
 
         Spectrum.withSession { session ->
 
-            def result = session.createSQLQuery("select count(*) from spectrum a where a.submitter_id = ? ").setLong(0,id).list()
+            def result = session.createSQLQuery("select count(*) from spectrum a where a.deleted = false and a.submitter_id = ? ").setLong(0,id).list()
 
             if (!result.isEmpty()) {
                 count = result[0]
@@ -86,7 +86,7 @@ class StatisticsService {
 
         Spectrum.withSession { session ->
 
-            def result = session.createSQLQuery("select avg(scaled_score) from spectrum a, score b where a.score_id = b.id and a.submitter_id = ? ").setLong(0,id).list()
+            def result = session.createSQLQuery("select avg(scaled_score) from spectrum a, score b where a.deleted = false and a.score_id = b.id and a.submitter_id = ? ").setLong(0,id).list()
 
             if (!result.isEmpty()) {
                 score = result[0]
@@ -130,7 +130,7 @@ class StatisticsService {
 
         Spectrum.withSession {session ->
 
-            def result = session.createSQLQuery(" select a.a - b.b from( select count(*) a from spectrum )a, ( select count(*) b from tag_link a, tag b where a.tag_id = b.id and b.text = 'deleted') b").list()
+            def result = session.createSQLQuery(" select count(*) from spectrum where deleted = false").list()
 
             if (!result.isEmpty()) {
                 count = result[0]
@@ -147,7 +147,7 @@ class StatisticsService {
         def res = []
 
         Tag.withSession { session ->
-            def result = session.createSQLQuery(" select count(*) as count, text  from spectrum a, tag b, tag_link c where a.id = c.owner_id and c.tag_id = b.id group by text").list()
+            def result = session.createSQLQuery(" select count(*) as count, text  from spectrum a, tag b, tag_link c where a.deleted = false and a.id = c.owner_id and c.tag_id = b.id group by text").list()
 
             if (!result.isEmpty()) {
                 for (Object[] o : result) {
@@ -208,7 +208,7 @@ class StatisticsService {
         def res = []
 
         Submitter.withSession { session ->
-            def result = session.createSQLQuery("select count(*) as count, b.first_name, b.last_name, b.email_address from spectrum a, submitter b where a.submitter_id = b.id group by b.id").list()
+            def result = session.createSQLQuery("select count(*) as count, b.first_name, b.last_name, b.email_address from spectrum a, submitter b where a.deleted = false and a.submitter_id = b.id group by b.id").list()
 
             if (!result.isEmpty()) {
                 for (Object[] o : result) {

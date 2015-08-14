@@ -32,7 +32,7 @@ abstract class AbstractCurationRule implements CurationRule {
 
     CurationAction failureAction
 
-    def tagService
+    TagService tagService
 
     /**
      * default constructor
@@ -180,6 +180,7 @@ abstract class AbstractCurationRule implements CurationRule {
     protected void addTag(CurationObject object, String... tags) {
         if (object.isSupportsMetaDataObject()) {
             tags.each { String tag ->
+
                 tagService.addTagTo(tag, object.getObjectAsSupportsMetaData())
             }
         }

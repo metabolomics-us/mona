@@ -73,11 +73,14 @@ class ScoringService {
                     score.removeFromImpacts(impact1)
                     impact1.delete()
                 }
+
+                score.impacts.clear()
+                score.save()
             }
 
             scoreable.score = null
-            score.delete()
-            scoreable.save()
+            scoreable.save(flush:true)
+            score.delete(flush: true)
         }
     }
 

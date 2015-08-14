@@ -15,7 +15,8 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      * contains one biological compound and one chemical compound
      */
     static hasOne = [
-            submitter: Submitter
+            submitter: Submitter,
+            splash:Splash
     ]
 
     /**
@@ -44,6 +45,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         submitter nullable: true
         score nullable: true
         hash nullable: true
+        deleted nullable: true
     }
 
     static mapping = {
@@ -120,6 +122,11 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     Splash splash
 
     /**
+     * has this spectra been deleted
+     */
+    Boolean deleted
+
+    /**
      * quick access method to not change existing format
      * @return
      */
@@ -136,5 +143,16 @@ class Spectrum extends SupportsMetaData implements Scoreable {
 
     def addQueryOption(def key, def value){
         queryOptions.put(key,value)
+    }
+
+    /**
+     * set deleted to false as default value
+     * @return
+     */
+    def beforeValidate() {
+
+        if(deleted == null){
+            deleted = false
+        }
     }
 }

@@ -91,12 +91,13 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
         }
 
 
+        logger.info("filename: ${filename}")
         if (filename != null) {
             filename = filename.replaceAll("\\s", "").substring(0, 4).replaceAll("\\d", "");
         }
 
         // Update submitter for massbank records
-        if (s.submitter.firstName == 'Gert' || s.submitter.emailAddress == filename + '@MassBank.jp') {
+        if (s.submitter.firstName.toLowerCase() == 'gert' || s.submitter.emailAddress == filename + '@MassBank.jp') {
 
             if (isMB || massbankSubmiters[filename] != null) {
                 Spectrum.withTransaction {
@@ -110,7 +111,7 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
                     }
                 }
             } else {
-                logger.error("not a massbank file: ${filename}")
+                logger.warn("not a massbank file: ${filename}")
             }
         }
 
@@ -123,6 +124,8 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
         Submitter submitter = Submitter.findOrCreateByEmailAddress(filename + '@MassBank.jp');
 
         if (!submitter.validate()) {
+            logger.info("creating a new submitter")
+
             //first last name
             if (authors.contains(",")) {
                 //try to get the first name out of the authors field
@@ -134,6 +137,9 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
                     if (names.length >= 2) {
                         submitter.firstName = names[0]
                         submitter.lastName = names[1]
+                    } else {
+                        submitter.firstName ="none";
+                        submitter.lastName = names[0];
                     }
                 }
             }
@@ -152,14 +158,33 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
 
             submitter.password = "password-${System.currentTimeMillis()}"
             submitter.accountEnabled = false
+
+            if (!submitter.validate()) {
+                logger.error(submitter.errors)
+            }
+            submitter.save()
+
+
+            logger.debug("submitter is created: ${submitter}")
+        } else {
+            logger.debug("submitter already exists: ${submitter}")
         }
 
-        submitter.addToSpectra(s)
+        Submitter current = s.submitter
+
+        logger.debug("detaching spectra from current submitter: ${current}")
+        current.removeFromSpectra(s)
+
+        s.submitter = null
+        s.save()
+        current.save()
+
+        logger.debug("attaching new submitter to spectra")
+        submitter.addToSpectra(s).save()
         s.submitter = submitter
 
-        submitter.save()
+        logger.debug("saving spectra")
         s.save()
-
     }
 
     @Override

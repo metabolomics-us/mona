@@ -23,6 +23,7 @@ CREATE INDEX "index-compound-name"
 CREATE INDEX "index-spectrum-compounds"
         ON "public"."spectrum"("biological_compound_id", "chemical_compound_id");
 
+
 CREATE INDEX "index-category-name"
         ON "public"."meta_data"("category_id", "name");
 
@@ -61,6 +62,22 @@ CREATE INDEX tag_deleted ON tag(text) WHERE text <> 'deleted'     ;
 create index index_meta_data_values_deleted on meta_data_value(deleted,string_value,owner_id) where deleted = true and string_value is not null;
 
 create index index_meta_data_values_deleted on meta_data_value(deleted,string_value,owner_id) where deleted = true;
+
+create index splash_block4_index on splash using gist (block4 gist_trgm_ops);
+
+CREATE INDEX "index-spectrum-deleted"
+        ON "public"."spectrum"("deleted");
+
+
+CREATE INDEX "metavalue_score_index"
+	ON "public"."meta_data_value"("score_id");
+CREATE INDEX "spectrum_score_id_index"
+	ON "public"."spectrum"("score_id");
+CREATE INDEX "spectrum_splash_id_index"
+	ON "public"."spectrum"("splash_id");
+CREATE INDEX "spectrum_submitter_id_index"
+	ON "public"."spectrum"("submitter_id");
+
 
 
 
