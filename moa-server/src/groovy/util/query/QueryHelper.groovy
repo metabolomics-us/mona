@@ -18,7 +18,7 @@ class QueryHelper {
 	 * @return
 	 */
 	public
-	static List buildComparisonField(String inputQuery, String fieldName, List values, String condition, Map executionParams, int index = 0, String qualifierTable = "") {
+	static List buildComparisonField(String inputQuery, String fieldName, List values, String condition, Map executionParams, int index = 0, String qualifierTable = "",String fromQualifier = "") {
 
 		if (qualifierTable != "") {
 			qualifierTable = qualifierTable + "."
@@ -74,9 +74,9 @@ class QueryHelper {
 		 * special handling for between
 		 */
 		if (conditionTranslation.equals("between")) {
-			query += "${qualifierTable}${fieldName} ${conditionTranslation} :${fieldName}_value_${index}_min and :${fieldName}_value_${index}_max"
-			executionParams.put("${fieldName}_value_${index}_min".toString(), values[0])
-			executionParams.put("${fieldName}_value_${index}_max".toString(), values[1])
+			query += "${qualifierTable}${fieldName} ${conditionTranslation} :${fromQualifier}_${fieldName}_value_${index}_min and :${fromQualifier}_${fieldName}_value_${index}_max"
+			executionParams.put("${fromQualifier}_${fieldName}_value_${index}_min".toString(), values[0])
+			executionParams.put("${fromQualifier}_${fieldName}_value_${index}_max".toString(), values[1])
 
 		} else if (conditionTranslation.equals("ilike")) {
 
@@ -87,9 +87,9 @@ class QueryHelper {
 				throw new RuntimeException("Can't use 'like' or 'ilike with numeric data")
 			}
 
-			query += "lower(${qualifierTable}${fieldName}) like (:${fieldName}_value_${index})"
+			query += "lower(${qualifierTable}${fieldName}) like (:${fromQualifier}_${fieldName}_value_${index})"
 
-			executionParams.put("${fieldName}_value_${index}".toString(), value.toString().toLowerCase())
+			executionParams.put("${fromQualifier}_${fieldName}_value_${index}".toString(), value.toString().toLowerCase())
 		}
 		else if(conditionTranslation.equals("isNotNull")){
 			query += "${qualifierTable}${fieldName} is not null"
@@ -129,9 +129,9 @@ class QueryHelper {
 					}
 				}
 			}
-			query += "${qualifierTable}${fieldName} ${conditionTranslation} (:${fieldName}_value_${index})"
+			query += "${qualifierTable}${fieldName} ${conditionTranslation} (:${fromQualifier}_${fieldName}_value_${index})"
 
-			executionParams.put("${fieldName}_value_${index}".toString(), value)
+			executionParams.put("${fromQualifier}_${fieldName}_value_${index}".toString(), value)
 		}
 
 		query += ")"

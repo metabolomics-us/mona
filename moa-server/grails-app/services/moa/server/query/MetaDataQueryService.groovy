@@ -81,7 +81,7 @@ class MetaDataQueryService {
         def executionParams = [:]
 
 
-        queryOfDoomWhere = buildMetadataQueryString(queryOfDoomWhere, json, executionParams, "md", "m", "mdc", 0)
+        (queryOfDoomWhere,executionParams) = buildMetadataQueryString(queryOfDoomWhere, json, executionParams, "md", "m", "mdc", 0)
 
         queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
@@ -105,7 +105,7 @@ class MetaDataQueryService {
      * @param index current join in case we have more than 1
      * @return
      */
-    protected String buildMetadataQueryString(String whereQuery, Map current, Map executionParams, String metaDataTableName, String valueTable, String categoryTable, int index = 0) {
+    protected List buildMetadataQueryString(String whereQuery, Map current, Map executionParams, String metaDataTableName, String valueTable, String categoryTable, int index = 0, String fromQualifier = "") {
 
         whereQuery = addRequiredAnd(whereQuery)
 
@@ -120,7 +120,7 @@ class MetaDataQueryService {
 
                 //query by id
                 if (current.category.id) {
-                    (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.category.id], "eq", executionParams, index, categoryTable)
+                    (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.category.id], "eq", executionParams, index, categoryTable,fromQualifier)
 
                 }
 
@@ -128,14 +128,14 @@ class MetaDataQueryService {
                 else {
                     current.category.keySet().each { String key ->
                         if (current.category."${key}") {
-                            (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.category."${key}"], key, executionParams, index, categoryTable)
+                            (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.category."${key}"], key, executionParams, index, categoryTable,fromQualifier)
                         }
                     }
                 }
             }
             //short form
             else {
-                (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.category], "eq", executionParams, index, categoryTable)
+                (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.category], "eq", executionParams, index, categoryTable,fromQualifier)
             }
         }
         //we have a name specified
@@ -146,13 +146,13 @@ class MetaDataQueryService {
             if (current.name instanceof Map) {
                 current.name.keySet().each { String key ->
                     if (current.name."${key}") {
-                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.name."${key}"], key, executionParams, index, metaDataTableName)
+                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.name."${key}"], key, executionParams, index, metaDataTableName,fromQualifier)
                     }
                 }
             }
             //short form
             else {
-                (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.name], "eq", executionParams, index, metaDataTableName)
+                (whereQuery, executionParams) = buildComparisonField(whereQuery, "name", [current.name], "eq", executionParams, index, metaDataTableName,fromQualifier)
             }
         }
 
@@ -163,14 +163,14 @@ class MetaDataQueryService {
             if (current.id instanceof Map) {
                 current.id.keySet().each { String key ->
                     if (current.id."${key}") {
-                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id."${key}"], key, executionParams, index, metaDataTableName)
+                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id."${key}"], key, executionParams, index, metaDataTableName,fromQualifier)
 
                     }
                 }
             }
             //short form
             else {
-                (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id], "eq", executionParams, index, metaDataTableName)
+                (whereQuery, executionParams) = buildComparisonField(whereQuery, "id", [current.id], "eq", executionParams, index, metaDataTableName,fromQualifier)
             }
         }
 
@@ -190,7 +190,7 @@ class MetaDataQueryService {
 
                             def impl = estimateMetaDataValueImpl(current.value.between[0].toString())
 
-                            (whereQuery, executionParams) = buildComparisonField(whereQuery, impl.name.toString(), [estimateMetaDataValueImpl(current.value.between[0]).value, estimateMetaDataValueImpl(current.value.between[1]).value], key, executionParams, index, valueTable)
+                            (whereQuery, executionParams) = buildComparisonField(whereQuery, impl.name.toString(), [estimateMetaDataValueImpl(current.value.between[0]).value, estimateMetaDataValueImpl(current.value.between[1]).value], key, executionParams, index, valueTable,fromQualifier)
                         }
                         // and unit inside value
                         else if (key.equals("unit")) {
@@ -198,7 +198,7 @@ class MetaDataQueryService {
                         } else {
                             def impl = estimateMetaDataValueImpl(current.value."${key}".toString())
 
-                            (whereQuery, executionParams) = buildComparisonField(whereQuery, impl.name.toString(), [impl.value], key, executionParams, index, valueTable)
+                            (whereQuery, executionParams) = buildComparisonField(whereQuery, impl.name.toString(), [impl.value], key, executionParams, index, valueTable,fromQualifier)
                         }
                     }
                 }
@@ -207,7 +207,7 @@ class MetaDataQueryService {
             else {
                 def impl = estimateMetaDataValueImpl(current.value.toString())
 
-                (whereQuery, executionParams) = buildComparisonField(whereQuery, impl.name, [impl.value], "eq", executionParams, index, valueTable)
+                (whereQuery, executionParams) = buildComparisonField(whereQuery, impl.name, [impl.value], "eq", executionParams, index, valueTable,fromQualifier)
 
             }
         }
@@ -216,7 +216,7 @@ class MetaDataQueryService {
         if (current.value instanceof Map && current.value.unit != null) {
             whereQuery = addRequiredAnd(whereQuery)
 
-            (whereQuery, executionParams) = buildComparisonField(whereQuery, "unit", [current.value.unit], "eq", executionParams, index, valueTable)
+            (whereQuery, executionParams) = buildComparisonField(whereQuery, "unit", [current.value.unit], "eq", executionParams, index, valueTable,fromQualifier)
         }
 
         //support for units in long form
@@ -227,19 +227,19 @@ class MetaDataQueryService {
             if (current.unit instanceof Map) {
                 current.unit.keySet().each { String key ->
                     if (current.unit."${key}") {
-                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "unit", [current.unit."${key}"], key, executionParams, index, valueTable)
+                        (whereQuery, executionParams) = buildComparisonField(whereQuery, "unit", [current.unit."${key}"], key, executionParams, index, valueTable,fromQualifier)
                     }
                 }
             }
             //short form
             else {
-                (whereQuery, executionParams) = buildComparisonField(whereQuery, "unit", [current.unit], "eq", executionParams, index, valueTable)
+                (whereQuery, executionParams) = buildComparisonField(whereQuery, "unit", [current.unit], "eq", executionParams, index, valueTable,fromQualifier)
             }
         }
 
         whereQuery += ")"
 
-        return whereQuery
+        return [whereQuery,executionParams]
     }
 
     /**
