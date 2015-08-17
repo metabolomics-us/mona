@@ -145,8 +145,8 @@
                                 </button>
                             </span>
                         </div>
-                        <p class="text-right" ng-show="auth.isLoggedIn()">
-                            <span class="help-block"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></span>
+                        <p class="text-right">
+                            <span><a href="" ng-click="querySpectraDialog()">Advanced Query</a></span>
                         </p>
                     </form>
                 </li>
@@ -164,7 +164,11 @@
                 </li>
 
                 <li>
-                    <a href="#/upload"><i class="fa fa-cloud-upload fa-fw"></i>Spectrum Cleaner & Uploader</a>
+                    <a href="#/spectra/similarity"><i class="fa fa-search fa-fw"></i>Similarity Query</a>
+                </li>
+
+                <li>
+                    <a href="#/upload"><i class="fa fa-cloud-upload fa-fw"></i>Spectrum Uploader</a>
                 </li>
 
                 <li>
@@ -310,7 +314,7 @@
 <script src="scripts/services/query/SpectraQueryBuilderService.js"></script>
 <script src="scripts/services/optimization/MetaDataOptimizationService.js"></script>
 <script src="scripts/services/cookie/CookieService.js"></script>
-
+<script src="scripts/services/splashService.js"></script>
 <script src="scripts/services/authenticationService.js"></script>
 <script src="scripts/services/upload/uploadLibraryService.js"></script>
 <script src="scripts/services/persistence/newsService.js"></script>
@@ -330,14 +334,14 @@
 <script src="scripts/controllers/browser/spectraBrowserController.js"></script>
 <script src="scripts/controllers/browser/spectraDatabaseIndexController.js"></script>
 <script src="scripts/controllers/browser/spectrumViewerController.js"></script>
-<script src="scripts/controllers/browser/spectraQueryModalController.js"></script>
-<script src="scripts/controllers/cleanSpectraDataController.js"></script>
 <script src="scripts/controllers/browser/compoundBrowserController.js"></script>
+<script src="scripts/controllers/query/spectraQueryModalController.js"></script>
+<script src="scripts/controllers/query/spectraSimilarityQueryController.js"></script>
 <script src="scripts/controllers/submitter/submitterController.js"></script>
 <script src="scripts/controllers/submitter/submitterModalController.js"></script>
 <script src="scripts/controllers/submitter/submitterProfileController.js"></script>
-<script src="scripts/controllers/upload/spectraUploadWizardController.js"></script>
-<script src="scripts/controllers/upload/spectraUploadController.js"></script>
+<script src="scripts/controllers/upload/spectraUploadStatusController.js"></script>
+<script src="scripts/controllers/upload/cleanAndUploadSpectraDataController.js"></script>
 <script src="scripts/controllers/statistics/statisticsController.js"></script>
 <script src="scripts/controllers/searchBoxController.js"></script>
 <script src="scripts/controllers/documentation/DocumentationTermController.js"></script>

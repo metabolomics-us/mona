@@ -89,6 +89,9 @@
                     <div>
                         <span score-spectra ng-model="spectrum"></span>
                     </div>
+                    <div ng-if="spectrum.queryOptions !== undefined">
+                        Similarity: {{100 * spectrum.queryOptions.spectralSimilarity | number:3}}%
+                    </div>
                 </td>
                 <td>
                     <p class="text-center">{{spectrum.accurateMass}}</p>
