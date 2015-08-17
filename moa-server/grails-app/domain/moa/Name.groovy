@@ -10,6 +10,7 @@ class Name implements Scoreable {
 
     static mapping = {
         name sqlType: "text"
+        version false
     }
 
     static constraints = {
