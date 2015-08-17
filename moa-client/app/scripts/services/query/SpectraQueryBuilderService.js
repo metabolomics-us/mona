@@ -184,7 +184,6 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
      * @param id
      */
     this.addSimilarSpectraToQuery = function (value, spectra) {
-
         var query = this.getQuery();
 
         if (!query.match) {
@@ -198,8 +197,40 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         query.match.score = 0.5;
 
         QueryCache.setSpectraQuery(query);
-
     };
+
+    /**
+     * finds exact spectra for this histogram
+     * @param id
+     */
+    this.addExactSpectraSearchToQuery = function (hash) {
+        var query = this.getQuery();
+
+        if (!query.match) {
+            query.match = {};
+        }
+        query.match.exact = hash;
+
+        QueryCache.setSpectraQuery(query);
+    };
+
+    /**
+     * finds exact spectra for this histogram
+     * @param id
+     */
+    this.addTop10IonsSearchToQuery = function (hash) {
+        var query = this.getQuery();
+
+        if (!query.match) {
+            query.match = {};
+        }
+        query.match.top10 = hash;
+
+        QueryCache.setSpectraQuery(query);
+    };
+
+
+
     /**
      * removes this spectra id from the query
      * @param id
