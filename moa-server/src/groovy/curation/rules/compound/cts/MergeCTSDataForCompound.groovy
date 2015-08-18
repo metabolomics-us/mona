@@ -32,6 +32,9 @@ class MergeCTSDataForCompound extends AbstractCurationRule {
 
         Compound compound = toValidate.objectAsCompound
 
+
+        compound = Compound.lock(compound.id)
+
         logger.info("running rule on: ${compound} with key: ${compound.inchiKey}")
 
 
