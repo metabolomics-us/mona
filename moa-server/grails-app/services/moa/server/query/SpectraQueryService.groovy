@@ -1,7 +1,10 @@
 package moa.server.query
 
 import curation.CommonTags
+import edu.ucdavis.fiehnlab.spectra.hash.core.SplashFactory
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
+import edu.ucdavis.fiehnlab.spectra.hash.core.util.SpectraUtil
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import grails.converters.JSON
 import grails.transaction.Transactional
@@ -368,28 +371,55 @@ class SpectraQueryService {
 
                     //if no histogram provided, we generated it on the fly, utilizing the latest splash version
                     if (!json.match.histogram) {
+
                         json.match.histogram = SplashUtil.splash(json.match.spectra, SpectraType.MS).split("-")[3]
                     }
 
+                    //normalize spectra
+
+                    edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum s = SpectraUtil.convertStringToSpectrum(json.match.spectra,SpectraType.MS).toRelative(1);
+
+                    //find the base peak
+                    Ion bp = null
+
+                    s.ions.each {
+                        if(it.intensity >= 1){
+                            bp = it
+                        }
+                    }
+
+                    queryOfDoomJoins += "  inner join s.ions as i"
+
+
+
+                    //spectra must have the same base peak, it's more of a performance issue
+                    queryOfDoomWhere += " i.mass between :minIon and :maxIon and i.intensity > 0.9 "
+
+
                     having = "$having, spectramatch(:spectra,s.id) > ${spectraScore}"
                     executionParams."spectra" = json.match.spectra
+                    executionParams."minIon" = Math.floor(bp.mass).doubleValue()
+                    executionParams."maxIon" = Math.ceil(bp.mass).doubleValue()
+
 
                     fields = "$fields, spectramatch(:spectra,s.id) as spectralSimilarity"
 
-                    orderBy = "$orderBy, spectramatch(:spectra,s.id) DESC"
+                    orderBy = "$orderBy, spectralSimilarity DESC"
 
-                    group = "$group, spectramatch(:spectra,s.id)"
+                    group = "$group, s.id"
 
                 }
 
                 //build the histgram query
+                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+
                 queryOfDoomWhere += " histmatch(s.splash.block4,:histogramBlock) > ${histogramScore}"
                 executionParams."histogramBlock" = json.match.histogram
 
 
                 fields = "$fields, histmatch(s.splash.block4,:histogramBlock) as histogramSimilarity"
-                orderBy = "$orderBy, histmatch(s.splash.block4,:histogramBlock) DESC"
-                group = "$group, histmatch(s.splash.block4,:histogramBlock), s.splash.block4"
+                orderBy = "$orderBy,histogramSimilarity DESC"
+                group = "$group, s.splash.block4"
 
             } else {
                 throw new RuntimeException("none supported arguments...")

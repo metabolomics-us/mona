@@ -194,7 +194,6 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             query.match.spectra = spectra;
         }
         query.match.histogram = value;
-        query.match.score = 0.5;
 
         QueryCache.setSpectraQuery(query);
     };
