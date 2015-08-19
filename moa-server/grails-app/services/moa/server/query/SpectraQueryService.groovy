@@ -388,18 +388,18 @@ class SpectraQueryService {
                         }
                     }
 
-                    queryOfDoomJoins += "  inner join s.ions as i"
+                    //queryOfDoomJoins += "  inner join s.ions as i"
 
 
 
                     //spectra must have the same base peak, it's more of a performance issue
-                    queryOfDoomWhere += " i.mass between :minIon and :maxIon and i.intensity > 0.9 "
+                    //queryOfDoomWhere += " i.mass between :minIon and :maxIon and i.intensity > 0.9 "
 
 
                     having = "$having, spectramatch(:spectra,s.id) > ${spectraScore}"
                     executionParams."spectra" = json.match.spectra
-                    executionParams."minIon" = Math.floor(bp.mass).doubleValue()
-                    executionParams."maxIon" = Math.ceil(bp.mass).doubleValue()
+                    //executionParams."minIon" = Math.floor(bp.mass).doubleValue()
+                    //executionParams."maxIon" = Math.ceil(bp.mass).doubleValue()
 
 
                     fields = "$fields, spectramatch(:spectra,s.id) as spectralSimilarity"
@@ -411,7 +411,7 @@ class SpectraQueryService {
                 }
 
                 //build the histgram query
-                queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+                //queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 queryOfDoomWhere += " histmatch(s.splash.block4,:histogramBlock) > ${histogramScore}"
                 executionParams."histogramBlock" = json.match.histogram

@@ -3,7 +3,6 @@ package moa.server.query
 import grails.converters.JSON
 import moa.Spectrum
 import moa.auth.AuthenticationToken
-import moa.server.DeleteSpectraJob
 import moa.server.SpectraQueryDownloadJob
 import moa.server.auth.AuthenticationService
 import moa.server.convert.SpectraConversionService
@@ -102,29 +101,6 @@ class SpectraQueryController {
             def result = spectraQueryService.update(json.query, json.update);
 
             render(result as JSON)
-        }
-    }
-
-    /**
-     * starts a batch delete against the server and removes
-     * all the spectra associated with this query
-     * this can take a couple of hours and fires off internal jobs
-     */
-    def searchAndDelete(){
-
-        def json = request.JSON
-
-        if(json.delete == null){
-            render(status: 404, text: "please provide a 'delete' tag in your json payload. It has to respond to the standard MoNA query syntax");
-
-        }
-        else {
-
-            log.info("received delete request: " + json.delete)
-
-            DeleteSpectraJob.triggerNow([deleteSpectra:json.delete])
-
-            render(['queued request for deletion'] as JSON)
         }
     }
 

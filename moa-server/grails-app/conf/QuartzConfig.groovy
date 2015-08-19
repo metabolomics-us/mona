@@ -29,7 +29,7 @@ quartz {
 
         threadPool.'class' = 'org.quartz.simpl.SimpleThreadPool'
         //use n-2 threads or 2 otherwise
-        threadPool.threadCount = Runtime.getRuntime().availableProcessors() > 2 ? Runtime.getRuntime().availableProcessors() -2 : 2
+        threadPool.threadCount = 4
         //threadPool.threadPriority = 7
         threadPool.makeThreadsDaemons = true
 
