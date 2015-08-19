@@ -44,7 +44,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         predictedCompound nullable: true
         submitter nullable: true
         score nullable: true
-        hash nullable: true
+        splash nullable: true
         deleted nullable: true
     }
 

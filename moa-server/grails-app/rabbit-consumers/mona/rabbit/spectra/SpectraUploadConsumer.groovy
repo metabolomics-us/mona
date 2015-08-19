@@ -1,43 +1,20 @@
-package moa.server
+package mona.rabbit.spectra
 
+import com.budjb.rabbitmq.consumer.MessageContext
+import com.budjb.rabbitmq.publisher.RabbitMessagePublisher
 import exception.ValidationException
 import grails.converters.JSON
 import moa.Spectrum
+import moa.server.SpectraPersistenceService
+import moa.server.SpectraUploadJob
 import moa.server.curation.SpectraCurationService
 import moa.server.scoring.ScoringService
 import moa.server.statistics.StatisticsService
+import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.json.JSONObject
 import util.FireJobs
 
-/**
- * used to upload a spectra in the background
- */
-@Deprecated
-class SpectraUploadJob {
-
-    /**
-     * do we automatically want to resubmit failed jobs
-     */
-    def resubmit = true
-
-    /**
-     * should this run concurrent over the whole cluster
-     */
-    def concurrent = true
-
-    /**
-     * do we want to automatically validate the spectra after submission
-     */
-    def validation = true
-
-    /**
-     * needs to be defined
-     */
-    static triggers = {}
-
-    def group = "upload"
-
-    def description = "uploads spectra data in the background of the server"
+class SpectraUploadConsumer {
 
     SpectraPersistenceService spectraPersistenceService
 
@@ -47,9 +24,27 @@ class SpectraUploadJob {
 
     ScoringService scoringService
 
-    def execute(context) {
-        Map data = context.mergedJobDataMap
+    Logger log = Logger.getLogger(getClass())
 
+    RabbitMessagePublisher rabbitMessagePublisher
+
+    def validation = true
+
+    def resubmit = true
+
+    static rabbitConfig = [
+            queue    : "mona.import.spectra",
+            consumers: 100
+    ]
+
+    /**
+     * Handle an incoming RabbitMQ message.
+     *
+     * @param body The converted body of the incoming message.
+     * @param context Properties of the incoming message.
+     * @return
+     */
+    def handleMessage(def data, MessageContext context) {
         if (data != null) {
             if (data.containsKey('spectra')) {
                 long begin = System.currentTimeMillis()
@@ -85,7 +80,8 @@ class SpectraUploadJob {
                     //automatic validation
                     if (validation) {
                         try {
-                            spectraCurationService.validateSpectra(result.id)
+
+                            FireJobs.fireSpectraCurationJob([spectraId: id.id])
                         }
                         catch (Exception e) {
                             log.warn("none fatal exception, but spectra submission was succcessful: ${e.getMessage()}", e)
@@ -112,7 +108,7 @@ class SpectraUploadJob {
                         } else {
                             log.error("resubmitting failed job to the system", e)
 
-                            SpectraUploadJob.triggerNow([spectra: data.spectra])
+                            FireJobs.fireSpectraUploadJob(data)
                         }
                     } else {
                         log.error("upload fatally failed: ${e.getMessage()}", e)

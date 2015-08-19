@@ -176,6 +176,7 @@ class UrlMappings {
 
         "/rest/curate/spectra/curateAllByQuery"(controller: 'spectraCuration',action:  'curateAllByQuery')
 
+
         /**
          * association services, use with care!
          * they will reassign users to

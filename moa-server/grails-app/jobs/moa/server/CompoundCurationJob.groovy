@@ -8,6 +8,7 @@ import moa.server.curation.CompoundCurationService
  * Date: 10/13/14
  * Time: 11:00 AM
  */
+@Deprecated
 class CompoundCurationJob {
     def concurrent = true
 

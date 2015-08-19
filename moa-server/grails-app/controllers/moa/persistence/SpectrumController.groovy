@@ -5,11 +5,11 @@ import grails.rest.RestfulController
 import grails.transaction.Transactional
 import moa.Spectrum
 import moa.server.SpectraPersistenceService
-import moa.server.SpectraUploadJob
 import moa.server.convert.SpectraConversionService
 import moa.server.query.SpectraQueryService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import util.FireJobs
 
 class SpectrumController extends RestfulController<Spectrum> {
     static responseFormats = ['json']
@@ -68,7 +68,7 @@ class SpectrumController extends RestfulController<Spectrum> {
     def singleSave() {
         String text = request.getReader().text
 
-        SpectraUploadJob.triggerNow([spectra: text])
+        FireJobs.fireSpectraUploadJob([spectra: text])
         render([message: "1 spectra submitted"] as JSON)
     }
 
@@ -80,7 +80,7 @@ class SpectrumController extends RestfulController<Spectrum> {
                 for (int i = 0; i < array.length(); i++) {
                     if (array.get(i) instanceof JSONObject) {
                         log.info("trigger uploading spectra")
-                        SpectraUploadJob.triggerNow([spectra: array.getJSONObject(i).toString()])
+                        FireJobs.fireSpectraUploadJob([spectra: array.getJSONObject(i).toString()])
                     }
                 }
 
@@ -89,7 +89,7 @@ class SpectrumController extends RestfulController<Spectrum> {
             } else {
                 log.info("trigger uploading spectra")
 
-                SpectraUploadJob.triggerNow([spectra: request.JSON.toString()])
+                FireJobs.fireSpectraUploadJob([spectra: request.JSON.toString()])
                 render([message: "1 spectra submitted"] as JSON)
             }
         }

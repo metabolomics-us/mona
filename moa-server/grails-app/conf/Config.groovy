@@ -138,11 +138,11 @@ log4j = {
     debug 'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
             'org.codehaus.groovy.grails.plugins'            // plugins
-            //'org.hibernate',
-            //'net.sf.ehcache.hibernate',
-            //'org.quartz.plugins.history.LoggingTriggerHistoryPlugin'
+    //'org.hibernate',
+    //'net.sf.ehcache.hibernate',
+    //'org.quartz.plugins.history.LoggingTriggerHistoryPlugin'
 
-            //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
+    //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
     debug additivity: false, monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
     debug additivity: false, monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
@@ -231,3 +231,16 @@ cors.headers = [
         'Access-Control-Allow-Methods'    : 'GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS',
         'Access-Control-Max-Age'          : 3600
 ]
+
+rabbitmq {
+    connection = {
+        connection host: "localhost", username: "guest", password: "guest", threads: Runtime.getRuntime().availableProcessors() - 2
+    }
+    queues = {
+        queue name: "mona.validate.spectra", arguments: ["x-max-priority", 6]
+        queue name: "mona.import.spectra", arguments: ["x-max-priority", 9]
+        queue name: "mona.validate.compound", arguments: ["x-max-priority", 8]
+
+    }
+
+}

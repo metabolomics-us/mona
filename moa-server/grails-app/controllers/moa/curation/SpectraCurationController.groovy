@@ -28,7 +28,7 @@ class SpectraCurationController {
 
         def id = params.id
 
-        FireJobs.fireSpectraCurationJob([spectraId: id as long])
+        FireJobs.fireSpectraCurationJob([spectraId: id as long],params)
 
         render(text: "scheduling curation of ${id} succesful!")
     }
@@ -47,7 +47,7 @@ class SpectraCurationController {
      * @return
      */
     def curateAll() {
-        FireJobs.fireSpectraCurationJob([all: true])
+        FireJobs.fireSpectraCurationJob([all: true],params)
         render(text: "curating all spectra!")
     }
 
@@ -84,7 +84,7 @@ class SpectraCurationController {
 
         log.info("received query: ${query}")
 
-        FireJobs.fireSpectraCurationJob([query: query])
+        FireJobs.fireSpectraCurationJob([query: query],params)
 
         render(text: "curating all spectra, by query!")
 

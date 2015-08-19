@@ -30,9 +30,9 @@ environments {
 
             properties {
                 jmxEnabled = true
-                initialSize = 5
-                maxActive = 50
-                minIdle = 5
+                initialSize = 50
+                maxActive = 70
+                minIdle = 10
                 maxIdle = 25
                 maxWait = 10000
                 maxAge = 10 * 60000

@@ -14,6 +14,7 @@ import util.FireJobs
  * Date: 9/30/14
  * Time: 1:30 PM
  */
+@Deprecated
 class SpectraValidationJob {
     def concurrent = true
 

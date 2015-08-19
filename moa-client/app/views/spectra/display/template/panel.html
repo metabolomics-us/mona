@@ -1,10 +1,8 @@
 <div class="panel panel-default">
     <div class="panel-heading" ng-click="viewSpectrum()">
         <div class="panel-title">
-            <a href="">
-                <i class="fa fa-external-link fa-fw"></i> Spectrum {{spectrum.id}}:
-                {{spectrum.biologicalCompound.names[0].name}}
-            </a>
+
+            <span gw-spectra-id-query value="spectrum">{{spectrum.hash}} - {{spectrum.biologicalCompound.names[0].name}}</span>
 
                         <span class="pull-right">
                             Score: <span score-spectra ng-model="spectrum"></span>
@@ -63,7 +61,8 @@
                     </li>
 
                     <li class="pull-right">
-                        <button class="btn btn-success" ng-click="viewSpectrum()" tooltip-placement="left" tooltip="click, to display all the spectra information">
+                        <button class="btn btn-success" ng-click="viewSpectrum()" tooltip-placement="left"
+                                tooltip="click, to display all the spectra information">
 
                             <i class="fa fa-external-link fa-fw"></i>display full information
                         </button>
