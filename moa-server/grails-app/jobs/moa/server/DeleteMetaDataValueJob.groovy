@@ -37,7 +37,9 @@ class DeleteMetaDataValueJob {
         Map data = context.mergedJobDataMap
 
         if (data != null) {
-            MetaDataValue.executeUpdate("delete from MetaDataValue where deleted = true")
+            MetaDataValue.withTransaction {
+                MetaDataValue.executeUpdate("delete from MetaDataValue where deleted = true")
+            }
         } else {
             log.warn("no data were provided")
         }

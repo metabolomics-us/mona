@@ -28,12 +28,14 @@ class DeleteComputedNamesRule extends AbstractCurationRule {
 
         Compound compound = toValidate.objectAsCompound
 
+        compound = Compound.lock(compound.id)
+
         logger.info("running rule on: ${compound}")
 
         def namesToDelete = []
 
-        compound.names.each {Name name ->
-            if(name.computed){
+        compound.names.each { Name name ->
+            if (name.computed) {
                 namesToDelete.add(name)
             }
         }
@@ -43,6 +45,8 @@ class DeleteComputedNamesRule extends AbstractCurationRule {
             it.compound = null
             it.delete()
         }
+
+        compound.save(flush: true)
 
 
         return true

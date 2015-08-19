@@ -73,11 +73,6 @@ class SpectraCurationService {
                     "spectra"
             )
 
-
-            FireJobs.fireCompoundCurationJob([compoundId:spectrum.biologicalCompound.id])
-            FireJobs.fireCompoundCurationJob([compoundId:spectrum.chemicalCompound.id])
-
-
             return result
         } else {
             return false
