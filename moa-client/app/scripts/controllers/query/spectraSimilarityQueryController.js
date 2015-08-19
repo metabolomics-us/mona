@@ -122,22 +122,27 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
                 }
             }
 
-            // Get splash id
-            SplashService.splashIt(splashObject).$promise.then(function(data) {
+            // Perform similarity search
+            if ($scope.queryOptions.queryType == 'similar') {
                 SpectraQueryBuilderService.prepareQuery();
-
-                if($scope.queryOptions.queryType == 'exact') {
-                    SpectraQueryBuilderService.addExactSpectraSearchToQuery(data.splash.split('-')[2])
-                }
-                else if ($scope.queryOptions.queryType == 'top10') {
-                    SpectraQueryBuilderService.addTop10IonsSearchToQuery(data.splash.split('-')[1])
-                }
-                else if ($scope.queryOptions.queryType == 'similar') {
-                    SpectraQueryBuilderService.addSimilarSpectraToQuery(data.splash.split('-')[3], spectrumString)
-                }
-
+                SpectraQueryBuilderService.addSimilarSpectraToQuery(spectrumString);
                 $location.path("/spectra/browse/");
-            });
+            }
+
+            // Get splash id
+            else {
+                SplashService.splashIt(splashObject).$promise.then(function(data) {
+                    SpectraQueryBuilderService.prepareQuery();
+
+                    if($scope.queryOptions.queryType == 'exact') {
+                        SpectraQueryBuilderService.addExactSpectraSearchToQuery(data.splash.split('-')[2]);
+                    }
+                    else if ($scope.queryOptions.queryType == 'top10') {
+                        SpectraQueryBuilderService.addTop10IonsSearchToQuery(data.splash.split('-')[1]);
+                    }
+                });
+            }
+
         }
     };
 
