@@ -14,7 +14,11 @@ class NameService {
 
         n.computed = computed
         n.source = source
-        n.save()
+
+        if(!n.validate()) {
+            log.error(n.errors)
+        }
+        n.save(flush:true)
 
 
     }

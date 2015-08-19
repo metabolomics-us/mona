@@ -412,7 +412,7 @@ ON "public"."spectrum"("submitter_id");
 
 -- drop none longer required hashcode column
 ALTER TABLE public.spectrum
-	DROP COLUMN hash cascade
+	DROP COLUMN hash cascade;
 
 -- delete job queues --
 
@@ -448,4 +448,12 @@ delete from splash;
 
 
 --update all names to be none computed--
-update name set computed = false
+update name set computed = false;
+
+--dropping not longer required version --
+ALTER TABLE name DROP COLUMN version;
+
+ALTER TABLE "public"."meta_data_value" ALTER COLUMN "url" TYPE varchar(5000);
+
+
+create index rounded_mass_index on ion ( round (cast(mass as numeric),0));
