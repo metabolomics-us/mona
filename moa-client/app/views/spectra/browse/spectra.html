@@ -46,8 +46,7 @@
 <div class="row" infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="1" infinite-scroll-use-document-bottom="true">
     <!-- display spectra as list -->
     <div class="col-md-12" ng-show="table == false">
-        <div ng-repeat="spectrum in spectra" >
-
+        <div ng-repeat="spectrum in spectra">
             <div display-spectra-panel spectrum="spectrum"></div>
         </div>
     </div>
@@ -90,7 +89,7 @@
                         <span score-spectra ng-model="spectrum"></span>
                     </div>
                     <div ng-if="spectrum.queryOptions !== undefined">
-                        Similarity: {{100 * spectrum.queryOptions.spectralSimilarity | number:3}}%
+                        Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
                     </div>
                 </td>
                 <td>
