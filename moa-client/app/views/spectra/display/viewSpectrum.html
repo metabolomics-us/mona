@@ -7,25 +7,19 @@
 
     <div class="row">
         <div class="col-md-12">
-
             <div class="panel panel-default">
                 <div class="panel-heading">
-
-                    <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}
-
-                    </h3>
+                    <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}</h3>
                 </div>
 
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-md-12"
-                             ng-click="showScore =! showScore" ng-init="showScore = false">
-            <span tooltip-placement="right" tooltip="Please click to view how the score was calculated"
-                  tooltip-trigger="mouseenter" tooltip-popup-delay='10'>
-            Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
-                </span>
+                        <div class="col-md-12" ng-click="showScore =! showScore" ng-init="showScore = false">
+                            <span tooltip-placement="right" tooltip="Please click to view how the score was calculated"
+                                    tooltip-trigger="mouseenter" tooltip-popup-delay='10'>
+                                Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
+                            </span>
                         </div>
-
                     </div>
 
                     <div class="row" ng-show="showScore" ng-class="animate-show">
@@ -36,10 +30,8 @@
                                     :4}}/({{spectrum.score.scaledScore | number :1}} stars
                                 </div>
                                 <div class="panel-body">
-
                                     Green elements show that this had a positive impact, while red elements display a
-                                    negative
-                                    impact.
+                                    negative impact.
                                 </div>
                                 <table class="table">
                                     <thead>
@@ -74,21 +66,19 @@
                         </div>
 
                         <div class="col-md-4 text-right">
-
                             <div spectra-download spectra="spectrum"></div>
-
                         </div>
                     </div>
-                    <div class="row top5">
 
+                    <div class="row top5">
                         <div class="col-md-12">
                             <ul class="list-inline">
                                 <li>
-                                    <div class="h5">Hash: <span gw-spectra-id-query
-                                                                value="spectrum">{{spectrum.hash}}</span></div>
+                                    <div class="h5">Hash: <span gw-spectra-id-query value="spectrum">{{spectrum.hash}}</span></div>
                                 </li>
                                 <li>
-                                    <div class="h5">Submitter: <span gw-submitter-query submitter="spectrum.submitter">{{spectrum.submitter.firstName}} {{spectrum.submitter.lastName}}</span>
+                                    <div class="h5">
+                                        Submitter: <span gw-submitter-query submitter="spectrum.submitter">{{spectrum.submitter.firstName}} {{spectrum.submitter.lastName}}</span>
                                     </div>
                                 </li>
                             </ul>
@@ -306,7 +296,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
