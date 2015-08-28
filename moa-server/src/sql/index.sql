@@ -81,8 +81,10 @@ CREATE INDEX "spectrum_submitter_id_index"
 create index name_gist_index on name using gist (name gist_trgm_ops);
 
 CREATE INDEX "ion_intensity_mass_index"
-	ON "public"."ion"("intensity", "mass")
+	ON "public"."ion"("intensity", "mass");
 
+CREATE INDEX "splash_spectra_index"
+	ON "public"."splash"("spectrum_id");
 
 
 

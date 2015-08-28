@@ -50,7 +50,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
 
     static mapping = {
 
-        batchSize(50)
+        //batchSize(50)
         version false
         comments /*fetch: 'join',*/ cascade: 'all-delete-orphan'
         // ions lazy:false

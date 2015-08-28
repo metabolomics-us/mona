@@ -183,13 +183,35 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
      * finds similar spectra for this histogram
      * @param id
      */
-    this.addSimilarSpectraToQuery = function (spectra) {
+    this.addSimilarSpectraToQuery = function (hash,spectra) {
         var query = this.getQuery();
 
         if (!query.match) {
             query.match = {};
         }
-        query.match.spectra = spectra;
+        if(angular.isDefined(spectra)) {
+            query.match.spectra = spectra;
+        }
+
+        if(angular.isDefined(hash) && hash != null){
+            //still dirty...
+            query.match.histogram = hash.split("-")[3];
+            query.match.histogramScore = 0.9;
+
+        }
+
+        QueryCache.setSpectraQuery(query);
+    };
+
+    this.addMatchingHistogramToQuery = function (hash) {
+        var query = this.getQuery();
+
+        if (!query.match) {
+            query.match = {};
+        }
+
+        query.match.histogram = hash.split("-")[3];
+        query.match.histogramScore = 1;
 
         QueryCache.setSpectraQuery(query);
     };

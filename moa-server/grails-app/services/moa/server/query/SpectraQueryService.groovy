@@ -54,9 +54,9 @@ class SpectraQueryService {
         Sql sql = new Sql(dataSource)
 
         long begin = System.currentTimeMillis()
-        def resultList = []
+        def resultList = new LinkedHashSet()
 
-        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and similarity(block4,?) > 0.8 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
+        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block4,:?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
 
             def hit = [:]
             hit.id = row.id
@@ -82,8 +82,31 @@ class SpectraQueryService {
      */
     def findSimilarSpectraIds(long id, double minSimilarity = 500, int maxResults = 10) {
 
-        return findSimilarSpectraIds(Spectrum.get(id).getSpectrum(), minSimilarity, maxResults);
+        Spectrum spectrum = Spectrum.get(id)
+        String histogram = spectrum.splash.block4
 
+
+        log.info("start searching...")
+        Sql sql = new Sql(dataSource)
+
+        long begin = System.currentTimeMillis()
+        def resultList = []
+
+        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block4,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ? limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
+
+            def hit = [:]
+            hit.id = row.id
+            hit.similarity = row.similarity
+
+            resultList.add(hit)
+        }
+
+        log.info("finished search and found ${resultList.size()} hits")
+
+        log.info("hits:\n ${resultList}")
+
+        statisticsService.acquire(System.currentTimeMillis() - begin, "similarity search", "search duration", "search")
+        return resultList
     }
 
     /**
@@ -97,15 +120,28 @@ class SpectraQueryService {
 
         def ids = queryForIds(json, limit, offset)
 
+        log.info("received ids: ${ids}")
         try {
 
             if (ids.isEmpty()) {
                 return []
             }
 
-            def result = Spectrum.findAll("from Spectrum as s where s.id in (:ids) $order", [ids: ids.collect({
+
+            def result = Spectrum.executeQuery("""
+
+                    select s
+                        from Spectrum as s
+
+
+
+                        where s.id in (:ids)
+
+                        """ + order, [ids: ids.collect({
                 it.id
-            })], [readOnly: true])
+            })]
+
+                    , [readOnly: true])
 
             //add known fields to the spectrum
             result.each { Spectrum s ->
@@ -122,7 +158,8 @@ class SpectraQueryService {
 
             log.debug("result count: ${result.size()}")
 
-            return result
+            //size everything down to our actual unique results, stupid hibernated...
+            return (result)
         }
         catch (Exception e) {
             log.error("query: ${json}")
@@ -355,8 +392,8 @@ class SpectraQueryService {
             //simialrity based searches
             else if (json.match.histogram || json.match.spectra) {
 
-                def histogramScore = 0.8
-                def spectraScore = 0.3
+                def histogramScore = 0.5
+                def spectraScore = 0.5
 
                 //score, which needs to be reached, by default 0.5
                 if (json.match.histogramScore) {
@@ -375,31 +412,8 @@ class SpectraQueryService {
                         json.match.histogram = SplashUtil.splash(json.match.spectra, SpectraType.MS).split("-")[3]
                     }
 
-                    //normalize spectra
-
-                    edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum s = SpectraUtil.convertStringToSpectrum(json.match.spectra,SpectraType.MS).toRelative(1);
-
-                    //find the base peak
-                    Ion bp = null
-
-                    s.ions.each {
-                        if(it.intensity >= 1){
-                            bp = it
-                        }
-                    }
-
-                    //queryOfDoomJoins += "  inner join s.ions as i"
-
-
-
-                    //spectra must have the same base peak, it's more of a performance issue
-                    //queryOfDoomWhere += " i.mass between :minIon and :maxIon and i.intensity > 0.9 "
-
-
                     having = "$having, spectramatch(:spectra,s.id) > ${spectraScore}"
                     executionParams."spectra" = json.match.spectra
-                    //executionParams."minIon" = Math.floor(bp.mass).doubleValue()
-                    //executionParams."maxIon" = Math.ceil(bp.mass).doubleValue()
 
 
                     fields = "$fields, spectramatch(:spectra,s.id) as spectralSimilarity"
@@ -413,11 +427,11 @@ class SpectraQueryService {
                 //build the histgram query
                 //queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                queryOfDoomWhere += " histmatch(s.splash.block4,:histogramBlock) > ${histogramScore}"
+                queryOfDoomWhere += " (10-levenstein(s.splash.block4,:histogramBlock))/10 >= ${histogramScore}"
                 executionParams."histogramBlock" = json.match.histogram
 
 
-                fields = "$fields, histmatch(s.splash.block4,:histogramBlock) as histogramSimilarity"
+                fields = "$fields, (10-levenstein(s.splash.block4,:histogramBlock))/10 as histogramSimilarity"
                 orderBy = "$orderBy,histogramSimilarity DESC"
                 group = "$group, s.splash.block4"
 
