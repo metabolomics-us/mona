@@ -81,6 +81,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     void setSpectrum(String spectrum) {
 
     }
+
     /**
      * comments
      */
