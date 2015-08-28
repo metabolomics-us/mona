@@ -1,5 +1,6 @@
 package dialect
 
+import dialect.function.PostgresLevensteinTextQuery
 import dialect.function.PostgresSpectraMatch
 import dialect.function.PostgresTextQuery
 import org.hibernate.dialect.PostgreSQL9Dialect
@@ -13,7 +14,8 @@ import org.hibernate.dialect.PostgreSQL9Dialect
 class CustomPostgresDialect extends PostgreSQL9Dialect {
 
     CustomPostgresDialect() {
-        registerFunction("histmatch", new PostgresTextQuery())
+        registerFunction("textmatch", new PostgresTextQuery())
         registerFunction("spectramatch", new PostgresSpectraMatch())
+        registerFunction("levenstein", new PostgresLevensteinTextQuery());
     }
 }

@@ -80,6 +80,16 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
         );
     };
 
+    /**
+     * utilizes a splash based search
+     * @param splash
+     */
+    $scope.parseSplash = function(splash){
+
+        $scope.splash = splash;
+        $scope.queryState = 3;
+    };
+
     $scope.parsePastedSpectrum = function(pastedSpectrum) {
         $scope.spectrumIons = pastedSpectrum.split(' ').map(function (x) {
             x = x.split(':');
@@ -103,46 +113,66 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
 
     $scope.query = function() {
         if (angular.isDefined($scope.queryOptions.queryType)) {
-            // Define splash object
-            var splashObject = {ions: [], type: 'MS'};
 
-            // Create spectrum string
-            var spectrumString = '';
+            //splash based queries
+            if($scope.queryState == 3){
 
-            for(var i = 0; i < $scope.spectrumIons.length; i++) {
-                if($scope.spectrumIons[i].selected) {
-                    spectrumString += (spectrumString == '' ? '' : ' ')
-                            + $scope.spectrumIons[i].ionStr
-                            +':'+ $scope.spectrumIons[i].intensityStr;
+                SpectraQueryBuilderService.prepareQuery();
 
-                    splashObject.ions.push({
-                        mass: $scope.spectrumIons[i].ion,
-                        intensity: $scope.spectrumIons[i].intensity
+                if ($scope.queryOptions.queryType == 'exact') {
+                    SpectraQueryBuilderService.addExactSpectraSearchToQuery($scope.splash);
+                }
+                else if ($scope.queryOptions.queryType == 'top10') {
+                    SpectraQueryBuilderService.addTop10IonsSearchToQuery($scope.splash.split('-')[1]);
+                }
+                else if ($scope.queryOptions.queryType == 'histogram') {
+                    SpectraQueryBuilderService.addMatchingHistogramToQuery($scope.splash);
+                }
+                $location.path("/spectra/browse/");
+
+            }
+            //spectra based queries
+            else {
+                // Define splash object
+                var splashObject = {ions: [], type: 'MS'};
+
+                // Create spectrum string
+                var spectrumString = '';
+
+                for (var i = 0; i < $scope.spectrumIons.length; i++) {
+                    if ($scope.spectrumIons[i].selected) {
+                        spectrumString += (spectrumString == '' ? '' : ' ')
+                        + $scope.spectrumIons[i].ionStr
+                        + ':' + $scope.spectrumIons[i].intensityStr;
+
+                        splashObject.ions.push({
+                            mass: $scope.spectrumIons[i].ion,
+                            intensity: $scope.spectrumIons[i].intensity
+                        });
+                    }
+                }
+
+                // Perform similarity search
+                if ($scope.queryOptions.queryType == 'similar') {
+                    SpectraQueryBuilderService.prepareQuery();
+                    SpectraQueryBuilderService.addSimilarSpectraToQuery(null, spectrumString);
+                    $location.path("/spectra/browse/");
+                }
+
+                // Get splash id
+                else {
+                    SplashService.splashIt(splashObject).$promise.then(function (data) {
+                        SpectraQueryBuilderService.prepareQuery();
+
+                        if ($scope.queryOptions.queryType == 'exact') {
+                            SpectraQueryBuilderService.addExactSpectraSearchToQuery(data.splash);
+                        }
+                        else if ($scope.queryOptions.queryType == 'top10') {
+                            SpectraQueryBuilderService.addTop10IonsSearchToQuery(data.splash.split('-')[1]);
+                        }
                     });
                 }
             }
-
-            // Perform similarity search
-            if ($scope.queryOptions.queryType == 'similar') {
-                SpectraQueryBuilderService.prepareQuery();
-                SpectraQueryBuilderService.addSimilarSpectraToQuery(spectrumString);
-                $location.path("/spectra/browse/");
-            }
-
-            // Get splash id
-            else {
-                SplashService.splashIt(splashObject).$promise.then(function(data) {
-                    SpectraQueryBuilderService.prepareQuery();
-
-                    if($scope.queryOptions.queryType == 'exact') {
-                        SpectraQueryBuilderService.addExactSpectraSearchToQuery(data.splash.split('-')[2]);
-                    }
-                    else if ($scope.queryOptions.queryType == 'top10') {
-                        SpectraQueryBuilderService.addTop10IonsSearchToQuery(data.splash.split('-')[1]);
-                    }
-                });
-            }
-
         }
     };
 

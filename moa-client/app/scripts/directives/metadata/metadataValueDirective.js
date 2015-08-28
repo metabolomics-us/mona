@@ -177,7 +177,7 @@ app.directive('gwSpectraIdQuery', function () {
             $scope.findSimilarSpectra = function(){
                 SpectraQueryBuilderService.prepareQuery();
 
-                SpectraQueryBuilderService.addSimilarSpectraToQuery($scope.value.hash.split("-")[3], $scope.value.spectrum);
+                SpectraQueryBuilderService.addSimilarSpectraToQuery($scope.value.hash, $scope.value.spectrum);
                 $location.path("/spectra/browse/");
             };
 

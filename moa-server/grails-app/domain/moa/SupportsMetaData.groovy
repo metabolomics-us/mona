@@ -8,7 +8,7 @@ class SupportsMetaData {
     static mapping = {
         tablePerSubclass true
         version false
-        metaData cascade: 'all-delete-orphan'//,lazy:false
+        metaData cascade: 'all-delete-orphan', batchSize: 50//,lazy:false
         //links  lazy:false
     }
 
