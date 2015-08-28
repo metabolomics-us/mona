@@ -3,10 +3,16 @@ package moa
 import curation.scoring.Scoreable
 import moa.scoring.Score
 import moa.splash.Splash
+import util.chemical.CompoundType
 
 class Spectrum extends SupportsMetaData implements Scoreable {
 
-    static transients = ["spectrum","hash","queryOptions"]
+    static transients = [
+            "spectrum", "hash", "queryOptions",
+            "chemicalCompound",
+            "biologicalCompound",
+            "predictedCompound"
+    ]
 
     Date dateCreated
     Date lastUpdated
@@ -16,36 +22,33 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      */
     static hasOne = [
             submitter: Submitter,
-            splash:Splash
+            splash   : Splash
     ]
 
     /**
      * contains many metadata
      */
     static hasMany = [
-            comments: Comment,
-            ions    : Ion
+            comments     : Comment,
+            ions         : Ion,
+            compoundLinks: CompoundLink
     ]
 
     /**
      * we belong to these
      */
     static belongsTo = [
-            submitter         : Submitter,
-            chemicalCompound  : Compound,
-            biologicalCompound: Compound,
-            predictedCompound : Compound
+            submitter: Submitter
     ]
 
     static constraints = {
         comments nullable: true
-        chemicalCompound nullable: true
-        biologicalCompound nullable: true
-        predictedCompound nullable: true
+
         submitter nullable: true
         score nullable: true
         splash nullable: true
         deleted nullable: true
+        compoundLinks nullable: false
     }
 
     static mapping = {
@@ -88,6 +91,11 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     Set<Comment> comments
 
     /**
+     * compound links
+     */
+    Set<CompoundLink> compoundLinks
+
+    /**
      * related ion
      */
     Set<Ion> ions
@@ -102,20 +110,79 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      */
     Score score
 
-    /**
-     * bio logical compound
-     */
-    Compound chemicalCompound
+    void setChemicalCompound(Compound compound) {
 
-    /**
-     * chemical compound
-     */
-    Compound biologicalCompound
+        CompoundLink link = new CompoundLink()
+        link.compound = compound
+        link.spectrum = this
+        link.type = CompoundType.CHEMICAL
 
-    /**
-     * a predicted possible compound by internal algorithms, based on available data
-     */
-    Compound predictedCompound
+
+        addToCompoundLinks(link)
+
+    }
+
+    Compound getChemicalCompound() {
+
+        Compound compound = null
+
+        getCompoundLinks().each {
+            if (it.type.equals(CompoundType.CHEMICAL)) {
+                compound = it.compound
+                return true
+            }
+        }
+
+        return compound
+    }
+
+    void setBiologicalCompound(Compound compound) {
+        CompoundLink link = new CompoundLink()
+        link.compound = compound
+        link.spectrum = this
+        link.type = CompoundType.BIOLOGICAL
+
+        addToCompoundLinks(link)
+
+    }
+
+    Compound getBiologicalCompound() {
+
+        Compound compound = null
+
+        getCompoundLinks().each {
+            if (it.type.equals(CompoundType.BIOLOGICAL)) {
+                compound = it.compound
+                return true
+            }
+        }
+
+        return compound
+    }
+
+    void setPredictedCompound(Compound compound) {
+        CompoundLink link = new CompoundLink()
+        link.compound = compound
+        link.spectrum = this
+        link.type = CompoundType.PREDICTED
+
+
+        addToCompoundLinks(link)
+    }
+
+    Compound getPredictedCompound() {
+
+        Compound compound = null
+
+        getCompoundLinks().each {
+            if (it.type.equals(CompoundType.PREDICTED)) {
+                compound = it.compound
+                return true
+            }
+        }
+
+        return compound
+    }
 
     /**
      * related splash code
@@ -131,9 +198,9 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      * quick access method to not change existing format
      * @return
      */
-    String getHash(){
-        if(splash != null){
-            return  splash.getSplash();
+    String getHash() {
+        if (splash != null) {
+            return splash.getSplash();
 
         }
 
@@ -142,8 +209,8 @@ class Spectrum extends SupportsMetaData implements Scoreable {
 
     Map queryOptions = [:]
 
-    def addQueryOption(def key, def value){
-        queryOptions.put(key,value)
+    def addQueryOption(def key, def value) {
+        queryOptions.put(key, value)
     }
 
     /**
@@ -152,7 +219,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      */
     def beforeValidate() {
 
-        if(deleted == null){
+        if (deleted == null) {
             deleted = false
         }
     }

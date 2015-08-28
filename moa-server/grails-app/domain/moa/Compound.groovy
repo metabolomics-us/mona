@@ -1,5 +1,7 @@
 package moa
 
+import util.chemical.CompoundType
+
 class Compound extends SupportsMetaData {
 
     Date dateCreated
@@ -9,6 +11,7 @@ class Compound extends SupportsMetaData {
         inchiKey unique: true, nullable: false
         molFile nullable: false
         inchi nullable: false
+       // type nullable: false //, inList: [CompoundType.BIOLOGICAL,CompoundType.CHEMICAL,CompoundType.PREDICTED]
     }
 
     static mapping = {
@@ -47,5 +50,10 @@ class Compound extends SupportsMetaData {
      * associated inchi code
      */
     String inchi
+
+    /**
+     * type of the compound
+     */
+  //  String type
 
 }
