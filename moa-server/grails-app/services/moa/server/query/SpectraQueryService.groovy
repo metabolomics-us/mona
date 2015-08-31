@@ -92,13 +92,15 @@ class SpectraQueryService {
         long begin = System.currentTimeMillis()
         def resultList = []
 
-        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block4,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ? limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
+        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block4,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ?  limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
 
             def hit = [:]
             hit.id = row.id
             hit.similarity = row.similarity
 
-            resultList.add(hit)
+            if(row.id != id) {
+                resultList.add(hit)
+            }
         }
 
         log.info("finished search and found ${resultList.size()} hits")
