@@ -232,10 +232,10 @@ cors.headers = [
         'Access-Control-Max-Age'          : 3600
 ]
 
+//rabbit mq configuration for our different enviornments
+
 rabbitmq {
-    connection = {
-        connection host: "localhost", username: "guest", password: "guest", threads: Runtime.getRuntime().availableProcessors() - 2
-    }
+
     queues = {
         queue name: "mona.validate.spectra", arguments: ["x-max-priority", 6]
         queue name: "mona.import.spectra", arguments: ["x-max-priority", 9]
@@ -243,4 +243,39 @@ rabbitmq {
 
     }
 
+}
+
+environments {
+
+    development {
+
+        rabbitmq {
+
+            connection = {
+                connection host: "localhost", username: "guest", password: "guest", threads: Runtime.getRuntime().availableProcessors() - 2
+            }
+
+        }
+    }
+
+    test {
+
+        rabbitmq {
+
+            connection = {
+                connection host: "localhost", username: "guest", password: "guest", threads: 5
+            }
+
+        }
+    }
+
+    production {
+
+        rabbitmq {
+
+            connection = {
+                connection host: "gose.fiehnlab.ucdavis.edu", username: "mona", password: "mona", threads: Runtime.getRuntime().availableProcessors() - 2
+            }
+        }
+    }
 }
