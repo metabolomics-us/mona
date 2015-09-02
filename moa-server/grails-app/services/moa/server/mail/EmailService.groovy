@@ -38,13 +38,15 @@ class EmailService {
         transport.close()
     }
 
-    def sendDownloadEmail(String emailAddress, String path, String queryFilename, String exportFilename) {
+    def sendDownloadEmail(String emailAddress, long queryCount, long id) {
         Submitter user = Submitter.findByEmailAddress(emailAddress)
 
         String body = "Dear "+ user.firstName +",\n\n";
-        body += "Thank you for your query download request.  You may retrieve the download results using the links below:\n\n"
-        body += "http://mona.fiehnlab.ucdavis.edu/exports/"+ emailAddress +"/"+ exportFilename +"\n"
-        body += "http://mona.fiehnlab.ucdavis.edu/exports/"+ emailAddress +"/"+ queryFilename +"\n"
+        body += "Thank you for your query download request.  $queryCount spectra were exported.\n\n"
+        body += "You may retrieve the download result in msp format from:\n"
+        body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id\n\n"
+        body += "You may also download your query in JSON format from:\n"
+        body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id/json\n\n"
         body += "\nBest Regards,\nMoNA Development Team"
 
         sendMessage(emailAddress, 'Your MoNA download results are ready!', body)

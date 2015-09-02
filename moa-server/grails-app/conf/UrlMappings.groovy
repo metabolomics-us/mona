@@ -23,6 +23,16 @@ class UrlMappings {
              * and spectra
              */
             "/spectra"(resources: 'Spectrum')
+
+            /**
+             * user registration
+             */
+            "/register" (controller: 'submitter', action: 'register')
+
+            /**
+             * user activation
+             */
+            "/activate" (controller: 'submitter', action: 'activate')
         }
 
         /**
@@ -128,9 +138,19 @@ class UrlMappings {
         "/rest/spectra/search"(controller: 'spectraQuery', action: 'search')
 
         /**
+         * provides us with access to export queries
+         */
+        "/rest/spectra/search/export"(controller: 'spectraQuery', action: 'export')
+
+        /**
          * provides us with access to download queries
          */
-        "/rest/spectra/search/download"(controller: 'spectraQuery', action: 'download')
+        "/rest/spectra/search/download/$id"(controller: 'spectraQuery', action: 'download')
+
+        /**
+         * provides us with access to download json query object
+         */
+        "/rest/spectra/search/download/$id/json"(controller: 'spectraQuery', action: 'downloadJson')
 
         /**
          * how many spectra will this query return
