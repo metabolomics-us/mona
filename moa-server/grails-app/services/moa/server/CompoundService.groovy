@@ -38,6 +38,7 @@ class CompoundService {
         //first get the compound we want
         Compound myCompound = null
 
+
         //workaround for Nils wrongly generate format
         //TODO fix in schema and make sure it gets rejected
         if(compound.inchiCode != null){
