@@ -239,8 +239,7 @@ rabbitmq {
     queues = {
         queue name: "mona.validate.spectra", arguments: ["x-max-priority", 6]
         queue name: "mona.import.spectra", arguments: ["x-max-priority", 9]
+        queue name: "mona.export.spectra", arguments: ["x-max-priority", 9]
         queue name: "mona.validate.compound", arguments: ["x-max-priority", 8]
-
     }
-
 }
