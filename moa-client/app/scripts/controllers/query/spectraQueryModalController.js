@@ -60,6 +60,7 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
 
 /**
  * TODO
+ * @Deprecated
  * FIX MULTIPLE META FIELDS ON SERVER SIDE
  */
 app.filter('unique', function () {

@@ -42,6 +42,20 @@ app.config(function ($routeProvider) {
             resolve: moaControllers.ViewSpectrumController.loadSpectrum
         })
 
+        .when('/spectra/splash/:splash', {
+            templateUrl: 'views/spectra/browse/spectra.html',
+            controller: 'SpectraBrowserController',
+            resolve: {
+                splash : function(SpectraQueryBuilderService, $route){
+                    SpectraQueryBuilderService.prepareQuery();
+                    //add it to query
+                    SpectraQueryBuilderService.addSpectraIdToQuery($route.current.params.splash);
+                }
+            }
+        })
+
+
+
         //database index
         .when('/spectra/dbindex', {
             templateUrl: 'views/spectra/dbindex/dbindex.html',

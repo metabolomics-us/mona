@@ -124,14 +124,14 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     /**
      * fires an event for directives to show the current query
      */
-    $scope.displayQuery = function(){
+    $scope.displayQuery = function () {
         $rootScope.$broadcast('spectra:query:show');
     };
 
     /**
      * calculates how my results this current query will return
      */
-    $scope.calculateResultCount = function(){
+    $scope.calculateResultCount = function () {
 
         //reports the count for the complete query response
         $scope.queryResultCount = "loading...";
@@ -235,7 +235,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
     };
 
-    $scope.$on('$viewContentLoaded', function(){
+    $scope.$on('$viewContentLoaded', function () {
         $timeout(function () {
             $(window).scrollTop($scope.spectraScrollStartLocation);
         }, 1);
@@ -246,25 +246,11 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * our list view and default view
      */
     (function list() {
-        TaggingService.query(
-            function (data) {
-                $scope.tags = data;
-            },
-            function (error) {
-                $log.error('failed: ' + error);
-            }
-        );
 
-        //if (SpectrumCache.hasBrowserSpectra()) {
-        //    $scope.spectraScrollStartLocation = SpectrumCache.getBrowserSpectraScrollLocation();
-        //    $scope.spectra = SpectrumCache.getBrowserSpectra();
-        //    SpectrumCache.removeBrowserSpectra();
-        //} else {
-            $scope.spectraScrollStartLocation = 0;
-            $scope.spectra = [];
+        $scope.spectraScrollStartLocation = 0;
+        $scope.spectra = [];
 
-            // Submit our initial query
-            $scope.submitQuery();
-        //}
+        // Submit our initial query
+        $scope.submitQuery();
     })();
 };
