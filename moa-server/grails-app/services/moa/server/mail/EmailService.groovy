@@ -47,7 +47,7 @@ class EmailService {
         body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id\n\n"
         body += "You may also download your query in JSON format from:\n"
         body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id/json\n\n"
-        body += "\nBest Regards,\nMoNA Development Team"
+        body += "Best Regards,\nMoNA Development Team"
 
         sendMessage(emailAddress, 'Your MoNA download results are ready!', body)
     }

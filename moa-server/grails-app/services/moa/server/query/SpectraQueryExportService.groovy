@@ -61,12 +61,13 @@ class SpectraQueryExportService {
 
 
         // Create new download file object
-        def queryDownload = SpectrumQueryDownload.findOrCreateByStartTimeAndEmailAddress(startTime, emailAddress);
+        def label = "${emailAddress.split('@')[0]}-$startTime"
+        def queryDownload = SpectrumQueryDownload.findOrCreateByLabelAndEmailAddress(label, emailAddress);
 
         if (!queryDownload.query) {
             queryDownload.query = query.toString();
-            queryDownload.queryFile = "${downloadPath}/export-${startTime}-query.json"
-            queryDownload.exportFile = "${downloadPath}/export-${startTime}.$format"
+            queryDownload.queryFile = "${downloadPath}/export-$label-query.json"
+            queryDownload.exportFile = "${downloadPath}/export-$label.$format"
         }
 
         queryDownload.save(flush: true)

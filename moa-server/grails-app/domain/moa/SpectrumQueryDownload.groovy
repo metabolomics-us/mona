@@ -8,19 +8,16 @@ class SpectrumQueryDownload {
     Date lastUpdated
 
     static constraints = {
-        label nullable: true
     }
 
     static mapping = {
         emailAddress sqlType: "text"
-        startTime sqlType: "text"
         query sqlType: "text"
         label sqlType: "text"
         version false
     }
 
     String emailAddress
-    String startTime
     String queryFile
     String exportFile
     String query
