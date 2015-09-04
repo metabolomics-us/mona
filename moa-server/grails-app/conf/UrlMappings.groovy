@@ -23,16 +23,6 @@ class UrlMappings {
              * and spectra
              */
             "/spectra"(resources: 'Spectrum')
-
-            /**
-             * user registration
-             */
-            "/register" (controller: 'submitter', action: 'register')
-
-            /**
-             * user activation
-             */
-            "/activate" (controller: 'submitter', action: 'activate')
         }
 
         /**
