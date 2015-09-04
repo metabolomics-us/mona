@@ -136,10 +136,12 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         for (var i = 0; i < spectra.length; i++) {
             var mass = '';
 
-            for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
-                if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
-                    mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
-                    break;
+            if (angular.isDefined(spectra[i].biologicalCompound)) {
+                for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
+                    if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
+                        mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
+                        break;
+                    }
                 }
             }
 
