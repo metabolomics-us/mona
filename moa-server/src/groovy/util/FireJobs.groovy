@@ -5,7 +5,6 @@ import grails.util.Holders
 
 import groovy.time.TimeCategory
 import moa.server.SpectraAssociationJob
-import moa.server.SpectraQueryDownloadJob
 
 /**
  * Created with IntelliJ IDEA.
