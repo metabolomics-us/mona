@@ -32,7 +32,7 @@
 
     <div class="col-md-4 ">
         <div class="pull-right">
-            <!--<div spectra-download class=""></div>-->
+            <div ng-show="auth.isLoggedIn()" spectra-download></div>
 
             <button class="btn btn-primary" ng-click="displayQuery()" tooltip-placement="left"
                     tooltip="this is the number of your received results, click to see more query details">

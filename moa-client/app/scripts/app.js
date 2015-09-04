@@ -5,7 +5,10 @@ var app = angular
         'ngRoute',
         'ngResource',
         'ngCookies',
+        'ngSanitize',
         'ui.bootstrap',
+        'dialogs.main',
+        'dialogs.default-translations',
         'ngTagsInput',
         'wohlgemuth.msp.parser',
         'wohlgemuth.mgf.parser',
@@ -14,7 +17,8 @@ var app = angular
         'angularFileUpload',
         'angularMasspecPlotter',
         'infinite-scroll',
-        'mgcrea.bootstrap.affix'
+        'mgcrea.bootstrap.affix',
+        'pascalprecht.translate'
     ]);
 
 /**
@@ -50,6 +54,14 @@ app.run(function($rootScope) {
 app.config(function ($httpProvider) {
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+});
+
+/**
+ * set translator language
+ */
+app.config(function ($translateProvider) {
+    $translateProvider.preferredLanguage('en-US');
+    $translateProvider.useSanitizeValueStrategy('sanitize');
 });
 
 /**
