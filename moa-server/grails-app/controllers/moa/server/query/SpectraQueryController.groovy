@@ -58,10 +58,10 @@ class SpectraQueryController {
 
         if (json.query) {
             log.info("received query download request: " + json.query +" from "+ emailAddress)
-            FireJobs.fireSpectraQueryExportJob([query: json.query.toString(), emailAddress: emailAddress, max: params.max, offset: params.offset])
+            FireJobs.fireSpectraQueryExportJob([query: json.query.toString(), emailAddress: emailAddress])
         } else {
             log.info("received query download request: " + json +" from "+ emailAddress)
-            FireJobs.fireSpectraQueryExportJob([query: json.toString(), emailAddress: emailAddress, max: params.max, offset: params.offset])
+            FireJobs.fireSpectraQueryExportJob([query: json.toString(), emailAddress: emailAddress])
         }
 
         render([message: "scheduling of download job successful, results will be emailed to "+ emailAddress] as JSON)
