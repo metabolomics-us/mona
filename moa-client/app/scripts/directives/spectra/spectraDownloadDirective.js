@@ -82,13 +82,13 @@ app.directive('spectraDownload', function(Spectrum, $http, $filter, $log, REST_B
                         dialogs.notify('Export request successful!', 'Your query export request has been submitted.  '+
                             'You will receive an email with a download link when the export has been completed.  '+
                             'This can take up to 24 hours for very large queries.',
-                            {size: 'md'});
+                            {size: 'md', backdrop: 'static'});
                     },
                     function (response) {
                         dialogs.error('Error submitting request!',
                             response.status == 403 ? "You must be logged in to request a query export." :
                             "Could not reach MoNA server!",
-                            {size: 'md'});
+                            {size: 'md', backdrop: 'static'});
                     }
                 );
             }
