@@ -75,22 +75,7 @@ environments {
         dataSource {
 	     pooled = true
             dbCreate = "update"
-            url = "jdbc:postgresql://128.120.143.126:5432/moa-prod"
-
-            /*
-		 properties {
-        		maxActive = 50
-        		maxAge = 10 * 60000
-        		timeBetweenEvictionRunsMillis = 5000
-        		minEvictableIdleTimeMillis = 60000
-        		numTestsPerEvictionRun=3
-        		testOnBorrow=true
-        		testWhileIdle=true
-        		testOnReturn=true
-        		validationQuery="SELECT 1"
-    		}
-
-    		*/
+            url = "jdbc:postgresql://128.120.143.126:5432/monaproduction"
 
             logSql = false
 
