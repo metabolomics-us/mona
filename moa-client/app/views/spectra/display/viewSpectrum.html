@@ -9,14 +9,15 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}</h3>
+                    <h3 class="panel-title">Spectrum {{spectrum.id}} for
+                        {{spectrum.biologicalCompound.names[0].name}}</h3>
                 </div>
 
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12" ng-click="showScore =! showScore" ng-init="showScore = false">
                             <span tooltip-placement="right" tooltip="Please click to view how the score was calculated"
-                                    tooltip-trigger="mouseenter" tooltip-popup-delay='10'>
+                                  tooltip-trigger="mouseenter" tooltip-popup-delay='10'>
                                 Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
                             </span>
                         </div>
@@ -74,7 +75,8 @@
                         <div class="col-md-12">
                             <ul class="list-inline">
                                 <li>
-                                    <div class="h5">Hash: <span gw-spectra-id-query value="spectrum">{{spectrum.hash}}</span></div>
+                                    <div class="h5">Hash: <span gw-spectra-id-query
+                                                                value="spectrum">{{spectrum.hash}}</span></div>
                                 </li>
                                 <li>
                                     <div class="h5">
@@ -269,7 +271,47 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: ['category','name']" >
+                                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: ['category','name']">
+                                        <td class="col-lg-2 col-md-4">
+                                            <span gw-meta-query value="meta"> {{meta.category}}</span>
+                                        </td>
+                                        <td class="col-lg-2 col-md-4">
+                                            <span gw-meta-edit value="meta"> {{meta.name}}</span>
+                                        </td>
+                                        <td class="col-lg-8 col-md-4">
+                                            <span gw-value value="meta">{{meta.value | number:4 }} {{meta.unit}}</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br/>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="inlineCheckbox1" ng-model="show.hidden"> Would you like to
+                                see hidden metadata fields?
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div ng-show="spectrum.metaData.length && show.hidden == true">
+                                <h4>Mass Spectrum Metadata - hidden</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>category</th>
+                                        <th>name</th>
+                                        <th>value</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: 'true'} | orderBy: ['category','name']">
                                         <td class="col-lg-2 col-md-4">
                                             <span gw-meta-query value="meta"> {{meta.category}}</span>
                                         </td>

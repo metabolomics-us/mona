@@ -1,0 +1,540 @@
+
+---
+title: "Massbank of North America - statistics"
+author: "Gert Wohlgemuth"
+date: '`r Sys.Date()`'
+output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
+  html_document:
+    number_sections: yes
+    theme: journal
+    toc: yes
+  word_document:
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 5
+---
+
+```{r, include=FALSE}
+
+#loading initial data and libraries
+library("sqldf")
+library("ggplot2")
+library("RPostgreSQL")
+library("gplots")
+library("pander")
+library("stringr")
+
+#configure database options
+options(sqldf.RPostgreSQL.user ="compound", 
+        sqldf.RPostgreSQL.password ="asdf",
+        sqldf.RPostgreSQL.dbname ="monadevel",
+        sqldf.RPostgreSQL.host ="venus.fiehnlab.ucdavis.edu", 
+        sqldf.RPostgreSQL.port =5432)
+
+drv <- dbDriver("PostgreSQL")
+
+listOfExternalDatabases <- c('HMDB','GNPS','MassBank','lipidblast','binbase')
+
+listOfExternalDatabases = sort(listOfExternalDatabases)
+
+```
+
+
+
+
+MassBank of America (MoNA), is an auto curating repository for storing, comparing and querying mass spectra of chemical compounds. It is metadata centric and it was designed to allow easy integration into other tools by utilize its REST based application programming interface.
+
+MoNA is utilizing the InChI Key as unique identifier for chemicals and is designed for easy scalability and expandability. This is realized by utilizing common applications like nginx, grails, AngularJS, postgresSQL and tomcat.
+
+MoNA is currently integrated in applications like MSDial, BinBase, MZMine and the statistics package R. This was accomplished by utilizing its REST based API, which is also utilized by its main AngularJS based web interface. We consider MoNA to be highly useful for crosslinking mass spectra in publications, identification of unknowns and integration in data acquisition software.
+
+This report, provides you with an overview of the content of the MoNA system and the sources of these data.
+
+# Database content analysis
+
+This secion of the report provides you with a simple overview of the content in MoNA.
+
+## Main database content providers
+
+```{r,include=FALSE}
+
+submittersInMona = sqldf("select count(*) from submitter")
+spectraBySubmitter = sqldf("
+select
+   count(*),
+   first_name as \"first name\",
+   last_name as \"last name\",
+   avg(scaled_score) as score 
+from
+   submitter a,
+   spectrum b,
+   splash c,
+   score d 
+where
+   d.id = b.score_id 
+   and a.id = b.submitter_id 
+   and c.spectrum_id = b.id 
+   and deleted = false 
+group by
+   first_name,
+   last_name 
+order by
+   score desc,
+   count desc                           
+                           ")
+```
+
+Currently MoNA contains spectra from `r submittersInMona` different submitters. These data have been automatically filtered, ranked, checked for common errors and enhanced with computed data.
+
+```{r,echo=FALSE}
+panderOptions("digits", 2)
+pander(spectraBySubmitter)
+```
+
+## Compounds in MoNA
+
+```{r, include=FALSE}
+
+monaUniqueCompounds = sqldf("select count(*) from compound")
+externalIdCount = sqldf("select count(*) from meta_data_category a, meta_data b where a.name = 'external id' and b.category_id = a.id")
+derivatizationProduct = sqldf("select count(*) from compound_link a, spectrum b  where a.spectrum_id = b.id and b.deleted = false and type = 'PREDICTED'")
+```
+
+These submissions of the provided spectra, resulted in `r monaUniqueCompounds` Chemical compounds in the database, which were automatically associated with `r externalIdCount` different external database identifier. The chemical translation service was utilized to generate these associations.
+
+During the curation workflow, MoNA also successfully predicted the derivatization product for `r derivatizationProduct` GCMS spectra.
+
+## Predicted vs Experimental Spectra
+
+MoNA contains different kinds of spectra and this contains predicted as well as experimentally aquired spectra. These experimental spectra can be obtained by utilizing standards or alternativly being 'picked'.
+
+```{r,include=FALSE}
+experimentalVsPredictedSpectraReport=sqldf("
+
+select
+   * 
+from
+   (  select
+      count(*) as count,
+      text as database 
+   from
+      (   select
+         distinct f.splash || inchi_key,
+         text 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f 
+      where
+         f.spectrum_id = b.id 
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(text) in (
+            'experimental','virtual' 
+         )   ) a 
+   group by
+      text  ) a  
+   union
+   select
+      (select
+         count(*) 
+      from
+         spectrum a,
+         splash b 
+      where
+         a.id = b.spectrum_id)     - count(*) as count,
+      'unknown' 
+   from
+      (   select
+         distinct f.splash || inchi_key,
+         text 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f 
+      where
+         f.spectrum_id = b.id 
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(text) in (
+            'experimental','virtual' 
+         )   ) a")
+
+
+```
+
+
+```{r,echo=FALSE}
+qplot(data=experimentalVsPredictedSpectraReport,x=experimentalVsPredictedSpectraReport$database,y=experimentalVsPredictedSpectraReport$count,geom="bar",stat="identity",xlab="type of spectra",ylab="count of spectra")
+```
+
+Sadly this information, was not provided for every available spectrum in the system.
+
+## Integration of external spectral databases
+
+```{r, include=FALSE}
+
+qr = "
+select
+   count(*) as count,
+   text as database 
+from
+   (   select
+      distinct f.splash || inchi_key,
+      text 
+   from
+      tag a,
+      spectrum b,
+      compound c,
+      compound_link d,
+      tag_link e,
+      splash f 
+   where
+      f.spectrum_id = b.id 
+      and e.tag_id = a.id 
+      and e.owner_id = b.id 
+      and b.id = d.spectrum_id 
+      and d.compound_id = c.id 
+      and lower(text) in (
+         
+"
+
+for( i in seq_along(listOfExternalDatabases)){ qr <- paste(qr,"'",tolower(listOfExternalDatabases[i]),"'",",",sep="" ) }
+qr = substr(qr,1,nchar(qr)-1)
+qr = paste(qr,')) a group by text')
+spectraCountForDatabases = sqldf(qr)
+
+```
+
+Since MoNA was designed a system holding millions of spectra, we successfully integrated several external databases. This includes databases like `r listOfExternalDatabases` and others. 
+
+```{r,echo=FALSE}
+qplot(data=spectraCountForDatabases,x=spectraCountForDatabases$database,y=spectraCountForDatabases$count,geom="bar",stat="identity",xlab="origin",ylab="count of spectra")
+```
+
+```{r,echo=FALSE}
+panderOptions("digits", 2)
+pander(spectraCountForDatabases)
+```
+
+### Overlap of exiting databases
+
+Since public database are merged into each other regularily, there will always some overlap between these sources, utilizing the SPLASH, we were able to easily visualize and identify spectra, unique to only one resource.
+
+```{r,include=FALSE}
+
+for(d in listOfExternalDatabases){
+  qr = "
+
+select
+   distinct f.splash || inchi_key as key,
+   text 
+from
+   tag a,
+   spectrum b,
+   compound c,
+   compound_link d,
+   tag_link e,
+   splash f 
+where
+   f.spectrum_id = b.id 
+   and e.tag_id = a.id 
+   and e.owner_id = b.id 
+   and b.id = d.spectrum_id 
+   and d.compound_id = c.id 
+   and lower(text) =
+
+  "
+  qr = paste(qr,"'",tolower(d),"'",sep="")
+  assign(str_trim(paste('database_overlap',tolower(d),sep="_")),sqldf(qr))
+  
+  qr
+
+}
+
+
+```
+
+
+
+```{r, echo=FALSE}
+#provide us with one venn diagram containing all the databases in it
+if(length(listOfExternalDatabases) <= 5){
+  
+  myList = list()
+  
+  for(db in listOfExternalDatabases){
+        myList[[length(myList)+1]] = get(paste('database_overlap',tolower(db),sep='_'))$key
+  }
+
+  names(myList) <- unlist(listOfExternalDatabases)
+          
+  
+  venn( 
+    myList
+  )
+}
+```
+
+These detailed plots, provide you with a quick overview of the overlap, between all registered databases.
+
+
+```{r, echo=FALSE,fig.width=3, fig.height=3}
+
+
+for(d in listOfExternalDatabases){
+  for(d2 in listOfExternalDatabases){
+
+    if(d != d2){
+        myList = list()
+        
+        myList[[1]] = get(paste('database_overlap',tolower(d),sep='_'))$key
+        myList[[2]] = get(paste('database_overlap',tolower(d2),sep='_'))$key
+        
+        myList
+        
+        names(myList) <- c(d,d2)
+
+        
+          venn( 
+            myList
+          )
+    }
+  }
+}
+```
+
+### Submission of duplicated spectra
+
+Due to the concept of merging several databases, MoNA ended up containing several duplicated spectra. These were automatically identified and flagged internally for removal by utilizing the Splash and InChI Key in combination. This combination ensures that identical spectra, which are associated with several different compounds will not be removed.
+
+```{r,include=FALSE}
+deletedSpectraReport=sqldf("select count(splash) as num, deleted from spectrum a, splash b where a.id = b.spectrum_id group by deleted")
+duplicatedSpectraReport=sqldf("
+select
+   total,
+   uniqueSpectra,
+   total - uniqueSpectra as duplicated 
+from
+   (  select
+      (select
+         count(*) 
+      from
+         spectrum a,
+         splash b 
+      where
+         a.id = b.spectrum_id) as total,
+      (select
+         count(distinct (c.inchi_key || splash)) 
+      from
+         splash a,
+         compound_link b,
+         compound c 
+      where
+         a.spectrum_id = b.spectrum_id 
+         and b.compound_id = c.id) as uniqueSpectra ) a
+                              ")
+```
+
+
+```{r,echo=FALSE, fig.width=4,fig.height=4}
+qplot(c('accepted','deleted because of duplication'),num,data=deletedSpectraReport,geom = "bar", stat = "identity", ylab = "count of spectra", xlab = "status of spectra")
+qplot(data=duplicatedSpectraReport,x=c('total','uniquespectra','duplicated'),y=c(duplicatedSpectraReport$total,duplicatedSpectraReport$uniquespectra,duplicatedSpectraReport$duplicated),geom="bar",stat="identity",xlab="spectra",ylab="count of spectra")
+```
+
+## Data aquisition
+
+This is lining out the different methods of data aquisition in MoNA.
+
+### Aquisition Method
+
+The spectra in MoNA, were aquirced utilzing several different types of chromatography methods.
+
+```{r,include=FALSE}
+aquistionMethodReport=sqldf("
+
+
+select
+   * 
+from
+   (  select
+      count(*) as count,
+      text as method 
+   from
+      (   select
+         distinct f.splash || inchi_key,
+         text 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f 
+      where
+         f.spectrum_id = b.id 
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(text) in (
+            'lcms','gcms' 
+         )   
+     ) a 
+   group by
+      text  ) a  
+   union
+   select
+      (select
+         count(distinct splash || inchi_key) 
+      from
+         spectrum a,
+         splash b,
+         compound c,
+         compound_link d
+      where
+         c.id = d.compound_id and
+         d.spectrum_id = a.id and
+         a.id = b.spectrum_id) - count(*) as count,
+      'other methods' 
+   from
+      (   
+        select
+          distinct f.splash || inchi_key
+        from
+          tag a,
+          spectrum b,
+          compound c,
+          compound_link d,
+          tag_link e,
+          splash f 
+        where
+          f.spectrum_id = b.id 
+          and e.tag_id = a.id 
+          and e.owner_id = b.id 
+          and b.id = d.spectrum_id 
+          and d.compound_id = c.id 
+          and lower(text) in (
+            'lcms','gcms' 
+          )   
+        ) a
+")
+
+
+```
+
+
+```{r,echo=FALSE}
+qplot(data=aquistionMethodReport,x=aquistionMethodReport$method,y=aquistionMethodReport$count,geom="bar",stat="identity",xlab="aquisition method",ylab="count of spectra")
+```
+
+
+### MS Level
+
+Currently MoNA contains mostly MS Spectra, which have been aquirred using different MS Levels. This will provide you with an rough overview.
+
+```{r,include=FALSE}
+
+msLevelTypeReport = sqldf("
+
+select
+   * 
+from
+   (  select
+      count(*) as count,
+      value
+   from
+      (  
+
+   select
+         distinct f.splash || inchi_key,
+         h.string_value as value 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f, 
+         meta_data g,
+         meta_data_value h
+      where
+         f.spectrum_id = b.id
+         and g.id = h.meta_data_id
+         and h.owner_id = b.id
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(g.name) = 'ms type'
+
+  ) a 
+   group by
+      value  ) a  
+   union
+   select
+      (select
+         count(*) 
+      from
+         spectrum a,
+         splash b 
+      where
+         a.id = b.spectrum_id)     - count(*) as count,
+      'other spectra' 
+   from
+      (   select
+         distinct f.splash || inchi_key
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f, 
+         meta_data g,
+         meta_data_value h
+      where
+         f.spectrum_id = b.id
+         and g.id = h.meta_data_id
+         and h.owner_id = b.id
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(g.name) = 'ms type'
+    ) a
+ 
+
+                          
+                          ")
+```
+
+```{r,echo=FALSE}
+qplot(data=msLevelTypeReport,x=msLevelTypeReport$value,y=msLevelTypeReport$count,geom="bar",stat="identity",xlab="MS Type",ylab="count of spectra")
+```
+
+### Instrument
+
+# MoNA Usage
+
+This section will provide you with an overview, who is using MoNA and how often.
+
+# Database Performance Report
+
+In this section, we will show an overview of the current performance of the MoNA system.
+
+
+

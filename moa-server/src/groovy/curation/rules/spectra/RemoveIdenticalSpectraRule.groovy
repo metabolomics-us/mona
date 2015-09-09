@@ -32,25 +32,28 @@ class RemoveIdenticalSpectraRule extends AbstractCurationRule {
 
             logger.info("received spectrum: ${spectrum.id}")
             logger.info("received splash: ${spectrum.splash}")
-            logger.info("received compound: ${spectrum.biologicalCompound}")
+            logger.info("received compound: ${spectrum.chemicalCompound}")
 
-            def identical = spectraQueryService.query([
+            List<Spectrum> identical = new ArrayList<>(10)
+
+            spectraQueryService.query([
                     match   : [
                             exact: spectrum.splash.splash
                     ],
                     compound: [
                             inchiKey: [
-                                    eq: spectrum.biologicalCompound.inchiKey
+                                    eq: spectrum.chemicalCompound.inchiKey
                             ]
                     ]
 
-            ],-1,-1,"")
+            ], -1, -1, "").each {
+                if (identical.contains(it) == false) {
+                    identical.add(it)
 
-            logger.info("found ${identical.size()} spectra")
-            identical.each { Spectrum compare ->
-                if (compare.score == null) {
-                    logger.info("having to score similar spectra...")
-                    scoringService.score(compare)
+                    if (it.score == null) {
+                        logger.info("having to score similar spectra: ${it}")
+                        scoringService.score(it)
+                    }
                 }
             }
 
@@ -65,7 +68,6 @@ class RemoveIdenticalSpectraRule extends AbstractCurationRule {
             if (!identical.isEmpty()) {
                 //ours is not the best hit
                 if (identical[0].id.equals(spectrum.id)) {
-
                     return true
                 }
                 //delete it

@@ -27,7 +27,6 @@ import curation.rules.spectra.ExactMassIsCorrectRule
 import curation.rules.spectra.GenerateHashKeyRule
 import curation.rules.spectra.IsAnnotatedSpectraRule
 import curation.rules.spectra.IsCleanSpectraRule
-import curation.rules.spectra.IsDuplicatedSpectraRule
 import curation.rules.spectra.MassSpecIsPreciseEnoughRule
 import curation.rules.spectra.RemoveIdenticalSpectraRule
 import curation.rules.spectra.RemoveTinyIonRule
@@ -127,11 +126,6 @@ beans {
         bean.autowire = 'byName'
         noisePercentage = 2
         percentOfSpectraIsNoise = 80
-    }
-
-    isSpectraDuplicated(IsDuplicatedSpectraRule) { bean ->
-        bean.autowire = 'byName'
-        minSimilarity = 900
     }
 
 //is column metadata valid
