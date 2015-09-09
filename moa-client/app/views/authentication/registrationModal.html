@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true"
+            ng-if="state == 'register' || state == 'success'">×</button>
+
+    <h4 class="modal-title">Create a MoNA Account</h4>
+    <p ng-if="state == 'register'">
+        An account is required to download large queries and to submit spectra.
+        Please sign up for a free account by providing the following information:
+    </p>
+</div>
+
+
+<div class="modal-body" >
+    <div class="alert alert-danger .alert-dismissible " role="alert" ng-show="errors.length">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span>Error:</span>
+        <ul>
+            <li ng-repeat="error in errors">{{error}}</li>
+        </ul>
+    </div>
+
+    <div submitter-form ng-show="state == 'register'"></div>
+
+    <h4 ng-show="state == 'success'"><i class="fa fa-check"></i> Success!  You may now log in.</h4>
+</div>
+
+
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-disabled="submitterForm.$invalid" ng-click="submitRegistration()"
+            ng-if="state == 'register'">Register</button>
+
+    <button class="btn btn-default" ng-disabled="submitterForm.$invalid" ng-click="cancelDialog()"
+            ng-if="state == 'success'">Close</button>
+</div>
