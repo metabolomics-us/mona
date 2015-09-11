@@ -30,18 +30,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.spectra = [];
 
     /**
-     * available tags
-     * @type {Array}
-     */
-    $scope.tags = [];
-
-    /**
-     * available selection
-     * @type {Array}
-     */
-    $scope.tagsSelection = [];
-
-    /**
      * load more spectra
      */
     $scope.spectraLoadLength = -1;
@@ -68,11 +56,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     $scope.resetQuery = function () {
         SpectraQueryBuilderService.prepareQuery();
 
-        // Reset query refining
-        $scope.nameFilter = '';
-        $scope.inchiFilter = '';
-        $scope.tagsSelection = [];
-
         // Submit blank query
         $scope.submitQuery();
     };
@@ -91,32 +74,8 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         // Add query parameters to query refining
         var query = SpectraQueryBuilderService.getQuery();
 
-
-        //TODO why are we doing this?????
-        if (query.compound.hasOwnProperty('name')) {
-            $scope.nameFilter = query.compound.name.ilike.replace(/%/g, '');
-        }
-
-        //TODO or this?
-        if (query.compound.hasOwnProperty('inchiKey')) {
-            $scope.inchiFilter = query.compound.inchiKey.hasOwnProperty('eq') ?
-                query.compound.inchiKey.eq : query.compound.inchiKey.like;
-        }
-
-        //TODO or this?
-        // Add tags from query to refine query tags
-        $scope.tagsSelection = [];
-
-        for (var i = 0; i < query.tags.length; i++) {
-            for (var j = 0; j < $scope.tags.length; j++) {
-                if (query.tags[i] == $scope.tags[j].text) {
-                    $scope.tagsSelection.push($scope.tags[j]);
-                    break;
-                }
-            }
-        }
-
         $scope.calculateResultCount();
+
         //actually load our data
         $scope.loadMoreSpectra();
     };
@@ -132,13 +91,12 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * calculates how my results this current query will return
      */
     $scope.calculateResultCount = function () {
-
         //reports the count for the complete query response
-        $scope.queryResultCount = "loading...";
+        $scope.queryResultCount = "Loading...";
+
         Spectrum.searchSpectraCount(SpectraQueryBuilderService.getQuery(), function (data) {
             $scope.queryResultCount = data.count;
         });
-
     };
 
     /**
@@ -163,9 +121,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * @param id
      * @param index
      */
-    $scope.viewSpectrum = function (id, $index) {
+    $scope.viewSpectrum = function (id, index) {
         SpectrumCache.setBrowserSpectra($scope.spectra);
-        SpectrumCache.setSpectrum($scope.spectra[$index]);
+        SpectrumCache.setSpectrum($scope.spectra[index]);
 
         $location.path('/spectra/display/' + id);
     };
@@ -178,10 +136,12 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         for (var i = 0; i < spectra.length; i++) {
             var mass = '';
 
-            for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
-                if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
-                    mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
-                    break;
+            if (angular.isDefined(spectra[i].biologicalCompound)) {
+                for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
+                    if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
+                        mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
+                        break;
+                    }
                 }
             }
 
@@ -195,7 +155,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * loads more spectra into the given view
      */
     $scope.loadMoreSpectra = function () {
-
         //inform other controllers that we are starting to load spectra
         $rootScope.$broadcast('spectra:starting:query');
 
@@ -232,7 +191,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
         //assign the offset
         query.offset = $scope.spectra.length;
-
     };
 
     $scope.$on('$viewContentLoaded', function () {
@@ -246,7 +204,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * our list view and default view
      */
     (function list() {
-
         $scope.spectraScrollStartLocation = 0;
         $scope.spectra = [];
 

@@ -82,6 +82,10 @@ class Submitter {
         encodePassword()
     }
 
+    def afterInsert() {
+        SubmitterRole.create(this, Role.findByAuthority('ROLE_USER'))
+    }
+
     def beforeUpdate() {
         if (isDirty('password')) {
             encodePassword()

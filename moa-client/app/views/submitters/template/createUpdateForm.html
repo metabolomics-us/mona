@@ -1,5 +1,4 @@
 <form name="submitterForm" class="form-horizontal" novalidate role="form">
-
     <p ng-show="formErrors" class="help-block bg-danger">
         {{formErrors}}
     </p>
@@ -7,9 +6,7 @@
     <div class="form-group"
          ng-class="{ 'has-error' : submitterForm.firstName.$invalid && !submitterForm.firstName.$pristine}">
 
-        <label for="firstName" class="control-label col-sm-3">
-            First Name
-        </label>
+        <label for="firstName" class="control-label col-sm-3">First Name:</label>
 
         <div class="col-sm-9">
             <input type="text" class="form-control" id="firstName" name="firstName"
@@ -18,71 +15,77 @@
 
             <p ng-show="submitterForm.firstName.$invalid && !submitterForm.firstName.$pristine" class="help-block">
                 Your first name is required.</p>
-
         </div>
     </div>
 
     <div class="form-group"
          ng-class="{ 'has-error' : submitterForm.lastName.$invalid && !submitterForm.lastName.$pristine}">
-        <label for="lastName" class="control-label col-sm-3">Last Name</label>
+
+        <label for="lastName" class="control-label col-sm-3">Last Name:</label>
 
         <div class="col-sm-9">
             <input type="text" class="form-control" id="lastName" name="lastName"
-                   placeholder="please enter your last name"
-                   ng-model="newSubmitter.lastName" required/>
+                   placeholder="please enter your last name" ng-model="newSubmitter.lastName" required/>
 
             <p ng-show="submitterForm.lastName.$invalid && !submitterForm.lastName.$pristine" class="help-block">
                 Your last name is required.</p>
-
         </div>
     </div>
 
     <div class="form-group"
          ng-class="{ 'has-error' : submitterForm.institution.$invalid && !submitterForm.institution.$pristine}">
-        <label for="institution" class="control-label col-sm-3">Institution</label>
+
+        <label for="institution" class="control-label col-sm-3">Institution:</label>
 
         <div class="col-sm-9">
-
             <input type="institution" class="form-control" placeholder="please enter your institution" id="institution"
-                   name="institution"
-                   ng-model="newSubmitter.institution"/>
+                   name="institution" ng-model="newSubmitter.institution" required/>
 
-            <p ng-show="submitterForm.institution.$invalid && !submitterForm.institution.$pristine" class="help-block">Enter a
-                valid institution.</p>
-
+            <p ng-show="submitterForm.institution.$invalid && !submitterForm.institution.$pristine" class="help-block">
+                Please enter a valid institution.</p>
         </div>
     </div>
 
     <div class="form-group"
          ng-class="{ 'has-error' : submitterForm.email.$invalid && !submitterForm.email.$pristine}">
-        <label for="email" class="control-label col-sm-3">Email
-            Address</label>
+
+        <label for="email" class="control-label col-sm-3">Email Address:</label>
 
         <div class="col-sm-9">
-
             <input type="email" class="form-control" placeholder="please enter your email address" id="email"
-                   name="email"
-                   ng-model="newSubmitter.emailAddress" required/>
+                   name="email" ng-model="newSubmitter.emailAddress" required/>
 
-            <p ng-show="submitterForm.email.$invalid && !submitterForm.email.$pristine" class="help-block">Enter a
-                valid email.</p>
-
+            <p ng-show="submitterForm.email.$invalid && !submitterForm.email.$pristine" class="help-block">
+                Please enter a valid email.</p>
         </div>
     </div>
 
     <div class="form-group"
          ng-class="{ 'has-error' : submitterForm.password.$invalid && !submitterForm.password.$pristine}">
-        <label for="password" class="control-label col-sm-3">Password</label>
+
+        <label for="password" class="control-label col-sm-3">Password:</label>
 
         <div class="col-sm-9">
             <input  class="form-control" placeholder="please enter your password" id="password"
-                   name="password"
-                   type="password"
-                   ng-model="newSubmitter.password" required/>
+                   name="password" type="password" ng-model="newSubmitter.password" required/>
 
             <p ng-show="submitterForm.password.$invalid && !submitterForm.password.$pristine" class="help-block">
-                Your last name is required.</p>
+                Please enter a valid password</p>
+        </div>
+    </div>
 
+    <div class="form-group" ng-class="{ 'has-error' : (submitterForm.password_match.$invalid &&
+        !submitterForm.password_match.$pristine) || newSubmitter.password != newSubmitter.password_match}">
+
+        <label for="password_match" class="control-label col-sm-3">Re-enter Password:</label>
+
+        <div class="col-sm-9">
+            <input  class="form-control" placeholder="please enter your password" id="password_match"
+                    name="password_match" type="password" ng-model="newSubmitter.password_match"
+                    password-match="newSubmitter.password" required/>
+
+            <p ng-show="(submitterForm.password_match.$invalid && !submitterForm.password_match.$pristine) ||
+                newSubmitter.password != newSubmitter.password_match" class="help-block">Passwords do not match!</p>
         </div>
     </div>
 

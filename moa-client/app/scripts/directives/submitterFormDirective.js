@@ -5,8 +5,8 @@ app.directive('submitterForm', function() {
 	return {
 		restrict: "A",
 		replace: true,
-		templateUrl: '/views/submitters/template/createUpdateForm.html'
-
+		templateUrl: '/views/submitters/template/createUpdateForm.html',
+        controller: function($scope) { console.log($scope)}
 	};
 });
 
@@ -24,9 +24,7 @@ app.directive('gwSubmitterQuery', function () {
 		scope: {
 			submitter: '=submitter'
 		},
-		link: function ($scope, element, attrs, ngModel) {
-
-		},
+		link: function ($scope, element, attrs, ngModel) {},
 
 		//controller to handle building new queries
 		controller: function ($scope, $element, SpectraQueryBuilderService, $location, Spectrum) {
@@ -38,8 +36,6 @@ app.directive('gwSubmitterQuery', function () {
 
 				//add it to query
 				SpectraQueryBuilderService.addUserToQuery($scope.submitter.emailAddress);
-
-				//assign to the cache
 
 				//run the query and show it's result in the spectra browser
 				$location.path("/spectra/browse/");
@@ -70,8 +66,7 @@ app.directive('gwSubmitterQuery', function () {
 
 				var query = SpectraQueryBuilderService.getQuery();
 
-				Spectrum.curateSpectraByQuery(query, function (data) {
-				});
+				Spectrum.curateSpectraByQuery(query, function (data) {});
 			}
 		}
 	}

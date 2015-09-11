@@ -2,10 +2,12 @@ package moa.server.query
 
 import grails.converters.JSON
 import moa.Spectrum
+import moa.SpectrumQueryDownload
 import moa.auth.AuthenticationToken
-import moa.server.SpectraQueryDownloadJob
 import moa.server.auth.AuthenticationService
 import moa.server.convert.SpectraConversionService
+import org.apache.commons.io.FileUtils
+import util.FireJobs
 
 class SpectraQueryController {
 
@@ -48,21 +50,53 @@ class SpectraQueryController {
     }
 
     /**
-     * download function for query controller
+     * export function for query controller
      */
-    def download() {
+    def export() {
         def json = request.JSON
         def emailAddress = authenticationService.getSubmitterEmailAddressFromRequest(request)
 
         if (json.query) {
             log.info("received query download request: " + json.query +" from "+ emailAddress)
-            SpectraQueryDownloadJob.triggerNow([query: json.query.toString(), emailAddress: emailAddress, max: params.max, offset: params.offset])
+            FireJobs.fireSpectraQueryExportJob([query: json.query.toString(), emailAddress: emailAddress])
         } else {
             log.info("received query download request: " + json +" from "+ emailAddress)
-            SpectraQueryDownloadJob.triggerNow([query: json.toString(), emailAddress: emailAddress, max: params.max, offset: params.offset])
+            FireJobs.fireSpectraQueryExportJob([query: json.toString(), emailAddress: emailAddress])
         }
 
         render([message: "scheduling of download job successful, results will be emailed to "+ emailAddress] as JSON)
+    }
+
+    /**
+     * download function for query controller
+     */
+    def download() {
+        def id = params.id
+
+        def spectrumDownload = SpectrumQueryDownload.findById(id)
+
+        if(!spectrumDownload) {
+            render(text: "${id} is not a valid query export!")
+        } else {
+            File f = new File(spectrumDownload.exportFile);
+
+            response.setHeader("Content-disposition", "attachment; filename=${f.getName()}")
+            response.contentType = 'text/plain'
+            response.outputStream << FileUtils.openInputStream(f)
+            response.outputStream.flush()
+        }
+    }
+
+    def downloadJson() {
+        def id = params.id
+
+        def spectrumDownload = SpectrumQueryDownload.findById(id)
+
+        if(!spectrumDownload) {
+            render(text: "${id} is not a valid query export!")
+        } else {
+            render(text: FileUtils.readFileToString(new File(spectrumDownload.queryFile), 'utf-8'))
+        }
     }
 
 

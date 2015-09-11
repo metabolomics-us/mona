@@ -50,13 +50,7 @@ class SpectraUploadConsumer {
                 long begin = System.currentTimeMillis()
 
                 try {
-
-                    def json = null
-                    if (data.spectra instanceof JSONObject) {
-                        json = data.spectra
-                    } else {
-                        json = JSON.parse(data.spectra);
-                    }
+                    def json = (data.spectra instanceof JSONObject) ? data.spectra : JSON.parse(data.spectra);
 
                     Spectrum result = spectraPersistenceService.create(json)
                     result.save(flush: true)
@@ -70,36 +64,29 @@ class SpectraUploadConsumer {
 
                     //automatic scoring, so we have some score at least, even if it's null
                     try {
-
                         scoringService.score(result)
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         log.warn("none fatal exception, but spectra submission was succcessful: ${e.getMessage()}", e)
-
                     }
+
                     //automatic validation
                     if (validation) {
                         try {
-
                             FireJobs.fireSpectraCurationJob([spectraId: id.id])
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             log.warn("none fatal exception, but spectra submission was succcessful: ${e.getMessage()}", e)
                         }
                     }
-                }
-                catch (ValidationException e) {
-
+                } catch (ValidationException e) {
                     JSON json = JSON.parse(data.spectra) as JSON
                     json.prettyPrint = true
 
                     log.debug("validation error found: ${e.getMessage()} ignoring this ojbect and skipping it from the upload")
                     log.debug(json, e)
-                }
-                catch (Exception e) {
-
+                } catch (Exception e) {
                     JSON json = JSON.parse(data.spectra) as JSON
                     json.prettyPrint = true
+
                     log.debug(json, e)
 
                     if (resubmit) {
@@ -107,7 +94,6 @@ class SpectraUploadConsumer {
                             log.error("fatal error - no resubmission possible", e)
                         } else {
                             log.error("resubmitting failed job to the system", e)
-
                             FireJobs.fireSpectraUploadJob(data)
                         }
                     } else {

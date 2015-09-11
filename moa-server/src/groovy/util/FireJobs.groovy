@@ -39,6 +39,7 @@ class FireJobs {
         use(TimeCategory) {
             schedule = date + 5.seconds
         }
+
         SpectraAssociationJob.triggerNow(data)
     }
 
@@ -47,6 +48,14 @@ class FireJobs {
             routingKey = "mona.validate.compound"
             body = data
             priority = 6
+        }
+    }
+
+    static fireSpectraQueryExportJob(Map data) {
+        Holders.getApplicationContext().getBean(RabbitMessagePublisher.class).send {
+            routingKey = "mona.export.spectra"
+            body = data
+            priority = 8
         }
     }
 }

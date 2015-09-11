@@ -4,7 +4,6 @@
 'use strict';
 
 moaControllers.SubmitterModalController = function ($scope, Submitter, $modalInstance, newSubmitter) {
-
 	/**
 	 * contains our results
 	 * @type {{}}
@@ -22,21 +21,22 @@ moaControllers.SubmitterModalController = function ($scope, Submitter, $modalIns
 	 * takes care of updates
 	 */
 	$scope.updateSubmitter = function () {
-
 		var submitter = createSubmitterFromScope();
+
 		//update the submitter
 		Submitter.update(submitter, function (data) {
 			$modalInstance.close(submitter);
 		}, function (error) {
 			handleDialogError(error);
 		});
-
 	};
+
 	/**
 	 * takes care of creates
 	 */
 	$scope.createNewSubmitter = function () {
 		var submitter = createSubmitterFromScope();
+
 		//no submitter id so create a new one
 		Submitter.save(submitter, function (savedSubmitter) {
 			$modalInstance.close(savedSubmitter);
@@ -60,6 +60,7 @@ moaControllers.SubmitterModalController = function ($scope, Submitter, $modalIns
 		if ($scope.newSubmitter.id) {
 			submitter.id = $scope.newSubmitter.id;
 		}
+
 		return submitter;
 	}
 
@@ -77,7 +78,6 @@ moaControllers.SubmitterModalController = function ($scope, Submitter, $modalIns
 				//remove the none needed object
 				delete obj.object;
 				errorReport.push(obj);
-
 			}
 
 			$scope.formErrors = errorReport;

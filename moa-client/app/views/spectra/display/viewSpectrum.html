@@ -15,9 +15,9 @@
 
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-md-12" ng-click="showScore =! showScore" ng-init="showScore = false">
+                        <div class="col-md-12" ng-init="showScore = false">
                             <span tooltip-placement="right" tooltip="Please click to view how the score was calculated"
-                                  tooltip-trigger="mouseenter" tooltip-popup-delay='10'>
+                                  tooltip-trigger="mouseenter" tooltip-popup-delay='10' ng-click="showScore =! showScore">
                                 Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
                             </span>
                         </div>
@@ -75,8 +75,7 @@
                         <div class="col-md-12">
                             <ul class="list-inline">
                                 <li>
-                                    <div class="h5">Hash: <span gw-spectra-id-query
-                                                                value="spectrum">{{spectrum.hash}}</span></div>
+                                    <div class="h5">Hash: <span gw-spectra-id-query value="spectrum">{{spectrum.hash}}</span></div>
                                 </li>
                                 <li>
                                     <div class="h5">
@@ -94,8 +93,9 @@
                             <accordion close-others="false">
                                 <accordion-group is-open="accordionStatus.isSpectraOpen">
                                     <accordion-heading>
-                                        <div>Mass Spectrum<i class="pull-right glyphicon"
-                                                             ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen,
+                                        <div>Mass Spectrum
+                                            <i class="pull-right glyphicon"
+                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen,
                                                        'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i>
                                         </div>
                                     </accordion-heading>
@@ -108,8 +108,9 @@
 
                                 <accordion-group is-open="accordionStatus.isIonTableOpen">
                                     <accordion-heading>
-                                        <div>Ion Table<i class="pull-right glyphicon"
-                                                         ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen,
+                                        <div>Ion Table
+                                            <i class="pull-right glyphicon"
+                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen,
                                                     'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i>
                                         </div>
                                     </accordion-heading>
