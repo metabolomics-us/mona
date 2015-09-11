@@ -31,11 +31,11 @@ class BootStrap {
 
         def addUser = { String firstName, String lastName, String emailAddress, String password, String institution, boolean isAdmin ->
             Submitter s = Submitter.findOrCreateWhere(firstName: firstName, lastName: lastName, emailAddress: emailAddress, password: password, institution: institution).save()
-            SubmitterRole.create(s, userRole)
+            SubmitterRole.findOrCreateWhere(submitter: s, role: userRole)
 
             if(isAdmin) {
-                SubmitterRole.create(s, curatorRole)
-                SubmitterRole.create(s, adminRole)
+                SubmitterRole.findOrCreateWhere(submitter: s, role: curatorRole)
+                SubmitterRole.findOrCreateWhere(submitter: s, role: adminRole)
             }
         }
 
