@@ -16,6 +16,7 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.min.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
@@ -116,7 +117,12 @@
                     <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
                 </li>
                 <li ng-show="auth.isLoggedIn()" class="divider"></li>
-                <li><a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
+
+                <li>
+                    <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
+                </li>
+                <li ng-show="!auth.isLoggedIn()">
+                    <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
                 </li>
             </ul>
             <!-- /.dropdown-user -->
@@ -261,12 +267,15 @@
 <script src="bower_components/angular-resource/angular-resource.js"></script>
 <script src="bower_components/angular-cookies/angular-cookies.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/angular-translate/angular-translate.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs.min.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.min.js"></script>
 <script src="bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
 <script src="bower_components/flot/jquery.flot.js"></script>
 <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
 <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
-<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="bower_components/angular-cts-service/service.js"></script>
 <script src="bower_components/angular-msp-parser/service.js"></script>
 <script src="bower_components/angular-mgf-parser/service.js"></script>
@@ -358,6 +367,7 @@
 <script src="scripts/directives/metadata/metadataValueDirective.js"></script>
 <script src="scripts/directives/spectra/spectraUploadProgressDirective.js"></script>
 <script src="scripts/directives/compound/displayCompoundDirective.js"></script>
+<script src="scripts/directives/passwordsMatchDirective.js"></script>
 <script src="scripts/directives/query/queryDirective.js"></script>
 <script src="scripts/directives/query/queryPieChart.js"></script>
 <script src="scripts/directives/news/newsDirective.js"></script>

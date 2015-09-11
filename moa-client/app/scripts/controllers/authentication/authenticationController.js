@@ -8,7 +8,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
     var self = this;
 
     self.currentUser = null;
-    self.welcomeMessage = '';
+    self.welcomeMessage = 'Welcome, Guest!';
 
 
     /**
@@ -45,7 +45,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
      * Opens the authentication modal dialog
      */
     self.openAuthenticationDialog = function () {
-        var modalInstance = $modal.open({
+        $modal.open({
             templateUrl: '/views/authentication/authenticationModal.html',
             controller: moaControllers.AuthenticationModalController,
             size: 'sm',
@@ -54,11 +54,25 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
     };
 
     /**
+     * Opens the registration modal dialog
+     */
+    self.handleRegistration = function() {
+        if (!self.isLoggedIn()) {
+            $modal.open({
+                templateUrl: '/views/authentication/registrationModal.html',
+                controller: moaControllers.RegistrationModalController,
+                size: 'md',
+                backdrop: 'static'
+            });
+        }
+    };
+
+    /**
      * Create a welcome message on login
      */
     $scope.$on('auth:login-success', function(event, data, status, headers, config) {
         AuthenticationService.getCurrentUser().then(function(data) {
-            self.welcomeMessage = "Welcome "+ data.firstName +"!";
+            self.welcomeMessage = 'Welcome, '+ data.firstName +'!';
         });
     });
 
@@ -66,7 +80,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
      * Remove the welcome message on logout
      */
     $scope.$on('auth:logout', function(event, data, status, headers, config) {
-        self.welcomeMessage = '';
+        self.welcomeMessage = 'Welcome, Guest!';
     });
 
     /**
@@ -129,6 +143,52 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
 
     $scope.$on('auth:login-error', function(event, data, status, headers, config) {
         $scope.state = 'login';
-        $scope.errors.push('Invalid email or password');
+
+        if (data.status == '401') {
+            $scope.errors.push('Invalid email or password');
+        } else {
+            $scope.errors.push('Unable to reach MoNA server');
+        }
     });
+};
+
+
+moaControllers.RegistrationModalController = function ($scope, $modalInstance, Submitter) {
+    $scope.errors = [];
+    $scope.state = 'register';
+
+    $scope.newSubmitter = {};
+
+    $scope.cancelDialog = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+    /**
+     * closes the dialog and finishes and builds the query
+     */
+    $scope.submitRegistration = function () {
+        $scope.errors = [];
+
+        var submitter = new Submitter();
+        submitter.firstName = $scope.newSubmitter.firstName;
+        submitter.lastName = $scope.newSubmitter.lastName;
+        submitter.institution = $scope.newSubmitter.institution;
+        submitter.emailAddress = $scope.newSubmitter.emailAddress;
+        submitter.password = $scope.newSubmitter.password;
+
+        Submitter.save(submitter,
+            function () {
+                $scope.$apply(function() {
+                    $scope.state = 'register';
+                });
+            },
+            function (data) {
+                $scope.$apply(function() {
+                    $scope.state = 'register';
+                    $scope.errors.push('Unable to reach MoNA server');
+                });
+            }
+        );
+    };
+
 };

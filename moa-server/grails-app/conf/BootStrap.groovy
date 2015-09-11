@@ -31,16 +31,19 @@ class BootStrap {
 
         def addUser = { String firstName, String lastName, String emailAddress, String password, String institution, boolean isAdmin ->
             Submitter s = Submitter.findOrCreateWhere(firstName: firstName, lastName: lastName, emailAddress: emailAddress, password: password, institution: institution).save()
-            SubmitterRole.create(s, userRole)
+            SubmitterRole.findOrCreateWhere(submitter: s, role: userRole)
 
             if(isAdmin) {
-                SubmitterRole.create(s, curatorRole)
-                SubmitterRole.create(s, adminRole)
+                SubmitterRole.findOrCreateWhere(submitter: s, role: curatorRole)
+                SubmitterRole.findOrCreateWhere(submitter: s, role: adminRole)
             }
         }
 
         // Fiehnlab
         addUser("Gert", "Wohlgemuth", "wohlgemuth@ucdavis.edu", "password", "University of California, Davis", true)
+        addUser("Sajjan", "Mehta", "ssmehta@ucdavis.edu", "password", "University of California, Davis", true)
+        addUser("Diego", "Pedrosa", "dpedrosa@ucdavis.edu", "password", "University of California, Davis", true)
+
 
         JSON.registerObjectMarshaller(Tag,
                 DomainClassMarshaller.createExcludeMarshaller(Tag, ["links","class", "id", "tagCachingService", "dateCreated", "lastUpdated","owner"])

@@ -16,7 +16,7 @@ grails {
                         '/rest/**/delete': protectedFilters,
 
 //                        '/rest/spectra/batch/**': protectedFilters,
-                        '/rest/spectra/search/download': protectedFilters,
+                        '/rest/spectra/search/export': protectedFilters,
 
                         // Allow anonymous access in general
                         // Should have filterInvocationInterceptor at the end, but results in blank pages
@@ -31,7 +31,7 @@ grails {
                     '/rest/**/delete': ['ROLE_ADMIN'],
 
 //                    '/rest/spectra/batch/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
-                    '/rest/spectra/search/download': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/spectra/search/export': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
 
                     // Allow anonymous access in general
                     // Should have filterInvocationInterceptor at the end, but results in blank pages

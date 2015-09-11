@@ -235,44 +235,33 @@ cors.headers = [
 //rabbit mq configuration for our different enviornments
 
 rabbitmq {
-
     queues = {
         queue name: "mona.validate.spectra", arguments: ["x-max-priority", 6]
         queue name: "mona.import.spectra", arguments: ["x-max-priority", 9]
+        queue name: "mona.export.spectra", arguments: ["x-max-priority", 9]
         queue name: "mona.validate.compound", arguments: ["x-max-priority", 8]
-
     }
-
 }
 
 environments {
-
     development {
-
         rabbitmq {
-
             connection = {
                 connection host: "localhost", username: "guest", password: "guest", threads: Runtime.getRuntime().availableProcessors() - 2
             }
-
         }
     }
 
     test {
-
         rabbitmq {
-
             connection = {
                 connection host: "localhost", username: "guest", password: "guest", threads: 5
             }
-
         }
     }
 
     production {
-
         rabbitmq {
-
             connection = {
                 connection host: "gose.fiehnlab.ucdavis.edu", username: "mona", password: "mona", threads: Runtime.getRuntime().availableProcessors() - 2
             }
