@@ -47,7 +47,6 @@ beans {
                 "compoundclass"           : COMPOUND_CLASS,
                 "author"                  : AUTHORS,
                 "adduct"                  : ADDUCT,
-                "adductionname"           : ADDUCT,
                 "adduct ion name"         : ADDUCT,
                 "column"                  : COLUMN_NAME,
                 "derivative form"         : DERIVATIVE_SUM_FORMULA,

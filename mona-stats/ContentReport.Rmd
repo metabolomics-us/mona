@@ -34,13 +34,14 @@ library("XML")
 #configure database options
 options(sqldf.RPostgreSQL.user ="compound", 
         sqldf.RPostgreSQL.password ="asdf",
-        sqldf.RPostgreSQL.dbname ="monadevel",
+        sqldf.RPostgreSQL.dbname ="monaproduction",
         sqldf.RPostgreSQL.host ="venus.fiehnlab.ucdavis.edu", 
         sqldf.RPostgreSQL.port =5432)
 
 drv <- dbDriver("PostgreSQL")
 
-listOfExternalDatabases <- c('HMDB','GNPS','MassBank','lipidblast','binbase')
+#listOfExternalDatabases <- c('HMDB','GNPS','MassBank','lipidblast','binbase')
+listOfExternalDatabases <- c('MassBank','respect')
 
 listOfExternalDatabases = sort(listOfExternalDatabases)
 
@@ -102,6 +103,7 @@ pander(spectraBySubmitter)
 ```
 
 \pagebreak
+
 ## Compounds in MoNA
 
 ```{r, include=FALSE}
@@ -192,6 +194,7 @@ qplot(data=experimentalVsPredictedSpectraReport,x=experimentalVsPredictedSpectra
 Sadly this information, was not provided for every available spectrum in the system.
 
 \pagebreak
+
 ## Integration of external spectral databases
 
 ```{r, include=FALSE}
@@ -366,8 +369,6 @@ from
 
 
 ```{r,echo=FALSE, fig.width=7,fig.height=3}
-qplot(c('accepted','deleted because of duplication'),num,data=deletedSpectraReport,geom = "bar", stat = "identity", ylab = "count of spectra", xlab = "status of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  coord_flip()
 
 qplot(data=duplicatedSpectraReport,x=c('total','uniquespectra','duplicated'),y=c(duplicatedSpectraReport$total,duplicatedSpectraReport$uniquespectra,duplicatedSpectraReport$duplicated),geom="bar",stat="identity",xlab="spectra",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   coord_flip()
@@ -533,20 +534,24 @@ from
          and e.owner_id = b.id 
          and b.id = d.spectrum_id 
          and d.compound_id = c.id 
-         and lower(g.name) = 'ms type'
+         and lower(g.name) = 'ms level'
 
   ) a 
    group by
       value  ) a  
    union
    select
-      (select
-         count(*) 
+       (select
+         count(distinct splash || inchi_key) 
       from
          spectrum a,
-         splash b 
+         splash b,
+         compound c,
+         compound_link d
       where
-         a.id = b.spectrum_id)     - count(*) as count,
+         c.id = d.compound_id and
+         d.spectrum_id = a.id and
+         a.id = b.spectrum_id) - count(*) as count,
       'other spectra' 
    from
       (   select
@@ -568,7 +573,7 @@ from
          and e.owner_id = b.id 
          and b.id = d.spectrum_id 
          and d.compound_id = c.id 
-         and lower(g.name) = 'ms type'
+         and lower(g.name) = 'ms level'
     ) a
  
 
@@ -580,7 +585,245 @@ from
 qplot(data=msLevelTypeReport,x=msLevelTypeReport$value,y=msLevelTypeReport$count,geom="bar",stat="identity",xlab="MS Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
+### Ion Mode
+
+Spectra can be aquired in different modes and this section of the report, provides you with a quick overview of these.
+
+```{r,include=FALSE}
+
+ionModeReport = sqldf("
+
+select
+   * 
+from
+   (  select
+      count(*) as count,
+      value
+   from
+      (  
+
+   select
+         distinct f.splash || inchi_key,
+         h.string_value as value 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f, 
+         meta_data g,
+         meta_data_value h
+      where
+         f.spectrum_id = b.id
+         and g.id = h.meta_data_id
+         and h.owner_id = b.id
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(g.name) = 'ion mode'
+
+  ) a 
+   group by
+      value  ) a  
+   union
+   select
+       (select
+         count(distinct splash || inchi_key) 
+      from
+         spectrum a,
+         splash b,
+         compound c,
+         compound_link d
+      where
+         c.id = d.compound_id and
+         d.spectrum_id = a.id and
+         a.id = b.spectrum_id) - count(*) as count,
+      'other' 
+   from
+      (   select
+         distinct f.splash || inchi_key
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f, 
+         meta_data g,
+         meta_data_value h
+      where
+         f.spectrum_id = b.id
+         and g.id = h.meta_data_id
+         and h.owner_id = b.id
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(g.name) = 'ion mode'
+    ) a
+ 
+
+                          
+                          ")
+```
+
+```{r,echo=FALSE,fig.width=7, fig.height=4, fig.align='center'}
+qplot(data=ionModeReport,x=ionModeReport$value,y=ionModeReport$count,geom="bar",stat="identity",xlab="Ion Mode",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+```
+
+### Precursor Types
+
+
+```{r,include=FALSE}
+
+precursorTypeReport = sqldf("
+
+select
+   * 
+from
+   (  select
+      count(*) as count,
+      value
+   from
+      (  
+
+   select
+         distinct f.splash || inchi_key,
+         h.string_value as value 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f, 
+         meta_data g,
+         meta_data_value h
+      where
+         f.spectrum_id = b.id
+         and g.id = h.meta_data_id
+         and h.owner_id = b.id
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(g.name) = 'precursor type'
+
+  ) a 
+   group by
+      value  ) a  
+  
+                          ")
+```
+
+```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
+qplot(data=precursorTypeReport,x=precursorTypeReport$value,y=precursorTypeReport$count,geom="bar",stat="identity",xlab="Precursor Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+```
+
+### Derivatisation
+
+Since none all spectra observed in GCMS are volatile or stable enough in their volatile form. They need to be derivatized. For this reason, you can utilize different reagents. This report provides you with an overview of the different utilized derivative types.
+
+
+```{r,include=FALSE}
+
+derivativeTypeReport = sqldf("
+
+select
+   * 
+from
+   (  select
+      count(*) as count,
+      value
+   from
+      (  
+
+   select
+         distinct f.splash || inchi_key,
+         h.string_value as value 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f, 
+         meta_data g,
+         meta_data_value h
+      where
+         f.spectrum_id = b.id
+         and g.id = h.meta_data_id
+         and h.owner_id = b.id
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(g.name) = 'derivative type'
+
+  ) a 
+   group by
+      value  ) a  
+  
+                          ")
+```
+
+```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
+qplot(data=derivativeTypeReport,x=derivativeTypeReport$value,y=derivativeTypeReport$count,geom="bar",stat="identity",xlab="Derivative Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+```
+
+
 ### Instrument
+
+
+
+```{r,include=FALSE}
+
+instrumentTypeReport = sqldf("
+
+select
+   * 
+from
+   (  select
+      count(*) as count,
+      value
+   from
+      (  
+
+   select
+         distinct f.splash || inchi_key,
+         h.string_value as value 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f, 
+         meta_data g,
+         meta_data_value h
+      where
+         f.spectrum_id = b.id
+         and g.id = h.meta_data_id
+         and h.owner_id = b.id
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(g.name) = 'instrument type'
+
+  ) a 
+   group by
+      value  ) a  
+  
+                          ")
+```
+
+```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
+qplot(data=instrumentTypeReport,x=instrumentTypeReport$value,y=instrumentTypeReport$count,geom="bar",stat="identity",xlab="Instrument Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+```
+
 
 # MoNA Usage
 
@@ -638,13 +881,30 @@ ggplot(data=importStatistics,aes(x= value)) + geom_histogram(binwidth=100, fill=
 
 ```
 
-Current estimates, based on the observed performance allow us to predict that the system can import $`24*60*60*1000/mean(importStatistics$value)`$ spectra in a single day.
+Current estimates, based on the observed performance allow us to predict that the system can import $`r 24*60*60*1000/mean(importStatistics$value)`$ spectra in a single day.
 
 ## Validation Performance
 
+
+Once the import is complete, the system automatically validates the imported spectra, computes additional meta data, synchronizes it with the Chemical Translation Service and computes Splashes, for an improved similarity search.
+
+```{r, include=FALSE}
+
+validationStatistics = sqldf("select * from statistics where category = 'validation'")
+```
+
+```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
+
+ggplot(data=validationStatistics,aes(x= value)) + geom_histogram(binwidth=150, fill=NA,color="black") + xlim(0,15000) + xlab("duration in ms") + ylab("count of validations")
+
+```
+
+Current estimates, based on the observed performance allow us to predict that the system can validate $`r 24*60*60*1000/mean(validationStatistics$value)`$ spectra in a single day.
+
+
 ## Scoring Perfomance
 
-Once the import is complete, the system automatically scores the received spectra, based on it's metadata and the correctness of these data, as well as there association with other metdata.
+Once the validation is complete, the system automatically scores the received spectra, based on it's metadata and the correctness of these data, as well as there association with other metdata.
 
 ```{r, include=FALSE}
 
@@ -657,4 +917,4 @@ ggplot(data=scoringStatistics,aes(x= value)) + geom_histogram(binwidth=50, fill=
 
 ```
 
-Current estimates, based on the observed performance allow us to predict that the system can score $`24*60*60*1000/mean(scoringStatistics$value)`$ spectra in a single day.
+Current estimates, based on the observed performance allow us to predict that the system can score $`r 24*60*60*1000/mean(scoringStatistics$value)`$ spectra in a single day.
