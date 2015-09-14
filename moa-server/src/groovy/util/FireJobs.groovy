@@ -33,14 +33,12 @@ class FireJobs {
     }
 
     static fireSpectraAssociationJob(Map data) {
-        Date date = new Date()
-
-        Date schedule = null;
-        use(TimeCategory) {
-            schedule = date + 5.seconds
+        Holders.getApplicationContext().getBean(RabbitMessagePublisher.class).send {
+            routingKey = "mona.association.spectra"
+            body = data
+            priority = 8
         }
 
-        SpectraAssociationJob.triggerNow(data)
     }
 
     static fireCompoundCurationJob(Map data) {

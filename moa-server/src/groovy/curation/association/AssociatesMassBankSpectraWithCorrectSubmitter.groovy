@@ -96,25 +96,20 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
             filename = filename.replaceAll("\\s", "").substring(0, 4).replaceAll("\\d", "");
         }
 
-        // Update submitter for massbank records
-        if (s.submitter.firstName.toLowerCase() == 'gert' || s.submitter.emailAddress == filename + '@MassBank.jp') {
-
-            if (isMB || massbankSubmiters[filename] != null) {
-                Spectrum.withTransaction {
+        if (isMB || massbankSubmiters[filename] != null) {
+            Spectrum.withTransaction {
 
 
-                    try {
+                try {
 
-                        associate(authors, s, filename)
-                    } catch (LockAcquisitionException e) {
-                        FireJobs.fireSpectraAssociationJob([spectraId: s.id])
-                    }
+                    associate(authors, s, filename)
+                } catch (LockAcquisitionException e) {
+                    FireJobs.fireSpectraAssociationJob([spectraId: s.id])
                 }
-            } else {
-                logger.warn("not a massbank file: ${filename}")
             }
+        } else {
+            logger.warn("not a massbank file: ${filename}")
         }
-
 
         return true
     }
@@ -123,68 +118,70 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
 
         Submitter submitter = Submitter.findOrCreateByEmailAddress(filename + '@MassBank.jp');
 
-        if (!submitter.validate()) {
-            logger.info("creating a new submitter")
+        if (submitter.emailAddress != s.submitter.emailAddress) {
+            if (!submitter.validate()) {
+                logger.info("creating a new submitter")
 
-            //first last name
-            if (authors.contains(",")) {
-                //try to get the first name out of the authors field
-                def names = authors.split(",");
+                //first last name
+                if (authors.contains(",")) {
+                    //try to get the first name out of the authors field
+                    def names = authors.split(",");
 
-                if (names.length > 0) {
-                    names = names[0].split(" ")
+                    if (names.length > 0) {
+                        names = names[0].split(" ")
 
-                    if (names.length >= 2) {
-                        submitter.firstName = names[0]
-                        submitter.lastName = names[1]
-                    } else {
-                        submitter.firstName ="none";
-                        submitter.lastName = names[0];
+                        if (names.length >= 2) {
+                            submitter.firstName = names[0]
+                            submitter.lastName = names[1]
+                        } else {
+                            submitter.firstName = "none";
+                            submitter.lastName = names[0];
+                        }
                     }
                 }
-            }
-            //no known pattern
-            else {
-                submitter.firstName = authors;
-                submitter.lastName = authors;
-            }
+                //no known pattern
+                else {
+                    submitter.firstName = authors;
+                    submitter.lastName = authors;
+                }
 
 
-            if (filename == null) {
-                submitter.institution = authors
+                if (filename == null) {
+                    submitter.institution = authors
+                } else {
+                    submitter.institution = massbankSubmiters[filename]
+                }
+
+                submitter.password = "password-${System.currentTimeMillis()}"
+                submitter.accountEnabled = false
+
+                if (!submitter.validate()) {
+                    logger.error(submitter.errors)
+                }
+                submitter.save()
+
+
+                logger.debug("submitter is created: ${submitter}")
             } else {
-                submitter.institution = massbankSubmiters[filename]
+                logger.debug("submitter already exists: ${submitter}")
             }
 
-            submitter.password = "password-${System.currentTimeMillis()}"
-            submitter.accountEnabled = false
+            Submitter current = s.submitter
 
-            if (!submitter.validate()) {
-                logger.error(submitter.errors)
-            }
-            submitter.save()
+            logger.debug("detaching spectra from current submitter: ${current}")
+            current.removeFromSpectra(s)
 
+            s.submitter = null
+            s.save()
+            current.save()
 
-            logger.debug("submitter is created: ${submitter}")
-        } else {
-            logger.debug("submitter already exists: ${submitter}")
+            logger.debug("attaching new submitter to spectra")
+            submitter.addToSpectra(s).save()
+            s.submitter = submitter
+
+            logger.debug("saving spectra")
+            s.save()
         }
-
-        Submitter current = s.submitter
-
-        logger.debug("detaching spectra from current submitter: ${current}")
-        current.removeFromSpectra(s)
-
-        s.submitter = null
-        s.save()
-        current.save()
-
-        logger.debug("attaching new submitter to spectra")
-        submitter.addToSpectra(s).save()
-        s.submitter = submitter
-
-        logger.debug("saving spectra")
-        s.save()
     }
 
     @Override
