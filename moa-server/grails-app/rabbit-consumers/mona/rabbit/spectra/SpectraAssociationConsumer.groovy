@@ -24,7 +24,9 @@ class SpectraAssociationConsumer {
 
     static rabbitConfig = [
             queue    : "mona.association.spectra",
-            consumers: 100
+            consumers: 100        ,
+            prefetchCount: 10
+
     ]
 
 
