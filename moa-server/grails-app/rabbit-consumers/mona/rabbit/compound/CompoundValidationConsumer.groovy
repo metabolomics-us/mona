@@ -13,8 +13,10 @@ class CompoundValidationConsumer {
      * Consumer configuration.
      */
     static rabbitConfig = [
-            queue    : "mona.validate.compound",
-            prefetchCount: 10
+            queue        : "mona.validate.compound",
+            prefetchCount: 10,
+            consumers    : 100
+
     ]
 
     CompoundCurationService compoundCurationService

@@ -10,7 +10,6 @@ output:
     number_sections: yes
     toc: yes
   html_document:
-    css: http://mona.fiehnlab.ucdavis.edu/styles/774b40ea.main.css
     number_sections: yes
     theme: journal
     toc: yes
@@ -40,10 +39,68 @@ options(sqldf.RPostgreSQL.user ="compound",
 
 drv <- dbDriver("PostgreSQL")
 
-#listOfExternalDatabases <- c('HMDB','GNPS','MassBank','lipidblast','binbase')
-listOfExternalDatabases <- c('MassBank','respect')
+sqldf("
+      
 
-listOfExternalDatabases = sort(listOfExternalDatabases)
+CREATE OR REPLACE FUNCTION spectra_statistics_for_metadata(field IN text,count out bigint,value out text)
+RETURNS setof record
+AS $$
+
+select
+   count,
+   value
+from
+   (  select
+      count(*) as count,
+      value
+   from
+      (  
+
+   select
+         distinct f.splash || inchi_key,
+         h.string_value as value 
+      from
+         tag a,
+         spectrum b,
+         compound c,
+         compound_link d,
+         tag_link e,
+         splash f, 
+         meta_data g,
+         meta_data_value h
+      where
+         f.spectrum_id = b.id
+         and g.id = h.meta_data_id
+         and h.owner_id = b.id
+         and e.tag_id = a.id 
+         and e.owner_id = b.id 
+         and b.id = d.spectrum_id 
+         and d.compound_id = c.id 
+         and lower(g.name) = $1
+
+  ) a 
+   group by
+      value  ) a  ;
+               
+
+$$ LANGUAGE sql;
+
+      ")
+
+#listOfExternalDatabases <- c('HMDB','GNPS','MassBank','lipidblast','binbase')
+listOfExternalDatabases <- c('MassBank','respect','gnps','lipidblast','FAHFA','HMDB')
+
+#build a query to ensure the items are actually contained in the tag list and have been validated
+listOfExternalDatabasesQuery = "select text from tag a, tag_link b, splash c where a.id = b.tag_id and b.owner_id = c.spectrum_id and lower(text) in ("
+
+  for(db in listOfExternalDatabases){
+        listOfExternalDatabasesQuery = paste( listOfExternalDatabasesQuery,"'",tolower(db),"'",',',sep = '')
+  }
+listOfExternalDatabasesQuery = substr(listOfExternalDatabasesQuery,1,nchar(listOfExternalDatabasesQuery)-1)
+
+listOfExternalDatabasesQuery = paste(listOfExternalDatabasesQuery,") group by text",sep="")
+
+listOfExternalDatabases = sort(sqldf(listOfExternalDatabasesQuery)$text)
 
 ```
 
@@ -312,9 +369,12 @@ countOfVennPlots = length(listOfExternalDatabases) * length(listOfExternalDataba
 mat <- matrix(1:countOfVennPlots, nrow = 2, ncol = countOfVennPlots/2, by = F)
 par(mar=c(0,0,0,0))
 
-for(d in listOfExternalDatabases){
-  for(d2 in listOfExternalDatabases){
+for(i in 1:(length(listOfExternalDatabases)-1)){
+  d = listOfExternalDatabases[i]
+  for(j in (i+1):length(listOfExternalDatabases)){
 
+    d2 = listOfExternalDatabases[j]
+    
     if(d != d2){
         myList = list()
         
@@ -335,6 +395,7 @@ for(d in listOfExternalDatabases){
 ```
 
 \pagebreak
+
 ### Submission of duplicated spectra
 
 Due to the concept of merging several databases, MoNA ended up containing several duplicated spectra. These were automatically identified and flagged internally for removal by utilizing the Splash and InChI Key in combination. This combination ensures that identical spectra, which are associated with several different compounds will not be removed.
@@ -679,42 +740,7 @@ qplot(data=ionModeReport,x=ionModeReport$value,y=ionModeReport$count,geom="bar",
 ```{r,include=FALSE}
 
 precursorTypeReport = sqldf("
-
-select
-   * 
-from
-   (  select
-      count(*) as count,
-      value
-   from
-      (  
-
-   select
-         distinct f.splash || inchi_key,
-         h.string_value as value 
-      from
-         tag a,
-         spectrum b,
-         compound c,
-         compound_link d,
-         tag_link e,
-         splash f, 
-         meta_data g,
-         meta_data_value h
-      where
-         f.spectrum_id = b.id
-         and g.id = h.meta_data_id
-         and h.owner_id = b.id
-         and e.tag_id = a.id 
-         and e.owner_id = b.id 
-         and b.id = d.spectrum_id 
-         and d.compound_id = c.id 
-         and lower(g.name) = 'precursor type'
-
-  ) a 
-   group by
-      value  ) a  
-  
+  select count, value from spectra_statistics_for_metadata('precursor type')
                           ")
 ```
 
@@ -731,41 +757,8 @@ Since none all spectra observed in GCMS are volatile or stable enough in their v
 
 derivativeTypeReport = sqldf("
 
-select
-   * 
-from
-   (  select
-      count(*) as count,
-      value
-   from
-      (  
+    select * from spectra_statistics_for_metadata('derivative type')
 
-   select
-         distinct f.splash || inchi_key,
-         h.string_value as value 
-      from
-         tag a,
-         spectrum b,
-         compound c,
-         compound_link d,
-         tag_link e,
-         splash f, 
-         meta_data g,
-         meta_data_value h
-      where
-         f.spectrum_id = b.id
-         and g.id = h.meta_data_id
-         and h.owner_id = b.id
-         and e.tag_id = a.id 
-         and e.owner_id = b.id 
-         and b.id = d.spectrum_id 
-         and d.compound_id = c.id 
-         and lower(g.name) = 'derivative type'
-
-  ) a 
-   group by
-      value  ) a  
-  
                           ")
 ```
 
@@ -781,47 +774,27 @@ qplot(data=derivativeTypeReport,x=derivativeTypeReport$value,y=derivativeTypeRep
 ```{r,include=FALSE}
 
 instrumentTypeReport = sqldf("
-
-select
-   * 
-from
-   (  select
-      count(*) as count,
-      value
-   from
-      (  
-
-   select
-         distinct f.splash || inchi_key,
-         h.string_value as value 
-      from
-         tag a,
-         spectrum b,
-         compound c,
-         compound_link d,
-         tag_link e,
-         splash f, 
-         meta_data g,
-         meta_data_value h
-      where
-         f.spectrum_id = b.id
-         and g.id = h.meta_data_id
-         and h.owner_id = b.id
-         and e.tag_id = a.id 
-         and e.owner_id = b.id 
-         and b.id = d.spectrum_id 
-         and d.compound_id = c.id 
-         and lower(g.name) = 'instrument type'
-
-  ) a 
-   group by
-      value  ) a  
-  
-                          ")
+  select * from spectra_statistics_for_metadata('instrument type')
+")
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
 qplot(data=instrumentTypeReport,x=instrumentTypeReport$value,y=instrumentTypeReport$count,geom="bar",stat="identity",xlab="Instrument Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+```
+
+## Usage of Labels and Tags
+
+MoNA user the concept of tags of labels internally to mark certain spectra, having certain criteria. A quick overview of these tags can be found here.
+
+```{r,include=FALSE}
+tagsDistribtution = sqldf("
+select count(*) as count ,text as value from tag a, tag_link b, splash d where a.id = b.tag_id and b.owner_id = d.spectrum_id group by text
+                         ")
+```
+
+
+```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
+qplot(data=tagsDistribtution,x=tagsDistribtution$value,y=tagsDistribtution$count,geom="bar",stat="identity",xlab="Tag/Label",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 
