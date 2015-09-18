@@ -4,14 +4,14 @@ title: "Massbank of North America - statistics"
 author: "Gert Wohlgemuth"
 date: '`r Sys.Date()`'
 output:
+  html_document:
+    number_sections: yes
+    theme: journal
+    toc: yes
   pdf_document:
     fig_height: 5
     fig_width: 5
     number_sections: yes
-    toc: yes
-  html_document:
-    number_sections: yes
-    theme: journal
     toc: yes
   word_document:
     fig_caption: yes
@@ -34,7 +34,7 @@ library("XML")
 options(sqldf.RPostgreSQL.user ="compound", 
         sqldf.RPostgreSQL.password ="asdf",
         sqldf.RPostgreSQL.dbname ="monaproduction",
-        sqldf.RPostgreSQL.host ="venus.fiehnlab.ucdavis.edu", 
+        sqldf.RPostgreSQL.host ="localhost", 
         sqldf.RPostgreSQL.port =5432)
 
 drv <- dbDriver("PostgreSQL")
@@ -87,6 +87,45 @@ $$ LANGUAGE sql;
 
       ")
 
+sqldf("
+create or replace function get_type(stringValue text) returns varchar as $$
+
+begin
+    begin
+        begin
+           if(stringValue::double precision is not null) then
+            begin
+                begin
+                    if(stringValue::integer is not null) then
+                        return 'integer';
+                    end if;
+
+               exception when numeric_value_out_of_range then
+                    return 'long';
+                end;
+            exception when invalid_text_representation then
+                return 'double';
+            end;
+
+            return 'double';
+
+           elsif(stringValue::boolean is not null) then
+                return 'boolean';
+           else
+                return 'string';    
+           end if;       
+
+        EXCEPTION when invalid_text_representation  then
+            return 'string';
+        end;
+    exception when numeric_value_out_of_range then
+        return 'unknown type';
+    end;
+end;
+
+$$ language plpgsql
+      
+      ")
 #listOfExternalDatabases <- c('HMDB','GNPS','MassBank','lipidblast','binbase')
 listOfExternalDatabases <- c('MassBank','respect','gnps','lipidblast','FAHFA','HMDB')
 
@@ -339,7 +378,7 @@ where
 
 
 
-```{r, echo=FALSE,fig.width=5, fig.height=5, fig.align='center'}
+```{r, echo=FALSE,fig.width=7, fig.height=7, fig.align='center'}
 #provide us with one venn diagram containing all the databases in it
 if(length(listOfExternalDatabases) <= 5){
   
@@ -769,8 +808,6 @@ qplot(data=derivativeTypeReport,x=derivativeTypeReport$value,y=derivativeTypeRep
 
 ### Instrument
 
-
-
 ```{r,include=FALSE}
 
 instrumentTypeReport = sqldf("
@@ -891,3 +928,20 @@ ggplot(data=scoringStatistics,aes(x= value)) + geom_histogram(binwidth=50, fill=
 ```
 
 Current estimates, based on the observed performance allow us to predict that the system can score $`r 24*60*60*1000/mean(scoringStatistics$value)`$ spectra in a single day.
+
+### Data type association
+
+The current system contains hundred of diffrent meta data types and to optimize the rule based autocuration system, we are utilizing this report to adjust the data types accordingly.
+
+```{r,include=FALSE}
+
+metaDataTypeReport = sqldf("
+        select get_type(string_value) as type, count(*) as count,b.name from meta_data_value a, meta_data b, meta_data_category c where a.meta_data_id = b.id and b.category_id = c.id and lower(c.name) not in ( 'annotation' ,'external id') group by get_type(string_value), b.name                           
+                           ")
+```
+
+```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
+
+qplot(data=metaDataTypeReport,x=metaDataTypeReport$name,y=metaDataTypeReport$count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=metaDataTypeReport$type)+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+
+```
