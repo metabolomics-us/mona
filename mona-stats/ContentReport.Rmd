@@ -4,14 +4,15 @@ title: "Massbank of North America - statistics"
 author: "Gert Wohlgemuth"
 date: '`r Sys.Date()`'
 output:
-  html_document:
-    number_sections: yes
-    theme: journal
-    toc: yes
   pdf_document:
     fig_height: 5
     fig_width: 5
     number_sections: yes
+    toc: yes
+    dev: pdf 
+  html_document:
+    number_sections: yes
+    theme: journal
     toc: yes
   word_document:
     fig_caption: yes
@@ -34,7 +35,7 @@ library("XML")
 options(sqldf.RPostgreSQL.user ="compound", 
         sqldf.RPostgreSQL.password ="asdf",
         sqldf.RPostgreSQL.dbname ="monaproduction",
-        sqldf.RPostgreSQL.host ="localhost", 
+        sqldf.RPostgreSQL.host ="venus.fiehnlab.ucdavis.edu", 
         sqldf.RPostgreSQL.port =5432)
 
 drv <- dbDriver("PostgreSQL")
@@ -284,7 +285,7 @@ from
 
 
 ```{r,echo=FALSE,fig.width=5, fig.height=3, fig.align='center'}
-qplot(data=experimentalVsPredictedSpectraReport,x=experimentalVsPredictedSpectraReport$database,y=experimentalVsPredictedSpectraReport$count,geom="bar",stat="identity",xlab="type of spectra",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ coord_flip()
+qplot(data=experimentalVsPredictedSpectraReport,x=experimentalVsPredictedSpectraReport$database,y=experimentalVsPredictedSpectraReport$count,geom="bar",stat="identity",xlab="type of spectra",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ coord_flip()
 ```
 
 Sadly this information, was not provided for every available spectrum in the system.
@@ -330,7 +331,7 @@ spectraCountForDatabases = sqldf(qr)
 Since MoNA was designed a system holding millions of spectra, we successfully integrated several external databases. This includes databases like $`r listOfExternalDatabases`$ and others. 
 
 ```{r,echo=FALSE,fig.width=5, fig.height=2.5, fig.align='center'}
-qplot(data=spectraCountForDatabases,x=spectraCountForDatabases$database,y=spectraCountForDatabases$count,geom="bar",stat="identity",xlab="origin",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+qplot(data=spectraCountForDatabases,x=spectraCountForDatabases$database,y=spectraCountForDatabases$count,geom="bar",stat="identity",xlab="origin",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 ```{r,echo=FALSE,fig.width=5, fig.height=3, fig.align='center'}
@@ -470,7 +471,7 @@ from
 
 ```{r,echo=FALSE, fig.width=7,fig.height=3}
 
-qplot(data=duplicatedSpectraReport,x=c('total','uniquespectra','duplicated'),y=c(duplicatedSpectraReport$total,duplicatedSpectraReport$uniquespectra,duplicatedSpectraReport$duplicated),geom="bar",stat="identity",xlab="spectra",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+qplot(data=duplicatedSpectraReport,x=c('total','uniquespectra','duplicated'),y=c(duplicatedSpectraReport$total,duplicatedSpectraReport$uniquespectra,duplicatedSpectraReport$duplicated),geom="bar",stat="identity",xlab="spectra",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   coord_flip()
 
 ```
@@ -506,7 +507,7 @@ where
 
 ```{r, echo=FALSE ,fig.width=7, fig.height=4, fig.align='center'}
 
-ggplot(data=spectraIonDistribution, aes(spectraIonDistribution$ioncount)) + geom_histogram(breaks=seq(0,100), aes(fill=..count..)) + ggtitle("distribution of spectra ion counts") +
+ggplot(data=spectraIonDistribution, aes(spectraIonDistribution$ioncount)) + geom_histogram(breaks=seq(0,100), aes(fill=..count..))  + theme_bw()+ ggtitle("distribution of spectra ion counts") +
     scale_fill_gradient("Count of spectra", low = "gray", high = "black") + labs(x="count of ions", y = "count")
 ```
 
@@ -593,7 +594,7 @@ from
 
 
 ```{r,echo=FALSE,fig.width=7, fig.height=4, fig.align='center'}
-qplot(data=aquistionMethodReport,x=aquistionMethodReport$method,y=aquistionMethodReport$count,geom="bar",stat="identity",xlab="aquisition method",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ coord_flip()
+qplot(data=aquistionMethodReport,x=aquistionMethodReport$method,y=aquistionMethodReport$count,geom="bar",stat="identity",xlab="aquisition method",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ coord_flip()
 ```
 
 
@@ -682,7 +683,7 @@ from
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=4, fig.align='center'}
-qplot(data=msLevelTypeReport,x=msLevelTypeReport$value,y=msLevelTypeReport$count,geom="bar",stat="identity",xlab="MS Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+qplot(data=msLevelTypeReport,x=msLevelTypeReport$value,y=msLevelTypeReport$count,geom="bar",stat="identity",xlab="MS Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ### Ion Mode
@@ -770,7 +771,7 @@ from
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=4, fig.align='center'}
-qplot(data=ionModeReport,x=ionModeReport$value,y=ionModeReport$count,geom="bar",stat="identity",xlab="Ion Mode",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+qplot(data=ionModeReport,x=ionModeReport$value,y=ionModeReport$count,geom="bar",stat="identity",xlab="Ion Mode",ylab="count of spectra") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ### Precursor Types
@@ -784,7 +785,7 @@ precursorTypeReport = sqldf("
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
-qplot(data=precursorTypeReport,x=precursorTypeReport$value,y=precursorTypeReport$count,geom="bar",stat="identity",xlab="Precursor Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+qplot(data=precursorTypeReport,x=precursorTypeReport$value,y=precursorTypeReport$count,geom="bar",stat="identity",xlab="Precursor Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ### Derivatisation
@@ -802,7 +803,7 @@ derivativeTypeReport = sqldf("
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
-qplot(data=derivativeTypeReport,x=derivativeTypeReport$value,y=derivativeTypeReport$count,geom="bar",stat="identity",xlab="Derivative Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+qplot(data=derivativeTypeReport,x=derivativeTypeReport$value,y=derivativeTypeReport$count,geom="bar",stat="identity",xlab="Derivative Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 
@@ -816,7 +817,7 @@ instrumentTypeReport = sqldf("
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
-qplot(data=instrumentTypeReport,x=instrumentTypeReport$value,y=instrumentTypeReport$count,geom="bar",stat="identity",xlab="Instrument Type",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+qplot(data=instrumentTypeReport,x=instrumentTypeReport$value,y=instrumentTypeReport$count,geom="bar",stat="identity",xlab="Instrument Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ## Usage of Labels and Tags
@@ -831,7 +832,7 @@ select count(*) as count ,text as value from tag a, tag_link b, splash d where a
 
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
-qplot(data=tagsDistribtution,x=tagsDistribtution$value,y=tagsDistribtution$count,geom="bar",stat="identity",xlab="Tag/Label",ylab="count of spectra")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+qplot(data=tagsDistribtution,x=tagsDistribtution$value,y=tagsDistribtution$count,geom="bar",stat="identity",xlab="Tag/Label",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 
@@ -863,7 +864,7 @@ monthlyVisitors = monthlyVisitors[c(1,2,3,4,5,6)]
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
-ggplot(data=monthlyVisitors, aes(x=factor(monthlyVisitors$Month, levels=unique(monthlyVisitors$Month)), y = Hits)) + geom_bar(stat="identity", aes(fill=factor(`Unique Vistors`))) + xlab("month of the year") + ylab("page hits") + scale_fill_manual("Unique Visitors",values=gray.colors(12, start = 0.3, end = 0.9, gamma = 2.2, alpha = NULL)) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(data=monthlyVisitors, aes(x=factor(monthlyVisitors$Month, levels=unique(monthlyVisitors$Month)), y = Hits)) + geom_bar(stat="identity", aes(fill=factor(`Unique Vistors`))) + xlab("month of the year") + ylab("page hits") + scale_fill_manual("Unique Visitors",values=gray.colors(12, start = 0.3, end = 0.9, gamma = 2.2, alpha = NULL)) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_x_discrete(expand = c(0, 0))+ scale_y_discrete(expand = c(0, 0))
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
@@ -887,7 +888,7 @@ importStatistics = sqldf("select * from statistics where category = 'import'")
 
 ```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
 
-ggplot(data=importStatistics,aes(x= value)) + geom_histogram(binwidth=100, fill=NA,color="black") + xlim(0,10000) + xlab("duration in ms") + ylab("count of imports")
+ggplot(data=importStatistics,aes(x= value)) + geom_histogram(binwidth=100, fill=NA,color="black") + xlim(0,10000) + xlab("duration in ms") + ylab("count of imports")+ theme_bw() 
 
 ```
 
@@ -905,7 +906,7 @@ validationStatistics = sqldf("select * from statistics where category = 'validat
 
 ```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
 
-ggplot(data=validationStatistics,aes(x= value)) + geom_histogram(binwidth=150, fill=NA,color="black") + xlim(0,15000) + xlab("duration in ms") + ylab("count of validations")
+ggplot(data=validationStatistics,aes(x= value)) + geom_histogram(binwidth=150, fill=NA,color="black") + xlim(0,15000) + xlab("duration in ms") + ylab("count of validations")+ theme_bw() 
 
 ```
 
@@ -923,13 +924,35 @@ scoringStatistics = sqldf("select * from statistics where category = 'scoring'")
 
 ```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
 
-ggplot(data=scoringStatistics,aes(x= value)) + geom_histogram(binwidth=50, fill=NA,color="black") + xlim(0,5000) + xlab("duration in ms") + ylab("count of scorings")
+ggplot(data=scoringStatistics,aes(x= value)) + geom_histogram(binwidth=50, fill=NA,color="black") + xlim(0,5000) + xlab("duration in ms") + ylab("count of scorings")+ theme_bw() 
 
 ```
 
 Current estimates, based on the observed performance allow us to predict that the system can score $`r 24*60*60*1000/mean(scoringStatistics$value)`$ spectra in a single day.
 
-### Data type association
+# Internal Diagnostics
+
+This are MoNa internal statsitics and mostly useful for developing and debugging the system.
+
+## Splash Distribution
+
+A quick overview, of the distrubtion of the spectral histograms. This allows us to tune algorithms and queries.
+
+```{r,include=FALSE}
+
+histogramDistribution = sqldf("
+    select count(*)::integer, block4::text from splash group by block4 having count(*) > (select count(*) * 0.005 from splash)
+")
+
+```
+
+```{r, echo=FALSE}
+
+panderOptions("digits", 2)
+pander(histogramDistribution)
+```
+
+## Data type association
 
 The current system contains hundred of diffrent meta data types and to optimize the rule based autocuration system, we are utilizing this report to adjust the data types accordingly.
 
@@ -937,11 +960,72 @@ The current system contains hundred of diffrent meta data types and to optimize 
 
 metaDataTypeReport = sqldf("
         select get_type(string_value) as type, count(*) as count,b.name from meta_data_value a, meta_data b, meta_data_category c where a.meta_data_id = b.id and b.category_id = c.id and lower(c.name) not in ( 'annotation' ,'external id') group by get_type(string_value), b.name                           
+            
                            ")
+
+metaDataTypeReportSegement1 = split(metaDataTypeReport, sample(rep(1:2,length(metaDataTypeReport)/2)))[[1]]
+metaDataTypeReportSegement2 = split(metaDataTypeReport, sample(rep(1:2,length(metaDataTypeReport)/2)))[[2]]
+
+
 ```
 
-```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
 
-qplot(data=metaDataTypeReport,x=metaDataTypeReport$name,y=metaDataTypeReport$count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=metaDataTypeReport$type)+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+
+```{r,echo=FALSE,fig.width=8, fig.height=10, fig.align='center'}
+
+qplot(data=metaDataTypeReportSegement1,x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 
 ```
+
+```{r,echo=FALSE,fig.width=8, fig.height=10, fig.align='center'}
+
+
+
+qplot(data=metaDataTypeReportSegement2,x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+
+```
+
+## Similar named meta data names
+
+This provides us with a quick overview of possible duplicated meta data names, which allows us to adjust the rules and filter these values during the next validation cycle.
+
+```{r,include=FALSE}
+
+
+duplicatedMetaDataReport = sqldf("
+
+
+
+select count(*) as count ,a,b,sim,sim * count(*) as score, case when substring(lower(a),1) < 'd' then 'one' when substring(lower(a),1) between 'd'  and 'l' then 'two' when substring(lower(a),1) between 'm' and  'q' then 'three' else 'four' end as part from (
+select a.id, a.name as a,b.name as b,similarity(a.name,b.name) as sim from meta_data a, meta_data b, meta_data_category c where a.category_id = c.id and b.category_id = c.id and lower(c.name) not in ('annotation','external id') and a.id != b.id and similarity(a.name,b.name) > 0.05 order by sim desc
+) a,
+meta_data_value b where b.meta_data_id = a.id group by a,b,sim, part
+
+
+                                 
+")
+
+
+duplicatedMetaDataReportSplit = split(duplicatedMetaDataReport,duplicatedMetaDataReport$part)
+
+```
+
+```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
+ggplot(duplicatedMetaDataReportSplit[[1]], aes(a,b)) + theme_bw() + geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.ticks = element_blank())
+```
+ 
+
+```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
+ggplot(duplicatedMetaDataReportSplit[[2]], aes(a,b))  + theme_bw()+ geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.ticks = element_blank())
+```
+
+```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
+ggplot(duplicatedMetaDataReportSplit[[3]], aes(a,b))  + theme_bw()+ geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.ticks = element_blank())
+```
+
+```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
+ggplot(duplicatedMetaDataReportSplit[[4]], aes(a,b)) + theme_bw() + geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.ticks = element_blank())
+```
+
+ 
+ 
