@@ -957,37 +957,30 @@ pander(histogramDistribution)
 The current system contains hundred of diffrent meta data types and to optimize the rule based autocuration system, we are utilizing this report to adjust the data types accordingly.
 
 ```{r,include=FALSE}
-
 metaDataTypeReport = sqldf("
-        select get_type(string_value) as type, count(*) as count,b.name from meta_data_value a, meta_data b, meta_data_category c where a.meta_data_id = b.id and b.category_id = c.id and lower(c.name) not in ( 'annotation' ,'external id') group by get_type(string_value), b.name                           
+        select get_type(string_value) as type, count(*) as count,b.name from meta_data_value a, meta_data b, meta_data_category c where a.meta_data_id = b.id and b.category_id = c.id and lower(c.name) not in ( 'annotation' ,'external id') group by get_type(string_value), b.name                          
             
                            ")
 
-metaDataTypeReportSegement1 = split(metaDataTypeReport, sample(rep(1:2,length(metaDataTypeReport)/2)))[[1]]
-metaDataTypeReportSegement2 = split(metaDataTypeReport, sample(rep(1:2,length(metaDataTypeReport)/2)))[[2]]
-
-
 ```
 
 
 
 ```{r,echo=FALSE,fig.width=8, fig.height=10, fig.align='center'}
 
-qplot(data=metaDataTypeReportSegement1,x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+qplot(data=split(metaDataTypeReport,1:2)[[1]],x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 
 ```
 
 ```{r,echo=FALSE,fig.width=8, fig.height=10, fig.align='center'}
 
-
-
-qplot(data=metaDataTypeReportSegement2,x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+qplot(data=split(metaDataTypeReport,1:2)[[2]],x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()+ theme(axis.ticks = element_blank())
 
 ```
 
 ## Similar named meta data names
 
-This provides us with a quick overview of possible duplicated meta data names, which allows us to adjust the rules and filter these values during the next validation cycle.
+This provides us with a quick overview of possible duplicated meta data names, which allows us to adjust the rules and filter these values during the next validation cycle. The graphs have been split into several sub graphs, to allow an easier presentation of the data and enhance readability.
 
 ```{r,include=FALSE}
 
@@ -1024,7 +1017,7 @@ ggplot(duplicatedMetaDataReportSplit[[3]], aes(a,b))  + theme_bw()+ geom_tile(ae
 ```
 
 ```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
-ggplot(duplicatedMetaDataReportSplit[[4]], aes(a,b)) + theme_bw() + geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.ticks = element_blank())
+ggplot(duplicatedMetaDataReportSplit[[4]], aes(a,b)) + theme_bw() + geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.ticks = element_blank())
 ```
 
  

@@ -20,7 +20,6 @@ class Splash {
         block1 nullable:true
         block2 nullable:true
         block3 nullable:true
-        block4 nullable:true
 
     }
     String splash
@@ -31,8 +30,6 @@ class Splash {
 
     String block3
 
-    String block4
-
     Spectrum spectrum
 
     def beforeValidate() {
@@ -40,11 +37,10 @@ class Splash {
         if(splash!= null){
             String[] blocks = splash.split("-");
 
-            if(blocks.size() == 4){
+            if(blocks.size() == 3){
                 block1 = blocks[0]
                 block2 = blocks[1]
                 block3 = blocks[2]
-                block4 = blocks[3]
             }
             else{
                 throw new RuntimeException("invalid number of blocks!")
