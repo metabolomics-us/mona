@@ -122,9 +122,6 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
                 if ($scope.queryOptions.queryType == 'exact') {
                     SpectraQueryBuilderService.addExactSpectraSearchToQuery($scope.splash);
                 }
-                else if ($scope.queryOptions.queryType == 'top10') {
-                    SpectraQueryBuilderService.addTop10IonsSearchToQuery($scope.splash.split('-')[1]);
-                }
                 else if ($scope.queryOptions.queryType == 'histogram') {
                     SpectraQueryBuilderService.addMatchingHistogramToQuery($scope.splash);
                 }
