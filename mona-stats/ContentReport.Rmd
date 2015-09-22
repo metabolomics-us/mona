@@ -941,7 +941,7 @@ A quick overview, of the distrubtion of the spectral histograms. This allows us 
 ```{r,include=FALSE}
 
 histogramDistribution = sqldf("
-    select count(*)::integer, block4::text from splash group by block4 having count(*) > (select count(*) * 0.005 from splash)
+    select count(*)::integer, block3::text from splash group by block3 having count(*) > (select count(*) * 0.005 from splash)
 ")
 
 ```
