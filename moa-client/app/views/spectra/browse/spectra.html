@@ -93,8 +93,8 @@
                     <div>
                         <span score-spectra ng-model="spectrum"></span>
                     </div>
-                    <div ng-if="angular.isDefined(spectrum.queryOptions !== undefined)">
-                        <div ng-if="angular.isDefined(spectrum.queryOptions.spectraSimilarity)">
+                    <div ng-if="angular.isDefined(spectrum.queryOptions)">
+                        <div ng-if="angular.isDefined(spectrum.queryOptions.spectralSimilarity)">
                             Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
                         </div>
                     </div>

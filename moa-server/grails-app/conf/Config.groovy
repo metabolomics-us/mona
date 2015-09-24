@@ -254,7 +254,7 @@ environments {
             }
         }
         grails.logging.jul.usebridge = false
-        grails.serverURL = "http://mona.fiehnlab.ucdavis.edu"
+      //  grails.serverURL = "http://mona.fiehnlab.ucdavis.edu"
 
         logdirectory = "/var/log/mona/"
         queryDownloadDirectory = "/data/export/"
