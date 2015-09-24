@@ -195,7 +195,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
         if(angular.isDefined(hash) && hash != null){
             //still dirty...
-            query.match.histogram = hash.split("-")[2];
+            query.match.histogram = hash.split("-")[1];
             query.match.histogramScore = 0.9;
 
         }
@@ -210,7 +210,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             query.match = {};
         }
 
-        query.match.histogram = hash.split("-")[2];
+        query.match.histogram = hash.split("-")[1];
         query.match.histogramScore = 1;
 
         QueryCache.setSpectraQuery(query);

@@ -9,22 +9,26 @@
 <div class="row">
     <div class="col-md-8">
         <div class="form-group">
-            <button class="btn btn-primary" ng-click="table = true" tooltip-placement="right" tooltip="click, to display the data in tabular mode"
+            <button class="btn btn-primary" ng-click="table = true" tooltip-placement="right"
+                    tooltip="click, to display the data in tabular mode"
                     tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
-                <i class="fa fa-2x fa-table fa-fw" ></i>
+                <i class="fa fa-2x fa-table fa-fw"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="table = false" tooltip-placement="right" tooltip="click, to display the data in grid mode"
+            <button class="btn btn-primary" ng-click="table = false" tooltip-placement="right"
+                    tooltip="click, to display the data in grid mode"
                     tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
-                <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"  ></i>
+                <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="querySpectraDialog()" tooltip-placement="right" tooltip="click, to open the advanced query dialog"
+            <button class="btn btn-primary" ng-click="querySpectraDialog()" tooltip-placement="right"
+                    tooltip="click, to open the advanced query dialog"
                     tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
-                <i class="fa fa-2x fa-search fa-fw"  ></i>
+                <i class="fa fa-2x fa-search fa-fw"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="submitQuery()" tooltip-placement="right" tooltip="click, to refresh the query" tooltip-trigger="mouseenter" tooltip-popup-delay="2">
+            <button class="btn btn-primary" ng-click="submitQuery()" tooltip-placement="right"
+                    tooltip="click, to refresh the query" tooltip-trigger="mouseenter" tooltip-popup-delay="2">
                 <i class="fa fa-2x fa-refresh fa-fw"></i>
             </button>
         </div>
@@ -43,7 +47,8 @@
     </div>
 </div>
 
-<div class="row" infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="1" infinite-scroll-use-document-bottom="true">
+<div class="row" infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="1"
+     infinite-scroll-use-document-bottom="true">
     <!-- display spectra as list -->
     <div class="col-md-12" ng-show="table == false">
         <div ng-repeat="spectrum in spectra">
@@ -88,8 +93,10 @@
                     <div>
                         <span score-spectra ng-model="spectrum"></span>
                     </div>
-                    <div ng-if="spectrum.queryOptions !== undefined">
-                        Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
+                    <div ng-if="angular.isDefined(spectrum.queryOptions !== undefined)">
+                        <div ng-if="angular.isDefined(spectrum.queryOptions.spectraSimilarity)">
+                            Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
+                        </div>
                     </div>
                 </td>
                 <td>

@@ -71,34 +71,6 @@ grails.exceptionresolver.params.exclude = ['password']
 grails.hibernate.cache.queries = false
 
 logdirectory = "./"
-queryDownloadDirectory = './query_export/'
-
-environments {
-    development {
-        grails.logging.jul.usebridge = true
-        grails.converters.default.pretty.print = true
-
-        logdirectory = "/var/log/mona/"
-    }
-    test {
-        grails.logging.jul.usebridge = true
-        grails.converters.default.pretty.print = true
-
-        logdirectory = "/var/log/mona/"
-    }
-    lipid {
-        grails.converters.default.pretty.print = true
-
-        logdirectory = "/var/log/mona/"
-    }
-    production {
-        grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
-
-        logdirectory = "/var/log/mona/"
-        queryDownloadDirectory = "/var/data/query_export/"
-    }
-}
 
 // log4j configuration
 log4j = {
@@ -252,6 +224,13 @@ environments {
                 connection host: "localhost", username: "guest", password: "guest", threads: Runtime.getRuntime().availableProcessors() - 2
             }
         }
+
+        grails.logging.jul.usebridge = true
+        grails.converters.default.pretty.print = true
+
+        logdirectory = "/var/log/mona/"
+        queryDownloadDirectory = './query_export/'
+
     }
 
     test {
@@ -260,6 +239,12 @@ environments {
                 connection host: "localhost", username: "guest", password: "guest", threads: 5
             }
         }
+        grails.logging.jul.usebridge = true
+        grails.converters.default.pretty.print = true
+
+        logdirectory = "/var/log/mona/"
+        queryDownloadDirectory = './query_export/'
+
     }
 
     production {
@@ -268,5 +253,13 @@ environments {
                 connection host: "gose.fiehnlab.ucdavis.edu", username: "mona", password: "mona", threads: Runtime.getRuntime().availableProcessors() - 2
             }
         }
+        grails.logging.jul.usebridge = false
+        grails.serverURL = "http://mona.fiehnlab.ucdavis.edu"
+
+        logdirectory = "/var/log/mona/"
+        queryDownloadDirectory = "/data/export/"
+
     }
 }
+
+

@@ -32,8 +32,11 @@
             </div>
 
             <div class="col-lg-6 col-md-7 col-sm-9">
-                <div class="row top5 lead" ng-if="spectrum.queryOptions !== undefined">
-                    Similarity Score: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
+
+                <div class="row top5 lead" ng-if="angular.isDefined(spectrum.queryOptions !== undefined)">
+                    <div ng-if="angular.isDefined(spectrum.queryOptions.spectraSimilarity)">
+                        Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
+                    </div>
                 </div>
 
                 <div class="row top5"
