@@ -395,7 +395,7 @@ update spectrum set deleted = false;
 delete from meta_data_value where deleted = true;
 
 -- new indexes --
-create index splash_block3_index on splash using gist (block3 gist_trgm_ops);
+create index splash_block2_index on splash using gist (block2 gist_trgm_ops);
 
 CREATE INDEX "index-spectrum-deleted"
         ON "public"."spectrum"("deleted");
