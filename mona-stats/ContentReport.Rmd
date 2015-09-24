@@ -476,6 +476,11 @@ qplot(data=duplicatedSpectraReport,x=c('total','uniquespectra','duplicated'),y=c
 
 ```
 
+```{r,echo=FALSE}
+panderOptions("digits", 1)
+pander(duplicatedSpectraReport)
+```
+
 ### Distribution of spectra ion counts
 
 This is a rough overview of the count of ion's, a spectrum has in MoNA.
@@ -884,6 +889,7 @@ During the import phase of the system, spectra will be associated with provided 
 ```{r, include=FALSE}
 
 importStatistics = sqldf("select * from statistics where category = 'import'")
+importPerformanceByWeek = sqldf("select count(value),avg(value), min(value), max(value),stddev(value),date_trunc('day', a.date_created)  as date  from statistics a where category = 'import' group by date order by date desc limit 30")
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
@@ -891,6 +897,15 @@ importStatistics = sqldf("select * from statistics where category = 'import'")
 ggplot(data=importStatistics,aes(x= value)) + geom_histogram(binwidth=100, fill=NA,color="black") + xlim(0,10000) + xlab("duration in ms") + ylab("count of imports")+ theme_bw() 
 
 ```
+
+
+```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
+
+ggplot(data=importPerformanceByWeek,aes(x= date,y=avg,fill=factor(importPerformanceByWeek$count))) + geom_bar(stat = "identity", position="dodge") + xlab("day") + ylab("average time in ms")+ theme_bw() + ggtitle("import speed over the last 30 days")  + scale_fill_manual("Imported spectra",values=gray.colors(12, start = 0.3, end = 0.9, gamma = 2.2, alpha = NULL)) 
+
+```
+
+
 
 Current estimates, based on the observed performance allow us to predict that the system can import $`r 24*60*60*1000/mean(importStatistics$value)`$ spectra in a single day.
 
@@ -900,6 +915,7 @@ Current estimates, based on the observed performance allow us to predict that th
 Once the import is complete, the system automatically validates the imported spectra, computes additional meta data, synchronizes it with the Chemical Translation Service and computes Splashes, for an improved similarity search.
 
 ```{r, include=FALSE}
+validationPerformanceByWeek = sqldf("select count(value),avg(value), min(value), max(value),stddev(value),date_trunc('day', a.date_created)  as date  from statistics a where category = 'validation' group by date order by date desc limit 30")
 
 validationStatistics = sqldf("select * from statistics where category = 'validation'")
 ```
@@ -909,6 +925,14 @@ validationStatistics = sqldf("select * from statistics where category = 'validat
 ggplot(data=validationStatistics,aes(x= value)) + geom_histogram(binwidth=150, fill=NA,color="black") + xlim(0,15000) + xlab("duration in ms") + ylab("count of validations")+ theme_bw() 
 
 ```
+
+
+```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
+
+ggplot(data=validationPerformanceByWeek,aes(x= date,y=avg,fill=factor(validationPerformanceByWeek$count))) + geom_bar(stat = "identity", position="dodge") + xlab("day") + ylab("average time in ms")+ theme_bw() + ggtitle("validation speed over the last 30 days")  + scale_fill_manual("validated spectra",values=gray.colors(12, start = 0.3, end = 0.9, gamma = 2.2, alpha = NULL)) 
+
+```
+
 
 Current estimates, based on the observed performance allow us to predict that the system can validate $`r 24*60*60*1000/mean(validationStatistics$value)`$ spectra in a single day.
 
@@ -941,20 +965,22 @@ A quick overview, of the distrubtion of the spectral histograms. This allows us 
 ```{r,include=FALSE}
 
 histogramDistribution = sqldf("
-    select count(*)::integer, block3::text from splash group by block3 having count(*) > (select count(*) * 0.005 from splash)
+    select count(*)::integer, block3::text from splash group by block3 order by count desc limit 10
 ")
 
 ```
 
 ```{r, echo=FALSE}
-
+set.caption("most observered histograms, limited to 10")
 panderOptions("digits", 2)
 pander(histogramDistribution)
 ```
 
+The utilized similarity search algorithm, is usually the quickest, if we only have 3000-5000 identical histograms.
+
 ## Data type association
 
-The current system contains hundred of diffrent meta data types and to optimize the rule based autocuration system, we are utilizing this report to adjust the data types accordingly.
+The current system contains hundred of diffrent meta data types and to optimize the rule based autocuration system, we are utilizing this report to adjust the data types accordingly. If you see more than 1 datatype on a bar in the chart, that means that we need to adjust our rules and interpret the data better.
 
 ```{r,include=FALSE}
 metaDataTypeReport = sqldf("
@@ -987,11 +1013,10 @@ This provides us with a quick overview of possible duplicated meta data names, w
 
 duplicatedMetaDataReport = sqldf("
 
-
-
 select count(*) as count ,a,b,sim,sim * count(*) as score, case when substring(lower(a),1) < 'd' then 'one' when substring(lower(a),1) between 'd'  and 'l' then 'two' when substring(lower(a),1) between 'm' and  'q' then 'three' else 'four' end as part from (
-select a.id, a.name as a,b.name as b,similarity(a.name,b.name) as sim from meta_data a, meta_data b, meta_data_category c where a.category_id = c.id and b.category_id = c.id and lower(c.name) not in ('annotation','external id') and a.id != b.id and similarity(a.name,b.name) > 0.05 order by sim desc
-) a,
+
+select a.name as a, b.name as b, similarity(a.name,b.name) as sim,a.id from meta_data a, meta_data b, meta_data_category c where a.name < b.name and c.id = a.category_id and c.id = b.category_id and lower(c.name) not in ('annotation','external id') and similarity(a.name, b.name) > 0.15 order by sim desc, a.name, b.name
+ )a,
 meta_data_value b where b.meta_data_id = a.id group by a,b,sim, part
 
 
@@ -1003,20 +1028,31 @@ duplicatedMetaDataReportSplit = split(duplicatedMetaDataReport,duplicatedMetaDat
 
 ```
 
-```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
+```{r,echo=FALSE}
+panderOptions('digits', 2)
+
+set.caption("Top 10 metadata name similarity pairs, with associated count")
+
+duplicatedMetaDataReportSubSet = head(duplicatedMetaDataReport[with(duplicatedMetaDataReport,order(-count)),],10)[,1:4]
+row.names(duplicatedMetaDataReportSubSet) <-NULL
+pander(duplicatedMetaDataReportSubSet)
+
+```
+
+```{r,echo=FALSE,fig.width=8,fig.height=10,fig.align='center'}
 ggplot(duplicatedMetaDataReportSplit[[1]], aes(a,b)) + theme_bw() + geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.ticks = element_blank())
 ```
  
 
-```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
+```{r,echo=FALSE,fig.width=8,fig.height=10,fig.align='center'}
 ggplot(duplicatedMetaDataReportSplit[[2]], aes(a,b))  + theme_bw()+ geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.ticks = element_blank())
 ```
 
-```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
+```{r,echo=FALSE,fig.width=8,fig.height=10,fig.align='center'}
 ggplot(duplicatedMetaDataReportSplit[[3]], aes(a,b))  + theme_bw()+ geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.ticks = element_blank())
 ```
 
-```{r,echo=FALSE,fig.width=8,fig.height=8,fig.align='center'}
+```{r,echo=FALSE,fig.width=8,fig.height=10,fig.align='center'}
 ggplot(duplicatedMetaDataReportSplit[[4]], aes(a,b)) + theme_bw() + geom_tile(aes(fill = sim), colour = "white") + scale_fill_gradient(low = "white", high = "steelblue", name = "similarity") + xlab("meta data name") + ylab("meta data name") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_x_discrete(expand = c(0, 0)) + scale_y_discrete(expand = c(0, 0)) + theme(axis.ticks = element_blank())
 ```
 
