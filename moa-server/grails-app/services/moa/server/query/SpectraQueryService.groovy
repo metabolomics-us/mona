@@ -149,7 +149,6 @@ class SpectraQueryService {
             result.each { Spectrum s ->
                 ids.each { Map m ->
 
-                    log.debug(m)
                     if (s.id.equals(m.id)) {
                         m.keySet().each {
                             if (!it.equals("id"))
@@ -157,8 +156,6 @@ class SpectraQueryService {
                         }
                     }
                 }
-
-                log.info(s.getQueryOptions())
             }
 
             log.debug("result count: ${result.size()}")
@@ -414,7 +411,7 @@ class SpectraQueryService {
                     //if no histogram provided, we generated it on the fly, utilizing the latest splash version
                     if (!json.match.histogram) {
 
-                        json.match.histogram = SplashUtil.splash(json.match.spectra, SpectraType.MS).split("-")[3]
+                        json.match.histogram = SplashUtil.splash(json.match.spectra, SpectraType.MS).split("-")[1]
                     }
 
                     having = "$having, spectramatch(:spectra,s.id) > ${spectraScore}"
