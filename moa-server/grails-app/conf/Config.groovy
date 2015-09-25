@@ -77,7 +77,7 @@ log4j = {
     // Example of changing the log pattern for the default console appender:
     //
     appenders {
-        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.ERROR
+        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.INFO
 
         file name: 'file', file: "${logdirectory}mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'error', file: "${logdirectory}monaError.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.ERROR
@@ -91,7 +91,7 @@ log4j = {
     }
 
     root {
-        error 'stdout'
+        info 'stdout'
         debug 'file'
         error 'error'
     }
