@@ -581,7 +581,7 @@ class SpectraQueryService {
     }
 
     private void debugModification(String queryOfDoomJoins, String fields, String orderBy, String group, String having, String where, def params) {
-        log.debug("modified query: \n $queryOfDoomJoins \n $where\n $fields \n$orderBy \n$group \n$having\n$params")
+        //log.debug("modified query: \n $queryOfDoomJoins \n $where\n $fields \n$orderBy \n$group \n$having\n$params")
     }
 
     /**
