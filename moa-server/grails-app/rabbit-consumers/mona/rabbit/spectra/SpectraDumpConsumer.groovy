@@ -28,18 +28,18 @@ class SpectraDumpConsumer {
     def grailsApplication
 
     static rabbitConfig = [
-            queue: "mona.repository.export.spectra",
-            prefetchCount: 100
+            queue        : "mona.repository.export.spectra",
+            prefetchCount: 100,
+            consumers    : Runtime.getRuntime().availableProcessors()
     ]
 
     def handleMessage(def data, MessageContext context) {
 
-        if(data!= null){
-            if(data.id != null){
+        if (data != null) {
+            if (data.id != null) {
                 spectraRepositoryService.exportToRepository(Spectrum.load(data.id))
                 return
-            }
-            else if(data.all){
+            } else if (data.all) {
                 spectraRepositoryService.exportAllToRepository()
                 return
             }

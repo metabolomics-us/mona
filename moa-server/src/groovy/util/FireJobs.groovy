@@ -57,7 +57,7 @@ class FireJobs {
         }
     }
 
-    static fireSpectraDumpJob(Map data) {
+    static fireSpectraRepositoryExportJob(Map data) {
         Holders.getApplicationContext().getBean(RabbitMessagePublisher.class).send {
             routingKey = "mona.repository.export.spectra"
             body = data

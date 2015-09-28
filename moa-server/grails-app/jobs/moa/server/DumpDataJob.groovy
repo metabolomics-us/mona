@@ -22,6 +22,6 @@ class DumpDataJob {
     }
 
     def execute() {
-        FireJobs.fireSpectraDumpJob([:])
+        FireJobs.fireSpectraRepositoryExportJob([:])
     }
 }
