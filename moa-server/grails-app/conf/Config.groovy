@@ -71,55 +71,22 @@ grails.exceptionresolver.params.exclude = ['password']
 grails.hibernate.cache.queries = false
 
 logdirectory = "./"
-queryDownloadDirectory = './query_export/'
-
-environments {
-    development {
-        grails.logging.jul.usebridge = true
-        grails.converters.default.pretty.print = true
-
-        logdirectory = "/var/log/mona/"
-    }
-    test {
-        grails.logging.jul.usebridge = true
-        grails.converters.default.pretty.print = true
-
-        logdirectory = "/var/log/mona/"
-    }
-    lipid {
-        grails.converters.default.pretty.print = true
-
-        logdirectory = "/var/log/mona/"
-    }
-    production {
-        grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
-
-        logdirectory = "/var/log/mona/"
-        queryDownloadDirectory = "/var/data/query_export/"
-    }
-}
 
 // log4j configuration
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
     appenders {
-        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.ERROR
+        console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.INFO
 
         file name: 'file', file: "${logdirectory}mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'error', file: "${logdirectory}monaError.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.ERROR
-
-        file name: 'monaImportStatistics', file: "${logdirectory}monaImport.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaFlushStatistics', file: "${logdirectory}monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaMemoryStatistics', file: "${logdirectory}monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaSpectraValidationStatistics', file: "${logdirectory}monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaDeleteStatistics', file: "${logdirectory}monaDelete.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'sql', file: "${logdirectory}sql.log", append: false, layout: pattern(conversionPattern: '%-5c{1} %d{HH:mm:ss.SSS} %n%n%m%n%n'), threshold: org.apache.log4j.Level.TRACE
     }
 
     root {
-        error 'stdout'
+        info 'stdout'
         debug 'file'
         error 'error'
     }
@@ -144,13 +111,8 @@ log4j = {
 
     //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
-    debug additivity: false, monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
-    debug additivity: false, monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
-    debug additivity: false, monaDeleteStatistics: ['grails.app.jobs.moa.server.DeleteSpectraJob']
 
     debug additivity: false, monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
-    debug additivity: false, monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
-
 
     debug additivity: false, sql: ['org.hibernate.SQL']
     trace additivity: false, sql: ['org.hibernate.type.descriptor.sql.BasicBinder']
@@ -238,8 +200,10 @@ rabbitmq {
     queues = {
         queue name: "mona.validate.spectra", arguments: ["x-max-priority", 6]
         queue name: "mona.import.spectra", arguments: ["x-max-priority", 9]
+        queue name: "mona.association.spectra", arguments: ["x-max-priority", 2]
         queue name: "mona.export.spectra", arguments: ["x-max-priority", 9]
         queue name: "mona.validate.compound", arguments: ["x-max-priority", 8]
+
     }
 }
 
@@ -250,6 +214,13 @@ environments {
                 connection host: "localhost", username: "guest", password: "guest", threads: Runtime.getRuntime().availableProcessors() - 2
             }
         }
+
+        grails.logging.jul.usebridge = true
+        grails.converters.default.pretty.print = true
+
+        logdirectory = "/var/log/mona/"
+        queryDownloadDirectory = './query_export/'
+
     }
 
     test {
@@ -258,6 +229,12 @@ environments {
                 connection host: "localhost", username: "guest", password: "guest", threads: 5
             }
         }
+        grails.logging.jul.usebridge = true
+        grails.converters.default.pretty.print = true
+
+        logdirectory = "/var/log/mona/"
+        queryDownloadDirectory = './query_export/'
+
     }
 
     production {
@@ -266,5 +243,13 @@ environments {
                 connection host: "gose.fiehnlab.ucdavis.edu", username: "mona", password: "mona", threads: Runtime.getRuntime().availableProcessors() - 2
             }
         }
+        grails.logging.jul.usebridge = false
+      //  grails.serverURL = "http://mona.fiehnlab.ucdavis.edu"
+
+        logdirectory = "/var/log/mona/"
+        queryDownloadDirectory = "/data/export/"
+
     }
 }
+
+

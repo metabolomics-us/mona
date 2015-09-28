@@ -57,7 +57,7 @@ class SpectraQueryExportConsumer {
 
                     long end = System.currentTimeMillis()
                     log.debug("exported query for ${data.emailAddress}, which took ${(end - begin) / 1000}")
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     def json = (data.query instanceof JSONObject) ? data.query : JSON.parse(data.query)
                     json.prettyPrint = true
                     log.debug(json, e)

@@ -1,37 +1,40 @@
-package moa.server
+package mona.rabbit.spectra
 
+import com.budjb.rabbitmq.consumer.MessageContext
 import grails.converters.JSON
-import moa.Spectrum
 import moa.server.curation.SpectraAssociationService
-import moa.server.curation.SpectraCurationService
 import moa.server.query.SpectraQueryService
-import moa.server.scoring.ScoringService
+import org.apache.log4j.Logger
 import util.FireJobs
 
 /**
  * Created with IntelliJ IDEA.
  * User: wohlgemuth
- * Date: 6/3/15
- * Time: 11:36 AM
+ * Date: 9/14/15
+ * Time: 2:07 PM
  */
-class SpectraAssociationJob {
-    def concurrent = true
+class SpectraAssociationConsumer {
+
 
     /**
-     * needs to be defined
+     * logger
      */
-    static triggers = {}
+    Logger log = Logger.getLogger(getClass())
 
-    def group = "association-spectra"
 
-    def description = "associates spectra data in the background of the server"
+    static rabbitConfig = [
+            queue    : "mona.association.spectra",
+            consumers: 100        ,
+            prefetchCount: 10
+
+    ]
+
 
     SpectraAssociationService spectraAssociationService
 
     SpectraQueryService spectraQueryService
 
-    def execute(context) {
-        Map data = context.mergedJobDataMap
+    def handleMessage(def data, MessageContext context) {
 
         if (data != null) {
             if (data.containsKey('spectraId')) {
@@ -81,6 +84,7 @@ class SpectraAssociationJob {
                 log.info("\t=>\tno spectraId was provided!")
             }
         }
+
 
     }
 }
