@@ -81,12 +81,7 @@ log4j = {
 
         file name: 'file', file: "${logdirectory}mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'error', file: "${logdirectory}monaError.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.ERROR
-
-        file name: 'monaImportStatistics', file: "${logdirectory}monaImport.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'monaFlushStatistics', file: "${logdirectory}monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaMemoryStatistics', file: "${logdirectory}monaMemory.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaSpectraValidationStatistics', file: "${logdirectory}monaSpectraValidation.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'monaDeleteStatistics', file: "${logdirectory}monaDelete.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
         file name: 'sql', file: "${logdirectory}sql.log", append: false, layout: pattern(conversionPattern: '%-5c{1} %d{HH:mm:ss.SSS} %n%n%m%n%n'), threshold: org.apache.log4j.Level.TRACE
     }
 
@@ -116,13 +111,8 @@ log4j = {
 
     //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
-    debug additivity: false, monaSpectraValidationStatistics: ['grails.app.jobs.moa.server.SpectraValidationJob']
-    debug additivity: false, monaImportStatistics: ['grails.app.jobs.moa.server.SpectraUploadJob']
-    debug additivity: false, monaDeleteStatistics: ['grails.app.jobs.moa.server.DeleteSpectraJob']
 
     debug additivity: false, monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
-    debug additivity: false, monaMemoryStatistics: ['grails.app.jobs.moa.server.MemoryConsumptionJob']
-
 
     debug additivity: false, sql: ['org.hibernate.SQL']
     trace additivity: false, sql: ['org.hibernate.type.descriptor.sql.BasicBinder']
