@@ -36,29 +36,25 @@ class SpectraQueryExportService {
 
 
     def exportQuery(def query, def emailAddress, def startTime) {
-        log.info("Starting download job for "+ emailAddress)
+        log.info("Starting download job for " + emailAddress)
 
         // Get query as JSON
         def json = (query instanceof JSONObject) ? query : JSON.parse(query);
 
-
         // Create directory to store query export if needed
-        def downloadPath = grailsApplication.getConfig().queryDownloadDirectory
-        new File(downloadPath).mkdirs();
+        String downloadPath = grailsApplication.config.queryDownloadDirectory
 
+        //TODO should be physically stored in the database to be instance independent or directory has to be shared
+        File directory = new File(downloadPath)
 
-        // Determine output format
-        String format
-
-        if (!json.format || json.format == "json") {
-            format = "json"
-        } else if (json.format == "msp") {
-            format = "msp"
-        } else {
-            log.info("\t=>\tinvalid output format specified: "+ json.format)
-            return
+        if (!directory.exists()) {
+            if (!directory.mkdirs()) {
+                throw new FileNotFoundException("was not able to create storage directory at: ${downloadPath}")
+            }
         }
 
+        // Determine output format
+        String format = getFileFormat(json)
 
         // Create new download file object
         def label = "${emailAddress.split('@')[0]}-$startTime"
@@ -70,21 +66,22 @@ class SpectraQueryExportService {
             queryDownload.exportFile = "${downloadPath}/export-$label.$format"
         }
 
-        queryDownload.save(flush: true)
-
-
         // Get the number of spectra in our query results
         def queryCount = spectraQueryService.getCountForQuery(json)
-        log.info("Counted "+ queryCount +" spectra")
-
+        log.info("Counted " + queryCount + " spectra")
 
         // Export query to file
         File queryFile = new File(queryDownload.queryFile)
-        queryFile.createNewFile()
+
+        log.debug("storing result at: ${queryFile.getAbsolutePath()}")
+        if (!queryFile.exists()) {
+            queryFile.createNewFile()
+        }
+
+
         FileUtils.writeStringToFile(queryFile, json.toString())
 
-        log.info("Exporting query file "+ queryFile.getName())
-
+        log.info("Exporting query file " + queryFile.getName())
 
         // Perform query in chunks and export data
         File exportFile = new File(queryDownload.exportFile)
@@ -109,7 +106,7 @@ class SpectraQueryExportService {
 
                 FileUtils.writeStringToFile(exportFile, (s as JSON).toString(), true);
             } else if (format == "msp") {
-                FileUtils.writeStringToFile(exportFile, spectraConversionService.convertToMsp(s) +"\n", true);
+                FileUtils.writeStringToFile(exportFile, spectraConversionService.convertToMsp(s) + "\n", true);
             }
 
             i++;
@@ -122,9 +119,30 @@ class SpectraQueryExportService {
             FileUtils.writeStringToFile(exportFile, "\n]", true)
         }
 
+        queryDownload.save(flush: true)
 
         // Email results
         log.info("Export of ${queryCount} spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
         emailService.sendDownloadEmail(emailAddress, queryCount, queryDownload.id)
+
+
+    }
+
+    /**
+     * TODO outsource this to be able to support more file, mzData, mzML, etc
+     * @param json
+     * @return
+     */
+    private String getFileFormat(json) {
+        String format
+
+        if (!json.format || json.format == "json") {
+            format = "json"
+        } else if (json.format == "msp") {
+            format = "msp"
+        } else {
+            throw new FileNotFoundException("\t=>\tinvalid output format specified: " + json.format)
+        }
+        format
     }
 }
