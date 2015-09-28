@@ -4,6 +4,7 @@ import grails.converters.JSON
 import grails.transaction.Transactional
 import moa.Spectrum
 import moa.server.convert.SpectraConversionService
+import moa.server.statistics.StatisticsService
 import util.FireJobs
 
 @Transactional
@@ -11,15 +12,16 @@ class SpectraRepositoryService {
 
     def grailsApplication
 
-    SpectraConversionService spectraConversionService
+    StatisticsService statisticsService
 
     /**
      * reports the spectra to the repository
      */
     def exportToRepository(Spectrum spectrum) {
 
-        log.info("persisting spectrum: ${spectrum.id}")
+        log.debug("persisting spectrum: ${spectrum.id}")
         Date date = spectrum.getDateCreated()
+        long begin = System.currentTimeMillis()
         Calendar cal = Calendar.getInstance()
         cal.setTime(date)
 
@@ -41,6 +43,9 @@ class SpectraRepositoryService {
             log.debug("\t-> overwriting existing file!")
         }
         persist(outputFile, spectrum)
+
+        statisticsService.acquire(System.currentTimeMillis() - begin, "${spectrum.id}", "duration of exporting spectra to repository", "repository-export")
+
     }
 
     /**
@@ -53,7 +58,7 @@ class SpectraRepositoryService {
 
         String content = (spectrum as JSON).toString(true)
 
-        log.debug("serialized as: \n\n${content}")
+        log.trace("serialized as: \n\n${content}")
         stream.write(content)
         stream.flush()
         stream.close()
@@ -70,7 +75,7 @@ class SpectraRepositoryService {
         Spectrum.executeQuery("select s.id from Spectrum s where s.dateCreated between ? and ?", [new Date() - days, (new Date())]).each { Long id ->
 
             //schedule a new job to parallize things a bit
-            FireJobs.fireSpectraDumpJob([id: id])
+            FireJobs.fireSpectraRepositoryExportJob([id: id])
 
         }
     }
@@ -80,7 +85,7 @@ class SpectraRepositoryService {
         Spectrum.executeQuery("select s.id from Spectrum s ").each { Long id ->
 
             //schedule a new job to parallize things a bit
-            FireJobs.fireSpectraDumpJob([id: id])
+            FireJobs.fireSpectraRepositoryExportJob([id: id])
 
         }
     }

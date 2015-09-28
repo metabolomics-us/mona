@@ -43,7 +43,7 @@ class SpectrumController extends RestfulController<Spectrum> {
     @Transactional
     def updateRepository(){
 
-        FireJobs.fireSpectraDumpJob([all:true])
+        FireJobs.fireSpectraRepositoryExportJob([all:true])
 
         render([message: "populating complete repository"] as JSON)
     }
