@@ -34,7 +34,6 @@ class SpectraQueryExportService {
      */
     EmailService emailService
 
-
     def exportQuery(def query, def emailAddress, def startTime) {
         log.info("Starting download job for " + emailAddress)
 
@@ -44,7 +43,6 @@ class SpectraQueryExportService {
         // Create directory to store query export if needed
         String downloadPath = grailsApplication.config.queryDownloadDirectory
 
-        //TODO should be physically stored in the database to be instance independent or directory has to be shared
         File directory = new File(downloadPath)
 
         if (!directory.exists()) {

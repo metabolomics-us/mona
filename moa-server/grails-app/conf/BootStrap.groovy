@@ -90,9 +90,9 @@ class BootStrap {
         JSON.registerObjectMarshaller(Query,
                 DomainClassMarshaller.createExcludeMarshaller(Query, ["class"])
         )
-
-
-
+        JSON.registerObjectMarshaller(Splash,
+                DomainClassMarshaller.createExcludeMarshaller(Splash, ["class","spectrum"])
+        )
 
         StaticQueries.register()
 
