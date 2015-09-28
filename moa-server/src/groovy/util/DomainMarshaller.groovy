@@ -58,12 +58,15 @@ class DomainClassMarshaller {
         return { domainItem ->
             DefaultGrailsDomainClass domain = new DefaultGrailsDomainClass(clazz)
 
+
             def results = [:]
             domain.properties.each { field ->
                 if (!(field.name in globalRestrictedFields) && !(field.name in fieldsToExclude) && (!field.name.endsWith("Service"))){
+
                     results[field.name] = domainItem[field.name]
                 }
             }
+
             return results
         }
     }

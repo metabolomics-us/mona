@@ -203,6 +203,7 @@ rabbitmq {
         queue name: "mona.association.spectra", arguments: ["x-max-priority", 2]
         queue name: "mona.export.spectra", arguments: ["x-max-priority", 9]
         queue name: "mona.validate.compound", arguments: ["x-max-priority", 8]
+        queue name: "mona.repository.export.spectra", arguments: ["x-max-priority", 8]
 
     }
 }
@@ -220,6 +221,16 @@ environments {
 
         logdirectory = "/var/log/mona/"
         queryDownloadDirectory = './query_export/'
+
+
+        repository{
+            //where to dump the data
+            directory = "./repository"
+
+            //timeframe of days we dump the uploaded data from
+            timeframeInDays = 7
+
+        }
 
     }
 
@@ -248,6 +259,15 @@ environments {
 
         logdirectory = "/var/log/mona/"
         queryDownloadDirectory = "/data/export/"
+
+        repository{
+            //where to dump the data
+            directory = "/data/repository"
+
+            //timeframe of days we dump the uploaded data from
+            timeframeInDays = 7
+
+        }
 
     }
 }
