@@ -45,7 +45,7 @@ class SpectrumController extends RestfulController<Spectrum> {
 
         FireJobs.fireSpectraDumpJob([all:true])
 
-        render([message: "populating complete repository" as JSON])
+        render([message: "populating complete repository"] as JSON)
     }
 
     @Override
