@@ -39,7 +39,13 @@ class SpectraDumpConsumer {
                 spectraRepositoryService.exportToRepository(Spectrum.load(data.id))
                 return
             }
+            else if(data.all){
+                spectraRepositoryService.exportAllToRepository()
+                return
+            }
         }
+
+        //this is the default
         spectraRepositoryService.exportCreatedToRepositoryFromLastNDays(grailsApplication.config.repository.timeframeInDays)
     }
 }
