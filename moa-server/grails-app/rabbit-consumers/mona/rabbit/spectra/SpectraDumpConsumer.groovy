@@ -29,7 +29,7 @@ class SpectraDumpConsumer {
 
     static rabbitConfig = [
             queue: "mona.repository.export.spectra",
-            prefetchCount: 1
+            prefetchCount: 100
     ]
 
     def handleMessage(def data, MessageContext context) {

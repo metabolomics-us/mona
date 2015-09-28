@@ -164,6 +164,10 @@ class UrlMappings {
 
         "/rest/spectra/upload"(controller: 'spectrum', action: 'upload')
 
+        /**
+         * updates the repository
+         */
+        "/rest/spectra/repository/update"(controller: 'spectrum', action: 'updateRepository')
 
         /**
          * delete all of these data
@@ -255,7 +259,7 @@ class UrlMappings {
                 action: 'listMilestones')
 
         /**
-         * queue related items
+         * TODO ALL DEPRECATED!!!!
          */
 
         "/rest/queue/spectra/validation"(controller: 'queue', action: 'spectraWaitingForValidation')
@@ -268,6 +272,10 @@ class UrlMappings {
         "/rest/queue/compound/validation/count"(controller: 'queue', action: 'compoundsWaitingForValidationCount')
 
         "/rest/queue"(controller: 'queue', action: 'jobs')
+
+        /**
+         *  TODO DEPRECATIONS ENDED!
+         */
 
         /**
          * error related parts

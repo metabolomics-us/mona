@@ -6,6 +6,7 @@ import moa.scoring.Score
 import moa.server.NewsService
 import moa.auth.Role
 import moa.auth.SubmitterRole
+import moa.splash.Splash
 import util.DomainClassMarshaller
 import util.query.StaticQueries
 
@@ -90,6 +91,7 @@ class BootStrap {
         JSON.registerObjectMarshaller(Query,
                 DomainClassMarshaller.createExcludeMarshaller(Query, ["class"])
         )
+
         JSON.registerObjectMarshaller(Splash,
                 DomainClassMarshaller.createExcludeMarshaller(Splash, ["class","spectrum"])
         )

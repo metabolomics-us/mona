@@ -194,19 +194,7 @@ cors.headers = [
         'Access-Control-Max-Age'          : 3600
 ]
 
-//rabbit mq configuration for our different enviornments
-
-rabbitmq {
-    queues = {
-        queue name: "mona.validate.spectra", arguments: ["x-max-priority", 6]
-        queue name: "mona.import.spectra", arguments: ["x-max-priority", 9]
-        queue name: "mona.association.spectra", arguments: ["x-max-priority", 2]
-        queue name: "mona.export.spectra", arguments: ["x-max-priority", 9]
-        queue name: "mona.validate.compound", arguments: ["x-max-priority", 8]
-        queue name: "mona.repository.export.spectra", arguments: ["x-max-priority", 8]
-
-    }
-}
+boolean queuesAreDurable = false
 
 environments {
     development {
@@ -223,7 +211,7 @@ environments {
         queryDownloadDirectory = './query_export/'
 
 
-        repository{
+        repository {
             //where to dump the data
             directory = "./repository"
 
@@ -249,18 +237,22 @@ environments {
     }
 
     production {
+
+        //we don't want to loose our queues in case of a crash
+        queuesAreDurable = false
+
         rabbitmq {
             connection = {
                 connection host: "gose.fiehnlab.ucdavis.edu", username: "mona", password: "mona", threads: Runtime.getRuntime().availableProcessors() - 2
             }
         }
         grails.logging.jul.usebridge = false
-      //  grails.serverURL = "http://mona.fiehnlab.ucdavis.edu"
+        //  grails.serverURL = "http://mona.fiehnlab.ucdavis.edu"
 
         logdirectory = "/var/log/mona/"
         queryDownloadDirectory = "/data/export/"
 
-        repository{
+        repository {
             //where to dump the data
             directory = "/data/repository"
 
@@ -268,6 +260,20 @@ environments {
             timeframeInDays = 7
 
         }
+
+    }
+}
+
+//rabbit mq configuration for our different enviornments
+
+rabbitmq {
+    queues = {
+        queue name: "mona.validate.spectra", arguments: ["x-max-priority", 6], durable: queuesAreDurable
+        queue name: "mona.import.spectra", arguments: ["x-max-priority", 9], durable: queuesAreDurable
+        queue name: "mona.association.spectra", arguments: ["x-max-priority", 2], durable: queuesAreDurable
+        queue name: "mona.export.spectra", arguments: ["x-max-priority", 9], durable: queuesAreDurable
+        queue name: "mona.validate.compound", arguments: ["x-max-priority", 8], durable: queuesAreDurable
+        queue name: "mona.repository.export.spectra", arguments: ["x-max-priority", 8], durable: queuesAreDurable
 
     }
 }
