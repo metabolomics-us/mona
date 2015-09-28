@@ -18,7 +18,7 @@ class DumpDataJob {
     def description = "schedules repository dumps"
 
     static triggers = {
-        cron name: 'dump', startDelay: 60, cronExpression: '0 */1 * * * ?', priority: 10
+        cron name: 'updateRepository', startDelay: 60, cronExpression: '0 0 0 ? * SAT', priority: 10
     }
 
     def execute() {

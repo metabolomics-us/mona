@@ -26,9 +26,9 @@ class SpectraRepositoryService {
         //where are we going to store our data
         File directory = new File("${grailsApplication.config.repository.directory}/${cal[Calendar.YEAR]}/${cal[Calendar.MONTH]}/${cal[Calendar.DAY_OF_MONTH]}/${spectrum.getBiologicalCompound().inchiKey}/${spectrum.getSplash().splash}/")
 
-        log.info("storing at directory: ${directory}")
+        log.debug("storing at directory: ${directory}")
         if (!directory.exists()) {
-            log.info("\t-> creating directory")
+            log.debug("\t-> creating directory")
             if (!directory.mkdirs()) {
                 throw new FileNotFoundException("sorry, was not able to create the required directory: ${directory.absolutePath}")
             }
@@ -38,7 +38,7 @@ class SpectraRepositoryService {
         File outputFile = new File(directory, "${spectrum.id}.json")
 
         if (outputFile.exists()) {
-            log.info("\t-> overwriting existing file!")
+            log.debug("\t-> overwriting existing file!")
         }
         persist(outputFile, spectrum)
     }
@@ -73,7 +73,16 @@ class SpectraRepositoryService {
             FireJobs.fireSpectraDumpJob([id: id])
 
         }
+    }
 
+    def exportAllToRepository(){
+        log.info("persisting all  spectra of the last to the repository")
+        Spectrum.executeQuery("select s.id from Spectrum s ").each { Long id ->
+
+            //schedule a new job to parallize things a bit
+            FireJobs.fireSpectraDumpJob([id: id])
+
+        }
     }
 
 }
