@@ -2,7 +2,7 @@
  * Created by wohlgemuth on 5/14/15.
  */
 
-app.directive('statistics', function ($compile, $filter,StatisticsService, $log) {
+app.directive('statistics', function ($compile, $filter, StatisticsService, $log) {
     return {
         //must be an attribute
         replace: false,
@@ -30,31 +30,34 @@ app.directive('statistics', function ($compile, $filter,StatisticsService, $log)
 
             StatisticsService.executionTime({time:$scope.timeframe,method:$scope.query,max:1},
                 function(data){
-                    $scope.executionTime = data[0].avg;
+                    if(data.length) {
+                        $scope.executionTime = data[0].avg;
 
-                    if($scope.executionTime > 1000) {
-                        $scope.executionTime = $scope.executionTime / 1000;
-                        $scope.unit = "s";
-
-
-                        if ($scope.executionTime > 90) {
-                            $scope.executionTime = $scope.executionTime / 60;
-                            $scope.unit = "min";
+                        if ($scope.executionTime > 1000) {
+                            $scope.executionTime = $scope.executionTime / 1000;
+                            $scope.unit = "s";
 
 
                             if ($scope.executionTime > 90) {
                                 $scope.executionTime = $scope.executionTime / 60;
-                                $scope.unit = "h";
+                                $scope.unit = "min";
 
 
-                                if ($scope.executionTime > 24) {
-                                    $scope.executionTime = $scope.executionTime / 24;
-                                    $scope.unit = "d";
+                                if ($scope.executionTime > 90) {
+                                    $scope.executionTime = $scope.executionTime / 60;
+                                    $scope.unit = "h";
+
+
+                                    if ($scope.executionTime > 24) {
+                                        $scope.executionTime = $scope.executionTime / 24;
+                                        $scope.unit = "d";
+                                    }
                                 }
                             }
                         }
+                    } else {
+                        $scope.executionTime = 0;
                     }
-
                 }
             );
         },

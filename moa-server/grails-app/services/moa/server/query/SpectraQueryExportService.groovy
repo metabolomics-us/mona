@@ -91,11 +91,13 @@ class SpectraQueryExportService {
             FileUtils.writeStringToFile(exportFile, "[\n", true)
         }
 
-        def result = spectraQueryService.query(json)
+        def ids = spectraQueryService.queryForIds(json)
         int i = 0
 
         // Iterate over all queried spectra and export after converting to JSON or MSP format
-        for (Spectrum s : result) {
+        ids.each { def id ->
+            Spectrum s = spectraQueryService.query(id)
+
             if (format == "json") {
                 // Append comma and newline
                 if (i > 0) {
