@@ -249,7 +249,7 @@ environments {
         grails.logging.jul.usebridge = false
         //  grails.serverURL = "http://mona.fiehnlab.ucdavis.edu"
 
-        logdirectory = "/var/log/mona/"
+        logdirectory = "/data/log/"
         queryDownloadDirectory = "/data/export/"
 
         repository {
