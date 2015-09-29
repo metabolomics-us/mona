@@ -19,14 +19,21 @@ class SpectraRepositoryService {
      */
     def exportToRepository(Spectrum spectrum) {
 
+        if(spectrum.splash == null){
+            log.info("spectra wasn't curated yet, requesting curation!")
+            FireJobs.fireSpectraCurationJob([id:spectrum.id])
+            return
+        }
+
+
         log.debug("persisting spectrum: ${spectrum.id}")
         Date date = spectrum.getDateCreated()
         long begin = System.currentTimeMillis()
         Calendar cal = Calendar.getInstance()
         cal.setTime(date)
 
-        //where are we going to store our data
-        File directory = new File("${grailsApplication.config.repository.directory}/${cal[Calendar.YEAR]}/${cal[Calendar.MONTH]}/${cal[Calendar.DAY_OF_MONTH]}/${spectrum.getBiologicalCompound().inchiKey}/${spectrum.getSplash().splash}/")
+
+        //where are we going to store our dataget).inchiKey}/${spectrum.getSplash().splash}/")
 
         log.debug("storing at directory: ${directory}")
         if (!directory.exists()) {
