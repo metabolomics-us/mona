@@ -56,4 +56,14 @@ class FireJobs {
             priority = 8
         }
     }
+
+    static fireSpectraRepositoryExportJob(Map data) {
+        Holders.getApplicationContext().getBean(RabbitMessagePublisher.class).send {
+            routingKey = "mona.repository.export.spectra"
+            body = data
+            priority = 8
+        }
+    }
+
+
 }

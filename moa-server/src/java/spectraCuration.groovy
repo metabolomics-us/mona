@@ -5,6 +5,7 @@
 
 import curation.CurationWorkflow
 import curation.SubCurationWorkflow
+import curation.repository.UpdateRepositoryRule
 import curation.rules.adduct.lcms.LCMSAdductCurationRule
 import curation.rules.adduct.gcms.CompoundShouldBeDerivatizedRule
 import curation.rules.adduct.gcms.ConfirmGCMSDerivatizationRule
@@ -63,6 +64,10 @@ beans {
 
 
         ]
+    }
+
+    updateRepository(UpdateRepositoryRule) { bean ->
+        bean.autowire = 'byName'
     }
 
     removeTinyIonRule(RemoveTinyIonRule) { bean ->
@@ -284,8 +289,10 @@ beans {
                 //fragmentation tree generation
                 generateFragmentationTreesRuleForMassBank,
 
-                //must be the last rule
+                //these should run last
+                updateRepository,
                 requiresRemoval
+
 
         ]
 //define and register our curation

@@ -7,6 +7,7 @@ import moa.Spectrum
 import moa.server.SpectraPersistenceService
 import moa.server.convert.SpectraConversionService
 import moa.server.query.SpectraQueryService
+import moa.server.query.SpectraRepositoryService
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import util.FireJobs
@@ -19,6 +20,8 @@ class SpectrumController extends RestfulController<Spectrum> {
     SpectraQueryService spectraQueryService
 
     SpectraConversionService spectraConversionService
+
+    SpectraRepositoryService spectraRepositoryService
 
     public SpectrumController() {
         super(Spectrum)
@@ -35,6 +38,14 @@ class SpectrumController extends RestfulController<Spectrum> {
     @Transactional
     def index(Integer max) {
         respond listAllResources(params), model: [("${resourceName}Count".toString()): countResources()]
+    }
+
+    @Transactional
+    def updateRepository(){
+
+        FireJobs.fireSpectraRepositoryExportJob([all:true])
+
+        render([message: "populating complete repository"] as JSON)
     }
 
     @Override

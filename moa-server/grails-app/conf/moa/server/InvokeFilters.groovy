@@ -22,12 +22,12 @@ class InvokeFilters {
             }
             after = {
 
-                log.info("time to execute ${controllerName}/${actionName}: ${(System.currentTimeMillis() - timeBegin) / 1000}, ip:${ip}, params: ${params}")
+                log.debug("time to execute ${controllerName}/${actionName}: ${(System.currentTimeMillis() - timeBegin) / 1000}, ip:${ip}, params: ${params}")
 
             }
             afterView = {
 
-                log.info("total execution ${controllerName}/${actionName}: ${(System.currentTimeMillis() - timeBegin) / 1000}, ip:${ip}, params: ${params}")
+                log.debug("total execution ${controllerName}/${actionName}: ${(System.currentTimeMillis() - timeBegin) / 1000}, ip:${ip}, params: ${params}")
             }
         }
     }
