@@ -22,6 +22,16 @@ output:
 
 ```{r, include=FALSE}
 
+local({r <- getOption("repos")
+       r["CRAN"] <- "http://cran.r-project.org" 
+       options(repos=r)
+})
+
+list.of.packages <- c("sqldf", "ggplot2","RPostgreSQL","gplots","pander","stringr","XML")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+
 #loading initial data and libraries
 library("sqldf")
 library("ggplot2")
