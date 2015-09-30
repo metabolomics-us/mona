@@ -4,7 +4,6 @@ import com.budjb.rabbitmq.publisher.RabbitMessagePublisher
 import grails.util.Holders
 
 import groovy.time.TimeCategory
-import moa.server.SpectraAssociationJob
 
 /**
  * Created with IntelliJ IDEA.

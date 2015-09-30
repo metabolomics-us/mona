@@ -6,7 +6,6 @@ import exception.ValidationException
 import grails.converters.JSON
 import moa.Spectrum
 import moa.server.SpectraPersistenceService
-import moa.server.SpectraUploadJob
 import moa.server.curation.SpectraCurationService
 import moa.server.scoring.ScoringService
 import moa.server.statistics.StatisticsService
