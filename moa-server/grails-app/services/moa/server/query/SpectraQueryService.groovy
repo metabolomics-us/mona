@@ -122,7 +122,6 @@ class SpectraQueryService {
 
         def ids = queryForIds(json, limit, offset)
 
-        log.info("received ids: ${ids}")
         try {
 
             if (ids.isEmpty()) {
