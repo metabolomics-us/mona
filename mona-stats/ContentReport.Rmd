@@ -878,6 +878,7 @@ monthlyVisitors = monthlyVisitors[c(1,2,3,4,5,6)]
 
 ```
 
+## aggregated monthly view
 ```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
 ggplot(data=monthlyVisitors, aes(x=factor(monthlyVisitors$Month, levels=unique(monthlyVisitors$Month)), y = Hits)) + geom_bar(stat="identity", aes(fill=factor(`Unique Vistors`))) + xlab("month of the year") + ylab("page hits") + scale_fill_manual("Unique Visitors",values=gray.colors(12, start = 0.3, end = 0.9, gamma = 2.2, alpha = NULL)) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_x_discrete(expand = c(0, 0))+ scale_y_discrete(expand = c(0, 0))
 ```
@@ -887,6 +888,26 @@ panderOptions("digits", 0)
 pander(monthlyVisitors[c(1,2,3,5,6)], split.table = Inf)
 ```
 
+## origins of visitors for the current month
+
+```{r,include=FALSE}
+
+currentOrigins = tables[[21]]
+currentOrigins = currentOrigins[-c(1),c(2,4,5,6)]
+
+colnames(currentOrigins)[1] = "Country"
+colnames(currentOrigins)[2] = "Pages"
+colnames(currentOrigins)[3] = "Hits"
+colnames(currentOrigins)[4] = "Bandwitdh"
+
+
+```
+
+```{r,echo=FALSE,fig.width=7,fig.height=3,fig.align='center'}
+panderOptions("digits", 0)
+pander(currentOrigins[c(1,2,3,4)], split.table = Inf)
+
+```
 
 # Database Performance Report
 

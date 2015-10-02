@@ -32,6 +32,7 @@ class SpectraRepositoryService {
         Calendar cal = Calendar.getInstance()
         cal.setTime(date)
 
+        File directory = new File("${grailsApplication.config.repository.directory}/${cal[Calendar.YEAR]}/${cal[Calendar.MONTH]}/${cal[Calendar.DAY_OF_MONTH]}/${spectrum.getBiologicalCompound().inchiKey}/${spectrum.getSplash().splash}/")
 
         //where are we going to store our dataget).inchiKey}/${spectrum.getSplash().splash}/")
 
