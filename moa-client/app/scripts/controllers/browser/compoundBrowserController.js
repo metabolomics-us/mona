@@ -35,7 +35,7 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $location,
             $scope.loadingMore = true;
 
             Compound.query(
-                {offset: '&offset='+ $scope.compounds.length},
+                {offset: $scope.compounds.length},
                 function (data) {
                     $scope.compounds.push.apply($scope.compounds, data);
                     $scope.loadingMore = false;
