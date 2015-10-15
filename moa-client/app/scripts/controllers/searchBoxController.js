@@ -18,7 +18,7 @@ moaControllers.SearchBoxController = function ($scope, $modal, $location, $route
 
         // Handle InChIKey
         if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(searchBoxQuery)) {
-            SpectraQueryBuilderService.compileQuery({nameFilter: searchBoxQuery});
+            SpectraQueryBuilderService.compileQuery({inchiFilter: searchBoxQuery});
             path = '/spectra/browse';
         }
 
