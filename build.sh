@@ -19,7 +19,17 @@ cd ..
 
 #assmeble docker file
 
+eval "$(docker-machine env cloud)"
+
 cd mona-docker/single
+
+cp ../../moa-server/target/mona-server.war root.war
+cp ../../moa-client/mona-client.zip client.zip
+
+bash build.sh push
+
+
+cd ../cloud
 
 cp ../../moa-server/target/mona-server.war root.war
 cp ../../moa-client/mona-client.zip client.zip
@@ -27,6 +37,7 @@ cp ../../moa-client/mona-client.zip client.zip
 $(boot2docker shellinit)
 
 bash build.sh push
+
 
 cd ../cache
 
