@@ -1,9 +1,6 @@
 FROM ubuntu
 MAINTAINER Gert Wohlgemuth "wohlgemuth@ucdavis.edu"
 
-#jetty - runs on port 8080
-EXPOSE 8080
-
 #nginx - runs on port 80
 EXPOSE 80
 
