@@ -119,7 +119,7 @@ abstract class AbstractAdductCurationRule extends AbstractCurationRule {
         if (isValidSpectraForRule(spectrum)) {
             // Get mass and ion mode
             def compoundMass = findMetaDataValue(spectrum.getBiologicalCompound(), TOTALT_EXACT_MASS);
-            def ionMode = findMetaDataValue(spectrum, IONMODE)
+            def ionMode = findMetaDataValue(spectrum, ION_MODE)
 
             // Check that mass and ion mode were found
             if (compoundMass == null) {

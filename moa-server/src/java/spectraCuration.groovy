@@ -40,14 +40,15 @@ beans {
         bean.autowire = 'byName'
         mapping = [
                 "precursormz"             : PRECURSOR_MASS,
-                "adductionname"           : PRECURSORTYPE,
+                "precursor mz"            : PRECURSOR_MASS,
+                "precursortype"           : PRECURSOR_TYPE,
+                "adductionname"           : PRECURSOR_TYPE,
                 "retentiontime"           : RETENTION_TIME,
                 "transfarline temperature": TRANSFER_LINE_TEMPERATURE,
                 "mslevel"                 : MS_LEVEL,
-                "ionmode"                 : IONMODE,
+                "ionmode"                 : ION_MODE,
                 "compoundclass"           : COMPOUND_CLASS,
                 "author"                  : AUTHORS,
-                "adduct"                  : ADDUCT,
                 "adduct ion name"         : ADDUCT,
                 "column"                  : COLUMN_NAME,
                 "derivative form"         : DERIVATIVE_SUM_FORMULA,

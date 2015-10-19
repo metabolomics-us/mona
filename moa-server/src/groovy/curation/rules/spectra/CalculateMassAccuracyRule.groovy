@@ -68,7 +68,7 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
 
                 }
 
-                if (value.getName().toLowerCase().equals(PRECURSORTYPE.toLowerCase().trim())) {
+                if (value.getName().toLowerCase().equals(PRECURSOR_TYPE.toLowerCase().trim())) {
                     precursorType = (value.getValue().toString())
                 }
 

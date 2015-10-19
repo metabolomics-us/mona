@@ -28,8 +28,6 @@ class PredictedMMinus15Rule extends AbstractCurationRule {
 
     @Override
     boolean executeRule(CurationObject toValidate) {
-
-
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         //calculate the predicted compound in case it's missing

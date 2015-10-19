@@ -11,13 +11,13 @@ interface MetaDataFieldNames {
 
     static final String EXACT_MASS = "exact mass"
 
-    static final String PRECURSORTYPE = "precursortype"
+    static final String PRECURSOR_TYPE = "precursor type"
 
     static final String PRECURSOR_MASS = "precursor m/z"
 
     static final String TOTALT_EXACT_MASS = "total exact mass"
 
-    static final String IONMODE = "ion mode"
+    static final String ION_MODE = "ion mode"
 
     static final String DERIVATISATION_TYPE = "derivative type"
 
@@ -59,7 +59,7 @@ interface MetaDataFieldNames {
 
     public static final String COMPOUND_CLASS = "compound class"
 
-    public static final String ADDUCT = "adduct ion name"
+    public static final String ADDUCT = "adduct"
 
     public static final String DERIVATIVE_SUM_FORMULA = "derivative sum formula"
 
