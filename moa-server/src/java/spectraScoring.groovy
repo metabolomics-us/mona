@@ -20,7 +20,7 @@ beans {
      */
     [
             'ri',
-            IONMODE,
+            ION_MODE,
             'injection',
             'injection volume',
             COLUMN_NAME,
@@ -92,10 +92,10 @@ beans {
             [first: COLUMN_NAME, second: 'mobile phase', failure: 0.0],
 
             //if we have a precursir type, we should also have a mass
-            [first: PRECURSORTYPE, second: PRECURSOR_MASS, failure: 0.0],
+            [first: PRECURSOR_TYPE, second: PRECURSOR_MASS, failure: 0.0],
 
             //if we have a MS type, we should always have an ion mode
-            [first: MS_LEVEL, second: IONMODE, failure: 0.0],
+            [first: MS_LEVEL, second: ION_MODE, failure: 0.0],
 
             //if we have a MS type, we should always have a collision energy
             [first: MS_LEVEL, second: 'collision energy', failure: 0.0],
