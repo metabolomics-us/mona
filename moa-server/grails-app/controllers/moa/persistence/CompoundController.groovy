@@ -30,8 +30,7 @@ class CompoundController extends RestfulController {
      */
     protected Map getParametersToBind() {
         if (request.JSON) {
-            params.putAll(
-                    request.JSON)
+            params.putAll(request.JSON)
         }
 
         params
@@ -119,17 +118,11 @@ class CompoundController extends RestfulController {
             def object = [:]
 
             object.category = [:]
-
             object.category.id = params.MetaDataCategoryId
-
 
             query.metadata.add(object)
         }
 
-
-
         return compoundQueryService.query(query, params)
     }
-
-
 }

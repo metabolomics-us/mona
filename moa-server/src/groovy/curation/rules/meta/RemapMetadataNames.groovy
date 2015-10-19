@@ -24,19 +24,19 @@ class RemapMetadataNames extends AbstractCurationRule {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra();
 
-        List<MetaDataValue> toRemapp = []
+        List<MetaDataValue> toRemap = []
 
         spectrum.listAvailableValues().each {
 
             if (!it.isComputed()) {
                 if (mapping.containsKey(it.getName())) {
-                    toRemapp.add(it)
+                    toRemap.add(it)
                 }
             }
 
         }
 
-        toRemapp.each {
+        toRemap.each {
             logger.info("remapping from ${it.getName()} to ${mapping.get(it.getName())}")
             String newName = mapping.get(it.getName())
 

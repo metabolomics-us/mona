@@ -20,8 +20,8 @@ class LipidBlastMSMSDetectionRule extends AbstractMetaDataCentricRule {
     MetaDataPersistenceService metaDataPersistenceService
 
     LipidBlastMSMSDetectionRule() {
-        this.successAction = new MetaDataSuspectAction(PRECURSORTYPE, false)
-        this.failureAction = new MetaDataSuspectAction(PRECURSORTYPE, true)
+        this.successAction = new MetaDataSuspectAction(PRECURSOR_TYPE, false)
+        this.failureAction = new MetaDataSuspectAction(PRECURSOR_TYPE, true)
 
     }
 
@@ -51,8 +51,8 @@ class LipidBlastMSMSDetectionRule extends AbstractMetaDataCentricRule {
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue value) {
-        logger.debug("checking ${value.name} against defined field ${PRECURSORTYPE}")
-        if (value.name.toLowerCase().equals(PRECURSORTYPE.toLowerCase())) {
+        logger.debug("checking ${value.name} against defined field ${PRECURSOR_TYPE}")
+        if (value.name.toLowerCase().equals(PRECURSOR_TYPE.toLowerCase())) {
             return true
         }
         return false
