@@ -8,7 +8,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
     var self = this;
 
     self.currentUser = null;
-    self.welcomeMessage = 'Welcome, Guest!';
+    self.welcomeMessage = 'Login/Register';
 
 
     /**
@@ -80,7 +80,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
      * Remove the welcome message on logout
      */
     $scope.$on('auth:logout', function(event, data, status, headers, config) {
-        self.welcomeMessage = 'Welcome, Guest!';
+        self.welcomeMessage = 'Login/Register';
     });
 
     /**
