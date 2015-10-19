@@ -32,9 +32,12 @@ class SpectraQueryController {
         def result = []
         if (json.query) {
             log.info("received query: " + json.query)
+            log.info("received params: " + params)
             result = spectraQueryService.query(json.query, params);
             json = json.query;
         } else {
+            log.info("received query: " + json)
+            log.info("received params: " + params)
             result = spectraQueryService.query(json, params);
         }
 
