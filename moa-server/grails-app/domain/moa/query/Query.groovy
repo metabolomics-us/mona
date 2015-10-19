@@ -12,6 +12,7 @@ class Query {
         query nullable: false
         label nullable: false
         description nullable: false
+        count nullable: true
     }
 
     static mapping = {
@@ -36,5 +37,8 @@ class Query {
      */
     String description
 
-
+    /**
+     * number of spectra associated with this query
+     */
+    int count
 }
