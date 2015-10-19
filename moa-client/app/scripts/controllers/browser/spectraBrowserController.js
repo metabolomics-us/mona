@@ -161,9 +161,14 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         if (!$scope.loadingMore && $scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
             //search utilizing our compiled query so that it can be easily refined over time
             $scope.loadingMore = true;
-            $scope.calculateOffsets();
+            $scope.spectraLoadLength = $scope.spectra.length;
 
-            Spectrum.searchSpectra(SpectraQueryBuilderService.getQuery(), function (data) {
+            var payload = {
+                query: SpectraQueryBuilderService.getQuery(),
+                offset: $scope.spectra.length
+            };
+
+            Spectrum.searchSpectra(payload, function (data) {
                 if (data.length == 0) {
                     $scope.dataAvailable = false;
                 } else {
@@ -181,17 +186,6 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         }
     };
 
-    /**
-     * calculates our offsets for us
-     */
-    $scope.calculateOffsets = function () {
-        $scope.spectraLoadLength = $scope.spectra.length;
-
-        var query = SpectraQueryBuilderService.getQuery();
-
-        //assign the offset
-        query.offset = $scope.spectra.length;
-    };
 
     $scope.$on('$viewContentLoaded', function () {
         $timeout(function () {
