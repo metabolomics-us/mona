@@ -5,7 +5,7 @@ ddescribe('e2e testing spectrum query', function() {
         browser.get('#/spectra/browse');
 
         // Access query modal
-        element(by.buttonText('Open Query Dialog')).click();
+        element.all(by.css('[ng-click="querySpectraDialog()"]')).get(0).click();
     });
 
 
