@@ -11,6 +11,7 @@
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-angular-templates');
+    grunt.loadNpmTasks('grunt-wiredep');
 
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
@@ -147,6 +148,29 @@ module.exports = function (grunt) {
                     dest: '.tmp/styles/'
                 }]
             }
+        },
+
+        wiredep: {
+          app: {
+            src:['<%= yeoman.app %>/index.html'],
+            ignorePath: /\.\.\//
+          },
+          test: {
+            devDependencies: true,
+            src: 'karma.conf.js',
+            ignorePath: /\.\.\//,
+            fileTypes: {
+              js: {
+                block: /(([\s\t]*)\/\/\s*bower:*(\S*))(\n|\r)*?(\/\/\s*endbower)/gi,
+                detect: {
+                  js: /'(.*\.js)'/gi
+                },
+                replace: {
+                  js:'\'{{filePath}}\','
+                }
+              }
+            }
+          }
         },
 
         // Automatically inject Bower components into the app
