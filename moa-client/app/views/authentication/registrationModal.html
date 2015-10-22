@@ -2,7 +2,7 @@
     <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true"
             ng-if="state == 'register' || state == 'success'">×</button>
 
-    <h4 class="modal-title">Create a MoNA Account</h4>
+    <h3 class="modal-title">Create a MoNA Account</h3>
     <p ng-if="state == 'register'">
         An account is required to download large queries and to submit spectra.
         Please sign up for a free account by providing the following information:
@@ -13,22 +13,32 @@
 <div class="modal-body" >
     <div class="alert alert-danger .alert-dismissible " role="alert" ng-show="errors.length">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span>Error:</span>
-        <ul>
+        <span>Error: </span>
+        <span ng-if="errors.length == 1">{{errors[0]}}</span>
+        <ul ng-if="errors.length > 1">
             <li ng-repeat="error in errors">{{error}}</li>
         </ul>
     </div>
 
     <div submitter-form ng-show="state == 'register'"></div>
 
-    <h4 ng-show="state == 'success'"><i class="fa fa-check"></i> Success!  You may now log in.</h4>
+    <div ng-show="state == 'registering'">
+        <h4><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Registering account...</span></h4>
+    </div>
+
+    <div ng-show="state == 'success'" class="text-success text-center">
+        <div><span class="h2"><i class="fa fa-check"></i></span> <span class="h4">Success!  You may now log in.</span></div>
+        <br />
+        <div><button class="btn btn-success btn-lg" ng-click="logIn()">Log In</button></div>
+    </div>
 </div>
 
 
-<div class="modal-footer">
-    <button class="btn btn-primary" ng-disabled="submitterForm.$invalid" ng-click="submitRegistration()"
+<div class="modal-footer" ng-show="state != 'success'">
+    <button class="btn btn-primary"
+            ng-disabled="submitterForm.$invalid"
+            ng-click="submitRegistration()"
             ng-if="state == 'register'">Register</button>
 
-    <button class="btn btn-default" ng-disabled="submitterForm.$invalid" ng-click="cancelDialog()"
-            ng-if="state == 'success'">Close</button>
+    <button class="btn btn-default" ng-click="cancelDialog()">Close</button>
 </div>
