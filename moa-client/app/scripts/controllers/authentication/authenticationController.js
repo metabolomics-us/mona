@@ -87,7 +87,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
      * Listen for external calls to bring up the authentication modal
      */
     $scope.$on('auth:login', function(event) {
-        if (self.isLoggedIn()) {
+        if (!self.isLoggedIn()) {
             self.openAuthenticationDialog();
         }
     });
@@ -153,7 +153,7 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
 };
 
 
-moaControllers.RegistrationModalController = function ($scope, $modalInstance, Submitter) {
+moaControllers.RegistrationModalController = function ($scope, $rootScope, $modalInstance, Submitter) {
     $scope.errors = [];
     $scope.state = 'register';
 
@@ -176,19 +176,39 @@ moaControllers.RegistrationModalController = function ($scope, $modalInstance, S
         submitter.emailAddress = $scope.newSubmitter.emailAddress;
         submitter.password = $scope.newSubmitter.password;
 
+        $scope.state = 'registering';
+
         Submitter.save(submitter,
             function () {
-                $scope.$apply(function() {
-                    $scope.state = 'register';
-                });
+                $scope.state = 'success';
             },
             function (data) {
-                $scope.$apply(function() {
-                    $scope.state = 'register';
-                    $scope.errors.push('Unable to reach MoNA server');
-                });
+                $scope.state = 'register';
+
+                if(data.status == 422) {
+                    for (var i = 0; i < data.data.errors.length; i++) {
+                        var message = 'Error in '+ data.data.errors[i].field +': ';
+
+                        if (data.data.errors[i].message.indexOf('must be unique') > -1) {
+                            $scope.errors.push(message +'already exists!');
+                        } else {
+                            $scope.errors.push(message + data.data.errors[i].message);
+                        }
+                    }
+                } else {
+                    $scope.errors.push('An unknown error has occurred: '+ JSON.stringify(data));
+                }
+
+
             }
         );
     };
 
+    /**
+     * Close dialog and open login modal
+     */
+    $scope.logIn = function() {
+        $modalInstance.dismiss('cancel');
+        $rootScope.$broadcast('auth:login');
+    };
 };
