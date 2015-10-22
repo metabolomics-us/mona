@@ -1,42 +1,33 @@
 <div class="panel panel-default">
     <div class="panel-heading" ng-click="viewSpectrum()">
         <div class="panel-title">
-
-            <span gw-spectra-id-query
-                  value="spectrum">{{spectrum.hash}} - {{spectrum.biologicalCompound.names[0].name}}</span>
-
-                        <span class="pull-right">
-                            Score: <span score-spectra ng-model="spectrum"></span>
-                        </span>
+            <span><a style="cursor: pointer">{{spectrum.biologicalCompound.names[0].name}}</a></span>
+            <span class="pull-right">Score: <span score-spectra ng-model="spectrum"></span></span>
         </div>
     </div>
 
     <div class="panel-body">
         <div class="row" ng-if="spectrum.queryOptions !== undefined">
             <div class="col-md-12">
-                <div class="row well-sm">
-                    <ul class="list-inline">
-                        <li class="pull-left">
-                            <h4>
-                    <span class="label label-primary" ng-if="spectrum.queryOptions.spectralSimilarity !== undefined">
-                        Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
-                    </span>
-                            </h4>
-                        </li>
-                        <li class="pull-left">
-
-                            <h4><span class="label label-info"
-                                      ng-if="spectrum.queryOptions.histogramSimilarity  !== undefined">
-                        Histogram Similarity: {{1000 * spectrum.queryOptions.histogramSimilarity | number:0}}
-                                </span>
-                            </h4>
-                        </li>
-                    </ul>
-
-                </div>
+                <ul class="list-inline">
+                    <li class="pull-left" ng-if="spectrum.queryOptions.spectralSimilarity !== undefined">
+                        <h4>
+                            <span class="label label-primary" >
+                                Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
+                            </span>
+                        </h4>
+                    </li>
+                    <li class="pull-left" ng-if="spectrum.queryOptions.histogramSimilarity !== undefined">
+                        <h4>
+                            <span class="label label-info">
+                                Histogram Similarity: {{1000 * spectrum.queryOptions.histogramSimilarity | number:0}}
+                            </span>
+                        </h4>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="row ">
+        <div class="row">
             <div class="col-lg-6 col-md-5 col-sm-3">
                 <div class="row">
                     <div class="col-lg-6 col-md-12">
@@ -46,7 +37,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-6 col-sm-12 ">
+                    <div class="col-lg-6 col-sm-12">
                         <div chemical-sketcher readonly="true" width="250"
                              height="250"
                              id="bioSketch_{{spectrum.id}}_false"
@@ -57,15 +48,13 @@
             </div>
 
             <div class="col-lg-6 col-md-7 col-sm-9">
-
-
                 <div class="row top5"
                      ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | filter: {category: '!computed'} | orderBy: ['name']">
 
                     <div class="col-lg-5 col-md-5 col-sm-6">
-                                    <span gw-meta-query value="meta">
-                                        {{meta.name}}
-                                    </span>
+                        <span gw-meta-query value="meta">
+                            {{meta.name}}
+                        </span>
                     </div>
                     <div class="col-lg-7 col-md-7 col-sm-6">
                         {{meta.value | limitTo : 25}}
