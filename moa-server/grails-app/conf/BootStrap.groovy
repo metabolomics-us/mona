@@ -23,7 +23,7 @@ class BootStrap {
 
         //session.setFlushMode(FlushMode.COMMIT)
 
-        log.warn("in development mode, setting up users...")
+        log.info("Setting up users and marshallers...")
 
         // Submitter roles
         Role adminRole = Role.findOrCreateByAuthority('ROLE_ADMIN').save()
@@ -40,10 +40,11 @@ class BootStrap {
             }
         }
 
-        // Fiehnlab
+        // Fiehnlab Members
         addUser("Gert", "Wohlgemuth", "wohlgemuth@ucdavis.edu", "password", "University of California, Davis", true)
         addUser("Sajjan", "Mehta", "ssmehta@ucdavis.edu", "password", "University of California, Davis", true)
         addUser("Diego", "Pedrosa", "dpedrosa@ucdavis.edu", "password", "University of California, Davis", true)
+
 
 
         JSON.registerObjectMarshaller(Tag,
@@ -99,14 +100,11 @@ class BootStrap {
         StaticQueries.register()
 
 
-
         /*
         JSON.registerObjectMarshaller(Ion,
                 DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
         )
         */
-
-        //newsService.createNews("massbank upload","the upload of massbank was complete!","none")
     }
 
     def destroy = {
