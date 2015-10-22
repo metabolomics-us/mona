@@ -1,10 +1,10 @@
 <form role="form" name="authentication" autocomplete="off" novalidate ng-submit="submitLogin()">
     <div class="modal-header" ng-if="state == 'login' || state == 'success'">
         <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true">×</button>
-        <h4 class="modal-title">Log into MoNA</h4>
+        <h3 class="modal-title">Log into MoNA</h3>
     </div>
     <div class="modal-header" ng-if="state == 'logging in'">
-        <h4 class="modal-title">Log into MoNA</h4>
+        <h3 class="modal-title">Log into MoNA</h3>
     </div>
 
 
@@ -12,7 +12,8 @@
         <div class="alert alert-danger .alert-dismissible " role="alert" ng-show="errors.length">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <span>Error:</span>
-            <ul>
+            <span ng-if="errors.length == 1">{{errors[0]}}</span>
+            <ul ng-if="errors.length > 1">
                 <li ng-repeat="error in errors">{{error}}</li>
             </ul>
         </div>
