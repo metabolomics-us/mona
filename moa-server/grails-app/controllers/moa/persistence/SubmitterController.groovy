@@ -21,8 +21,6 @@ class SubmitterController extends RestfulController {
 			params.putAll(request.JSON)
 		}
 
-        log.warn("received: ${params}")
-
         params
 	}
 }
