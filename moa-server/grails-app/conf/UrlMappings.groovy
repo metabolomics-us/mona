@@ -25,6 +25,8 @@ class UrlMappings {
             "/spectra"(resources: 'Spectrum')
         }
 
+        "/rest/webhooks"(resources: 'Webhook')
+
         /**
          * query by tags
          */

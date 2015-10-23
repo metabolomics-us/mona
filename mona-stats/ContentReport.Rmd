@@ -22,6 +22,16 @@ output:
 
 ```{r, include=FALSE}
 
+local({r <- getOption("repos")
+       r["CRAN"] <- "http://cran.r-project.org" 
+       options(repos=r)
+})
+
+list.of.packages <- c("sqldf", "ggplot2","RPostgreSQL","gplots","pander","stringr","XML")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+
 #loading initial data and libraries
 library("sqldf")
 library("ggplot2")
@@ -144,7 +154,7 @@ listOfExternalDatabases = sort(sqldf(listOfExternalDatabasesQuery)$text)
 
 ```
 
-
+\pagebreak
 
 #Introduction
 
@@ -159,8 +169,6 @@ This report, provides you with an overview of the content of the MoNA system and
 # Database content analysis
 
 This secion of the report provides you with a simple overview of the content in MoNA.
-
-\pagebreak
 
 ## Main database content providers
 
@@ -213,6 +221,31 @@ derivatizationProduct = sqldf("select count(*) from compound_link a, spectrum b 
 These submissions of the provided spectra, resulted in $`r monaUniqueCompounds`$ Chemical compounds in the database, which were automatically associated with $`r externalIdCount`$ different external database identifier. The chemical translation service was utilized to generate these associations.
 
 During the curation workflow, MoNA also successfully predicted the derivatization product for $`r derivatizationProduct`$ GCMS spectra.
+
+### Association of compounds with spectra
+
+Due to the nature of MoNa, it is possible that one compound, can be associated with several spetra. This histogram, provides you with a quick overview of this data
+
+```{r,include=FALSE}
+
+monaCompoundSplashes = sqldf("
+          select count(*), a.inchi_key , splash from compound a, spectrum b, compound_link c, splash d where c.type = 'BIOLOGICAL' and b.id = d.spectrum_id and a.id = c.compound_id and b.id = c.spectrum_id group by inchi_key, splash, inchi_key || splash order by count desc
+
+                             ")
+```
+
+
+```{r,echo=FALSE}
+
+```
+
+
+```{r,echo=FALSE}
+set.caption("compounds with most associated spectra")
+
+panderOptions("digits", 1)
+pander(head(monaCompoundSplashes,10), split.table = Inf)
+```
 
 ## Predicted vs Experimental Spectra
 
@@ -868,6 +901,7 @@ monthlyVisitors = monthlyVisitors[c(1,2,3,4,5,6)]
 
 ```
 
+## aggregated monthly view
 ```{r,echo=FALSE,fig.width=7, fig.height=3, fig.align='center'}
 ggplot(data=monthlyVisitors, aes(x=factor(monthlyVisitors$Month, levels=unique(monthlyVisitors$Month)), y = Hits)) + geom_bar(stat="identity", aes(fill=factor(`Unique Vistors`))) + xlab("month of the year") + ylab("page hits") + scale_fill_manual("Unique Visitors",values=gray.colors(12, start = 0.3, end = 0.9, gamma = 2.2, alpha = NULL)) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_x_discrete(expand = c(0, 0))+ scale_y_discrete(expand = c(0, 0))
 ```
@@ -876,6 +910,80 @@ ggplot(data=monthlyVisitors, aes(x=factor(monthlyVisitors$Month, levels=unique(m
 panderOptions("digits", 0)
 pander(monthlyVisitors[c(1,2,3,5,6)], split.table = Inf)
 ```
+
+## origins of visitors for the current month
+
+```{r,include=FALSE}
+
+currentOrigins = tables[[21]]
+currentOrigins = currentOrigins[-c(1),c(2,4,5,6)]
+
+colnames(currentOrigins)[1] = "Country"
+colnames(currentOrigins)[2] = "Pages"
+colnames(currentOrigins)[3] = "Hits"
+colnames(currentOrigins)[4] = "Bandwitdh"
+
+
+```
+
+```{r,echo=FALSE,fig.width=7,fig.height=3,fig.align='center'}
+panderOptions("digits", 0)
+pander(currentOrigins[c(1,2,3,4)], split.table = Inf)
+
+```
+
+## registered submitters
+
+This graph illustrates how the registered userbase of MoNa is growing over the last 12 Months.
+
+```{r,include=FALSE}
+
+submitterCount = sqldf("select count(*), date_trunc('month',date_created) as date from submitter group by date order by date asc")
+
+```
+
+```{r,echo=FALSE,fig.width=7,fig.height=3,fig.align='center'}
+
+ggplot(data=submitterCount,aes(x= date,y=count)) + geom_bar(stat = "identity", position="dodge") + xlab("month") + ylab("registered user count")+ theme_bw() + ggtitle("registered users by month") + geom_line(aes( y = cumsum(count)), size = 1, color = 'darkgray')
+```
+
+## generated compounds
+
+This graph illustrates how many compounds have been generated in the system over the last 12 Months
+
+
+```{r,include=FALSE}
+
+compoundCount = sqldf("
+select count(*), date_trunc('day',date_created) as date from compound a, supports_meta_data b where a.id = b.id group by date order by date asc
+                     ")
+
+```
+
+```{r,echo=FALSE,fig.width=7,fig.height=3,fig.align='center'}
+
+ggplot(data=compoundCount,aes(x= date,y=count)) + geom_bar(stat = "identity", position="dodge") + xlab("date") + ylab("uploaded compound count")+ theme_bw() + ggtitle("uploaded compounds by month") + geom_line(aes( y = cumsum(count)), size = 1, color = 'darkgray')
+```
+
+
+## uploaded spectra
+
+This graph illustrates how many spectra have been imported in the system over the last 12 Months
+
+
+```{r,include=FALSE}
+
+spectraCount = sqldf("
+                     select count(*), date_trunc('day',date_created) as date from spectrum a, supports_meta_data b where a.id = b.id group by date order by date asc
+                     ")
+
+```
+
+```{r,echo=FALSE,fig.width=7,fig.height=3,fig.align='center'}
+
+ggplot(data=spectraCount,aes(x= date,y=count)) + geom_bar(stat = "identity", position="dodge") + xlab("date") + ylab("uploaded spectra count")+ theme_bw() + ggtitle("uploaded spectra by month") + geom_line(aes( y = cumsum(count)), size = 1, color = 'darkgray')
+```
+
 
 
 # Database Performance Report

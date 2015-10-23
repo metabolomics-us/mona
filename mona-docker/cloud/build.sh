@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME="mona/site"
+NAME="mona/cloud"
 IMAGE="eros.fiehnlab.ucdavis.edu/$NAME"
 VERSION=`date +%F_%H-%M-%S`
 

@@ -26,7 +26,7 @@ class Submitter {
         institution nullable: true, blank: true
     }
 
-    static hasMany = [spectra: Spectrum]
+    static hasMany = [spectra: Spectrum, webhooks:Webhook]
 
     static mapping = {
         password column: '`password`'
@@ -62,6 +62,11 @@ class Submitter {
      * owned spectra
      */
     Set<Spectrum> spectra
+
+    /**
+     * associated webhooks for this user
+     */
+    Set<Webhook> webhooks
 
     /**
      * state of the submitter account

@@ -1,6 +1,5 @@
 package moa.curation
 import moa.Compound
-import moa.server.CompoundCurationJob
 import moa.server.curation.CompoundCurationService
 import util.FireJobs
 
