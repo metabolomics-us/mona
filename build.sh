@@ -14,6 +14,7 @@ cd ..
 #build server module
 
 cd moa-server
+grails clean
 grails war
 cd ..
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME="mona/site"
-IMAGE="eros.fiehnlab.ucdavis.edu/$NAME"
+IMAGE="gose.fiehnlab.ucdavis.edu:5000/$NAME"
 VERSION=`date +%F_%H-%M-%S`
 
 docker build -t ${IMAGE} --rm=true . | tee build.log || exit 1
