@@ -5,24 +5,29 @@ describe('Compounds Service test', function() {
     $httpProvider.interceptors.push('moaClientApp');
   });
 
-  var mockFactory,httpBackEnd,requestHandle;
+  var $resource,httpBackEnd,requestHandle;
 
   var queryResult = [];
   beforeEach(function() {
     angular.mock.inject(function($injector){
       httpBackEnd = $injector.get('$httpBackend');
-      mockFactory = $injector.get('Compound');
+      $resource = $injector.get('Compound');
 
     })
   });
 
-  console.log(httpBackEnd);
+  //console.log(mockFactory.get({Id:62}));
 
-  it('calls the REST API with params', function() {
-    var id = 62;
-    var max = 20;
-    httpBackEnd.expectGET('');
+  it('has a custom update method', function() {
+    expect($resource.update());
   });
 
+  it('handles GET request with @id param', function() {
+    expect($resource.get({id:65}));
+  });
 
+  it('handles GET request with @offset param', function(){
+    expect($resource.get({offset:1}));
+  });
+  
 });
