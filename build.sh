@@ -7,13 +7,15 @@ cd moa-client
 
 npm install
 bower update
-
+rm mona-client.zip
+grunt clean
 grunt dist
 cd ..
 
 #build server module
 
 cd moa-server
+rm -rdf target/*
 grails clean
 grails war
 cd ..
