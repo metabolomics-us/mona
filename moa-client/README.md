@@ -1,19 +1,14 @@
 compiling source code:
 
-1. 
+1. npm -install
+    install all grunt dependices to build the system using grunt
 
-npm -install
+2. bower install
+    install all the bower dependencies
 
-install all grunt dependices to build the system using grunt
+3. grunt serve
+    to start the client side application 
 
-2.
-
-bower install
-
-install all the bower dependencies
-
-3.
-
-grunt serve
-
-to start the client side application 
+4. karma start
+    to run tests, code coverage can be viewed in /coverage
+  
