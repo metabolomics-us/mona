@@ -4,7 +4,7 @@ dist
 .tmp
 .sass-cache
 app/bower_components
-app/coverage
+coverage/
 
 .classpath
 .project
