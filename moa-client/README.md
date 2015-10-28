@@ -11,4 +11,4 @@ compiling source code:
 
 4. karma start
     to run tests, code coverage can be viewed in /coverage
-  
+    npm install -g karma-cli  //if you have issues with karma start  
