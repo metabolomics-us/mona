@@ -78,17 +78,10 @@ log4j = {
     //
     appenders {
         console name: 'stdout', layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss}] [%m]%n'), threshold: org.apache.log4j.Level.INFO
-
-        file name: 'file', file: "${logdirectory}mona.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'error', file: "${logdirectory}monaError.log", append: false, layout: pattern(conversionPattern: '[%t] [%-5c] [%p] [%d{HH:mm:ss.SSS}] [%m]%n'), threshold: org.apache.log4j.Level.ERROR
-        file name: 'monaFlushStatistics', file: "${logdirectory}monaFlush.log", append: false, layout: pattern(conversionPattern: '%t %-5c{1} %d{HH:mm:ss.SSS} %m%n'), threshold: org.apache.log4j.Level.DEBUG
-        file name: 'sql', file: "${logdirectory}sql.log", append: false, layout: pattern(conversionPattern: '%-5c{1} %d{HH:mm:ss.SSS} %n%n%m%n%n'), threshold: org.apache.log4j.Level.TRACE
     }
 
     root {
         info 'stdout'
-        debug 'file'
-        error 'error'
     }
 
     //info file: 'grails.app'
@@ -111,15 +104,10 @@ log4j = {
 
     //warn   'org.quartz.plugins.history.LoggingJobHistoryPlugin'
 
-
-    debug additivity: false, monaFlushStatistics: ['grails.app.jobs.moa.server.FlushSessionJob']
-
-    debug additivity: false, sql: ['org.hibernate.SQL']
-    trace additivity: false, sql: ['org.hibernate.type.descriptor.sql.BasicBinder']
-
     //debug 'org.hibernate'
 
     environments {
+
         test {
             debug 'stdout', additivity: false
             debug stdout: ['grails.app', 'grails.app.services', 'util.query', 'moa.server.query'], additivity: false
@@ -138,21 +126,8 @@ log4j = {
         }
 
         production {
-            info file: 'grails.app'
-
-            error stdout:
+            info stdout:
                     'grails.app'
-
-
-            debug 'util.chemical'
-            debug 'curation'
-
-            debug 'grails.app'
-            debug 'moa'
-//            trace 'org.hibernate.type.descriptor.sql.BasicBinder'
-//            debug 'org.hibernate.SQL'
-
-            //debug 'grails.plugin.cache'
         }
     }
 }
