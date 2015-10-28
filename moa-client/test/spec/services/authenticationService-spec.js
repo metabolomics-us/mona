@@ -82,7 +82,7 @@ describe('service: Authentication Service', function() {
     mockUserLogin();
     AuthenticationService.validate();
     flush();
-    expect(rootScope.currentUser).isNull;
+    expect(rootScope.currentUser).toBe(null);
   });
 
   it('redirects a User that is not logged in and tries to logout', function() {
