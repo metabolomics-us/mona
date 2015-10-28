@@ -1,6 +1,15 @@
 /**
  * shared settings
  */
+
+def credentials = [
+        port:System.getenv("EXTERNAL_POSTGRES_SERVICE_PORT"),
+        hostname:System.getenv("EXTERNAL_POSTGRES_SERVICE_HOST"),
+        username:System.getenv("POSTGRESQL_USER"),
+        password:System.getenv("POSTGRESQL_PASSWORD"),
+        database:System.getenv("POSTGRESQL_DATABASE")
+]
+
 dataSource {
     pooled = true
     driverClassName = "org.postgresql.Driver"
@@ -58,8 +67,7 @@ environments {
             dbCreate = "update"// "create-drop"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
             driverClassName = "org.postgresql.Driver"
-            username = "compound"
-            password = "asdf"
+
             pooled = true
 
             cache.use_second_level_cache = false
@@ -72,11 +80,14 @@ environments {
      * mona production database
      */
     production {
+
+
         dataSource {
 	     pooled = true
             dbCreate = "update"
-            url = "jdbc:postgresql://128.120.143.126:5432/monaproduction"
-
+            url = "jdbc:postgresql://${credentials.hostname}:${credentials.port}/${credentials.database}"
+            username = "${credentials.username}"
+            password = "${credentials.password}"
             logSql = false
 
 
