@@ -61,7 +61,6 @@ describe('service: Authentication Service', function() {
     flush();
   });
 
-
   it('validates a user that is not logged in', function() {
     AuthenticationService.validate();
     flush();
