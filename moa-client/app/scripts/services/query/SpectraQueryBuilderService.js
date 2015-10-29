@@ -14,6 +14,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
     this.getQuery = function () {
         var query = QueryCache.getSpectraQuery();
 
+        //TODO: remove statement: cache.js - getSpectraQuery handles null queries
         if (query == null) {
             query = this.prepareQuery();
         }
@@ -21,8 +22,8 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         return query;
     };
 
-    /**
-     * prepares an empty query to avoid null pointer exceptions
+    /** TODO: remove function: cache.js - getSpectraQuery handles null queries
+     * prepares an empty query to avoid null pointer exceptions****
      */
     this.prepareQuery = function () {
 
@@ -154,7 +155,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             index = query.compound.tags.indexOf(tag);
 
             if (index > -1) {
-                query.tags.splice(query.compound.tags.indexOf(tag), 1);
+                query.compound.tags.splice(query.compound.tags.indexOf(tag), 1);
             }
         }
 
