@@ -17,29 +17,29 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
          */
         var regexNumeric = /([0-9]+\.?[0-9]+)/;
 
-        /**
+        /** TODO: complete implementation and uncomment
          * converts our retention time to seconds
          * @param metadata
          * @returns {*}
-         */
+
         function convertRetentionTimeToSeconds(metadata) {
 
             /**
              * regular expression to find regex metadata field
              * @type {number}
-             */
+
             var regex = /retention[ -_]?time/i;
 
             /**
              * retetnion with minutes
              * @type {RegExp}
-             */
+
             var regexMinutes = /([0-9]+\.?[0-9]+).*min/;
 
             /**
              * retention time with seconds
              * @type {RegExp}
-             */
+
             var regexSeconds = /([0-9]+\.?[0-9]+).*s/;
 
             if (regex.test(metadata.name)) {
@@ -64,7 +64,7 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                 metadata.unit = "s";
             }
             return metadata;
-        }
+        }*/
 
         /**
          * converts the name and category
@@ -82,11 +82,11 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
         }
 
 
-        /**
+        /**TODO: complete implementation and uncommment
          * checks for collision energy and converts it
          * @param metadata
          * @returns {*}
-         */
+
         function convertUnits(metadata) {
 
             var regexEv = /^\+?(-?[0-9]+\.?[0-9]+).*ev$/i;
@@ -143,7 +143,7 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
             }
 
             return metadata;
-        }
+        }*/
 
         /**
          * works on the provided metadata array and returns a promise
