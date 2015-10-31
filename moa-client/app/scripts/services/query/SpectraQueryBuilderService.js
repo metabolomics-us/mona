@@ -289,10 +289,10 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             var query = this.getQuery();
 
             if (isCompound) {
-                if (!query.compounds.tags) {
-                    query.compounds.tags = [];
+                if (!query.compound.tags) {
+                    query.compound.tags = [];
                 }
-                query.compounds.tags.push(tag);
+                query.compound.tags.push(tag);
             }
             else {
 
