@@ -15,8 +15,9 @@ describe('service: Spectra Query Builder Service', function() {
       var query = {
         id: [1],
         compound: {test: 'test'},
-        metadata: [],
+        metadata: [{name: 'author'}],
         tags: ['testTag','testTag2']
+
       };
       queryCache.setSpectraQuery(query);
 
@@ -120,7 +121,7 @@ describe('service: Spectra Query Builder Service', function() {
     var tag = 'massbank';
     specQueryBuilder.addTagToQuery(tag);
     var res = queryCache.getSpectraQuery();
-    expect(res.tags[2].name.eq).toEqual(tag);
+    expect(res.tags[res.tags.length-1].name.eq).toEqual(tag);
   });
 
   it('adds a tag that is of a compound type', function() {
@@ -128,13 +129,42 @@ describe('service: Spectra Query Builder Service', function() {
     specQueryBuilder.addTagToQuery(compoundTag,true);
     var res = queryCache.getSpectraQuery();
     //console.log(res);
-    //expect(res.compounds.tags[0]).toEqual(compoundTag);
-
-
+    expect(res.compound.tags[0]).toEqual(compoundTag);
   });
 
+    it('includes + when adding tag to query', function() {
+      specQueryBuilder.addTagToQuery('water', false, '+');
+      var res = queryCache.getSpectraQuery();
+      expect(res.tags[res.tags.length-1].name.eq).toEqual('water');
+  });
 
+  it('excludes - when adding tag to query', function() {
+    specQueryBuilder.addTagToQuery('water', false, '-');
+    var res = queryCache.getSpectraQuery();
+    expect(res.tags[res.tags.length-1].name.ne).toEqual('water');
+  });
 
+  it('clear all tags from query', function() {
+    specQueryBuilder.clearTagsFromQuery();
+    var res = queryCache.getSpectraQuery();
+    expect(res.tags).toEqual([]);
+  });
 
+  it('removes a metadata from query', function() {
+    var metadata = {name: 'author'};
+    specQueryBuilder.removeMetaDataFromQuery(metadata);
+    var res = queryCache.getSpectraQuery();
+    expect(res.metadata.length).toEqual(0);
+  });
 
+  it('removes metadata of compounds from query', function() {
+    var query = {compound: {name: 'oxygen', metadata: [{name: 'molecule'}]}};
+    var metadata = {name: 'molecule'};
+    queryCache.setSpectraQuery(query);
+    specQueryBuilder.removeMetaDataFromQuery(metadata);
+    var res = queryCache.getSpectraQuery();
+    expect(res.compound.metadata).toEqual([]);
+  });
+
+  
 });
