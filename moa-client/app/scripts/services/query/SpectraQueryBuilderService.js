@@ -58,7 +58,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             compiled = this.getQuery();
         }
 
-        if (tags == null) {
+        if (tags == null || tags.constructor !== Array) {
             tags = [];
         }
 
@@ -85,7 +85,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             }
 
             else if (element === "nameFilter" && query[element]) {
-                compiled.compound.name = {ilike: '%' + query[element] + '%'};
+                compiled.compound.name = {like: '%' + query[element] + '%'};
             }
 
             else if (element === "inchiFilter" && query[element]) {
