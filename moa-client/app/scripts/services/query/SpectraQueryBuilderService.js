@@ -119,8 +119,10 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
 
         // Add all tags to query
-        for (var i = 0; i < tags.length; i++) {
+        if(tags.constructor === Array) {
+          for (var i = 0; i < tags.length; i++) {
             compiled.tags.push(tags[i]);
+          }
         }
 
         QueryCache.setSpectraQuery(compiled);
