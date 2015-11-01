@@ -53,7 +53,7 @@ describe('service: Spectra Query Builder Service', function() {
 
   it('updates a pre-compiled query', function(){
     var currentQuery = queryCache.getSpectraQuery();
-    var qToCompile = {metadata: [],tags: []};
+    var qToCompile = {metadata: []};
     specQueryBuilder.updateQuery(qToCompile, ['tag1','tag2'], currentQuery);
     var res = queryCache.getSpectraQuery();
     expect(res.tags.length).toBe(4);
@@ -61,7 +61,7 @@ describe('service: Spectra Query Builder Service', function() {
 
   it('handles a query with submitter component', function() {
     var currentQuery = queryCache.getSpectraQuery();
-    var qToCompile = {metadata: [],tags: []};
+    var qToCompile = {metadata: []};
     qToCompile.submitter = 'testuser@fiehnlab.com';
     specQueryBuilder.updateQuery(qToCompile, 'test', currentQuery);
     var res = queryCache.getSpectraQuery();
@@ -69,30 +69,40 @@ describe('service: Spectra Query Builder Service', function() {
   });
 
   it('handles a query with nameFilter component', function() {
-    var qToCompile = queryCache.getSpectraQuery();
-    var qToCompile = {metadata: [],tags: [],compound: {}};
+    var currentQuery = queryCache.getSpectraQuery();
+    var qToCompile = {metadata: [],compound: {}};
     qToCompile.nameFilter = 'test filter';
-    specQueryBuilder.updateQuery(qToCompile, 'test', qToCompile);
+    specQueryBuilder.updateQuery(qToCompile, 'test', currentQuery);
     var res = queryCache.getSpectraQuery();
     expect(res.compound.name.like).toBe('%test filter%');
   });
 
   it('handles a query with inchiFilter component', function() {
     var currentQuery = queryCache.getSpectraQuery();
-    var qToCompile = {metadata: [],tags: [],compound: {}};
+    var qToCompile = {metadata: [],compound: {}};
     qToCompile.inchiFilter ='JLKIGFTWXXRPMT-UHFFFAOYSA-N';
-    specQueryBuilder.updateQuery(qToCompile, 'test', qToCompile);
+    specQueryBuilder.updateQuery(qToCompile, 'test', currentQuery);
     var res = queryCache.getSpectraQuery();
     expect(res.compound.inchiKey.eq).toBe('JLKIGFTWXXRPMT-UHFFFAOYSA-N');
   });
 
   it('handles a inchiFilter that does not match standard inChiKey format', function() {
     var currentQuery = queryCache.getSpectraQuery();
-    var qToCompile = {metadata: [],tags: [],compound: {}};
+    var qToCompile = {metadata: [],compound: {}};
     qToCompile.inchiFilter ='Not a Standard Formatted Key';
-    specQueryBuilder.updateQuery(qToCompile, 'test', qToCompile);
+    specQueryBuilder.updateQuery(qToCompile, 'test', currentQuery);
     var res = queryCache.getSpectraQuery();
     expect(res.compound.inchiKey.like).toBe('Not a Standard Formatted Key');
+  });
+
+  it('handles all other metadata query components', function() {
+    var currentQuery = queryCache.getSpectraQuery();
+    var qToCompile = {metadata: [{accession: 'AU101801'}],compound: {}};
+    specQueryBuilder.updateQuery(qToCompile, [], currentQuery);
+    var res = queryCache.getSpectraQuery();
+
+    specQueryBuilder.mDataService.metadata({name: 'author'});
+    expect(res.metadata[1].value.eq[0].accession).toBe('AU101801');
   });
 
   it('removes Tags from Queries', function() {
