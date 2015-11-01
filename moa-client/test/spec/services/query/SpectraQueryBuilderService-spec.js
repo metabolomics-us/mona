@@ -52,17 +52,48 @@ describe('service: Spectra Query Builder Service', function() {
 
 
   it('updates a pre-compiled query', function(){
-    var q = queryCache.getSpectraQuery();
-    var toCompile = {metadata: [],tags: []};
-    specQueryBuilder.updateQuery(q, ['tag1','tag2'], toCompile);
+    var currentQuery = queryCache.getSpectraQuery();
+    var qToCompile = {metadata: [],tags: []};
+    specQueryBuilder.updateQuery(qToCompile, ['tag1','tag2'], currentQuery);
     var res = queryCache.getSpectraQuery();
-    console.log(res);
+    expect(res.tags.length).toBe(4);
   });
 
-  it('handles a query with element component', function() {
-    //q.submitter = 'testuser@fiehnlab.com';
+  it('handles a query with submitter component', function() {
+    var currentQuery = queryCache.getSpectraQuery();
+    var qToCompile = {metadata: [],tags: []};
+    qToCompile.submitter = 'testuser@fiehnlab.com';
+    specQueryBuilder.updateQuery(qToCompile, 'test', currentQuery);
+    var res = queryCache.getSpectraQuery();
+    expect(res.submitter).toBe('testuser@fiehnlab.com');
   });
 
+  it('handles a query with nameFilter component', function() {
+    var qToCompile = queryCache.getSpectraQuery();
+    var qToCompile = {metadata: [],tags: [],compound: {}};
+    qToCompile.nameFilter = 'test filter';
+    specQueryBuilder.updateQuery(qToCompile, 'test', qToCompile);
+    var res = queryCache.getSpectraQuery();
+    expect(res.compound.name.like).toBe('%test filter%');
+  });
+
+  it('handles a query with inchiFilter component', function() {
+    var currentQuery = queryCache.getSpectraQuery();
+    var qToCompile = {metadata: [],tags: [],compound: {}};
+    qToCompile.inchiFilter ='JLKIGFTWXXRPMT-UHFFFAOYSA-N';
+    specQueryBuilder.updateQuery(qToCompile, 'test', qToCompile);
+    var res = queryCache.getSpectraQuery();
+    expect(res.compound.inchiKey.eq).toBe('JLKIGFTWXXRPMT-UHFFFAOYSA-N');
+  });
+
+  it('handles a inchiFilter that does not match standard inChiKey format', function() {
+    var currentQuery = queryCache.getSpectraQuery();
+    var qToCompile = {metadata: [],tags: [],compound: {}};
+    qToCompile.inchiFilter ='Not a Standard Formatted Key';
+    specQueryBuilder.updateQuery(qToCompile, 'test', qToCompile);
+    var res = queryCache.getSpectraQuery();
+    expect(res.compound.inchiKey.like).toBe('Not a Standard Formatted Key');
+  });
 
   it('removes Tags from Queries', function() {
     specQueryBuilder.removeTagFromQuery('testTag');
