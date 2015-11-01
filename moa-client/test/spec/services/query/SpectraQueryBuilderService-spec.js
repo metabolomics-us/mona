@@ -26,6 +26,7 @@ describe('service: Spectra Query Builder Service', function() {
 
   var hash = 'splash10-dz40000000-9ff3eaf3411278ba18fd';
   var spectra = 'test Spectra';
+  var metadata = {name: 'molecule'};
 
   //mock queries
 
@@ -48,6 +49,20 @@ describe('service: Spectra Query Builder Service', function() {
     var compiled = queryCache.getSpectraQuery();
     expect(qToCompile).toEqual(compiled);
   });
+
+
+  it('updates a pre-compiled query', function(){
+    var q = queryCache.getSpectraQuery();
+    var toCompile = {metadata: [],tags: []};
+    specQueryBuilder.updateQuery(q, ['tag1','tag2'], toCompile);
+    var res = queryCache.getSpectraQuery();
+    console.log(res);
+  });
+
+  it('handles a query with element component', function() {
+    //q.submitter = 'testuser@fiehnlab.com';
+  });
+
 
   it('removes Tags from Queries', function() {
     specQueryBuilder.removeTagFromQuery('testTag');
@@ -159,12 +174,49 @@ describe('service: Spectra Query Builder Service', function() {
 
   it('removes metadata of compounds from query', function() {
     var query = {compound: {name: 'oxygen', metadata: [{name: 'molecule'}]}};
-    var metadata = {name: 'molecule'};
     queryCache.setSpectraQuery(query);
     specQueryBuilder.removeMetaDataFromQuery(metadata);
     var res = queryCache.getSpectraQuery();
     expect(res.compound.metadata).toEqual([]);
   });
 
-  
+  it('adds metadata to a query', function() {
+    specQueryBuilder.addMetaDataToQuery(metadata);
+    var res = queryCache.getSpectraQuery();
+    expect(res.metadata[1].name).toBe('molecule');
+  });
+
+  it('does not add a metadata with an empty name', function() {
+    var m = {name: ''};
+    specQueryBuilder.addMetaDataToQuery(m);
+    var res = queryCache.getSpectraQuery();
+    expect(res.metadata.length).toBe(1);
+  });
+
+  it('adds a metadata that is of compound', function() {
+    var compound = {name: 'oxygen'};
+    specQueryBuilder.addMetaDataToQuery(metadata,compound);
+    var res = queryCache.getSpectraQuery();
+    expect(res.compound.metadata[0].name).toEqual('molecule');
+  });
+
+  it('adds metadata unit if given', function() {
+    var m = {name: 'molecule', unit: 10};
+    specQueryBuilder.addMetaDataToQuery(m);
+    var res = queryCache.getSpectraQuery();
+    expect(res.metadata[1].unit.eq).toEqual(10);
+  });
+
+  it('adds a user to query', function() {
+    var user = 'test@fiehnlab.com';
+    specQueryBuilder.addUserToQuery(user);
+    var res = queryCache.getSpectraQuery();
+    expect(res.submitter).toEqual(user);
+  });
+
+  it('removes a user from the query', function() {
+    specQueryBuilder.removeUserFromQuery();
+    var res = queryCache.getSpectraQuery();
+    expect(res.submitter).toEqual(null);
+  });
 });
