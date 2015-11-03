@@ -28,8 +28,7 @@ describe('service: Upload Library Service', function(){
             }
   };
 
-
-
+  
   var flush = function() {
     httpBackend.expectGET('views/main.html').respond(200);
     httpBackend.flush();
@@ -119,21 +118,21 @@ describe('service: Upload Library Service', function(){
     var data = ['test','Num Peaks'];
     var origin = 'testdata.txt';
     UploadLibraryService.processData(data, specCallback, origin);
-    expect(UploadLibraryService.processData).toHaveBeenCalled();
+    expect(UploadLibraryService.processData).toHaveBeenCalledWith(data,specCallback,origin);
   });
 
   it('processes .msp data', function() {
     var data = ['test','Num Peaks'];
     var origin = 'testdata.msp';
     UploadLibraryService.processData(data, specCallback, origin);
-    expect(UploadLibraryService.processData).toHaveBeenCalled();
+    expect(UploadLibraryService.processData).toHaveBeenCalledWith(data,specCallback,origin);
   });
 
   it('processes .mgf data', function() {
     var data = ['test','Num Peaks'];
     var origin = 'testdata.mgf';
     UploadLibraryService.processData(data, specCallback, origin);
-    expect(UploadLibraryService.processData).toHaveBeenCalled();
+    expect(UploadLibraryService.processData).toHaveBeenCalledWith(data,specCallback,origin);
   });
 
   it('adds data without origin', function() {
@@ -148,6 +147,7 @@ describe('service: Upload Library Service', function(){
     var origin = 'testdata.jar';
     UploadLibraryService.processData(data, specCallback, origin);
     expect(window.alert).toHaveBeenCalledWith('not supported file format!');
+    expect(UploadLibraryService.processData).toHaveBeenCalledWith(data,specCallback,origin);
   });
 
   it('upload spectra files', function() {
@@ -156,16 +156,5 @@ describe('service: Upload Library Service', function(){
     UploadLibraryService.uploadSpectraFiles(files, specCallback, wizardData);
     expect(UploadLibraryService.uploadSpectraFiles).toHaveBeenCalledWith(files,specCallback,wizardData);
   });
-/*
-  it('uploads a spectra',function() {
-    var spec = [spectra(),spectra(),spectra()];
-    rootScope.currentUser = {name: 'test', submitter: 'test@fiehnlab.com'};
-    rootScope.currentUser.access_token = 'TOKEN';
-    var aData = {comments: 'additional data', tags:['moreTags1','moreTags2'], meta: [{name: 'one'}, {name: 'two'}]};
-    UploadLibraryService.uploadSpectrum(spec,specCallback,aData);
-    rootScope.$digest();
-  });*/
-
-
 
 });
