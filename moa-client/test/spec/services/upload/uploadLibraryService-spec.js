@@ -28,7 +28,7 @@ describe('service: Upload Library Service', function(){
             }
   };
 
-  
+
   var flush = function() {
     httpBackend.expectGET('views/main.html').respond(200);
     httpBackend.flush();
