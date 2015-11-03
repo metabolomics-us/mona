@@ -101,7 +101,7 @@ describe('service: Spectra Query Builder Service', function() {
     specQueryBuilder.updateQuery(qToCompile, [], currentQuery);
     var res = queryCache.getSpectraQuery();
 
-    specQueryBuilder.mDataService.metadata({name: 'author'});
+    mDataService.metadata({name: 'author'});
     expect(res.metadata[1].value.eq[0].accession).toBe('AU101801');
   });
 
