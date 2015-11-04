@@ -119,7 +119,7 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
 
                 SpectraQueryBuilderService.prepareQuery();
 
-                if ($scope.queryOptions.queryType == 'exact') {
+                if ($scope.queryOptions.queryType == "exact") {
                     SpectraQueryBuilderService.addExactSpectraSearchToQuery($scope.splash);
                 }
                 else if ($scope.queryOptions.queryType == 'histogram') {
@@ -156,17 +156,12 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
                     $location.path("/spectra/browse/");
                 }
 
-                // Get splash id
+                // Perform exact search, and get splash id
                 else {
                     SplashService.splashIt(splashObject).$promise.then(function (data) {
                         SpectraQueryBuilderService.prepareQuery();
-
-                        if ($scope.queryOptions.queryType == 'exact') {
-                            SpectraQueryBuilderService.addExactSpectraSearchToQuery(data.splash);
-                        }
-                        else if ($scope.queryOptions.queryType == 'top10') {
-                            SpectraQueryBuilderService.addTop10IonsSearchToQuery(data.splash.split('-')[1]);
-                        }
+                        SpectraQueryBuilderService.addExactSpectraSearchToQuery(data.splash);
+                        $location.path("/spectra/browse/");
                     });
                 }
             }

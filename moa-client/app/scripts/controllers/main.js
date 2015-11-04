@@ -1,3 +1,4 @@
+//TODO: find out if this file is used, then remove if no longer needed.
 'use strict';
 
 angular.module('moaClientApp')

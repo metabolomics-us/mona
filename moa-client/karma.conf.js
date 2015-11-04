@@ -17,11 +17,25 @@ module.exports = function (config) {
         files: [
             'app/bower_components/angular/angular.js',
             'app/bower_components/angular-route/angular-route.js',
+            'app/bower_components/angular-cookies/angular-cookies.js',
+            'app/bower_components/angular-sanitize/angular-sanitize.js',
+            'app/bower_components/angular-dialog-service/dist/dialogs.js',
+            'app/bower_components/angular-dialog-service/dist/dialogs-default-translations.js',
+            'app/bower_components/angular-msp-parser/service.js',
+            'app/bower_components/angular-mgf-parser/service.js',
+            'app/bower_components/angular-massbank-parser/service.js',
+            'app/bower_components/angular-cts-service/service.js',
+            'app/bower_components/angular-masspec-plotter/angular-masspec-plotter.js',
+            'app/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
+            'app/bower_components/ng-file-upload/angular-file-upload.js',
+            'app/bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
+            'app/bower_components/angular-jquery/dist/angular-jquery.js',
+            'app/bower_components/angular-translate/angular-translate.js',
             'app/bower_components/angular-resource/angular-resource.js',
             'app/bower_components/angular-mocks/angular-mocks.js',
-            'app/bower_components/angular-animate/angular-animate.js',
             'app/bower_components/angular-bootstrap/ui-bootstrap.js',
             'app/bower_components/ng-tags-input/ng-tags-input.js',
+
             'app/scripts/**/*.js',
             'test/spec/**/*.js'
         ],
@@ -36,14 +50,14 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-
+          '**/scripts/services/**/*.js' : 'coverage'
         },
 
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'osx'],
+        reporters: ['progress', 'osx','coverage'],
 
 
         // web server port
@@ -65,8 +79,8 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Chrome'],
-//      browsers: ['PhantomJS'],
+        // browsers: ['Chrome'],
+        browsers: ['PhantomJS'],
 
 
         // Continuous Integration mode
