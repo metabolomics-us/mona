@@ -14,6 +14,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
     this.getQuery = function () {
         var query = QueryCache.getSpectraQuery();
 
+        //TODO: remove statement: cache.js - getSpectraQuery handles null queries
         if (query == null) {
             query = this.prepareQuery();
         }
@@ -21,8 +22,8 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         return query;
     };
 
-    /**
-     * prepares an empty query to avoid null pointer exceptions
+    /** TODO: remove function: cache.js - getSpectraQuery handles null queries
+     * prepares an empty query to avoid null pointer exceptions****
      */
     this.prepareQuery = function () {
 
@@ -57,7 +58,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             compiled = this.getQuery();
         }
 
-        if (tags == null) {
+        if (tags == null || tags.constructor !== Array) {
             tags = [];
         }
 
@@ -84,7 +85,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             }
 
             else if (element === "nameFilter" && query[element]) {
-                compiled.compound.name = {ilike: '%' + query[element] + '%'};
+                compiled.compound.name = {like: '%' + query[element] + '%'};
             }
 
             else if (element === "inchiFilter" && query[element]) {
@@ -118,8 +119,10 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
 
         // Add all tags to query
-        for (var i = 0; i < tags.length; i++) {
+        if(tags.length > 0) {
+          for (var i = 0; i < tags.length; i++) {
             compiled.tags.push(tags[i]);
+          }
         }
 
         QueryCache.setSpectraQuery(compiled);
@@ -154,7 +157,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             index = query.compound.tags.indexOf(tag);
 
             if (index > -1) {
-                query.tags.splice(query.compound.tags.indexOf(tag), 1);
+                query.compound.tags.splice(query.compound.tags.indexOf(tag), 1);
             }
         }
 
@@ -288,10 +291,10 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             var query = this.getQuery();
 
             if (isCompound) {
-                if (!query.compounds.tags) {
-                    query.compounds.tags = [];
+                if (!query.compound.tags) {
+                    query.compound.tags = [];
                 }
-                query.compounds.tags.push(tag);
+                query.compound.tags.push(tag);
             }
             else {
 

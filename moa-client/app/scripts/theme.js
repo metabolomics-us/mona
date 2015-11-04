@@ -1,7 +1,7 @@
 /**
  * Created by wohlgemuth on 6/27/14.
  */
-$(function() {
+(function() {
 
     $('#side-menu').metisMenu();
 
@@ -9,7 +9,7 @@ $(function() {
 
 //Loads the correct sidebar on window load,
 //collapses the sidebar on window resize.
-$(function() {
+(function() {
     $(window).bind("load resize", function() {
         var width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
         if (width < 768) {
