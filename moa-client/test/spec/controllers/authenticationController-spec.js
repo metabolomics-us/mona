@@ -99,10 +99,10 @@ describe('Controller: Authentication Modal Controller', function() {
 
   var scope,rootScope,modalController,modalInstance,authService,timeout;
 
-  beforeEach(inject(function($controller,$rootScope,$injector,_AuthenticationService_) {
+  beforeEach(inject(function($controller,$rootScope,$injector,_AuthenticationService_,$timeout) {
     scope = $rootScope.$new();
+    timeout = $timeout;
     rootScope = $injector.get('$rootScope');
-    // WIP timeout = jasmine.createSpy().andCallFake(function() {return 'test '});
     authService = _AuthenticationService_;
     modalInstance = {                    // Create a mock object using spies
       close: jasmine.createSpy('modalInstance.close'),
@@ -142,11 +142,133 @@ describe('Controller: Authentication Modal Controller', function() {
     expect(authService.login).toHaveBeenCalledWith('testuser@fiehnlab.com','super');
   });
 
-  it('is in a success state and closes the modalInstance on success-login', function() {
+  it('is in a success state on success-login', function() {
     scope.$broadcast('auth:login-success');
     expect(scope.state).toBe('success');
-    //expect(modalInstance.close).toHaveBeenCalled();
+  });
+
+  it('returns an error for invalid email or password', function() {
+    var data = {status: 401};
+    scope.$broadcast('auth:login-error',data);
+    expect(scope.errors[0]).toBe('Invalid email or password');
+  });
+
+  it('returns an error if MoNA servers cant be reached during login', function() {
+    var data = {status: 500};
+    scope.$broadcast('auth:login-error', data);
+    expect(scope.errors[0]).toBe('Unable to reach MoNA server');
   });
 
 });
 
+
+describe('Controller: Registration Modal Controller', function() {
+  beforeEach(module('moaClientApp'), function($httpProvider){
+    $httpProvider.interceptors.push('moaClientApp');
+  });
+  var scope,rootScope,modalController,modalInstance,submitter,httpBackend,REST_SERVER;
+
+  beforeEach(function() {
+    angular.mock.inject(function($injector,$controller,$rootScope,_Submitter_,_REST_BACKEND_SERVER_) {
+      scope = $rootScope.$new();
+      submitter = _Submitter_;
+      rootScope = $injector.get('$rootScope');
+      httpBackend = $injector.get('$httpBackend');
+      REST_SERVER = _REST_BACKEND_SERVER_;
+      modalInstance = {
+        dismiss: jasmine.createSpy('modalInstance.dismiss')
+      };
+      modalController = $controller('RegistrationModalController', {
+        $scope: scope,
+        $modalInstance: modalInstance,
+        Submitter: submitter
+      });
+    });
+  });
+
+  afterEach(function() {
+    httpBackend.verifyNoOutstandingExpectation();
+    httpBackend.verifyNoOutstandingRequest();
+  });
+
+  it('can cancel a dialog', function() {
+    httpBackend.expectGET('views/main.html').respond(200);
+    scope.cancelDialog();
+    expect(modalInstance.dismiss).toHaveBeenCalledWith('cancel');
+    httpBackend.flush();
+  });
+
+  it('register a user that submits all the correct information and is in a success state', function() {
+    httpBackend.expectPOST(REST_SERVER + '/rest/submitters',
+      {"firstName":"test","lastName":"user",
+        "institution":"UC Davis","emailAddress":"testuser@fiehnlab.com","password":"super"})
+      .respond(200);
+    httpBackend.expectGET('views/main.html').respond(200);
+    scope.newSubmitter.firstName = 'test';
+    scope.newSubmitter.lastName = 'user';
+    scope.newSubmitter.institution = 'UC Davis';
+    scope.newSubmitter.emailAddress = 'testuser@fiehnlab.com';
+    scope.newSubmitter.password = 'super';
+    scope.submitRegistration();
+    httpBackend.flush();
+    expect(scope.state).toBe('success');
+  });
+
+  it('returns an error message when registration data is not submitted correctly', function() {
+    var errorData = {status: 422,
+      errors: [{message: 'no first name', field: 'First Name'}, {message: 'no last name', field: 'Last Name'}]
+    };
+    httpBackend.expectPOST(REST_SERVER + '/rest/submitters', {}).respond(422,errorData);
+    httpBackend.expectGET('views/main.html').respond(200);
+    scope.submitRegistration();
+    httpBackend.flush();
+    expect(scope.errors).toEqual(['Error in First Name: no first name', 'Error in Last Name: no last name']);
+  });
+
+  it('returns an error if a user registers with an existing email address', function() {
+    var duplicateData = {status: 422,
+      errors:[{message: 'must be unique', field: 'Email'}]
+    };
+    httpBackend.expectPOST(REST_SERVER + '/rest/submitters', {emailAddress: 'testuser@fiehnlab.com'})
+      .respond(422,duplicateData);
+    httpBackend.expectGET('views/main.html').respond(200);
+    scope.newSubmitter.emailAddress = 'testuser@fiehnlab.com';
+    scope.submitRegistration();
+    httpBackend.flush();
+    expect(scope.errors).toEqual(['Error in Email: already exists!']);
+  });
+
+  it('returns all other error with the data submitted', function() {
+    var unknownError = {status: 400,
+      errors: [{message: '', field: ''}]
+    };
+    httpBackend.expectPOST(REST_SERVER + '/rest/submitters',
+      {"firstName":"test","lastName":"user",
+        "institution":"UC Davis","emailAddress":"testuser@fiehnlab.com","password":"super"})
+      .respond(400, unknownError);
+    httpBackend.expectGET('views/main.html').respond(200);
+    scope.newSubmitter.firstName = 'test';
+    scope.newSubmitter.lastName = 'user';
+    scope.newSubmitter.institution = 'UC Davis';
+    scope.newSubmitter.emailAddress = 'testuser@fiehnlab.com';
+    scope.newSubmitter.password = 'super';
+    scope.submitRegistration();
+    httpBackend.flush();
+    expect(scope.errors).toEqual(['An unknown error has occurred: ' +
+    '{"data":{"status":400,"errors":[{"message":"","field":""}]},' +
+    '"status":400,"config":{"method":"POST","transformRequest":[null],' +
+    '"transformResponse":[null],"data":{"firstName":"test","lastName":"user",' +
+    '"institution":"UC Davis","emailAddress":"testuser@fiehnlab.com","password":"super"},' +
+    '"url":"http://cream.fiehnlab.ucdavis.edu:8080/rest/submitters",' +
+    '"headers":{"Accept":"application/json, text/plain, */*","Content-Type":"application/json;charset=utf-8"}},' +
+    '"statusText":""}']);
+  });
+
+  it('close dialog and open login modal', function() {
+    httpBackend.expectGET('views/main.html').respond(200);
+    scope.logIn();
+    expect(modalInstance.dismiss).toHaveBeenCalledWith('cancel');
+    httpBackend.flush();
+  });
+
+});
