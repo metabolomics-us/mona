@@ -15,7 +15,6 @@ describe('Controller: Authentication Controller', function() {
         $scope : scope
       });
     };
-
   }));
 
   it('opens a authentication dialogue for user to log in', function() {
@@ -69,7 +68,6 @@ describe('Controller: Authentication Controller', function() {
     var isAdmin = controller.isAdmin();
     expect(isAdmin).toBe(false);
   });
-  //TODO: ensure scope.$on methods are being called
 
   it('creates a welcome message on login', function() {
     var controller = createController();
@@ -91,7 +89,6 @@ describe('Controller: Authentication Controller', function() {
     scope.$broadcast('auth:login');
     expect(controller.openAuthenticationDialog).toHaveBeenCalled();
   });
-
 });
 
 describe('Controller: Authentication Modal Controller', function() {
@@ -158,7 +155,6 @@ describe('Controller: Authentication Modal Controller', function() {
     scope.$broadcast('auth:login-error', data);
     expect(scope.errors[0]).toBe('Unable to reach MoNA server');
   });
-
 });
 
 
@@ -218,8 +214,14 @@ describe('Controller: Registration Modal Controller', function() {
     var errorData = {status: 422,
       errors: [{message: 'no first name', field: 'First Name'}, {message: 'no last name', field: 'Last Name'}]
     };
-    httpBackend.expectPOST(REST_SERVER + '/rest/submitters', {}).respond(422,errorData);
+
+    httpBackend.expectPOST(REST_SERVER + '/rest/submitters', {"institution":"UC Davis",
+      "emailAddress":"testuser@fiehnlab.com",
+      "password":"super"}).respond(422,errorData);
     httpBackend.expectGET('views/main.html').respond(200);
+    scope.newSubmitter.institution = 'UC Davis';
+    scope.newSubmitter.emailAddress = 'testuser@fiehnlab.com';
+    scope.newSubmitter.password = 'super';
     scope.submitRegistration();
     httpBackend.flush();
     expect(scope.errors).toEqual(['Error in First Name: no first name', 'Error in Last Name: no last name']);
@@ -229,6 +231,7 @@ describe('Controller: Registration Modal Controller', function() {
     var duplicateData = {status: 422,
       errors:[{message: 'must be unique', field: 'Email'}]
     };
+
     httpBackend.expectPOST(REST_SERVER + '/rest/submitters', {emailAddress: 'testuser@fiehnlab.com'})
       .respond(422,duplicateData);
     httpBackend.expectGET('views/main.html').respond(200);
@@ -238,10 +241,11 @@ describe('Controller: Registration Modal Controller', function() {
     expect(scope.errors).toEqual(['Error in Email: already exists!']);
   });
 
-  it('returns all other error with the data submitted', function() {
+  it('returns all other error with log of the data submitted', function() {
     var unknownError = {status: 400,
       errors: [{message: '', field: ''}]
     };
+
     httpBackend.expectPOST(REST_SERVER + '/rest/submitters',
       {"firstName":"test","lastName":"user",
         "institution":"UC Davis","emailAddress":"testuser@fiehnlab.com","password":"super"})
@@ -270,5 +274,4 @@ describe('Controller: Registration Modal Controller', function() {
     expect(modalInstance.dismiss).toHaveBeenCalledWith('cancel');
     httpBackend.flush();
   });
-
 });
