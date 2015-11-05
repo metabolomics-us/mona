@@ -31,12 +31,4 @@ describe('service: Async Service', function() {
     ASyncService.resetPool();
     expect(ASyncService.hasPooledTasks()).toEqual(false);
   });
-
-  it('starts the pool', function() {
-    ASyncService.addToPool(f,data);
-    //var test = ASyncService.returnTimeout();
-    //console.log(test);
-  });
-
-
 });
