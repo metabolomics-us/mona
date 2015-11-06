@@ -55,7 +55,6 @@ describe('Controller: Spectra Database Index Controller', function() {
     httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/8792').respond(200,data);
     httpBackend.expectGET(REST_SERVER + '/rest/statistics/countAll/').respond(200,data);
     httpBackend.expectGET('views/main.html').respond(200);
-    //httpBackend.expectGET(REST_SERVER + '/rest/meta/data/?max=100').respond(200,data);
 
     var res = filter('titlecase')('test test test');
     expect(res).toBe('Test Test Test');
