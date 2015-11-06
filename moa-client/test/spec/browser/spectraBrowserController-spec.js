@@ -5,14 +5,15 @@ describe('Controller: Spectra Browser Controller', function() {
     $httpProvider.intereceptors.push('moaClientApp');
   });
 
-  var scope,specBrowserController,rootScope,httpBackend,modal;
+  var scope,specBrowserController,rootScope,httpBackend,modal,REST_SERVER;
 
   beforeEach(function() {
-    angular.mock.inject(function($injector,$controller,$rootScope) {
+    angular.mock.inject(function($injector,$controller,$rootScope,_REST_BACKEND_SERVER_) {
       scope = $rootScope.$new();
       rootScope = $injector.get('$rootScope');
       httpBackend = $injector.get('$httpBackend');
       modal = $injector.get('$modal');
+      REST_SERVER = _REST_BACKEND_SERVER_;
       specBrowserController = $controller('SpectraBrowserController', {
         $scope: scope
       });
@@ -25,9 +26,9 @@ describe('Controller: Spectra Browser Controller', function() {
   });
 
   it('resets the current query', function() {
-    httpBackend.expectPOST('http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/searchCount').respond(200);
-    httpBackend.expectPOST('http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/search?max=7&offset=0').respond(200);
-    httpBackend.expectPOST('http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/searchCount').respond(200);
+    httpBackend.expectPOST(REST_SERVER + '/rest/spectra/searchCount').respond(200);
+    httpBackend.expectPOST(REST_SERVER + '/rest/spectra/search?max=7&offset=0').respond(200);
+    httpBackend.expectPOST(REST_SERVER + '/rest/spectra/searchCount').respond(200);
     httpBackend.expectGET('views/main.html').respond(200);
     spyOn(scope,'resetQuery').and.callThrough();
     scope.resetQuery();
@@ -36,8 +37,8 @@ describe('Controller: Spectra Browser Controller', function() {
   });
 
   it('fires an event to show the current query', function() {
-    httpBackend.expectPOST('http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/searchCount').respond(200);
-    httpBackend.expectPOST('http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/search?max=7&offset=0').respond(200);
+    httpBackend.expectPOST(REST_SERVER + '/rest/spectra/searchCount').respond(200);
+    httpBackend.expectPOST(REST_SERVER + '/rest/spectra/search?max=7&offset=0').respond(200);
     httpBackend.expectGET('views/main.html').respond(200);
     spyOn(rootScope,'$broadcast').and.callThrough();
     scope.displayQuery();
@@ -46,7 +47,7 @@ describe('Controller: Spectra Browser Controller', function() {
   });
 
   it('opens our modal dialog to query spectra', function() {
-    httpBackend.expectPOST('POST http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/searchCount').respond(200,{data: 'test'});
+    httpBackend.expectPOST(REST_SERVER + '/rest/spectra/searchCount').respond(200,{data: 'test'});
     spyOn(modal, 'open');
     var open = {
       templateUrl: '/views/spectra/query/query.html',
