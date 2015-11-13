@@ -726,8 +726,8 @@ class SpectraQueryService {
             log.info("deleting spectrum: ${id}")
 
             long begin = System.currentTimeMillis()
-
             Spectrum spectrum = Spectrum.get(id)
+
             if (params.forceRemoval == true) {
                 def links = []
 

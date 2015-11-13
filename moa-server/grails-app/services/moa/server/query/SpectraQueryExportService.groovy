@@ -6,6 +6,7 @@ import moa.SpectrumQueryDownload
 import moa.server.convert.SpectraConversionService
 import moa.server.mail.EmailService
 import org.apache.commons.io.FileUtils
+import org.apache.ivy.util.FileUtil
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.web.json.JSONObject
 
@@ -71,17 +72,27 @@ class SpectraQueryExportService {
         // Export query to file
         File queryFile = new File(queryDownload.queryFile)
         log.debug("storing result at: ${queryFile.getAbsolutePath()}")
-        if (!queryFile.exists()) {
+
+        boolean moveExportFile = false
+        File exportFile
+
+        if (queryFile.exists()) {
+            log.info("Query file " + queryFile.getName() +" exists, creating temporary dump file")
+
+            exportFile = new File(queryDownload.exportFile +".tmp")
+            moveExportFile = true
+        } else {
+            log.info("Exporting query file " + queryFile.getName())
+
             queryFile.createNewFile()
+            FileUtils.writeStringToFile(queryFile, json.toString())
+
+            exportFile = new File(queryDownload.exportFile)
         }
 
 
-        FileUtils.writeStringToFile(queryFile, json.toString())
-
-        log.info("Exporting query file " + queryFile.getName())
-
         // Perform query in chunks and export data
-        File exportFile = new File(queryDownload.exportFile)
+
         exportFile.createNewFile()
 
         log.info("Exporting data file ${exportFile.getName()} as $format")
@@ -115,6 +126,13 @@ class SpectraQueryExportService {
 
         if (format == "json") {
             FileUtils.writeStringToFile(exportFile, "\n]", true)
+        }
+
+        // Move temporary export file to stored location
+        if(moveExportFile) {
+            File toFile = new File(queryDownload.exportFile)
+            FileUtils.forceDelete(toFile)
+            FileUtils.moveFile(exportFile, toFile)
         }
 
         queryDownload.save(flush: true)
