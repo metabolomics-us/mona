@@ -30,5 +30,4 @@ class Webhook {
      * which event are we interested in
      */
     MonaEvent monaEvent
-
 }
