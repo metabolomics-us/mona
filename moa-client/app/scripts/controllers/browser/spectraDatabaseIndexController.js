@@ -89,11 +89,11 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
         //);
 
         // Temporary fix
-        queryMetadataValues(148); // ion mode
-        queryMetadataValues(138); // instrument type
-        queryMetadataValues(233); // ms type
-        queryMetadataValues(770); // precursor type
-        queryMetadataValues(8792); // derivative type
+        queryMetadataValues(112); // ion mode
+        queryMetadataValues(107); // instrument type
+        queryMetadataValues(676); // ms type
+        queryMetadataValues(117); // precursor type
+        queryMetadataValues(2079592); // derivative type
 
         queryTotalStatistics();
     })();
