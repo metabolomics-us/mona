@@ -46,9 +46,7 @@ class SpectraQueryService {
      * @param maxResults how many results do we maximal want to have
      */
     def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int maxResults = 10) {
-
         String histogram = SplashUtil.splash(massSpectra, SpectraType.MS).split("-")[3]
-
 
         log.info("start searching...")
         Sql sql = new Sql(dataSource)
@@ -57,7 +55,6 @@ class SpectraQueryService {
         def resultList = new LinkedHashSet()
 
         sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block2,:?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
-
             def hit = [:]
             hit.id = row.id
             hit.similarity = row.similarity
@@ -81,10 +78,8 @@ class SpectraQueryService {
      * @param maxResults how many results do we maximal want to have
      */
     def findSimilarSpectraIds(long id, double minSimilarity = 500, int maxResults = 10) {
-
         Spectrum spectrum = Spectrum.get(id)
         String histogram = spectrum.splash.block2
-
 
         log.info("start searching...")
         Sql sql = new Sql(dataSource)
@@ -93,7 +88,6 @@ class SpectraQueryService {
         def resultList = []
 
         sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block2,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ?  limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
-
             def hit = [:]
             hit.id = row.id
             hit.similarity = row.similarity
@@ -119,30 +113,20 @@ class SpectraQueryService {
     def query(Map json, int limit = -1, int offset = -1, String order = "order by s.score.scaledScore desc") {
         log.info("received query: ${json}")
 
-
         def ids = queryForIds(json, limit, offset)
 
         try {
-
             if (ids.isEmpty()) {
                 return []
             }
 
-
             def result = Spectrum.executeQuery("""
-
                     select s
                         from Spectrum as s
-
-
-
                         where s.id in (:ids)
-
                         """ + order, [ids: ids.collect({
                 it.id
-            })]
-
-                    , [readOnly: true])
+            })] , [readOnly: true])
 
             //add known fields to the spectrum
             result.each { Spectrum s ->
@@ -164,7 +148,7 @@ class SpectraQueryService {
         }
         catch (Exception e) {
             log.error("query: ${json}")
-            log.error("ids: ${ids}")
+            log.error("${ids.size()} ids: ${ids.take(10)}${ids.size() > 10 ? '...' : ''}")
             throw e;
         }
     }
@@ -210,7 +194,6 @@ class SpectraQueryService {
 
         (queryOfDoom, executionParams) = generateFinalQuery(json, true)
 
-
         def result = Spectrum.executeQuery(queryOfDoom, executionParams)
 
         return result.size()
@@ -224,7 +207,6 @@ class SpectraQueryService {
      * @return
      */
     private List generateFinalQuery(Map json, boolean count = false, String fields = "s.id as id") {
-
         log.debug("provided json query: \n ${json as JSON}")
 
         //defines all our joins
@@ -313,7 +295,6 @@ class SpectraQueryService {
      */
     private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         if (json.id) {
-
             log.debug("debug analyzing id query part:\n ${json.match as JSON}")
 
             if (json.id instanceof Collection && json.id.size() > 0) {
@@ -322,7 +303,6 @@ class SpectraQueryService {
 
                 //handle brackets
                 queryOfDoomWhere += "( "
-
 
                 json.id.eachWithIndex { Object current, int index ->
 
@@ -373,9 +353,7 @@ class SpectraQueryService {
          * matching based
          */
         if (json.match) {
-
             log.debug("debug analyzing match query part:\n ${json.match as JSON}")
-
 
             queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
@@ -449,7 +427,6 @@ class SpectraQueryService {
 
     @Transactional
     def query(Map json, def params) {
-
         if (!params.max) {
             params.max = -1
         }
@@ -461,7 +438,6 @@ class SpectraQueryService {
         if (json == null) {
             throw new QueryException("your query needs to contain some parameters!")
         }
-
 
         return query(json, params.max as int, params.offset as int)
     }
@@ -475,7 +451,6 @@ class SpectraQueryService {
      * @return
      */
     private List handleJsonSubmitterField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams, String fields, String orderBy, String group, String having) {
-
         //handling submitter
         if (json.submitter) {
 
@@ -736,7 +711,6 @@ class SpectraQueryService {
      * @return
      */
     def searchAndDelete(def deleteQuery, def params = [:]) {
-
         log.info("query system for delete request: ${deleteQuery}")
 
         def queryOfDoom = null
@@ -755,9 +729,8 @@ class SpectraQueryService {
 
             Spectrum spectrum = Spectrum.get(id)
             if (params.forceRemoval == true) {
-
-
                 def links = []
+
                 spectrum.links.each {
                     links.add(it)
                 }
@@ -766,14 +739,12 @@ class SpectraQueryService {
                     tagService.removeLink(it)
                 }
 
-
                 spectrum.delete(flush: true)
             } else {
                 spectrum.deleted = true
                 spectrum.save()
             }
             statisticsService.acquire(System.currentTimeMillis() - begin, "deleted a spectra", "${spectrum.hash}", "delete")
-
         }
 
         log.info("finished delete operation")

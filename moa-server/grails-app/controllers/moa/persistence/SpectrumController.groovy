@@ -41,8 +41,7 @@ class SpectrumController extends RestfulController<Spectrum> {
     }
 
     @Transactional
-    def updateRepository(){
-
+    def updateRepository() {
         FireJobs.fireSpectraRepositoryExportJob([all:true])
 
         render([message: "populating complete repository"] as JSON)
@@ -103,8 +102,7 @@ class SpectrumController extends RestfulController<Spectrum> {
                 FireJobs.fireSpectraUploadJob([spectra: request.JSON.toString()])
                 render([message: "1 spectra submitted"] as JSON)
             }
-        }
-        else{
+        } else{
             render([errors: "sorry missing JSON request"]);
         }
     }
