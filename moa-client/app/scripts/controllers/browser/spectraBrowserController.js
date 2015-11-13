@@ -20,7 +20,7 @@
  * @param SpectrumCache
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, $rootScope, $timeout, $filter) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, $rootScope, $timeout, $filter, REST_BACKEND_SERVER) {
 
     $scope.table = false;
     /**
@@ -65,6 +65,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * submits our build query to the backend
      */
     $scope.submitQuery = function () {
+
         $scope.dataAvailable = true;
 
         // Reset spectra
@@ -78,6 +79,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
         //actually load our data
         $scope.loadMoreSpectra();
+
     };
 
     /**
@@ -92,6 +94,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      */
     $scope.calculateResultCount = function () {
         //reports the count for the complete query response
+
         $scope.queryResultCount = "Loading...";
 
         Spectrum.searchSpectraCount(SpectraQueryBuilderService.getQuery(), function (data) {
@@ -169,6 +172,9 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
             };
 
             Spectrum.searchSpectra(payload, function (data) {
+                // benchmark searchSpectra object
+                queryPerformance();
+
                 if (data.length == 0) {
                     $scope.dataAvailable = false;
                 } else {
@@ -186,12 +192,30 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         }
     };
 
-
     $scope.$on('$viewContentLoaded', function () {
         $timeout(function () {
             $(window).scrollTop($scope.spectraScrollStartLocation);
         }, 1);
     });
+
+    var queryPerformance = function() {
+        var perfEntries = window.performance.getEntries();
+        var last = perfEntries.length - 1;
+
+        for(var i = last; i > -1; i--) {
+            var name = perfEntries[i].name;
+
+            if(name.indexOf('/rest/spectra/search?') > -1) {
+                $log.info("Name: " + perfEntries[i].name +
+                " Entry Type: " + perfEntries[i].entryType +
+                " Start Time: " + perfEntries[i].startTime +
+                " Duration: " + perfEntries[i].duration + "\n");
+
+              $scope.duration = perfEntries[i].duration / 1000;
+              break;
+            }
+        }
+    };
 
 
     /**
