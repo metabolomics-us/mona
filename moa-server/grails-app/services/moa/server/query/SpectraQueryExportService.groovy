@@ -65,12 +65,11 @@ class SpectraQueryExportService {
         }
 
         // Get the number of spectra in our query results
-        def queryCount = spectraQueryService.getCountForQuery(json)
-        log.info("Counted " + queryCount + " spectra")
+        def ids = spectraQueryService.queryForIds(json)
+        log.info("Counted " + ids.size() + " spectra")
 
         // Export query to file
         File queryFile = new File(queryDownload.queryFile)
-
         log.debug("storing result at: ${queryFile.getAbsolutePath()}")
         if (!queryFile.exists()) {
             queryFile.createNewFile()
@@ -91,12 +90,11 @@ class SpectraQueryExportService {
             FileUtils.writeStringToFile(exportFile, "[\n", true)
         }
 
-        def ids = spectraQueryService.queryForIds(json)
         int i = 0
 
         // Iterate over all queried spectra and export after converting to JSON or MSP format
         ids.each { def id ->
-            Spectrum s = spectraQueryService.query(id)
+            Spectrum s = spectraQueryService.query(id.id)
 
             if (format == "json") {
                 // Append comma and newline
@@ -122,10 +120,8 @@ class SpectraQueryExportService {
         queryDownload.save(flush: true)
 
         // Email results
-        log.info("Export of ${queryCount} spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
-        emailService.sendDownloadEmail(emailAddress, queryCount, queryDownload.id)
-
-
+        log.info("Export of ${ids.size()} spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
+        emailService.sendDownloadEmail(emailAddress, ids.size(), queryDownload.id)
     }
 
     /**
