@@ -31,6 +31,7 @@
                     tooltip="click, to refresh the query" tooltip-trigger="mouseenter" tooltip-popup-delay="2">
                 <i class="fa fa-2x fa-refresh fa-fw"></i>
             </button>
+
         </div>
     </div>
 
@@ -42,6 +43,7 @@
                     tooltip="this is the number of your received results, click to see more query details">
 
                 <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{queryResultCount}}
+                <span ng-show="auth.isAdmin() && duration !== undefined"> ({{duration | number: 2}} s)</span>
             </button>
         </div>
     </div>
