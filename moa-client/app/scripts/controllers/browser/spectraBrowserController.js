@@ -173,7 +173,10 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
 
             Spectrum.searchSpectra(payload, function (data) {
                 // benchmark searchSpectra object
-                queryPerformance();
+
+                if (window.console) {
+                    queryPerformance();
+                }
 
                 if (data.length == 0) {
                     $scope.dataAvailable = false;
@@ -199,20 +202,21 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
     });
 
     var queryPerformance = function() {
+
         var perfEntries = window.performance.getEntries();
         var last = perfEntries.length - 1;
 
-        for(var i = last; i > -1; i--) {
+        for (var i = last; i > -1; i--) {
             var name = perfEntries[i].name;
 
-            if(name.indexOf('/rest/spectra/search?') > -1) {
+            if (name.indexOf('/rest/spectra/search?') > -1) {
                 $log.info("Name: " + perfEntries[i].name +
-                " Entry Type: " + perfEntries[i].entryType +
-                " Start Time: " + perfEntries[i].startTime +
-                " Duration: " + perfEntries[i].duration + "\n");
+                    " Entry Type: " + perfEntries[i].entryType +
+                    " Start Time: " + perfEntries[i].startTime +
+                    " Duration: " + perfEntries[i].duration + "\n");
 
-              $scope.duration = perfEntries[i].duration / 1000;
-              break;
+                $scope.duration = perfEntries[i].duration / 1000;
+                break;
             }
         }
     };
