@@ -152,7 +152,7 @@ module.exports = function (grunt) {
 
         wiredep: {
           app: {
-            src:['<%= yeoman.app %>/index.html'],
+            src:['<%= yeoman.app %>/index_original.html'],
             ignorePath: /\.\.\//
           },
           test: {
@@ -176,7 +176,7 @@ module.exports = function (grunt) {
         // Automatically inject Bower components into the app
         bowerInstall: {
             app: {
-                src: ['<%= yeoman.app %>/index.html'],
+                src: ['<%= yeoman.app %>/index_original.html'],
                 ignorePath: '<%= yeoman.app %>/',
                 exclude: ['<%= yeoman.app %>/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/']
             },
@@ -233,7 +233,7 @@ module.exports = function (grunt) {
         // concat, minify and revision files. Creates configurations in memory so
         // additional tasks can operate on them
         useminPrepare: {
-            html: '<%= yeoman.app %>/index.html',
+            html: '<%= yeoman.app %>/index_original.html',
             options: {
                 dest: '<%= yeoman.dist %>',
                 flow: {
@@ -416,7 +416,7 @@ module.exports = function (grunt) {
             ]
         },
 
-        // By default, your `index.html`'s <!-- Usemin block --> will take care of
+        // By default, your `index_original.html`'s <!-- Usemin block --> will take care of
         // minification. These next options are pre-configured if you do not wish
         // to use the Usemin blocks.
         //cssmin: {
