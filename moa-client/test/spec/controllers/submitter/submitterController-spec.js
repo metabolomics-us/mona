@@ -54,7 +54,7 @@ describe('Controllers: Submitter Controller', function() {
     httpBackend.expectGET('template/modal/backdrop.html').respond(200,'<div><b>Hello</b> World!</div>');
     httpBackend.expectGET('template/modal/window.html').respond(200,'<div><b>Hello</b> World!</div>');
     scope.displayCreateDialog();
-    expect(modalInstance).toBeDefined;
+    expect(modalInstance).toBeDefined();
     httpBackend.flush();
   });
 
