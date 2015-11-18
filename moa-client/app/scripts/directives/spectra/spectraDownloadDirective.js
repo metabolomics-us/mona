@@ -13,6 +13,7 @@ app.directive('spectraDownload', function(Spectrum, $http, $filter, $log, REST_B
             spectra:'=spectra'
         },
         templateUrl: '/views/templates/spectra/download.html',
+
         controller: function($scope, SpectraQueryBuilderService, dialogs) {
             /**
              * does the actual downloading of the content
@@ -41,9 +42,7 @@ app.directive('spectraDownload', function(Spectrum, $http, $filter, $log, REST_B
                     $http.get(uri).then(function (returnData) {
                         $scope.downloadData(returnData.data, $scope.spectra.id + ".msp");
                     });
-                }
-
-                else {
+                } else {
                     var query = angular.copy(SpectraQueryBuilderService.getQuery());
                     query.format = 'msp';
 
@@ -61,9 +60,7 @@ app.directive('spectraDownload', function(Spectrum, $http, $filter, $log, REST_B
                     $http.get(uri).then(function(returnData){
                         $scope.downloadData($filter('json')(returnData.data), $scope.spectra.id + ".json");
                     });
-                }
-
-                else {
+                } else {
                     var query = angular.copy(SpectraQueryBuilderService.getQuery());
                     query.format = 'json';
 
