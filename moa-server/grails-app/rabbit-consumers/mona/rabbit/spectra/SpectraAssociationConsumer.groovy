@@ -5,6 +5,7 @@ import grails.converters.JSON
 import moa.server.curation.SpectraAssociationService
 import moa.server.query.SpectraQueryService
 import org.apache.log4j.Logger
+import org.springframework.dao.CannotAcquireLockException
 import util.FireJobs
 
 /**
@@ -20,10 +21,9 @@ class SpectraAssociationConsumer {
     Logger log = Logger.getLogger(getClass())
 
     static rabbitConfig = [
-            queue    : "mona.association.spectra",
+            queue: "mona.association.spectra",
             consumers: 100,
             prefetchCount: 10
-
     ]
 
     SpectraAssociationService spectraAssociationService
@@ -37,14 +37,13 @@ class SpectraAssociationConsumer {
 
                 try {
                     spectraAssociationService.associate(data.spectraId as long)
-                } catch (org.springframework.dao.CannotAcquireLockException e){
+                } catch (CannotAcquireLockException e){
                     FireJobs.fireSpectraAssociationJob([spectraId:data.spectraId])
                 }
 
-                long end = System.currentTimeMillis()
-                long needed = (end - begin)
+                long duration = System.currentTimeMillis() - begin
 
-                log.debug("associated spectra with id: ${data.spectraId}, which took ${needed / 1000}")
+                log.debug("associated spectra with id: ${data.spectraId}, which took ${duration / 1000}")
             } else if (data.all) {
                 //get all id's in the system
                 def ids = spectraQueryService.queryForIds([:]);

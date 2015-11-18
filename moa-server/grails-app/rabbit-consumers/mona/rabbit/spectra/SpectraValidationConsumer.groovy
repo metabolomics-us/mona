@@ -30,10 +30,9 @@ class SpectraValidationConsumer {
     RabbitMessagePublisher rabbitMessagePublisher
 
     static rabbitConfig = [
-            queue    : "mona.validate.spectra",
+            queue: "mona.validate.spectra",
             consumers: Runtime.getRuntime().availableProcessors(),
             prefetchCount: 10
-
     ]
 
     /**
@@ -44,10 +43,8 @@ class SpectraValidationConsumer {
      * @return
      */
     def handleMessage(def data, MessageContext context) {
-
         if (data != null) {
             if (data.containsKey('spectraId')) {
-
                 long begin = System.currentTimeMillis()
 
                 if (data.arguments.bean != null) {
@@ -58,9 +55,7 @@ class SpectraValidationConsumer {
                     CurationWorkflow workflow = new CurationWorkflow();
                     workflow.getRules().add(rule)
                     workflow.runWorkflow(new CurationObject(Spectrum.get(data.spectraId as long)))
-
                 } else {
-
                     boolean result = spectraCurationService.validateSpectra(data.spectraId as long)
 
                     long end = System.currentTimeMillis()
@@ -73,48 +68,34 @@ class SpectraValidationConsumer {
                     if (score) {
                         scoringService.score(data.spectraId as long)
                     }
-
                 }
             } else if (data.all) {
                 //get all id's in the system
-                def ids = spectraQueryService.queryForIds(
-                        [:
-                        ]
-                );
+                def ids = spectraQueryService.queryForIds([:]);
 
                 log.debug("found: ${ids.size()} spectra to validate...")
 
                 rabbitMessagePublisher.withChannel { channel ->
-
                     ids.each { def id ->
-
                         send {
                             routingKey = "mona.validate.spectra"
                             body = [spectraId: id.id, "arguments": data.arguments]
                             priority = 5
                         }
                     }
-
                 }
-
             } else if (data.query) {
-
                 def ids = spectraQueryService.queryForIds(JSON.parse(data.query))
 
                 rabbitMessagePublisher.withChannel { channel ->
-
                     ids.each { def id ->
-
                         send {
                             routingKey = "mona.validate.spectra"
                             body = [spectraId: id.id, "arguments": data.arguments]
                             priority = 5
                         }
                     }
-
                 }
-
-
             } else {
                 log.info("\t=>\tno spectraId was provided!")
             }
