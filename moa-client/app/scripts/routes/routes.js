@@ -147,6 +147,13 @@ app.config(function ($routeProvider) {
 
         })
 
+
+        .when('/500', {
+            templateUrl: 'views/500.html',
+            controller: 'DocumentationTermController'
+
+        })
+
         //any other page is redirected to the root page
         .otherwise({
             redirectTo: '/'
