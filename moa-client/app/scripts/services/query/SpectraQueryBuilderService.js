@@ -46,6 +46,10 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         return query;
     };
 
+    this.setQuery = function(query) {
+        QueryCache.setSpectraQuery(query);
+    };
+
 
     /**
      * updates a pre-compiled query with the given
