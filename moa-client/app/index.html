@@ -8,33 +8,235 @@
 <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 
-<html class="no-js" ngapp="moaClientApp"> <!--<![endif]-->
+<html class="no-js" ng-app="moaClientApp"> <!--<![endif]-->
 <head>
-
-</head>
     <meta charset="utf-8">
     <title ng-bind="APP_NAME"></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.min.css" />
-    <link rel="stylesheet" href="bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
-    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
-    <link rel="stylesheet" href="bower_components/angular-patternfly/dist/styles/angular-patternfly.css" />
-    <!-- endbower -->
-    <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css" />
-    <!-- endbuild -->
-    <!-- build:css({.tmp,app}) styles/main.css -->
 
+    <link rel="stylesheet" href="bower_components/angular-patternfly/dist/styles/angular-patternfly.css" />
+    <link rel="stylesheet" href="bower_components/patternfly/dist/css/patternfly.css" />
+    <link rel="stylesheet" href="bower_components/patternfly/dist/css/patternfly-additions.css" />
     <link rel="stylesheet" href="lib/chemdoodle/ChemDoodleWeb.css">
 
-    <link rel="stylesheet" href="styles/main.css">
+    <!-- <link rel="stylesheet" href="styles/main.css"> -->
     <link rel="stylesheet" href="styles/autocomplete.css">
+    <!-- endbuild -->
+</head>
+<body class="dashboard">
+<!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please
+    <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<div id="wrapper" ng-controller="AuthenticationController as auth">
+    <nav class="navbar navbar-default navbar-fixed-top navbar-pf" role="navigation">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse-21">
+                <span class="sr-only">Toggle navigation</span>
+            </button>
+            <a class="navbar-brand" href="#/" ng-cloak>{{APP_NAME_ABBR}} - {{APP_NAME}}</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-collapse-21">
+            <!-- user login dropdown -->
+            <ul class="nav navbar-nav navbar-utility">
+                <li class="dropdown" dropdown>
+                    <a class="dropdown-toggle" dropdown-toggle href="" data-toggle="dropdown" aria-expanded="false">
+                        <span ng-bind="auth.welcomeMessage"></span> <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-show="auth.isLoggedIn()">
+                            <a href="#/profile">User Profile</a>
+                        </li>
+
+                        <li ng-show="auth.isLoggedIn()"></li>
+
+                        <li>
+                            <a ng-click="auth.handleLogin()">{{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
+                        </li>
+
+                        <li ng-show="!auth.isLoggedIn()">
+                            <a ng-click="auth.handleRegistration()"> Register</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-primary persistent-secondary">
+                <li><a href="">Browse</a>
+                    <ul class="nav navbar-nav navbar-persistent">
+                        <li class="dropdown-submenu">
+                        <li><a href="#/spectra/browse">Spectra</a>
+                        <li><a href="#/compounds">Compounds</a>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#">And Another</a></li>
+                <li><a href="#">One More</a></li>
+                <li><a href="#">Last Link</a></li>
+            </ul>
+        </div>
+
+
+
+    </nav>
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="top17">
+                <div ng-view="" autoscroll="true"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /#page-wrapper -->
+
+
+
+<!--[if lt IE 9]>
+<script src="bower_components/es5-shim/es5-shim.js"></script>
+<script src="bower_components/json3/lib/json3.min.js"></script>
+<![endif]-->
+
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+<script src="bower_components/angular-resource/angular-resource.js"></script>
+<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/angular-translate/angular-translate.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs.min.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.min.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/affix.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/alert.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/button.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/carousel.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/collapse.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/dropdown.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tab.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/transition.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/scrollspy.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/modal.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/popover.js"></script>
+<script src="bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
+<script src="bower_components/flot/jquery.flot.js"></script>
+<script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
+<script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
+<script src="bower_components/angular-cts-service/service.js"></script>
+<script src="bower_components/angular-msp-parser/service.js"></script>
+<script src="bower_components/angular-mgf-parser/service.js"></script>
+<script src="bower_components/angular-massbank-parser/service.js"></script>
+<script src="bower_components/angular-masspec-plotter/angular-masspec-plotter.js"></script>
+<script src="bower_components/ng-file-upload/angular-file-upload.js"></script>
+<script src="bower_components/ng-file-upload-shim/angular-file-upload-shim.js"></script>
+<script src="bower_components/metisMenu/jquery.metisMenu.js"></script>
+<script src="bower_components/paralleljs/lib/parallel.js"></script>
+<script src="bower_components/angular-patternfly/dist/angular-patternfly.js"></script>
+<!-- endbower -->
+
+<script src="bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js"></script>
+<script src="bower_components/angular-jquery/dist/angular-jquery.js"></script>
+<script src="bower_components/flot/jquery.flot.resize.js"></script>
+<script src="bower_components/flot/jquery.flot.selection.js"></script>
+<script src="bower_components/flot/jquery.flot.pie.js"></script>
+<script src="bower_components/flot/jquery.flot.time.js"></script>
 <!-- endbuild -->
 
 
+
+<!-- build:js({.tmp,app}) scripts/scripts.js -->
+<script src="scripts/app.js"></script>
+<script src="scripts/server.js"></script>
+<script src="scripts/routes/routes.js"></script>
+
+<!-- error handling -->
+<script src="scripts/errors.js"></script>
+
+<!-- theming -->
+<script src="scripts/theme.js"></script>
+
+<!-- events -->
+<script src="scripts/events.js"></script>
+
+<!-- data caching -->
+<script src="scripts/cache.js"></script>
+
+<!-- services -->
+<script src="scripts/services/persistence/submitterService.js"></script>
+<script src="scripts/services/upload/asyncService.js"></script>
+<script src="scripts/services/persistence/taggingService.js"></script>
+<script src="scripts/services/persistence/spectrumService.js"></script>
+<script src="scripts/services/persistence/compoundsService.js"></script>
+<script src="scripts/services/persistence/metadataService.js"></script>
+<script src="scripts/services/query/SpectraQueryBuilderService.js"></script>
+<script src="scripts/services/optimization/MetaDataOptimizationService.js"></script>
+<script src="scripts/services/cookie/CookieService.js"></script>
+<script src="scripts/services/splashService.js"></script>
+<script src="scripts/services/authenticationService.js"></script>
+<script src="scripts/services/upload/uploadLibraryService.js"></script>
+<script src="scripts/services/persistence/newsService.js"></script>
+<script src="scripts/services/persistence/statisticsService.js"></script>
+
+
+<script src="scripts/filters/curlFilter.js"></script>
+<script src="scripts/filters/spectraDownloadFilter.js"></script>
+
+
+<!-- filters -->
+<script src="scripts/filters/curlFilter.js"></script>
+
+<!-- controllers -->
+<script src="scripts/controllers/main.js"></script>
+<script src="scripts/controllers/authentication/authenticationController.js"></script>
+<script src="scripts/controllers/browser/spectraBrowserController.js"></script>
+<script src="scripts/controllers/browser/spectraDatabaseIndexController.js"></script>
+<script src="scripts/controllers/browser/spectrumViewerController.js"></script>
+<script src="scripts/controllers/browser/compoundBrowserController.js"></script>
+<script src="scripts/controllers/query/spectraQueryModalController.js"></script>
+<script src="scripts/controllers/query/spectraSimilarityQueryController.js"></script>
+<script src="scripts/controllers/submitter/submitterController.js"></script>
+<script src="scripts/controllers/submitter/submitterModalController.js"></script>
+<script src="scripts/controllers/submitter/submitterProfileController.js"></script>
+<script src="scripts/controllers/upload/spectraUploadStatusController.js"></script>
+<script src="scripts/controllers/upload/cleanAndUploadSpectraDataController.js"></script>
+<script src="scripts/controllers/statistics/statisticsController.js"></script>
+<script src="scripts/controllers/searchBoxController.js"></script>
+<script src="scripts/controllers/documentation/DocumentationTermController.js"></script>
+
+
+
+<!-- directives -->
+<script src="scripts/directives/submitterFormDirective.js"></script>
+<script src="scripts/directives/sketcherDirective.js"></script>
+<script src="scripts/directives/autocompleteDirective.js"></script>
+<script src="scripts/directives/disableEnterEventDirective.js"></script>
+<script src="scripts/directives/multiselectDropdown.js"></script>
+<script src="scripts/directives/metadata/tagDirective.js"></script>
+<script src="scripts/directives/metadata/metadataValueDirective.js"></script>
+<script src="scripts/directives/spectra/spectraUploadProgressDirective.js"></script>
+<script src="scripts/directives/compound/displayCompoundDirective.js"></script>
+<script src="scripts/directives/passwordsMatchDirective.js"></script>
+<script src="scripts/directives/query/queryDirective.js"></script>
+<script src="scripts/directives/query/queryPieChart.js"></script>
+<script src="scripts/directives/news/newsDirective.js"></script>
+<script src="scripts/directives/scoring.js"></script>
+<script src="scripts/directives/statisticsDirective.js"></script>
+<script src="scripts/directives/submitter/spectra.js"></script>
+<script src="scripts/directives/spectra/spectraDownloadDirective.js"></script>
+<script src="scripts/directives/spectra/spectraPanelDirective.js"></script>
+
+
+
+
+<!-- none bower js -->
+<script src="lib/chemdoodle/ChemDoodleWeb-unpacked.js"></script>
+<script src="lib/chemdoodle/ChemDoodleWeb-uis-unpacked.js"></script>
+<!-- endbuild -->
+</body>
 </html>
