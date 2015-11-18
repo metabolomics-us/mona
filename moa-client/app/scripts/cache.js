@@ -47,7 +47,6 @@ app.service('SpectrumCache', function ($log, $window) {
     };
     this.setBrowserSpectra = function (browserSpectra) {
         this.browserSpectraScroll = $(window).scrollTop();
-        console.log(this.browserSpectraScroll)
         this.browserSpectra = browserSpectra;
     };
     this.removeBrowserSpectra = function () {

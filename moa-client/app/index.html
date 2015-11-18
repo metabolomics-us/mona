@@ -170,6 +170,10 @@
                 </li>
 
                 <li>
+                    <a href="#/spectra/querytree"><i class="fa fa-list-alt fa-fw"></i>Query Tree</a>
+                </li>
+
+                <li>
                     <a href="#/spectra/similarity"><i class="fa fa-search fa-fw"></i>Similarity Query</a>
                 </li>
 
@@ -299,7 +303,6 @@
 <script src="bower_components/flot/jquery.flot.time.js"></script>
 <!-- endbuild -->
 
-
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/app.js"></script>
 <script src="scripts/server.js"></script>
@@ -340,12 +343,14 @@
 
 <!-- filters -->
 <script src="scripts/filters/curlFilter.js"></script>
+<script src="scripts/filters/spectraDownloadFilter.js"></script>
 
 <!-- controllers -->
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/authentication/authenticationController.js"></script>
 <script src="scripts/controllers/browser/spectraBrowserController.js"></script>
 <script src="scripts/controllers/browser/spectraDatabaseIndexController.js"></script>
+<script src="scripts/controllers/browser/queryTreeController.js"></script>
 <script src="scripts/controllers/browser/spectrumViewerController.js"></script>
 <script src="scripts/controllers/browser/compoundBrowserController.js"></script>
 <script src="scripts/controllers/query/spectraQueryModalController.js"></script>
@@ -358,8 +363,6 @@
 <script src="scripts/controllers/statistics/statisticsController.js"></script>
 <script src="scripts/controllers/searchBoxController.js"></script>
 <script src="scripts/controllers/documentation/DocumentationTermController.js"></script>
-
-
 
 <!-- directives -->
 <script src="scripts/directives/submitterFormDirective.js"></script>
@@ -380,9 +383,6 @@
 <script src="scripts/directives/submitter/spectra.js"></script>
 <script src="scripts/directives/spectra/spectraDownloadDirective.js"></script>
 <script src="scripts/directives/spectra/spectraPanelDirective.js"></script>
-
-
-
 
 <!-- none bower js -->
 <script src="lib/chemdoodle/ChemDoodleWeb-unpacked.js"></script>
