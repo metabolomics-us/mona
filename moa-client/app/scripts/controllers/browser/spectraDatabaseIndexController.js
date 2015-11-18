@@ -101,10 +101,15 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
 
 app.filter('titlecase', function() {
     return function(s) {
-        s = ( angular.isUndefined(s) || s === null ) ? '' : s;
-        return s.toString().toLowerCase().replace( /\b([a-z])/g, function(ch) {
-            return ch.toUpperCase();
-        });
+        s = ( angular.isUndefined(s) || s === null ) ? '' : s.toString();
+
+        if(s.toUpperCase() == s) {
+            return s;
+        } else {
+            return s.toLowerCase().replace(/\b([a-z])/g, function (ch) {
+                return ch.toUpperCase();
+            });
+        }
     };
 });
 
