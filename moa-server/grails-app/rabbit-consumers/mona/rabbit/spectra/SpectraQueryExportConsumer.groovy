@@ -33,7 +33,7 @@ class SpectraQueryExportConsumer {
 
 
     static rabbitConfig = [
-            queue    : "mona.export.spectra",
+            queue: "mona.export.spectra",
             prefetchCount: 1
     ]
 
@@ -80,5 +80,4 @@ class SpectraQueryExportConsumer {
             log.info("\t=>\tno data was provided")
         }
     }
-
 }

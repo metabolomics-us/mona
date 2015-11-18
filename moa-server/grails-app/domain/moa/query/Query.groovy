@@ -51,8 +51,6 @@ class Query {
     SpectrumQueryDownload queryExport
 
 
-
-
     def afterUpdate() {
 
     }
