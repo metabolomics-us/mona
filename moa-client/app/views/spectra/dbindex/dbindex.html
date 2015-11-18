@@ -11,9 +11,9 @@
             <h4 class="page-header">{{name | titlecase}}</h4>
 
             <div class="row">
-                <div class="col-sm-4 text-left" ng-repeat-start="meta in data">
-                    <span class="left10"> ({{meta.count}})</span> <a style="cursor: pointer;"
-                                                                     ng-click="submitQuery(name, meta.value)">{{meta.value}}</a>
+                <div class="col-sm-4 text-left" ng-repeat-start="meta in data | orderBy:'count':true">
+                    <span class="left10"> ({{meta.count}})</span>
+                    <a style="cursor: pointer;" ng-click="submitQuery(name, meta.value)">{{meta.value}}</a>
                 </div>
                 <div class="clearfix" ng-if="$index % 3 == 2"></div>
                 <div ng-repeat-end=""></div>
