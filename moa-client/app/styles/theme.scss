@@ -42,17 +42,94 @@ body {
 /* ------------------------------- */
 
 // Nav bar styles
-/*
+
+.navbar-default .navbar-brand {
+    color: #FFCD00;
+}
+
+.navbar-default .navbar-brand:hover {
+    color: #FFCD00;
+    background-color: transparent;
+}
+
 .navbar-default {
-  background-color: #1A3E68;
-  border-bottom: 5px solid #DFC166;
-}*/
-/*
+    background-color: #1A3E68;
+    border-bottom: 5px solid #DFC166;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: white;
+    font-family: "Lucida Grande","Lucida Sans","Verdana",sans-serif;
+    font-size: medium;
+}
+
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
   color: #DFC166;
   background-color: transparent;
-}*/
-//Top Right Navigation Dropdown Styles
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+    background-color: #335379;
+    color: #DFC166;
+}
+
+.dropdown-menu > li > a {
+    font-family: "Lucida Grande","Lucida Sans","Verdana",sans-serif;
+}
+
+.dropdown-menu > li > a:hover {
+    color: white;
+    background-color: #335379;
+}
+
+.navbar-nav > li > .dropdown-menu {
+    margin-top: 5px;
+    border-radius: 10px;
+}
+
+.dropdown-menu:after {
+    position: inherit;
+    left: 3px;
+    top: -5px;
+    width: inherit;
+    height: inherit;
+    content: '';
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid white;
+}
+
+// search button
+.input-group-btn:last-child > .btn {
+    margin-left: -1px;
+    color: #002855;
+    background-color: #DEB31A;
+}
+
+//Top Right Navigation Dropdown Styles*****
+.nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
+    background-color: #335379;
+    color: #DFC166;
+}
+
+.navbar-top-links {
+    background-color: #1A3E68;
+}
+
+.navbar-top-links > li > a {
+    color: white;
+    font-family: "Lucida Grande","Lucida Sans","Verdana",sans-serif;
+    font-size: medium;
+}
+
+
+.navbar-top-links > li > a:hover {
+    text-decoration: none;
+    color: #DFC166;
+    background-color: transparent;
+}
 
 .navbar-top-links li {
   display: inline-block;
@@ -108,7 +185,10 @@ body {
   left: auto;
 }
 
-/* Sidebar Menu Styles */
+
+
+
+/* Sidebar Menu Styles
 
 .navbar-static-side ul li {
   border-bottom: 1px solid #e7e7e7;
@@ -171,6 +251,7 @@ body {
     overflow-y: scroll;
   }
 }
+*/
 
 /* Buttons */
 
@@ -338,3 +419,5 @@ table.dataTable thead .sorting:after {
 .show-grid {
   margin: 15px 0;
 }
+
+
