@@ -7,8 +7,7 @@ class SpectrumQueryDownload {
     Date dateCreated
     Date lastUpdated
 
-    static constraints = {
-    }
+    static constraints = {}
 
     static mapping = {
         emailAddress sqlType: "text"
