@@ -15,13 +15,10 @@ app.directive('showQuery', function ($compile) {
          * @param $log
          * @param $rootScope
          */
-        controller: function ($scope, $log, $rootScope,SpectraQueryBuilderService,Spectrum) {
-            $scope.status = {
-                isOpen : false
-            };
-
-            $scope.query = SpectraQueryBuilderService.getQuery();
+        controller: function($scope, $log, $rootScope, SpectraQueryBuilderService, Spectrum) {
             $scope.result = [];
+            $scope.status = {isOpen : false};
+            $scope.query = SpectraQueryBuilderService.getQuery();
 
             $scope.$on('spectra:query', function (event, data) {
                 $scope.query = data;
@@ -36,23 +33,16 @@ app.directive('showQuery', function ($compile) {
                 $scope.status.isOpen = !$scope.status.isOpen;
             });
 
-            $scope.curateSpectra = function(){
-
-                Spectrum.curateSpectraByQuery($scope.query, function (data) {
-                });
+            $scope.curateSpectra = function() {
+                Spectrum.curateSpectraByQuery($scope.query, function (data) {});
             };
 
-            $scope.associateSpectra = function(){
-
-                Spectrum.associateSpectraByQuery($scope.query, function (data) {
-                });
+            $scope.associateSpectra = function() {
+                Spectrum.associateSpectraByQuery($scope.query, function (data) {});
             };
-
         },
 
         //decorate our elements based on there properties
-        link: function ($scope, element, attrs, ngModel) {
-
-        }
+        link: function ($scope, element, attrs, ngModel) {}
     }
 });
