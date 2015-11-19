@@ -198,8 +198,6 @@ moaControllers.RegistrationModalController = function ($scope, $rootScope, $moda
                 } else {
                     $scope.errors.push('An unknown error has occurred: '+ JSON.stringify(data));
                 }
-
-
             }
         );
     };
