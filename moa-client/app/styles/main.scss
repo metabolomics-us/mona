@@ -353,3 +353,10 @@ input[readonly] {
 .panel-collapse.collapse.in {
   overflow: visible;
 }
+
+
+/* Query tree children style */
+.panel-query-tree { padding: 0; margin: 20px; }
+.list-group.panel-query-tree .list-group { margin-bottom: 0; }
+.list-group.panel-query-tree .list-group-item { border-radius: 0; border-width: 1px 0 0 0; }
+.list-group.panel-query-tree > .list-group-item:first-child { border-top-width: 0; }

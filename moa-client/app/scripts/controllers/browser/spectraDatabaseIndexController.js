@@ -89,11 +89,11 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
         //);
 
         // Temporary fix
-        queryMetadataValues(148); // ion mode
-        queryMetadataValues(138); // instrument type
-        queryMetadataValues(233); // ms type
-        queryMetadataValues(770); // precursor type
-        queryMetadataValues(8792); // derivative type
+        queryMetadataValues(112); // ion mode
+        queryMetadataValues(107); // instrument type
+        queryMetadataValues(676); // ms type
+        queryMetadataValues(117); // precursor type
+        queryMetadataValues(2079592); // derivative type
 
         queryTotalStatistics();
     })();
@@ -101,10 +101,15 @@ moaControllers.SpectraDatabaseIndexController = function($scope, $http, $locatio
 
 app.filter('titlecase', function() {
     return function(s) {
-        s = ( angular.isUndefined(s) || s === null ) ? '' : s;
-        return s.toString().toLowerCase().replace( /\b([a-z])/g, function(ch) {
-            return ch.toUpperCase();
-        });
+        s = ( angular.isUndefined(s) || s === null ) ? '' : s.toString();
+
+        if(s.toUpperCase() == s) {
+            return s;
+        } else {
+            return s.toLowerCase().replace(/\b([a-z])/g, function (ch) {
+                return ch.toUpperCase();
+            });
+        }
     };
 });
 

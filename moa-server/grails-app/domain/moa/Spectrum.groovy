@@ -111,19 +111,15 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     Score score
 
     void setChemicalCompound(Compound compound) {
-
         CompoundLink link = new CompoundLink()
         link.compound = compound
         link.spectrum = this
         link.type = CompoundType.CHEMICAL
 
-
         addToCompoundLinks(link)
-
     }
 
     Compound getChemicalCompound() {
-
         Compound compound = null
 
         getCompoundLinks().each {
@@ -143,11 +139,9 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         link.type = CompoundType.BIOLOGICAL
 
         addToCompoundLinks(link)
-
     }
 
     Compound getBiologicalCompound() {
-
         Compound compound = null
 
         getCompoundLinks().each {
@@ -171,7 +165,6 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     }
 
     Compound getPredictedCompound() {
-
         Compound compound = null
 
         getCompoundLinks().each {
@@ -218,7 +211,6 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      * @return
      */
     def beforeValidate() {
-
         if (deleted == null) {
             deleted = false
         }

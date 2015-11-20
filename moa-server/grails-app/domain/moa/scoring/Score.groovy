@@ -2,8 +2,7 @@ package moa.scoring
 
 class Score {
 
-    static constraints = {
-    }
+    static constraints = {}
 
     static mapping = {
         impacts nullable: true
@@ -34,9 +33,7 @@ class Score {
 
     @Override
     public String toString() {
-        return "Score{" +
-                "impacts=" + impacts + " score=" + score +
-                '}';
+        return "Score{impacts="+ impacts +" score="+ score +"}";
     }
 
     /**
@@ -44,7 +41,6 @@ class Score {
      * @return
      */
     def beforeValidate() {
-
         //max possible score
         double max = 0
 
@@ -63,10 +59,6 @@ class Score {
 
             //should scaled to 0 - 10
             scaledScore = (relativeScore + 1) * 5;
-
-
         }
-
     }
-
 }

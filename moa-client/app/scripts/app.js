@@ -45,20 +45,23 @@ app.run(function($rootScope) {
     $rootScope.APP_NAME = 'MassBank of North America';
     $rootScope.APP_NAME_ABBR = 'MoNA';
     $rootScope.APP_VERSION = 'alpha-2';
-
 });
 
 
 /**
- * enable cross domain stuff
+ * HTTP configuration
  */
 app.config(function ($httpProvider) {
+    // Enable cross domain access
     $httpProvider.defaults.useXDomain = true;
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+    // Interceptor to handle 500 errors
+    //$httpProvider.interceptors.push('httpResponseInterceptor');
 });
 
 /**
- * set translator language
+ * Set translator language for dialog service
  */
 app.config(function ($translateProvider) {
     $translateProvider.preferredLanguage('en-US');

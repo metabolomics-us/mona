@@ -1,7 +1,6 @@
 package util.query
 
 import moa.query.Query
-import org.apache.log4j.Logger
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,133 +10,194 @@ import org.apache.log4j.Logger
  */
 class StaticQueries {
 
-    static void register(){
-
-        lcms()
+    static void register() {
+        defineGCMSQueries()
+        defineLCMSQueries()
     }
 
-
-    private static void save(String label, String description, String query){
-
+    private static void save(String label, String description, String query) {
         if(Query.findByLabel(label) == null){
-            Query.findOrSaveByLabelAndDescriptionAndQuery(label,description,query)
+            Query.findOrSaveByLabelAndDescriptionAndQuery(label, description, query)
         }
-
     }
 
-    private static  void lcms(){
+
+    private static void defineGCMSQueries() {
+        String label = "GCMS"
+        List instrumentType = ["GC-EI-TOF", "CI-B", "GC-EI-QQ", "EI-B"]
 
 
+        save("${label}", "${label} spectra", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "${label}"
+            }
+        }
+    ]
+}""")
+
+        // derivatized
+        save("${label} - derivatized", "derivatized ${label} spectra", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "derivative type",
+            "value": {
+                "like": "%"
+            }
+        }
+    ],
+    "tags": [
+        {
+            "name": {
+                "eq": "${label}"
+            }
+        }
+    ]
+}""")
+
+        instrumentType.each { t ->
+            // with derivative type
+            save("${label} - derivatized - ${t}", "derivatized ${label} spectra with instrument type ${t}", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "derivative type",
+            "value": {
+                "like": "%"
+            }
+        },
+        {
+            "name": "instrument type",
+            "value": {
+                "eq": "${t}"
+            }
+        }
+    ],
+    "tags": [
+        {
+            "name": {
+                "eq": "${label}"
+            }
+        }
+    ]
+}""")
+
+            // without derivative type
+            save("${label} - ${t}", "${label} spectra with instrument type ${t}", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "instrument type",
+            "value": {
+                "eq": "${t}"
+            }
+        }
+    ],
+    "tags": [
+        {
+            "name": {
+                "eq": "${label}"
+            }
+        }
+    ]
+}""")
+        }
+    }
+
+
+    private static void defineLCMSQueries() {
+        String label = "LCMS"
         List mode = ["virtual", "experimental"]
-
         List acq = ["positive", "negative"]
 
-        String label = "LCMS"
-
-
-        save("${label}","a predefined query returning all ${label} spectra from the system","""
-
-            {
-  "compound": {},
-  "metadata": [],
-  "tags": [
-    {
-      "name": {
-        "eq": "${label}"
-      }
-    }
-  ]
-  }
-            """)
+        save("${label}", "${label} spectra", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "${label}"
+            }
+        }
+    ]
+}""")
 
         /**
          * build different modes
          */
         mode.each { m ->
-
-            save("${label} - ${m}","a predefined query returning all ${m} ${label} spectra from the system","""
-
-            {
-  "compound": {},
-  "metadata": [],
-  "tags": [
-     {
-      "name": {
-        "eq": "${label}"
-      }
-    },
-    {
-      "name": {
-        "eq": "${m}"
-      }
-    }
-  ]
-  }
-            """)
+            save("${label} - ${m}", "${m} ${label} spectra", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "${label}"
+            }
+        },
+        {
+            "name": {
+                "eq": "${m}"
+            }
+        }
+    ]
+}""")
 
             /**
-             * different acquistions
+             * different acquisitions
              */
             acq.each { a ->
-
                 //with mode
-                save("${label} - ${m} - ${a}","a predefined query returning all ${a} mode ${m} ${label} spectra from the system","""
-
-            {
-  "compound": {},
-  "metadata": [
-   {
-      "name": "ion mode",
-      "value": {
-        "eq": "${a}"
-      }
-    }
-],
-  "tags": [
-    {
-      "name": {
-        "eq": "${label}"
-      }
-    }
-    ,
-    {
-      "name": {
-        "eq": "${m}"
-      }
-    }
-  ]
-  }
-            """)
-
-
+                save("${label} - ${m} - ${a}", "${a} mode ${m} ${label} spectra", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "ion mode",
+            "value": {
+            "   eq": "${a}"
+            }
+        }
+    ],
+    "tags": [
+        {
+            "name": {
+                "eq": "${label}"
+            }
+        },
+        {
+            "name": {
+                "eq": "${m}"
+            }
+        }
+    ]
+}""")
             }
         }
 
         acq.each {a ->
-
-
             //without mode
-            save("${label} - ${a}","a predefined query returning all ${a} mode ${label} spectra from the system","""
-
-            {
-  "compound": {},
-  "metadata": [
-   {
-      "name": "ion mode",
-      "value": {
-        "eq": "${a}"
-      }
-    }
-],
-  "tags": [
-    {
-      "name": {
-        "eq": "${label}"
-      }
-    }
-  ]
-  }
-            """)
+            save("${label} - ${a}","${a} mode ${label} spectra", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "ion mode",
+            "value": {
+            "   eq": "${a}"
+            }
+        }
+    ],
+    "tags": [
+        {
+            "name": {
+                "eq": "${label}"
+            }
+        }
+    ]
+}""")
         }
     }
 }
