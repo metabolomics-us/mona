@@ -85,9 +85,12 @@ environments {
         dataSource {
 	     pooled = true
             dbCreate = "update"
-            url = "jdbc:postgresql://${credentials.hostname}:${credentials.port}/${credentials.database}"
-            username = "${credentials.username}"
-            password = "${credentials.password}"
+//            url = "jdbc:postgresql://${credentials.hostname}:${credentials.port}/${credentials.database}"
+//            username = "${credentials.username}"
+//            password = "${credentials.password}"
+            url = "jdbc:postgresql://128.120.143.126:5432/monaproduction"
+            username = "compound"
+            password = "asdf"
             logSql = false
 
 

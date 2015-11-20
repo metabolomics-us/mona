@@ -57,7 +57,7 @@
                         </span>
                     </div>
                     <div class="col-lg-7 col-md-7 col-sm-6">
-                        {{meta.value | limitTo : 25}}
+                        {{meta.value | limitTo : 25}}{{meta.value.length > 25 ? '...' : ''}}
                     </div>
                 </div>
             </div>

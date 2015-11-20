@@ -41,6 +41,7 @@ class SpectraQueryExportService {
         // Get query as JSON
         def json = (query instanceof JSONObject) ? query : JSON.parse(query);
 
+
         // Create directory to store query export if needed
         String downloadPath = grailsApplication.config.queryDownloadDirectory
 
@@ -52,8 +53,10 @@ class SpectraQueryExportService {
             }
         }
 
+
         // Determine output format
         String format = getFileFormat(json)
+
 
         // Create new download file object
         def label = "${emailAddress.split('@')[0]}-$startTime"
@@ -67,7 +70,11 @@ class SpectraQueryExportService {
 
         // Get the number of spectra in our query results
         def ids = spectraQueryService.queryForIds(json)
+        //queryDownload.count = ids.size()
+
         log.info("Counted " + ids.size() + " spectra")
+
+
 
         // Export query to file
         File queryFile = new File(queryDownload.queryFile)
@@ -92,7 +99,6 @@ class SpectraQueryExportService {
 
 
         // Perform query in chunks and export data
-
         exportFile.createNewFile()
 
         log.info("Exporting data file ${exportFile.getName()} as $format")
@@ -128,6 +134,7 @@ class SpectraQueryExportService {
             FileUtils.writeStringToFile(exportFile, "\n]", true)
         }
 
+
         // Move temporary export file to stored location
         if(moveExportFile) {
             File toFile = new File(queryDownload.exportFile)
@@ -136,6 +143,7 @@ class SpectraQueryExportService {
         }
 
         queryDownload.save(flush: true)
+
 
         // Email results
         log.info("Export of ${ids.size()} spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
@@ -157,6 +165,7 @@ class SpectraQueryExportService {
         } else {
             throw new FileNotFoundException("\t=>\tinvalid output format specified: " + json.format)
         }
-        format
+
+        return format
     }
 }

@@ -22,7 +22,6 @@ class MetaDataQueryService {
 
     @Transactional
     def query(def json, def params) {
-
         if (!params.max) {
             params.max = -1
         }
@@ -34,7 +33,6 @@ class MetaDataQueryService {
         if (json == null) {
             throw new Exception("your query needs to contain some parameters!")
         }
-
 
         return query(json, params.max as int, params.offset as int)
     }
@@ -68,11 +66,8 @@ class MetaDataQueryService {
         }
 
         String queryOfDoom = "select distinct ${field} from MetaDataValue m left join m.metaData as md left join md.category as mdc "
-
         String queryOfDoomJoins = ""
-
         String queryOfDoomWhere = ""
-
 
         if (json.isEmpty() == false) {
             queryOfDoomWhere += " where "
@@ -80,8 +75,7 @@ class MetaDataQueryService {
 
         def executionParams = [:]
 
-
-        (queryOfDoomWhere,executionParams) = buildMetadataQueryString(queryOfDoomWhere, json, executionParams, "md", "m", "mdc", 0)
+        (queryOfDoomWhere, executionParams) = buildMetadataQueryString(queryOfDoomWhere, json, executionParams, "md", "m", "mdc", 0)
 
         queryOfDoom = queryOfDoom + queryOfDoomJoins + queryOfDoomWhere
 
@@ -91,7 +85,6 @@ class MetaDataQueryService {
         println ("\n\nt query: \n\n ${queryOfDoom}\n\n")
         log.debug("result size: ${result.size()}")
         return result
-
     }
 
     /**
