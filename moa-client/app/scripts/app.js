@@ -5,6 +5,7 @@ var app = angular
         'ngRoute',
         'ngResource',
         'ngCookies',
+        'ngAnimate',
         'ngSanitize',
         'ui.bootstrap',
         'dialogs.main',
