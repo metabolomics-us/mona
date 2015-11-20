@@ -10,6 +10,7 @@
     "angular-bootstrap": "0.12.0",
     "angular-bootstrap-affix": "https://github.com/passy/angular-bootstrap-affix.git",
     "angular-translate": "^2.1",
+      "angular-animate": "1.3.14",
     "angular-dialog-service": "5.2.8",
     "bootstrap": "3.3.1",
     "bootstrap-sass-official": "3.3.1",

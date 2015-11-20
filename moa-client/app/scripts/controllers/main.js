@@ -3,9 +3,8 @@
 
 angular.module('moaClientApp')
     .controller('MainCtrl', function ($scope) {
-        $scope.awesomeThings = [
-            'HTML5 Boilerplate',
-            'AngularJS',
-            'Karma'
+        $scope.slides = [
+            {image: "images/s1.png", id: '252'},
+            {image: "images/s2.png", id: '931'}
         ];
     });

@@ -6,6 +6,7 @@ var app = angular
         'ngResource',
         'ngCookies',
         'ngSanitize',
+        'ngAnimate',
         'ui.bootstrap',
         'dialogs.main',
         'dialogs.default-translations',
