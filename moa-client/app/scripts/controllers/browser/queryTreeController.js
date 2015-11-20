@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.QueryTreeController = function($scope, Spectrum, $location, $log, SpectraQueryBuilderService) {
+moaControllers.QueryTreeController = function($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService) {
     $scope.executeQuery = function(node) {
         SpectraQueryBuilderService.setQuery(JSON.parse(node.query));
         $location.path('/spectra/browse');
@@ -28,8 +28,15 @@ moaControllers.QueryTreeController = function($scope, Spectrum, $location, $log,
                     data[i].depth = label.length;
                     data[i].id = i;
                     data[i].children = [];
-                    data[i].singleLabel = label.pop();
 
+                    data[i].formattedLabel = '';
+                    for(var j = 0; j < label.length; j++) {
+                        if(j > 0)
+                            data[i].formattedLabel += ', ';
+                        data[i].formattedLabel += $filter('titlecase')(label[j]);
+                    }
+
+                    data[i].singleLabel = label.pop();
                     var parentLabel = label.join(" - ");
 
                     if(data[i].depth == 1) {
@@ -71,8 +78,8 @@ app.directive('queryTreeView', ['$compile', function($compile) {
             var template =
                 '<p class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +'">' +
                 '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length"></i>' +
-            //    '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i> ' +
-                '    <span><a href="" ng-click="executeQuery(node)"><i class="fa fa-search"></i> {{node.singleLabel | titlecase}}</a></span>' +
+                '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i> ' +
+                '    <a href="" ng-click="executeQuery(node)"><i class="fa fa-search"></i> {{node.formattedLabel}}</a> ({{node.queryCount | number:0}})'+
                 '    <span class="pull-right" ng-if="node.exportId !== undefined"><a href="" ng-click="downloadQuery(node)"><i class="fa fa-download"></i> Download</a></span>' +
                 '</p>'+
                 '<div class="list-group" data-ng-repeat-end ng-if="node.children.length" data-query-tree-view data-query-tree-depth="'+ (depth + 1) +'" data-tree-id="'+ treeId +'" data-tree-model="node.children"></div>';

@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:15.10
 MAINTAINER Gert Wohlgemuth "wohlgemuth@ucdavis.edu"
 
 #nginx - runs on port 80

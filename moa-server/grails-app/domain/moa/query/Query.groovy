@@ -1,11 +1,16 @@
 package moa.query
 
+import grails.converters.JSON
 import moa.SpectrumQueryDownload
+import moa.server.query.PredefinedQueryService
+import moa.server.query.SpectraQueryService
 
 /**
  * defienes a pre defined query for easy usability
  */
 class Query {
+    def spectraQueryService
+
 
     Date dateCreated
     Date lastUpdated
@@ -22,7 +27,6 @@ class Query {
         query sqlType: "text"
         description sqlType: "text"
         label unique: false
-        queryCount defaultValue: "0"
     }
 
     /**
@@ -51,9 +55,7 @@ class Query {
     SpectrumQueryDownload queryExport
 
 
-
-
-    def afterUpdate() {
-
+    def beforeInsert() {
+        queryCount = spectraQueryService.getCountForQuery(JSON.parse(query))
     }
 }

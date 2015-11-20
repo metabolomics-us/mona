@@ -10,7 +10,7 @@ class QueryController extends RestfulController<Query> {
         super(Query.class)
     }
 
-    def getQueryByLabel(){
+    def getQueryByLabel() {
         render Query.findAllByLabel(params.label) as JSON
     }
 }

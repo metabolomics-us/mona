@@ -1,6 +1,7 @@
 package util.query
 
 import moa.query.Query
+import moa.server.query.PredefinedQueryService
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,8 +10,8 @@ import moa.query.Query
  * Time: 2:38 PM
  */
 class StaticQueries {
-
     static void register() {
+        defineGeneralQueries()
         defineGCMSQueries()
         defineLCMSQueries()
     }
@@ -19,6 +20,15 @@ class StaticQueries {
         if(Query.findByLabel(label) == null){
             Query.findOrSaveByLabelAndDescriptionAndQuery(label, description, query)
         }
+    }
+
+
+    private static void defineGeneralQueries() {
+        save("all spectra", "all spectra", """{
+    "compound": {},
+    "metadata": [],
+    "tags": []
+}""")
     }
 
 
@@ -112,7 +122,7 @@ class StaticQueries {
     private static void defineLCMSQueries() {
         String label = "LCMS"
         List mode = ["virtual", "experimental"]
-        List acq = ["positive", "negative"]
+        List acq = ["POSITIVE", "NEGATIVE"]
 
         save("${label}", "${label} spectra", """{
     "compound": {},
@@ -158,7 +168,7 @@ class StaticQueries {
         {
             "name": "ion mode",
             "value": {
-            "   eq": "${a}"
+            "eq": "${a}"
             }
         }
     ],
@@ -186,7 +196,7 @@ class StaticQueries {
         {
             "name": "ion mode",
             "value": {
-            "   eq": "${a}"
+            "eq": "${a}"
             }
         }
     ],
