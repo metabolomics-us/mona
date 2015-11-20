@@ -35,6 +35,16 @@
 </div>
 
 <div class="row">
+    <div class="col-md-12">
+        <carousel interval="1000">
+            <slide ng-repeat="slide in slides">
+                <a ng-href="#/spectra/display/{{slide.id}}"><img ng-src="{{slide.image}}" style="margin:auto; width: 75%;" /></a>
+            </slide>
+        </carousel>
+    </div>
+</div>
+
+<div class="row">
     <div class="col-md-4">
         <h3>Database Services</h3>
 
@@ -49,7 +59,6 @@
             <dd>advanced queries possible, using our flexible query dialog</dd>
             <dt>Self curating</dt>
             <dd>the system curates and scores your data, constantly!</dd>
-
         </dl>
     </div>
 
@@ -58,6 +67,4 @@
 
         <div spectra-top-scores-for-users limit="10">please wait, while we are loading the data for you...</div>
     </div>
-
-
 </div>
