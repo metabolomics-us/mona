@@ -16,9 +16,7 @@ import javax.sql.DataSource
  * Time: 12:05 PM
  */
 class GenerateHashKeyRule extends AbstractCurationRule {
-
     boolean executeRule(CurationObject toValidate) {
-
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         Splash splash = spectrum.getSplash();
@@ -29,7 +27,7 @@ class GenerateHashKeyRule extends AbstractCurationRule {
             spectrum.splash = splash
         }
 
-        splash.splash = (SplashUtil.splash(spectrum.getSpectrum(),SpectraType.MS))
+        splash.splash = (SplashUtil.splash(spectrum.getSpectrum(), SpectraType.MS))
 
         splash.save()
 

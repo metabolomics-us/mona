@@ -3,25 +3,21 @@ package moa.splash
 import moa.Spectrum
 
 /**
- * defines the splash, as outlined here
+ * Defines the splash, as outlined here
  *
  * splash.fiehnlab.ucdavis.edu
- *
  */
 class Splash {
+    static belongsTo = [spectrum: Spectrum]
 
-
-    static belongsTo = [spectrum:Spectrum]
-
-    static constraints = {
-    }
+    static constraints = {}
 
     static mapping = {
         block1 nullable:true
         block2 nullable:true
         block3 nullable:true
-
     }
+
     String splash
 
     String block1
@@ -33,16 +29,14 @@ class Splash {
     Spectrum spectrum
 
     def beforeValidate() {
-
-        if(splash!= null){
+        if(splash !=  null) {
             String[] blocks = splash.split("-");
 
-            if(blocks.size() == 3){
+            if(blocks.size() == 3) {
                 block1 = blocks[0]
                 block2 = blocks[1]
                 block3 = blocks[2]
-            }
-            else{
+            } else {
                 throw new RuntimeException("invalid number of blocks!")
             }
         }

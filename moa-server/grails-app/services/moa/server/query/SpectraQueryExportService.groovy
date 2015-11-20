@@ -6,6 +6,7 @@ import moa.SpectrumQueryDownload
 import moa.server.convert.SpectraConversionService
 import moa.server.mail.EmailService
 import org.apache.commons.io.FileUtils
+import org.apache.ivy.util.FileUtil
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.web.json.JSONObject
 
@@ -65,24 +66,33 @@ class SpectraQueryExportService {
         }
 
         // Get the number of spectra in our query results
-        def queryCount = spectraQueryService.getCountForQuery(json)
-        log.info("Counted " + queryCount + " spectra")
+        def ids = spectraQueryService.queryForIds(json)
+        log.info("Counted " + ids.size() + " spectra")
 
         // Export query to file
         File queryFile = new File(queryDownload.queryFile)
-
         log.debug("storing result at: ${queryFile.getAbsolutePath()}")
-        if (!queryFile.exists()) {
+
+        boolean moveExportFile = false
+        File exportFile
+
+        if (queryFile.exists()) {
+            log.info("Query file " + queryFile.getName() +" exists, creating temporary dump file")
+
+            exportFile = new File(queryDownload.exportFile +".tmp")
+            moveExportFile = true
+        } else {
+            log.info("Exporting query file " + queryFile.getName())
+
             queryFile.createNewFile()
+            FileUtils.writeStringToFile(queryFile, json.toString())
+
+            exportFile = new File(queryDownload.exportFile)
         }
 
 
-        FileUtils.writeStringToFile(queryFile, json.toString())
-
-        log.info("Exporting query file " + queryFile.getName())
-
         // Perform query in chunks and export data
-        File exportFile = new File(queryDownload.exportFile)
+
         exportFile.createNewFile()
 
         log.info("Exporting data file ${exportFile.getName()} as $format")
@@ -91,12 +101,11 @@ class SpectraQueryExportService {
             FileUtils.writeStringToFile(exportFile, "[\n", true)
         }
 
-        def ids = spectraQueryService.queryForIds(json)
         int i = 0
 
         // Iterate over all queried spectra and export after converting to JSON or MSP format
         ids.each { def id ->
-            Spectrum s = spectraQueryService.query(id)
+            Spectrum s = spectraQueryService.query(id.id)
 
             if (format == "json") {
                 // Append comma and newline
@@ -119,13 +128,18 @@ class SpectraQueryExportService {
             FileUtils.writeStringToFile(exportFile, "\n]", true)
         }
 
+        // Move temporary export file to stored location
+        if(moveExportFile) {
+            File toFile = new File(queryDownload.exportFile)
+            FileUtils.forceDelete(toFile)
+            FileUtils.moveFile(exportFile, toFile)
+        }
+
         queryDownload.save(flush: true)
 
         // Email results
-        log.info("Export of ${queryCount} spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
-        emailService.sendDownloadEmail(emailAddress, queryCount, queryDownload.id)
-
-
+        log.info("Export of ${ids.size()} spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
+        emailService.sendDownloadEmail(emailAddress, ids.size(), queryDownload.id)
     }
 
     /**

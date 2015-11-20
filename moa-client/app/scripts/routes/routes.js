@@ -62,6 +62,11 @@ app.config(function ($routeProvider) {
             controller: 'SpectraDatabaseIndexController'
         })
 
+        .when('/spectra/querytree', {
+            templateUrl: 'views/spectra/dbindex/queryTree.html',
+            controller: 'QueryTreeController'
+        })
+
         //query by similarity
         .when('/spectra/similarity', {
             templateUrl: 'views/spectra/query/similarityQuery.html',
@@ -138,6 +143,13 @@ app.config(function ($routeProvider) {
         })
         .when('/documentation/terms', {
             templateUrl: 'views/documentation/terms.html',
+            controller: 'DocumentationTermController'
+
+        })
+
+
+        .when('/500', {
+            templateUrl: 'views/500.html',
             controller: 'DocumentationTermController'
 
         })

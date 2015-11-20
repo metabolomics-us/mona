@@ -1,2 +1,2 @@
 #!/bin/sh
-ssh cream -CNL localhost:5432:venus:5432
+ssh cream -CNL 5432:venus:5432

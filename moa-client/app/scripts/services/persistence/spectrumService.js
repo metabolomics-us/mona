@@ -9,7 +9,7 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
      * creates a new resources, we can work with
      */
     return $resource(
-        REST_BACKEND_SERVER + '/rest/spectra/:id?max=' + MAX_SPECTRA + ':offset',
+        REST_BACKEND_SERVER + '/rest/spectra/:id?max='+ MAX_SPECTRA +':offset',
         {id: "@id", offset: "@offset"},
         {
             /**
@@ -17,20 +17,20 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
              */
             'update': {
                 method: 'PUT'
-
             },
 
             /**
              * connects to our service and executes a query
              */
             'searchSpectra': {
-                url: REST_BACKEND_SERVER + '/rest/spectra/search?max=' + MAX_SPECTRA,
+                url: REST_BACKEND_SERVER + '/rest/spectra/search?max='+ MAX_SPECTRA,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 isArray: true
             },
+
             'searchSpectraCount': {
                 url: REST_BACKEND_SERVER + '/rest/spectra/searchCount',
                 method: 'POST',
@@ -40,12 +40,11 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
                 isArray: false
             },
 
-
             /**
              * searches for similar spectra
              */
             'searchSimilarSpectra': {
-                url: REST_BACKEND_SERVER + '/rest/spectra/similarity?max='+MAX_SPECTRA,
+                url: REST_BACKEND_SERVER + '/rest/spectra/similarity?max='+ MAX_SPECTRA,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -64,6 +63,7 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
                 },
                 isArray: false
             },
+
             /**
              * sends a request to the server to score this entity
              */
@@ -75,11 +75,11 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
                 },
                 isArray: false
             },
+
             /**
              * sends a request to the server to curate this spectrum
              */
             'curate': {
-
                 url: REST_BACKEND_SERVER + '/rest/spectra/curate/:id',
                 method: 'GET',
                 headers: {
@@ -104,9 +104,16 @@ app.factory('Spectrum', function ($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
                     'Content-Type': 'application/json'
                 },
                 isArray: false
+            },
+
+            'getPredefinedQueries' : {
+                url: REST_BACKEND_SERVER + '/rest/stored/query?max=100',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                isArray: true
             }
-
-
         }
     );
 });

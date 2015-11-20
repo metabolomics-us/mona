@@ -21,19 +21,16 @@ class RemapMetadataNames extends AbstractCurationRule {
 
     @Override
     boolean executeRule(CurationObject toValidate) {
-
         Spectrum spectrum = toValidate.getObjectAsSpectra();
 
         List<MetaDataValue> toRemap = []
 
         spectrum.listAvailableValues().each {
-
             if (!it.isComputed()) {
                 if (mapping.containsKey(it.getName())) {
                     toRemap.add(it)
                 }
             }
-
         }
 
         toRemap.each {
@@ -47,6 +44,7 @@ class RemapMetadataNames extends AbstractCurationRule {
 
         return true
     }
+
 
     @Override
     boolean ruleAppliesToObject(CurationObject toValidate) {

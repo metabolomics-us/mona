@@ -22,18 +22,19 @@
                 We consider MoNA to be highly useful for crosslinking mass spectra in publications, identification of unknowns and
                 integration in data acquisition software.
             </p>
-    </div>
-    <div class="bor-bot"></div>
-    <div class="row">
-        <div class="col-md-12">
-            <carousel interval="5000">
-                <slide ng-repeat="slide in slides">
-                    <a ng-href="#/spectra/display/{{slide.id}}"><img ng-src="{{slide.image}}" style="margin:auto; width: 75%;" /></a>
-                </slide>
-            </carousel>
         </div>
-    </div>
-    <div class="bor-bot"></div>
+
+        <div class="bor-bot"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <carousel interval="5000">
+                    <slide ng-repeat="slide in slides">
+                        <a ng-href="#/spectra/display/{{slide.id}}"><img ng-src="{{slide.image}}" style="margin:auto; width: 75%;" /></a>
+                    </slide>
+                </carousel>
+            </div>
+        </div>
+        <div class="bor-bot"></div>
     </div>
 
     <div class="row">

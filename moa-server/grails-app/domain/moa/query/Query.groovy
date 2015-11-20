@@ -1,5 +1,7 @@
 package moa.query
 
+import moa.SpectrumQueryDownload
+
 /**
  * defienes a pre defined query for easy usability
  */
@@ -12,6 +14,7 @@ class Query {
         query nullable: false
         label nullable: false
         description nullable: false
+        queryExport nullable: true
     }
 
     static mapping = {
@@ -19,6 +22,7 @@ class Query {
         query sqlType: "text"
         description sqlType: "text"
         label unique: false
+        queryCount defaultValue: "0"
     }
 
     /**
@@ -35,4 +39,21 @@ class Query {
      * a description for our query
      */
     String description
+
+    /**
+     * count of spectra that satisfy the corresponding query
+     */
+    int queryCount
+
+    /**
+     * associated query export
+     */
+    SpectrumQueryDownload queryExport
+
+
+
+
+    def afterUpdate() {
+
+    }
 }

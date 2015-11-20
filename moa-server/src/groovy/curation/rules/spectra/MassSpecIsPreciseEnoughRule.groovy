@@ -13,7 +13,6 @@ import curation.AbstractCurationRule
  * Time: 1:47 PM
  */
 class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
-
     Logger logger = Logger.getLogger(getClass())
     int minPrecision = 3
 
@@ -24,7 +23,6 @@ class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
 
     @Override
     boolean executeRule(CurationObject toValidate) {
-
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         logger.debug("checking precision of mass spec...")
@@ -45,7 +43,6 @@ class MassSpecIsPreciseEnoughRule extends AbstractCurationRule {
         logger.debug("considert to be precise enough: ${result}")
         return result
     }
-
 
     @Override
     String getDescription() {
