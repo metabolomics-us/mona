@@ -29,6 +29,8 @@
 
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/autocomplete.css">
+
+
     <!-- endbuild -->
 </head>
 <body class="dashboard">
@@ -38,7 +40,6 @@
 <![endif]-->
 
 <div id="wrapper" ng-controller="AuthenticationController as auth">
-
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -192,19 +193,16 @@
             </ul>
         </div>
     </nav>
-
+</div>
     <div id="page-wrapper">
         <div class="row">
             <div class="top17">
                 <div ng-view="" autoscroll="true"></div>
             </div>
         </div>
-        <!-- /.row -->
-
     </div>
     <!-- /#page-wrapper -->
 
-</div>
 <!-- /#wrapper -->
 
 <!--[if lt IE 9]>
@@ -322,6 +320,7 @@
 <script src="scripts/directives/submitterFormDirective.js"></script>
 <script src="scripts/directives/sketcherDirective.js"></script>
 <script src="scripts/directives/autocompleteDirective.js"></script>
+<script src="scripts/directives/disableAnimation.js"></script>
 <script src="scripts/directives/disableEnterEventDirective.js"></script>
 <script src="scripts/directives/multiselectDropdown.js"></script>
 <script src="scripts/directives/metadata/tagDirective.js"></script>
