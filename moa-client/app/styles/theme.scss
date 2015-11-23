@@ -100,9 +100,9 @@ h1, h2  {
     font-size: large;
 }
 
-.navbar-default .navbar-brand:hover {
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
     color: #FFCD00;
-    background-color: transparent;
 }
 
 .navbar-default {
@@ -116,7 +116,8 @@ h1, h2  {
     font-size: medium;
 }
 
-.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
   color: #DFC166;
   background-color: transparent;
 }
