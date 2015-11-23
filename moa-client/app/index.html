@@ -41,7 +41,7 @@
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -50,148 +50,147 @@
             <a class="navbar-brand" href="#/" ng-cloak>{{APP_NAME_ABBR}} - {{APP_NAME}}</a>
         </div>
         <!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" role="navigation">
+            <ul class="nav navbar-top-links navbar-right">
+                <!-- User Login -->
+                <li class="dropdown" dropdown>
+                    <a class="dropdown-toggle" dropdown-toggle href="">
+                        <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user" role="menu">
 
-        <ul class="nav navbar-top-links navbar-right">
-            <!-- User Login -->
-            <li class="dropdown" dropdown>
-                <a class="dropdown-toggle" dropdown-toggle href="">
-                    <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i class="fa fa-caret-down"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-user" role="menu">
+                        <li ng-show="auth.isLoggedIn()">
+                            <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li ng-show="auth.isLoggedIn()" class="divider"></li>
 
-                    <li ng-show="auth.isLoggedIn()">
-                        <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
-                    </li>
-                    <li ng-show="auth.isLoggedIn()" class="divider"></li>
+                        <li>
+                            <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
+                        </li>
+                        <li ng-show="!auth.isLoggedIn()">
+                            <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+            </ul>
 
-                    <li>
-                        <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
-                    </li>
-                    <li ng-show="!auth.isLoggedIn()">
-                        <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
-                    </li>
-                </ul>
-                <!-- /.dropdown-user -->
-            </li>
-        </ul>
-
-        <form name="searchBox" ng-controller="SearchBoxController" ng-submit="searchBoxQuery=''" class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
-            <div class="input-group custom-search-form">
-                <input type="text" class="form-control ng-pristine ng-valid ng-touched" ng-model="searchBoxQuery"
-                       placeholder="Search..." tooltip="Search by Name,InChiKey or MoNA ID" tooltip-trigger="focus"
-                       tooltip-placement="bottom">
+            <!-- search form -->
+            <form name="searchBox" ng-controller="SearchBoxController" ng-submit="searchBoxQuery=''" class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
+                <div class="input-group custom-search-form">
+                    <input type="text" class="form-control ng-pristine ng-valid ng-touched" ng-model="searchBoxQuery"
+                           placeholder="Search..." tooltip="Search by Name,InChiKey or MoNA ID" tooltip-trigger="focus"
+                           tooltip-placement="bottom">
                         <span class="input-group-btn">
                             <button class="btn btn-repeat" type="submit" ng-click="performSimpleQuery(searchBoxQuery)">
                                 <i class="fa fa-search"></i>
                             </button>
                         </span>
-            </div>
-        </form>
+                </div>
+            </form>
 
-        <!-- /.navbar-top-links -->
+            <!-- /.navbar-top-links -->
+            <ul class="nav navbar-nav">
+                <li class="dropdown" dropdown>
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" dropdown-toggle href="">
+                        Browse
+                        <span class="fa fa-caret-down"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#/spectra/browse">Browse Mass Spectra</a></li>
+                        <li><a href="#/compounds">Browse Compounds</a></li>
+                        <li><a href="#/spectra/dbindex">Database Index</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#/spectra/querytree">Query Tree</a></li>
+                        <li><a href="#/spectra/similarity">Similarity Query</a></li>
+                        <li ng-controller="SearchBoxController"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#/upload">Spectrum Upload</a></li>
+                    </ul>
+                </li>
+                <!-- statistics dropdown -->
+                <li class="dropdown" dropdown>
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" dropdown-toggle href="">
+                        Statistics
+                        <span class="fa fa-caret-down"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-tasks" role="menu">
+                        <li>
+                            <a href="#/uploadstatus">
+                                <div>
+                                    <p><strong>Upload Progress</strong><span class="pull-right text muted">&nbsp;</span></p>
+                                    <spectra-upload-progress-bar></spectra-upload-progress-bar>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#/statistics/query">
+                                <div>
+                                    <p><strong>average query time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <statistics timeframe="month" query="search"></statistics>
+                                </div>
 
-        <div class="nav navbar-nav" role="navigation">
-            <li class="dropdown" dropdown>
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                    Browse
-                    <span class="fa fa-caret-down"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="#/spectra/browse">Browse Mass Spectra</a></li>
-                    <li><a href="#/compounds">Browse Compounds</a></li>
-                    <li><a href="#/spectra/dbindex">Database Index</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#/spectra/querytree">Query Tree</a></li>
-                    <li><a href="#/spectra/similarity">Similarity Query</a></li>
-                    <li ng-controller="SearchBoxController"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#/upload">Spectrum Upload</a></li>
-                </ul>
-            </li>
-            <!-- statistics dropdown -->
-            <li class="dropdown" dropdown>
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                    Statistics
-                    <span class="fa fa-caret-down"></span>
-                </a>
-                <ul class="dropdown-menu dropdown-tasks" role="menu">
-                    <li>
-                        <a href="#/uploadstatus">
-                            <div>
-                                <p><strong>Upload Progress</strong><span class="pull-right text muted">&nbsp;</span></p>
-                                <spectra-upload-progress-bar></spectra-upload-progress-bar>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#/statistics/query">
-                            <div>
-                                <p><strong>average query time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                <statistics timeframe="month" query="search"></statistics>
-                            </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/statistics/validation">
+                                <div>
+                                    <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <statistics timeframe="month" query="validation"></statistics>
+                                </div>
 
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#/statistics/validation">
-                            <div>
-                                <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                <statistics timeframe="month" query="validation"></statistics>
-                            </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/statistics/import">
+                                <div>
+                                    <p><strong>average upload time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <statistics timeframe="month" query="import"></statistics>
+                                </div>
 
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#/statistics/import">
-                            <div>
-                                <p><strong>average upload time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                <statistics timeframe="month" query="import"></statistics>
-                            </div>
+                            </a>
+                        </li>
 
-                        </a>
-                    </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#/statistics">
+                                <strong>See All Statistics</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
-                    <li class="divider"></li>
-                    <li>
-                        <a class="text-center" href="#/statistics">
-                            <strong>See All Statistics</strong>
-                            <i class="fa fa-angle-right"></i>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="dropdown" dropdown>
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                    Resources
-                    <span class="fa fa-caret-down"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="#/documentation/webservices">Web Services</a></li>
-                    <li><a href="#/documentation/license">License</a></li>
-                    <li><a href="#/documentation/query">REST Service Query</a></li>
-                    <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Using%20authentication%20tokens%20via%20cURL" target="_blank">REST API Authentication</a></li>
-                    <li><a href="#/documentation/terms">Terms and Abbreviations</a></li>
-                    <li><a href="https://bitbucket.org/fiehnlab/mona/src" target="_blank">Sourcecode</a></li>
-                    <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Home" target="_blank">Wiki</a></li>
-                    <li><a href="https://bitbucket.org/fiehnlab/mona/issues/" target="_blank">Bug Reports / Feature requests</a></li>
-                </ul>
-            </li>
-            <li><a href="#/news">About</a></li>
-            <li ng-show="auth.isAdmin()">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                    Administration
-                    <span class="fa fa-caret-down"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="#/admin/submitters">Manage Submitters</a></li>
-                    <li><a href="#/admin/news">News</a></li>
-                </ul>
-            </li>
-
+                <li class="dropdown" dropdown>
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" dropdown-toggle href="">
+                        Resources
+                        <span class="fa fa-caret-down"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#/documentation/webservices">Web Services</a></li>
+                        <li><a href="#/documentation/license">License</a></li>
+                        <li><a href="#/documentation/query">REST Service Query</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Using%20authentication%20tokens%20via%20cURL" target="_blank">REST API Authentication</a></li>
+                        <li><a href="#/documentation/terms">Terms and Abbreviations</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/src" target="_blank">Sourcecode</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Home" target="_blank">Wiki</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/issues/" target="_blank">Bug Reports / Feature requests</a></li>
+                    </ul>
+                </li>
+                <li><a href="#/news">About</a></li>
+                <li ng-show="auth.isAdmin()">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        Administration
+                        <span class="fa fa-caret-down"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#/admin/submitters">Manage Submitters</a></li>
+                        <li><a href="#/admin/news">News</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-        <!-- /.navbar-static-side -->
     </nav>
 
     <div id="page-wrapper">
