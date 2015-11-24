@@ -8,7 +8,7 @@ body {
   font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
 }
 
-@media(min-width: 768px) {
+@media(min-width: 1108px) {
   body {
     padding-top: 50px;
   }
@@ -49,6 +49,9 @@ body {
 }
 /* ------------------------------- */
 
+.carousel-inner > .item > a > img {
+  height: 300px;
+}
 
 // Text Style
 
