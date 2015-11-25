@@ -1,13 +1,16 @@
 'use strict';
 
 describe('Controller: Authentication Controller', function() {
-  beforeEach(module('moaClientApp'));
+  beforeEach(module('moaClientApp'), function($httpProvider){
+    $httpProvider.interceptors.push('moaClientApp');
+  });
 
-  var scope,createController,modal,rootScope,authService;
+  var scope,createController,modal,rootScope,authService,httpBackEnd;
 
   beforeEach(inject(function($controller,$rootScope,$injector,_AuthenticationService_) {
     scope = $rootScope.$new();
     rootScope = $injector.get('$rootScope');
+    httpBackEnd = $injector.get('$httpBackend');
     modal = $injector.get('$modal');
     authService = _AuthenticationService_;
     createController = function() {
@@ -70,10 +73,10 @@ describe('Controller: Authentication Controller', function() {
   });
 
   it('creates a welcome message on login', function() {
+    httpBackEnd.expectPOST('http://cream.fiehnlab.ucdavis.edu:8080/rest/login/validate').respond(200,{firstName: 'testUser', access_token: 123, submitter: 'test@fiehnlab.com' });
+    httpBackEnd.expectGET('views/main.html').respond(200);
     var controller = createController();
-    rootScope.currentUser = {firstName: 'testUser', access_token: 123, submitter: 'test@fiehnlab.com' };
-    scope.$broadcast('auth:login-success');
-    scope.$digest();
+    httpBackEnd.flush();
     expect(controller.welcomeMessage).toBe('Welcome, ' + rootScope.currentUser.firstName +'!');
   });
 
