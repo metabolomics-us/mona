@@ -66,7 +66,7 @@ describe('Controller: Spectra Browser Controller', function() {
 
   it('opens our modal dialog to query spectra', function() {
     httpBackend.expectPOST(REST_SERVER + '/rest/spectra/searchCount').respond(200,{data: 'test'});
-    httpBackend.expectPOST(REST_SERVER + '/rest/spectra/search?max=7&offset=0').respond(200, ['test','test2']);
+    httpBackend.expectPOST(REST_SERVER + '/rest/spectra/search?max=7&offset=0').respond(200, [spectra()]);
     httpBackend.expectGET('/views/spectra/query/query.html').respond(200);
     httpBackend.expectGET('views/main.html').respond(200);
     httpBackend.expectGET('template/modal/backdrop.html').respond(200,'<div><b>Hello</b> World!</div>');
