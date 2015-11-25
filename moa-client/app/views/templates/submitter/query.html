@@ -1,16 +1,15 @@
-<span class="dropdown" dropdown>
-    <a href class="" dropdown-toggle>
+<span class="dropdown" uib-dropdown>
+    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
         <i class='fa fa-search'></i>
         <span ng-transclude></span>
     </a>
 
-    <ul class="dropdown-menu" role="menu">
+    <ul class="uib-dropdown-menu">
         <li><a ng-click="newQuery()">Create new query</a></li>
         <li><a ng-click="addToQuery()">Add to query</a></li>
         <li><a ng-click="removeFromQuery()">Remove from query</a></li>
 
         <li ng-show="$parent.auth.isAdmin()" class="divider"></li>
         <li ng-show="$parent.auth.isAdmin()"><a ng-click="curateSpectra()">curate submitters spectra</a></li>
-
     </ul>
 </span>

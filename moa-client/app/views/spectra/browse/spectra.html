@@ -9,26 +9,26 @@
 <div class="row">
     <div class="col-md-8">
         <div class="form-group">
-            <button class="btn btn-primary" ng-click="table = true" tooltip-placement="right"
-                    tooltip="click, to display the data in tabular mode"
-                    tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+            <button class="btn btn-primary" ng-click="table = true" uib-tooltip-placement="right"
+                    uib-tooltip="click, to display the data in tabular mode"
+                    uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-table fa-fw"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="table = false" tooltip-placement="right"
-                    tooltip="click, to display the data in grid mode"
-                    tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+            <button class="btn btn-primary" ng-click="table = false" uib-tooltip-placement="right"
+                    uib-tooltip="click, to display the data in grid mode"
+                    uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="querySpectraDialog()" tooltip-placement="right"
-                    tooltip="click, to open the advanced query dialog"
-                    tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+            <button class="btn btn-primary" ng-click="querySpectraDialog()" uib-tooltip-placement="right"
+                    uib-tooltip="click, to open the advanced query dialog"
+                    uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-search fa-fw"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="submitQuery()" tooltip-placement="right"
-                    tooltip="click, to refresh the query" tooltip-trigger="mouseenter" tooltip-popup-delay="2">
+            <button class="btn btn-primary" ng-click="submitQuery()" uib-tooltip-placement="right"
+                    uib-tooltip="click, to refresh the query" uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay="2">
                 <i class="fa fa-2x fa-refresh fa-fw"></i>
             </button>
 
@@ -39,8 +39,8 @@
         <div class="pull-right">
             <div ng-show="auth.isLoggedIn()" spectra-download></div>
 
-            <button class="btn btn-primary" ng-click="displayQuery()" tooltip-placement="left"
-                    tooltip="this is the number of your received results, click to see more query details">
+            <button class="btn btn-primary" ng-click="displayQuery()" uib-tooltip-placement="left"
+                    uib-tooltip="this is the number of your received results, click to see more query details">
 
                 <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{queryResultCount}}
                 <span ng-show="auth.isAdmin() && duration !== undefined"> ({{duration | number: 2}} s)</span>

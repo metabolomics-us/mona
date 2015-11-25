@@ -144,6 +144,11 @@ h2  {
 .navbar-default {
     background-color: #1A3E68;
     border-bottom: 5px solid #DFC166;
+
+}
+
+.dropdown-toggle {
+  cursor: pointer;
 }
 
 .navbar-default .navbar-nav > li > a {
@@ -177,6 +182,7 @@ h2  {
 .navbar-nav > li > .dropdown-menu {
     margin-top: 5px;
     border-radius: 10px;
+
 }
 
 .dropdown-menu:after {
@@ -287,6 +293,7 @@ h2  {
 .navbar-top-links .dropdown-user {
   right: 0;
   left: auto;
+  cursor: pointer;
 }
 
 /* Buttons */

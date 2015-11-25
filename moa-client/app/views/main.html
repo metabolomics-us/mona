@@ -27,15 +27,11 @@
         <div class="bor-bot"></div>
         <div class="row" ng-controller="MainCtrl">
             <div class="col-md-12">
-                <carousel interval="7000" disable-animation="true" no-wrap="noWrapSlides">
-                    <slide ng-repeat="slide in slides">
+                <uib-carousel interval="7000" no-wrap="noWrapSlides">
+                    <uib-slide ng-repeat="slide in slides">
                         <a ng-href="#/spectra/display/{{slide.id}}"><img ng-src="{{slide.image}}" style="margin:auto" /></a>
-                       <!-- <div class="carousel-caption">
-                            <h4>Spectrum {{slide.id}}</h4>
-                            <span>{{slide.name}}</span>
-                        </div> -->
-                    </slide>
-                </carousel>
+                    </uib-slide>
+                </uib-carousel>
             </div>
         </div>
         <div class="bor-bot"></div>
