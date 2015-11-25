@@ -16,7 +16,7 @@
 
     <div ng-if="options.length > 0">
         <div class="btn-group top5" dropdown>
-            <button type="button" class="btn dropdown-toggle btn-sm" dropdown-toggle
+            <button type="button" class="btn dropdown-toggle btn-sm" uib-dropdown-toggle
                     ng-class="{active: status.active, 'btn-info' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}">
 
                 <span ng-if="tag.ruleBased">
@@ -27,7 +27,7 @@
 
                 <span class="caret left30"></span>
             </button>
-            <ul class="dropdown-menu" role="menu">
+            <ul class="uib-dropdown-menu">
                 <li ng-repeat="opt in options"><a ng-click="opt.action(tag, status)">{{opt.name}}</a></li>
             </ul>
         </div>
