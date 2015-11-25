@@ -24,6 +24,7 @@ module.exports = function (config) {
             'app/bower_components/angular-msp-parser/service.js',
             'app/bower_components/angular-mgf-parser/service.js',
             'app/bower_components/angular-massbank-parser/service.js',
+            'app/bower_components/angular-animate/angular-animate.js',
             'app/bower_components/angular-cts-service/service.js',
             'app/bower_components/angular-masspec-plotter/angular-masspec-plotter.js',
             'app/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
