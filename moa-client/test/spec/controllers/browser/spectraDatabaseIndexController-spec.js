@@ -34,11 +34,16 @@ describe('Controller: Spectra Database Index Controller', function() {
   });
 
   it('submits a query from clicked metadata link', function() {
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/148').respond(200,data);
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/138').respond(200,data);
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/233').respond(200,data);
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/770').respond(200,data);
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/8792').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/112').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/107').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/676').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/117').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/2079592').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/148').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/138').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/233').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/770').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/8792').respond(200,data);
     httpBackend.expectGET(REST_SERVER + '/rest/statistics/countAll/').respond(200,data);
     httpBackend.expectGET(REST_SERVER + '/rest/meta/data/?max=100').respond(200,data);
     httpBackend.expectGET('views/spectra/browse/spectra.html').respond(200,data);
@@ -48,11 +53,16 @@ describe('Controller: Spectra Database Index Controller', function() {
   });
 
   it('can title case the first character of any word in a string', function() {
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/148').respond(200,data);
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/138').respond(200,data);
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/233').respond(200,data);
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/770').respond(200,data);
-    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/8792').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/112').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/107').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/676').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/117').respond(200,data);
+    httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/2079592').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/148').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/138').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/233').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/770').respond(200,data);
+    //httpBackend.expectGET(REST_SERVER + '/rest/statistics/meta/spectra/count/8792').respond(200,data);
     httpBackend.expectGET(REST_SERVER + '/rest/statistics/countAll/').respond(200,data);
     httpBackend.expectGET('views/main.html').respond(200);
 
