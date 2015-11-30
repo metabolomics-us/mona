@@ -16,8 +16,8 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12" ng-init="showScore = false">
-                            <span tooltip-placement="right" tooltip="Please click to view how the score was calculated"
-                                  tooltip-trigger="mouseenter" tooltip-popup-delay='10' ng-click="showScore =! showScore">
+                            <span uib-tooltip-placement="right" uib-tooltip="Please click to view how the score was calculated"
+                                  uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='10' ng-click="showScore =! showScore">
                                 Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
                             </span>
                         </div>
@@ -133,8 +133,8 @@
 
                                                     <!-- display this, if it's a computed value -->
                                                     <i ng-show="ion.computed == true" class="fa fa-flask"
-                                                       tooltip-placement="top"
-                                                       tooltip="This value was computed via automated curation"></i>
+                                                       uib-tooltip-placement="top"
+                                                       uib-tooltip="This value was computed via automated curation"></i>
                                                 </td>
                                             </tr>
                                             </tbody>
