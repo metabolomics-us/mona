@@ -2,15 +2,15 @@
     <ul class="list-inline" style="text-align: center;">
         <li class="" ng-repeat="tag in tags">
 
-            <div class="btn-group" dropdown>
+            <div class="btn-group" uib-dropdown>
 
-                <button type="button" class="btn dropdown-toggle" dropdown-toggle ng-class="tagClass(tag)" ng-click="selectTag(tag)">
+                <button type="button" class="btn dropdown-toggle" uib-dropdown-toggle ng-class="tagClass(tag)" ng-click="selectTag(tag)">
                     {{tag.text}}
                     <i class="fa fa-flask" ng-show="tag.ruleBased"></i>
 
                     <span class="caret left30"></span>
                 </button>
-                <ul class="dropdown-menu" role="menu">
+                <ul class="uib-dropdown-menu">
                     <li ng-repeat="opt in options"><a ng-click="opt.action(tag, status)">{{opt.name}}</a></li>
                 </ul>
             </div>

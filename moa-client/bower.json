@@ -7,7 +7,7 @@
     "angular-route": "1.4.8",
     "angular-resource": "1.4.8",
     "angular-cookies": "1.4.8",
-    "angular-bootstrap": "^0.12",
+    "angular-bootstrap": "0.14.3",
     "angular-bootstrap-affix": "https://github.com/passy/angular-bootstrap-affix.git",
     "angular-translate": "^2.1",
     "angular-animate": "1.4.8",
@@ -41,6 +41,7 @@
     "ngSanitize": "~0.0.2"
   },
   "resolutions": {
-    "angular": "1.4.8"
+    "angular": "1.4.8",
+    "angular-bootstrap": "0.14.3"
   }
 }

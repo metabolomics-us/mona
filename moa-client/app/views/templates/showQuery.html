@@ -1,6 +1,6 @@
 <div>
-    <accordion close-others="true" tooltip-placement="right" tooltip="click, to display the currently executed query"
-               tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+    <accordion close-others="true" uib-tooltip-placement="right" uib-tooltip="click, to display the currently executed query"
+               uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
         <accordion-group heading="display generated query" is-open="status.isOpen"
                          ng-click="status.isOpen != status.isOpen">
 
@@ -23,14 +23,14 @@
             <div class="row" ng-show="auth.isLoggedIn() && auth.isAdmin()">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <button class="btn btn-danger" ng-click="curateSpectra()" tooltip-placement="right"
-                                tooltip="click, to curate all spectra, based on this query"
-                                tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+                        <button class="btn btn-danger" ng-click="curateSpectra()" uib-tooltip-placement="right"
+                                uib-tooltip="click, to curate all spectra, based on this query"
+                                uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                             <i class="fa fa-2x fa-tasks fa-fw"></i>
                         </button>
-                        <button class="btn btn-danger" ng-click="associateSpectra()" tooltip-placement="right"
-                                tooltip="click, to associate all spectra, based on this query. This try's to automatically remap the submitter to the author fields"
-                                tooltip-trigger="mouseenter" tooltip-popup-delay='2'>
+                        <button class="btn btn-danger" ng-click="associateSpectra()" uib-tooltip-placement="right"
+                                uib-tooltip="click, to associate all spectra, based on this query. This try's to automatically remap the submitter to the author fields"
+                                uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                             <i class="fa fa-2x fa-users fa-fw"></i>
                         </button>
 

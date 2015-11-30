@@ -7,7 +7,6 @@ var app = angular
         'ngCookies',
         'ngAnimate',
         'ngSanitize',
-        'ngAnimate',
         'ui.bootstrap',
         'dialogs.main',
         'dialogs.default-translations',
