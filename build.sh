@@ -21,8 +21,10 @@ grails war
 cd ..
 
 #assmeble docker file
-
-eval "$(docker-machine env cloud)"
+if [ "$HOSTNAME" -eq "trashcan.fiehnlab.ucdavis.edu"]
+then
+  eval "$(docker-machine env cloud)"
+fi
 
 cd mona-docker/single
 
@@ -31,16 +33,17 @@ cp ../../moa-client/mona-client.zip client.zip
 
 bash build.sh push
 
+if [ "$HOSTNAME" -eq "trashcan.fiehnlab.ucdavis.edu"]
+then
+  cd ../cloud
 
-cd ../cloud
+  cp ../../moa-server/target/mona-server.war root.war
+  cp ../../moa-client/mona-client.zip client.zip
 
-cp ../../moa-server/target/mona-server.war root.war
-cp ../../moa-client/mona-client.zip client.zip
+  $(boot2docker shellinit)
 
-$(boot2docker shellinit)
-
-bash build.sh push
-
+  bash build.sh push
+fi
 
 cd ../cache
 
