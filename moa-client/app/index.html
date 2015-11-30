@@ -79,7 +79,7 @@
             <form name="searchBox" ng-controller="SearchBoxController" ng-submit="searchBoxQuery=''" class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
                 <div class="input-group custom-search-form">
                     <input type="text" class="form-control ng-pristine ng-valid ng-touched" ng-model="searchBoxQuery"
-                           placeholder="Search..." tooltip="Search by Name,InChiKey or MoNA ID" tooltip-trigger="focus"
+                           placeholder="Search..." tooltip="Search by Name, InChiKey, MoNA ID or SPLASH Code" tooltip-trigger="focus"
                            tooltip-placement="bottom">
                         <span class="input-group-btn">
                             <button class="btn btn-repeat" type="submit" ng-click="performSimpleQuery(searchBoxQuery)">
@@ -130,7 +130,6 @@
                                     <p><strong>average query time</strong><span class="pull-right text-muted">&nbsp;</span></p>
                                     <statistics timeframe="month" query="search"></statistics>
                                 </div>
-
                             </a>
                         </li>
                         <li>
@@ -139,7 +138,6 @@
                                     <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span></p>
                                     <statistics timeframe="month" query="validation"></statistics>
                                 </div>
-
                             </a>
                         </li>
                         <li>
@@ -148,7 +146,6 @@
                                     <p><strong>average upload time</strong><span class="pull-right text-muted">&nbsp;</span></p>
                                     <statistics timeframe="month" query="import"></statistics>
                                 </div>
-
                             </a>
                         </li>
 
