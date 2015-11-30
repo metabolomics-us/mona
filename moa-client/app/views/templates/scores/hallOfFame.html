@@ -1,3 +1,4 @@
+
 <table class="table">
     <thead>
     <tr>
@@ -10,7 +11,7 @@
     </thead>
 
     <tbody>
-        <tr ng-repeat="score in scores | orderBy:'-score' | limitTo:10">
+        <tr ng-repeat="score in scores | orderBy:'-score' | limitTo:limit">
             <td>
                 <i class="fa fa-trophy" ng-show="$index == 0"  style="color:#ffd700"></i>
                 <i class="fa fa-trophy" ng-show="$index == 1"  style="color:#C0C0C0"></i>
