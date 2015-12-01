@@ -2,11 +2,11 @@
 
 #simple build file for our docker image of the latest version
 
-#build client module
-cd moa-client
-
 if [ "$1" == "--skip-build" ]
 then
+	#build client module
+	cd moa-client
+
 	npm install
 	bower update
 	rm mona-client.zip
@@ -15,7 +15,6 @@ then
 	cd ..
 
 	#build server module
-
 	cd moa-server
 	rm -rdf target/*
 	grails clean
