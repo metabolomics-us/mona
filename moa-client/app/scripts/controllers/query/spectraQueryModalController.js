@@ -1,7 +1,7 @@
 /**
  * Created by wohlgemuth on 7/11/14.
  */
-moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, SpectraQueryBuilderService) {
+moaControllers.QuerySpectrumModalController = function ($scope, $uibModalInstance, SpectraQueryBuilderService) {
     /**
      * Store accordion status
      * @type {{name: boolean}}
@@ -28,7 +28,7 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
     $scope.query = {};
 
     $scope.cancelDialog = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 
     /**
@@ -52,7 +52,7 @@ moaControllers.QuerySpectrumModalController = function ($scope, $modalInstance, 
         }
 
         //submit the final query
-        $modalInstance.close(SpectraQueryBuilderService.getQuery());
+        $uibModalInstance.close(SpectraQueryBuilderService.getQuery());
     };
 
 };

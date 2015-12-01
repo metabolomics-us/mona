@@ -11,7 +11,7 @@
  * @param $scope
  * @param Spectrum
  * @param Compound
- * @param $modal
+ * @param $uibModal
  * @param $routeParams
  * @param SpectraQueryBuilderService
  * @param MetadataService
@@ -20,7 +20,7 @@
  * @param SpectrumCache
  * @constructor
  */
-moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $modal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, $rootScope, $timeout, $filter, REST_BACKEND_SERVER) {
+moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, $uibModal, $routeParams, SpectraQueryBuilderService, MetadataService, TaggingService, $log, $location, SpectrumCache, $rootScope, $timeout, $filter, REST_BACKEND_SERVER) {
 
     $scope.table = false;
     /**
@@ -106,7 +106,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
      * opens our modal dialog to query spectra against the system
      */
     $scope.querySpectraDialog = function () {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: '/views/spectra/query/query.html',
             controller: moaControllers.QuerySpectrumModalController,
             size: 'lg',

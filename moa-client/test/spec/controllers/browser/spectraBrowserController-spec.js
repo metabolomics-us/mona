@@ -5,26 +5,26 @@ describe('Controller: Spectra Browser Controller', function() {
     $httpProvider.interceptors.push('moaClientApp');
   });
 
-  var scope,specBrowserController,rootScope,httpBackend,modal,REST_SERVER,modalInstance,location;
+  var scope,specBrowserController,rootScope,httpBackend,uibModal,REST_SERVER,uibModalInstance,location;
 
   beforeEach(function() {
     angular.mock.inject(function($injector,$controller,$rootScope,_REST_BACKEND_SERVER_) {
       scope = $rootScope.$new();
       rootScope = $injector.get('$rootScope');
       httpBackend = $injector.get('$httpBackend');
-      modal = $injector.get('$modal');
+      uibModal = $injector.get('$uibModal');
       location = $injector.get('$location');
       REST_SERVER = _REST_BACKEND_SERVER_;
 
-      modalInstance = {
+      uibModalInstance = {
         result: {
-          then: jasmine.createSpy('modalInstance.result.then')
+          then: jasmine.createSpy('uibModalInstance.result.then')
         }
       };
 
       specBrowserController = $controller('SpectraBrowserController', {
         $scope: scope,
-        $modalInstance: modalInstance
+        $uibModalInstance: uibModalInstance
       });
     });
   });
@@ -64,7 +64,7 @@ describe('Controller: Spectra Browser Controller', function() {
     httpBackend.flush();
   });
 
-  it('opens our modal dialog to query spectra', function() {
+  it('opens our uibModal dialog to query spectra', function() {
     httpBackend.expectPOST(REST_SERVER + '/rest/spectra/searchCount').respond(200,{data: 'test'});
     httpBackend.expectPOST(REST_SERVER + '/rest/spectra/search?max=7&offset=0').respond(200, [spectra()]);
     httpBackend.expectGET('/views/spectra/query/query.html').respond(200);

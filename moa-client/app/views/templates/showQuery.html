@@ -1,7 +1,7 @@
 <div>
-    <accordion close-others="true" uib-tooltip-placement="right" uib-tooltip="click, to display the currently executed query"
+    <uib-accordion close-others="true" uib-tooltip-placement="right" uib-tooltip="click, to display the currently executed query"
                uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
-        <accordion-group heading="display generated query" is-open="status.isOpen"
+        <uib-accordion-group heading="display generated query" is-open="status.isOpen"
                          ng-click="status.isOpen != status.isOpen">
 
             <div>
@@ -37,6 +37,6 @@
                     </div>
                 </div>
             </div>
-        </accordion-group>
-    </accordion>
+        </uib-accordion-group>
+    </uib-accordion>
 </div>

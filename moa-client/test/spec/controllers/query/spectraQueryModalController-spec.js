@@ -1,32 +1,32 @@
 describe('Controller: Spectra Query Modal Controller', function() {
   beforeEach(module('moaClientApp'));
 
-  var scope,querySpecModalController,modalInstance,filter;
+  var scope,querySpecModalController,uibModalInstance,filter;
 
   beforeEach(function() {
     angular.mock.inject(function($injector,$controller,$rootScope) {
       scope = $rootScope.$new();
       filter = $injector.get('$filter');
-      modalInstance = {
-        close: jasmine.createSpy('modalInstance.close'),
-        dismiss: jasmine.createSpy('modalInstance.dismiss')
+      uibModalInstance = {
+        close: jasmine.createSpy('uibModalInstance.close'),
+        dismiss: jasmine.createSpy('uibModalInstance.dismiss')
       };
 
       querySpecModalController = $controller('QuerySpectrumModalController', {
         $scope: scope,
-        $modalInstance: modalInstance
+        $uibModalInstance: uibModalInstance
       });
     });
   });
 
   it('can cancel the dialog', function() {
     scope.cancelDialog();
-    expect(modalInstance.dismiss).toHaveBeenCalledWith('cancel');
+    expect(uibModalInstance.dismiss).toHaveBeenCalledWith('cancel');
   });
 
   it('closes the dialog and builds the query', function() {
     scope.submitQuery();
-    expect(modalInstance.close).toHaveBeenCalled();
+    expect(uibModalInstance.close).toHaveBeenCalled();
   });
 
   it('can filter unique fields', function() {
