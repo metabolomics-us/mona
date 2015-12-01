@@ -90,30 +90,30 @@
                     <!-- mass spectral properties -->
                     <div class="row">
                         <div class="col-md-12">
-                            <accordion close-others="false">
-                                <accordion-group is-open="accordionStatus.isSpectraOpen">
-                                    <accordion-heading>
+                            <uib-accordion close-others="false">
+                                <uib-accordion-group is-open="accordionStatus.isSpectraOpen">
+                                    <uib-accordion-heading>
                                         <div>Mass Spectrum
                                             <i class="pull-right glyphicon"
                                                ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen,
                                                        'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i>
                                         </div>
-                                    </accordion-heading>
+                                    </uib-accordion-heading>
 
                                     <div class="masspec-modal">
                                         <mass-spec id="massSpec_{{spectrum.id}}"
                                                    ng-model="spectrum.spectrum"></mass-spec>
                                     </div>
-                                </accordion-group>
+                                </uib-accordion-group>
 
-                                <accordion-group is-open="accordionStatus.isIonTableOpen">
-                                    <accordion-heading>
+                                <uib-accordion-group is-open="accordionStatus.isIonTableOpen">
+                                    <uib-accordion-heading>
                                         <div>Ion Table
                                             <i class="pull-right glyphicon"
                                                ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen,
                                                     'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i>
                                         </div>
-                                    </accordion-heading>
+                                    </uib-accordion-heading>
 
                                     <div style="height: 400px; overflow: auto; margin-top: 10px;">
                                         <table class="table">
@@ -140,16 +140,16 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </accordion-group>
+                                </uib-accordion-group>
 
-                                <accordion-group is-open="accordionStatus.isSimilarSpectraOpen">
-                                    <accordion-heading>
+                                <uib-accordion-group is-open="accordionStatus.isSimilarSpectraOpen">
+                                    <uib-accordion-heading>
                                         <div ng-click="loadSimilarSpectra()">
                                             Similar Spectra<i class="pull-right glyphicon"
                                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
                                                        'glyphicon-chevron-right': !accordionStatus.isSimilarSpectraOpen}"></i>
                                         </div>
-                                    </accordion-heading>
+                                    </uib-accordion-heading>
 
                                     <div class="text-center" ng-show="loadingSimilarSpectra">
                                         <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span>
@@ -214,8 +214,8 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </accordion-group>
-                            </accordion>
+                                </uib-accordion-group>
+                            </uib-accordion>
                         </div>
                     </div>
                     <br/>
@@ -224,37 +224,37 @@
                         <div class="col-md-12">
                             <h4>Compound Properties</h4>
 
-                            <accordion close-others="false">
-                                <accordion-group
+                            <uib-accordion close-others="false">
+                                <uib-accordion-group
                                         ng-if="spectrum.predictedCompound != null"
                                         is-open="accordionStatus.isDerivatizedCompoundOpen">
-                                    <accordion-heading>
+                                    <uib-accordion-heading>
                                         <div>Computed Derivatization Product<i class="pull-right glyphicon"
                                                                                ng-class="{'glyphicon-chevron-down': accordionStatus.isDerivatizedCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isDerivatizedCompoundOpen}"></i>
                                         </div>
-                                    </accordion-heading>
+                                    </uib-accordion-heading>
                                     <div display-compound-info compound="spectrum.predictedCompound"></div>
-                                </accordion-group>
+                                </uib-accordion-group>
 
-                                <accordion-group is-open="accordionStatus.isBiologicalCompoundOpen">
-                                    <accordion-heading>
+                                <uib-accordion-group is-open="accordionStatus.isBiologicalCompoundOpen">
+                                    <uib-accordion-heading>
                                         <div>Substance <i class="pull-right glyphicon"
                                                           ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i>
                                         </div>
-                                    </accordion-heading>
+                                    </uib-accordion-heading>
 
                                     <div display-compound-info compound="spectrum.biologicalCompound"></div>
-                                </accordion-group>
+                                </uib-accordion-group>
 
-                                <accordion-group is-open="accordionStatus.isChemicalCompoundOpen">
-                                    <accordion-heading>
+                                <uib-accordion-group is-open="accordionStatus.isChemicalCompoundOpen">
+                                    <uib-accordion-heading>
                                         <div>Provided Derivatized Substance<i class="pull-right glyphicon"
                                                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i>
                                         </div>
-                                    </accordion-heading>
+                                    </uib-accordion-heading>
                                     <div display-compound-info compound="spectrum.chemicalCompound"></div>
-                                </accordion-group>
-                            </accordion>
+                                </uib-accordion-group>
+                            </uib-accordion>
                         </div>
                     </div>
                     <br/>

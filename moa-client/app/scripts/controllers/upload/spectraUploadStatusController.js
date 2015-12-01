@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SpectraUploadController = function ($scope, $rootScope, $modal, AuthenticationService, UploadLibraryService) {
+moaControllers.SpectraUploadController = function ($scope, $rootScope, $uibModal, AuthenticationService, UploadLibraryService) {
     /**
      * Check whether the user is uploading, and open the upload dialog accordingly
      */

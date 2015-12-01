@@ -11,11 +11,11 @@
     </div>
 
     <div class="modal-body">
-        <accordion close-others="false">
-            <accordion-group is-open="queryAccordion.name">
-                <accordion-heading>
+        <uib-accordion close-others="false">
+            <uib-accordion-group is-open="queryAccordion.name">
+                <uib-accordion-heading>
                     <div>Query by Name</div>
-                </accordion-heading>
+                </uib-accordion-heading>
 
                 <div class="form-group">
                     <label class="control-label" for="nameFilter">Partial filtering by compound name:</label>
@@ -25,13 +25,13 @@
                            placeholder="Name"
                            class="form-control"/>
                 </div>
-            </accordion-group>
+            </uib-accordion-group>
 
 
-            <accordion-group is-open="queryAccordion.inchikey">
-                <accordion-heading>
+            <uib-accordion-group is-open="queryAccordion.inchikey">
+                <uib-accordion-heading>
                     <div>Query by InChIKey</div>
-                </accordion-heading>
+                </uib-accordion-heading>
 
                 <div class="form-group">
                     <label class="control-label" for="inchiFilter">Partial filtering by biological or compound
@@ -43,13 +43,13 @@
                            ng-pattern="/^([A-Z,0-9,\-]+)+$/"
                            class="form-control"/>
                 </div>
-            </accordion-group>
+            </uib-accordion-group>
 
 
-            <accordion-group is-open="queryAccordion.accurateMass">
-                <accordion-heading>
+            <uib-accordion-group is-open="queryAccordion.accurateMass">
+                <uib-accordion-heading>
                     <div>Query by Accurate Mass</div>
-                </accordion-heading>
+                </uib-accordion-heading>
 
                 <div class="form-group">
                     <label class="control-label col-sm-4" for="accurateMass">Mass:</label>
@@ -74,27 +74,27 @@
                                class="form-control"/>
                     </div>
                 </div>
-            </accordion-group>
+            </uib-accordion-group>
 
 
-            <accordion-group is-open="queryAccordion.metadata">
-                <accordion-heading>
+            <uib-accordion-group is-open="queryAccordion.metadata">
+                <uib-accordion-heading>
                     <div>Query by Metadata</div>
-                </accordion-heading>
+                </uib-accordion-heading>
                 <label>Select an existing metadata type and then input a value to query</label>
 
                 <div gw-meta-query-input query="metadataQuery" editable="false"></div>
-            </accordion-group>
+            </uib-accordion-group>
 
 
-            <accordion-group is-open="queryAccordion.tags">
-                <accordion-heading>
+            <uib-accordion-group is-open="queryAccordion.tags">
+                <uib-accordion-heading>
                     <div>Query by Tags</div>
-                </accordion-heading>
+                </uib-accordion-heading>
 
                 <div gw-tag-display selection="selectedTags"></div>
-            </accordion-group>
-        </accordion>
+            </uib-accordion-group>
+        </uib-accordion>
 
     </div>
     <div class="modal-footer">

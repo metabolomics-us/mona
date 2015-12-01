@@ -5,21 +5,21 @@ describe('Controllers: Submitter Controller', function() {
     $httpProvider.interceptors.push('moaClientApp');
   });
 
-  var scope,subController,httpBackend,REST_SERVER,modalInstance;
+  var scope,subController,httpBackend,REST_SERVER,uibModalInstance;
 
   beforeEach(function() {
     angular.mock.inject(function($injector,$controller,$rootScope,_REST_BACKEND_SERVER_) {
       scope = $rootScope.$new();
       httpBackend = $injector.get('$httpBackend');
       REST_SERVER = _REST_BACKEND_SERVER_;
-      modalInstance = {
+      uibModalInstance = {
         result: {
-          then: jasmine.createSpy('modalInstance.result.then')
+          then: jasmine.createSpy('uibModalInstance.result.then')
         }
       };
       subController = $controller('SubmitterController', {
         $scope: scope,
-        $modalInstance: modalInstance
+        $uibModalInstance: uibModalInstance
       });
     });
   });
@@ -54,7 +54,7 @@ describe('Controllers: Submitter Controller', function() {
     httpBackend.expectGET('template/modal/backdrop.html').respond(200,'<div><b>Hello</b> World!</div>');
     httpBackend.expectGET('template/modal/window.html').respond(200,'<div><b>Hello</b> World!</div>');
     scope.displayCreateDialog();
-    expect(modalInstance).toBeDefined();
+    expect(uibModalInstance).toBeDefined();
     httpBackend.flush();
   });
 

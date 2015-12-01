@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SubmitterModalController = function ($scope, Submitter, $modalInstance, newSubmitter) {
+moaControllers.SubmitterModalController = function ($scope, Submitter, $uibModalInstance, newSubmitter) {
 	/**
 	 * contains our results
 	 * @type {{}}
@@ -14,7 +14,7 @@ moaControllers.SubmitterModalController = function ($scope, Submitter, $modalIns
 	 * cancels any dialog in this controller
 	 */
 	$scope.cancelDialog = function () {
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	};
 
 	/**
@@ -25,7 +25,7 @@ moaControllers.SubmitterModalController = function ($scope, Submitter, $modalIns
 
 		//update the submitter
 		Submitter.update(submitter, function (data) {
-			$modalInstance.close(submitter);
+			$uibModalInstance.close(submitter);
 		}, function (error) {
 			handleDialogError(error);
 		});
@@ -39,7 +39,7 @@ moaControllers.SubmitterModalController = function ($scope, Submitter, $modalIns
 
 		//no submitter id so create a new one
 		Submitter.save(submitter, function (savedSubmitter) {
-			$modalInstance.close(savedSubmitter);
+			$uibModalInstance.close(savedSubmitter);
 		}, function (error) {
 			handleDialogError(error);
 		});
