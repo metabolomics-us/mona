@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, AuthenticationService) {
+moaControllers.AuthenticationController = function ($scope, $rootScope, $uibModal, AuthenticationService) {
     var ADMIN_ROLE_NAME = 'ROLE_ADMIN';
     var self = this;
 
@@ -45,7 +45,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
      * Opens the authentication modal dialog
      */
     self.openAuthenticationDialog = function () {
-        $modal.open({
+        $uibModal.open({
             templateUrl: '/views/authentication/authenticationModal.html',
             controller: moaControllers.AuthenticationModalController,
             size: 'sm',
@@ -58,7 +58,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
      */
     self.handleRegistration = function() {
         if (!self.isLoggedIn()) {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: '/views/authentication/registrationModal.html',
                 controller: moaControllers.RegistrationModalController,
                 size: 'md',
@@ -101,7 +101,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $modal, 
 };
 
 
-moaControllers.AuthenticationModalController = function ($scope, $rootScope, $modalInstance, $timeout, AuthenticationService) {
+moaControllers.AuthenticationModalController = function ($scope, $rootScope, $uibModalInstance, $timeout, AuthenticationService) {
     $scope.errors = [];
     $scope.state = 'login';
 
@@ -111,7 +111,7 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
     };
 
     $scope.cancelDialog = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 
     /**
@@ -137,7 +137,7 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
     $scope.$on('auth:login-success', function(event, data, status, headers, config) {
         $scope.state = 'success';
         $timeout(function() {
-            $modalInstance.close();
+            $uibModalInstance.close();
         }, 1000);
     });
 
@@ -153,14 +153,14 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $mo
 };
 
 
-moaControllers.RegistrationModalController = function ($scope, $rootScope, $modalInstance, Submitter) {
+moaControllers.RegistrationModalController = function ($scope, $rootScope, $uibModalInstance, Submitter) {
     $scope.errors = [];
     $scope.state = 'register';
 
     $scope.newSubmitter = {};
 
     $scope.cancelDialog = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 
     /**
@@ -206,7 +206,7 @@ moaControllers.RegistrationModalController = function ($scope, $rootScope, $moda
      * Close dialog and open login modal
      */
     $scope.logIn = function() {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
         $rootScope.$broadcast('auth:login');
     };
 };

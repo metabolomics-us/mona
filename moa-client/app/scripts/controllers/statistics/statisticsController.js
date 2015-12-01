@@ -3,6 +3,6 @@
  */
 'use strict';
 
-moaControllers.StatisticsController = function ($scope, StatisticsService, $modal, statistics) {
+moaControllers.StatisticsController = function ($scope, StatisticsService, $uibModal, statistics) {
     $scope.data = statistics;
 };

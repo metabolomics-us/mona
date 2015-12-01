@@ -4,7 +4,7 @@
 'use strict';
 
 
-moaControllers.SearchBoxController = function ($scope, $modal, $location, $route, SpectraQueryBuilderService) {
+moaControllers.SearchBoxController = function ($scope, $uibModal, $location, $route, SpectraQueryBuilderService) {
     $scope.inputError = false;
 
 
@@ -52,7 +52,7 @@ moaControllers.SearchBoxController = function ($scope, $modal, $location, $route
      * opens our modal dialog to query spectra against the system
      */
     $scope.querySpectraDialog = function () {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             templateUrl: '/views/spectra/query/query.html',
             controller: moaControllers.QuerySpectrumModalController,
             size: 'lg',
