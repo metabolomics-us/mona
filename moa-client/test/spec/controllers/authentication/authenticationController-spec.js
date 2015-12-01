@@ -5,13 +5,13 @@ describe('Controller: Authentication Controller', function() {
     $httpProvider.interceptors.push('moaClientApp');
   });
 
-  var scope,createController,modal,rootScope,authService,httpBackEnd;
+  var scope,createController,uibModal,rootScope,authService,httpBackEnd;
 
   beforeEach(inject(function($controller,$rootScope,$injector,_AuthenticationService_) {
     scope = $rootScope.$new();
     rootScope = $injector.get('$rootScope');
     httpBackEnd = $injector.get('$httpBackend');
-    modal = $injector.get('$modal');
+    uibModal = $injector.get('$uibModal');
     authService = _AuthenticationService_;
     createController = function() {
       return $controller('AuthenticationController', {
@@ -21,7 +21,7 @@ describe('Controller: Authentication Controller', function() {
   }));
 
   it('opens a authentication dialogue for user to log in', function() {
-    spyOn(modal, 'open');
+    spyOn(uibModal, 'open');
     var controller = createController();
     controller.handleLogin();
     var open = {
@@ -30,7 +30,7 @@ describe('Controller: Authentication Controller', function() {
       size: 'sm',
       backdrop: 'true'
     };
-    expect(modal.open).toHaveBeenCalledWith(open);
+    expect(uibModal.open).toHaveBeenCalledWith(open);
   });
 
   it('logs out a user that is currently login', function() {
@@ -41,8 +41,8 @@ describe('Controller: Authentication Controller', function() {
     expect(authService.logout).toHaveBeenCalled();
   });
 
-  it('opens a registration modal when a user is not logged in', function() {
-    spyOn(modal, 'open');
+  it('opens a registration uibModal when a user is not logged in', function() {
+    spyOn(uibModal, 'open');
     var controller = createController();
     controller.handleRegistration();
     var open = {
@@ -51,7 +51,7 @@ describe('Controller: Authentication Controller', function() {
       size: 'md',
       backdrop: 'static'
     };
-    expect(modal.open).toHaveBeenCalledWith(open);
+    expect(uibModal.open).toHaveBeenCalledWith(open);
   });
 
   it('returns true for a user that has admin rights', function() {
@@ -86,7 +86,7 @@ describe('Controller: Authentication Controller', function() {
     expect(controller.welcomeMessage).toBe('Login/Register');
   });
 
-  it('Listens for external calls to bring up the authentication modal', function() {
+  it('Listens for external calls to bring up the authentication uibModal', function() {
     var controller = createController();
     spyOn(controller, 'openAuthenticationDialog');
     scope.$broadcast('auth:login');
@@ -97,23 +97,23 @@ describe('Controller: Authentication Controller', function() {
 describe('Controller: Authentication Modal Controller', function() {
   beforeEach(module('moaClientApp'));
 
-  var scope,rootScope,modalController,modalInstance,authService,timeout;
+  var scope,rootScope,modalController,uibModalInstance,authService,timeout;
 
   beforeEach(inject(function($controller,$rootScope,$injector,_AuthenticationService_,$timeout) {
     scope = $rootScope.$new();
     timeout = $timeout;
     rootScope = $injector.get('$rootScope');
     authService = _AuthenticationService_;
-    modalInstance = {                    // Create a mock object using spies
-      close: jasmine.createSpy('modalInstance.close'),
-      dismiss: jasmine.createSpy('modalInstance.dismiss'),
+    uibModalInstance = {                    // Create a mock object using spies
+      close: jasmine.createSpy('uibModalInstance.close'),
+      dismiss: jasmine.createSpy('uibModalInstance.dismiss'),
       result: {
-        then: jasmine.createSpy('modalInstance.result.then')
+        then: jasmine.createSpy('uibModalInstance.result.then')
       }
     };
     modalController = $controller('AuthenticationModalController', {
         $scope : scope,
-        $modalInstance: modalInstance,
+        $uibModalInstance: uibModalInstance,
         $timeout: timeout
       });
 
@@ -125,7 +125,7 @@ describe('Controller: Authentication Modal Controller', function() {
 
   it('can cancel a dialog', function() {
     scope.cancelDialog();
-    expect(modalInstance.dismiss).toHaveBeenCalledWith('cancel');
+    expect(uibModalInstance.dismiss).toHaveBeenCalledWith('cancel');
   });
 
   it('pushes error when a user attempt to login without an email address or password', function() {
@@ -165,7 +165,7 @@ describe('Controller: Registration Modal Controller', function() {
   beforeEach(module('moaClientApp'), function($httpProvider){
     $httpProvider.interceptors.push('moaClientApp');
   });
-  var scope,rootScope,modalController,modalInstance,submitter,httpBackend,REST_SERVER;
+  var scope,rootScope,modalController,uibModalInstance,submitter,httpBackend,REST_SERVER;
 
   beforeEach(function() {
     angular.mock.inject(function($injector,$controller,$rootScope,_Submitter_,_REST_BACKEND_SERVER_) {
@@ -174,12 +174,12 @@ describe('Controller: Registration Modal Controller', function() {
       rootScope = $injector.get('$rootScope');
       httpBackend = $injector.get('$httpBackend');
       REST_SERVER = _REST_BACKEND_SERVER_;
-      modalInstance = {
-        dismiss: jasmine.createSpy('modalInstance.dismiss')
+      uibModalInstance = {
+        dismiss: jasmine.createSpy('uibModalInstance.dismiss')
       };
       modalController = $controller('RegistrationModalController', {
         $scope: scope,
-        $modalInstance: modalInstance,
+        $uibModalInstance: uibModalInstance,
         Submitter: submitter
       });
     });
@@ -193,7 +193,7 @@ describe('Controller: Registration Modal Controller', function() {
   it('can cancel a dialog', function() {
     httpBackend.expectGET('views/main.html').respond(200);
     scope.cancelDialog();
-    expect(modalInstance.dismiss).toHaveBeenCalledWith('cancel');
+    expect(uibModalInstance.dismiss).toHaveBeenCalledWith('cancel');
     httpBackend.flush();
   });
 
@@ -271,10 +271,10 @@ describe('Controller: Registration Modal Controller', function() {
     '"statusText":""}']);
   });
 
-  it('close dialog and open login modal', function() {
+  it('close dialog and open login uibModal', function() {
     httpBackend.expectGET('views/main.html').respond(200);
     scope.logIn();
-    expect(modalInstance.dismiss).toHaveBeenCalledWith('cancel');
+    expect(uibModalInstance.dismiss).toHaveBeenCalledWith('cancel');
     httpBackend.flush();
   });
 });
