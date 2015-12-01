@@ -5,23 +5,26 @@
 #build client module
 cd moa-client
 
-npm install
-bower update
-rm mona-client.zip
-grunt clean
-grunt dist
-cd ..
+if [ "$1" == "--skip-build"]
+then
+	npm install
+	bower update
+	rm mona-client.zip
+	grunt clean
+	grunt dist
+	cd ..
 
-#build server module
+	#build server module
 
-cd moa-server
-rm -rdf target/*
-grails clean
-grails war
-cd ..
+	cd moa-server
+	rm -rdf target/*
+	grails clean
+	grails war
+	cd ..
+fi
 
 #assmeble docker file
-if [ "$HOSTNAME" -eq "trashcan.fiehnlab.ucdavis.edu"]
+if [ "$HOSTNAME" == "trashcan.fiehnlab.ucdavis.edu"]
 then
   eval "$(docker-machine env cloud)"
 fi
@@ -33,7 +36,7 @@ cp ../../moa-client/mona-client.zip client.zip
 
 bash build.sh push
 
-if [ "$HOSTNAME" -eq "trashcan.fiehnlab.ucdavis.edu"]
+if [ "$HOSTNAME" == "trashcan.fiehnlab.ucdavis.edu"]
 then
   cd ../cloud
 
