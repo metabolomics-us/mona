@@ -3,7 +3,7 @@
  */
 'use strict';
 
-moaControllers.SubmitterController = function ($scope, Submitter, $modal) {
+moaControllers.SubmitterController = function ($scope, Submitter, $uibModal) {
 
 	/**
 	 * contains all local objects
@@ -39,7 +39,7 @@ moaControllers.SubmitterController = function ($scope, Submitter, $modal) {
 	 */
 	$scope.displayCreateDialog = function () {
 
-		var modalInstance = $modal.open({
+		var modalInstance = $uibModal.open({
 			templateUrl: '/views/submitters/dialog/createDialog.html',
 			controller: moaControllers.SubmitterModalController,
 			size: 'lg',
@@ -64,7 +64,7 @@ moaControllers.SubmitterController = function ($scope, Submitter, $modal) {
 	 * @param index
 	 */
 	$scope.displayEditDialog = function (index) {
-		var modalInstance = $modal.open({
+		var modalInstance = $uibModal.open({
 			templateUrl: '/views/submitters/dialog/editDialog.html',
 			controller: moaControllers.SubmitterModalController,
 			size: 'lg',
