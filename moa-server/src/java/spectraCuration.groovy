@@ -129,8 +129,11 @@ beans {
 //is spectra dirty
     isSpectraDirty(IsCleanSpectraRule) { bean ->
         bean.autowire = 'byName'
-        noisePercentage = 2
-        percentOfSpectraIsNoise = 80
+        lowAbundancePercentage = 2
+        highAbundancePercentage = 10
+        lowAbundanceNoisyThreshold = 95
+        highAbundanceNoisyThreshold = 50
+        minLCMSPeaks = 10
     }
 
 //is column metadata valid
