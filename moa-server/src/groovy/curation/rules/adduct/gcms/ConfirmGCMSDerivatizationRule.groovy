@@ -40,16 +40,12 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
      * @return
      */
     int calculateTMSCount(MetaDataValue value) {
-
-
         String stringValue = value.getValue().toString()
 
         def matcher = (stringValue =~ /([0-9]+).*TMS/)
+
         if (matcher.matches()) {
-
-            int count = Integer.parseInt(matcher[0][1].toString())
-
-            return count
+            return Integer.parseInt(matcher[0][1].toString())
         } else if ((stringValue =~ /n+.*TMS/).matches()) {
             return Integer.MAX_VALUE
         }
@@ -59,8 +55,6 @@ class ConfirmGCMSDerivatizationRule extends AbstractMetaDataCentricRule {
 
     @Override
     protected boolean acceptMetaDataValue(MetaDataValue value) {
-
-
         String stringValue = value.getValue().toString()
 
         int count = calculateTMSCount(value)

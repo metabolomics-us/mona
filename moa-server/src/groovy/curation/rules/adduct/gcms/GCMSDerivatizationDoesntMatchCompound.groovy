@@ -20,8 +20,10 @@ class GCMSDerivatizationDoesntMatchCompound extends AbstractCurationRule {
 
     GCMSDerivatizationDoesntMatchCompound() {
         super()
-        this.successAction = new AddTagAction(SUSPECT_VALUE)
-        this.failureAction = new RemoveTagAction(SUSPECT_VALUE)
+
+        // TODO: Provide a more useful method of displaying this issue
+        // this.successAction = new AddTagAction(SUSPECT_VALUE)
+        // this.failureAction = new RemoveTagAction(SUSPECT_VALUE)
     }
 
     @Override
