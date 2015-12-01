@@ -72,6 +72,20 @@ body {
   height: 360px;
 }
 
+@media(min-width: 768px) {
+    .carousel .carousel-control {
+        visibility: hidden;
+    }
+
+    .carousel:hover .carousel-control {
+        visibility: visible;
+    }
+}
+
+.glyphicon-chevron-right, .glyphicon-chevron-left {
+    color: #99A9BF;
+}
+
 // Text Style
 
 .news-date {

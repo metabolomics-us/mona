@@ -127,10 +127,10 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
          * Decimal truncation routines
          */
         var truncateDecimal = function (s, length) {
-            var regex = new RegExp("^\\s*(\\d+\\.\\d{" + length + "})\\d*\\s*$");
+            var regex = new RegExp("\\s*(\\d+\\.\\d{" + length + "})\\d*\\s*");
             var m = s.match(regex);
 
-            return m != null ? m[1] : s;
+            return (m !== null) ? s.replace(m[0].trim(),m[1]) : s;
         };
 
         /**
