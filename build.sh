@@ -5,7 +5,7 @@
 #build client module
 cd moa-client
 
-if [ "$1" == "--skip-build"]
+if [ "$1" == "--skip-build" ]
 then
 	npm install
 	bower update
@@ -24,7 +24,7 @@ then
 fi
 
 #assmeble docker file
-if [ "$HOSTNAME" == "trashcan.fiehnlab.ucdavis.edu"]
+if [ "$HOSTNAME" == "trashcan.fiehnlab.ucdavis.edu" ]
 then
   eval "$(docker-machine env cloud)"
 fi
@@ -36,7 +36,7 @@ cp ../../moa-client/mona-client.zip client.zip
 
 bash build.sh push
 
-if [ "$HOSTNAME" == "trashcan.fiehnlab.ucdavis.edu"]
+if [ "$HOSTNAME" == "trashcan.fiehnlab.ucdavis.edu" ]
 then
   cd ../cloud
 
