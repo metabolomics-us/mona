@@ -5,7 +5,6 @@ import curation.CurationObject
 import curation.actions.AddTagAction
 import curation.actions.RemoveTagAction
 import moa.Spectrum
-import moa.Tag
 import org.apache.log4j.Logger
 
 /**
@@ -20,14 +19,29 @@ class IsCleanSpectraRule extends AbstractCurationRule {
     private Logger logger = Logger.getLogger(getClass())
 
     /**
-     * noise in percent in relation to the basepeak
+     * low abundance noise in percent in relation to the basepeak
      */
-    double noisePercentage = 2
+    double lowAbundancePercentage = 2
 
     /**
-     * how many percent of peaks are in the noise range
+     * higher abundance peak limit in percent in relation to the basepeak
      */
-    double percentOfSpectraIsNoise = 50
+    double highAbundancePercentage = 10
+
+    /**
+     * percentage of peaks are in the low abundance noise range to be considered noisy
+     */
+    double lowAbundanceNoisyThreshold = 50
+
+    /**
+     * percentage of peaks above the high abundance thresholds to be considered noisy
+     */
+    double highAbundanceNoisyThreshold = 50
+
+    /**
+     * minimum number of peaks to check if an LCMS spectrum is direct
+     */
+    double minLCMSPeaks = 10
 
 
     IsCleanSpectraRule() {
@@ -48,44 +62,61 @@ class IsCleanSpectraRule extends AbstractCurationRule {
     boolean executeRule(CurationObject toValidate) {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
+        boolean isGCMS = false
+        boolean isLCMS = false
+
+        spectrum.tags.each {
+            if (it.text == GCMS_SPECTRA) {
+                isGCMS = true
+            } else if (it.text == LCMS_SPECTRA) {
+                isLCMS = true
+            }
+        }
+
 
         int countOfPeaks = 0
-        int countOfNoisyPeaks = 0
-
-        logger.info("noise percentage: ${noisePercentage}" )
-        logger.info("having: ${spectrum.spectrum}")
+        int countOfLowAbundancePeaks = 0
+        int countOfHighAbundancePeaks = 0
 
         spectrum.ions.each {
+            logger.info("m/z: ${it.mass}, intensity: ${it.intensity}")
             countOfPeaks++
 
-            logger.info("intensity: ${it.intensity}")
-            if (it.intensity * 100 < noisePercentage) {
-                countOfNoisyPeaks++
+            if (it.intensity * 100 < lowAbundancePercentage) {
+                countOfLowAbundancePeaks++
+            } else if (it.intensity * 1000 > highAbundancePercentage) {
+                countOfHighAbundancePeaks++
             }
         }
 
         try {
-            double ratio = countOfNoisyPeaks / countOfPeaks * 100
+            double lowAbundanceRatio = 100.0 * countOfLowAbundancePeaks / countOfPeaks
+            double highAbundanceRatio = 100.0 * countOfHighAbundancePeaks / countOfPeaks
 
-            logger.info("noise ratio: ${ratio}, spectra is")
+            boolean isClean = true
 
-            if (ratio > percentOfSpectraIsNoise) {
-                logger.info("\t => dirty!")
-                return false
+            if (isLCMS) {
+                if (countOfPeaks >= minLCMSPeaks && lowAbundanceRatio >= lowAbundanceNoisyThreshold)
+                    isClean = false
+            } else if (isGCMS) {
+                if (highAbundanceRatio >= highAbundanceNoisyThreshold)
+                    isClean = false
             } else {
-                logger.info("\t => clean!")
-                return true
+                if (lowAbundanceRatio >= lowAbundanceNoisyThreshold || highAbundanceRatio >= highAbundanceNoisyThreshold)
+                    isClean = false
             }
 
-        }
-        catch (Exception e){
+            logger.info("low abundance noise ratio: ${lowAbundanceRatio}, low abundance noise ratio: ${highAbundanceRatio}")
+            logger.info(isClean ? "\t => clean!" : "\t => dirty!")
+
+            return isClean
+        } catch (Exception e){
             logger.error("something wrong with this spectrum: ${spectrum.id}")
             logger.error("spectra: " + spectrum.spectrum)
             logger.error(e.getMessage(),e);
-            //something odd, but not dirty
+
             return true;
         }
-
     }
 
 
