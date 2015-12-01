@@ -77,7 +77,6 @@ class MetaDataSuspectAction implements CurationAction {
 
                 if (mark) {
                     value.reasonForSuspicion = reason
-
                     logger.info("reason: ${reason}")
                 } else {
                     value.reasonForSuspicion = ""
@@ -85,11 +84,13 @@ class MetaDataSuspectAction implements CurationAction {
 
                 value.save(flush: true)
 
-                if (value.suspect) {
-                    new AddTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
-                } else {
-                    new RemoveTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
-                }
+                // TODO: Improve the method of denoting issues with spectra
+//                if (value.suspect) {
+//
+//                    new AddTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
+//                } else {
+//                    new RemoveTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
+//                }
             } else {
                 logger.debug("ignoring ${value.name}, doesn't match the requested field ${field}")
             }
