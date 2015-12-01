@@ -5,27 +5,27 @@ describe('Controller: Search Box Controller', function() {
     $httpProvider.interceptors.push('moaClientApp');
   });
 
-  var scope,modal,searchBoxController,modalInstance,location,route,httpBackend;
+  var scope,uibModal,searchBoxController,uibModalInstance,location,route,httpBackend;
 
   beforeEach(function() {
     angular.mock.inject(function($injector,$controller,$rootScope) {
       scope = $rootScope.$new();
-      modal = $injector.get('$modal');
+      uibModal = $injector.get('$uibModal');
       route = $injector.get('$route');
       location = $injector.get('$location');
       httpBackend = $injector.get('$httpBackend');
-      modalInstance = {                    // Create a mock object using spies
-        close: jasmine.createSpy('modalInstance.close'),
-        dismiss: jasmine.createSpy('modalInstance.dismiss'),
+      uibModalInstance = {                    // Create a mock object using spies
+        close: jasmine.createSpy('uibModalInstance.close'),
+        dismiss: jasmine.createSpy('uibModalInstance.dismiss'),
         result: {
-          then: jasmine.createSpy('modalInstance.result.then')
+          then: jasmine.createSpy('uibModalInstance.result.then')
         }
       };
       
       searchBoxController = $controller('SearchBoxController', {
         $scope: scope,
-        $modal: modal,
-        $modalInstance: modalInstance,
+        $uibModal: uibModal,
+        $uibModalInstance: uibModalInstance,
         $location: location
       });
     });
@@ -91,7 +91,7 @@ describe('Controller: Search Box Controller', function() {
     httpBackend.flush();
   });
 
-  it('opens modal dialog to query spectra against the system', function() {
+  it('opens uibModal dialog to query spectra against the system', function() {
     httpBackend.expectGET('/views/spectra/query/query.html').respond(200);
     httpBackend.expectGET('views/main.html').respond(200);
     httpBackend.expectGET('template/modal/backdrop.html').respond(200,'<div><b>Hello</b> World!</div>');

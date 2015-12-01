@@ -11,7 +11,7 @@
     "angular-bootstrap-affix": "https://github.com/passy/angular-bootstrap-affix.git",
     "angular-translate": "^2.1",
     "angular-animate": "1.4.8",
-    "angular-dialog-service": "5.2.8",
+    "angular-dialog-service": "5.2.9",
     "bootstrap": "3.3.1",
     "bootstrap-sass-official": "3.3.1",
     "bootstrap-multiselect": "0.9.10",
@@ -39,9 +39,5 @@
     "jasmine-core": "jasmine#~2.3.4",
     "purescript-webdriver": "~0.14.0",
     "ngSanitize": "~0.0.2"
-  },
-  "resolutions": {
-    "angular": "1.4.8",
-    "angular-bootstrap": "0.14.3"
   }
 }
