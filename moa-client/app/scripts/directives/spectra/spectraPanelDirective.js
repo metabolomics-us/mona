@@ -26,7 +26,6 @@ app.directive('displaySpectraPanel', function () {
             });
 
 
-            //console.log('Value' + a.value);
             /**
              * displays the spectrum for the given index
              * @param id
