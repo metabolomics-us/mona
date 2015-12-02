@@ -12,6 +12,21 @@ app.directive('displaySpectraPanel', function () {
         templateUrl: '/views/spectra/display/template/panel.html',
         controller: function ($scope, $location,SpectrumCache) {
 
+            var truncateDecimal = function(s, length) {
+                var regex = new RegExp("\\s*(\\d+\\.\\d{" + length + "})\\d*\\s*");
+                var m = s.match(regex);
+                return (m !== null) ? s.replace(m[0].trim(),m[1]) : s;
+            }
+
+            angular.forEach($scope.spectrum.metaData, function(meta, index) {
+               if(meta.category !== 'annotation' && meta.deleted !== 'true'
+                   && meta.hidden !== 'true' && meta.computed !== 'true') {
+                   meta.value = truncateDecimal(meta.value,4);
+               }
+            });
+
+
+            //console.log('Value' + a.value);
             /**
              * displays the spectrum for the given index
              * @param id
