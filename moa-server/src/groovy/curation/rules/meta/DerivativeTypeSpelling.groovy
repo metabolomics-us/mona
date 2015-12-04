@@ -48,34 +48,30 @@ class DerivativeTypeSpelling extends AbstractMetaDataCentricRule {
             //ok
             return true
         } else if (myValue.matches(regexNearlyCorrect)) {
-
             logger.info("value needs slight adjustment!")
             //reformat and update
             def matcher = (myValue =~ regexNearlyCorrect)
 
             newValue = "${matcher[0][1]} TMS"
         } else if (myValue.matches(regexWrong)) {
-
             logger.info("value needs to be rewritten!")
             //reformat and update
             def matcher = (myValue =~ regexWrong)
 
             newValue = "${matcher[0][1]} TMS"
         } else {
-
             logger.info("invalid value ($myValue) for ${DERIVATISATION_TYPE}")
             this.getFailureAction().setReason(("provide value, doesn't match any known regular expression"))
 
             return false
         }
 
-        logger.info("adding new database metadata value: ${newValue}")
         //create new metadata object and update it
+        logger.info("adding new database metadata value: ${newValue}")
         metaDataPersistenceService.generateMetaDataObject(value.owner, [name: value.getName(), value: newValue, category: value.getCategory()])
 
-        logger.info("deleting outdated value")
         //delete the wrong object
-
+        logger.info("deleting outdated value")
         metaDataPersistenceService.removeMetaDataValue(value)
 
         return true
@@ -88,9 +84,11 @@ class DerivativeTypeSpelling extends AbstractMetaDataCentricRule {
      */
     protected boolean isCorrectMetaDataField(MetaDataValue value) {
         logger.debug("checking ${value.name} against defined field ${DERIVATISATION_TYPE}")
+
         if (value.name.toLowerCase().equals(DERIVATISATION_TYPE.toLowerCase())) {
             return true
         }
+
         return false
     }
 

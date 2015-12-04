@@ -249,7 +249,6 @@ rabbitmq {
         queue name: "mona.export.spectra", arguments: ["x-max-priority", 9], durable: queuesAreDurable
         queue name: "mona.validate.compound", arguments: ["x-max-priority", 8], durable: queuesAreDurable
         queue name: "mona.repository.export.spectra", arguments: ["x-max-priority", 8], durable: queuesAreDurable
-
     }
 }
 

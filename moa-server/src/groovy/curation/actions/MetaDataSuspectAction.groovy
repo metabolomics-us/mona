@@ -86,7 +86,6 @@ class MetaDataSuspectAction implements CurationAction {
 
                 // TODO: Improve the method of denoting issues with spectra
 //                if (value.suspect) {
-//
 //                    new AddTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))
 //                } else {
 //                    new RemoveTagAction(SUSPECT_VALUE).doAction(new CurationObject(value.owner))

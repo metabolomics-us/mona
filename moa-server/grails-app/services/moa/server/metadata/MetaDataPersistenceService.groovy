@@ -40,14 +40,11 @@ class MetaDataPersistenceService {
         if(deleteNow) {
             log.info("deleting: ${value}")
 
-
             value.merge()
             value.metaData.removeFromValue(value)
             value.owner.removeFromMetaData(value)
-
             value.delete()
-        }
-        else {
+        } else {
             value.deleted = true
             value.save()
         }

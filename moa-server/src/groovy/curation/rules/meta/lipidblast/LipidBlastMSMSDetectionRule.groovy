@@ -31,16 +31,16 @@ class LipidBlastMSMSDetectionRule extends AbstractMetaDataCentricRule {
         boolean hasFieldSpecified = false
         value.getOwner().listAvailableValues().each { MetaDataValue v ->
 
-            if (v.getName() == MS_LEVEL) {
+            if (v.getName() == MS_TYPE) {
                 hasFieldSpecified = true
             }
         }
 
         if (!hasFieldSpecified) {
             //positive mode
-            metaDataPersistenceService.generateMetaDataObject(value.owner, [name: MS_LEVEL, value: "MS2", computed: true])
+            metaDataPersistenceService.generateMetaDataObject(value.owner, [name: MS_TYPE, value: "MS2", computed: true])
         } else {
-            logger.info("${MS_LEVEL} was already specified")
+            logger.info("${MS_TYPE} was already specified")
         }
         return true
     }
