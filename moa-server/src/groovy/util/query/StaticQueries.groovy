@@ -1,7 +1,9 @@
 package util.query
 
+import grails.util.Environment
 import moa.query.Query
 import moa.server.query.PredefinedQueryService
+import org.apache.log4j.Logger
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,10 +12,25 @@ import moa.server.query.PredefinedQueryService
  * Time: 2:38 PM
  */
 class StaticQueries {
+    private static Logger logger = Logger.getLogger(getClass())
+
     static void register() {
-        defineGeneralQueries()
-        defineGCMSQueries()
-        defineLCMSQueries()
+        if(Environment.current == Environment.PRODUCTION) {
+            logger.info("Generating query tree definitions")
+
+            defineGeneralQueries()
+            defineGCMSQueries()
+            defineLCMSQueries()
+        }
+
+        if(Environment.current == Environment.DEVELOPMENT) {
+            logger.info("Generating testing query tree definitions")
+
+            if(Query.findByLabel("Test") == null) {
+                def x = Query.findOrSaveByLabelAndDescriptionAndQuery("Test", "test",
+                        "{\"compound\": {},\"metadata\": [{\"name\": \"accession\", \"value\": {\"eq\": \"AU102001\"}}], \"tags\": []}")
+            }
+        }
     }
 
     private static void save(String label, String description, String query) {
@@ -122,7 +139,7 @@ class StaticQueries {
     private static void defineLCMSQueries() {
         String label = "LCMS"
         List mode = ["virtual", "experimental"]
-        List acq = ["POSITIVE", "NEGATIVE"]
+        List acq = ["positive", "negative"]
 
         save("${label}", "${label} spectra", """{
     "compound": {},
