@@ -29,7 +29,6 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
 
 
         spectrum.chemicalCompound.listAvailableValues().each { MetaDataValue value ->
-
             for (String option : ["total exact mass"]) {
                 if (value.getName().toLowerCase().equals(option)) {
                     theoreticalMass = Double.parseDouble(value.getValue().toString())
@@ -37,8 +36,6 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
                     break
                 }
             }
-
-
         }
 
         try {
@@ -48,11 +45,9 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
 
                 if (exactMass == null) {
                     if (value.getName().toLowerCase().equals(EXACT_MASS)) {
-
                         try {
                             exactMass = Double.parseDouble(value.getValue().toString())
-                        }
-                        catch (NumberFormatException e){
+                        } catch (NumberFormatException e){
 
                             logger.warn(e.getMessage(),e)
                             value.suspect = true
@@ -63,51 +58,34 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
                 }
 
                 if (value.getName().toLowerCase().equals(PRECURSOR_MASS.toLowerCase().trim())) {
-
                     exactMass = Double.parseDouble(value.getValue().toString())
-
                 }
 
                 if (value.getName().toLowerCase().equals(PRECURSOR_TYPE.toLowerCase().trim())) {
                     precursorType = (value.getValue().toString())
                 }
-
             }
-
-        }
-        catch (NumberFormatException e){
-
-        }
+        } catch (NumberFormatException e) {}
 
         if (theoreticalMass != null) {
-
             logger.info("theoretical mass of compound: " + theoreticalMass)
 
             if (exactMass != null) {
                 logger.info("observed exact mass: " + exactMass)
 
                 if (precursorType != null) {
-
                     precursorType = precursorType.toUpperCase()
-
                     logger.info("using precursor type: ${precursorType}")
 
                     double computedMass = 0
                     if (AdductBuilder.LCMS_NEGATIVE_ADDUCTS.containsKey(precursorType)) {
-
                         computedMass = AdductBuilder.LCMS_NEGATIVE_ADDUCTS.get(precursorType)(theoreticalMass)
-
                         logger.info("computed theoretical mass of adduct: ${computedMass}")
-
                     } else if (AdductBuilder.LCMS_POSITIVE_ADDUCTS.containsKey(precursorType)) {
-
                         computedMass = AdductBuilder.LCMS_POSITIVE_ADDUCTS.get(precursorType)(theoreticalMass)
-
                         logger.info("computed theoretical mass of adduct: ${computedMass}")
-
                     } else {
                         logger.warn("unknown precursor type: ${precursorType}")
-
                         return false;
                     }
 
@@ -117,22 +95,19 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
 
                     metaDataPersistenceService.generateMetaDataObject(spectrum, [name: MASS_ACCURACY, value: accuracy, category: "mass spectrometry", unit: "ppm", computed: true])
                     metaDataPersistenceService.generateMetaDataObject(spectrum, [name: MASS_ERROR, value: massError * 1000, category: "mass spectrometry", unit: "mDa", computed: true])
-
                 } else {
                     logger.warn("no precursor found for this spectra")
-
                     return false;
                 }
             } else {
                 logger.warn("no exact mass found for this spectra")
-
                 return false;
             }
         } else {
             logger.warn("no theoretical mass found for this spectra")
-
             return false;
         }
+
         return false
     }
 
