@@ -17,7 +17,7 @@ import static util.MetaDataFieldNames.EXACT_MASS
  * Date: 7/31/15
  * Time: 2:20 PM
  */
-class ExactMassIsCorrectRule extends AbstractCurationRule{
+class ExactMassIsCorrectRule extends AbstractCurationRule {
 
     /**
      * the accuracy needs to be between 0 and the provided value

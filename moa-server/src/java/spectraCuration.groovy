@@ -17,6 +17,7 @@ import curation.rules.instrument.GCMSSpectraIdentificationRule
 import curation.rules.instrument.LCMSSpectraIdentificationRule
 import curation.rules.meta.DerivativeTypeSpelling
 import curation.rules.meta.DropNoneNecessaryMetaDataRule
+import curation.rules.meta.IonModeValueRule
 import curation.rules.meta.IsColumnValid
 import curation.rules.meta.PercentageValueRule
 import curation.rules.meta.RemapMetadataNames
@@ -35,7 +36,6 @@ import curation.rules.tree.GenerateFragmentationTreesRuleForMassBank
 import static util.MetaDataFieldNames.*
 
 beans {
-
     remapMetadataNames(RemapMetadataNames) { bean ->
         bean.autowire = 'byName'
         mapping = [
@@ -45,7 +45,9 @@ beans {
                 "adductionname"           : PRECURSOR_TYPE,
                 "retentiontime"           : RETENTION_TIME,
                 "transfarline temperature": TRANSFER_LINE_TEMPERATURE,
-                "mslevel"                 : MS_LEVEL,
+                "mslevel"                 : MS_TYPE,
+                "ms level"                : MS_TYPE,
+                "mode"                    : ION_MODE,
                 "ionmode"                 : ION_MODE,
                 "compoundclass"           : COMPOUND_CLASS,
                 "author"                  : AUTHORS,
@@ -55,15 +57,16 @@ beans {
                 "molecule formula"        : MOLECULAR_SUM_FORMULA,
                 "molecular formula"       : MOLECULAR_SUM_FORMULA,
                 "mz exact"                : EXACT_MASS,
-                "ms type"                 : MS_LEVEL,
                 "submituser"              : AUTHORS,
                 "source instrument"       : INSTRUMENT,
                 "ri"                      : RETENTION_INDEX,
                 "pi"                      : AUTHORS,
                 "mw"                      : MOLECULAR_WEIGHT,
-                "rate"                    : FLOW_RATE
+                "rate"                    : FLOW_RATE,
+                "spectrumid"              : ACCESSION,
 
-
+                "datacollector"           : "data collector",
+                "dataformat"              : "data format",
         ]
     }
 
@@ -80,7 +83,7 @@ beans {
         bean.autowire = 'byName'
     }
 
-//Spectra curation workflow
+    //Spectra curation workflow
     lcmsSpectraIdentification(LCMSSpectraIdentificationRule) { bean ->
         bean.autowire = 'byName'
     }
@@ -89,73 +92,77 @@ beans {
         bean.autowire = 'byName'
     }
 
-//limit our collision energy in case of percentages to under 100 and over 0
+    ionModeValueRule(IonModeValueRule) { bean ->
+        bean.autowire = 'byName'
+    }
+
+    //limit our collision energy in case of percentages to under 100 and over 0
     collisionEnergyPercentageRule(PercentageValueRule, "collision energy") { bean ->
         bean.autowire = 'byName'
         minPercentage = 0
         maxPercentage = 100
     }
 
-//flow gradiant percentage rule
+    //flow gradiant percentage rule
     flowGradientPercentageRule(PercentageValueRule, "flow gradient") { bean ->
         bean.autowire = 'byName'
         minPercentage = 0
         maxPercentage = 100
     }
 
-//solvent percentage rule
+    //solvent percentage rule
     solventPercentageRule(PercentageValueRule, "solvent") { bean ->
         bean.autowire = 'byName'
         minPercentage = 0
         maxPercentage = 100
     }
 
-//tests the precision of the ions in a mass spec
+    //tests the precision of the ions in a mass spec
     preciseEnough(MassSpecIsPreciseEnoughRule) { bean ->
         bean.autowire = 'byName'
         minPrecision = 3
     }
 
-//does the spectra has any annotations
+    //does the spectra has any annotations
     isAnnotatedSpectraRule(IsAnnotatedSpectraRule) { bean ->
         bean.autowire = 'byName'
     }
 
-//spectra should always be relative and not absolute
+    //spectra should always be relative and not absolute
     convertSpectraToRelativeRule(ConvertMassspectraToRelativeSpectraRule) { bean ->
         bean.autowire = 'byName'
     }
 
-//is spectra dirty
+    //is spectra dirty
     isSpectraDirty(IsCleanSpectraRule) { bean ->
         bean.autowire = 'byName'
         lowAbundancePercentage = 2
         highAbundancePercentage = 10
-        lowAbundanceNoisyThreshold = 95
-        highAbundanceNoisyThreshold = 50
+        lowAbundanceNoisyThreshold = 90
+        highAbundanceNoisyThreshold = 90
         minLCMSPeaks = 10
     }
 
-//is column metadata valid
+    //is column metadata valid
     isColumnValid(IsColumnValid) { bean ->
         bean.autowire = 'byName'
     }
 
-//verify that a lcms spectrum has valid adducts
+    //verify that a lcms spectrum has valid adducts
     lcmsAdductCuration(LCMSAdductCurationRule) { bean ->
         bean.autowire = 'byName'
         toleranceInDalton = 0.5
         minAdducts = 1
     }
 
-//verify that a lcms spectrum has valid adducts
+    //verify that a lcms spectrum has valid adducts
     gcmsAdductCuration(GCMSAdductCurationRule) { bean ->
         bean.autowire = 'byName'
         toleranceInDalton = 1
         minAdducts = 1
     }
 
-//GCMS Derivatization rules
+    //GCMS Derivatization rules
     gcmsDerivatizationRule(ConfirmGCMSDerivatizationRule) { bean ->
         bean.autowire = 'byName'
     }
@@ -183,21 +190,20 @@ beans {
 
     }
 
-//checks if the provided accurate mass is actuall possible
+    //checks if the provided accurate mass is actuall possible
     exactMassIsPossibleRule(ExactMassIsCorrectRule) { bean ->
         bean.autowire = 'byName'
     }
 
-//set up subcuration workflow to check if it's an accurate mass spectra
+    //set up subcuration workflow to check if it's an accurate mass spectra
     isAccurateMassSpectra(SubCurationWorkflow, true) { bean ->
         bean.autowire = 'byName'
         rules = [
                 preciseEnough
         ]
 
-//   successAction = new AddTagAction("accurate")
-//   failureAction = new RemoveTagAction("accurate")
-
+//        successAction = new AddTagAction("accurate")
+//        failureAction = new RemoveTagAction("accurate")
     }
 
 
@@ -222,7 +228,7 @@ beans {
         bean.autowire = 'byName'
     }
 
-//set up metadata subcuration workflow
+    //set up metadata subcuration workflow
     metadataCuration(SubCurationWorkflow, "suspect values", false, "metadata curation") { bean ->
         bean.autowire = 'byName'
         rules = [
@@ -234,12 +240,12 @@ beans {
                 isColumnValid,
                 exactMassIsPossibleRule,
                 derivativeTypeSpellingRule,
-                gcmsDerivatizationRule
-
+                gcmsDerivatizationRule,
+                ionModeValueRule
         ]
     }
 
-//removes metadata we dont need
+    //removes metadata we don't need
     dropNoneWantedMetaDataRule(DropNoneNecessaryMetaDataRule) { bean ->
         bean.autowire = 'byName'
 
@@ -258,12 +264,11 @@ beans {
         bean.autowire = 'byName'
     }
 
-//define our complete workflow here
+    //define our complete workflow here
     spectraCurationWorkflow(CurationWorkflow) { bean ->
         bean.autowire = 'byName'
 
         rules = [
-
                 //these rules should run first
                 deleteRuleBasedTagRule,
                 deleteMetaDataRule,
@@ -277,6 +282,7 @@ beans {
 
                 //order doesn't really matter here
                 metadataCuration,
+
                 //isSpectraDuplicated,
                 isAccurateMassSpectra,
                 isSpectraDirty,
@@ -296,9 +302,6 @@ beans {
                 //these should run last
                 updateRepository,
                 requiresRemoval
-
-
         ]
-//define and register our curation
     }
 }

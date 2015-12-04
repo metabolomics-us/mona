@@ -79,7 +79,6 @@ class IsCleanSpectraRule extends AbstractCurationRule {
         int countOfHighAbundancePeaks = 0
 
         spectrum.ions.each {
-            logger.info("m/z: ${it.mass}, intensity: ${it.intensity}")
             countOfPeaks++
 
             if (it.intensity * 100 < lowAbundancePercentage) {

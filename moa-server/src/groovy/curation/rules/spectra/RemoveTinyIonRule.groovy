@@ -15,7 +15,7 @@ import org.apache.log4j.Logger
 class RemoveTinyIonRule  extends AbstractCurationRule {
 
     Logger logger = Logger.getLogger(getClass())
-    double maxIntensitity = 0.000001;
+    double maxIntensity = 0.000001;
 
     @Override
     boolean ruleAppliesToObject(CurationObject toValidate) {
@@ -24,13 +24,12 @@ class RemoveTinyIonRule  extends AbstractCurationRule {
 
     @Override
     boolean executeRule(CurationObject toValidate) {
-
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         def toDelete = []
 
         spectrum.ions.each {Ion ion ->
-           if(ion.intensity <= maxIntensitity){
+           if(ion.intensity <= maxIntensity) {
                toDelete.add(ion)
            }
         }
@@ -43,9 +42,8 @@ class RemoveTinyIonRule  extends AbstractCurationRule {
         return true
     }
 
-
     @Override
     String getDescription() {
-        return "this rule removes ion's below or equal to the intensity of ${maxIntensitity}"
+        return "this rule removes ion's below or equal to the intensity of ${maxIntensity}"
     }
 }
