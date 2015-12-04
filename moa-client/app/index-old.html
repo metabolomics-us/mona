@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
-    <link rel="stylesheet" href="bower_components/angular-patternfly/dist/styles/angular-patternfly.css" />
     <!-- endbower -->
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css" />
     <!-- endbuild -->
@@ -30,6 +29,8 @@
 
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/autocomplete.css">
+
+
     <!-- endbuild -->
 </head>
 <body class="dashboard">
@@ -39,10 +40,9 @@
 <![endif]-->
 
 <div id="wrapper" ng-controller="AuthenticationController as auth">
-
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0" ng-cloak>
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -51,198 +51,146 @@
             <a class="navbar-brand" href="#/" ng-cloak>{{APP_NAME_ABBR}} - {{APP_NAME}}</a>
         </div>
         <!-- /.navbar-header -->
+        <div class="collapse navbar-collapse" role="navigation">
+            <ul class="nav navbar-top-links navbar-right">
+                <!-- User Login -->
+                <li class="dropdown" uib-dropdown>
+                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+                        <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="uib-dropdown-menu dropdown-user">
+                        <li ng-show="auth.isLoggedIn()">
+                            <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li ng-show="auth.isLoggedIn()" class="divider"></li>
 
-        <ul class="nav navbar-top-links navbar-right">
-            <!-- /.dropdown -->
-            <li class="dropdown" dropdown>
-                <a class="dropdown-toggle" dropdown-toggle href="">
-                    <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-tasks" role="menu">
-                    <li>
-                        <a href="#/uploadstatus">
-                            <div>
-                                <p><strong>Upload Progress</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                <spectra-upload-progress-bar></spectra-upload-progress-bar>
-                            </div>
-                        </a>
-                    </li>
+                        <li>
+                            <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
+                        </li>
+                        <li ng-show="!auth.isLoggedIn()">
+                            <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+            </ul>
 
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#/statistics/query">
-                            <div>
-                                <p><strong>average query time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                <statistics timeframe="month" query="search"></statistics>
-                            </div>
+            <!-- search form -->
+            <form name="searchBox" ng-controller="SearchBoxController" ng-submit="searchBoxQuery=''" class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
+                <div class="input-group custom-search-form">
+                    <input type="text" class="form-control ng-pristine ng-valid ng-touched" ng-model="searchBoxQuery"
+                           placeholder="Search..." tooltip="Search by Name,InChiKey or MoNA ID" tooltip-trigger="focus"
+                           tooltip-placement="bottom">
+                        <span class="input-group-btn">
+                            <button class="btn btn-repeat" type="submit" ng-click="performSimpleQuery(searchBoxQuery)">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                </div>
+            </form>
 
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#/statistics/validation">
-                            <div>
-                                <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                <statistics timeframe="month" query="validation"></statistics>
-                            </div>
+            <!-- /.navbar-top-links -->
+            <ul class="nav navbar-nav">
+                <li class="dropdown" uib-dropdown>
+                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+                        Browse
+                        <span class="fa fa-caret-down"></span>
+                    </a>
+                    <ul class="uib-dropdown-menu">
+                        <li><a href="#/spectra/browse">Browse Mass Spectra</a></li>
+                        <li><a href="#/compounds">Browse Compounds</a></li>
+                        <li><a href="#/spectra/dbindex">Database Index</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#/spectra/querytree">Query Tree</a></li>
+                        <li><a href="#/spectra/similarity">Similarity Query</a></li>
+                        <li ng-controller="SearchBoxController"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#/upload">Spectrum Upload</a></li>
+                    </ul>
+                </li>
+                <!-- statistics dropdown -->
+                <li class="dropdown" uib-dropdown>
+                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+                        Statistics
+                        <span class="fa fa-caret-down"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-tasks" role="menu">
+                        <li>
+                            <a href="#/uploadstatus">
+                                <div>
+                                    <p><strong>Upload Progress</strong><span class="pull-right text muted">&nbsp;</span></p>
+                                    <spectra-upload-progress-bar></spectra-upload-progress-bar>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#/statistics/query">
+                                <div>
+                                    <p><strong>average query time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <statistics timeframe="month" query="search"></statistics>
+                                </div>
 
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#/statistics/import">
-                            <div>
-                                <p><strong>average upload time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                <statistics timeframe="month" query="import"></statistics>
-                            </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/statistics/validation">
+                                <div>
+                                    <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <statistics timeframe="month" query="validation"></statistics>
+                                </div>
 
-                        </a>
-                    </li>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/statistics/import">
+                                <div>
+                                    <p><strong>average upload time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <statistics timeframe="month" query="import"></statistics>
+                                </div>
 
-                    <li class="divider"></li>
-                    <li>
-                        <a class="text-center" href="#/statistics">
-                            <strong>See All Statistics</strong>
-                            <i class="fa fa-angle-right"></i>
-                        </a>
-                    </li>
-                </ul>
-                <!-- /.dropdown-tasks -->
-            </li>
-            <!-- /.dropdown -->
-            <li class="dropdown" dropdown>
-                <a class="dropdown-toggle" dropdown-toggle href="">
-                    <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i class="fa fa-caret-down"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-user" role="menu">
+                            </a>
+                        </li>
 
-                    <li ng-show="auth.isLoggedIn()">
-                        <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
-                    </li>
-                    <li ng-show="auth.isLoggedIn()" class="divider"></li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#/statistics">
+                                <strong>See All Statistics</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
-                    <li>
-                        <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
-                    </li>
-                    <li ng-show="!auth.isLoggedIn()">
-                        <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
-                    </li>
-                </ul>
-                <!-- /.dropdown-user -->
-            </li>
-
-            <!-- /.dropdown -->
-        </ul>
-        <!-- /.navbar-top-links -->
-
-        <div class="navbar-default navbar-static-side" role="navigation">
-            <div class="sidebar-collapse">
-                <ul class="nav" id="side-menu">
-                    <li class="sidebar-search" ng-controller="SearchBoxController">
-                        <form name="searchBox" ng-submit="searchBoxQuery = ''">
-                            <div class="input-group custom-search-form">
-                                <input type="text"
-                                       class="form-control"
-                                       ng-model="searchBoxQuery"
-                                       placeholder="Search..."
-                                       tooltip="Search by Name, InChIKey or MoNA ID"
-                                       tooltip-trigger="focus"
-                                       tooltip-placement="bottom" />
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="submit" ng-click="performSimpleQuery(searchBoxQuery)">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </span>
-                            </div>
-                            <p class="text-right">
-                                <span><a href="" ng-click="querySpectraDialog()">Advanced Query</a></span>
-                            </p>
-                        </form>
-                    </li>
-
-                    <li>
-                        <a href="#/spectra/browse"><i class="fa fa-table fa-fw"></i>Browse Mass Spectra</a>
-                    </li>
-
-                    <li>
-                        <a href="#/compounds"><i class="fa fa-flask fa-fw"></i>Browse Compounds</a>
-                    </li>
-
-                    <li>
-                        <a href="#/spectra/dbindex"><i class="fa fa-list-alt fa-fw"></i>Database Index</a>
-                    </li>
-
-                    <li>
-                        <a href="#/spectra/similarity"><i class="fa fa-search fa-fw"></i>Similarity Query</a>
-                    </li>
-
-                    <li>
-                        <a href="#/upload"><i class="fa fa-cloud-upload fa-fw"></i>Spectrum Uploader</a>
-                    </li>
-
-                    <li>
-                        <a href="#/statistics"><i class="fa fa-signal fa-fw"></i>Statistics</a>
-                    </li>
-
-                    <li>
-                        <a href="#/news"><i class="fa fa-flag-o fa-fw"></i>Announcements</a>
-                    </li>
-
-                    <li ng-show="auth.isAdmin()">
-                        <a href="#"><i class="fa fa-files-o fa-fw"></i>Administration<span class="fa arrow"></span></a>
-
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="#/admin/submitters">Manage Submitters</a>
-                            </li>
-                        </ul>
-
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="#/admin/news">News</a>
-                            </li>
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-
-                    <li>
-                        <a href="#"><i class="fa  fa-file-text-o fa-fw"></i>Documentation<span class="fa arrow"></span></a>
-
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="#/documentation/webservices">Web Services</a>
-                            </li>
-                            <li>
-                                <a href="#/documentation/license">License</a>
-                            </li>
-                            <li>
-                                <a href="#/documentation/query">Query Language for REST services</a>
-                            </li>
-                            <li>
-                                <a href="https://bitbucket.org/fiehnlab/mona/wiki/Using%20authentication%20tokens%20via%20cURL" target="_blank">Authentication using the REST Api</a>
-                            </li>
-
-                            <li>
-                                <a href="#/documentation/terms">Commonly used terms and abbreviations</a>
-                            </li>
-                            <li>
-                                <a href="https://bitbucket.org/fiehnlab/mona/src" target="_blank">Sourcecode</a>
-                            </li>
-                            <li>
-                                <a href="https://bitbucket.org/fiehnlab/mona/wiki/Home" target="_blank">Wiki</a>
-                            </li>
-                            <li>
-                                <a href="https://bitbucket.org/fiehnlab/mona/issues/" target="_blank">Bug Reports/ Feature requests</a>
-                            </li>
-
-
-                        </ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-                </ul>
-                <!-- /#side-menu -->
-            </div>
-            <!-- /.sidebar-collapse -->
+                <li class="dropdown" uib-dropdown>
+                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+                        Resources
+                        <span class="fa fa-caret-down"></span>
+                    </a>
+                    <ul class="uib-dropdown-menu">
+                        <li><a href="#/documentation/webservices">Web Services</a></li>
+                        <li><a href="#/documentation/license">License</a></li>
+                        <li><a href="#/documentation/query">REST Service Query</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Using%20authentication%20tokens%20via%20cURL" target="_blank">REST API Authentication</a></li>
+                        <li><a href="#/documentation/terms">Terms and Abbreviations</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/src" target="_blank">Sourcecode</a></li>
+                        <li><a href="http://mona.fiehnlab.ucdavis.edu/repository/">Repository</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Home" target="_blank">Wiki</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/issues/" target="_blank">Bug Reports / Feature requests</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown" uib-dropdown ng-show="auth.isAdmin()">
+                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+                        Administration
+                        <span class="fa fa-caret-down"></span>
+                    </a>
+                    <ul class="uib-dropdown-menu">
+                        <li><a href="#/admin/submitters">Manage Submitters</a></li>
+                        <li><a href="#/admin/news">News</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-        <!-- /.navbar-static-side -->
     </nav>
 
     <div id="page-wrapper">
@@ -251,12 +199,10 @@
                 <div ng-view="" autoscroll="true"></div>
             </div>
         </div>
-        <!-- /.row -->
-
     </div>
-    <!-- /#page-wrapper -->
-
 </div>
+<!-- /#page-wrapper -->
+
 <!-- /#wrapper -->
 
 <!--[if lt IE 9]>
@@ -273,22 +219,13 @@
 <script src="bower_components/angular-cookies/angular-cookies.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/angular-translate/angular-translate.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="bower_components/angular-dialog-service/dist/dialogs.min.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs.js"></script>
 <script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.min.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/affix.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/alert.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/button.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/carousel.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/collapse.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/dropdown.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tab.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/transition.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/scrollspy.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/modal.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/popover.js"></script>
+<script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.js"></script>
 <script src="bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
 <script src="bower_components/flot/jquery.flot.js"></script>
 <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
@@ -302,7 +239,6 @@
 <script src="bower_components/ng-file-upload-shim/angular-file-upload-shim.js"></script>
 <script src="bower_components/metisMenu/jquery.metisMenu.js"></script>
 <script src="bower_components/paralleljs/lib/parallel.js"></script>
-<script src="bower_components/angular-patternfly/dist/angular-patternfly.js"></script>
 <!-- endbower -->
 
 <script src="bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js"></script>
@@ -312,7 +248,6 @@
 <script src="bower_components/flot/jquery.flot.pie.js"></script>
 <script src="bower_components/flot/jquery.flot.time.js"></script>
 <!-- endbuild -->
-
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/app.js"></script>
@@ -346,20 +281,18 @@
 <script src="scripts/services/upload/uploadLibraryService.js"></script>
 <script src="scripts/services/persistence/newsService.js"></script>
 <script src="scripts/services/persistence/statisticsService.js"></script>
-
-
-<script src="scripts/filters/curlFilter.js"></script>
-<script src="scripts/filters/spectraDownloadFilter.js"></script>
-
+<script src="scripts/services/httpResponseInterceptor.js"></script>
 
 <!-- filters -->
 <script src="scripts/filters/curlFilter.js"></script>
+<script src="scripts/filters/spectraDownloadFilter.js"></script>
 
 <!-- controllers -->
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/authentication/authenticationController.js"></script>
 <script src="scripts/controllers/browser/spectraBrowserController.js"></script>
 <script src="scripts/controllers/browser/spectraDatabaseIndexController.js"></script>
+<script src="scripts/controllers/browser/queryTreeController.js"></script>
 <script src="scripts/controllers/browser/spectrumViewerController.js"></script>
 <script src="scripts/controllers/browser/compoundBrowserController.js"></script>
 <script src="scripts/controllers/query/spectraQueryModalController.js"></script>
@@ -372,8 +305,6 @@
 <script src="scripts/controllers/statistics/statisticsController.js"></script>
 <script src="scripts/controllers/searchBoxController.js"></script>
 <script src="scripts/controllers/documentation/DocumentationTermController.js"></script>
-
-
 
 <!-- directives -->
 <script src="scripts/directives/submitterFormDirective.js"></script>
@@ -394,9 +325,6 @@
 <script src="scripts/directives/submitter/spectra.js"></script>
 <script src="scripts/directives/spectra/spectraDownloadDirective.js"></script>
 <script src="scripts/directives/spectra/spectraPanelDirective.js"></script>
-
-
-
 
 <!-- none bower js -->
 <script src="lib/chemdoodle/ChemDoodleWeb-unpacked.js"></script>
