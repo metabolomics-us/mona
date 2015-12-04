@@ -15,16 +15,16 @@ import static util.MetaDataFieldNames.*
  */
 class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
-    static Map<String, String> listOfAcceptedField = new HashMap<>();
+    static Map<String, List<String>> listOfAcceptedField = new HashMap<>();
 
     static {
-        listOfAcceptedField.put(INSTRUMENT, ".*gcms.*")
-        listOfAcceptedField.put(INSTRUMENT_TYPE, ".*gc.*")
-        listOfAcceptedField.put(IONIZATION_ENERGY, "ev")
+        listOfAcceptedField.put INSTRUMENT, [".*gcms.*", ".*gc/ms.*"]
+        listOfAcceptedField.put INSTRUMENT_TYPE, [".*gc.*"]
+        listOfAcceptedField.put IONIZATION_ENERGY, ["ev"]
     }
 
     def GCMSSpectraIdentificationRule() {
-        this.successAction = (new AddTagAction(GCMS_SPECTRA))
+        this.successAction = new AddTagAction(GCMS_SPECTRA)
         this.failureAction = new RemoveTagAction(GCMS_SPECTRA)
     }
 
@@ -33,19 +33,20 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     protected boolean acceptMetaDataValue(MetaDataValue val) {
         String value = val.value.toString().toLowerCase()
 
-        String s = listOfAcceptedField.get(val.name.toLowerCase())
+        List<String> list = listOfAcceptedField.get(val.name.toLowerCase())
 
-        logger.info("checking ${s} vs ${val.value} - ${val.unit}")
+        for (String s : list) {
+            logger.info("checking ${s} vs ${val.value} - ${val.unit}")
 
-        if (value.equals(s.toLowerCase())) {
-
-            return true
-        } else if (val.unit != null && val.unit.toLowerCase().equals(s.toLowerCase())) {
-            return true
-        } else if (value.matches(s)) {
-            return true
-        } else if (value.contains(s.toLowerCase())) {
-            return true
+            if (value.equals(s.toLowerCase())) {
+                return true
+            } else if (val.unit != null && val.unit.toLowerCase().equals(s.toLowerCase())) {
+                return true
+            } else if (value.matches(s)) {
+                return true
+            } else if (value.contains(s.toLowerCase())) {
+                return true
+            }
         }
 
         return false
@@ -57,7 +58,6 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue field) {
-
         for (String s in listOfAcceptedField.keySet()) {
             if (field.name.toLowerCase().equals(s.toLowerCase())) {
                 logger.info("found field: ${field.name}")

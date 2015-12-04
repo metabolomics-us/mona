@@ -22,7 +22,7 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     static Map<String, List<String>> listOfAcceptedField = new HashMap<>()
 
     static {
-        listOfAcceptedField.put INSTRUMENT, [".*lcms.*", ".*ltq.*"]
+        listOfAcceptedField.put INSTRUMENT, [".*lcms.*", ".*lc/ms.*", ".*ltq.*"]
         listOfAcceptedField.put INSTRUMENT_TYPE, [".*lc.*"]
         listOfAcceptedField.put SOLVENT, [".*"]
         listOfAcceptedField.put "*", ["direct infusion"]
@@ -41,12 +41,10 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
     protected boolean acceptMetaDataValue(MetaDataValue val) {
         String value = val.value.toString().toLowerCase()
 
-
         List<String> list = listOfAcceptedField.get(val.name.toLowerCase())
 
         for (String s : list) {
             logger.info("checking ${s} vs ${val.value} - ${val.unit}")
-
             if (value.equals(s.toLowerCase())) {
                 return true
             } else if (val.unit != null && val.unit.toLowerCase().equals(s.toLowerCase())) {
@@ -61,12 +59,10 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
                 if (p.matcher(value)) {
                     return true
                 }
-
             }
         }
 
         return false
-
     }
 
     /**
@@ -75,8 +71,6 @@ class LCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
      * @return
      */
     protected boolean isCorrectMetaDataField(MetaDataValue field) {
-
-
         for (String s in listOfAcceptedField.keySet()) {
             if (field.name.toLowerCase().equals(s.toLowerCase())) {
                 return true
