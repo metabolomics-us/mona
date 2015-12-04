@@ -46,35 +46,49 @@ class SpectraQueryExportConsumer {
      */
     def handleMessage(def data, MessageContext context) {
         if (data != null) {
-            if (data.containsKey('query') && data.containsKey('emailAddress')) {
-                long begin = System.currentTimeMillis()
+            if (data.containsKey('query')) {
 
-                // Use a datetime string as an identifier for this job
-                String startTime = data.containsKey('startTime') ? data.startTime : new Date().format('yyyyMMddHHmmssSSS');
+                if (data.containsKey('emailAddress') || data.containsKey('label')) {
+                    long begin = System.currentTimeMillis()
 
-                try {
-                    spectraQueryExportService.exportQuery(data.query, data.emailAddress, startTime)
+                    // Use a datetime string as an identifier for this job
+                    String startTime = data.containsKey('startTime') ? data.startTime : new Date().format('yyyyMMddHHmmssSSS');
 
-                    long end = System.currentTimeMillis()
-                    log.debug("exported query for ${data.emailAddress}, which took ${(end - begin) / 1000}")
-                } catch (Throwable e) {
-                    def json = (data.query instanceof JSONObject) ? data.query : JSON.parse(data.query)
-                    json.prettyPrint = true
-                    log.debug(json, e)
-
-                    if (resubmit) {
-                        if (e instanceof IllegalArgumentException) {
-                            log.error("fatal error - no resubmission possible", e)
+                    try {
+                        if(data.containsKey('emailAddress')) {
+                            spectraQueryExportService.exportQueryByEmailAddress(data.query, data.emailAddress, startTime)
                         } else {
-                            log.error("resubmitting failed job to the system", e)
-                            FireJobs.fireSpectraQueryExportJob([query: data.query, emailAddress: data.emailAddress, startTime: startTime])
+                            spectraQueryExportService.exportQueryByLabel(data.query, data.label)
                         }
-                    } else {
-                        log.error("download fatally failed: ${e.getMessage()}", e)
+
+                        long end = System.currentTimeMillis()
+                        log.debug("exported query, which took ${(end - begin) / 1000}")
+                    } catch (Throwable e) {
+                        def json = (data.query instanceof JSONObject) ? data.query : JSON.parse(data.query)
+                        json.prettyPrint = true
+                        log.debug(json, e)
+
+                        if (resubmit) {
+                            if (e instanceof IllegalArgumentException) {
+                                log.error("fatal error - no resubmission possible", e)
+                            } else {
+                                log.error("resubmitting failed job to the system", e)
+
+                                if(data.containsKey('emailAddress')) {
+                                    FireJobs.fireSpectraQueryExportJob([query: data.query, emailAddress: data.emailAddress, startTime: startTime])
+                                } else {
+                                    FireJobs.fireSpectraQueryExportJob([query: data.query, label: data.label])
+                                }
+                            }
+                        } else {
+                            log.error("download fatally failed: ${e.getMessage()}", e)
+                        }
                     }
+                } else {
+                    log.info("\t=>\tno label/email address was provided!")
                 }
             } else {
-                log.info("\t=>\tno query/email address was provided!")
+                log.info("\t=>\tno query was provided!")
             }
         } else {
             log.info("\t=>\tno data was provided")
