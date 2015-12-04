@@ -4,7 +4,6 @@ import moa.server.metadata.MetaDataPersistenceService
 
 import static util.MetaDataFieldNames.*
 
-import curation.actions.MetaDataSuspectAction
 import curation.rules.AbstractMetaDataCentricRule
 import moa.MetaDataValue
 import org.apache.log4j.Logger
@@ -22,7 +21,7 @@ class IonModeValueRule extends AbstractMetaDataCentricRule {
 
     @Override
     protected boolean acceptMetaDataValue(MetaDataValue value) {
-        String ionMode = val.value.toString()
+        String ionMode = value.value.toString()
 
         if (ionMode.toLowerCase() == "n/a") {
             logger.info("ion mode $ionMode is invalid, removing value")
