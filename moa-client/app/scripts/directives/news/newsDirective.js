@@ -41,19 +41,19 @@ app.directive('gwNews', function (News, $interval,$timeout) {
             if (angular.isDefined(running)) return;
 
             $scope.loadData = function () {
-                if ($scope.type == 'announcements') {
+                if ($scope.type === 'announcements') {
                     News.listAnnouncements(function (data) {
                         $scope.recentNews.length = 0;
                         $scope.recentNews = data;
                     });
                 }
-                else if ($scope.type == 'upload') {
+                else if ($scope.type === 'upload') {
                     News.listUpdates(function (data) {
                         $scope.recentNews.length = 0;
                         $scope.recentNews = data;
                     });
                 }
-                else if ($scope.type == 'notification') {
+                else if ($scope.type === 'notification') {
                     News.listNotifications(function (data) {
                         $scope.recentNews.length = 0;
                         $scope.recentNews = data;

@@ -40,7 +40,7 @@ app.service('SpectrumCache', function ($log, $window) {
 
 
     this.hasBrowserSpectra = function () {
-        return this.browserSpectra != null;
+        return this.browserSpectra !== null;
     };
     this.getBrowserSpectra = function () {
         return this.browserSpectra;
@@ -60,7 +60,7 @@ app.service('SpectrumCache', function ($log, $window) {
 
 
     this.hasBrowserLocation = function () {
-        return this.browserLocation != null;
+        return this.browserLocation !== null;
     };
     this.getBrowserLocation = function () {
         return this.browserLocation;
@@ -74,7 +74,7 @@ app.service('SpectrumCache', function ($log, $window) {
 
 
     this.hasSpectrum = function () {
-        return this.spectrum != null;
+        return this.spectrum !== null;
     };
     this.getSpectrum = function () {
         return this.spectrum;
@@ -110,7 +110,7 @@ app.service('QueryCache', function ($injector, $log, $rootScope) {
      * @returns {boolean}
      */
     this.hasSpectraQuery = function () {
-        return this.query != null;
+        return this.query !== null;
     };
 
     /**
@@ -120,7 +120,7 @@ app.service('QueryCache', function ($injector, $log, $rootScope) {
     this.getSpectraQuery = function () {
         // Create default query if none exists
         // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
-        if (this.query == null) {
+        if (this.query === null) {
             return $injector.get('SpectraQueryBuilderService').prepareQuery();
         } else {
             return this.query;

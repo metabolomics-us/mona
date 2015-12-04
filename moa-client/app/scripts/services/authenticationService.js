@@ -12,7 +12,7 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
 
     var handleLoginSuccess = function(response) {
         // In progress to handle errors more gracefully
-        if (response.status == 200) {
+        if (response.status === 200) {
 
         }
         $rootScope.currentUser = response.data;
@@ -116,7 +116,7 @@ app.service('AuthenticationService', function (Submitter, $q, $http, $resource, 
 
     this.isLoggedIn = function() {
         return angular.isDefined($rootScope.currentUser) &&
-               $rootScope.currentUser != null &&
+               $rootScope.currentUser !== null &&
                angular.isDefined($rootScope.currentUser.access_token);
     };
 

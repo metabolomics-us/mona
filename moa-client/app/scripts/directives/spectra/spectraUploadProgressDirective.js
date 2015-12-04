@@ -28,9 +28,9 @@ app.directive('spectraUploadProgressBar', function () {
             $scope.etaString = '';
 
             var buildEtaString = function() {
-                if (UploadLibraryService.uploadStartTime == -1 || !UploadLibraryService.isUploading()) {
+                if (UploadLibraryService.uploadStartTime === -1 || !UploadLibraryService.isUploading()) {
                     $scope.etaString = '';
-                } else if ($scope.completedSpectraCount == 0) {
+                } else if ($scope.completedSpectraCount === 0) {
                     $scope.etaString = 'Loading spectra for processing...'
 
                 } else {
@@ -48,7 +48,7 @@ app.directive('spectraUploadProgressBar', function () {
                     if (minutes > 0 || hours > 0) etaString += ' ' + minutes + ' minutes';
                     if (seconds > 0 || minutes > 0 || hours > 0) etaString += ' ' + seconds + ' seconds';
 
-                    if (etaString != '') {
+                    if (etaString !== '') {
                         $scope.etaString = 'Estimated' + etaString + ' remaining';
                     } else {
                         $scope.etaString = '';

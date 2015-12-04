@@ -30,7 +30,7 @@ moaControllers.CompoundBrowserController = function($scope, Compound, $location,
     $scope.loadingMore = false;
 
     $scope.loadMoreCompounds = function () {
-        if ($scope.compoundLoadLength != $scope.compounds.length) {
+        if ($scope.compoundLoadLength !== $scope.compounds.length) {
             $scope.compoundLoadLength = $scope.compounds.length;
             $scope.loadingMore = true;
 

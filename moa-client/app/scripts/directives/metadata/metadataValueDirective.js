@@ -14,7 +14,7 @@ app.directive('gwValue', function () {
             value: '=value'
         },
         link: function ($scope, element, attrs, ngModel) {
-            if ($scope.value.computed == true) {
+            if ($scope.value.computed === true) {
                 element.append("<i class='fa fa-flask'></i>");
             }
         }
@@ -208,7 +208,7 @@ app.directive('typeaheadFocus', function () {
                 var viewValue = ngModel.$viewValue;
 
                 //restore to null value so that the typeahead can detect a change
-                if (ngModel.$viewValue == ' ') {
+                if (ngModel.$viewValue === ' ') {
                     ngModel.$setViewValue(null);
                 }
 
@@ -221,7 +221,7 @@ app.directive('typeaheadFocus', function () {
 
             //compare function that treats the empty space as a match
             scope.emptyOrMatch = function (actual, expected) {
-                if (expected == ' ') {
+                if (expected === ' ') {
                     return true;
                 }
                 return actual.indexOf(expected) > -1;
@@ -271,7 +271,7 @@ app.directive('gwMetaQueryInput', function () {
              * @param value
              */
             $scope.queryMetadataNames = function(value){
-                if(angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') == '') {
+                if(angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') === '') {
                     return $http.get(REST_BACKEND_SERVER + '/rest/meta/searchNames/', {}).then(function (data) {
                         return limitToFilter(data.data,50);
                     });
@@ -291,7 +291,7 @@ app.directive('gwMetaQueryInput', function () {
              */
             $scope.queryMetadataValues = function (name, value) {
 
-                if(angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') == ''){
+                if(angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') === ''){
                     return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search', {
                         query: {
                             name: name,
@@ -349,7 +349,7 @@ app.directive('gwMetaQueryInput', function () {
                 }
 
                 // Set blank entry if query list is empty
-                if ($scope.query.length == 0) {
+                if ($scope.query.length === 0) {
                     $scope.addMetadataQuery();
                 }
 

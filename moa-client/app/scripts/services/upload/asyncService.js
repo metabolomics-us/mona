@@ -25,7 +25,7 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
     this.addToPool = function (executeFunction, data) {
         pool.push({execute: executeFunction, data: data});
 
-        if(timeout == null){
+        if (timeout === null){
             this.startPool();
         }
     };
@@ -54,7 +54,7 @@ app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
                     }
                 }
             }
-            else if(pool.length == 0){
+            else if (pool.length === 0){
                 //stop the interval to save resources
                 $interval.cancel(timeout);
                 timeout = null;

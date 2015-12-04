@@ -31,7 +31,7 @@ app.directive('scoreSpectra', function ($compile, $filter,Spectrum, $log) {
             var delayedSpectrum = $scope.ngModel;
 
             //calculate the score of our spectrum
-            if (angular.isDefined(delayedSpectrum.score) && delayedSpectrum.score != null) {
+            if (angular.isDefined(delayedSpectrum.score) && delayedSpectrum.score !== null) {
                 if (angular.isDefined(delayedSpectrum.score.scaledScore)) {
                     $scope.score = delayedSpectrum.score.scaledScore;
                 }
