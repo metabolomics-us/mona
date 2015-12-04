@@ -39,12 +39,12 @@ moaControllers.QueryTreeController = function($scope, Spectrum, $location, $filt
                     data[i].singleLabel = label.pop();
                     var parentLabel = label.join(" - ");
 
-                    if(data[i].depth == 1) {
+                    if(data[i].depth === 1) {
                         data[i].parent = -1;
                         $scope.queryTree.push(data[i]);
                     } else {
                         for(var j = 0; j < data.length; j++) {
-                            if(data[j].label == parentLabel) {
+                            if(data[j].label === parentLabel) {
                                 data[i].parent = j;
                                 data[j].children.push(data[i]);
                                 break;
@@ -85,7 +85,7 @@ app.directive('queryTreeView', ['$compile', function($compile) {
                 '<div class="list-group" data-ng-repeat-end ng-if="node.children.length" data-query-tree-view data-query-tree-depth="'+ (depth + 1) +'" data-tree-id="'+ treeId +'" data-tree-model="node.children"></div>';
 
             if(treeId && treeModel) {
-                if(depth == 0) {
+                if(depth === 0) {
                     template = '<div class="list-group panel-query-tree well">'+ template +'</div>';
                 }
 

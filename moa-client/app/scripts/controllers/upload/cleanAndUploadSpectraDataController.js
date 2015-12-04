@@ -35,9 +35,9 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
     $scope.removeCurrentSpectrum = function() {
         $scope.spectra.splice($scope.spectraIndex, 1);
 
-        if($scope.spectra.length == 0) {
+        if($scope.spectra.length === 0) {
             $scope.resetFile();
-        } else if ($scope.spectraIndex == $scope.spectra.length) {
+        } else if ($scope.spectraIndex === $scope.spectra.length) {
             setSpectrum($scope.spectraIndex - 1);
         } else {
             setSpectrum($scope.spectraIndex);
@@ -64,16 +64,16 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
     $scope.ionTableSortReverse = false;
 
     $scope.sortIonTable = function (column) {
-        if (column == 'ion') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '+ion') ? !$scope.ionTableSortReverse : false;
+        if (column === 'ion') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '+ion') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '+ion';
         }
-        else if (column == 'intensity') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '-intensity') ? !$scope.ionTableSortReverse : false;
+        else if (column === 'intensity') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '-intensity') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '-intensity';
         }
-        else if (column == 'annotation') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '-annotation') ? !$scope.ionTableSortReverse : false;
+        else if (column === 'annotation') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '-annotation') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '-annotation';
         }
     };
@@ -140,7 +140,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
      */
 
     $scope.addName = function() {
-        if ($scope.currentSpectrum.names[$scope.currentSpectrum.names.length - 1] != '') {
+        if ($scope.currentSpectrum.names[$scope.currentSpectrum.names.length - 1] !== '') {
             $scope.currentSpectrum.names.push('');
         }
     };
@@ -164,7 +164,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
         var metadata = $scope.currentSpectrum.meta[index];
 
         for(var i = 0; i < $scope.spectra.length; i++) {
-            if(i != $scope.spectraIndex) {
+            if(i !== $scope.spectraIndex) {
                 $scope.spectra[i].meta.push(metadata);
             }
         }
@@ -174,7 +174,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
         var tags = $scope.currentSpectrum.tags;
 
         for(var i = 0; i < $scope.spectra.length; i++) {
-            if(i != $scope.spectraIndex) {
+            if(i !== $scope.spectraIndex) {
                 if(!$scope.spectra[i].tags) {
                     $scope.spectra[i].tags = [];
                 }
@@ -183,7 +183,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
                     var hasTag = false;
 
                     for(var k = 0; k < $scope.spectra[i].tags.length; k++) {
-                        if($scope.spectra[i].tags[k].text == tags[j].text) {
+                        if($scope.spectra[i].tags[k].text === tags[j].text) {
                             hasTag = true;
                             break
                         }
@@ -221,7 +221,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
                                 var annotation = '';
 
                                 for (var i = 0; i < spectrum.meta.length; i++) {
-                                    if (spectrum.meta[i].category == 'annotation' && spectrum.meta[i].value == x[0]) {
+                                    if (spectrum.meta[i].category === 'annotation' && spectrum.meta[i].value === x[0]) {
                                         annotation = spectrum.meta[i].name;
                                     }
                                 }
@@ -243,7 +243,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
                             // Get structure from InChIKey if no InChI is provided
                             if (angular.isDefined(spectrum.inchiKey) && angular.isUndefined(spectrum.inchi)) {
                                 gwCtsService.convertInchiKeyToMol(spectrum.inchiKey, function (molecule) {
-                                    if (molecule != null) {
+                                    if (molecule !== null) {
                                         spectrum.molFile = molecule;
                                     }
                                 });
@@ -251,15 +251,15 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
 
                             // Remove annotations and origin from metadata
                             spectrum.hiddenMetadata = spectrum.meta.filter(function(metadata) {
-                                return metadata.name == 'origin' || (angular.isDefined(metadata.category) && metadata.category == 'annotation');
+                                return metadata.name === 'origin' || (angular.isDefined(metadata.category) && metadata.category === 'annotation');
                             });
 
                             spectrum.meta = spectrum.meta.filter(function(metadata) {
-                                return metadata.name != 'origin' && (angular.isUndefined(metadata.category) || metadata.category != 'annotation');
+                                return metadata.name !== 'origin' && (angular.isUndefined(metadata.category) || metadata.category !== 'annotation');
                             });
 
                             // Add an empty metadata field if none exist
-                            if (spectrum.meta.length == 0) {
+                            if (spectrum.meta.length === 0) {
                                 spectrum.meta.push({name: '', value: ''});
                             }
 
@@ -293,7 +293,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
                 console.log(sep1 +" "+ sep2)
 
                 if (sep1 > -1 || sep2 > -1) {
-                    if (sep1 == -1 || (sep1 > -1 && sep2 > -1 && sep1 > sep2)) {
+                    if (sep1 === -1 || (sep1 > -1 && sep2 > -1 && sep1 > sep2)) {
                         sep1 = sep2;
                     }
 
@@ -309,7 +309,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
     };
 
     $scope.convertMolToInChI = function() {
-        if (angular.isDefined($scope.currentSpectrum.molFile) && $scope.currentSpectrum.molFile != '') {
+        if (angular.isDefined($scope.currentSpectrum.molFile) && $scope.currentSpectrum.molFile !== '') {
             gwCtsService.convertToInchiKey($scope.currentSpectrum.molFile, function (result) {
                 console.log(result);
                 $scope.currentSpectrum.inchiKey = result.inchikey;
@@ -331,17 +331,17 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
             }
 
             // Add names
-            msp += 'Name: '+ ($scope.spectra[i].names.length == 0 ? 'Unknown' : $scope.spectra[i].names[0]) +'\n';
+            msp += 'Name: '+ ($scope.spectra[i].names.length === 0 ? 'Unknown' : $scope.spectra[i].names[0]) +'\n';
 
-            if (angular.isDefined($scope.spectra[i].inchiKey) && $scope.spectra[i].inchiKey != '') {
+            if (angular.isDefined($scope.spectra[i].inchiKey) && $scope.spectra[i].inchiKey !== '') {
                 msp += 'InChIKey: '+ $scope.spectra[i].inchiKey +'\n';
             }
 
-            if (angular.isDefined($scope.spectra[i].inchi) && $scope.spectra[i].inchi != '') {
+            if (angular.isDefined($scope.spectra[i].inchi) && $scope.spectra[i].inchi !== '') {
                 msp += 'InChI: '+ $scope.spectra[i].inchi +'\n';
             }
 
-            if (angular.isDefined($scope.spectra[i].smiles) && $scope.spectra[i].smiles != '') {
+            if (angular.isDefined($scope.spectra[i].smiles) && $scope.spectra[i].smiles !== '') {
                 msp += 'SMILES: '+ $scope.spectra[i].smiles +'\n';
             }
 
@@ -370,7 +370,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
             msp += 'Num Peaks: '+ ions.length +'\n';
 
             for (var j = 0; j < ions.length; j++) {
-                msp += ions[j].ion +' '+ ions[j].intensity + (ions[j].annotation != '' ? ' '+ ions[j].annotation : '') +'\n';
+                msp += ions[j].ion +' '+ ions[j].intensity + (ions[j].annotation !== '' ? ' '+ ions[j].annotation : '') +'\n';
             }
         }
 
@@ -392,7 +392,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
      */
     $scope.waitForLogin = function() {
         $scope.$on('auth:login-success', function(event, data, status, headers, config) {
-            if ($scope.spectraLoaded == 2) {
+            if ($scope.spectraLoaded === 2) {
                 $scope.uploadFile();
             }
         });
@@ -416,13 +416,13 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
                 }
             }
 
-            if (ionCount == 0) {
+            if (ionCount === 0) {
                 $scope.spectra[i].errors.push('This spectrum has no selected ions!  It cannot be uploaded.');
             }
 
-            if ((angular.isUndefined($scope.spectra[i].inchi) || $scope.spectra[i].inchi == '') &&
-                    (angular.isUndefined($scope.spectra[i].molFile) || $scope.spectra[i].molFile == '') &&
-                    (angular.isUndefined($scope.spectra[i].smiles) || $scope.spectra[i].smiles == '')) {
+            if ((angular.isUndefined($scope.spectra[i].inchi) || $scope.spectra[i].inchi === '') &&
+                    (angular.isUndefined($scope.spectra[i].molFile) || $scope.spectra[i].molFile === '') &&
+                    (angular.isUndefined($scope.spectra[i].smiles) || $scope.spectra[i].smiles === '')) {
                 $scope.spectra[i].errors.push('This spectrum requires a structure in order to upload. Please provide a MOL file or InChI code!');
             }
 
@@ -438,7 +438,7 @@ moaControllers.CleanSpectraDataController = function ($scope, $rootScope, $windo
             $window.scrollTo(0, 0);
         }
 
-        return (invalid.length == 0);
+        return (invalid.length === 0);
     };
 
 

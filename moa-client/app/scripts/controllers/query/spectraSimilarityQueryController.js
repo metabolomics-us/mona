@@ -20,16 +20,16 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
     $scope.ionTableSortReverse = false;
 
     $scope.sortIonTable = function (column) {
-        if (column == 'ion') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '+ion') ? !$scope.ionTableSortReverse : false;
+        if (column === 'ion') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '+ion') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '+ion';
         }
-        else if (column == 'intensity') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '-intensity') ? !$scope.ionTableSortReverse : false;
+        else if (column === 'intensity') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '-intensity') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '-intensity';
         }
-        else if (column == 'annotation') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '-annotation') ? !$scope.ionTableSortReverse : false;
+        else if (column === 'annotation') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '-annotation') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '-annotation';
         }
     };
@@ -46,14 +46,14 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
             function (data, origin) {
                 UploadLibraryService.processData(data, function (spectrum) {
                     $scope.$apply(function() {
-                        if ($scope.spectraCount == 0) {
+                        if ($scope.spectraCount === 0) {
                             // Create list of ions
                             $scope.spectrumIons = spectrum.spectrum.split(' ').map(function (x) {
                                 x = x.split(':');
                                 var annotation = '';
 
                                 for (var i = 0; i < spectrum.meta.length; i++) {
-                                    if (spectrum.meta[i].category == 'annotation' && spectrum.meta[i].value == x[0]) {
+                                    if (spectrum.meta[i].category === 'annotation' && spectrum.meta[i].value === x[0]) {
                                         annotation = spectrum.meta[i].name;
                                     }
                                 }
@@ -115,14 +115,14 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
         if (angular.isDefined($scope.queryOptions.queryType)) {
 
             //splash based queries
-            if($scope.queryState == 3){
+            if($scope.queryState === 3){
 
                 SpectraQueryBuilderService.prepareQuery();
 
-                if ($scope.queryOptions.queryType == "exact") {
+                if ($scope.queryOptions.queryType === "exact") {
                     SpectraQueryBuilderService.addExactSpectraSearchToQuery($scope.splash);
                 }
-                else if ($scope.queryOptions.queryType == 'histogram') {
+                else if ($scope.queryOptions.queryType === 'histogram') {
                     SpectraQueryBuilderService.addMatchingHistogramToQuery($scope.splash);
                 }
                 $location.path("/spectra/browse/");
@@ -138,7 +138,7 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
 
                 for (var i = 0; i < $scope.spectrumIons.length; i++) {
                     if ($scope.spectrumIons[i].selected) {
-                        spectrumString += (spectrumString == '' ? '' : ' ')
+                        spectrumString += (spectrumString === '' ? '' : ' ')
                         + $scope.spectrumIons[i].ionStr
                         + ':' + $scope.spectrumIons[i].intensityStr;
 
@@ -150,7 +150,7 @@ moaControllers.SpectraSimilarityQueryController = function ($scope, $location, U
                 }
 
                 // Perform similarity search
-                if ($scope.queryOptions.queryType == 'similar') {
+                if ($scope.queryOptions.queryType === 'similar') {
                     SpectraQueryBuilderService.prepareQuery();
                     SpectraQueryBuilderService.addSimilarSpectraToQuery(null, spectrumString);
                     $location.path("/spectra/browse/");

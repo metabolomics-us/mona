@@ -10,7 +10,7 @@ moaControllers.SearchBoxController = function ($scope, $uibModal, $location, $ro
 
     $scope.performSimpleQuery = function(searchBoxQuery) {
         // Handle empty query
-        if (angular.isUndefined(searchBoxQuery) || searchBoxQuery == '') {
+        if (angular.isUndefined(searchBoxQuery) || searchBoxQuery === '') {
             return;
         }
 
@@ -28,7 +28,7 @@ moaControllers.SearchBoxController = function ($scope, $uibModal, $location, $ro
         }
 
         // Handle MoNA hash
-        else if (searchBoxQuery.indexOf('mona-') == 0) {
+        else if (searchBoxQuery.indexOf('mona-') === 0) {
             SpectraQueryBuilderService.prepareQuery();
             SpectraQueryBuilderService.addSpectraIdToQuery(searchBoxQuery);
             path = '/spectra/browse';
@@ -41,7 +41,7 @@ moaControllers.SearchBoxController = function ($scope, $uibModal, $location, $ro
         }
 
         // Update view
-        if ($location.path() == path) {
+        if ($location.path() === path) {
             $route.reload();
         } else {
             $location.path(path);

@@ -33,7 +33,7 @@ app.directive('gwTag', function () {
         controller: function ($scope, SpectraQueryBuilderService, $location) {
             $scope.options = [];
 
-            if ($scope.type == 'spectrum') {
+            if ($scope.type === 'spectrum') {
                 $scope.options = [
                     {
                         name: 'Create new query',
@@ -123,10 +123,10 @@ app.directive('gwTagDisplay', function () {
                 var tagClass = [];
 
                 //if something is selected
-                if ($scope.selectedTags[tag.text] == '+') {
+                if ($scope.selectedTags[tag.text] === '+') {
                     tagClass.push('btn-success');
                 }
-                else if ($scope.selectedTags[tag.text] == '-') {
+                else if ($scope.selectedTags[tag.text] === '-') {
                     tagClass.push('btn-danger');
                 }
                 else {

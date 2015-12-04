@@ -118,7 +118,7 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                 /**
                  * get the actual molecule information and tell our parent scope that this value needs updating. Obviously in case of a read only sketcher we ignore it
                  */
-                if ($scope.readonly == false) {
+                if ($scope.readonly === false) {
                     sketcher.click = function () {
                         //make sure everything is in the angular context
                         $scope.$apply(
@@ -149,8 +149,8 @@ app.directive('chemicalSketcher', function (gwCtsService, $log) {
                 $scope.$watch(function () {
                     return ngModel.$modelValue;
                 }, function (newValue, oldValue) {
-                    if ($scope.readonly == false) {
-                        if (newValue != oldValue) {
+                    if ($scope.readonly === false) {
+                        if (newValue !== oldValue) {
                             getMoleculeForModel(newValue);
                         }
                     }

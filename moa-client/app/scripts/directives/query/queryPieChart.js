@@ -20,7 +20,7 @@ app.directive('queryPie', function(){
 
         controller: function($scope, $location, SpectraQueryBuilderService) {
             $scope.redirect = function(event, pos, obj) {
-                if(typeof obj != 'undefined') {
+                if(typeof obj !== 'undefined') {
                     var query = {};
                     query[$scope.name] = obj.series.label;
 
@@ -44,7 +44,7 @@ app.directive('queryPie', function(){
                 }
             };
 
-            if(typeof scope.data != 'undefined') {
+            if(typeof scope.data !== 'undefined') {
                 var plotData = [];
                 var minValue = 0;
 

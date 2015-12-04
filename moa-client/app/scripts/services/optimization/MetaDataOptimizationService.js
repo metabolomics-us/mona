@@ -165,7 +165,7 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                 //object = convertRetentionTimeToSeconds(object);
                 //object = convertUnits(object);
 
-                if (object != null) {
+                if (object !== null) {
                     result.push(object);
                 }
             }

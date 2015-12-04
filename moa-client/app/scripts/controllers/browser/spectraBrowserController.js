@@ -161,7 +161,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
         //inform other controllers that we are starting to load spectra
         $rootScope.$broadcast('spectra:starting:query');
 
-        if (!$scope.loadingMore && $scope.spectraLoadLength != $scope.spectra.length && $scope.dataAvailable) {
+        if (!$scope.loadingMore && $scope.spectraLoadLength !== $scope.spectra.length && $scope.dataAvailable) {
             //search utilizing our compiled query so that it can be easily refined over time
             $scope.loadingMore = true;
             $scope.spectraLoadLength = $scope.spectra.length;
@@ -178,7 +178,7 @@ moaControllers.SpectraBrowserController = function ($scope, Spectrum, Compound, 
                     queryPerformance();
                 }
 
-                if (data.length == 0) {
+                if (data.length === 0) {
                     $scope.dataAvailable = false;
                 } else {
                     // Add data to spectra object

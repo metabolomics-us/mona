@@ -61,7 +61,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 				$scope.minLength = 1;
 				$scope.searchStr = null;
 
-				if ($scope.minLengthUser && $scope.minLengthUser != "") {
+				if ($scope.minLengthUser && $scope.minLengthUser !== "") {
 					$scope.minLength = $scope.minLengthUser;
 				}
 
@@ -76,7 +76,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
                  * @returns {boolean}
                  */
 				var isNewSearchNeeded = function (newTerm, oldTerm) {
-					return newTerm.length >= $scope.minLength && newTerm != oldTerm
+					return newTerm.length >= $scope.minLength && newTerm !== oldTerm
 				};
 
 				/**
@@ -89,7 +89,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 						$scope.results = [];
 
 						var titleFields = [];
-						if ($scope.titleField && $scope.titleField != "") {
+						if ($scope.titleField && $scope.titleField !== "") {
 							titleFields = $scope.titleField.split(",");
 						}
 
@@ -201,8 +201,8 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
                  * @param event
                  */
 				$scope.keyPressed = function (event) {
-					if (!(event.which == 38 || event.which == 40 || event.which == 13)) {
-						if (!$scope.searchStr || $scope.searchStr == "") {
+					if (!(event.which === 38 || event.which === 40 || event.which === 13)) {
+						if (!$scope.searchStr || $scope.searchStr === "") {
 							$scope.showDropdown = false;
 							$scope.lastSearchTerm = null
 						} else if (isNewSearchNeeded($scope.searchStr, $scope.lastSearchTerm)) {
@@ -272,7 +272,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 						}
 
 						$scope.$apply();
-					} else if (event.which == 38) {
+					} else if (event.which === 38) {
 						if ($scope.currentIndex >= 1) {
 							$scope.currentIndex--;
 							$scope.$apply();
@@ -280,7 +280,7 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 							event.stopPropagation();
 						}
 
-					} else if (event.which == 13) {
+					} else if (event.which === 13) {
 						if ($scope.results && $scope.currentIndex >= 0 && $scope.currentIndex < $scope.results.length) {
 							$scope.selectResult($scope.results[$scope.currentIndex]);
 							$scope.$apply();
@@ -309,11 +309,11 @@ app.directive('flAngucomplete', function ($parse, $http, $sce, $timeout) {
 							event.stopPropagation();
 						}
 
-					} else if (event.which == 27) {
+					} else if (event.which === 27) {
 						$scope.results = [];
 						$scope.showDropdown = false;
 						$scope.$apply();
-					} else if (event.which == 8) {
+					} else if (event.which === 8) {
 						$scope.selectedObject = null;
 						$scope.$apply();
 					}

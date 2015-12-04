@@ -22,7 +22,7 @@ moaControllers.AuthenticationController = function ($scope, $rootScope, $uibModa
     self.isAdmin = function() {
         if (AuthenticationService.isLoggedIn()) {
             for (var i = 0; i < $rootScope.currentUser.roles.length; i++) {
-                if ($rootScope.currentUser.roles[i].authority == ADMIN_ROLE_NAME)
+                if ($rootScope.currentUser.roles[i].authority === ADMIN_ROLE_NAME)
                     return true;
             }
         }
@@ -120,15 +120,15 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $ui
     $scope.submitLogin = function () {
         $scope.errors = [];
 
-        if ($scope.credentials.email == '') {
+        if ($scope.credentials.email === '') {
             $scope.errors.push('Please enter your email address');
         }
 
-        if ($scope.credentials.password == '') {
+        if ($scope.credentials.password === '') {
             $scope.errors.push('Please enter your password');
         }
 
-        if($scope.errors.length == 0) {
+        if($scope.errors.length === 0) {
             $scope.state = 'logging in';
             AuthenticationService.login($scope.credentials.email, $scope.credentials.password);
         }
@@ -144,7 +144,7 @@ moaControllers.AuthenticationModalController = function ($scope, $rootScope, $ui
     $scope.$on('auth:login-error', function(event, data, status, headers, config) {
         $scope.state = 'login';
 
-        if (data.status == '401') {
+        if (data.status === '401') {
             $scope.errors.push('Invalid email or password');
         } else {
             $scope.errors.push('Unable to reach MoNA server');
@@ -185,7 +185,7 @@ moaControllers.RegistrationModalController = function ($scope, $rootScope, $uibM
             function (data) {
                 $scope.state = 'register';
 
-                if(data.status == 422) {
+                if(data.status === 422) {
                     for (var i = 0; i < data.data.errors.length; i++) {
                         var message = 'Error in '+ data.data.errors[i].field +': ';
 

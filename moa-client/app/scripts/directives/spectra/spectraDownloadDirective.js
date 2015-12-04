@@ -83,7 +83,7 @@ app.directive('spectraDownload', function(Spectrum, $http, $filter, $log, REST_B
                     },
                     function (response) {
                         dialogs.error('Error submitting request!',
-                            response.status == 403 ? "You must be logged in to request a query export." :
+                            response.status === 403 ? "You must be logged in to request a query export." :
                             "Could not reach MoNA server!",
                             {size: 'md', backdrop: 'static'});
                     }

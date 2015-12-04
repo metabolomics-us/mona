@@ -50,16 +50,16 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
     $scope.ionTableSortReverse = false;
 
     $scope.sortIonTable = function (column) {
-        if (column == 'ion') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '+ion') ? !$scope.ionTableSortReverse : false;
+        if (column === 'ion') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '+ion') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '+ion';
         }
-        else if (column == 'intensity') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '-intensity') ? !$scope.ionTableSortReverse : false;
+        else if (column === 'intensity') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '-intensity') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '-intensity';
         }
-        else if (column == 'annotation') {
-            $scope.ionTableSortReverse = ($scope.ionTableSort == '-annotation') ? !$scope.ionTableSortReverse : false;
+        else if (column === 'annotation') {
+            $scope.ionTableSortReverse = ($scope.ionTableSort === '-annotation') ? !$scope.ionTableSortReverse : false;
             $scope.ionTableSort = '-annotation';
         }
     };
@@ -82,14 +82,14 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
             function (data) {
                 $scope.similarityResult = data;
 
-                if(data.result.length == 0) {
+                if(data.result.length === 0) {
                     $scope.loadingSimilarSpectra = false;
                 }
 
                 for (var i = 0; i < data.result.length; i++) {
                     Spectrum.get({id: data.result[i].id}, function (s) {
                         for (var j = 0; j < $scope.similarityResult.result.length; j++) {
-                            if ($scope.similarityResult.result[j].id == s.id) {
+                            if ($scope.similarityResult.result[j].id === s.id) {
                                 s.similarity = $scope.similarityResult.result[j].similarity;
                                 break;
                             }
@@ -195,7 +195,7 @@ moaControllers.ViewSpectrumController = function ($scope, $location, $log, delay
         // Parse spectrum string to generate ion list
         var match;
 
-        while ((match = ionRegex.exec(delayedSpectrum.spectrum)) != null) {
+        while ((match = ionRegex.exec(delayedSpectrum.spectrum)) !== null) {
             // Find annotation
             var annotation = '';
             var computed = false;
@@ -231,7 +231,7 @@ moaControllers.ViewSpectrumController.loadSpectrum = {
     delayedSpectrum: function (Spectrum, $route, SpectrumCache) {
         // If a spectrum is not cached or the id requested does not match the
         // cached spectrum, request it from the REST api
-        if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id != $route.current.params.id) {
+        if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
             return Spectrum.get(
                 {id: $route.current.params.id},
                 function (data) {

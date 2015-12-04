@@ -15,7 +15,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         var query = QueryCache.getSpectraQuery();
 
         //TODO: remove statement: cache.js - getSpectraQuery handles null queries
-        if (query == null) {
+        if (query === null) {
             query = this.prepareQuery();
         }
 
@@ -58,11 +58,11 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
         //no query assigned, use the one from the cache
 
-        if (compiled == null) {
+        if (compiled === null) {
             compiled = this.getQuery();
         }
 
-        if (tags == null || tags.constructor !== Array) {
+        if (tags === null || tags.constructor !== Array) {
             tags = [];
         }
 
@@ -196,11 +196,11 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         if (!query.match) {
             query.match = {};
         }
-        if(angular.isDefined(spectra)) {
+        if (angular.isDefined(spectra)) {
             query.match.spectra = spectra;
         }
 
-        if(angular.isDefined(hash) && hash != null){
+        if (angular.isDefined(hash) && hash !== null){
             //still dirty...
             query.match.histogram = hash.split("-")[1];
             query.match.histogramScore = 0.9;
@@ -268,7 +268,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             //create a metadata query object
 
             for (var i = 0; i < query.id.length; i++) {
-                if (query.id[i] == id) {
+                if (query.id[i] === id) {
                     query.id.splice(i, 1);
                 }
             }
@@ -302,7 +302,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             }
             else {
 
-                if (includeExclude == '+') {
+                if (includeExclude === '+') {
 
                     query.tags.push(
                         {
@@ -312,7 +312,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
                         }
                     );
                 }
-                else if (includeExclude == '-') {
+                else if (includeExclude === '-') {
 
                     query.tags.push(
                         {
@@ -360,7 +360,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
             //create a metadata query object
 
             for (var i = 0; i < query.metadata.length; i++) {
-                if (query.metadata[i].name == metadata.name) {
+                if (query.metadata[i].name === metadata.name) {
                     query.metadata.splice(i, 1);
                 }
             }
@@ -369,7 +369,7 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
         if (query.compound.metadata) {
 
             for (var i = 0; i < query.compound.metadata.length; i++) {
-                if (query.compound.metadata[i].name == metadata.name) {
+                if (query.compound.metadata[i].name === metadata.name) {
                     query.compound.metadata.splice(i, 1);
                 }
             }
@@ -385,17 +385,17 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
      */
     this.addMetaDataToQuery = function (metadata, compound) {
         if (metadata) {
-            if (metadata.name && metadata.name != '') {
+            if (metadata.name && metadata.name !== '') {
                 this.removeMetaDataFromQuery(metadata);
 
 
                 var query = this.getQuery();
 
-                if (compound == null) {
+                if (compound === null) {
                     compound = false;
                 }
 
-                if (query.metadata == null) {
+                if (query.metadata === null) {
                     query.metadata = [];
                 }
 
@@ -412,12 +412,12 @@ app.service('SpectraQueryBuilderService', function (QueryCache, MetadataService)
 
                 var meta = {'name': metadata.name, 'value': options};
 
-                if (metadata.unit != null) {
+                if (metadata.unit !== null) {
                     meta.unit = {'eq': metadata.unit};
                 }
 
                 if (compound) {
-                    if (query.compound.metadata == null) {
+                    if (query.compound.metadata === null) {
                         query.compound.metadata = [];
                     }
                     query.compound.metadata.push(meta);

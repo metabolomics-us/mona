@@ -31,7 +31,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
         var resolveByName = function (spectra) {
             if (spectra.name) {
                 gwChemifyService.nameToInChIKey(spectra.name, function (key) {
-                    if (key == null) {
+                    if (key === null) {
                         deferred.reject("sorry no InChI Key found for " + spectra.name + ", at name to InChI key!");
                     }
                     else {
@@ -45,7 +45,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             else if (spectra.names && spectra.names.length > 0) {
 
                 gwChemifyService.nameToInChIKey(spectra.names[0], function (key) {
-                    if (key == null) {
+                    if (key === null) {
                         deferred.reject("sorry no InChI Key found for " + specta.names[0] + ", at names to InChI key!");
                     }
                     else {
@@ -80,11 +80,11 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             gwCtsService.convertInchiKeyToMol(spectra.inchiKey, function (molecule) {
 
                 //
-                if (molecule == null && spectra.inchi == null) {
+                if (molecule === null && spectra.inchi === null) {
                     resolveByName(spectra);
                 }
                 else {
-                    if (molecule != null) {
+                    if (molecule !== null) {
                         spectra.molFile = molecule;
                     }
                     deferred.resolve(spectra);
@@ -111,7 +111,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
 
 
         //if we have  a key or an inchi
-        if (spectrumObject.inchiKey != null && spectrumObject.inchi != null) {
+        if (spectrumObject.inchiKey !== null && spectrumObject.inchi !== null) {
 
             self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData).then(function (submittedSpectra) {
 
@@ -126,7 +126,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             //get the key
             obtainKey(spectrumObject).then(function (spectrumWithKey) {
                 //only if we have an inchi or a molfile we can submit this file
-                if (spectrumWithKey.inchi != null || spectrumWithKey.molFile != null) {
+                if (spectrumWithKey.inchi !== null || spectrumWithKey.molFile !== null) {
                     //$log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
                     self.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData).then(function (submittedSpectra) {
 
@@ -180,7 +180,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
             s.chemicalCompound.inchiKey = spectra.inchiKey;
             s.chemicalCompound.inchi = spectra.inchi;
 
-            if (spectra.molFile != null) {
+            if (spectra.molFile !== null) {
                 s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
                 s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
             }
@@ -225,7 +225,7 @@ app.service('UploadLibraryService', function ($rootScope, ApplicationError, Spec
                 if (angular.isDefined(additionalData.tags)) {
                     additionalData.tags.forEach(function (tag) {
                         for (var i = 0; i < s.tags.length; i++) {
-                            if (s.tags[i].text == tag.text)
+                            if (s.tags[i].text === tag.text)
                                 return;
                         }
 

@@ -11,7 +11,7 @@ app.directive('passwordMatch', function () {
 
         link: function (scope, elem , attrs, control) {
             var checker = function () {
-                return scope.$eval(attrs.ngModel) == scope.$eval(attrs.passwordMatch);
+                return scope.$eval(attrs.ngModel) === scope.$eval(attrs.passwordMatch);
             };
 
             scope.$watch(checker, function (x) {

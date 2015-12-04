@@ -51,13 +51,13 @@ app.service('CookieService', function (ApplicationError, $cookieStore, $log) {
      */
     this.getBooleanValue = function (cookieName, defaultValueIfNotFound) {
 
-        if (defaultValueIfNotFound == null) {
+        if (defaultValueIfNotFound === null) {
             defaultValueIfNotFound = false;
         }
 
         var result = defaultValueIfNotFound;
 
-        if ($cookieStore.get(cookieName) != null) {
+        if ($cookieStore.get(cookieName) !== null) {
             result = this.stringToBoolean($cookieStore.get(cookieName));
         }
 
