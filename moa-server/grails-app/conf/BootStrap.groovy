@@ -46,24 +46,21 @@ class BootStrap {
         addUser("Diego", "Pedrosa", "dpedrosa@ucdavis.edu", "password", "University of California, Davis", true)
 
 
-
+        // Register domain object marshallers
         JSON.registerObjectMarshaller(Tag,
-                DomainClassMarshaller.createExcludeMarshaller(Tag, ["links","class", "id", "tagCachingService", "dateCreated", "lastUpdated","owner"])
+                DomainClassMarshaller.createExcludeMarshaller(Tag, ["links", "class", "id", "tagCachingService", "dateCreated", "lastUpdated", "owner"])
         )
-
         JSON.registerObjectMarshaller(Compound,
                 DomainClassMarshaller.createExcludeMarshaller(Compound, ["links","class", "spectra", "dateCreated"])
         )
-
         JSON.registerObjectMarshaller(Submitter,
                 DomainClassMarshaller.createExcludeMarshaller(Submitter, ["class", "spectra", "password", "dateCreated", "lastUpdated"])
         )
         JSON.registerObjectMarshaller(Role,
                 DomainClassMarshaller.createExcludeMarshaller(Role, ["class", "id"])
         )
-
         JSON.registerObjectMarshaller(Spectrum,
-                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["links","class", "dateCreated", "ions","compoundLinks"])
+                DomainClassMarshaller.createExcludeMarshaller(Spectrum, ["links", "class", "dateCreated", "ions","compoundLinks"])
         )
         JSON.registerObjectMarshaller(Name,
                 DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound", "dateCreated"])
@@ -75,7 +72,7 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class", "owner", "metaData"])
         )
         JSON.registerObjectMarshaller(MetaDataCategory,
-                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class", "metaDatas", "dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaDataCategory, ["class", "metaData", "dateCreated"])
         )
         JSON.registerObjectMarshaller(Comment,
                 DomainClassMarshaller.createExcludeMarshaller(Comment, ["class", "dateCreated"])
@@ -84,27 +81,27 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(News, ["class"])
         )
         JSON.registerObjectMarshaller(Score,
-                DomainClassMarshaller.createExcludeMarshaller(Score, ["class","id"])
+                DomainClassMarshaller.createExcludeMarshaller(Score, ["class", "id"])
         )
         JSON.registerObjectMarshaller(Impact,
-                DomainClassMarshaller.createExcludeMarshaller(Impact, ["class","score","id","scoringClass"])
+                DomainClassMarshaller.createExcludeMarshaller(Impact, ["class", "score", "id", "scoringClass"])
         )
         JSON.registerObjectMarshaller(Query,
                 DomainClassMarshaller.createExcludeMarshaller(Query, ["class"])
         )
-
+        JSON.registerObjectMarshaller(SpectrumQueryDownload,
+                DomainClassMarshaller.createExcludeMarshaller(SpectrumQueryDownload, ["class", "queryFile", "exportFile", "emailAddress"])
+        )
         JSON.registerObjectMarshaller(Splash,
-                DomainClassMarshaller.createExcludeMarshaller(Splash, ["class","spectrum"])
+                DomainClassMarshaller.createExcludeMarshaller(Splash, ["class", "spectrum"])
         )
+//        JSON.registerObjectMarshaller(Ion,
+//                DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
+//        )
 
+        
+        // Generate static queries
         StaticQueries.register()
-
-
-        /*
-        JSON.registerObjectMarshaller(Ion,
-                DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
-        )
-        */
     }
 
     def destroy = {
