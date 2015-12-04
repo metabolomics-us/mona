@@ -23,10 +23,9 @@ class DropNoneNecessaryMetaDataRule extends AbstractCurationRule {
 
     @Override
     boolean executeRule(CurationObject toValidate) {
-
         def toDrop = []
-        toValidate.getObjectAsSpectra().listAvailableValues().each {MetaDataValue value ->
 
+        toValidate.getObjectAsSpectra().listAvailableValues().each { MetaDataValue value ->
             dataToDrop.each {String valueName ->
                 if(value.name.toLowerCase() == valueName.toLowerCase()){
                     toDrop.add(value)

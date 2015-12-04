@@ -2,7 +2,7 @@
 
 #simple build file for our docker image of the latest version
 
-if [ "$1" != "--skip-build" ]
+if [ "$1" != "--skip-compile" ]
 then
 	#build client module
 	cd moa-client

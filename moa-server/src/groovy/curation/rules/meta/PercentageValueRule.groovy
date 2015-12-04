@@ -30,8 +30,6 @@ class PercentageValueRule extends AbstractMetaDataCentricRule {
 
         this.getFailureAction().setReason(("value needs to be >= ${minPercentage} and <= ${maxPercentage}"))
 
-
-
         return (val >= minPercentage && val <= maxPercentage)
     }
 
