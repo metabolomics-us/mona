@@ -53,7 +53,7 @@ interface MetaDataFieldNames {
 
     public static final String TRANSFER_LINE_TEMPERATURE = "transfer line temperature"
 
-    public static final String MS_LEVEL = "ms level"
+    public static final String MS_TYPE = "ms type"
 
     public static final String AUTHORS = "authors"
 
