@@ -3,6 +3,7 @@ package moa.server.query
 import grails.converters.JSON
 import moa.Spectrum
 import moa.SpectrumQueryDownload
+import moa.query.Query
 import moa.server.convert.SpectraConversionService
 import moa.server.mail.EmailService
 import org.apache.commons.io.FileUtils
@@ -35,9 +36,31 @@ class SpectraQueryExportService {
      */
     EmailService emailService
 
-    def exportQuery(def query, def emailAddress, def startTime) {
+
+    def exportQueryByLabel(def query, def label) {
+        log.info("Starting download job for " + label)
+        def queryDownload = exportQuery(query, label)
+
+        def queryObject = Query.findByLabel(label)
+        queryObject.queryExport = queryDownload
+        queryObject.save(flush: true)
+
+        log.info("Export of spectra complete for $label, id ${queryDownload.id}")
+    }
+
+
+    def exportQueryByEmailAddress(def query, def emailAddress, def startTime) {
         log.info("Starting download job for " + emailAddress)
 
+        def label = "${emailAddress.split('@')[0]}-$startTime"
+        def queryDownload = exportQuery(query, label)
+
+        // Email results
+        log.info("Export of spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
+        emailService.sendDownloadEmail(emailAddress, ids.size(), queryDownload.id)
+    }
+
+    private SpectrumQueryDownload exportQuery(def query, def label) {
         // Get query as JSON
         def json = (query instanceof JSONObject) ? query : JSON.parse(query);
 
@@ -57,10 +80,8 @@ class SpectraQueryExportService {
         // Determine output format
         String format = getFileFormat(json)
 
-
         // Create new download file object
-        def label = "${emailAddress.split('@')[0]}-$startTime"
-        def queryDownload = SpectrumQueryDownload.findOrCreateByLabelAndEmailAddress(label, emailAddress);
+        def queryDownload = SpectrumQueryDownload.findOrCreateByLabel(label);
 
         if (!queryDownload.query) {
             queryDownload.query = query.toString();
@@ -143,11 +164,8 @@ class SpectraQueryExportService {
         }
 
         queryDownload.save(flush: true)
-
-
-        // Email results
-        log.info("Export of ${ids.size()} spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
-        emailService.sendDownloadEmail(emailAddress, ids.size(), queryDownload.id)
+        queryDownload.errors.allErrors.each { println it }
+        return queryDownload
     }
 
     /**
@@ -155,7 +173,7 @@ class SpectraQueryExportService {
      * @param json
      * @return
      */
-    private String getFileFormat(json) {
+    private String getFileFormat(def json) {
         String format
 
         if (!json.format || json.format == "json") {
