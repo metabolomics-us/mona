@@ -4,6 +4,7 @@ import grails.converters.JSON
 import moa.SpectrumQueryDownload
 import moa.server.query.PredefinedQueryService
 import moa.server.query.SpectraQueryService
+import util.FireJobs
 
 /**
  * defienes a pre defined query for easy usability
@@ -57,5 +58,9 @@ class Query {
 
     def beforeInsert() {
         queryCount = spectraQueryService.getCountForQuery(JSON.parse(query))
+    }
+
+    def afterInsert() {
+        FireJobs.fireSpectraQueryExportJob([query: query, label: label])
     }
 }
