@@ -24,6 +24,7 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/spectra/upload/cleanAndUploadSpectra.html',
             controller: 'CleanSpectraDataController'
         })
+
         .when('/uploadstatus', {
             templateUrl: 'views/spectra/upload/uploadStatus.html',
             controller: 'SpectraUploadController'
@@ -46,14 +47,13 @@ app.config(function ($routeProvider) {
             templateUrl: 'views/spectra/browse/spectra.html',
             controller: 'SpectraBrowserController',
             resolve: {
-                splash : function(SpectraQueryBuilderService, $route){
+                splash: function (SpectraQueryBuilderService, $route) {
                     SpectraQueryBuilderService.prepareQuery();
                     //add it to query
                     SpectraQueryBuilderService.addSpectraIdToQuery($route.current.params.splash);
                 }
             }
         })
-
 
 
         //database index
@@ -83,10 +83,10 @@ app.config(function ($routeProvider) {
             controller: 'StatisticsController',
 
             resolve: {
-                statistics : function(StatisticsService){
+                statistics: function (StatisticsService) {
                     return [
-                        StatisticsService.executionTime({time:"day",method:"import",max:100}),
-                        StatisticsService.executionTime({time:"hour",method:"import",max:100})
+                        StatisticsService.executionTime({time: "day", method: "import", max: 100}),
+                        StatisticsService.executionTime({time: "hour", method: "import", max: 100})
                     ];
                 }
             }
@@ -96,10 +96,10 @@ app.config(function ($routeProvider) {
             controller: 'StatisticsController',
 
             resolve: {
-                statistics : function(StatisticsService){
+                statistics: function (StatisticsService) {
                     return [
-                        StatisticsService.executionTime({time:"day",method:"validation",max:100}),
-                        StatisticsService.executionTime({time:"hour",method:"validation",max:100})
+                        StatisticsService.executionTime({time: "day", method: "validation", max: 100}),
+                        StatisticsService.executionTime({time: "hour", method: "validation", max: 100})
                     ]
                 }
             }
@@ -109,10 +109,10 @@ app.config(function ($routeProvider) {
             controller: 'StatisticsController',
 
             resolve: {
-                statistics : function(StatisticsService){
+                statistics: function (StatisticsService) {
                     return [
-                        StatisticsService.executionTime({time:"day",method:"search",max:100}),
-                        StatisticsService.executionTime({time:"hour",method:"search",max:100})
+                        StatisticsService.executionTime({time: "day", method: "search", max: 100}),
+                        StatisticsService.executionTime({time: "hour", method: "search", max: 100})
                     ]
                 }
             }
