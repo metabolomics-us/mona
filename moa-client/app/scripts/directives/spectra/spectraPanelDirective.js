@@ -9,7 +9,7 @@ app.directive('displaySpectraPanel', function () {
         scope: {
             spectrum: '=spectrum'
         },
-        templateUrl: '/views/spectra/display/template/panel.html',
+        templateUrl: '/views/spectra/display/panel.html',
         controller: function ($scope, $location,SpectrumCache) {
 
             var truncateDecimal = function(s, length) {
