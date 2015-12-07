@@ -1,10 +1,10 @@
 /**
  * Created by wohlgemuth on 7/11/14.
  */
-
 (function() {
     'use strict';
-    moaControllers.AuthenticationController = ['$scope', '$rootScope', '$uibModal', 'AuthenticationService',
+    angular.module('moaClientApp')
+      .controller('AuthenticationController', ['$scope', '$rootScope', '$uibModal', 'AuthenticationService',
         function($scope, $rootScope, $uibModal, AuthenticationService) {
             var ADMIN_ROLE_NAME = 'ROLE_ADMIN';
             var self = this;
@@ -100,118 +100,9 @@
             (function() {
                 AuthenticationService.validate();
             })();
-        }];
+        }]);
 
-
-    moaControllers.AuthenticationModalController = ['$scope', '$rootScope', '$uibModalInstance', '$timeout', 'AuthenticationService',
-        function($scope, $rootScope, $uibModalInstance, $timeout, AuthenticationService) {
-            $scope.errors = [];
-            $scope.state = 'login';
-
-            $scope.credentials = {
-                email: '',
-                password: ''
-            };
-
-            $scope.cancelDialog = function() {
-                $uibModalInstance.dismiss('cancel');
-            };
-
-            /**
-             * closes the dialog and finishes and builds the query
-             */
-            $scope.submitLogin = function() {
-                $scope.errors = [];
-
-                if ($scope.credentials.email === '') {
-                    $scope.errors.push('Please enter your email address');
-                }
-
-                if ($scope.credentials.password === '') {
-                    $scope.errors.push('Please enter your password');
-                }
-
-                if ($scope.errors.length === 0) {
-                    $scope.state = 'logging in';
-                    AuthenticationService.login($scope.credentials.email, $scope.credentials.password);
-                }
-            };
-
-            $scope.$on('auth:login-success', function(event, data, status, headers, config) {
-                $scope.state = 'success';
-                $timeout(function() {
-                    $uibModalInstance.close();
-                }, 1000);
-            });
-
-            $scope.$on('auth:login-error', function(event, data, status, headers, config) {
-                $scope.state = 'login';
-
-                if (data.status === '401') {
-                    $scope.errors.push('Invalid email or password');
-                } else {
-                    $scope.errors.push('Unable to reach MoNA server');
-                }
-            });
-        }];
-
-
-    moaControllers.RegistrationModalController = ['$scope', '$rootScope', '$uibModalInstance', 'Submitter',
-        function($scope, $rootScope, $uibModalInstance, Submitter) {
-            $scope.errors = [];
-            $scope.state = 'register';
-
-            $scope.newSubmitter = {};
-
-            $scope.cancelDialog = function() {
-                $uibModalInstance.dismiss('cancel');
-            };
-
-            /**
-             * closes the dialog and finishes and builds the query
-             */
-            $scope.submitRegistration = function() {
-                $scope.errors = [];
-
-                var submitter = new Submitter();
-                submitter.firstName = $scope.newSubmitter.firstName;
-                submitter.lastName = $scope.newSubmitter.lastName;
-                submitter.institution = $scope.newSubmitter.institution;
-                submitter.emailAddress = $scope.newSubmitter.emailAddress;
-                submitter.password = $scope.newSubmitter.password;
-
-                $scope.state = 'registering';
-
-                Submitter.save(submitter,
-                  function() {
-                      $scope.state = 'success';
-                  },
-                  function(data) {
-                      $scope.state = 'register';
-
-                      if (data.status === 422) {
-                          for (var i = 0; i < data.data.errors.length; i++) {
-                              var message = 'Error in ' + data.data.errors[i].field + ': ';
-
-                              if (data.data.errors[i].message.indexOf('must be unique') > -1) {
-                                  $scope.errors.push(message + 'already exists!');
-                              } else {
-                                  $scope.errors.push(message + data.data.errors[i].message);
-                              }
-                          }
-                      } else {
-                          $scope.errors.push('An unknown error has occurred: ' + JSON.stringify(data));
-                      }
-                  }
-                );
-            };
-
-            /**
-             * Close dialog and open login modal
-             */
-            $scope.logIn = function() {
-                $uibModalInstance.dismiss('cancel');
-                $rootScope.$broadcast('auth:login');
-            };
-        }];
 })();
+
+
+

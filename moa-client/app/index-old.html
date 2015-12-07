@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
     <!-- endbower -->
-    <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css" />
+    <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css"/>
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
 
@@ -56,7 +56,8 @@
                 <!-- User Login -->
                 <li class="dropdown" uib-dropdown>
                     <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i class="fa fa-caret-down"></i>
+                        <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i
+                            class="fa fa-caret-down"></i>
                     </a>
                     <ul class="uib-dropdown-menu dropdown-user">
                         <li ng-show="auth.isLoggedIn()">
@@ -65,7 +66,8 @@
                         <li ng-show="auth.isLoggedIn()" class="divider"></li>
 
                         <li>
-                            <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
+                            <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ?
+                                "Logout" : "Login"}}</a>
                         </li>
                         <li ng-show="!auth.isLoggedIn()">
                             <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
@@ -76,7 +78,8 @@
             </ul>
 
             <!-- search form -->
-            <form name="searchBox" ng-controller="SearchBoxController" ng-submit="searchBoxQuery=''" class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
+            <form name="searchBox" ng-controller="SearchBoxController" ng-submit="searchBoxQuery=''"
+                  class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
                 <div class="input-group custom-search-form">
                     <input type="text" class="form-control ng-pristine ng-valid ng-touched" ng-model="searchBoxQuery"
                            placeholder="Search..." tooltip="Search by Name,InChiKey or MoNA ID" tooltip-trigger="focus"
@@ -103,7 +106,8 @@
                         <li class="divider"></li>
                         <li><a href="#/spectra/querytree">Query Tree</a></li>
                         <li><a href="#/spectra/similarity">Similarity Query</a></li>
-                        <li ng-controller="SearchBoxController"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></li>
+                        <li ng-controller="SearchBoxController"><a href="" ng-click="querySpectraDialog()">Advanced
+                            Query</a></li>
                         <li class="divider"></li>
                         <li><a href="#/upload">Spectrum Upload</a></li>
                     </ul>
@@ -118,7 +122,8 @@
                         <li>
                             <a href="#/uploadstatus">
                                 <div>
-                                    <p><strong>Upload Progress</strong><span class="pull-right text muted">&nbsp;</span></p>
+                                    <p><strong>Upload Progress</strong><span class="pull-right text muted">&nbsp;</span>
+                                    </p>
                                     <spectra-upload-progress-bar></spectra-upload-progress-bar>
                                 </div>
                             </a>
@@ -127,7 +132,8 @@
                         <li>
                             <a href="#/statistics/query">
                                 <div>
-                                    <p><strong>average query time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <p><strong>average query time</strong><span
+                                            class="pull-right text-muted">&nbsp;</span></p>
                                     <statistics timeframe="month" query="search"></statistics>
                                 </div>
 
@@ -136,7 +142,8 @@
                         <li>
                             <a href="#/statistics/validation">
                                 <div>
-                                    <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span>
+                                    </p>
                                     <statistics timeframe="month" query="validation"></statistics>
                                 </div>
 
@@ -145,7 +152,8 @@
                         <li>
                             <a href="#/statistics/import">
                                 <div>
-                                    <p><strong>average upload time</strong><span class="pull-right text-muted">&nbsp;</span></p>
+                                    <p><strong>average upload time</strong><span
+                                            class="pull-right text-muted">&nbsp;</span></p>
                                     <statistics timeframe="month" query="import"></statistics>
                                 </div>
 
@@ -171,12 +179,15 @@
                         <li><a href="#/documentation/webservices">Web Services</a></li>
                         <li><a href="#/documentation/license">License</a></li>
                         <li><a href="#/documentation/query">REST Service Query</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Using%20authentication%20tokens%20via%20cURL" target="_blank">REST API Authentication</a></li>
+                        <li><a
+                                href="https://bitbucket.org/fiehnlab/mona/wiki/Using%20authentication%20tokens%20via%20cURL"
+                                target="_blank">REST API Authentication</a></li>
                         <li><a href="#/documentation/terms">Terms and Abbreviations</a></li>
                         <li><a href="https://bitbucket.org/fiehnlab/mona/src" target="_blank">Sourcecode</a></li>
                         <li><a href="http://mona.fiehnlab.ucdavis.edu/repository/">Repository</a></li>
                         <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Home" target="_blank">Wiki</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/issues/" target="_blank">Bug Reports / Feature requests</a></li>
+                        <li><a href="https://bitbucket.org/fiehnlab/mona/issues/" target="_blank">Bug Reports / Feature
+                            requests</a></li>
                     </ul>
                 </li>
                 <li class="dropdown" uib-dropdown ng-show="auth.isAdmin()">
@@ -263,8 +274,9 @@
 <!-- events -->
 <script src="scripts/events.js"></script>
 
-<!-- data caching -->
-<script src="scripts/cache.js"></script>
+<!-- data caching services-->
+<script src="scripts/services/cache/queryCacheService.js"></script>
+<script src="scripts/services/cache/spectrumCacheService.js"></script>
 
 <!-- services -->
 <script src="scripts/services/persistence/submitterService.js"></script>
@@ -286,10 +298,13 @@
 <!-- filters -->
 <script src="scripts/filters/curlFilter.js"></script>
 <script src="scripts/filters/spectraDownloadFilter.js"></script>
+<script src="scripts/filters/titleCaseFilter.js"></script>
 
 <!-- controllers -->
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/authentication/authenticationController.js"></script>
+<script src="scripts/controllers/authentication/authenticationModalController.js"></script>
+<script src="scripts/controllers/authentication/registrationModalController.js"></script>
 <script src="scripts/controllers/browser/spectraBrowserController.js"></script>
 <script src="scripts/controllers/browser/spectraDatabaseIndexController.js"></script>
 <script src="scripts/controllers/browser/queryTreeController.js"></script>
@@ -307,6 +322,7 @@
 <script src="scripts/controllers/documentation/DocumentationTermController.js"></script>
 
 <!-- directives -->
+<script src="scripts/directives/query/queryTreeDirective.js"></script>
 <script src="scripts/directives/submitterFormDirective.js"></script>
 <script src="scripts/directives/sketcherDirective.js"></script>
 <script src="scripts/directives/autocompleteDirective.js"></script>

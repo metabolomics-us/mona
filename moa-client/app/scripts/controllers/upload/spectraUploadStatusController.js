@@ -1,20 +1,23 @@
 /**
  * Created by Gert on 5/28/2014.
  */
-'use strict';
+(function() {
+    'use strict';
 
-moaControllers.SpectraUploadController = function ($scope, $rootScope, $uibModal, AuthenticationService, UploadLibraryService) {
-    /**
-     * Check whether the user is uploading, and open the upload dialog accordingly
-     */
-    (function() {
-        $scope.spectraUploaded = UploadLibraryService.uploadedSpectraCount > 0;
+    moaControllers.SpectraUploadController = ['$scope', '$rootScope', '$uibModal', 'AuthenticationService', 'UploadLibraryService',
+        function($scope, $rootScope, $uibModal, AuthenticationService, UploadLibraryService) {
+            /**
+             * Check whether the user is uploading, and open the upload dialog accordingly
+             */
+            (function() {
+                $scope.spectraUploaded = UploadLibraryService.uploadedSpectraCount > 0;
 
-        if (AuthenticationService.isLoggedIn() && !$scope.spectraUploaded) {
-            // Not using the old upload wizard anymore
-            //$scope.uploadSpectraDialog()
-        } else if(!AuthenticationService.isLoggedIn() && !AuthenticationService.isLoggingIn()) {
-            $rootScope.$broadcast('auth:login');
-        }
-    })();
-};
+                if (AuthenticationService.isLoggedIn() && !$scope.spectraUploaded) {
+                    // Not using the old upload wizard anymore
+                    //$scope.uploadSpectraDialog()
+                } else if (!AuthenticationService.isLoggedIn() && !AuthenticationService.isLoggingIn()) {
+                    $rootScope.$broadcast('auth:login');
+                }
+            })();
+        }];
+})();
