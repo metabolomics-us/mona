@@ -1,96 +1,99 @@
 /**
  * Created by Gert on 5/28/2014.
  */
-'use strict';
 
-moaControllers.SubmitterController = function ($scope, Submitter, $uibModal) {
+(function() {
+    'use strict';
 
-	/**
-	 * contains all local objects
-	 * @type {Array}
-	 */
-	$scope.submitters = [];
+    moaControllers.SubmitterController = ['$scope', 'Submitter', '$uibModal',
+        function($scope, Submitter, $uibModal) {
 
-	/**
-	 * list all our submitters in the system
-	 */
-	$scope.listSubmitter = list();
+            /**
+             * contains all local objects
+             * @type {Array}
+             */
+            $scope.submitters = [];
 
-	/**
-	 * deletes our submitter from the system
-	 * @param submitterId
-	 */
-	$scope.remove = function (index) {
-		var submitterToRemove = $scope.submitters[index];
+            /**
+             * list all our submitters in the system
+             */
+            $scope.listSubmitter = list();
 
-		Submitter.delete({id: submitterToRemove.id}, function (data) {
+            /**
+             * deletes our submitter from the system
+             * @param submitterId
+             */
+            $scope.remove = function(index) {
+                var submitterToRemove = $scope.submitters[index];
 
-				//remove it from the scope and update our table
-				$scope.submitters.splice(index, 1);
-			},
-			function (errors) {
-				alert('oh noes an error...');
-			}
-		);
-	};
+                Submitter.delete({id: submitterToRemove.id}, function(data) {
 
-	/**
-	 * displays our dialog to create a new submitter
-	 */
-	$scope.displayCreateDialog = function () {
+                      //remove it from the scope and update our table
+                      $scope.submitters.splice(index, 1);
+                  },
+                  function(errors) {
+                      alert('oh noes an error...');
+                  }
+                );
+            };
 
-		var modalInstance = $uibModal.open({
-			templateUrl: '/views/submitters/dialog/createDialog.html',
-			controller: moaControllers.SubmitterModalController,
-			size: 'lg',
-			backdrop: 'static',
-			resolve: {
-				//just an empty object
-				newSubmitter: function () {
-					return {};
-				}
-			}
-		});
+            /**
+             * displays our dialog to create a new submitter
+             */
+            $scope.displayCreateDialog = function() {
 
-		//retrieve the result from the dialog and save it
-		modalInstance.result.then(function (submitter) {
-			//push our object to the scope now so that our table can show it
-			$scope.submitters.push(submitter);
-		})
-	};
+                var modalInstance = $uibModal.open({
+                    templateUrl: '/views/submitters/dialog/createDialog.html',
+                    controller: moaControllers.SubmitterModalController,
+                    size: 'lg',
+                    backdrop: 'static',
+                    resolve: {
+                        //just an empty object
+                        newSubmitter: function() {
+                            return {};
+                        }
+                    }
+                });
 
-	/**
-	 * displays the edit dialog for the select submitter
-	 * @param index
-	 */
-	$scope.displayEditDialog = function (index) {
-		var modalInstance = $uibModal.open({
-			templateUrl: '/views/submitters/dialog/editDialog.html',
-			controller: moaControllers.SubmitterModalController,
-			size: 'lg',
-			backdrop: 'static',
-			resolve: {
-				//populate the dialog with the given submitter at this index
-				newSubmitter: function () {
-					return $scope.submitters[index];
-				}
-			}
-		});
+                //retrieve the result from the dialog and save it
+                modalInstance.result.then(function(submitter) {
+                    //push our object to the scope now so that our table can show it
+                    $scope.submitters.push(submitter);
+                })
+            };
 
-		//retrieve the result from the dialog and save it
-		modalInstance.result.then(function (submitter) {
-			//will be handled automatically by angular js
-		});
-	};
+            /**
+             * displays the edit dialog for the select submitter
+             * @param index
+             */
+            $scope.displayEditDialog = function(index) {
+                var modalInstance = $uibModal.open({
+                    templateUrl: '/views/submitters/dialog/editDialog.html',
+                    controller: moaControllers.SubmitterModalController,
+                    size: 'lg',
+                    backdrop: 'static',
+                    resolve: {
+                        //populate the dialog with the given submitter at this index
+                        newSubmitter: function() {
+                            return $scope.submitters[index];
+                        }
+                    }
+                });
 
-	/**
-	 * helper function
-	 */
-	function list() {
-		$scope.submitters = Submitter.query(function (data) {
-		}, function (error) {
-			alert('failed: ' + error);
-		});
-	}
+                //retrieve the result from the dialog and save it
+                modalInstance.result.then(function(submitter) {
+                    //will be handled automatically by angular js
+                });
+            };
 
-};
+            /**
+             * helper function
+             */
+            function list() {
+                $scope.submitters = Submitter.query(function(data) {
+                }, function(error) {
+                    alert('failed: ' + error);
+                });
+            }
+        }];
+})();

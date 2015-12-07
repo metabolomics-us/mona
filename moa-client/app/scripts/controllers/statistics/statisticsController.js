@@ -1,8 +1,11 @@
 /**
  * Created by Gert on 5/28/2014.
  */
-'use strict';
+(function() {
+    'use strict';
 
-moaControllers.StatisticsController = function ($scope, StatisticsService, $uibModal, statistics) {
-    $scope.data = statistics;
-};
+    moaControllers.StatisticsController = ['$scope', 'StatisticsService', '$uibModal', 'statistics',
+        function($scope, StatisticsService, $uibModal, statistics) {
+            $scope.data = statistics;
+        }];
+})();

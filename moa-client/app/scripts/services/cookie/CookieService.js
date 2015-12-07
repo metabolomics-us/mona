@@ -1,68 +1,74 @@
 /**
  * Created by wohlgemuth on 10/31/14.
  */
-app.service('CookieService', function (ApplicationError, $cookieStore, $log) {
 
-    this.stringToBoolean = function (string) {
-        switch (string) {
-            case "true":
-            case "yes":
-            case "1":
-                return true;
-            case "false":
-            case "no":
-            case "0":
-            case null:
-                return false;
-            default:
-                return Boolean(string);
-        }
-    };
+(function() {
+    'use strict';
+    angular.module('moaClientApp')
+      .factory('CookieService', ['ApplicationError', '$cookieStore', '$log',
+          function(ApplicationError, $cookieStore, $log) {
 
-    /**
-     * updates the cookie
-     * @param name
-     * @param value
-     */
-    this.update = function (name, value) {
-        $cookieStore.put(name, value);
-    };
+              this.stringToBoolean = function(string) {
+                  switch (string) {
+                      case "true":
+                      case "yes":
+                      case "1":
+                          return true;
+                      case "false":
+                      case "no":
+                      case "0":
+                      case null:
+                          return false;
+                      default:
+                          return Boolean(string);
+                  }
+              };
 
-    /**
-     * gets the cookie
-     * @param cookieName
-     */
-    this.get = function (cookieName) {
-        return $cookieStore.get(cookieName);
-    };
+              /**
+               * updates the cookie
+               * @param name
+               * @param value
+               */
+              this.update = function(name, value) {
+                  $cookieStore.put(name, value);
+              };
 
-    /**
-     * remove a cookie
-     * @param cookieName
-     */
-    this.remove = function(cookieName) {
-        return $cookieStore.remove(cookieName);
-    };
+              /**
+               * gets the cookie
+               * @param cookieName
+               */
+              this.get = function(cookieName) {
+                  return $cookieStore.get(cookieName);
+              };
 
-    /**
-     * provides us with a boolean cookie value of true or false
-     * @param cookieName name your cookie
-     * @param defaultValueIfNotFound default value if we don't find the cookie
-     */
-    this.getBooleanValue = function (cookieName, defaultValueIfNotFound) {
+              /**
+               * remove a cookie
+               * @param cookieName
+               */
+              this.remove = function(cookieName) {
+                  return $cookieStore.remove(cookieName);
+              };
 
-        if (defaultValueIfNotFound === null) {
-            defaultValueIfNotFound = false;
-        }
+              /**
+               * provides us with a boolean cookie value of true or false
+               * @param cookieName name your cookie
+               * @param defaultValueIfNotFound default value if we don't find the cookie
+               */
+              this.getBooleanValue = function(cookieName, defaultValueIfNotFound) {
 
-        var result = defaultValueIfNotFound;
+                  if (defaultValueIfNotFound === null) {
+                      defaultValueIfNotFound = false;
+                  }
 
-        if ($cookieStore.get(cookieName) !== null) {
-            result = this.stringToBoolean($cookieStore.get(cookieName));
-        }
+                  var result = defaultValueIfNotFound;
 
-        //return the result
-        return result;
+                  if ($cookieStore.get(cookieName) !== null) {
+                      result = this.stringToBoolean($cookieStore.get(cookieName));
+                  }
 
-    }
-});
+                  //return the result
+                  return result;
+
+              }
+          }]);
+})();
