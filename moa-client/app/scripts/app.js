@@ -41,7 +41,7 @@ app.constant('INTERNAL_CACHING', true);
 /**
  * App name
  */
-app.run(function($rootScope) {
+app.run(function ($rootScope) {
     $rootScope.APP_NAME = 'MassBank of North America';
     $rootScope.APP_NAME_ABBR = 'MoNA';
     $rootScope.APP_VERSION = 'alpha-2';
@@ -72,13 +72,13 @@ app.config(function ($translateProvider) {
  * Prompt user before leaving the page if spectra are being uploaded.
  * Uses $injector to bypass timeout error when testing with protractor.
  */
-app.run(function($window, $injector) {
+app.run(function ($window, $injector) {
     $window.onbeforeunload = function (e) {
         var service = $injector.get('UploadLibraryService');
 
-        if(service.isUploading()) {
+        if (service.isUploading()) {
             var progress = parseInt(((service.completedSpectraCount / service.uploadedSpectraCount) * 100), 10);
-            return 'MoNA is '+ progress +'% done with processing and uploading spectra.';
+            return 'MoNA is ' + progress + '% done with processing and uploading spectra.';
         }
     };
 });
