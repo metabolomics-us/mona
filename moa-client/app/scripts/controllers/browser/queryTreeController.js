@@ -4,63 +4,63 @@
 
 (function() {
     'use strict';
+    angular.module('moaClientApp')
+      .controller('QueryTreeController', ['$scope', 'Spectrum', '$location', '$filter', '$log', 'SpectraQueryBuilderService',
+          function($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService) {
+              $scope.executeQuery = function(node) {
+                  SpectraQueryBuilderService.setQuery(JSON.parse(node.query));
+                  $location.path('/spectra/browse');
+              };
 
-    moaControllers.QueryTreeController = ['$scope', 'Spectrum', '$location', '$filter', '$log', 'SpectraQueryBuilderService',
-        function($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService) {
-            $scope.executeQuery = function(node) {
-                SpectraQueryBuilderService.setQuery(JSON.parse(node.query));
-                $location.path('/spectra/browse');
-            };
+              $scope.downloadQuery = function(node) {
 
-            $scope.downloadQuery = function(node) {
+              };
 
-            };
+              (function() {
+                  $scope.queries = {};
+                  $scope.queryTree = [];
 
-            (function() {
-                $scope.queries = {};
-                $scope.queryTree = [];
+                  // Get predefined queries and build query tree
+                  Spectrum.getPredefinedQueries(function(data) {
 
-                // Get predefined queries and build query tree
-                Spectrum.getPredefinedQueries(function(data) {
+                        // Identify node parents
+                        for (var i = 0, l = data.length; i < l; i++) {
+                            $scope.queries[data[i].label] = data[i];
 
-                      // Identify node parents
-                      for (var i = 0, l = data.length; i < l; i++) {
-                          $scope.queries[data[i].label] = data[i];
+                            var label = data[i].label.split(' - ');
+                            data[i].depth = label.length;
+                            data[i].id = i;
+                            data[i].children = [];
 
-                          var label = data[i].label.split(' - ');
-                          data[i].depth = label.length;
-                          data[i].id = i;
-                          data[i].children = [];
+                            data[i].formattedLabel = '';
+                            for (var j = 0, k = label.length; j < k; j++) {
+                                if (j > 0)
+                                    data[i].formattedLabel += ', ';
+                                data[i].formattedLabel += $filter('titlecase')(label[j]);
+                            }
 
-                          data[i].formattedLabel = '';
-                          for (var j = 0, k = label.length; j < k; j++) {
-                              if (j > 0)
-                                  data[i].formattedLabel += ', ';
-                              data[i].formattedLabel += $filter('titlecase')(label[j]);
-                          }
+                            data[i].singleLabel = label.pop();
+                            var parentLabel = label.join(" - ");
 
-                          data[i].singleLabel = label.pop();
-                          var parentLabel = label.join(" - ");
-
-                          if (data[i].depth === 1) {
-                              data[i].parent = -1;
-                              $scope.queryTree.push(data[i]);
-                          } else {
-                              for (var j = 0, k = data.length; j < k; j++) {
-                                  if (data[j].label === parentLabel) {
-                                      data[i].parent = j;
-                                      data[j].children.push(data[i]);
-                                      break;
-                                  }
-                              }
-                          }
-                      }
-                  },
-                  function(error) {
-                      $log.error('query tree failed: ' + error);
-                  }
-                );
-            })();
-        }];
+                            if (data[i].depth === 1) {
+                                data[i].parent = -1;
+                                $scope.queryTree.push(data[i]);
+                            } else {
+                                for (var j = 0, k = data.length; j < k; j++) {
+                                    if (data[j].label === parentLabel) {
+                                        data[i].parent = j;
+                                        data[j].children.push(data[i]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    function(error) {
+                        $log.error('query tree failed: ' + error);
+                    }
+                  );
+              })();
+          }]);
 })();
 
