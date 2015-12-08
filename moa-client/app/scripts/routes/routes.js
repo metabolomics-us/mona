@@ -5,157 +5,165 @@
 /**
  * this defines all the different urls in our view
  */
-app.config(function ($routeProvider) {
-    $routeProvider
-        //defining the root url
-        .when('/', {
-            templateUrl: 'views/main.html',
-            controller: 'MainCtrl'
-        })
+(function() {
+    'use strict';
+    angular.module('moaClientApp')
+      .config(configure);
 
-        //browsing compounds
-        .when('/compounds', {
-            templateUrl: 'views/compounds/browse/compounds.html',
-            controller: 'CompoundBrowserController'
-        })
+    configure.$inject = ['$routeProvider'];
 
-        //uploading a mass spec
-        .when('/upload', {
-            templateUrl: 'views/spectra/upload/cleanAndUploadSpectra.html',
-            controller: 'CleanSpectraDataController'
-        })
+    function configure ($routeProvider) {
+        $routeProvider
+            //defining the root url
+          .when('/', {
+              templateUrl: 'views/main.html',
+              controller: 'MainCtrl'
+          })
 
-        .when('/uploadstatus', {
-            templateUrl: 'views/spectra/upload/uploadStatus.html',
-            controller: 'SpectraUploadController'
-        })
+            //browsing compounds
+          .when('/compounds', {
+              templateUrl: 'views/compounds/browse/compounds.html',
+              controller: 'CompoundBrowserController'
+          })
 
-        //displaying a single compound
-        .when('/spectra/browse', {
-            templateUrl: 'views/spectra/browse/spectra.html',
-            controller: 'SpectraBrowserController'
-        })
+            //uploading a mass spec
+          .when('/upload', {
+              templateUrl: 'views/spectra/upload/cleanAndUploadSpectra.html',
+              controller: 'CleanSpectraDataController'
+          })
 
-        //view individual spectrum
-        .when('/spectra/display/:id', {
-            templateUrl: 'views/spectra/display/viewSpectrum.html',
-            controller: 'ViewSpectrumController',
-            resolve: moaControllers.ViewSpectrumController.loadSpectrum
-        })
+          .when('/uploadstatus', {
+              templateUrl: 'views/spectra/upload/uploadStatus.html',
+              controller: 'SpectraUploadController'
+          })
 
-        .when('/spectra/splash/:splash', {
-            templateUrl: 'views/spectra/browse/spectra.html',
-            controller: 'SpectraBrowserController',
-            resolve: {
-                splash: function (SpectraQueryBuilderService, $route) {
-                    SpectraQueryBuilderService.prepareQuery();
-                    //add it to query
-                    SpectraQueryBuilderService.addSpectraIdToQuery($route.current.params.splash);
-                }
-            }
-        })
+            //displaying a single compound
+          .when('/spectra/browse', {
+              templateUrl: 'views/spectra/browse/spectra.html',
+              controller: 'SpectraBrowserController'
+          })
 
+            //view individual spectrum
+          .when('/spectra/display/:id', {
+              templateUrl: 'views/spectra/display/viewSpectrum.html',
+              controller: 'ViewSpectrumController',
+              resolve: 'ViewSpectrumController.loadSpectrum'
+          })
 
-        //database index
-        .when('/spectra/dbindex', {
-            templateUrl: 'views/spectra/dbindex/dbindex.html',
-            controller: 'SpectraDatabaseIndexController'
-        })
-
-        .when('/spectra/querytree', {
-            templateUrl: 'views/spectra/dbindex/queryTree.html',
-            controller: 'QueryTreeController'
-        })
-
-        //query by similarity
-        .when('/spectra/similarity', {
-            templateUrl: 'views/spectra/query/similarityQuery.html',
-            controller: 'SpectraSimilarityQueryController'
-        })
-
-        //statistics page
-        .when('/statistics', {
-            templateUrl: 'views/statistics/statistics.html',
-            controller: 'SpectraDatabaseIndexController'
-        })
-        .when('/statistics/import', {
-            templateUrl: 'views/statistics/times.html',
-            controller: 'StatisticsController',
-
-            resolve: {
-                statistics: function (StatisticsService) {
-                    return [
-                        StatisticsService.executionTime({time: "day", method: "import", max: 100}),
-                        StatisticsService.executionTime({time: "hour", method: "import", max: 100})
-                    ];
-                }
-            }
-        })
-        .when('/statistics/validation', {
-            templateUrl: 'views/statistics/times.html',
-            controller: 'StatisticsController',
-
-            resolve: {
-                statistics: function (StatisticsService) {
-                    return [
-                        StatisticsService.executionTime({time: "day", method: "validation", max: 100}),
-                        StatisticsService.executionTime({time: "hour", method: "validation", max: 100})
-                    ]
-                }
-            }
-        })
-        .when('/statistics/query', {
-            templateUrl: 'views/statistics/times.html',
-            controller: 'StatisticsController',
-
-            resolve: {
-                statistics: function (StatisticsService) {
-                    return [
-                        StatisticsService.executionTime({time: "day", method: "search", max: 100}),
-                        StatisticsService.executionTime({time: "hour", method: "search", max: 100})
-                    ]
-                }
-            }
-        })
+          .when('/spectra/splash/:splash', {
+              templateUrl: 'views/spectra/browse/spectra.html',
+              controller: 'SpectraBrowserController',
+              resolve: {
+                  splash: function(SpectraQueryBuilderService, $route) {
+                      SpectraQueryBuilderService.prepareQuery();
+                      //add it to query
+                      SpectraQueryBuilderService.addSpectraIdToQuery($route.current.params.splash);
+                  }
+              }
+          })
 
 
-        //user profile page
-        .when('/profile', {
-            templateUrl: 'views/submitters/profile.html',
-            controller: 'SubmitterProfileController'
-        })
+            //database index
+          .when('/spectra/dbindex', {
+              templateUrl: 'views/spectra/dbindex/dbindex.html',
+              controller: 'SpectraDatabaseIndexController'
+          })
 
-        //displaying all submitters
-        .when('/admin/submitters', {
-            templateUrl: 'views/submitters/list.html',
-            controller: 'SubmitterController'
-        })
+          .when('/spectra/querytree', {
+              templateUrl: 'views/spectra/dbindex/queryTree.html',
+              controller: 'QueryTreeController'
+          })
+
+            //query by similarity
+          .when('/spectra/similarity', {
+              templateUrl: 'views/spectra/query/similarityQuery.html',
+              controller: 'SpectraSimilarityQueryController'
+          })
+
+            //statistics page
+          .when('/statistics', {
+              templateUrl: 'views/statistics/statistics.html',
+              controller: 'SpectraDatabaseIndexController'
+          })
+          .when('/statistics/import', {
+              templateUrl: 'views/statistics/times.html',
+              controller: 'StatisticsController',
+
+              resolve: {
+                  statistics: function(StatisticsService) {
+                      return [
+                          StatisticsService.executionTime({time: "day", method: "import", max: 100}),
+                          StatisticsService.executionTime({time: "hour", method: "import", max: 100})
+                      ];
+                  }
+              }
+          })
+          .when('/statistics/validation', {
+              templateUrl: 'views/statistics/times.html',
+              controller: 'StatisticsController',
+
+              resolve: {
+                  statistics: function(StatisticsService) {
+                      return [
+                          StatisticsService.executionTime({time: "day", method: "validation", max: 100}),
+                          StatisticsService.executionTime({time: "hour", method: "validation", max: 100})
+                      ]
+                  }
+              }
+          })
+          .when('/statistics/query', {
+              templateUrl: 'views/statistics/times.html',
+              controller: 'StatisticsController',
+
+              resolve: {
+                  statistics: function(StatisticsService) {
+                      return [
+                          StatisticsService.executionTime({time: "day", method: "search", max: 100}),
+                          StatisticsService.executionTime({time: "hour", method: "search", max: 100})
+                      ]
+                  }
+              }
+          })
 
 
-        .when('/documentation/license', {
-            templateUrl: 'views/documentation/license.html'
-        })
-        .when('/news', {
-            templateUrl: 'views/news/news.html'
-        })
-        .when('/documentation/query', {
-            templateUrl: 'views/documentation/query.html'
-        })
-        .when('/documentation/terms', {
-            templateUrl: 'views/documentation/terms.html',
-            controller: 'DocumentationTermController'
+            //user profile page
+          .when('/profile', {
+              templateUrl: 'views/submitters/profile.html',
+              controller: 'SubmitterProfileController'
+          })
 
-        })
+            //displaying all submitters
+          .when('/admin/submitters', {
+              templateUrl: 'views/submitters/list.html',
+              controller: 'SubmitterController'
+          })
 
 
-        .when('/500', {
-            templateUrl: 'views/500.html',
-            controller: 'DocumentationTermController'
+          .when('/documentation/license', {
+              templateUrl: 'views/documentation/license.html'
+          })
+          .when('/news', {
+              templateUrl: 'views/news/news.html'
+          })
+          .when('/documentation/query', {
+              templateUrl: 'views/documentation/query.html'
+          })
+          .when('/documentation/terms', {
+              templateUrl: 'views/documentation/terms.html',
+              controller: 'DocumentationTermController'
 
-        })
+          })
 
-        //any other page is redirected to the root page
-        .otherwise({
-            redirectTo: '/'
-        });
-});
+
+          .when('/500', {
+              templateUrl: 'views/500.html',
+              controller: 'DocumentationTermController'
+
+          })
+
+            //any other page is redirected to the root page
+          .otherwise({
+              redirectTo: '/'
+          });
+    };
+})();

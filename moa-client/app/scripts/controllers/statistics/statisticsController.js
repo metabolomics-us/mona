@@ -3,9 +3,9 @@
  */
 (function() {
     'use strict';
-
-    moaControllers.StatisticsController = ['$scope', 'StatisticsService', '$uibModal', 'statistics',
-        function($scope, StatisticsService, $uibModal, statistics) {
-            $scope.data = statistics;
-        }];
+    angular.module('moaClientApp')
+      .controller('StatisticsController', ['$scope', 'StatisticsService', '$uibModal', 'statistics',
+          function($scope, StatisticsService, $uibModal, statistics) {
+              $scope.data = statistics;
+          }]);
 })();
