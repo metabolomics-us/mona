@@ -1,92 +1,96 @@
 /**
  * Created by Gert on 5/28/2014.
  */
+
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SubmitterModalController', ['$scope', 'Submitter', '$uibModalInstance', 'newSubmitter',
-          function($scope, Submitter, $uibModalInstance, newSubmitter) {
-              /**
-               * contains our results
-               * @type {{}}
-               */
-              $scope.newSubmitter = newSubmitter;
+      .controller('SubmitterModalController', SubmitterModalController);
 
-              /**
-               * cancels any dialog in this controller
-               */
-              $scope.cancelDialog = function() {
-                  $uibModalInstance.dismiss('cancel');
-              };
+    SubmitterModalController.$inject = ['$scope', 'Submitter', '$uibModalInstance', 'newSubmitter'];
 
-              /**
-               * takes care of updates
-               */
-              $scope.updateSubmitter = function() {
-                  var submitter = createSubmitterFromScope();
+    function SubmitterModalController($scope, Submitter, $uibModalInstance, newSubmitter) {
+        /**
+         * contains our results
+         * @type {{}}
+         */
+        $scope.newSubmitter = newSubmitter;
 
-                  //update the submitter
-                  Submitter.update(submitter, function(data) {
-                      $uibModalInstance.close(submitter);
-                  }, function(error) {
-                      handleDialogError(error);
-                  });
-              };
+        /**
+         * cancels any dialog in this controller
+         */
+        $scope.cancelDialog = function() {
+            $uibModalInstance.dismiss('cancel');
+        };
 
-              /**
-               * takes care of creates
-               */
-              $scope.createNewSubmitter = function() {
-                  var submitter = createSubmitterFromScope();
+        /**
+         * takes care of updates
+         */
+        $scope.updateSubmitter = function() {
+            var submitter = createSubmitterFromScope();
 
-                  //no submitter id so create a new one
-                  Submitter.save(submitter, function(savedSubmitter) {
-                      $uibModalInstance.close(savedSubmitter);
-                  }, function(error) {
-                      handleDialogError(error);
-                  });
-              };
+            //update the submitter
+            Submitter.update(submitter, function(data) {
+                $uibModalInstance.close(submitter);
+            }, function(error) {
+                handleDialogError(error);
+            });
+        };
 
-              /**
-               * creates our submitter object
-               */
-              function createSubmitterFromScope() {
-                  //build our object
-                  var submitter = new Submitter();
-                  submitter.firstName = $scope.newSubmitter.firstName;
-                  submitter.lastName = $scope.newSubmitter.lastName;
-                  submitter.institution = $scope.newSubmitter.institution;
-                  submitter.emailAddress = $scope.newSubmitter.emailAddress;
-                  submitter.password = $scope.newSubmitter.password;
+        /**
+         * takes care of creates
+         */
+        $scope.createNewSubmitter = function() {
+            var submitter = createSubmitterFromScope();
 
-                  if ($scope.newSubmitter.id) {
-                      submitter.id = $scope.newSubmitter.id;
-                  }
+            //no submitter id so create a new one
+            Submitter.save(submitter, function(savedSubmitter) {
+                $uibModalInstance.close(savedSubmitter);
+            }, function(error) {
+                handleDialogError(error);
+            });
+        };
 
-                  return submitter;
-              }
+        /**
+         * creates our submitter object
+         */
+        function createSubmitterFromScope() {
+            //build our object
+            var submitter = new Submitter();
+            submitter.firstName = $scope.newSubmitter.firstName;
+            submitter.lastName = $scope.newSubmitter.lastName;
+            submitter.institution = $scope.newSubmitter.institution;
+            submitter.emailAddress = $scope.newSubmitter.emailAddress;
+            submitter.password = $scope.newSubmitter.password;
 
-              /**
-               * handles our dialog errors
-               * @param error
-               */
-              function handleDialogError(error) {
-                  var errorReport = [];
+            if ($scope.newSubmitter.id) {
+                submitter.id = $scope.newSubmitter.id;
+            }
 
-                  if (error.data) {
-                      for (var i = 0, l = error.data.errors.length; i < l; i++) {
-                          var obj = error.data.errors[i];
+            return submitter;
+        }
 
-                          //remove the none needed object
-                          delete obj.object;
-                          errorReport.push(obj);
-                      }
+        /**
+         * handles our dialog errors
+         * @param error
+         */
+        function handleDialogError(error) {
+            var errorReport = [];
 
-                      $scope.formErrors = errorReport;
-                  }
-                  else {
-                      $scope.formErrors = "we had an unexpected error, please check the JS console";
-                  }
-              }
-          }]);
+            if (error.data) {
+                for (var i = 0, l = error.data.errors.length; i < l; i++) {
+                    var obj = error.data.errors[i];
+
+                    //remove the none needed object
+                    delete obj.object;
+                    errorReport.push(obj);
+                }
+
+                $scope.formErrors = errorReport;
+            }
+            else {
+                $scope.formErrors = "we had an unexpected error, please check the JS console";
+            }
+        }
+    }
 })();
