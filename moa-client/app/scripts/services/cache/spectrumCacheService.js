@@ -8,83 +8,87 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('SpectrumCache', ['$log', '$window', function($log, $window) {
-          /**
-           * Stored browser spectra
-           */
-          this.browserSpectra = null;
+      .factory('SpectrumCache', SpectrumCache);
 
-          /**
-           * Stored browser spectra scoll location
-           */
-          this.browserSpectraScroll = null;
+    SpectrumCache.$inject = ['$log', '$window'];
 
-          /**
-           * Stored browser scroll location
-           */
-          this.browserLocation = null;
+    function SpectrumCache($log, $window) {
+        /**
+         * Stored browser spectra
+         */
+        this.browserSpectra = null;
 
-          /**
-           * Stored spectrum for viewing
-           */
-          this.spectrum = null;
+        /**
+         * Stored browser spectra scoll location
+         */
+        this.browserSpectraScroll = null;
 
+        /**
+         * Stored browser scroll location
+         */
+        this.browserLocation = null;
 
-          /**
-           * Clear all values stored in this cache factory
-           */
-          this.clear = function() {
-              this.removeBrowserSpectra();
-              this.removeBrowserLocation();
-              this.removeSpectrum();
-          };
+        /**
+         * Stored spectrum for viewing
+         */
+        this.spectrum = null;
 
 
-          this.hasBrowserSpectra = function() {
-              return this.browserSpectra !== null;
-          };
-          this.getBrowserSpectra = function() {
-              return this.browserSpectra;
-          };
-          this.setBrowserSpectra = function(browserSpectra) {
-              this.browserSpectraScroll = $(window).scrollTop();
-              this.browserSpectra = browserSpectra;
-          };
-          this.removeBrowserSpectra = function() {
-              this.browserSpectraScroll = null;
-              this.browserSpectra = null;
-          };
-
-          this.getBrowserSpectraScrollLocation = function() {
-              return this.browserSpectraScroll;
-          };
+        /**
+         * Clear all values stored in this cache factory
+         */
+        this.clear = function() {
+            this.removeBrowserSpectra();
+            this.removeBrowserLocation();
+            this.removeSpectrum();
+        };
 
 
-          this.hasBrowserLocation = function() {
-              return this.browserLocation !== null;
-          };
-          this.getBrowserLocation = function() {
-              return this.browserLocation;
-          };
-          this.setBrowserLocation = function(browserLocation) {
-              this.browserLocation = browserLocation;
-          };
-          this.removeBrowserLocation = function() {
-              this.browserLocation = null;
-          };
+        this.hasBrowserSpectra = function() {
+            return this.browserSpectra !== null;
+        };
+        this.getBrowserSpectra = function() {
+            return this.browserSpectra;
+        };
+        this.setBrowserSpectra = function(browserSpectra) {
+            this.browserSpectraScroll = $(window).scrollTop();
+            this.browserSpectra = browserSpectra;
+        };
+        this.removeBrowserSpectra = function() {
+            this.browserSpectraScroll = null;
+            this.browserSpectra = null;
+        };
+
+        this.getBrowserSpectraScrollLocation = function() {
+            return this.browserSpectraScroll;
+        };
 
 
-          this.hasSpectrum = function() {
-              return this.spectrum !== null;
-          };
-          this.getSpectrum = function() {
-              return this.spectrum;
-          };
-          this.setSpectrum = function(spectrum) {
-              this.spectrum = spectrum;
-          };
-          this.removeSpectrum = function() {
-              this.spectrum = null;
-          };
-      }]);
+        this.hasBrowserLocation = function() {
+            return this.browserLocation !== null;
+        };
+        this.getBrowserLocation = function() {
+            return this.browserLocation;
+        };
+        this.setBrowserLocation = function(browserLocation) {
+            this.browserLocation = browserLocation;
+        };
+        this.removeBrowserLocation = function() {
+            this.browserLocation = null;
+        };
+
+
+        this.hasSpectrum = function() {
+            return this.spectrum !== null;
+        };
+        this.getSpectrum = function() {
+            return this.spectrum;
+        };
+        this.setSpectrum = function(spectrum) {
+            this.spectrum = spectrum;
+        };
+        this.removeSpectrum = function() {
+            this.spectrum = null;
+        };
+    }
 })();

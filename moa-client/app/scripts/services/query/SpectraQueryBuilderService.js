@@ -1,15 +1,17 @@
+/**
+ * Created by wohlgemuth on 7/10/14.
+ *
+ * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
+ */
+
 (function() {
-    /**
-     * Created by wohlgemuth on 7/10/14.
-     */
-
-    /**
-     * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
-     *
-     */
     'use strict';
+    angular.module('moaClientApp')
+      .factory('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
-    app.service('SpectraQueryBuilderService', ['QueryCache', 'MetadataService', function(QueryCache, MetadataService) {
+    SpectraQueryBuilderService.$inject = ['QueryCache', 'MetadataService'];
+
+    function SpectraQueryBuilderService(QueryCache, MetadataService) {
         /**
          * provides us with the current query
          * @returns {*|QueryCache.spectraQuery}
@@ -460,5 +462,5 @@
             QueryCache.setSpectraQuery(query);
 
         };
-    }]);
+    }
 })();
