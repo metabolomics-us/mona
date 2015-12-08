@@ -12,7 +12,7 @@
 
     configure.$inject = ['$routeProvider'];
 
-    function configure ($routeProvider) {
+    function configure($routeProvider) {
         $routeProvider
             //defining the root url
           .when('/', {
@@ -165,5 +165,5 @@
           .otherwise({
               redirectTo: '/'
           });
-    };
+    }
 })();

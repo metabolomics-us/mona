@@ -4,20 +4,23 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('Submitter', ['$resource', 'REST_BACKEND_SERVER', '$http',
-          function($resource, REST_BACKEND_SERVER, $http) {
+      .factory('Submitter', Submitter);
 
-              $http.defaults.useXDomain = true;
+    Submitter.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
 
-              return $resource(
-                REST_BACKEND_SERVER + '/rest/submitters/:id',
-                {id: "@id"},
-                {
-                    'update': {
-                        method: 'PUT'
+    function Submitter($resource, REST_BACKEND_SERVER, $http) {
 
-                    }
-                }
-              );
-          }]);
+        $http.defaults.useXDomain = true;
+
+        return $resource(
+          REST_BACKEND_SERVER + '/rest/submitters/:id',
+          {id: "@id"},
+          {
+              'update': {
+                  method: 'PUT'
+
+              }
+          }
+        );
+    }
 })();
