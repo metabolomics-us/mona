@@ -8,7 +8,6 @@
     angular.module('moaClientApp')
       .directive('gwMetaEdit', gwMetaEdit);
 
-
     function gwMetaEdit() {
         var directive = {
             restrict: 'A',
