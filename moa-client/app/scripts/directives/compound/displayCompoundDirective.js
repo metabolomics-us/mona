@@ -1,18 +1,33 @@
 /**
  * Created by wohlgemuth on 10/16/14.
  */
-app.directive('displayCompoundInfo', function() {
-    return {
-        require: "ngModel",
-        restrict: "A",
-        replace: true,
-        scope:{
-            compound:'=compound'
-        },
-        templateUrl: '/views/compounds/display/template/displayCompound.html',
-        controller: function($scope){
-            //calculate some unique id for the compound picture
-            $scope.pictureId = Math.floor(Math.random()*1000);
-        }
-    };
-});
+
+(function() {
+    'use strict';
+
+    angular.module('moaClientApp')
+      .directive('displayCompoundInfo', displayCompoundInfo);
+
+    function displayCompoundInfo() {
+        var directive = {
+            require: "ngModel",
+            restrict: "A",
+            replace: true,
+            scope: {
+                compound: '=compound'
+            },
+            templateUrl: '/views/compounds/display/template/displayCompound.html',
+            controller: displayCompoundInfoController
+        };
+
+        return directive;
+    }
+
+
+    displayCompoundInfoController.$inject = ['$scope'];
+
+    function displayCompoundInfoController($scope) {
+        //calculate some unique id for the compound picture
+        $scope.pictureId = Math.floor(Math.random() * 1000);
+    }
+})();
