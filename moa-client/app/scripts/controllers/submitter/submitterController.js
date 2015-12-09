@@ -47,7 +47,7 @@
 
             var modalInstance = $uibModal.open({
                 templateUrl: '/views/submitters/dialog/createDialog.html',
-                controller: moaControllers.SubmitterModalController,
+                controller: 'SubmitterModalController',
                 size: 'lg',
                 backdrop: 'static',
                 resolve: {
@@ -72,7 +72,7 @@
         $scope.displayEditDialog = function(index) {
             var modalInstance = $uibModal.open({
                 templateUrl: '/views/submitters/dialog/editDialog.html',
-                controller: moaControllers.SubmitterModalController,
+                controller: 'SubmitterModalController',
                 size: 'lg',
                 backdrop: 'static',
                 resolve: {

@@ -7,9 +7,9 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('UploadLibraryService', UploadLibraryService);
+      .service('UploadLibraryService', UploadLibraryService);
 
-    UploadLibraryService.$inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'wMgfService',
+    UploadLibraryService.$inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'gwMgfService',
         'gwChemifyService', 'AuthenticationService', 'gwCtsService', '$log', '$q', '$timeout', 'gwMassbankService',
         '$filter', 'AsyncService', 'MetaDataOptimizationService'];
 

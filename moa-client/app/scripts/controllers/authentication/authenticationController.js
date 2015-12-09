@@ -53,7 +53,7 @@
         self.openAuthenticationDialog = function() {
             $uibModal.open({
                 templateUrl: '/views/authentication/authenticationModal.html',
-                controller: moaControllers.AuthenticationModalController,
+                controller: 'AuthenticationModalController',
                 size: 'sm',
                 backdrop: 'true'
             });
@@ -66,7 +66,7 @@
             if (!self.isLoggedIn()) {
                 $uibModal.open({
                     templateUrl: '/views/authentication/registrationModal.html',
-                    controller: moaControllers.RegistrationModalController,
+                    controller: 'RegistrationModalController',
                     size: 'md',
                     backdrop: 'static'
                 });

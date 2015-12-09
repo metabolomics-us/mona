@@ -59,7 +59,7 @@
         $scope.querySpectraDialog = function() {
             var modalInstance = $uibModal.open({
                 templateUrl: '/views/spectra/query/query.html',
-                controller: moaControllers.QuerySpectrumModalController,
+                controller: 'QuerySpectrumModalController',
                 size: 'lg',
                 backdrop: 'true'
             });

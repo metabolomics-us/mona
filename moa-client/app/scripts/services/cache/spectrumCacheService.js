@@ -8,7 +8,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('SpectrumCache', SpectrumCache);
+      .service('SpectrumCache', SpectrumCache);
 
     SpectrumCache.$inject = ['$log', '$window'];
 

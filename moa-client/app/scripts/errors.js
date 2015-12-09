@@ -50,7 +50,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory("ApplicationError", ApplicationError);
+      .service("ApplicationError", ApplicationError);
 
     ApplicationError.$inject = ['$rootScope'];
 

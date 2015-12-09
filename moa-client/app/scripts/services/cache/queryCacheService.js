@@ -7,7 +7,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('QueryCache', QueryCache);
+      .service('QueryCache', QueryCache);
 
     QueryCache.$inject = ['$injector', '$log', '$rootScope'];
 

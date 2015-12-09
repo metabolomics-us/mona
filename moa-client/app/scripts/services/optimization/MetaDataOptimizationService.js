@@ -13,7 +13,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('MetaDataOptimizationService', MetaDataOptimizationService);
+      .service('MetaDataOptimizationService', MetaDataOptimizationService);
 
     MetaDataOptimizationService.$inject = ['ApplicationError', '$log', '$q', '$timeout', '$filter'];
 

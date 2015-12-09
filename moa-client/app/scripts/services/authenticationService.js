@@ -6,7 +6,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('AuthenticationService', AuthenticationService);
+      .service('AuthenticationService', AuthenticationService);
 
     AuthenticationService.$inject = ['Submitter', '$q', '$http', '$resource', '$rootScope', 'CookieService', 'REST_BACKEND_SERVER'];
 
