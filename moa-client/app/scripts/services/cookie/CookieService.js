@@ -5,7 +5,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('CookieService', CookieService);
+      .service('CookieService', CookieService);
 
     CookieService.$inject = ['ApplicationError', '$cookieStore', '$log'];
 

@@ -7,7 +7,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('AsyncService', AsyncService);
+      .service('AsyncService', AsyncService);
 
     AsyncService.$inject = ['ApplicationError', '$log', '$q', '$interval'];
 
