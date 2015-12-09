@@ -232,11 +232,12 @@
 
 
 (function() {
+    'use strict';
     /**
      * Required in order to load the spectrum before resolving the web page.
      * Loads spectrum from cache if it exists, otherwise get from rest api
      */
-    'use strict';
+    
     angular.module('moaClientApp')
       .ViewSpectrumController.loadSpectrum = {
         delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
