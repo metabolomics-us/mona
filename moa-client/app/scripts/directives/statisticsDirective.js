@@ -9,7 +9,7 @@
     angular.module('moaClientApp')
       .directive('statistics', statistics);
 
-    statistics.$inject = ['StatisticsService'];
+    statistics.$inject = ['$compile','$filter','StatisticsService'];
 
     function statistics($compile, $filter, StatisticsService, $log) {
         var directive = {
@@ -79,3 +79,76 @@
     }
 
 })();
+
+/*
+    **** refactored code using bindToController instead of linkFunction. Performance is slow compared to Mona site, it's not
+    * because of removal of linkFunc, but of refactoring the whole application. Looking into why.
+(function() {
+    'use strict';
+
+    angular.module('moaClientApp')
+      .directive('statistics', statistics);
+
+    function statistics() {
+        var directive = {
+            restrict: 'AE',
+            replace: false,
+            template: '<span>{{ctrl.executionTime | number:0}} {{ctrl.unit}} over the last {{ctrl.timeframe}}</span>',
+            scope: {
+                timeframe: '@',
+                query: '@'
+            },
+            controller: statisticsController,
+            controllerAs: 'ctrl',
+
+
+             // bind scope to variable, we no longer need $compile or link function, and we can input data into template
+
+            bindToController: true
+        };
+
+        return directive;
+    }
+
+    statisticsController.$inject = ['StatisticsService'];
+
+    function statisticsController(StatisticsService) {
+        var ctrl = this;
+        ctrl.executionTime = "loading...";
+        ctrl.unit = "ms";
+
+        StatisticsService.executionTime({time: this.timeframe, method: this.query, max: 1},
+          function(data) {
+              if (data.length) {
+                  ctrl.executionTime = data[0].avg;
+
+                  if (ctrl.executionTime > 1000) {
+                      ctrl.executionTime = ctrl.executionTime / 1000;
+                      ctrl.unit = "s";
+
+
+                      if (ctrl.executionTime > 90) {
+                          ctrl.executionTime = ctrl.executionTime / 60;
+                          ctrl.unit = "min";
+
+
+                          if (ctrl.executionTime > 90) {
+                              ctrl.executionTime = ctrl.executionTime / 60;
+                              ctrl.unit = "h";
+
+
+                              if (ctrl.executionTime > 24) {
+                                  ctrl.executionTime = ctrl.executionTime / 24;
+                                  ctrl.unit = "d";
+                              }
+                          }
+                      }
+                  }
+              } else {
+                  ctrl.executionTime = 0;
+              }
+          }
+        );
+    }
+})();
+  */
