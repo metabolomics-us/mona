@@ -67,10 +67,9 @@
                 compiled = this.getQuery();
             }
 
-            if (tags === null || tags.constructor !== Array) {
+            if (tags === null || tags === undefined) {
                 tags = [];
             }
-
 
             // Get all metadata in a single dictionary
             var meta = {};
