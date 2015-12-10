@@ -40,61 +40,16 @@
 <![endif]-->
 
 <div id="wrapper" ng-controller="AuthenticationController as auth">
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0" ng-cloak>
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#/" ng-cloak>{{APP_NAME_ABBR}} - {{APP_NAME}}</a>
-        </div>
-        <!-- /.navbar-header -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+        <title-header></title-header>
+
+        <!-- navbar dropdowns -->
         <div class="collapse navbar-collapse" role="navigation">
-            <ul class="nav navbar-top-links navbar-right">
-                <!-- User Login -->
-                <li class="dropdown" uib-dropdown>
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i
-                            class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="uib-dropdown-menu dropdown-user">
-                        <li ng-show="auth.isLoggedIn()">
-                            <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
-                        </li>
-                        <li ng-show="auth.isLoggedIn()" class="divider"></li>
+            <login-drop-down></login-drop-down>
+            <search-box></search-box>
 
-                        <li>
-                            <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ?
-                                "Logout" : "Login"}}</a>
-                        </li>
-                        <li ng-show="!auth.isLoggedIn()">
-                            <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-user -->
-                </li>
-            </ul>
-
-            <!-- search form -->
-            <form name="searchBox" ng-controller="SearchBoxController" ng-submit="searchBoxQuery=''"
-                  class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
-                <div class="input-group custom-search-form">
-                    <input type="text" class="form-control ng-pristine ng-valid ng-touched" ng-model="searchBoxQuery"
-                           placeholder="Search..." tooltip="Search by Name,InChiKey or MoNA ID" tooltip-trigger="focus"
-                           tooltip-placement="bottom">
-                        <span class="input-group-btn">
-                            <button class="btn btn-repeat" type="submit" ng-click="performSimpleQuery(searchBoxQuery)">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </span>
-                </div>
-            </form>
-
-            <!-- /.navbar-top-links -->
+            <!-- dropdown menus -->
             <ul class="nav navbar-nav">
-                <!-- dropdown menus -->
                 <browse-drop-down></browse-drop-down>
                 <stat-drop-down></stat-drop-down>
                 <res-drop-down></res-drop-down>
@@ -231,6 +186,9 @@
 <script src="scripts/directives/autocompleteDirective.js"></script>
 <script src="scripts/directives/disableEnterEventDirective.js"></script>
 
+<script src="scripts/directives/navbar/titleHeaderDirective.js"></script>
+<script src="scripts/directives/navbar/searchBoxDirective.js"></script>
+<script src="scripts/directives/navbar/loginDropDownDirective.js"></script>
 <script src="scripts/directives/navbar/browseDropDownDirective.js"></script>
 <script src="scripts/directives/navbar/adminDropDownDirective.js"></script>
 <script src="scripts/directives/navbar/resourceDropDownDirective.js"></script>
