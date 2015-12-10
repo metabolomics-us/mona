@@ -48,7 +48,6 @@
         }
 
         function calculateTime() {
-            console.log(ctrl.executionTime);
             if (ctrl.executionTime > 1000) {
                 ctrl.executionTime = ctrl.executionTime / 1000;
                 ctrl.unit = "s";

@@ -15,11 +15,11 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.min.css" />
-    <link rel="stylesheet" href="bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
-    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.min.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css"/>
+    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css"/>
     <!-- endbower -->
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css"/>
     <!-- endbuild -->
@@ -57,7 +57,7 @@
                 <li class="dropdown" uib-dropdown>
                     <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
                         <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i
-                        class="fa fa-caret-down"></i>
+                            class="fa fa-caret-down"></i>
                     </a>
                     <ul class="uib-dropdown-menu dropdown-user">
                         <li ng-show="auth.isLoggedIn()">
@@ -94,112 +94,11 @@
 
             <!-- /.navbar-top-links -->
             <ul class="nav navbar-nav">
-                <li class="dropdown" uib-dropdown>
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        Browse
-                        <span class="fa fa-caret-down"></span>
-                    </a>
-                    <ul class="uib-dropdown-menu">
-                        <li><a href="#/spectra/browse">Browse Mass Spectra</a></li>
-                        <li><a href="#/compounds">Browse Compounds</a></li>
-                        <li><a href="#/spectra/dbindex">Database Index</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#/spectra/querytree">Query Tree</a></li>
-                        <li><a href="#/spectra/similarity">Similarity Query</a></li>
-                        <li ng-controller="SearchBoxController"><a href="" ng-click="querySpectraDialog()">Advanced
-                            Query</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#/upload">Spectrum Upload</a></li>
-                    </ul>
-                </li>
-                <!-- statistics dropdown -->
-                <li class="dropdown" uib-dropdown>
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        Statistics
-                        <span class="fa fa-caret-down"></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-tasks" role="menu">
-                        <li>
-                            <a href="#/uploadstatus">
-                                <div>
-                                    <p><strong>Upload Progress</strong><span class="pull-right text muted">&nbsp;</span>
-                                    </p>
-                                    <spectra-upload-progress-bar></spectra-upload-progress-bar>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#/statistics/query">
-                                <div>
-                                    <p><strong>average query time</strong><span
-                                        class="pull-right text-muted">&nbsp;</span></p>
-                                    <statistics timeframe="month" query="search"></statistics>
-                                </div>
-
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#/statistics/validation">
-                                <div>
-                                    <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span>
-                                    </p>
-                                    <statistics timeframe="month" query="validation"></statistics>
-                                </div>
-
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#/statistics/import">
-                                <div>
-                                    <p><strong>average upload time</strong><span
-                                        class="pull-right text-muted">&nbsp;</span></p>
-                                    <statistics timeframe="month" query="import"></statistics>
-                                </div>
-
-                            </a>
-                        </li>
-
-                        <li class="divider"></li>
-                        <li>
-                            <a class="text-center" href="#/statistics">
-                                <strong>See All Statistics</strong>
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="dropdown" uib-dropdown>
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        Resources
-                        <span class="fa fa-caret-down"></span>
-                    </a>
-                    <ul class="uib-dropdown-menu">
-                        <li><a href="#/documentation/webservices">Web Services</a></li>
-                        <li><a href="#/documentation/license">License</a></li>
-                        <li><a href="#/documentation/query">REST Service Query</a></li>
-                        <li><a
-                            href="https://bitbucket.org/fiehnlab/mona/wiki/Using%20authentication%20tokens%20via%20cURL"
-                            target="_blank">REST API Authentication</a></li>
-                        <li><a href="#/documentation/terms">Terms and Abbreviations</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/src" target="_blank">Sourcecode</a></li>
-                        <li><a href="http://mona.fiehnlab.ucdavis.edu/repository/">Repository</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Home" target="_blank">Wiki</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/issues/" target="_blank">Bug Reports / Feature
-                            requests</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown" uib-dropdown ng-show="auth.isAdmin()">
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        Administration
-                        <span class="fa fa-caret-down"></span>
-                    </a>
-                    <ul class="uib-dropdown-menu">
-                        <li><a href="#/admin/submitters">Manage Submitters</a></li>
-                        <li><a href="#/admin/news">News</a></li>
-                    </ul>
-                </li>
+                <!-- dropdown menus -->
+                <browse-drop-down></browse-drop-down>
+                <stat-drop-down></stat-drop-down>
+                <res-drop-down></res-drop-down>
+                <admin-drop-down></admin-drop-down>
             </ul>
         </div>
     </nav>
@@ -237,18 +136,6 @@
 <script src="bower_components/angular-dialog-service/dist/dialogs.js"></script>
 <script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.min.js"></script>
 <script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/affix.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/alert.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/button.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/carousel.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/collapse.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/dropdown.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tab.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/transition.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/scrollspy.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/modal.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js"></script>
-<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/popover.js"></script>
 <script src="bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
 <script src="bower_components/flot/jquery.flot.js"></script>
 <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
@@ -343,6 +230,11 @@
 <script src="scripts/directives/sketcherDirective.js"></script>
 <script src="scripts/directives/autocompleteDirective.js"></script>
 <script src="scripts/directives/disableEnterEventDirective.js"></script>
+
+<script src="scripts/directives/navbar/browseDropDownDirective.js"></script>
+<script src="scripts/directives/navbar/adminDropDownDirective.js"></script>
+<script src="scripts/directives/navbar/resourceDropDownDirective.js"></script>
+<script src="scripts/directives/navbar/statisticsDropDownDirective.js"></script>
 <script src="scripts/directives/multiselectDropdown.js"></script>
 
 <script src="scripts/directives/metadata/gwMetaEditDirective.js"></script>
