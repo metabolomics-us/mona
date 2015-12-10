@@ -33,49 +33,44 @@
         ctrl.executionTime = "loading...";
         ctrl.unit = "ms";
 
-        ctrl.test = null;
-
-
         getExecutionTime();
 
+
         function getExecutionTime() {
-            return StatisticsService.executionTime({time: ctrl.timeframe, method: ctrl.query, max: 1}, function(data) {
-                ctrl.test = data[0].avg;
+            StatisticsService.executionTime({time: ctrl.timeframe, method: ctrl.query, max: 1}, function(data) {
+                if (data.length) {
+                    ctrl.executionTime = data[0].avg;
+                    calculateTime();
+                } else {
+                    ctrl.executionTime = 0;
+                }
             })
         }
 
-        StatisticsService.executionTime({time: ctrl.timeframe, method: ctrl.query, max: 1},
-          function(data) {
-              if (data.length) {
-                  ctrl.executionTime = data[0].avg;
+        function calculateTime() {
+            console.log(ctrl.executionTime);
+            if (ctrl.executionTime > 1000) {
+                ctrl.executionTime = ctrl.executionTime / 1000;
+                ctrl.unit = "s";
 
-                  if (ctrl.executionTime > 1000) {
-                      ctrl.executionTime = ctrl.executionTime / 1000;
-                      ctrl.unit = "s";
-
-
-                      if (ctrl.executionTime > 90) {
-                          ctrl.executionTime = ctrl.executionTime / 60;
-                          ctrl.unit = "min";
+                if (ctrl.executionTime > 90) {
+                    ctrl.executionTime = ctrl.executionTime / 60;
+                    ctrl.unit = "min";
 
 
-                          if (ctrl.executionTime > 90) {
-                              ctrl.executionTime = ctrl.executionTime / 60;
-                              ctrl.unit = "h";
+                    if (ctrl.executionTime > 90) {
+                        ctrl.executionTime = ctrl.executionTime / 60;
+                        ctrl.unit = "h";
 
 
-                              if (ctrl.executionTime > 24) {
-                                  ctrl.executionTime = ctrl.executionTime / 24;
-                                  ctrl.unit = "d";
-                              }
-                          }
-                      }
-                  }
-              } else {
-                  ctrl.executionTime = 0;
-              }
-          }
-        );
+                        if (ctrl.executionTime > 24) {
+                            ctrl.executionTime = ctrl.executionTime / 24;
+                            ctrl.unit = "d";
+                        }
+                    }
+                }
+            }
+        }
     }
 })();
 
