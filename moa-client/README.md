@@ -1,3 +1,13 @@
+AngularJS Best Practices
+    If you are new to AngularJS or developing features for Mona-client app, the resources below will
+    speed you up on implementation practices and AngularJS.
+
+    1. Code School - AngularJS intro course sponsored by Google
+    2. John Papa Style Guide - https://github.com/johnpapa/angular-styleguide
+    3. Immediately Invoked Function Expression - http://benalman.com/news/2010/11/immediately-invoked-function-expression/#iife
+
+**Implement ONE component per file to make code easy to maintain and read**
+
 compiling source code:
 
 1. npm -install
