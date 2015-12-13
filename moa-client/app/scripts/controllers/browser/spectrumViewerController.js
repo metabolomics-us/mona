@@ -10,12 +10,13 @@
     'use strict';
     angular.module('moaClientApp')
       .controller('ViewSpectrumController', ViewSpectrumController);
-    ViewSpectrumController.loadSpectrum = {delayedSpectrum: delayedSpectrum};
 
-    ViewSpectrumController.$inject = ['$scope', '$location', '$log', 'delayedSpectrum', 'CookieService', 'Spectrum'];
-    delayedSpectrum.$inject = ['Spectrum', '$route', 'SpectrumCache'];
+    // no need to inject delaySpectrum, it is resolved in route.js
+    ViewSpectrumController.$inject = ['$scope', '$location', '$log', 'CookieService', 'Spectrum'];
+
 
     function ViewSpectrumController($scope, $location, $log, delayedSpectrum, CookieService, Spectrum) {
+
         /**
          * Mass spectrum obtained from cache if it exists, otherwise from REST api
          */
@@ -28,6 +29,7 @@
         $scope.score = 0;
 
         $scope.massSpec = [];
+        console.log('COOKIE ' + JSON.stringify(CookieService));
 
         /**
          * status of our accordion
@@ -231,35 +233,15 @@
         })();
     }
 
-    function delayedSpectrum(Spectrum, $route, SpectrumCache) {
-        // If a spectrum is not cached or the id requested does not match the
-        // cached spectrum, request it from the REST api
-        if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
-            return Spectrum.get(
-              {id: $route.current.params.id},
-              function(data) {
-              },
-              function(error) {
-                  alert('failed to obtain spectrum: ' + error);
-              }
-            ).$promise;
-        }
 
-        else {
-            var spectrum = SpectrumCache.getSpectrum();
-            SpectrumCache.removeSpectrum();
-            return spectrum;
-        }
-    }
 })();
-
 
 /*
 (function() {
     'use strict';
 
-     * Required in order to load the spectrum before resolving the web page.
-     * Loads spectrum from cache if it exists, otherwise get from rest api
+    // Required in order to load the spectrum before resolving the web page.
+    // Loads spectrum from cache if it exists, otherwise get from rest api
 
 
     angular.module('moaClientApp')
@@ -285,4 +267,5 @@
             }
         }
     };
-})();*/
+})();
+*/

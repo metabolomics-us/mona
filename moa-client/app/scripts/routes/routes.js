@@ -47,7 +47,7 @@
           .when('/spectra/display/:id', {
               templateUrl: 'views/spectra/display/viewSpectrum.html',
               controller: 'ViewSpectrumController',
-              resolve: 'ViewSpectrumController.loadSpectrum'
+              resolve: 'delayedSpectrum'
           })
 
           .when('/spectra/splash/:splash', {

@@ -4,14 +4,25 @@
 
 (function() {
     'use strict';
+
     angular.module('moaClientApp')
-      .service('CookieService', CookieService);
+      .factory('CookieService', CookieService);
 
     CookieService.$inject = ['ApplicationError', '$cookieStore', '$log'];
 
     function CookieService(ApplicationError, $cookieStore, $log) {
 
-        this.stringToBoolean = function(string) {
+        var service = {
+            stringToBoolean: stringToBoolean,
+            update: update,
+            get: get,
+            remove: remove,
+            getBooleanValue: getBooleanValue
+        };
+
+        return service;
+
+        function stringToBoolean(string) {
             switch (string) {
                 case "true":
                 case "yes":
@@ -25,39 +36,39 @@
                 default:
                     return Boolean(string);
             }
-        };
+        }
 
         /**
          * updates the cookie
          * @param name
          * @param value
          */
-        this.update = function(name, value) {
+        function update(name, value) {
             $cookieStore.put(name, value);
-        };
+        }
 
         /**
          * gets the cookie
          * @param cookieName
          */
-        this.get = function(cookieName) {
+        function get(cookieName) {
             return $cookieStore.get(cookieName);
-        };
+        }
 
         /**
          * remove a cookie
          * @param cookieName
          */
-        this.remove = function(cookieName) {
+        function remove(cookieName) {
             return $cookieStore.remove(cookieName);
-        };
+        }
 
         /**
          * provides us with a boolean cookie value of true or false
          * @param cookieName name your cookie
          * @param defaultValueIfNotFound default value if we don't find the cookie
          */
-        this.getBooleanValue = function(cookieName, defaultValueIfNotFound) {
+        function getBooleanValue(cookieName, defaultValueIfNotFound) {
 
             if (defaultValueIfNotFound === null) {
                 defaultValueIfNotFound = false;
@@ -66,7 +77,7 @@
             var result = defaultValueIfNotFound;
 
             if ($cookieStore.get(cookieName) !== null) {
-                result = this.stringToBoolean($cookieStore.get(cookieName));
+                result = stringToBoolean($cookieStore.get(cookieName));
             }
 
             //return the result
