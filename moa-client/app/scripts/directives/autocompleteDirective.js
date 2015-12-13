@@ -8,6 +8,7 @@
  *
  * we are taking our given query string as succesful result, if the user presses enter.
  * possible to define a name for the generated field, so that we can watch it
+ * TODO: directive usage can't be found.
  */
 
 (function() {
@@ -22,9 +23,6 @@
         var directive = {
             restrict: 'A',
             replace: false,
-            /**
-             * generates our field
-             */
             templateUrl: '/views/autocomplete.html',
             scope: {
                 "id": "@inputid",
@@ -324,4 +322,11 @@
 
         return directive;
     }
+
+    /* REFACTORING WORK IN PROGRESS**
+    flAngucompleteController.$inject = ['$parse', '$http', '$sce', '$timeout'];
+
+    function flAngucompleteController($parse, $http, $sce, $timeout) {
+
+    }*/
 })();
