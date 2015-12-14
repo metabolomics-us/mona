@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Wed Jun 11 2014 20:13:48 GMT-0700 (PDT)
 
-module.exports = function (config) {
+module.exports = function(config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -37,26 +37,31 @@ module.exports = function (config) {
             'app/bower_components/angular-bootstrap/ui-bootstrap.js',
             'app/bower_components/ng-tags-input/ng-tags-input.js',
 
-            'app/scripts/**/*.js',
-            'test/spec/directives/**/*.js',
-            'app/views/spectra/display/template/*.html'
-            //'test/spec/**/*.js'
+            //'test/spec/directives/**/*.js',
+            //'app/views/spectra/display/template/*.html'
+            'test/spec/**/*.js',
+            'app/scripts/**/*.js'
         ],
 
 
         // list of files to exclude
         exclude: [
-
+            'app/scripts/directives/metadata/metadataValueDirective.js',
+            'app/scripts/directives/metadata/tagDirective.js',
+            'app/scripts/directives/query/queryPieChart.js',
+            'app/scripts/directives/submitter/spectra.js',
+            'app/scripts/directives/submitterFormDirective.js',
+            'app/scripts/theme.js'
         ],
 
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'app/views/spectra/display/template/*.html' : 'ng-html2js',
-            '**/scripts/services/**/*.js' : 'coverage',
-            '**/scripts/controllers/**/*.js' : 'coverage',
-            '**/scripts/directives/**/*.js' : 'coverage'
+            //'app/views/spectra/display/template/*.html' : 'ng-html2js',
+            //'**/scripts/**/*.js' : 'coverage'
+            '**/scripts/controllers/**/*.js': 'coverage',
+            '**/scripts/directives/**/*.js': 'coverage'
         },
 
         ngHtml2JsPreprocessor: {
@@ -66,7 +71,7 @@ module.exports = function (config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'osx','coverage'],
+        reporters: ['progress', 'coverage'],
 
 
         // web server port
@@ -88,8 +93,8 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-         browsers: ['Chrome'],
-        //browsers: ['PhantomJS'],
+        //browsers: ['Chrome'],
+        browsers: ['PhantomJS2'],
 
 
         // Continuous Integration mode
