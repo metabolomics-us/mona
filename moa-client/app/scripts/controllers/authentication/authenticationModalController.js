@@ -48,7 +48,7 @@
         $scope.$on('auth:login-error', function(event, data, status, headers, config) {
             $scope.state = 'login';
 
-            if (data.status === '401') {
+            if (data.status == '401') {
                 $scope.errors.push('Invalid email or password');
             } else {
                 $scope.errors.push('Unable to reach MoNA server');
