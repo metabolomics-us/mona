@@ -30,8 +30,6 @@
     }
 
     //controller to handle building of the queires
-    gwTagDisplayController.$inject = ['$scope', '$element', '$log', 'TaggingService'];
-
     function gwTagDisplayController($scope, $element, $log, TaggingService) {
 
         /**

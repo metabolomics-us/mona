@@ -29,8 +29,6 @@
     }
 
     //controller to handle building new queries
-    gwSpectraIdQueryController.$inject = ['$scope', '$element', 'SpectraQueryBuilderService', '$location'];
-
     function gwSpectraIdQueryController($scope, $element, SpectraQueryBuilderService, $location) {
 
         //receive a click

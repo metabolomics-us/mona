@@ -9,7 +9,6 @@
     angular.module('moaClientApp')
       .directive('scoreSpectra', scoreSpectra);
 
-    scoreSpectra.$inject = ['$compile', '$filter', 'Spectrum', '$log'];
     function scoreSpectra($compile, $filter, Spectrum, $log) {
         var directive = {
             //must be an attribute

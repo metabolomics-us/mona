@@ -9,9 +9,6 @@
     angular.module('moaClientApp')
       .service('UploadLibraryService', UploadLibraryService);
 
-    UploadLibraryService.$inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'gwMgfService',
-        'gwChemifyService', 'AuthenticationService', 'gwCtsService', '$log', '$q', '$timeout', 'gwMassbankService',
-        '$filter', 'AsyncService', 'MetaDataOptimizationService'];
 
     function UploadLibraryService($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService,
                                   gwChemifyService, AuthenticationService, gwCtsService, $log, $q, $timeout,

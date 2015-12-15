@@ -8,7 +8,6 @@
     angular.module('moaClientApp')
       .service('AuthenticationService', AuthenticationService);
 
-    AuthenticationService.$inject = ['Submitter', '$q', '$http', '$resource', '$rootScope', 'CookieService', 'REST_BACKEND_SERVER'];
 
     function AuthenticationService(Submitter, $q, $http, $resource, $rootScope, CookieService, REST_BACKEND_SERVER) {
         var self = this;

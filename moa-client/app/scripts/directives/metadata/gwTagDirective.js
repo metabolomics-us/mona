@@ -36,8 +36,6 @@
     }
 
     //controller to handle building new queries
-    gwTagController.$inject = ['$scope', 'SpectraQueryBuilderService', '$location'];
-
     function gwTagController($scope, SpectraQueryBuilderService, $location) {
         $scope.options = [];
 

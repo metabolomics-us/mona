@@ -9,7 +9,6 @@
     angular.module('moaClientApp')
       .factory('StatisticsService', StatisticsService);
 
-    StatisticsService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
 
     function StatisticsService($resource, REST_BACKEND_SERVER, $http) {
 

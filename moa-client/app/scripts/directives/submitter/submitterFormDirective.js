@@ -19,7 +19,6 @@
         return directive;
     }
 
-    submitterFormController.$inject = ['$scope'];
 
     function submitterFormController($scope) {
         console.log($scope);

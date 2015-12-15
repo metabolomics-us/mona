@@ -52,7 +52,6 @@
     angular.module('moaClientApp')
       .service("ApplicationError", ApplicationError);
 
-    ApplicationError.$inject = ['$rootScope'];
 
     function ApplicationError($rootScope) {
         this.handleError = function(message, reason) {

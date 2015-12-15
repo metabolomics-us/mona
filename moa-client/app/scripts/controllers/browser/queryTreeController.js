@@ -7,8 +7,6 @@
     angular.module('moaClientApp')
       .controller('QueryTreeController', QueryTreeController)
 
-    QueryTreeController.$inject = ['$scope', 'Spectrum', '$location', '$filter', '$log', 'SpectraQueryBuilderService'];
-
     function QueryTreeController($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService) {
         $scope.executeQuery = function(node) {
             SpectraQueryBuilderService.setQuery(JSON.parse(node.query));

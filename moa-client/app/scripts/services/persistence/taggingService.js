@@ -8,7 +8,6 @@
     angular.module('moaClientApp')
       .factory('TaggingService', TaggingService);
 
-    TaggingService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
 
     function TaggingService($resource, REST_BACKEND_SERVER, $http) {
 

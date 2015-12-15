@@ -7,8 +7,6 @@
     angular.module('moaClientApp')
       .controller('CompoundBrowserController', CompoundBrowserController)
 
-    CompoundBrowserController.$inject = ['$scope', 'Compound', '$location', 'SpectraQueryBuilderService'];
-
     function CompoundBrowserController($scope, Compound, $location, SpectraQueryBuilderService) {
         /**
          * contains all local objects

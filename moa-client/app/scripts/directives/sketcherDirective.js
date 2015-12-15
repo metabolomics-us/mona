@@ -10,8 +10,6 @@
     angular.module('moaClientApp')
       .directive('chemicalSketcher', chemicalSketcher);
 
-    chemicalSketcher.$inject = ['gwCtsService', '$log'];
-
     function chemicalSketcher(gwCtsService, $log) {
         var directive = {
             restrict: "A",

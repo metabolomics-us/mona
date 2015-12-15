@@ -7,8 +7,6 @@
     angular.module('moaClientApp')
       .controller('SearchBoxController', SearchBoxController);
 
-    SearchBoxController.$inject = ['$scope', '$uibModal', '$location', '$route', 'SpectraQueryBuilderService'];
-
     function SearchBoxController($scope, $uibModal, $location, $route, SpectraQueryBuilderService) {
         $scope.inputError = false;
 

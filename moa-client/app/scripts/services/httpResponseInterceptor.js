@@ -7,7 +7,6 @@
     angular.module('moaClientApp')
       .factory('httpResponseInterceptor', httpResponseInterceptor);
 
-    httpResponseInterceptor.$inject = ['$q', '$location'];
 
     function httpResponseInterceptor($q, $location) {
         return {

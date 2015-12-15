@@ -11,10 +11,6 @@
     angular.module('moaClientApp')
       .controller('ViewSpectrumController', ViewSpectrumController);
 
-    // no need to inject delaySpectrum, it is resolved in route.js
-    ViewSpectrumController.$inject = ['$scope', '$location', '$log', 'CookieService', 'Spectrum', 'delayedSpectrum'];
-
-
     function ViewSpectrumController($scope, $location, $log, CookieService, Spectrum, delayedSpectrum) {
 
         /**

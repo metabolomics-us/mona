@@ -7,8 +7,6 @@
     angular.module('moaClientApp')
       .controller('StatisticsController', StatisticsController);
 
-    StatisticsController.$inject = ['$scope', 'StatisticsService', '$uibModal', 'statistics'];
-
     function StatisticsController($scope, StatisticsService, $uibModal, statistics) {
         $scope.data = statistics;
     }

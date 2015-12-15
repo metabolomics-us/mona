@@ -7,8 +7,6 @@
     angular.module('moaClientApp')
       .controller('SpectraDatabaseIndexController', SpectraDatabaseIndexController);
 
-    SpectraDatabaseIndexController.$inject = ['$scope', '$http', '$location', 'SpectraQueryBuilderService', 'MetadataService', 'REST_BACKEND_SERVER'];
-
     function SpectraDatabaseIndexController($scope, $http, $location, SpectraQueryBuilderService, MetadataService, REST_BACKEND_SERVER) {
         /**
          * Metadata that we wish to display

@@ -8,8 +8,6 @@
     angular.module('moaClientApp')
       .directive('spectraCountForUser', spectraCountForUser);
 
-    spectraCountForUser.$inject = ['$compile', 'StatisticsService'];
-
     function spectraCountForUser($compile, StatisticsService) {
         var directive = {
             replace: true,
@@ -30,8 +28,6 @@
         return directive;
     }
 
-
-    spectraCountForUserController.$inject = ['$scope'];
 
     function spectraCountForUserController($scope) {
         $scope.spectraCount = "loading...";

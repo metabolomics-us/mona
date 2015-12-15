@@ -9,7 +9,6 @@
     angular.module('moaClientApp')
       .service('AsyncService', AsyncService);
 
-    AsyncService.$inject = ['ApplicationError', '$log', '$q', '$interval'];
 
     function AsyncService(ApplicationError, $log, $q, $interval) {
 

@@ -3,8 +3,6 @@
     angular.module('moaClientApp')
       .controller('AuthenticationModalController', AuthenticationModalController)
 
-    AuthenticationModalController.$inject = ['$scope', '$rootScope', '$uibModalInstance', '$timeout', 'AuthenticationService'];
-
     function AuthenticationModalController($scope, $rootScope, $uibModalInstance, $timeout, AuthenticationService) {
         $scope.errors = [];
         $scope.state = 'login';
