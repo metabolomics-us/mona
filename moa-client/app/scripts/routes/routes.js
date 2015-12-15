@@ -47,7 +47,28 @@
           .when('/spectra/display/:id', {
               templateUrl: 'views/spectra/display/viewSpectrum.html',
               controller: 'ViewSpectrumController',
-              resolve: 'delayedSpectrum'
+              resolve: {
+                  delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
+                      // If a spectrum is not cached or the id requested does not match the
+                      // cached spectrum, request it from the REST api
+                      if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
+                          return Spectrum.get(
+                            {id: $route.current.params.id},
+                            function(data) {
+                            },
+                            function(error) {
+                                alert('failed to obtain spectrum: ' + error);
+                            }
+                          ).$promise;
+                      }
+
+                      else {
+                          var spectrum = SpectrumCache.getSpectrum();
+                          SpectrumCache.removeSpectrum();
+                          return spectrum;
+                      }
+                  }
+              }
           })
 
           .when('/spectra/splash/:splash', {
