@@ -12,16 +12,16 @@
       .controller('ViewSpectrumController', ViewSpectrumController);
 
     // no need to inject delaySpectrum, it is resolved in route.js
-    ViewSpectrumController.$inject = ['$scope', '$location', '$log', 'CookieService', 'Spectrum'];
+    ViewSpectrumController.$inject = ['$scope', '$location', '$log', 'CookieService', 'Spectrum', 'delayedSpectrum'];
 
 
-    function ViewSpectrumController($scope, $location, $log, delayedSpectrum, CookieService, Spectrum) {
+    function ViewSpectrumController($scope, $location, $log, CookieService, Spectrum, delayedSpectrum) {
 
         /**
          * Mass spectrum obtained from cache if it exists, otherwise from REST api
          */
         $scope.spectrum = delayedSpectrum;
-
+        console.log($scope.spectrum);
         /**
          * quality score of our spectrum
          * @type {number}
@@ -29,7 +29,7 @@
         $scope.score = 0;
 
         $scope.massSpec = [];
-        console.log('COOKIE ' + JSON.stringify(CookieService));
+
 
         /**
          * status of our accordion
