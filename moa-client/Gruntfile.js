@@ -9,9 +9,6 @@
 
 
 module.exports = function (grunt) {
-    grunt.loadNpmTasks('grunt-contrib-compress');
-    grunt.loadNpmTasks('grunt-angular-templates');
-    grunt.loadNpmTasks('grunt-wiredep');
 
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
@@ -39,6 +36,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+                tasks: 'ngAnnotate',
                 //tasks: ['newer:jshint:all'],
                 options: {
                     livereload: true
@@ -321,7 +319,21 @@ module.exports = function (grunt) {
             }
         },
 
-        // ngmin tries to make the code safe for minification automatically by
+        ngAnnotate: {
+            options: {
+                remove: true,
+                add: true,
+                singleQuotes: true
+            },
+            moaClientApp: {
+                files: {
+                    'scripts/**/*.js' : 'scripts/**/*.js',
+                    'scripts/*.js': 'scripts/*.js'
+                }
+            }
+        },
+        /****  NgMin is now Deprecated, we're using grunt-ng annotate instead ****
+        ngmin tries to make the code safe for minification automatically by
         // using the Angular long form for dependency injection. It doesn't work on
         // things like resolve or inject so those have to be done manually.
         ngmin: {
@@ -333,7 +345,7 @@ module.exports = function (grunt) {
                     dest: '.tmp/concat/scripts'
                 }]
             }
-        },
+        },*/
 
         // Replace Google CDN references
         cdnify: {
@@ -465,6 +477,10 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-angular-templates');
+    grunt.loadNpmTasks('grunt-wiredep');
+    grunt.loadNpmTasks('grunt-ng-annotate');
     /**
      * which server do we want to use for our application
      */
@@ -532,7 +548,8 @@ module.exports = function (grunt) {
     grunt.registerTask('default', [
         //'newer:jshint',
         'test',
-        'build'
+        'build',
+        'ngAnnotate'
     ]);
 
     /**
