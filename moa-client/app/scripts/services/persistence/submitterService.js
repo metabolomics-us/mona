@@ -6,7 +6,6 @@
     angular.module('moaClientApp')
       .factory('Submitter', Submitter);
 
-    Submitter.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
 
     function Submitter($resource, REST_BACKEND_SERVER, $http) {
 

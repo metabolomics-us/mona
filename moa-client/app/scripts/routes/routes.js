@@ -10,8 +10,6 @@
     angular.module('moaClientApp')
       .config(configure);
 
-    configure.$inject = ['$routeProvider'];
-
     function configure($routeProvider) {
         $routeProvider
             //defining the root url
@@ -48,6 +46,7 @@
               templateUrl: 'views/spectra/display/viewSpectrum.html',
               controller: 'ViewSpectrumController',
               resolve: {
+
                   delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
                       // If a spectrum is not cached or the id requested does not match the
                       // cached spectrum, request it from the REST api

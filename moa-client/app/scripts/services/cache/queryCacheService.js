@@ -9,7 +9,6 @@
     angular.module('moaClientApp')
       .service('QueryCache', QueryCache);
 
-    QueryCache.$inject = ['$injector', '$log', '$rootScope'];
 
     function QueryCache($injector, $log, $rootScope) {
         /**

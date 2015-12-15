@@ -22,9 +22,6 @@
     angular.module('moaClientApp')
       .controller('SpectraBrowserController', SpectraBrowserController)
 
-    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'Compound', '$uibModal', '$routeParams', 'SpectraQueryBuilderService',
-        'MetadataService', 'TaggingService', '$log', '$location', 'SpectrumCache', '$rootScope', '$timeout'];
-
     function SpectraBrowserController($scope, Spectrum, Compound, $uibModal, $routeParams, SpectraQueryBuilderService,
                                       MetadataService, TaggingService, $log, $location, SpectrumCache, $rootScope, $timeout) {
 

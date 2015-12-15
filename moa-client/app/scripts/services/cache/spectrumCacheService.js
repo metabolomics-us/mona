@@ -10,7 +10,6 @@
     angular.module('moaClientApp')
       .service('SpectrumCache', SpectrumCache);
 
-    SpectrumCache.$inject = ['$log', '$window'];
 
     function SpectrumCache($log, $window) {
         /**

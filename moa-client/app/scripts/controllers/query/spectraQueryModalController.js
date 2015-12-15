@@ -6,8 +6,6 @@
     angular.module('moaClientApp')
       .controller('QuerySpectrumModalController', QuerySpectrumModalController);
 
-    QuerySpectrumModalController.$inject = ['$scope', '$uibModalInstance', 'SpectraQueryBuilderService'];
-
     function QuerySpectrumModalController($scope, $uibModalInstance, SpectraQueryBuilderService) {
         /**
          * Store accordion status

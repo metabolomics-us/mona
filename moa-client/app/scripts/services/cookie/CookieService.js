@@ -8,7 +8,6 @@
     angular.module('moaClientApp')
       .factory('CookieService', CookieService);
 
-    CookieService.$inject = ['ApplicationError', '$cookieStore', '$log'];
 
     function CookieService(ApplicationError, $cookieStore, $log) {
 

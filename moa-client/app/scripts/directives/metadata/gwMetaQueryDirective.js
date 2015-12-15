@@ -33,8 +33,6 @@
     }
 
     //controller to handle building new queries
-    gwMetaQueryController.$inject = ['$scope', '$element', 'SpectraQueryBuilderService', '$location'];
-
     function gwMetaQueryController($scope, $element, SpectraQueryBuilderService, $location) {
 
         //receive a click

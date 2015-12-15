@@ -9,7 +9,6 @@
     angular.module('moaClientApp')
       .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
-    SpectraQueryBuilderService.$inject = ['QueryCache', 'MetadataService'];
 
     function SpectraQueryBuilderService(QueryCache, MetadataService) {
         /**

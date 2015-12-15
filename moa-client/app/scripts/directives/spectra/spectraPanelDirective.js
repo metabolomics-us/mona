@@ -23,8 +23,6 @@
     }
 
 
-    displaySpectraPanelController.$inject = ['$scope', '$location', 'SpectrumCache'];
-
     function displaySpectraPanelController($scope, $location, SpectrumCache) {
 
         var truncateDecimal = function(s, length) {

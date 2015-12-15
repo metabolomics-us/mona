@@ -26,8 +26,6 @@
         return directive;
     }
 
-    statisticsController.$inject = ['StatisticsService'];
-
     function statisticsController(StatisticsService) {
         var ctrl = this;
         ctrl.executionTime = "loading...";

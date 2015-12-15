@@ -17,8 +17,6 @@
     angular.module('moaClientApp')
       .directive('flAngucomplete', flAngucomplete);
 
-    flAngucomplete.$inject = ['$parse', '$http', '$sce', '$timeout'];
-
     function flAngucomplete($parse, $http, $sce, $timeout) {
         var directive = {
             restrict: 'A',

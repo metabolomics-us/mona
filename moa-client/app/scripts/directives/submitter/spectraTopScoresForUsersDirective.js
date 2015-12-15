@@ -8,8 +8,6 @@
     angular.module('moaClientApp')
       .directive('spectraTopScoresForUsers', spectraTopScoresForUsers);
 
-    spectraTopScoresForUsers.$inject = ['$compile', 'StatisticsService', 'Submitter'];
-
     function spectraTopScoresForUsers($compile, StatisticsService, Submitter) {
         var directive = {
             replace: true,
@@ -35,8 +33,6 @@
 
         return directive;
     }
-
-    spectraTopScoresForUsersController.$inject = ['$scope'];
 
     function spectraTopScoresForUsersController($scope) {
 

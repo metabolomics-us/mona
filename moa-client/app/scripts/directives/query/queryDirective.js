@@ -31,7 +31,6 @@
      * @param $log
      * @param $rootScope
      */
-    showQueryController.$inject = ['$scope', '$log', '$rootScope', 'SpectraQueryBuilderService', 'Spectrum'];
 
     function showQueryController($scope, $log, $rootScope, SpectraQueryBuilderService, Spectrum) {
         $scope.result = [];

@@ -31,7 +31,6 @@
      * watches for changes to the upload progress
      * @param $scope
      */
-    spectraUploadProgressBarController.$inject = ['$scope', 'UploadLibraryService'];
 
     function spectraUploadProgressBarController($scope, UploadLibraryService) {
         $scope.etaString = '';

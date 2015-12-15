@@ -321,30 +321,18 @@ module.exports = function (grunt) {
         ngAnnotate: {
             dist: {
                 options: {
-                    singleQuotes: true
+                    singleQuotes: true,
+                    remove: true,
+                    add: true
                 },
                 files: [{
                     expand: true,
                     cwd: '.tmp/concat/scripts',
-                    src: ['<%= yeoman.dist %>/scripts/{,*/}*.js','<%= yeoman.dist %>/scripts/{,*/}*.js'],
+                    src: 'scripts.js',
                     dest: '.tmp/concat/scripts'
                 }]
             }
         },
-        /****  NgMin is now Deprecated, we're using grunt-ng annotate instead ****
-        ngmin tries to make the code safe for minification automatically by
-        // using the Angular long form for dependency injection. It doesn't work on
-        // things like resolve or inject so those have to be done manually.
-        ngmin: {
-            dist: {
-                files: [{
-                    expand: true,
-                    cwd: '.tmp/concat/scripts',
-                    src: '*.js',
-                    dest: '.tmp/concat/scripts'
-                }]
-            }
-        },*/
 
         // Replace Google CDN references
         cdnify: {
@@ -379,13 +367,13 @@ module.exports = function (grunt) {
                     },
 
                     // scripts
-                    // remove if using ngmin and uglify
+                    /* remove if using ngmin and uglify
                     {
                         expand: true,
-                        cwd: '.tmp/concat/scripts',
+                        cwd: '.tmp/concat/scripts/app',
                         dest: '<%= yeoman.dist %>/scripts',
                         src: ['*.js']
-                    },
+                    },*/
 
                     // fonts
                     {
@@ -529,11 +517,11 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'bowerInstall',
-        'ngAnnotate:dist',
         'useminPrepare',
         'concurrent:dist',
         'autoprefixer',
         'concat',
+        'ngAnnotate:dist',
         //'ngmin',
         'copy:dist',
         'cdnify',

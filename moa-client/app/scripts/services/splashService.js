@@ -7,7 +7,6 @@
     angular.module('moaClientApp')
       .factory('SplashService', SplashService);
 
-    SplashService.$inject = ['$resource', '$http'];
 
     function SplashService($resource, $http) {
         $http.defaults.useXDomain = true;

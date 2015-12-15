@@ -3,7 +3,6 @@
     angular.module('moaClientApp')
       .factory('News', News);
 
-    News.$inject = ['$resource', 'REST_BACKEND_SERVER', 'MAX_OBJECTS'];
 
     function News($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
 
