@@ -36,7 +36,6 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-                tasks: 'ngAnnotate',
                 //tasks: ['newer:jshint:all'],
                 options: {
                     livereload: true
@@ -320,16 +319,16 @@ module.exports = function (grunt) {
         },
 
         ngAnnotate: {
-            options: {
-                remove: true,
-                add: true,
-                singleQuotes: true
-            },
-            moaClientApp: {
-                files: {
-                    'scripts/**/*.js' : 'scripts/**/*.js',
-                    'scripts/*.js': 'scripts/*.js'
-                }
+            dist: {
+                options: {
+                    singleQuotes: true
+                },
+                files: [{
+                    expand: true,
+                    cwd: '.tmp/concat/scripts',
+                    src: ['<%= yeoman.dist %>/scripts/{,*/}*.js','<%= yeoman.dist %>/scripts/{,*/}*.js'],
+                    dest: '.tmp/concat/scripts'
+                }]
             }
         },
         /****  NgMin is now Deprecated, we're using grunt-ng annotate instead ****
@@ -530,6 +529,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'bowerInstall',
+        'ngAnnotate:dist',
         'useminPrepare',
         'concurrent:dist',
         'autoprefixer',
@@ -548,8 +548,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default', [
         //'newer:jshint',
         'test',
-        'build',
-        'ngAnnotate'
+        'build'
     ]);
 
     /**
