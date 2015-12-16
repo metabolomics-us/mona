@@ -236,7 +236,7 @@ module.exports = function (grunt) {
                 flow: {
                     html: {
                         steps: {
-                            js: ['concat', 'uglifyjs'],
+                            js: ['concat','uglifyjs'],
                             css: ['cssmin']
                         },
                         post: {}
@@ -367,13 +367,13 @@ module.exports = function (grunt) {
                     },
 
                     // scripts
-                    /* remove if using ngmin and uglify
+                    // remove if using ngmin and uglify
                     {
                         expand: true,
-                        cwd: '.tmp/concat/scripts/app',
+                        cwd: '.tmp/concat/scripts',
                         dest: '<%= yeoman.dist %>/scripts',
                         src: ['*.js']
-                    },*/
+                    },
 
                     // fonts
                     {
@@ -428,15 +428,15 @@ module.exports = function (grunt) {
         //        }
         //    }
         //},
-        //uglify: {
-        //    dist: {
-        //        files: {
-        //            '<%= yeoman.dist %>/scripts/scripts.js': [
-        //                '<%= yeoman.dist %>/scripts/scripts.js'
-        //            ]
-        //        }
-        //    }
-        //},
+        uglify: {
+            dist: {
+                files: {
+                    '<%= yeoman.dist %>/scripts/scripts.js': [
+                        '<%= yeoman.dist %>/scripts/scripts.js'
+                    ]
+                }
+            }
+        },
         //concat: {
         //    dist: {}
         //},
@@ -522,7 +522,6 @@ module.exports = function (grunt) {
         'autoprefixer',
         'concat',
         'ngAnnotate:dist',
-        //'ngmin',
         'copy:dist',
         'cdnify',
         'cssmin',
