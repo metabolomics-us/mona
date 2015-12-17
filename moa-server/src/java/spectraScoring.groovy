@@ -19,28 +19,27 @@ beans {
      * basically the most common metadata fields, which should always be correct and have none suspicous values
      */
     [
-            'ri',
             ION_MODE,
-            'injection',
-            'injection volume',
-            COLUMN_NAME,
-            'mass resolution',
             INSTRUMENT,
             INSTRUMENT_TYPE,
-            DERIVATISATION_TYPE,
+
+//            RETENTION_INDEX,
+            'injection',
+//            'injection volume',
+//            COLUMN_NAME,
+//            'column temperature'
+//            'mass resolution',
+//            DERIVATISATION_TYPE,
             EXACT_MASS,
             'collision energy',
-            MS_LEVEL,
-            [field: 'fragmentation method', impact: 0.1],
-            'data processing',
-            'column temperature'
-
-
+//            MS_TYPE,
+//            [field: 'fragmentation method', impact: 0.1],
+//            'data processing'
     ]
     /**
      * build our actual beans, just some mojo to save typing
      */
-            .each {
+    .each {
         //in case it's a string just use it
         if (it instanceof String) {
             "${it}hasField"(HasFieldScoring, it)
@@ -48,8 +47,6 @@ beans {
 
             allMyBeans.add(ref("${it}hasField"))
             allMyBeans.add(ref("${it}fieldIsSuspect"))
-
-
         }
         //in case of a map, we setting additional properties
         if (it instanceof Map) {
@@ -58,22 +55,20 @@ beans {
 
             allMyBeans.add(ref("${it.field}hasField"))
             allMyBeans.add(ref("${it.field}fieldIsSuspect"))
-
         }
-
     }
+
+
 
     /**
      * these fields should always be provided with additional fields to ensure,
      * which will increase the score dramatically, but won't drop it if they are missing
      */
-
     [
-
             [first: INSTRUMENT, second: INSTRUMENT_TYPE, failure: 0.0],
 
             //retention time and column information
-            [first: 'ri', second: COLUMN_NAME, failure: 0.0],
+            [first: RETENTION_INDEX, second: COLUMN_NAME, failure: 0.0],
             [first: COLUMN_NAME, second: 'column temperature', failure: 0.0],
 
             //if we have a column, we might also have a guard column, but it's not that important
@@ -95,28 +90,23 @@ beans {
             [first: PRECURSOR_TYPE, second: PRECURSOR_MASS, failure: 0.0],
 
             //if we have a MS type, we should always have an ion mode
-            [first: MS_LEVEL, second: ION_MODE, failure: 0.0],
+            [first: MS_TYPE, second: ION_MODE, failure: 0.0],
 
             //if we have a MS type, we should always have a collision energy
-            [first: MS_LEVEL, second: 'collision energy', failure: 0.0],
-
-
+            [first: MS_TYPE, second: 'collision energy', failure: 0.0]
     ]
     /**
      * build our beans based on the given configuration
      */
-            .each { map ->
-
+    .each { map ->
         "${map.first}_${map.second}hasAssociatedFields"(HasAssociatedFieldsScoring, map.first, map.second, map.impact, map.success, map.failure)
         allMyBeans.add(ref("${map.first}_${map.second}hasAssociatedFields"))
     }
 
     /**
-     *
      * putting everything together
      */
     spectraScoringWorkflow(ScoringWorkflow) {
-
         rules = allMyBeans
     }
 }
