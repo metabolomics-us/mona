@@ -30,16 +30,16 @@ class IonModeValueRule extends AbstractMetaDataCentricRule {
         } else if (ionMode == "positive" || ionMode == "negative") {
             return true
         } else {
-            ionMode = ionMode.toLowerCase().trim()
+            def s = ionMode.toLowerCase().trim()
 
-            if (ionMode in POSITIVE) {
+            if (s in POSITIVE) {
                 logger.info("remapping $ionMode -> positive")
 
                 metaDataPersistenceService.generateMetaDataObject(value.owner, [name: value.getName(), value: "positive", category: value.getCategory()])
                 metaDataPersistenceService.removeMetaDataValue(value)
 
                 return true
-            } else if (ionMode in NEGATIVE) {
+            } else if (s in NEGATIVE) {
                 logger.info("remapping $ionMode -> negative")
 
                 metaDataPersistenceService.generateMetaDataObject(value.owner, [name: value.getName(), value: "negative", category: value.getCategory()])
