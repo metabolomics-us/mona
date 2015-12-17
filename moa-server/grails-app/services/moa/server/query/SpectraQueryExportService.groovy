@@ -37,9 +37,12 @@ class SpectraQueryExportService {
     EmailService emailService
 
 
+    int QUERY_SIZE = 50
+
+
     def exportQueryByLabel(def query, def label) {
-        log.info("Starting download job for " + label)
-        def queryDownload = exportQuery(query, label)
+        log.info("Starting download job for $label")
+        def queryDownload = exportQuery(query, label).queryDownload
 
         def queryObject = Query.findByLabel(label)
         queryObject.queryExport = queryDownload
@@ -53,11 +56,12 @@ class SpectraQueryExportService {
         log.info("Starting download job for " + emailAddress)
 
         def label = "${emailAddress.split('@')[0]}-$startTime"
-        def queryDownload = exportQuery(query, label)
+        def queryResult = exportQuery(query, label)
+
 
         // Email results
-        log.info("Export of spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
-        emailService.sendDownloadEmail(emailAddress, ids.size(), queryDownload.id)
+        log.info("Export of spectra complete, id ${queryResult.queryDownload.id}, sending notification email to $emailAddress")
+        emailService.sendDownloadEmail(emailAddress, queryResult.queryCount, queryResult.queryDownload.id)
     }
 
     private SpectrumQueryDownload exportQuery(def query, def label) {
@@ -90,10 +94,8 @@ class SpectraQueryExportService {
         }
 
         // Get the number of spectra in our query results
-        def ids = spectraQueryService.queryForIds(json)
-        //queryDownload.count = ids.size()
-
-        log.info("Counted " + ids.size() + " spectra")
+        def queryCount = spectraQueryService.getCountForQuery(json)
+        log.info("Counted $queryCount spectra")
 
 
 
@@ -105,7 +107,7 @@ class SpectraQueryExportService {
         File exportFile
 
         if (queryFile.exists()) {
-            log.info("Query file " + queryFile.getName() +" exists, creating temporary dump file")
+            log.info("Query file ${queryFile.getName()} exists, creating temporary dump file")
 
             exportFile = new File(queryDownload.exportFile +".tmp")
             moveExportFile = true
@@ -128,27 +130,25 @@ class SpectraQueryExportService {
             FileUtils.writeStringToFile(exportFile, "[\n", true)
         }
 
-        int i = 0
 
         // Iterate over all queried spectra and export after converting to JSON or MSP format
-        ids.each { def id ->
-            Spectrum s = spectraQueryService.query(id.id)
+        for (int i = 0; i < queryCount; i += QUERY_SIZE) {
+            def result = spectraQueryService.query(json, QUERY_SIZE, i)
 
-            if (format == "json") {
-                // Append comma and newline
-                if (i > 0) {
-                    FileUtils.writeStringToFile(exportFile, ",\n", true);
+            for (Spectrum s : result) {
+                if (format == "json") {
+                    // Append comma and newline
+                    if (i > 0) {
+                        FileUtils.writeStringToFile(exportFile, ",\n", true);
+                    }
+
+                    FileUtils.writeStringToFile(exportFile, (s as JSON).toString(), true);
+                } else if (format == "msp") {
+                    FileUtils.writeStringToFile(exportFile, spectraConversionService.convertToMsp(s) + "\n", true);
                 }
-
-                FileUtils.writeStringToFile(exportFile, (s as JSON).toString(), true);
-            } else if (format == "msp") {
-                FileUtils.writeStringToFile(exportFile, spectraConversionService.convertToMsp(s) + "\n", true);
             }
 
-            i++;
-            if (i % 1000 == 0) {
-                log.info("\tExported $i spectra")
-            }
+            log.info("Exported ${i + QUERY_SIZE} / $queryCount for $label")
         }
 
         if (format == "json") {
@@ -165,11 +165,14 @@ class SpectraQueryExportService {
 
         queryDownload.save(flush: true)
         queryDownload.errors.allErrors.each { println it }
-        return queryDownload
+
+        return [
+                queryDownload: queryDownload,
+                queryCount: queryCount
+        ]
     }
 
     /**
-     * TODO outsource this to be able to support more file, mzData, mzML, etc
      * @param json
      * @return
      */
@@ -181,7 +184,7 @@ class SpectraQueryExportService {
         } else if (json.format == "msp") {
             format = "msp"
         } else {
-            throw new FileNotFoundException("\t=>\tinvalid output format specified: " + json.format)
+            throw new FileNotFoundException("\t=>\tinvalid output format specified: ${json.format}")
         }
 
         return format
