@@ -1,4 +1,6 @@
 // Generated on 2014-05-28 using generator-angular 0.8.0
+
+
 'use strict';
 
 // # Globbing
@@ -236,7 +238,7 @@ module.exports = function (grunt) {
                 flow: {
                     html: {
                         steps: {
-                            js: ['concat','uglifyjs'],
+                            js: ['concat'],
                             css: ['cssmin']
                         },
                         post: {}
@@ -321,16 +323,19 @@ module.exports = function (grunt) {
         ngAnnotate: {
             dist: {
                 options: {
-                    singleQuotes: true,
-                    remove: true,
-                    add: true
+                    singleQuotes: true
                 },
-                files: [{
-                    expand: true,
-                    cwd: '.tmp/concat/scripts',
-                    src: 'scripts.js',
-                    dest: '.tmp/concat/scripts'
-                }]
+                files: {
+                    '<%= yeoman.dist %>/scripts/scripts.js': [
+                        '<%= yeoman.dist %>/scripts/scripts.js'
+                    ]
+                }
+                //files: [{
+                //    expand: true,
+                //    cwd: '.tmp/concat/scripts',
+                //    src: 'scripts.js',
+                //    dest: '.tmp/concat/scripts'
+                //}]
             }
         },
 
@@ -428,12 +433,13 @@ module.exports = function (grunt) {
         //        }
         //    }
         //},
+
+        // minifies our scripts in the distribution folder
         uglify: {
             dist: {
                 files: {
-                    '<%= yeoman.dist %>/scripts/scripts.js': [
-                        '<%= yeoman.dist %>/scripts/scripts.js'
-                    ]
+                    '<%= yeoman.dist %>/scripts/scripts.js': ['<%= yeoman.dist %>/scripts/scripts.js'],
+                    '<%= yeoman.dist %>/scripts/vendor.js': ['<%= yeoman.dist %>/scripts/vendor.js']
                 }
             }
         },
@@ -539,7 +545,7 @@ module.exports = function (grunt) {
     ]);
 
     /**
-     *
+     * distribution task
      */
     grunt.registerTask('dist', [
         'setServer:dist',

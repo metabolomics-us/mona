@@ -3,7 +3,7 @@
     angular.module('moaClientApp')
       .factory('News', News);
 
-
+    /* @ngInject */
     function News($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
 
         /**

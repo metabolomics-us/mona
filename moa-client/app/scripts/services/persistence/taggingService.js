@@ -8,7 +8,7 @@
     angular.module('moaClientApp')
       .factory('TaggingService', TaggingService);
 
-
+    /* @ngInject */
     function TaggingService($resource, REST_BACKEND_SERVER, $http) {
 
         $http.defaults.useXDomain = true;

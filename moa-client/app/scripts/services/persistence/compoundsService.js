@@ -7,7 +7,7 @@
     angular.module('moaClientApp')
       .factory('Compound', Compound)
 
-
+    /* @ngInject */
     function Compound($resource, REST_BACKEND_SERVER, MAX_COMPOUNDS) {
         return $resource(REST_BACKEND_SERVER + '/rest/compounds/:id?max=' + MAX_COMPOUNDS,
           {id: "@id", offset: "@offset"},

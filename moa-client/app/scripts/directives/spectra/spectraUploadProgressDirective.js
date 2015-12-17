@@ -31,7 +31,7 @@
      * watches for changes to the upload progress
      * @param $scope
      */
-
+    /* @ngInject */
     function spectraUploadProgressBarController($scope, UploadLibraryService) {
         $scope.etaString = '';
 

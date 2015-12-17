@@ -32,6 +32,7 @@
      * @param $rootScope
      */
 
+    /* @ngInject */
     function showQueryController($scope, $log, $rootScope, SpectraQueryBuilderService, Spectrum) {
         $scope.result = [];
         $scope.status = {isOpen: false};

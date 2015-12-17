@@ -9,7 +9,7 @@
     angular.module('moaClientApp')
       .service('QueryCache', QueryCache);
 
-
+    /* @ngInject */
     function QueryCache($injector, $log, $rootScope) {
         /**
          * Stored query

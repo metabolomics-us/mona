@@ -32,8 +32,7 @@
 
 
     //controller to handle building new queries
-    gwSubmitterQueryController.$inject = ['$scope', '$element', 'SpectraQueryBuilderService', '$location', 'Spectrum'];
-
+    /* @ngInject */
     function gwSubmitterQueryController($scope, $element, SpectraQueryBuilderService, $location, Spectrum) {
 
         //receive a click

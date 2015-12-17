@@ -11,7 +11,7 @@
     angular.module('moaClientApp')
       .factory('MetadataService', MetadataService);
 
-
+    /* @ngInject */
     function MetadataService($resource, REST_BACKEND_SERVER, $http) {
         $http.defaults.useXDomain = true;
 

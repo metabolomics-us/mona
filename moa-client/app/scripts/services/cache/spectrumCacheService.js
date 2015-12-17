@@ -10,7 +10,7 @@
     angular.module('moaClientApp')
       .service('SpectrumCache', SpectrumCache);
 
-
+    /* @ngInject */
     function SpectrumCache($log, $window) {
         /**
          * Stored browser spectra

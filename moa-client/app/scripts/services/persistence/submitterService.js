@@ -6,7 +6,7 @@
     angular.module('moaClientApp')
       .factory('Submitter', Submitter);
 
-
+    /* @ngInject */
     function Submitter($resource, REST_BACKEND_SERVER, $http) {
 
         $http.defaults.useXDomain = true;

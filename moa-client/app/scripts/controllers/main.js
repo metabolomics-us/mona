@@ -3,6 +3,7 @@
     angular.module('moaClientApp')
       .controller('MainCtrl', MainCtrl);
 
+    /* @ngInject */
     function MainCtrl($scope) {
         $scope.slides = [
             {image: 'images/spectrum-1.png', id: '252', name: 'Cyclopamine'},

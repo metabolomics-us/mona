@@ -8,8 +8,7 @@
     angular.module('moaClientApp')
       .directive('queryTreeView', queryTreeView);
 
-    queryTreeView.$inject = ['$compile'];
-
+    /* @ngInject */
     function queryTreeView($compile) {
         var directive = {
             restrict: 'A',

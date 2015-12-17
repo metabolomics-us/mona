@@ -7,6 +7,7 @@
     angular.module('moaClientApp')
       .controller('SubmitterController', SubmitterController);
 
+    /* @ngInject */
     function SubmitterController($scope, Submitter, $uibModal) {
 
         /**

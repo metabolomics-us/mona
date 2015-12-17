@@ -7,7 +7,7 @@
     angular.module('moaClientApp')
       .factory('Spectrum', Spectrum);
 
-
+    /* @ngInject */
     function Spectrum($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
 
         /**

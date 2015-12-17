@@ -8,6 +8,7 @@
     'use strict';
 
     angular.module('moaClientApp')
+        /* @ngInject */
     .directive('gwNews', function(News, $interval, $timeout) {
         return {
             //must be an attribute

@@ -22,7 +22,7 @@
         return directive;
     }
 
-
+    /* @ngInject */
     function displaySpectraPanelController($scope, $location, SpectrumCache) {
 
         var truncateDecimal = function(s, length) {

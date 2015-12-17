@@ -30,6 +30,7 @@
     }
 
     //controller to handle building of the queires
+    /* @ngInject */
     function gwTagDisplayController($scope, $element, $log, TaggingService) {
 
         /**

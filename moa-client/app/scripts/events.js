@@ -7,6 +7,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
+        /* @ngInject */
       .run(function($rootScope, $route, $window, $location) {
 
           $rootScope.$on('$routeChangeStart', function(evt, absNewUrl, absOldUrl) {

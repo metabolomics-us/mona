@@ -29,6 +29,7 @@
     }
 
     //controller to handle building new queries
+    /* @ngInject */
     function gwSpectraIdQueryController($scope, $element, SpectraQueryBuilderService, $location) {
 
         //receive a click

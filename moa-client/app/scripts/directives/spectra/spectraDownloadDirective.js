@@ -23,7 +23,7 @@
         return directive;
     }
 
-
+    /* @ngInject */
     function spectraDownloadController($scope, SpectraQueryBuilderService, dialogs,
                                        Spectrum, $http, $filter, $log, REST_BACKEND_SERVER) {
         /**
