@@ -56,10 +56,7 @@
                             {{meta.name}}
                         </span>
                     </div>
-                    <div ng-if="meta.value < 1" class="col-lg-7 col-md-7 col-sm-6">
-                        {{meta.value | number : 4}}
-                    </div>
-                    <div ng-if="!(meta.value < 1)" class="col-lg-7 col-md-7 col-sm-6">
+                    <div class="col-lg-7 col-md-7 col-sm-6">
                         {{meta.value | limitTo : 25}}{{meta.value.length > 25 ? '...' : ''}}
                     </div>
                 </div>

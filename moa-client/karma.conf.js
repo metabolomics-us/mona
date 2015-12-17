@@ -38,7 +38,9 @@ module.exports = function (config) {
             'app/bower_components/ng-tags-input/ng-tags-input.js',
 
             'app/scripts/**/*.js',
-            'test/spec/**/*.js'
+            'test/spec/directives/**/*.js',
+            'app/views/spectra/display/template/*.html'
+            //'test/spec/**/*.js'
         ],
 
 
@@ -51,10 +53,15 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-          '**/scripts/services/**/*.js' : 'coverage',
-          '**/scripts/controllers/**/*.js' : 'coverage'
+            'app/views/spectra/display/template/*.html' : 'ng-html2js',
+            '**/scripts/services/**/*.js' : 'coverage',
+            '**/scripts/controllers/**/*.js' : 'coverage',
+            '**/scripts/directives/**/*.js' : 'coverage'
         },
 
+        ngHtml2JsPreprocessor: {
+            stripPrefix: 'app/'
+        },
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
