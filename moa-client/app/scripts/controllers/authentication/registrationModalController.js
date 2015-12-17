@@ -3,6 +3,7 @@
     angular.module('moaClientApp')
       .controller('RegistrationModalController', RegistrationModalController)
 
+    /* @ngInject */
     function RegistrationModalController($scope, $rootScope, $uibModalInstance, Submitter) {
         $scope.errors = [];
         $scope.state = 'register';

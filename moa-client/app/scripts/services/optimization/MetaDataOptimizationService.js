@@ -15,7 +15,7 @@
     angular.module('moaClientApp')
       .service('MetaDataOptimizationService', MetaDataOptimizationService);
 
-
+    /* @ngInject */
     function MetaDataOptimizationService(ApplicationError, $log, $q, $timeout, $filter) {
 
         /**

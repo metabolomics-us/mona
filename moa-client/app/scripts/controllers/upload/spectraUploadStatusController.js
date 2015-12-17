@@ -7,6 +7,7 @@
     angular.module('moaClientApp')
       .controller('SpectraUploadController', SpectraUploadController);
 
+    /* @ngInject */
     function SpectraUploadController($scope, $rootScope, $uibModal, AuthenticationService, UploadLibraryService) {
         /**
          * Check whether the user is uploading, and open the upload dialog accordingly

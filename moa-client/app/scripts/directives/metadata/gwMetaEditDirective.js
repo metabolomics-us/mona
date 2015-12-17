@@ -30,6 +30,7 @@
     }
 
     //controller to handle building new queries
+    /* @ngInject */
     function gwMetaEditController($scope, $element, MetaData, $filter) {
 
         //receive a click

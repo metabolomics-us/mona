@@ -7,6 +7,7 @@
     angular.module('moaClientApp')
       .controller('CleanSpectraDataController', CleanSpectraDataController);
 
+    /* @ngInject */
     function CleanSpectraDataController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService,
                                         TaggingService, $q, $filter, AsyncService, $log, $timeout) {
         // Loaded spectra data/status

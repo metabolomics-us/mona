@@ -7,6 +7,7 @@
     angular.module('moaClientApp')
       .controller('SubmitterProfileController', SubmitterProfileController);
 
+    /* @ngInject */
     function SubmitterProfileController($scope, $location, AuthenticationService, SpectraQueryBuilderService) {
         $scope.$on('auth:login-success', function(event, data, status, headers, config) {
             AuthenticationService.getCurrentUser().then(function(data) {

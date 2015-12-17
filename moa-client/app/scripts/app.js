@@ -1,3 +1,8 @@
+/***************************************
+ * Our main module, and configs. Read the README.md for best practices
+ * before making any changes to moaClientApp
+ * *************************************/
+
 (function() {
     'use strict';
 
@@ -25,6 +30,7 @@
     /**
      * HTTP configuration
      */
+        /* @ngInject */
       .config(function($httpProvider) {
           // Enable cross domain access
           $httpProvider.defaults.useXDomain = true;
@@ -37,6 +43,7 @@
     /**
      * Set translator language for dialog service
      */
+        /* @ngInject */
       .config(function($translateProvider) {
           $translateProvider.preferredLanguage('en-US');
           $translateProvider.useSanitizeValueStrategy('sanitize');
@@ -45,6 +52,7 @@
     /**
      * App name
      */
+        /* @ngInject */
       .run(function($rootScope) {
           $rootScope.APP_NAME = 'MassBank of North America';
           $rootScope.APP_NAME_ABBR = 'MoNA';
@@ -55,6 +63,7 @@
      * Prompt user before leaving the page if spectra are being uploaded.
      * Uses $injector to bypass timeout error when testing with protractor.
      */
+        /* @ngInject */
       .run(function($window, $injector) {
           $window.onbeforeunload = function(e) {
               var service = $injector.get('UploadLibraryService');

@@ -9,7 +9,7 @@
     angular.module('moaClientApp')
       .service('AsyncService', AsyncService);
 
-
+    /* @ngInject */
     function AsyncService(ApplicationError, $log, $q, $interval) {
 
         var runningTasks = 0;

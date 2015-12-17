@@ -32,6 +32,7 @@
     }
 
     //controller to handle building of the queries
+    /* @ngInject */
     function gwMetaQueryInputController($scope, $element, SpectraQueryBuilderService, $location,
                                         REST_BACKEND_SERVER, $http, $filter, $log, limitToFilter) {
 

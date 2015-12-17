@@ -10,6 +10,7 @@
     angular.module('moaClientApp')
       .config(configure);
 
+    /* @ngInject */
     function configure($routeProvider) {
         $routeProvider
             //defining the root url
@@ -46,7 +47,7 @@
               templateUrl: 'views/spectra/display/viewSpectrum.html',
               controller: 'ViewSpectrumController',
               resolve: {
-
+                  /* @ngInject */
                   delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
                       // If a spectrum is not cached or the id requested does not match the
                       // cached spectrum, request it from the REST api
@@ -74,6 +75,7 @@
               templateUrl: 'views/spectra/browse/spectra.html',
               controller: 'SpectraBrowserController',
               resolve: {
+                  /* @ngInject */
                   splash: function(SpectraQueryBuilderService, $route) {
                       SpectraQueryBuilderService.prepareQuery();
                       //add it to query
@@ -110,6 +112,7 @@
               controller: 'StatisticsController',
 
               resolve: {
+                  /* @ngInject */
                   statistics: function(StatisticsService) {
                       return [
                           StatisticsService.executionTime({time: "day", method: "import", max: 100}),
@@ -123,6 +126,7 @@
               controller: 'StatisticsController',
 
               resolve: {
+                  /* @ngInject */
                   statistics: function(StatisticsService) {
                       return [
                           StatisticsService.executionTime({time: "day", method: "validation", max: 100}),
@@ -136,6 +140,7 @@
               controller: 'StatisticsController',
 
               resolve: {
+                  /* @ngInject */
                   statistics: function(StatisticsService) {
                       return [
                           StatisticsService.executionTime({time: "day", method: "search", max: 100}),

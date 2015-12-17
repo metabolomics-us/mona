@@ -20,6 +20,7 @@
     }
 
 
+    /* @ngInject */
     function submitterFormController($scope) {
         console.log($scope);
     }

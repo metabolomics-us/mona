@@ -23,7 +23,7 @@
         return directive;
     }
 
-
+    /* @ngInject */
     function displayCompoundInfoController($scope) {
         //calculate some unique id for the compound picture
         $scope.pictureId = Math.floor(Math.random() * 1000);

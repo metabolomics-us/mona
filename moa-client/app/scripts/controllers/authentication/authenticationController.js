@@ -7,6 +7,7 @@
     angular.module('moaClientApp')
       .controller('AuthenticationController', AuthenticationController);
 
+    /* @ngInject */
     function AuthenticationController($scope, $rootScope, $uibModal, AuthenticationService) {
         var ADMIN_ROLE_NAME = 'ROLE_ADMIN';
         var self = this;

@@ -7,6 +7,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
+        /* @ngInject */
       .run(function($rootScope) {
           //contains all our errors
           $rootScope.errors = [];
@@ -31,6 +32,7 @@
     /**
      * general error handling
      */
+        /* @ngInject */
       .config(function($provide) {
           $provide.decorator("$exceptionHandler", function($delegate, $injector) {
               return function(exception, cause) {
@@ -52,7 +54,7 @@
     angular.module('moaClientApp')
       .service("ApplicationError", ApplicationError);
 
-
+    /* @ngInject */
     function ApplicationError($rootScope) {
         this.handleError = function(message, reason) {
             $rootScope.addError({message: message, reason: reason})

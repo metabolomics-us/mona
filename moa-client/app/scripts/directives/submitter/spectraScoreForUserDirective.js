@@ -8,6 +8,7 @@
     angular.module('moaClientApp')
       .directive('spectraScoreForUser', spectraScoreForUser);
 
+    /* @ngInject */
     function spectraScoreForUser($compile, StatisticsService) {
         var directive = {
             replace: true,
@@ -29,7 +30,7 @@
         return directive;
     }
 
-
+    /* @ngInject */
     function spectraScoreForUserController($scope) {
 
     }

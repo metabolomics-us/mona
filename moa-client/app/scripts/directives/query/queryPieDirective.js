@@ -68,8 +68,8 @@
         elem.bind("plotclick", scope.redirect);
     }
 
-    queryPieController.$inject = ['$scope', '$location', 'SpectraQueryBuilderService'];
 
+    /* @ngInject */
     function queryPieController($scope, $location, SpectraQueryBuilderService) {
         $scope.redirect = function(event, pos, obj) {
             if (typeof obj !== 'undefined') {

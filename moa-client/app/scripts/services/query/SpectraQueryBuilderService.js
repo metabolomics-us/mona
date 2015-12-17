@@ -9,7 +9,7 @@
     angular.module('moaClientApp')
       .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
-
+    /* @ngInject */
     function SpectraQueryBuilderService(QueryCache, MetadataService) {
         /**
          * provides us with the current query

@@ -9,6 +9,7 @@
     angular.module('moaClientApp')
       .directive('scoreSpectra', scoreSpectra);
 
+    /* @ngInject */
     function scoreSpectra($compile, $filter, Spectrum, $log) {
         var directive = {
             //must be an attribute
@@ -27,6 +28,7 @@
              * @param $log
              * @param $rootScope
              */
+            /* @ngInject */
             controller: function($scope) {
 
             },
