@@ -1,5 +1,6 @@
 package curation.scoring.spectrum
 
+import curation.scoring.ScoringRule
 import moa.MetaDataValue
 import moa.Spectrum
 
@@ -9,7 +10,7 @@ import moa.Spectrum
  * Date: 3/26/15
  * Time: 2:17 PM
  */
-class FieldIsSuspectScoring extends curation.scoring.ScoringRule {
+class FieldIsSuspectScoring extends ScoringRule {
     String fieldToHave
 
     FieldIsSuspectScoring(String field, Double impact = 1.0, Double successScore = -0.4, Double failureScore = 0) {

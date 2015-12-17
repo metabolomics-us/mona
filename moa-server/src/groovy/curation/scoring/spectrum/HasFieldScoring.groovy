@@ -1,5 +1,6 @@
 package curation.scoring.spectrum
 
+import curation.scoring.ScoringRule
 import moa.MetaDataValue
 import moa.Spectrum
 
@@ -9,7 +10,7 @@ import moa.Spectrum
  * Date: 3/25/15
  * Time: 2:05 PM
  */
-class HasFieldScoring extends curation.scoring.ScoringRule {
+class HasFieldScoring extends ScoringRule {
     String fieldToHave
 
     HasFieldScoring(String field,Double impact = 1.0, Double successScore = 0.1, Double failureScore = -0.1){
