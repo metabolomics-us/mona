@@ -21,21 +21,17 @@ dataSource {
 hibernate {
     cache.use_second_level_cache = true
     cache.use_query_cache = false
-//    cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
+    //cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
     cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory' // Hibernate 4
     format_sql = true
     use_sql_comments = true
 }
 
 environments {
-
     development {
-
-
         dataSource {
             dbCreate = "update"
             url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/monadevel"
-
 
             properties {
                 jmxEnabled = true
@@ -58,7 +54,6 @@ environments {
             }
 
             logSql = false
-
         }
     }
 
@@ -80,19 +75,16 @@ environments {
      * mona production database
      */
     production {
-
-
         dataSource {
-	     pooled = true
+            pooled = true
             dbCreate = "update"
-//            url = "jdbc:postgresql://${credentials.hostname}:${credentials.port}/${credentials.database}"
-//            username = "${credentials.username}"
-//            password = "${credentials.password}"
+            //url = "jdbc:postgresql://${credentials.hostname}:${credentials.port}/${credentials.database}"
+            //username = "${credentials.username}"
+            //password = "${credentials.password}"
             url = "jdbc:postgresql://128.120.143.126:5432/monaproduction"
             username = "compound"
             password = "asdf"
             logSql = false
-
 
             properties {
                 jmxEnabled = true
@@ -113,8 +105,6 @@ environments {
                 jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
                 defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
             }
-
         }
     }
-
 }

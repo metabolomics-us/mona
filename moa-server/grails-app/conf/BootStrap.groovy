@@ -99,7 +99,7 @@ class BootStrap {
 //                DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
 //        )
 
-        
+
         // Generate static queries
         StaticQueries.register()
     }
