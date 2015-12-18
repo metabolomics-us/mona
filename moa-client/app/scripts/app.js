@@ -13,6 +13,7 @@
         'ngAnimate',
         'ngSanitize',
         'ui.bootstrap',
+        'angular.filter',
         'dialogs.main',
         'dialogs.default-translations',
         'ngTagsInput',
