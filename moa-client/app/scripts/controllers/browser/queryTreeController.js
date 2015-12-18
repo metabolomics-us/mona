@@ -81,6 +81,7 @@ app.directive('queryTreeView', ['$compile', function($compile) {
                 '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i> ' +
                 '    <a href="" ng-click="executeQuery(node)"><i class="fa fa-search"></i> {{node.formattedLabel}}</a> ({{node.queryCount | number:0}})'+
                 '    <span class="pull-right" ng-if="node.queryExport !== null"><a href="" ng-click="downloadQuery(node)"><i class="fa fa-download"></i> Download JSON</a></span>' +
+                '    <span class="pull-right" ng-if="node.queryExport === null">Export generation in progress...</span>' +
                 '</p>'+
                 '<div class="list-group" data-ng-repeat-end ng-if="node.children.length" data-query-tree-view data-query-tree-depth="'+ (depth + 1) +'" data-tree-id="'+ treeId +'" data-tree-model="node.children"></div>';
 
