@@ -40,7 +40,7 @@ beans = {
     loadBeans('classpath*:associateAccounts.groovy')
 
 
-//metadata filter, we only care for certain fields
+    //metadata filter, we only care for certain fields
     metadataFilters(Filters) { bean ->
         bean.autowire = 'byName'
 
@@ -77,12 +77,11 @@ beans = {
         ]
     }
 
-//tries to discover units for us and converts them on the fly
+    //tries to discover units for us and converts them on the fly
     metadataValueConverter(Converters) { bean ->
         bean.autowire = 'byName'
         converters = [
                 new BasicUnitConverter()
         ]
     }
-
 }
