@@ -76,7 +76,7 @@ app.directive('queryTreeView', ['$compile', function($compile) {
             var style = depth > 0 ? 'padding-left: '+ (3 * depth) +'em' : '';
 
             var template =
-                '<p class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +'">' +
+                '<p class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +' | orderBy:\'-queryCount\'">' +
                 '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length"></i>' +
                 '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i> ' +
                 '    <a href="" ng-click="executeQuery(node)"><i class="fa fa-search"></i> {{node.formattedLabel}}</a> ({{node.queryCount | number:0}})'+
