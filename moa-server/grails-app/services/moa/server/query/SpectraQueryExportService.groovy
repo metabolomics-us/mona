@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.ivy.util.FileUtil
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.web.json.JSONObject
+import org.hibernate.SessionFactory
 
 /**
  * Created by sajjan on 8/31/15.
@@ -37,7 +38,10 @@ class SpectraQueryExportService {
     EmailService emailService
 
 
-    int QUERY_SIZE = 50
+    SessionFactory sessionFactory
+
+
+    int QUERY_SIZE = 100
 
 
     def exportQueryByLabel(def query, def label) {
@@ -126,33 +130,41 @@ class SpectraQueryExportService {
 
         log.info("Exporting data file ${exportFile.getName()} as $format")
 
-        if (format == "json") {
-            FileUtils.writeStringToFile(exportFile, "[\n", true)
-        }
-
 
         // Iterate over all queried spectra and export after converting to JSON or MSP format
-        for (int i = 0; i < queryCount; i += QUERY_SIZE) {
-            def result = spectraQueryService.query(json, QUERY_SIZE, i)
-
-            for (Spectrum s : result) {
-                if (format == "json") {
-                    // Append comma and newline
-                    if (i > 0) {
-                        FileUtils.writeStringToFile(exportFile, ",\n", true);
-                    }
-
-                    FileUtils.writeStringToFile(exportFile, (s as JSON).toString(), true);
-                } else if (format == "msp") {
-                    FileUtils.writeStringToFile(exportFile, spectraConversionService.convertToMsp(s) + "\n", true);
-                }
+        exportFile.withWriter { writer ->
+            if (format == "json") {
+                writer.append("[\n")
             }
 
-            log.info("Exported ${i + QUERY_SIZE} / $queryCount for $label")
-        }
+            for (int i = 0; i < queryCount; i += QUERY_SIZE) {
+                def result = spectraQueryService.query(json, QUERY_SIZE, i)
 
-        if (format == "json") {
-            FileUtils.writeStringToFile(exportFile, "\n]", true)
+                for (Spectrum s : result) {
+                    if (format == "json") {
+                        // Append comma and newline
+                        if (i > 0) {
+                            writer.append(",\n")
+                        }
+
+                        writer.append((s as JSON).toString())
+                    } else if (format == "msp") {
+                        writer.append(spectraConversionService.convertToMsp(s))
+                        writer.append('\n')
+                    }
+                }
+
+                sessionFactory.currentSession.flush()
+                sessionFactory.currentSession.clear()
+
+                log.info("Exported ${i + QUERY_SIZE} / $queryCount for $label")
+            }
+
+            if (format == "json") {
+                writer.append("\n]")
+            }
+
+            return
         }
 
 
