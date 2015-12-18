@@ -5,7 +5,7 @@
 /**
  * this defines all the different urls in our view
  */
-app.config(function ($routeProvider) {
+app.config(function($routeProvider) {
     $routeProvider
         //defining the root url
         .when('/', {
@@ -53,7 +53,6 @@ app.config(function ($routeProvider) {
                 }
             }
         })
-
 
 
         //database index
