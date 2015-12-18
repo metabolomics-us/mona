@@ -12,7 +12,6 @@ import util.FireJobs
 class Query {
     def spectraQueryService
 
-
     Date dateCreated
     Date lastUpdated
 

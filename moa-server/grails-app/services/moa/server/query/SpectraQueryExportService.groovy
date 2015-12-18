@@ -46,7 +46,7 @@ class SpectraQueryExportService {
 
     def exportQueryByLabel(def query, def label) {
         log.info("Starting download job for $label")
-        def queryDownload = exportQuery(query, label).queryDownload
+        def queryDownload = exportQuery(query, label)
 
         def queryObject = Query.findByLabel(label)
         queryObject.queryExport = queryDownload
@@ -60,12 +60,12 @@ class SpectraQueryExportService {
         log.info("Starting download job for " + emailAddress)
 
         def label = "${emailAddress.split('@')[0]}-$startTime"
-        def queryResult = exportQuery(query, label)
+        def queryDownload = exportQuery(query, label)
 
 
         // Email results
-        log.info("Export of spectra complete, id ${queryResult.queryDownload.id}, sending notification email to $emailAddress")
-        emailService.sendDownloadEmail(emailAddress, queryResult.queryCount, queryResult.queryDownload.id)
+        log.info("Export of spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
+        emailService.sendDownloadEmail(emailAddress, queryDownload.queryCount, queryDownload.id)
     }
 
     private SpectrumQueryDownload exportQuery(def query, def label) {
@@ -99,8 +99,9 @@ class SpectraQueryExportService {
 
         // Get the number of spectra in our query results
         def queryCount = spectraQueryService.getCountForQuery(json)
-        log.info("Counted $queryCount spectra")
+        queryDownload.queryCount = queryCount
 
+        log.info("Counted $queryCount spectra")
 
 
         // Export query to file
@@ -157,7 +158,7 @@ class SpectraQueryExportService {
                 sessionFactory.currentSession.flush()
                 sessionFactory.currentSession.clear()
 
-                log.info("Exported ${i + QUERY_SIZE} / $queryCount for $label")
+                log.info("Exported ${Math.min(i + QUERY_SIZE, queryCount)} / $queryCount for $label")
             }
 
             if (format == "json") {
@@ -178,10 +179,7 @@ class SpectraQueryExportService {
         queryDownload.save(flush: true)
         queryDownload.errors.allErrors.each { println it }
 
-        return [
-                queryDownload: queryDownload,
-                queryCount: queryCount
-        ]
+        return queryDownload
     }
 
     /**

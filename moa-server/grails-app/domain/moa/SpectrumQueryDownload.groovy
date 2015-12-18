@@ -25,4 +25,5 @@ class SpectrumQueryDownload {
     String exportFile
     String query
     String label
+    int queryCount
 }
