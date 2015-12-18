@@ -7,7 +7,7 @@
     angular.module('moaClientApp')
       .factory('SplashService', SplashService);
 
-
+    /* @ngInject */
     function SplashService($resource, $http) {
         $http.defaults.useXDomain = true;
         delete $http.defaults.headers.common['X-Requested-With'];

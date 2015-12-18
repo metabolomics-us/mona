@@ -84,7 +84,6 @@
               }
           })
 
-
             //database index
           .when('/spectra/dbindex', {
               templateUrl: 'views/spectra/dbindex/dbindex.html',
@@ -107,10 +106,10 @@
               templateUrl: 'views/statistics/statistics.html',
               controller: 'SpectraDatabaseIndexController'
           })
+
           .when('/statistics/import', {
               templateUrl: 'views/statistics/times.html',
               controller: 'StatisticsController',
-
               resolve: {
                   /* @ngInject */
                   statistics: function(StatisticsService) {
@@ -121,6 +120,7 @@
                   }
               }
           })
+
           .when('/statistics/validation', {
               templateUrl: 'views/statistics/times.html',
               controller: 'StatisticsController',
@@ -135,6 +135,7 @@
                   }
               }
           })
+
           .when('/statistics/query', {
               templateUrl: 'views/statistics/times.html',
               controller: 'StatisticsController',
@@ -149,7 +150,6 @@
                   }
               }
           })
-
 
             //user profile page
           .when('/profile', {
@@ -167,23 +167,23 @@
           .when('/documentation/license', {
               templateUrl: 'views/documentation/license.html'
           })
+
           .when('/news', {
               templateUrl: 'views/news/news.html'
           })
+
           .when('/documentation/query', {
               templateUrl: 'views/documentation/query.html'
           })
+
           .when('/documentation/terms', {
               templateUrl: 'views/documentation/terms.html',
               controller: 'DocumentationTermController'
-
           })
-
 
           .when('/500', {
               templateUrl: 'views/500.html',
               controller: 'DocumentationTermController'
-
           })
 
             //any other page is redirected to the root page
