@@ -36,11 +36,10 @@ module.exports = function(config) {
             'app/bower_components/angular-mocks/angular-mocks.js',
             'app/bower_components/angular-bootstrap/ui-bootstrap.js',
             'app/bower_components/ng-tags-input/ng-tags-input.js',
-
-            //'test/spec/directives/**/*.js',
             //'app/views/spectra/display/template/*.html'
-            'test/spec/**/*.js',
-            'app/scripts/**/*.js'
+            'app/scripts/**/*.js',
+            //'test/spec/**/*.js'
+            'test/spec/controllers/authentication/*.js'
         ],
 
 
@@ -50,7 +49,6 @@ module.exports = function(config) {
             'app/scripts/directives/metadata/tagDirective.js',
             'app/scripts/directives/query/queryPieChart.js',
             'app/scripts/directives/submitter/spectra.js',
-            'app/scripts/directives/submitterFormDirective.js',
             'app/scripts/theme.js'
         ],
 

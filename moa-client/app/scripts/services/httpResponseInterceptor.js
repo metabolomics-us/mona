@@ -7,7 +7,7 @@
     angular.module('moaClientApp')
       .factory('httpResponseInterceptor', httpResponseInterceptor);
 
-
+    /* @ngInject */
     function httpResponseInterceptor($q, $location) {
         return {
             response: function(response) {

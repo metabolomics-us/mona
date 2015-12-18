@@ -22,14 +22,14 @@ describe('Controller: Authentication Controller', function() {
     };
 
     it('opens a authentication dialogue for user to log in', function() {
-        spyOn(uibModal, 'open');
-        authController.handleLogin();
         var open = {
             templateUrl: '/views/authentication/authenticationModal.html',
             controller: 'AuthenticationModalController',
             size: 'sm',
             backdrop: 'true'
         };
+        spyOn(uibModal, 'open').and.returnValue(open);
+        authController.handleLogin();
         expect(uibModal.open).toHaveBeenCalledWith(open);
     });
 
