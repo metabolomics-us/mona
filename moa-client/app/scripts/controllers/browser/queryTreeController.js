@@ -3,14 +3,14 @@
  */
 'use strict';
 
-moaControllers.QueryTreeController = function($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService) {
+moaControllers.QueryTreeController = function($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
     $scope.executeQuery = function(node) {
         SpectraQueryBuilderService.setQuery(JSON.parse(node.query));
         $location.path('/spectra/browse');
     };
 
     $scope.downloadQuery = function(node) {
-
+        window.location.href = REST_BACKEND_SERVER +'/rest/spectra/search/download/'+ node.queryExport.id;
     };
 
     (function() {
@@ -76,11 +76,12 @@ app.directive('queryTreeView', ['$compile', function($compile) {
             var style = depth > 0 ? 'padding-left: '+ (3 * depth) +'em' : '';
 
             var template =
-                '<p class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +'">' +
+                '<p class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +' | orderBy:\'-queryCount\'">' +
                 '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length"></i>' +
                 '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i> ' +
                 '    <a href="" ng-click="executeQuery(node)"><i class="fa fa-search"></i> {{node.formattedLabel}}</a> ({{node.queryCount | number:0}})'+
-                '    <span class="pull-right" ng-if="node.exportId !== undefined"><a href="" ng-click="downloadQuery(node)"><i class="fa fa-download"></i> Download</a></span>' +
+                '    <span class="pull-right" ng-if="node.queryExport !== null"><a href="" ng-click="downloadQuery(node)"><i class="fa fa-download"></i> Download JSON</a></span>' +
+                '    <span class="pull-right" ng-if="node.queryExport === null">Export generation in progress...</span>' +
                 '</p>'+
                 '<div class="list-group" data-ng-repeat-end ng-if="node.children.length" data-query-tree-view data-query-tree-depth="'+ (depth + 1) +'" data-tree-id="'+ treeId +'" data-tree-model="node.children"></div>';
 
