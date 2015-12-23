@@ -100,7 +100,7 @@ describe('Controller: Registration Modal Controller', function() {
         '"status":400,"config":{"method":"POST","transformRequest":[null],' +
         '"transformResponse":[null],"data":{"firstName":"test","lastName":"user",' +
         '"institution":"UC Davis","emailAddress":"testuser@fiehnlab.com","password":"super"},' +
-        '"url":"http://cream.fiehnlab.ucdavis.edu:9292/mona.fiehnlab.ucdavis.edu/rest/submitters",' +
+        '"url":"http://cream.fiehnlab.ucdavis.edu:8080/rest/submitters",' +
         '"headers":{"Accept":"application/json, text/plain, */*","Content-Type":"application/json;charset=utf-8"}},' +
         '"statusText":""}']);
     });
