@@ -144,7 +144,7 @@
                 var mass = '';
 
                 if (angular.isDefined(spectra[i].biologicalCompound)) {
-                    for (var j = 0, k = spectra[i].biologicalCompound.metaData.length; j < k; j++) {
+                    for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
                         if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
                             mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
                             break;
