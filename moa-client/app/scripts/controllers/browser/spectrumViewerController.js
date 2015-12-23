@@ -18,7 +18,7 @@
          * Mass spectrum obtained from cache if it exists, otherwise from REST api
          */
         $scope.spectrum = delayedSpectrum;
-        console.log($scope.spectrum);
+
         /**
          * quality score of our spectrum
          * @type {number}
@@ -157,7 +157,7 @@
             // Truncate metadata mass values
             //
 
-            for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
+            for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
                 var name = delayedSpectrum.metaData[i].name.toLowerCase();
 
                 if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
@@ -167,7 +167,7 @@
                 }
             }
 
-            for (var i = 0, l = delayedSpectrum.biologicalCompound.metaData.length; i < l; i++) {
+            for (var i = 0; i < delayedSpectrum.biologicalCompound.metaData.length; i++) {
                 var name = delayedSpectrum.biologicalCompound.metaData[i].name.toLowerCase();
 
                 if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
@@ -175,7 +175,7 @@
                 }
             }
 
-            for (var i = 0, l = delayedSpectrum.chemicalCompound.metaData.length; i < l; i++) {
+            for (var i = 0; i < delayedSpectrum.chemicalCompound.metaData.length; i++) {
                 var name = delayedSpectrum.chemicalCompound.metaData[i].name.toLowerCase();
 
                 if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
@@ -208,7 +208,7 @@
                 var annotation = '';
                 var computed = false;
 
-                for (var i = 0, l = meta.length; i < l; i++) {
+                for (var i = 0; i < meta.length; i++) {
                     if (meta[i].value === match[1]) {
                         annotation = meta[i].name;
                         computed = meta[i].computed;
@@ -233,36 +233,37 @@
 
 })();
 
-/*
-(function() {
-    'use strict';
+/* Moved to route resolve for now.
+ // TODO: create a service
+ (function() {
+ 'use strict';
 
-    // Required in order to load the spectrum before resolving the web page.
-    // Loads spectrum from cache if it exists, otherwise get from rest api
+ // Required in order to load the spectrum before resolving the web page.
+ // Loads spectrum from cache if it exists, otherwise get from rest api
 
 
-    angular.module('moaClientApp')
-      .ViewSpectrumController.loadSpectrum = {
-        delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
-            // If a spectrum is not cached or the id requested does not match the
-            // cached spectrum, request it from the REST api
-            if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
-                return Spectrum.get(
-                  {id: $route.current.params.id},
-                  function(data) {
-                  },
-                  function(error) {
-                      alert('failed to obtain spectrum: ' + error);
-                  }
-                ).$promise;
-            }
+ angular.module('moaClientApp')
+ .ViewSpectrumController.loadSpectrum = {
+ delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
+ // If a spectrum is not cached or the id requested does not match the
+ // cached spectrum, request it from the REST api
+ if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
+ return Spectrum.get(
+ {id: $route.current.params.id},
+ function(data) {
+ },
+ function(error) {
+ alert('failed to obtain spectrum: ' + error);
+ }
+ ).$promise;
+ }
 
-            else {
-                var spectrum = SpectrumCache.getSpectrum();
-                SpectrumCache.removeSpectrum();
-                return spectrum;
-            }
-        }
-    };
-})();
-*/
+ else {
+ var spectrum = SpectrumCache.getSpectrum();
+ SpectrumCache.removeSpectrum();
+ return spectrum;
+ }
+ }
+ };
+ })();
+ */
