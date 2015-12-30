@@ -9,5 +9,5 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/mona.fiehnlab.ucdavis.edu');
+      .constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:8080');
 })();

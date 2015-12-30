@@ -10,6 +10,7 @@ module.exports = function(config) {
         files: [
             'app/bower_components/angular/angular.js',
             'app/bower_components/angular-jquery/dist/angular-jquery.js',
+            'app/bower_components/jquery/dist/jquery.js',
 
             // moaClientApp modules
             'app/bower_components/angular-mocks/angular-mocks.js',
@@ -33,10 +34,15 @@ module.exports = function(config) {
             'app/bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
             'app/bower_components/angular-translate/angular-translate.js',
 
+            // load html templates
+            'app/index.html',
+            'app/views/*html',
+
             // source and test files
             'app/scripts/**/*.js',
-            'test/spec/app-spec.js'
-            //'test/spec/controllers/authentication/authenticationController-spec.js'
+            'test/spec/controllers/**/*.js'
+
+
         ],
         exclude: ['app/scripts/theme.js'],
 
@@ -64,7 +70,7 @@ module.exports = function(config) {
 
 
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
 
 
         // enable / disable watching file and executing tests whenever any file changes
