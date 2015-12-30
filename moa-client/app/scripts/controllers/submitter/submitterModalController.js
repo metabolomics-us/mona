@@ -77,7 +77,7 @@
             var errorReport = [];
 
             if (error.data) {
-                for (var i = 0, l = error.data.errors.length; i < l; i++) {
+                for (var i = 0; i < error.data.errors.length; i++) {
                     var obj = error.data.errors[i];
 
                     //remove the none needed object
