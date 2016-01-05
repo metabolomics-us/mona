@@ -55,6 +55,7 @@ describe('service: Upload Library Service', function(){
 
   it('adds additionalData to spectra when provided', function() {
     var spec = spectra();
+    spec.molFile = 'file1.txt';
     var aData = {comments: 'additional data', tags:['moreTags1','moreTags2'], meta: [{name: 'one'}, {name: 'two'}]};
     var res = UploadLibraryService.submitSpectrum(spec, null, specCallback, aData);
     flush();
@@ -64,6 +65,7 @@ describe('service: Upload Library Service', function(){
 
   it('records the submitter email', function() {
     var spec = spectra();
+    spec.molFile = 'file1.txt';
     var res = UploadLibraryService.submitSpectrum(spec,'testUser@fiehnlab.com',specCallback);
     flush();
     rootScope.$digest();
@@ -72,11 +74,6 @@ describe('service: Upload Library Service', function(){
 
   it('loads spectra file and returns the data to a callback function', function(){
     var f = {name: 'testfile.txt'};
-    /*
-    var eventListener = jasmine.createSpy();
-    spyOn(window, "FileReader").andReturn({
-      addEventListener: eventListener
-    });*/
     UploadLibraryService.loadSpectraFile(f,specCallback,true);
   });
 
@@ -155,6 +152,16 @@ describe('service: Upload Library Service', function(){
     var wizardData = {power: 'lightning'};
     UploadLibraryService.uploadSpectraFiles(files, specCallback, wizardData);
     expect(UploadLibraryService.uploadSpectraFiles).toHaveBeenCalledWith(files,specCallback,wizardData);
+  });
+
+  it('uploads a spectra', function() {
+    UploadLibraryService.uploadSpectra(spectra(),function(){});
+    expect(UploadLibraryService.uploadSpectra).toBeDefined();
+  });
+
+  it('checks if spectra are being processed', function() {
+    UploadLibraryService.isUploading();
+    expect(UploadLibraryService.isUploading).toBeDefined();
   });
 
 });

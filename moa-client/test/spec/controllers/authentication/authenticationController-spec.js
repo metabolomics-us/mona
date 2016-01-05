@@ -69,12 +69,6 @@ describe('Controller: Authentication Controller', function() {
         expect(isAdmin).toBe(false);
     });
 
-    it('creates a welcome message on login', function() {
-        rootScope.currentUser = loggedInUser;
-        scope.$broadcast('auth:login-success');
-        scope.$digest();
-        expect(authController.welcomeMessage).toBe('Welcome, ' + rootScope.currentUser.firstName + '!');
-    });
 
     it('removes the welcome message on logout', function() {
         scope.$broadcast('auth:logout');

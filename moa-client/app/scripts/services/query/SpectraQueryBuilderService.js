@@ -419,7 +419,7 @@
                     }
 
                     if (compound) {
-                        if (query.compound.metadata === null) {
+                        if (query.compound.metadata == null) {
                             query.compound.metadata = [];
                         }
                         query.compound.metadata.push(meta);

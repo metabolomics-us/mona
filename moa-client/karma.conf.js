@@ -40,7 +40,8 @@ module.exports = function(config) {
 
             // source and test files
             'app/scripts/**/*.js',
-            'test/spec/controllers/**/*.js'
+            'test/spec/controllers/**/*.js',
+            'test/spec/services/**/*.js'
 
 
         ],
@@ -51,7 +52,7 @@ module.exports = function(config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             '**/scripts/controllers/**/*.js': 'coverage',
-            '**/scripts/directives/**/*.js': 'coverage'
+            '**/scripts/services/**/*.js': 'coverage'
         },
 
 
