@@ -8,7 +8,7 @@ describe('Controller: Clean Spectra Data -', function() {
     beforeEach(inject(function($controller, $rootScope, $injector) {
         scope = $rootScope.$new();
         cSpecCtrl = $controller('CleanSpectraDataController', {
-            $scope: scope
+            $scope: scope,
         });
     }));
 
@@ -161,9 +161,14 @@ describe('Controller: Clean Spectra Data -', function() {
         expect(scope.error).toBe('There are some errors in the data you have provided.  The');
     });
 
+    it('exports files as a MSP', function() {
+        scope.exportFile();
+    });
+
     it('adds spectrum on broadcast', function() {
-        
+        spyOn(scope,'$broadcast').and.callThrough();
        scope.$broadcast('AddSpectrum');
+        expect(scope.$broadcast).toHaveBeenCalled();
     });
 
 });
