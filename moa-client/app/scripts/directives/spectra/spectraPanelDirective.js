@@ -29,7 +29,7 @@
             var regex = new RegExp("\\s*(\\d+\\.\\d{" + length + "})\\d*\\s*");
             var m = s.match(regex);
             return (m !== null) ? s.replace(m[0].trim(), m[1]) : s;
-        }
+        };
 
         angular.forEach($scope.spectrum.metaData, function(meta, index) {
             if (meta.category !== 'annotation' && meta.deleted !== 'true'
