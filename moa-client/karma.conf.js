@@ -8,11 +8,12 @@ module.exports = function(config) {
         frameworks: ['jasmine'],
 
         files: [
+            // development dependencies
             'app/bower_components/angular/angular.js',
             'app/bower_components/angular-jquery/dist/angular-jquery.js',
             'app/bower_components/jquery/dist/jquery.js',
 
-            // moaClientApp modules
+            // moaClientApp dependencies
             'app/bower_components/angular-mocks/angular-mocks.js',
             'app/bower_components/angular-route/angular-route.js',
             'app/bower_components/angular-resource/angular-resource.js',
@@ -34,25 +35,35 @@ module.exports = function(config) {
             'app/bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
             'app/bower_components/angular-translate/angular-translate.js',
 
-            // load html templates
-            'app/index.html',
-            'app/views/*html',
+            // load html templates into $templateCache for testing
+            //'app/*.html',
+            'app/views/**/*.html',
 
-            // source and test files
+            // source scripts
             'app/scripts/**/*.js',
+
+            // test scripts
             'test/spec/controllers/**/*.js',
-            'test/spec/services/**/*.js'
+            'test/spec/services/**/*.js',
+            'test/spec/directives/**/*.js'
 
 
         ],
         exclude: ['app/scripts/theme.js'],
 
+        // plugin to load our html templates as modules
+        ngHtml2JsPreprocessor: {
+          stripPrefix: 'app/',
+            moduleName: 'templates'
+        },
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             '**/scripts/controllers/**/*.js': 'coverage',
-            '**/scripts/services/**/*.js': 'coverage'
+            '**/scripts/services/**/*.js': 'coverage',
+            '**/scripts/directives/**/*.js': 'coverage',
+            '**/*.html': ['ng-html2js']
         },
 
 
