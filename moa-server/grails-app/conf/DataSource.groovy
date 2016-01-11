@@ -59,8 +59,8 @@ environments {
 
     test {
         dataSource {
-            dbCreate = "update"// "create-drop"
-            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-devel"
+            dbCreate = "update" "create-drop"
+            url = "jdbc:postgresql://venus.fiehnlab.ucdavis.edu:5432/moa-test"
             driverClassName = "org.postgresql.Driver"
 
             pooled = true
