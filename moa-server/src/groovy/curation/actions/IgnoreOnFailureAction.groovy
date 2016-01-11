@@ -9,10 +9,7 @@ import curation.CurationObject
  */
 class IgnoreOnFailureAction implements CurationAction{
     @Override
-    void doAction(CurationObject spectrum) {
-
-        //nothing
-    }
+    void doAction(CurationObject spectrum) {}
 
     @Override
     boolean actionAppliesToObject(CurationObject toValidate) {

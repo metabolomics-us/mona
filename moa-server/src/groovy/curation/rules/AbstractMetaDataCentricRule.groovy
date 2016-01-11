@@ -24,6 +24,7 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
     public AbstractMetaDataCentricRule(){
         super()
     }
+
     /**
      * does the actual check
      * @param value
@@ -38,14 +39,14 @@ abstract class AbstractMetaDataCentricRule extends AbstractCurationRule {
 
     @Override
     final boolean executeRule(CurationObject toValidate) {
-
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
         for (MetaDataValue metaDataValue : spectrum.listAvailableValues()) {
-
             logger.debug("checking for correct meta data value field: ${metaDataValue.name}")
+
             if (isCorrectMetaDataField(metaDataValue)) {
                 logger.debug("\t=> accepted, checking actual value")
+
                 if (acceptMetaDataValue(metaDataValue)) {
                     logger.debug("\t\t=> value was ok")
                     return finalCheck(spectrum)

@@ -121,3 +121,4 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
         return "calculates the mass accuracy of the given spectra and adds this as metadata field"
     }
 }
+

@@ -5,14 +5,13 @@ import curation.CurationObject
 import util.FireJobs
 
 /**
- * everytimne a spectra has been modified, this rule will automatically schedule a repository update
+ * every time a spectra has been modified, this rule will automatically schedule a repository update
  */
-class UpdateRepositoryRule extends AbstractCurationRule{
+class UpdateRepositoryRule extends AbstractCurationRule {
 
     @Override
     boolean executeRule(CurationObject toValidate) {
-
-        FireJobs.fireSpectraRepositoryExportJob([id:toValidate.getObjectAsSpectra().id])
+        FireJobs.fireSpectraRepositoryExportJob([id: toValidate.getObjectAsSpectra().id])
 
         return true
     }

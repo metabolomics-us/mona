@@ -35,14 +35,14 @@ class AddTagAction implements CurationAction {
         this.tagNameToAdd = tagName
     }
 
-
     @Override
     void doAction(CurationObject toValidate) {
-
         if(tagService == null){
             tagService = Holders.grailsApplication.mainContext.tagService
         }
+
         SupportsMetaData owner = null
+
         if (toValidate.isSpectra()) {
             owner = toValidate.getObjectAsSpectra()
         } else if (toValidate.isCompound()) {
@@ -52,6 +52,7 @@ class AddTagAction implements CurationAction {
         }
 
         logger.debug("adding tag(s) to (${owner.id} - ${tagNameToAdd}")
+
         if (!tagNameToAdd) {
             throw new RuntimeException("please provide us with a 'tagNameToAdd' value!")
         }
