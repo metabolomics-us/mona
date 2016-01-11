@@ -12,6 +12,7 @@ import moa.Tag
 import org.apache.log4j.Logger
 import org.hibernate.exception.LockAcquisitionException
 import util.FireJobs
+import util.MetaDataFieldNames
 
 /**
  * Created by sajjan on 10/17/14.
@@ -63,16 +64,16 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
         String filename = null;
 
         String authors = null;
-
         boolean isMB = false;
+
         for (metaData in s.getMetaData()) {
-            if (metaData.getName() == "origin") {
+            if (metaData.getName() == MetaDataFieldNames.ORIGIN) {
                 filename = metaData.getValue();
-            } else if (metaData.getName() == "accession") {
+            } else if (metaData.getName() == MetaDataFieldNames.ACCESSION) {
                 filename = metaData.getValue();
             }
 
-            if (metaData.getName() == "authors") {
+            if (metaData.getName() == MetaDataFieldNames.AUTHORS) {
                 authors = metaData.getValue();
 
                 for (Tag tag : s.getTags()) {
@@ -98,10 +99,7 @@ class AssociatesMassBankSpectraWithCorrectSubmitter extends AbstractAssociationR
 
         if (isMB || massbankSubmiters[filename] != null) {
             Spectrum.withTransaction {
-
-
                 try {
-
                     associate(authors, s, filename)
                 } catch (LockAcquisitionException e) {
                     FireJobs.fireSpectraAssociationJob([spectraId: s.id])
