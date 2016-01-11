@@ -8,135 +8,130 @@ package util.query
  */
 class QueryHelper {
 
-	/**
-	 * builds our query for comparison fields
-	 * @param fieldName
-	 * @param values
-	 * @param condition
-	 * @param executionParams
-	 * @param index
-	 * @return
-	 */
-	public
-	static List buildComparisonField(String inputQuery, String fieldName, List values, String condition, Map executionParams, int index = 0, String qualifierTable = "",String fromQualifier = "") {
+    /**
+     * builds our query for comparison fields
+     * @param fieldName
+     * @param values
+     * @param condition
+     * @param executionParams
+     * @param index
+     * @return
+     */
+    public static List buildComparisonField(String inputQuery, String fieldName, List values, String condition,
+                                            Map executionParams, int index = 0, String qualifierTable = "",
+                                            String fromQualifier = "") {
 
-		if (qualifierTable != "") {
-			qualifierTable = qualifierTable + "."
-		}
+        if (qualifierTable != "") {
+            qualifierTable = qualifierTable + "."
+        }
 
-		String query = " ("
+        String query = " ("
 
-		String conditionTranslation = ""
+        String conditionTranslation = ""
 
-		switch (condition) {
-			case "eq":
-				conditionTranslation = "="
-				break
-			case "like":
-				conditionTranslation = "like"
-				break
-			case "ilike":
-				conditionTranslation = "ilike"
-				break
+        switch (condition) {
+            case "eq":
+                conditionTranslation = "="
+                break
+            case "like":
+                conditionTranslation = "like"
+                break
+            case "ilike":
+                conditionTranslation = "ilike"
+                break
+            case "gt":
+                conditionTranslation = ">"
+                break
+            case "lt":
+                conditionTranslation = "<"
+                break
+            case "ge":
+                conditionTranslation = ">="
+                break
+            case "le":
+                conditionTranslation = "<="
+                break
+            case "ne":
+                conditionTranslation = "!="
+                break
+            case "between":
+                conditionTranslation = "between"
+                break
+            case "in":
+                conditionTranslation = "in"
+                break
+            case "isNotNull":
+                conditionTranslation = "isNotNull"
+                break
+            case "isNull":
+                conditionTranslation = "isNull"
+                break
+            default:
+                throw new RuntimeException("unknown condition specified: ${condition}, skipping!")
+        }
 
-			case "gt":
-				conditionTranslation = ">"
-				break
-			case "lt":
-				conditionTranslation = "<"
-				break
-			case "ge":
-				conditionTranslation = ">="
-				break
-			case "le":
-				conditionTranslation = "<="
-				break
-			case "ne":
-				conditionTranslation = "!="
-				break
-			case "between":
-				conditionTranslation = "between"
-				break
-			case "in":
-				conditionTranslation = "in"
-				break
-			case "isNotNull":
-				conditionTranslation = "isNotNull"
-				break
-			case "isNull":
-				conditionTranslation = "isNull"
-				break
-			default:
-				throw new RuntimeException("unknown condition specified: ${condition}, skipping!")
-		}
+        /**
+         * special handling for between
+         */
+        if (conditionTranslation.equals("between")) {
+            query += "${qualifierTable}${fieldName} ${conditionTranslation} :${fromQualifier}_${fieldName}_value_${index}_min and :${fromQualifier}_${fieldName}_value_${index}_max"
+            executionParams.put("${fromQualifier}_${fieldName}_value_${index}_min".toString(), values[0])
+            executionParams.put("${fromQualifier}_${fieldName}_value_${index}_max".toString(), values[1])
 
-		/**
-		 * special handling for between
-		 */
-		if (conditionTranslation.equals("between")) {
-			query += "${qualifierTable}${fieldName} ${conditionTranslation} :${fromQualifier}_${fieldName}_value_${index}_min and :${fromQualifier}_${fieldName}_value_${index}_max"
-			executionParams.put("${fromQualifier}_${fieldName}_value_${index}_min".toString(), values[0])
-			executionParams.put("${fromQualifier}_${fieldName}_value_${index}_max".toString(), values[1])
+        } else if (conditionTranslation.equals("ilike")) {
+            def value = values[0];
 
-		} else if (conditionTranslation.equals("ilike")) {
+            // like and ilike work only on textual data
+            if (!(value instanceof String)) {
+                throw new RuntimeException("Can't use 'like' or 'ilike with numeric data")
+            }
 
-			def value = values[0];
+            query += "lower(${qualifierTable}${fieldName}) like (:${fromQualifier}_${fieldName}_value_${index})"
 
-			// like and ilike work only on textual data
-			if(!(value instanceof String)) {
-				throw new RuntimeException("Can't use 'like' or 'ilike with numeric data")
-			}
+            executionParams.put("${fromQualifier}_${fieldName}_value_${index}".toString(), value.toString().toLowerCase())
+        } else if (conditionTranslation.equals("isNotNull")) {
+            query += "${qualifierTable}${fieldName} is not null"
+        } else if (conditionTranslation.equals("isNull")) {
+            query += "${qualifierTable}${fieldName} is null"
+        }
 
-			query += "lower(${qualifierTable}${fieldName}) like (:${fromQualifier}_${fieldName}_value_${index})"
+        /**
+         * general handling for everything else
+         */
+        else {
+            def value = values[0];
 
-			executionParams.put("${fromQualifier}_${fieldName}_value_${index}".toString(), value.toString().toLowerCase())
-		}
-		else if(conditionTranslation.equals("isNotNull")){
-			query += "${qualifierTable}${fieldName} is not null"
-		}
+            // like and ilike work only on textual data
+            if (!(value instanceof String) && condition.equals("like")) {
+                throw new RuntimeException("Can't use 'like' or 'ilike with numeric data")
+            }
 
-		else if(conditionTranslation.equals("isNull")){
-			query += "${qualifierTable}${fieldName} is null"
-		}
+            if (fieldName == "id") {
+                //stupid grails is not able to convert from integer to longs internally
+                if (value instanceof Collection) {
+                    value = []
 
-		/**
-		 * general handling for everything else
-		 */
-		else {
+                    values[0].each {
+                        if (it instanceof Integer) {
+                            value.add(it as long)
+                        } else {
+                            value.add(it)
+                        }
+                    }
+                } else {
+                    if (value instanceof Integer) {
+                        value = value as long
+                    }
+                }
+            }
 
-			def value = values[0];
-			// like and ilike work only on textual data
-			if(!(value instanceof String) && condition.equals("like")) {
-				throw new RuntimeException("Can't use 'like' or 'ilike with numeric data")
-			}
+            query += "${qualifierTable}${fieldName} ${conditionTranslation} (:${fromQualifier}_${fieldName}_value_${index})"
 
-			if (fieldName == "id") {
+            executionParams.put("${fromQualifier}_${fieldName}_value_${index}".toString(), value)
+        }
 
-				//stupid grails is not able to convert from integer to longs internally
-				if (value instanceof Collection) {
-					value = []
+        query += ")"
 
-					values[0].each {
-						if (it instanceof Integer) {
-							value.add(it as long)
-						} else {
-							value.add(it)
-						}
-					}
-				} else {
-					if (value instanceof Integer) {
-						value = value as long
-					}
-				}
-			}
-			query += "${qualifierTable}${fieldName} ${conditionTranslation} (:${fromQualifier}_${fieldName}_value_${index})"
-
-			executionParams.put("${fromQualifier}_${fieldName}_value_${index}".toString(), value)
-		}
-
-		query += ")"
-
-		return [inputQuery + query, executionParams];
-	}
-
+        return [inputQuery + query, executionParams];
+    }
 }
