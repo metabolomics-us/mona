@@ -227,19 +227,19 @@ class SpectraQueryService {
         executionParams.put("deleted", new Boolean(false))
 
         (where, joins, fields, orderBy, group, having) = handleJsonSpectraData(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonCompoundField(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleSpectraJsonMetadataFields(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonTagsField(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonSubmitterField(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         //working on the ordering
         if (orderBy.length() > 0) {
@@ -627,7 +627,7 @@ class SpectraQueryService {
                         queryOfDoomJoins += " inner join cmd_${index}.category as cmdc_${index}"
 
 
-                        (queryOfDoomWhere,executionParams) = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "cmd_${index}", "cmdv_${index}", "cmdc_${index}", index,"compound")
+                        (queryOfDoomWhere, executionParams) = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "cmd_${index}", "cmdv_${index}", "cmdc_${index}", index,"compound")
 
                     }
                 }
@@ -660,11 +660,14 @@ class SpectraQueryService {
      * update json:
      *
      *
-     *{*     update:{*         tags:[
-     *              tagName //to add a new tagname
-     *              -tagName //to remove this tagname
+     * {
+     *     update: {
+     *         tags: [
+     *              tagName, // to add a new tag name
+     *              -tagName // to remove this tag name
      *          ]
-     *}*}* }
+     *     }
+     * }
      * @param json
      */
     def update(queryContent, update) {

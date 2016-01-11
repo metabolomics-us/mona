@@ -16,11 +16,8 @@ abstract class AbstractAssociationRule extends AbstractCurationRule {
         return false
     }
 
-
-
     @Override
     boolean ruleAppliesToObject(CurationObject toValidate) {
         return toValidate.isSpectra()
     }
-
 }
