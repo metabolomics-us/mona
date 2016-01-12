@@ -1,8 +1,14 @@
 /**
  * Created by Gert on 5/28/2014.
  */
-'use strict';
 
-moaControllers.StatisticsController = function ($scope, StatisticsService, $uibModal, statistics) {
-    $scope.data = statistics;
-};
+(function() {
+    'use strict';
+    angular.module('moaClientApp')
+      .controller('StatisticsController', StatisticsController);
+
+    /* @ngInject */
+    function StatisticsController($scope, StatisticsService, $uibModal, statistics) {
+        $scope.data = statistics;
+    }
+})();
