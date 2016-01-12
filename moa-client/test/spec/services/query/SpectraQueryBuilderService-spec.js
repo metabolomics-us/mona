@@ -26,7 +26,7 @@ describe('service: Spectra Query Builder Service', function() {
 
   var hash = 'splash10-dz40000000-9ff3eaf3411278ba18fd';
   var spectra = 'test Spectra';
-  var metadata = {name: 'molecule'};
+  var metadata = {name: 'molecule',value:'test'};
 
   //mock queries
 
@@ -235,7 +235,9 @@ describe('service: Spectra Query Builder Service', function() {
   });
 
   it('adds a metadata that is of compound', function() {
-    var compound = {name: 'oxygen'};
+    var compound = {name: 'oxygen',
+      metadata:[]
+    };
     specQueryBuilder.addMetaDataToQuery(metadata,compound);
     var res = queryCache.getSpectraQuery();
     expect(res.compound.metadata[0].name).toEqual('molecule');

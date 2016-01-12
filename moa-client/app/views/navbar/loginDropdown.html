@@ -1,0 +1,24 @@
+<ul class="nav navbar-top-links navbar-right">
+    <!-- User Login -->
+    <li class="dropdown" uib-dropdown>
+        <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+            <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i
+                class="fa fa-caret-down"></i>
+        </a>
+        <ul class="uib-dropdown-menu dropdown-user">
+            <li ng-show="auth.isLoggedIn()">
+                <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
+            </li>
+            <li ng-show="auth.isLoggedIn()" class="divider"></li>
+
+            <li>
+                <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ?
+                    "Logout" : "Login"}}</a>
+            </li>
+            <li ng-show="!auth.isLoggedIn()">
+                <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
+            </li>
+        </ul>
+        <!-- /.dropdown-user -->
+    </li>
+</ul>

@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
     <!-- endbower -->
-    <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css" />
+    <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css"/>
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
 
@@ -40,152 +40,20 @@
 <![endif]-->
 
 <div id="wrapper" ng-controller="AuthenticationController as auth">
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0" ng-cloak>
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#/" ng-cloak>{{APP_NAME_ABBR}} - {{APP_NAME}}</a>
-        </div>
-        <!-- /.navbar-header -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <title-header></title-header>
+
+        <!-- navbar dropdowns -->
         <div class="collapse navbar-collapse" role="navigation">
-            <ul class="nav navbar-top-links navbar-right">
-                <!-- User Login -->
-                <li class="dropdown" uib-dropdown>
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        <i class="fa fa-user fa-fw"></i> <span ng-bind="auth.welcomeMessage"></span> <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="uib-dropdown-menu dropdown-user">
-                        <li ng-show="auth.isLoggedIn()">
-                            <a href="#/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
-                        </li>
-                        <li ng-show="auth.isLoggedIn()" class="divider"></li>
+            <login-drop-down></login-drop-down>
+            <search-box></search-box>
 
-                        <li>
-                            <a ng-click="auth.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{auth.isLoggedIn() ? "Logout" : "Login"}}</a>
-                        </li>
-                        <li ng-show="!auth.isLoggedIn()">
-                            <a ng-click="auth.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-user -->
-                </li>
-            </ul>
-
-            <!-- search form -->
-            <form name="searchBox" ng-controller="SearchBoxController" ng-submit="searchBoxQuery=''" class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
-                <div class="input-group custom-search-form">
-                    <input type="text" class="form-control ng-pristine ng-valid ng-touched" ng-model="searchBoxQuery"
-                           placeholder="Search..." tooltip="Search by Name, InChiKey, MoNA ID or SPLASH Code" tooltip-trigger="focus"
-                           tooltip-placement="bottom">
-                        <span class="input-group-btn">
-                            <button class="btn btn-repeat" type="submit" ng-click="performSimpleQuery(searchBoxQuery)">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </span>
-                </div>
-            </form>
-
-            <!-- /.navbar-top-links -->
+            <!-- dropdown menus -->
             <ul class="nav navbar-nav">
-                <li class="dropdown" uib-dropdown>
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        Browse
-                        <span class="fa fa-caret-down"></span>
-                    </a>
-                    <ul class="uib-dropdown-menu">
-                        <li><a href="#/spectra/browse">Browse Mass Spectra</a></li>
-                        <li><a href="#/compounds">Browse Compounds</a></li>
-                        <li><a href="#/spectra/dbindex">Database Index</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#/spectra/querytree">Query Tree</a></li>
-                        <li><a href="#/spectra/similarity">Similarity Query</a></li>
-                        <li ng-controller="SearchBoxController"><a href="" ng-click="querySpectraDialog()">Advanced Query</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#/upload">Spectrum Upload</a></li>
-                    </ul>
-                </li>
-                <!-- statistics dropdown -->
-                <li class="dropdown" uib-dropdown>
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        Statistics
-                        <span class="fa fa-caret-down"></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-tasks" role="menu">
-                        <li>
-                            <a href="#/uploadstatus">
-                                <div>
-                                    <p><strong>Upload Progress</strong><span class="pull-right text muted">&nbsp;</span></p>
-                                    <spectra-upload-progress-bar></spectra-upload-progress-bar>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#/statistics/query">
-                                <div>
-                                    <p><strong>average query time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                    <statistics timeframe="month" query="search"></statistics>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#/statistics/validation">
-                                <div>
-                                    <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                    <statistics timeframe="month" query="validation"></statistics>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#/statistics/import">
-                                <div>
-                                    <p><strong>average upload time</strong><span class="pull-right text-muted">&nbsp;</span></p>
-                                    <statistics timeframe="month" query="import"></statistics>
-                                </div>
-                            </a>
-                        </li>
-
-                        <li class="divider"></li>
-                        <li>
-                            <a class="text-center" href="#/statistics">
-                                <strong>See All Statistics</strong>
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="dropdown" uib-dropdown>
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        Resources
-                        <span class="fa fa-caret-down"></span>
-                    </a>
-                    <ul class="uib-dropdown-menu">
-                        <li><a href="#/documentation/webservices">Web Services</a></li>
-                        <li><a href="#/documentation/license">License</a></li>
-                        <li><a href="#/documentation/query">REST Service Query</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Using%20authentication%20tokens%20via%20cURL" target="_blank">REST API Authentication</a></li>
-                        <li><a href="#/documentation/terms">Terms and Abbreviations</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/src" target="_blank">Sourcecode</a></li>
-                        <li><a href="http://mona.fiehnlab.ucdavis.edu/repository/">Repository</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/wiki/Home" target="_blank">Wiki</a></li>
-                        <li><a href="https://bitbucket.org/fiehnlab/mona/issues/" target="_blank">Bug Reports / Feature requests</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown" uib-dropdown ng-show="auth.isAdmin()">
-                    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-                        Administration
-                        <span class="fa fa-caret-down"></span>
-                    </a>
-                    <ul class="uib-dropdown-menu">
-                        <li><a href="#/admin/submitters">Manage Submitters</a></li>
-                        <li><a href="#/admin/news">News</a></li>
-                    </ul>
-                </li>
+                <browse-drop-down></browse-drop-down>
+                <stat-drop-down></stat-drop-down>
+                <res-drop-down></res-drop-down>
+                <admin-drop-down></admin-drop-down>
             </ul>
         </div>
     </nav>
@@ -236,6 +104,7 @@
 <script src="bower_components/ng-file-upload-shim/angular-file-upload-shim.js"></script>
 <script src="bower_components/metisMenu/jquery.metisMenu.js"></script>
 <script src="bower_components/paralleljs/lib/parallel.js"></script>
+<script src="bower_components/angular-filter/dist/angular-filter.min.js"></script>
 <!-- endbower -->
 
 <script src="bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js"></script>
@@ -251,6 +120,9 @@
 <script src="scripts/server.js"></script>
 <script src="scripts/routes/routes.js"></script>
 
+<!-- application constants -->
+<script src="scripts/constants.js"></script>
+
 <!-- error handling -->
 <script src="scripts/errors.js"></script>
 
@@ -260,8 +132,9 @@
 <!-- events -->
 <script src="scripts/events.js"></script>
 
-<!-- data caching -->
-<script src="scripts/cache.js"></script>
+<!-- data caching services-->
+<script src="scripts/services/cache/queryCacheService.js"></script>
+<script src="scripts/services/cache/spectrumCacheService.js"></script>
 
 <!-- services -->
 <script src="scripts/services/persistence/submitterService.js"></script>
@@ -270,6 +143,7 @@
 <script src="scripts/services/persistence/spectrumService.js"></script>
 <script src="scripts/services/persistence/compoundsService.js"></script>
 <script src="scripts/services/persistence/metadataService.js"></script>
+<script src="scripts/services/persistence/metadata.js"></script>
 <script src="scripts/services/query/SpectraQueryBuilderService.js"></script>
 <script src="scripts/services/optimization/MetaDataOptimizationService.js"></script>
 <script src="scripts/services/cookie/CookieService.js"></script>
@@ -283,10 +157,14 @@
 <!-- filters -->
 <script src="scripts/filters/curlFilter.js"></script>
 <script src="scripts/filters/spectraDownloadFilter.js"></script>
+<script src="scripts/filters/titleCaseFilter.js"></script>
+<script src="scripts/filters/curlFilter.js"></script>
 
 <!-- controllers -->
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/authentication/authenticationController.js"></script>
+<script src="scripts/controllers/authentication/authenticationModalController.js"></script>
+<script src="scripts/controllers/authentication/registrationModalController.js"></script>
 <script src="scripts/controllers/browser/spectraBrowserController.js"></script>
 <script src="scripts/controllers/browser/spectraDatabaseIndexController.js"></script>
 <script src="scripts/controllers/browser/queryTreeController.js"></script>
@@ -304,22 +182,44 @@
 <script src="scripts/controllers/documentation/DocumentationTermController.js"></script>
 
 <!-- directives -->
-<script src="scripts/directives/submitterFormDirective.js"></script>
+
+
 <script src="scripts/directives/sketcherDirective.js"></script>
 <script src="scripts/directives/autocompleteDirective.js"></script>
 <script src="scripts/directives/disableEnterEventDirective.js"></script>
+
+<script src="scripts/directives/navbar/titleHeaderDirective.js"></script>
+<script src="scripts/directives/navbar/searchBoxDirective.js"></script>
+<script src="scripts/directives/navbar/loginDropDownDirective.js"></script>
+<script src="scripts/directives/navbar/browseDropDownDirective.js"></script>
+<script src="scripts/directives/navbar/adminDropDownDirective.js"></script>
+<script src="scripts/directives/navbar/resourceDropDownDirective.js"></script>
+<script src="scripts/directives/navbar/statisticsDropDownDirective.js"></script>
 <script src="scripts/directives/multiselectDropdown.js"></script>
-<script src="scripts/directives/metadata/tagDirective.js"></script>
-<script src="scripts/directives/metadata/metadataValueDirective.js"></script>
+
+<script src="scripts/directives/metadata/gwMetaEditDirective.js"></script>
+<script src="scripts/directives/metadata/gwMetaQueryDirective.js"></script>
+<script src="scripts/directives/metadata/gwMetaQueryInputDirective.js"></script>
+<script src="scripts/directives/metadata/gwSpectraIdQueryDirective.js"></script>
+<script src="scripts/directives/metadata/gwTagDirective.js"></script>
+<script src="scripts/directives/metadata/gwTagDisplayDirective.js"></script>
+<script src="scripts/directives/metadata/gwValueDirective.js"></script>
+<script src="scripts/directives/metadata/typeaheadFocusDirective.js"></script>
 <script src="scripts/directives/spectra/spectraUploadProgressDirective.js"></script>
 <script src="scripts/directives/compound/displayCompoundDirective.js"></script>
 <script src="scripts/directives/passwordsMatchDirective.js"></script>
 <script src="scripts/directives/query/queryDirective.js"></script>
-<script src="scripts/directives/query/queryPieChart.js"></script>
+<script src="scripts/directives/query/queryLineChartDirective.js"></script>
+<script src="scripts/directives/query/queryPieDirective.js"></script>
+<script src="scripts/directives/query/queryTreeDirective.js"></script>
 <script src="scripts/directives/news/newsDirective.js"></script>
 <script src="scripts/directives/scoring.js"></script>
 <script src="scripts/directives/statisticsDirective.js"></script>
-<script src="scripts/directives/submitter/spectra.js"></script>
+<script src="scripts/directives/submitter/submitterFormDirective.js"></script>
+<script src="scripts/directives/submitter/gwSubmitterQueryDirective.js"></script>
+<script src="scripts/directives/submitter/spectraCountForUserDirective.js"></script>
+<script src="scripts/directives/submitter/spectraScoreForUserDirective.js"></script>
+<script src="scripts/directives/submitter/spectraTopScoresForUsersDirective.js"></script>
 <script src="scripts/directives/spectra/spectraDownloadDirective.js"></script>
 <script src="scripts/directives/spectra/spectraPanelDirective.js"></script>
 
