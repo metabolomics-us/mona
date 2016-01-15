@@ -7,10 +7,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('StatisticsService', StatisticsService);
+      .factory('StatisticsService', statisticsService);
 
     /* @ngInject */
-    function StatisticsService($resource, REST_BACKEND_SERVER, $http) {
+    function statisticsService($resource, REST_BACKEND_SERVER, $http) {
 
         return $resource(
             REST_BACKEND_SERVER + '/rest/statistics/:time',

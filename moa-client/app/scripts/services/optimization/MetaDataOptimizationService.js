@@ -13,10 +13,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .service('MetaDataOptimizationService', MetaDataOptimizationService);
+      .service('MetaDataOptimizationService', metaDataOptimizationService);
 
     /* @ngInject */
-    function MetaDataOptimizationService(ApplicationError, $log, $q, $timeout, $filter) {
+    function metaDataOptimizationService(ApplicationError, $log, $q, $timeout, $filter) {
 
         /**
          * numeric value

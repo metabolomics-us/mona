@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('CleanSpectraDataController', CleanSpectraDataController);
+      .controller('CleanSpectraDataController', cleanSpectraDataController);
 
     /* @ngInject */
-    function CleanSpectraDataController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService,
+    function cleanSpectraDataController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService,
                                         TaggingService, $q, $filter, AsyncService, $log, $timeout) {
         // Loaded spectra data/status
         $scope.spectraLoaded = 0;

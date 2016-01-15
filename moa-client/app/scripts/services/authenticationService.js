@@ -6,10 +6,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .service('AuthenticationService', AuthenticationService);
+      .service('AuthenticationService', authenticationService);
 
     /* @ngInject */
-    function AuthenticationService(Submitter, $q, $http, $resource, $rootScope, CookieService, REST_BACKEND_SERVER) {
+    function authenticationService(Submitter, $q, $http, $resource, $rootScope, CookieService, REST_BACKEND_SERVER) {
         var self = this;
         self.loggingIn = false;
 

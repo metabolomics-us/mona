@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('Spectrum', Spectrum);
+      .factory('Spectrum', spectrum);
 
     /* @ngInject */
-    function Spectrum($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
+    function spectrum($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
 
         /**
          * creates a new resources, we can work with

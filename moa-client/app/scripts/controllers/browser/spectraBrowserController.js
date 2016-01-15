@@ -20,10 +20,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SpectraBrowserController', SpectraBrowserController)
+      .controller('SpectraBrowserController', spectraBrowserController)
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, Compound, $uibModal, $routeParams, SpectraQueryBuilderService,
+    function spectraBrowserController($scope, Spectrum, Compound, $uibModal, $routeParams, SpectraQueryBuilderService,
                                       MetadataService, TaggingService, $log, $location, SpectrumCache, $rootScope, $timeout) {
 
         $scope.table = false;

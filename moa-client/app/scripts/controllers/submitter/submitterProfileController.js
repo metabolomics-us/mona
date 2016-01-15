@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SubmitterProfileController', SubmitterProfileController);
+      .controller('SubmitterProfileController', submitterProfileController);
 
     /* @ngInject */
-    function SubmitterProfileController($scope, $location, AuthenticationService, SpectraQueryBuilderService) {
+    function submitterProfileController($scope, $location, AuthenticationService, SpectraQueryBuilderService) {
         $scope.$on('auth:login-success', function(event, data, status, headers, config) {
             AuthenticationService.getCurrentUser().then(function(data) {
                 $scope.user = data;
