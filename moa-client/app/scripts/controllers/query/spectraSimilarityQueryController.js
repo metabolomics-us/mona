@@ -4,10 +4,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SpectraSimilarityQueryController', SpectraSimilarityQueryController);
+      .controller('SpectraSimilarityQueryController', spectraSimilarityQueryController);
 
     /* @ngInject */
-    function SpectraSimilarityQueryController($scope, $location, UploadLibraryService, SplashService, SpectraQueryBuilderService) {
+    function spectraSimilarityQueryController($scope, $location, UploadLibraryService, SplashService, SpectraQueryBuilderService) {
         $scope.queryState = 0;
         $scope.inputMode = 'upload';
 

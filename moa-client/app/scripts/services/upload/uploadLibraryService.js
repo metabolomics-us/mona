@@ -7,10 +7,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .service('UploadLibraryService', UploadLibraryService);
+      .service('UploadLibraryService', uploadLibraryService);
 
     /* @ngInject */
-    function UploadLibraryService($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService,
+    function uploadLibraryService($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService,
                                   gwChemifyService, AuthenticationService, gwCtsService, $log, $q, $timeout,
                                   gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
         // Representing this service

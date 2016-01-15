@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SpectraUploadController', SpectraUploadController);
+      .controller('SpectraUploadController', spectraUploadController);
 
     /* @ngInject */
-    function SpectraUploadController($scope, $rootScope, $uibModal, AuthenticationService, UploadLibraryService) {
+    function spectraUploadController($scope, $rootScope, $uibModal, AuthenticationService, UploadLibraryService) {
         /**
          * Check whether the user is uploading, and open the upload dialog accordingly
          */

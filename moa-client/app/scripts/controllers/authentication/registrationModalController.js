@@ -1,10 +1,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('RegistrationModalController', RegistrationModalController)
+      .controller('RegistrationModalController', registrationModalController)
 
     /* @ngInject */
-    function RegistrationModalController($scope, $rootScope, $uibModalInstance, Submitter) {
+    function registrationModalController($scope, $rootScope, $uibModalInstance, Submitter) {
         $scope.errors = [];
         $scope.state = 'register';
 

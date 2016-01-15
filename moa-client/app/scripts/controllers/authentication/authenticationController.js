@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('AuthenticationController', AuthenticationController);
+      .controller('AuthenticationController', authenticationController);
 
     /* @ngInject */
-    function AuthenticationController($scope, $rootScope, $uibModal, AuthenticationService) {
+    function authenticationController($scope, $rootScope, $uibModal, AuthenticationService) {
         var ADMIN_ROLE_NAME = 'ROLE_ADMIN';
         var self = this;
 
@@ -77,6 +77,7 @@
          */
         $scope.$on('auth:login-success', function(event, data, status, headers, config) {
             AuthenticationService.getCurrentUser().then(function(data) {
+                console.log(JSON.stringify(data));
                 self.welcomeMessage = 'Welcome, ' + data.firstName + '!';
             });
         });

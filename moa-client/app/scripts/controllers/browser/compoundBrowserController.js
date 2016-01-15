@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('CompoundBrowserController', CompoundBrowserController)
+      .controller('CompoundBrowserController', compoundBrowserController)
 
     /* @ngInject */
-    function CompoundBrowserController($scope, Compound, $location, SpectraQueryBuilderService) {
+    function compoundBrowserController($scope, Compound, $location, SpectraQueryBuilderService) {
         /**
          * contains all local objects
          * @type {Array}
