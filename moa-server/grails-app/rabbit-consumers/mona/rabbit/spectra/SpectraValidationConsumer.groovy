@@ -46,28 +46,21 @@ class SpectraValidationConsumer {
         if (data != null) {
             if (data.containsKey('spectraId')) {
                 long begin = System.currentTimeMillis()
+                boolean result;
 
                 if (data.arguments.bean != null) {
-                    CurationRule rule = Holders.getApplicationContext().getBean(data.arguments.bean as String)
-
-                    log.info("running rule: ${rule.description}")
-
-                    CurationWorkflow workflow = new CurationWorkflow();
-                    workflow.getRules().add(rule)
-                    workflow.runWorkflow(new CurationObject(Spectrum.get(data.spectraId as long)))
+                    result = spectraCurationService.validateSpectrumByBean(data.spectraId as long, data.arguments.bean as String)
                 } else {
-                    boolean result = spectraCurationService.validateSpectra(data.spectraId as long)
+                    result = spectraCurationService.validateSpectra(data.spectraId as long)
+                }
 
-                    long end = System.currentTimeMillis()
+                long end = System.currentTimeMillis()
+                long needed = (end - begin)
 
-                    long needed = (end - begin)
+                log.debug("validated spectra with id: ${data.spectraId}, which took ${needed / 1000}, success: ${result} ")
 
-                    log.debug("validated spectra with id: ${data.spectraId}, which took ${needed / 1000}, success: ${result} ")
-
-
-                    if (score) {
-                        scoringService.score(data.spectraId as long)
-                    }
+                if (score) {
+                    scoringService.score(data.spectraId as long)
                 }
             } else if (data.all) {
                 //get all id's in the system
