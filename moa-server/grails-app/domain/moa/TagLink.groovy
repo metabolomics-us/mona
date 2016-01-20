@@ -1,9 +1,7 @@
 package moa
 
 class TagLink {
-
-    static constraints = {
-    }
+    static constraints = {}
 
     Tag tag
 
@@ -11,6 +9,5 @@ class TagLink {
 
     static mapping = {
         version false
-
     }
 }

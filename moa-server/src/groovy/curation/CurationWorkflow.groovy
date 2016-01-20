@@ -1,5 +1,8 @@
 package curation
 import curation.actions.IgnoreOnFailureAction
+import moa.Spectrum
+import moa.server.UpdateSpectrumTimestampService
+import moa.server.query.SpectraQueryService
 import org.apache.log4j.Logger
 /**
  * workflows are rules them self, so we can chain one workflow to the next and so on
@@ -10,6 +13,9 @@ import org.apache.log4j.Logger
 class CurationWorkflow extends AbstractCurationRule implements Workflow {
 
     Logger logger = Logger.getLogger(getClass())
+
+    UpdateSpectrumTimestampService updateSpectrumTimestampService
+    SpectraQueryService spectraQueryService
 
     /**
      * list of our curation to execute
@@ -23,12 +29,14 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
     def CurationWorkflow() {
         super(new IgnoreOnFailureAction(), new IgnoreOnFailureAction())
     }
-/**
- * runs the complete workflow
- * @param toValidate
- * @return ˜
- */
+
+    /**
+     * runs the complete workflow
+     * @param toValidate
+     * @return ˜
+     */
     final boolean runWorkflow(CurationObject toValidate) {
+        Date startTime = new Date()
 
         if (rules.isEmpty()) {
             throw new Exception("please add at least 1 rule to be executed!")
@@ -46,10 +54,11 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
 
         for (CurationRule rule : rules) {
             long time = System.currentTimeMillis();
+            Date lastUpdated = toValidate.isSupportsMetaDataObject() ? toValidate.getObjectAsSupportsMetaData().lastUpdated : null;
+
             logger.info("STARTED - executing rule: ${rule.getClass().getName()}")
 
             try {
-
                 if(rule.ruleAppliesToObject(toValidate)) {
                     boolean result = rule.executeRule(toValidate)
 
@@ -70,21 +79,24 @@ class CurationWorkflow extends AbstractCurationRule implements Workflow {
                             return false
                         }
                     }
-                }
-                else{
+                } else {
                     logger.debug("rule doesn't apply to this kind of object, so it's valid by default!")
                     return true;
                 }
 
-
+                // Handle updates to compound objects
+                if (toValidate.isCompound() && toValidate.getObjectAsCompound().lastUpdated.after(lastUpdated)) {
+                    updateSpectrumTimestampService.updateSpectrumTimestampsByCompound(toValidate.getObjectAsCompound())
+                }
             }
             catch (Exception e) {
                 throw e;
             }
             finally {
-                logger.info("FINSIHED - executing rule: ${rule.getClass().getName()}, duration:" + ((System.currentTimeMillis() - time)/1000))
+                logger.info("FINSIHED - executing rule: ${rule.getClass().getName()}, duration:" + ((System.currentTimeMillis() - time) / 1000))
             }
         }
+
 
         return determineResultBasedOnWorkflowStatus(workflowResult)
     }
