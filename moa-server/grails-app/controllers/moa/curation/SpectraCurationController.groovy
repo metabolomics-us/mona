@@ -25,11 +25,9 @@ class SpectraCurationController {
      * @param id
      */
     def curate() {
-
         def id = params.id
 
-        FireJobs.fireSpectraCurationJob([spectraId: id as long],params)
-
+        FireJobs.fireSpectraCurationJob([spectraId: id as long], params)
         render(text: "scheduling curation of ${id} succesful!")
     }
 
@@ -49,28 +47,23 @@ class SpectraCurationController {
         render(text: "curating all spectra!")
     }
 
-    def associateAll(){
+    def associateAll() {
         FireJobs.fireSpectraAssociationJob([all: true])
-
         render(text: "associating all spectra!")
     }
 
-    def associate(){
+    def associate() {
         def id = params.id
 
         FireJobs.fireSpectraAssociationJob([spectraId: id as long])
-
         render(text: "scheduling association of ${id} succesful!")
     }
 
-    def associateByQuery(){
-
+    def associateByQuery() {
         def query = request.getJSON().toString()
-
         log.info("received query: ${query}")
 
         FireJobs.fireSpectraAssociationJob([query: query])
-
         render(text: "associating all spectra, by query!")
     }
     /**
@@ -78,11 +71,9 @@ class SpectraCurationController {
      */
     def curateAllByQuery() {
         def query = request.getJSON().toString()
-
         log.info("received query: ${query}")
 
         FireJobs.fireSpectraCurationJob([query: query], params)
-
         render(text: "curating all spectra, by query!")
     }
 }

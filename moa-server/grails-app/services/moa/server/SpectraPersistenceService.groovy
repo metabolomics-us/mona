@@ -57,7 +57,6 @@ class SpectraPersistenceService {
         json = dropIds(json);
 
         Spectrum spectrum = new Spectrum()
-
         spectrum.spectrum = json.spectrum
 
         log.debug("inserting new spectra")
@@ -96,8 +95,7 @@ class SpectraPersistenceService {
 
         double max = 0
 
-        //find our max intensity
-
+        // find our max intensity
         json.spectrum.split(" ").each { s ->
             def i = s.split(":")
 
@@ -110,7 +108,7 @@ class SpectraPersistenceService {
             }
         }
 
-        //calculate relative spectra
+        // calculate relative spectra
         json.spectrum.split(" ").each { s ->
             def i = s.split(":")
 
@@ -129,25 +127,11 @@ class SpectraPersistenceService {
             }
         }
 
-
-
         newsService.spectraCreatedNews(spectrum)
         return spectrum;
 
     }
 
-    /**
-     * generates a correctly implemted metadata set
-     * @param object - object to modify
-     * @parm json - json definition of the metadata
-     * @return
-     */
-
-/**
- * builds our internal compound object
- * @param compound
- * @return
- */
 
     /**
      * removes id objects from the json file, since we can't really reuse them
@@ -172,5 +156,4 @@ class SpectraPersistenceService {
         }
         return json
     }
-
 }
