@@ -12,32 +12,29 @@ import moa.MetaDataValue
  */
 class MetaDataNameCurationRule extends AbstractCurationRule{
 
-    public MetaDataNameCurationRule(){
-
-    }
     /**
      * the required string similarity to automatically correct the name to an ontology value
      */
     double similarityForAutoccuration = 0.95
 
+    public MetaDataNameCurationRule() {}
 
     @Override
     boolean executeRule(CurationObject toValidate) {
-        if(toValidate.isSpectra()){
-
+        if(toValidate.isSpectra()) {
             toValidate.objectAsSpectra.listAvailableValues().each {MetaDataValue m ->
                 checkValue(m)
             }
-        }
-        else if(toValidate.isMetaData()){
+        } else if(toValidate.isMetaData()) {
             checkValue(toValidate.getObjectAsMetaDataValue())
         }
+
         //we always return true
         return true
     }
 
-    private void checkValue(MetaDataValue m){
-          //TODO
+    private void checkValue(MetaDataValue m) {
+        //TODO
     }
 
     @Override

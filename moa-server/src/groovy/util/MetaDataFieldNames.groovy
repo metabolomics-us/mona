@@ -35,15 +35,17 @@ interface MetaDataFieldNames {
 
     static final String SOLVENT = "solvent"
 
-    static final String MOBILE_PHASE_A = "mobile phase a"
+    public static final String MOBILE_PHASE_A = "mobile phase a"
 
-    static final String MOBILE_PHASE_B = "mobile phase b"
+    public static final String MOBILE_PHASE_B = "mobile phase b"
 
-    static final String COLUMN_NAME = "column name"
+    public static final String COLUMN_NAME = "column name"
 
-    static final String PARENT_SCAN = "parentScan"
+    public static final String PARENT_SCAN = "parentScan"
 
     public static final String ACCESSION = "accession"
+
+    public static final String ORIGIN = "origin"
 
     public static final String TMS_TYPE = "tms type"
 

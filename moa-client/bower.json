@@ -30,10 +30,10 @@
     "ng-file-upload": "~1.4.0",
     "ng-file-upload-shim": "~1.4.0",
     "metisMenu": "1.0.1",
-    "paralleljs": "*"
+    "paralleljs": "*",
+    "angular-filter": "~0.5.8"
   },
   "devDependencies": {
-    "angular-mocks": "1.4.8",
     "protractor": "~2.5.1",
     "karma-jasmine": "~0.3.6",
     "jasmine-core": "jasmine#~2.3.4",

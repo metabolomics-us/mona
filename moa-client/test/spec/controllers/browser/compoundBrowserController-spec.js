@@ -1,38 +1,26 @@
 'use strict';
 
 describe('Controller: Compound Browser Controller', function() {
-  beforeEach(module('moaClientApp'), function($httpProvider) {
-    $httpProvider.interceptors.push('moaClientApp');
-  });
+    beforeEach(module('moaClientApp'));
 
-  var scope,cBrowserController,location,httpBackend;
+    var scope, cBrowserController, location;
 
-  beforeEach(inject(function($injector,$controller,$rootScope){
-    scope = $rootScope.$new();
-    httpBackend = $injector.get('$httpBackend');
-    location = $injector.get('$location');
-    cBrowserController = $controller('CompoundBrowserController', {
-      $scope: scope
+    beforeEach(inject(function($injector, $controller, $rootScope) {
+        scope = $rootScope.$new();
+        location = $injector.get('$location');
+        cBrowserController = $controller('CompoundBrowserController', {
+            $scope: scope
+        });
+    }));
+
+    it('shows the currently selected spectra based on inchi key', function() {
+        scope.viewSpectra('1234');
+        expect(location.path()).toBe('/spectra/browse/');
     });
-  }));
 
-  afterEach(function() {
-    httpBackend.verifyNoOutstandingExpectation();
-    httpBackend.verifyNoOutstandingRequest();
-  });
-
-  it('show the currently selected spectra based on inchikey', function() {
-    httpBackend.expectGET('http://cream.fiehnlab.ucdavis.edu:8080/rest/meta/data/?max=100').respond(200);
-    httpBackend.expectGET('views/spectra/browse/spectra.html').respond(200);
-    scope.viewSpectra('testkey');
-    httpBackend.flush();
-    expect(location.path()).toBe('/spectra/browse');
-  });
-
-  it('can load more compounds into view', function() {
-    httpBackend.expectGET('http://cream.fiehnlab.ucdavis.edu:8080/rest/compounds/?max=20&offset=0').respond(200);
-    httpBackend.expectGET('views/main.html').respond(200);
-    scope.loadMoreCompounds();
-    httpBackend.flush();
-  });
+    it('can load more compounds', function() {
+        spyOn(scope, 'loadMoreCompounds').and.callThrough();
+        scope.loadMoreCompounds();
+        expect(scope.loadMoreCompounds).toHaveBeenCalled();
+    });
 });

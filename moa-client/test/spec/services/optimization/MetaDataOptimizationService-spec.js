@@ -19,6 +19,9 @@ describe('service: MetaData Optimization Service', function(){
                   {name: 'Compound Report', category: 'Report'}];
 
   it('returns a promise on a metadata array', function() {
+    metaService.optimizeMetaData(mockData);
     expect(metaService.optimizeMetaData(mockData) instanceof q);
-  })
+  });
+
+
 });

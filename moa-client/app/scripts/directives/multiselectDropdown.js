@@ -1,41 +1,48 @@
-app.directive('multiselectDropdown', function() {
-    return function(scope, element, attributes) {
-        // http://stackoverflow.com/a/21631193
+// TODO: can't locate usage of directive in views or controllers
 
-        element.multiselect({
-            buttonClass: 'btn btn-mini btn-primary',
-            buttonWidth: '150px',
-            buttonContainer: '<div class="btn-group" />',
-            maxHeight: 250,
-            enableFiltering: true,
-            enableCaseInsensitiveFiltering: true,
-            //includeSelectAllOption: true,
+(function() {
+    'use strict';
 
-            buttonText: function(options) {
-                return element.data()['placeholder'] + ' <b class="caret"></b>';
-            },
+    angular.module('moaClientApp')
+      .directive('multiselectDropdown', function() {
+          return function(scope, element, attributes) {
+              // http://stackoverflow.com/a/21631193
 
-            // Replicate the native functionality on the elements so
-            // that angular can handle the changes for us.
-            onChange: function (optionElement, checked) {
-                optionElement.removeAttr('selected');
-                if (checked)
-                    optionElement.prop('selected', 'selected');
-                element.change();
-            }
+              element.multiselect({
+                  buttonClass: 'btn btn-mini btn-primary',
+                  buttonWidth: '150px',
+                  buttonContainer: '<div class="btn-group" />',
+                  maxHeight: 250,
+                  enableFiltering: true,
+                  enableCaseInsensitiveFiltering: true,
+                  //includeSelectAllOption: true,
 
-        });
+                  buttonText: function(options) {
+                      return element.data()['placeholder'] + ' <b class="caret"></b>';
+                  },
 
-        // Watch for any changes to the length of our select element
-        scope.$watch(function () {
-            return element[0].length;
-        }, function () {
-            element.multiselect('rebuild');
-        });
-        
-        // Watch for any changes from outside the directive and refresh
-        scope.$watch(attributes.ngModel, function () {
-            element.multiselect('refresh');
-        });
-    }
-});
+                  // Replicate the native functionality on the elements so
+                  // that angular can handle the changes for us.
+                  onChange: function(optionElement, checked) {
+                      optionElement.removeAttr('selected');
+                      if (checked)
+                          optionElement.prop('selected', 'selected');
+                      element.change();
+                  }
+
+              });
+
+              // Watch for any changes to the length of our select element
+              scope.$watch(function() {
+                  return element[0].length;
+              }, function() {
+                  element.multiselect('rebuild');
+              });
+
+              // Watch for any changes from outside the directive and refresh
+              scope.$watch(attributes.ngModel, function() {
+                  element.multiselect('refresh');
+              });
+          }
+      });
+})();

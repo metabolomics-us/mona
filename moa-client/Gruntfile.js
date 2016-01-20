@@ -1,4 +1,6 @@
 // Generated on 2014-05-28 using generator-angular 0.8.0
+
+
 'use strict';
 
 // # Globbing
@@ -9,9 +11,6 @@
 
 
 module.exports = function (grunt) {
-    grunt.loadNpmTasks('grunt-contrib-compress');
-    grunt.loadNpmTasks('grunt-angular-templates');
-    grunt.loadNpmTasks('grunt-wiredep');
 
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
@@ -240,7 +239,7 @@ module.exports = function (grunt) {
                 flow: {
                     html: {
                         steps: {
-                            js: ['concat', 'uglifyjs'],
+                            js: ['concat'],
                             css: ['cssmin']
                         },
                         post: {}
@@ -322,17 +321,22 @@ module.exports = function (grunt) {
             }
         },
 
-        // ngmin tries to make the code safe for minification automatically by
-        // using the Angular long form for dependency injection. It doesn't work on
-        // things like resolve or inject so those have to be done manually.
-        ngmin: {
+        ngAnnotate: {
             dist: {
-                files: [{
-                    expand: true,
-                    cwd: '.tmp/concat/scripts',
-                    src: '*.js',
-                    dest: '.tmp/concat/scripts'
-                }]
+                options: {
+                    singleQuotes: true
+                },
+                files: {
+                    '<%= yeoman.dist %>/scripts/scripts.js': [
+                        '<%= yeoman.dist %>/scripts/scripts.js'
+                    ]
+                }
+                //files: [{
+                //    expand: true,
+                //    cwd: '.tmp/concat/scripts',
+                //    src: 'scripts.js',
+                //    dest: '.tmp/concat/scripts'
+                //}]
             }
         },
 
@@ -430,15 +434,16 @@ module.exports = function (grunt) {
         //        }
         //    }
         //},
-        //uglify: {
-        //    dist: {
-        //        files: {
-        //            '<%= yeoman.dist %>/scripts/scripts.js': [
-        //                '<%= yeoman.dist %>/scripts/scripts.js'
-        //            ]
-        //        }
-        //    }
-        //},
+
+        // minifies our scripts in the distribution folder
+        uglify: {
+            dist: {
+                files: {
+                    '<%= yeoman.dist %>/scripts/scripts.js': ['<%= yeoman.dist %>/scripts/scripts.js'],
+                    '<%= yeoman.dist %>/scripts/vendor.js': ['<%= yeoman.dist %>/scripts/vendor.js']
+                }
+            }
+        },
         //concat: {
         //    dist: {}
         //},
@@ -466,6 +471,10 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-angular-templates');
+    grunt.loadNpmTasks('grunt-wiredep');
+    grunt.loadNpmTasks('grunt-ng-annotate');
     /**
      * which server do we want to use for our application
      */
@@ -519,7 +528,7 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer',
         'concat',
-        //'ngmin',
+        'ngAnnotate:dist',
         'copy:dist',
         'cdnify',
         'cssmin',
@@ -537,7 +546,7 @@ module.exports = function (grunt) {
     ]);
 
     /**
-     *
+     * distribution task
      */
     grunt.registerTask('dist', [
         'setServer:dist',

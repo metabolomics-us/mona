@@ -29,7 +29,4 @@ describe('Controller: Spectra Query Modal Controller', function() {
     expect(uibModalInstance.close).toHaveBeenCalled();
   });
 
-  it('can filter unique fields', function() {
-    expect(filter('unique')(['test','23434','TEST'],10)).toEqual(['test']);
-  })
 });

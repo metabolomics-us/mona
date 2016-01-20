@@ -1,7 +1,7 @@
 /**
  * Created by wohlgemuth on 7/18/14.
  */
-'use strict';
+
 
 /**
  *
@@ -9,7 +9,14 @@
  *
  * general service to optimize metadata and take care of some formating issues
  */
-app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q, $timeout, $filter) {
+
+(function() {
+    'use strict';
+    angular.module('moaClientApp')
+      .service('MetaDataOptimizationService', MetaDataOptimizationService);
+
+    /* @ngInject */
+    function MetaDataOptimizationService(ApplicationError, $log, $q, $timeout, $filter) {
 
         /**
          * numeric value
@@ -22,27 +29,27 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
          * @param metadata
          * @returns {*}
 
-        function convertRetentionTimeToSeconds(metadata) {
+         function convertRetentionTimeToSeconds(metadata) {
 
             /**
              * regular expression to find regex metadata field
-             * @type {number}
+         * @type {number}
 
-            var regex = /retention[ -_]?time/i;
+         var regex = /retention[ -_]?time/i;
 
-            /**
-             * retetnion with minutes
-             * @type {RegExp}
+         /**
+         * retetnion with minutes
+         * @type {RegExp}
 
-            var regexMinutes = /([0-9]+\.?[0-9]+).*min/;
+         var regexMinutes = /([0-9]+\.?[0-9]+).*min/;
 
-            /**
-             * retention time with seconds
-             * @type {RegExp}
+         /**
+         * retention time with seconds
+         * @type {RegExp}
 
-            var regexSeconds = /([0-9]+\.?[0-9]+).*s/;
+         var regexSeconds = /([0-9]+\.?[0-9]+).*s/;
 
-            if (regex.test(metadata.name)) {
+         if (regex.test(metadata.name)) {
                 if (regexMinutes.test(metadata.value)) {
                     metadata.value = regexMinutes.exec(metadata.value)[1] * 60;
                 }
@@ -63,8 +70,8 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
 
                 metadata.unit = "s";
             }
-            return metadata;
-        }*/
+         return metadata;
+         }*/
 
         /**
          * converts the name and category
@@ -87,7 +94,7 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
          * @param metadata
          * @returns {*}
 
-        function convertUnits(metadata) {
+         function convertUnits(metadata) {
 
             var regexEv = /^\+?(-?[0-9]+\.?[0-9]+).*ev$/i;
             var regexPercent = /^\+?(-?[0-9]+\.?[0-9]*)\s*\%(?:\s\(nominal\)$)?/i;
@@ -150,7 +157,7 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
          * @param metaData
          * @returns {*}
          */
-        this.optimizeMetaData = function (metaData) {
+        this.optimizeMetaData = function(metaData) {
             //$log.debug("optimizing metaData");
             var deferred = $q.defer();
 
@@ -165,7 +172,7 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
                 //object = convertRetentionTimeToSeconds(object);
                 //object = convertUnits(object);
 
-                if (object != null) {
+                if (object !== null) {
                     result.push(object);
                 }
             }
@@ -178,4 +185,4 @@ app.service('MetaDataOptimizationService', function (ApplicationError, $log, $q,
             return deferred.promise;
         };
     }
-);
+})();

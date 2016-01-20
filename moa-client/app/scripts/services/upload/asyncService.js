@@ -4,77 +4,84 @@
  * Created by wohlgemuth on 7/17/14.
  */
 
-app.service('AsyncService', function (ApplicationError, $log, $q, $interval) {
+(function() {
+    'use strict';
+    angular.module('moaClientApp')
+      .service('AsyncService', AsyncService);
 
-    var runningTasks = 0;
+    /* @ngInject */
+    function AsyncService(ApplicationError, $log, $q, $interval) {
 
-    //firefox allows max 6,
-    var maxRunningTasks = 4;
+        var runningTasks = 0;
 
-    var pool = [];
+        //firefox allows max 6,
+        var maxRunningTasks = 4;
 
-    var poolRate = 200;
+        var pool = [];
 
-    var timeout = null;
+        var poolRate = 200;
 
-    /**
-     * adds a function, which takes one argument and our obect to the pool
-     * @param runMe
-     * @param executeFunction
-     */
-    this.addToPool = function (executeFunction, data) {
-        pool.push({execute: executeFunction, data: data});
+        var timeout = null;
 
-        if(timeout == null){
-            this.startPool();
-        }
-    };
+        /**
+         * adds a function, which takes one argument and our obect to the pool
+         * @param runMe
+         * @param executeFunction
+         */
+        this.addToPool = function(executeFunction, data) {
+            pool.push({execute: executeFunction, data: data});
 
-    this.startPool = function () {
-
-        $log.info("starting pool and waiting for jobs");
-
-        //works over the pool
-        var handlePool = function () {
-            if (runningTasks < maxRunningTasks) {
-                for (var i = 0; i < maxRunningTasks; i++) {
-                    if (angular.isDefined(pool)) {
-                        if (pool.length > 0) {
-                            runningTasks = runningTasks + 1;
-
-                            var object = pool.pop();
-
-                            object.execute(object.data).then(function (data) {
-                                runningTasks--;
-                            }).catch(function (error) {
-                                runningTasks--;
-                            });
-
-                        }
-                    }
-                }
-            }
-            else if(pool.length == 0){
-                //stop the interval to save resources
-                $interval.cancel(timeout);
-                timeout = null;
-            }
-            else{
-                $log.debug("waiting for running tasks to finish (" + runningTasks + ")");
+            if (timeout === null) {
+                this.startPool();
             }
         };
 
-        //start the pull as interval
+        this.startPool = function() {
 
-        timeout = $interval(handlePool, poolRate);
-    };
+            $log.info("starting pool and waiting for jobs");
 
-    this.hasPooledTasks = function() {
-        return pool.length > 0;
-    };
+            //works over the pool
+            var handlePool = function() {
+                if (runningTasks < maxRunningTasks) {
+                    for (var i = 0; i < maxRunningTasks; i++) {
+                        if (angular.isDefined(pool)) {
+                            if (pool.length > 0) {
+                                runningTasks = runningTasks + 1;
 
-    this.resetPool = function() {
-        pool = [];
-        timeout = null;
+                                var object = pool.pop();
+
+                                object.execute(object.data).then(function(data) {
+                                    runningTasks--;
+                                }).catch(function(error) {
+                                    runningTasks--;
+                                });
+
+                            }
+                        }
+                    }
+                }
+                else if (pool.length === 0) {
+                    //stop the interval to save resources
+                    $interval.cancel(timeout);
+                    timeout = null;
+                }
+                else {
+                    $log.debug("waiting for running tasks to finish (" + runningTasks + ")");
+                }
+            };
+
+            //start the pull as interval
+
+            timeout = $interval(handlePool, poolRate);
+        };
+
+        this.hasPooledTasks = function() {
+            return pool.length > 0;
+        };
+
+        this.resetPool = function() {
+            pool = [];
+            timeout = null;
+        }
     }
-});
+})();
