@@ -3,4 +3,5 @@
  *
  * where can we find our rest connections
  */
-app.constant('REST_BACKEND_SERVER', 'http://cream.fiehnlab.ucdavis.edu:9292/mona.fiehnlab.ucdavis.edu');
+
+app.constant('REST_BACKEND_SERVER', 'http://mona.fiehnlab.ucdavis.edu');
