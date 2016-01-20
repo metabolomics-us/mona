@@ -21,14 +21,11 @@ class TagService {
 
         //avoids duplicated tagging
         if (TagLink.findByTagAndOwner(tag, meta) == null) {
-
             TagLink link = new TagLink()
             link.owner = meta
             link.tag = tag
-
             link.save()
         }
-
     }
 
     /**
@@ -37,8 +34,6 @@ class TagService {
      * @param meta
      */
     def removeTagFrom(String tagName, SupportsMetaData owner) {
-
-
         Tag tag = Tag.findOrSaveByText(tagName/*, [lock: true]*/)
 
         def links = TagLink.findAllByOwnerAndTag(owner, tag);
@@ -59,5 +54,4 @@ class TagService {
         link.tag.removeFromLinks(link)
         link.delete()
     }
-
 }

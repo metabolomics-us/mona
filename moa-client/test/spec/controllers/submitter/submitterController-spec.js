@@ -42,8 +42,6 @@ describe('Controllers: Submitter Controller', function() {
     httpBackend.expectGET('views/main.html').respond(200);
     scope.submitters = [{id:1},{id:2}];
     scope.remove(1);
-    //scope.submitters.splice(1,1);
-    console.log(scope.submitters);
     httpBackend.flush();
   });
 

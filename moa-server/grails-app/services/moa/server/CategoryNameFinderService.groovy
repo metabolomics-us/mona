@@ -23,7 +23,7 @@ class CategoryNameFinderService {
             name = MetaDataCategory.DEFAULT_CATEGORY_NAME
         }
 
-        category = MetaDataCategory.findByName(name, /*[lock: true]*/)
+        category = MetaDataCategory.findByName(name/*, [lock: true]*/)
 
         //create a new category if it doesn't exit
         if (category == null) {

@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import grails.converters.JSON
 import grails.transaction.Transactional
 import groovy.sql.Sql
+import groovy.time.TimeCategory
 import moa.Spectrum
 import moa.Tag
 import moa.server.statistics.StatisticsService
@@ -103,6 +104,19 @@ class SpectraQueryService {
 
         statisticsService.acquire(System.currentTimeMillis() - begin, "similarity search", "search duration", "search")
         return resultList
+    }
+
+    /**
+     * returns a list of recently updated spectra
+     * @param lastUpdated
+     */
+    def findIdsBylastUpdated(Date lastUpdated) {
+        use(TimeCategory) {
+            // Take into account issues with lastUpdated times being set before starting the curation task
+            def timestamp = (lastUpdated - 30.seconds).toTimestamp().toString()
+
+            return Spectrum.executeQuery("SELECT s.id FROM Spectrum s, SupportsMetaData m WHERE s.id = m.id AND m.lastUpdated > '$timestamp'")
+        }
     }
 
     /**
@@ -227,19 +241,19 @@ class SpectraQueryService {
         executionParams.put("deleted", new Boolean(false))
 
         (where, joins, fields, orderBy, group, having) = handleJsonSpectraData(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonCompoundField(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleSpectraJsonMetadataFields(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonTagsField(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonSubmitterField(json, where, joins, executionParams, fields, orderBy, group, having)
-        debugModification(joins, fields, orderBy, group, having, where,executionParams)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         //working on the ordering
         if (orderBy.length() > 0) {
@@ -627,7 +641,7 @@ class SpectraQueryService {
                         queryOfDoomJoins += " inner join cmd_${index}.category as cmdc_${index}"
 
 
-                        (queryOfDoomWhere,executionParams) = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "cmd_${index}", "cmdv_${index}", "cmdc_${index}", index,"compound")
+                        (queryOfDoomWhere, executionParams) = metaDataQueryService.buildMetadataQueryString(queryOfDoomWhere, current, executionParams, "cmd_${index}", "cmdv_${index}", "cmdc_${index}", index,"compound")
 
                     }
                 }
@@ -660,11 +674,14 @@ class SpectraQueryService {
      * update json:
      *
      *
-     *{*     update:{*         tags:[
-     *              tagName //to add a new tagname
-     *              -tagName //to remove this tagname
+     * {
+     *     update: {
+     *         tags: [
+     *              tagName, // to add a new tag name
+     *              -tagName // to remove this tag name
      *          ]
-     *}*}* }
+     *     }
+     * }
      * @param json
      */
     def update(queryContent, update) {

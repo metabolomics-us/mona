@@ -10,7 +10,7 @@ class UpdatePredefinedQueryJob {
 
     def group = "update"
 
-    def description = "schedules repository dumps"
+    def description = "schedules an update to the spectrum counts for all predefined queries"
 
     static triggers = {
         cron name: 'updateQueryCounts', cronExpression: '0 0 0 * * ?', priority: 10

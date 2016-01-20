@@ -1,3 +1,6 @@
+// Our Test requires httpBackEnd Calls because our controllers are making http calls to our REST SERVER.
+// Solution is to abstract the http calls to a service
+
 'use strict';
 
 describe('Controller: Spectra Database Index Controller', function() {

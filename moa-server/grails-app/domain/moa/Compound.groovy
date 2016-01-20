@@ -3,9 +3,7 @@ package moa
 import util.chemical.CompoundType
 
 class Compound extends SupportsMetaData {
-
-    Date dateCreated
-    Date lastUpdated
+    def updateSpectrumTimestampService
 
     static constraints = {
         inchiKey unique: true, nullable: false
@@ -50,10 +48,4 @@ class Compound extends SupportsMetaData {
      * associated inchi code
      */
     String inchi
-
-    /**
-     * type of the compound
-     */
-  //  String type
-
 }
