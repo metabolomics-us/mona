@@ -24,7 +24,7 @@ class WebhookService {
         }
     }
 
-    private def postData(String url, long id, Date timestamp) {
+    def postData(String url, long id, Date timestamp) {
         log.info("Sending webook request to $url")
 
         def http = new HTTPBuilder(url)

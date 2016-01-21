@@ -190,7 +190,7 @@ class UrlMappings {
 
         "/rest/spectra/curateAll"(controller: 'spectraCuration', action: 'curateAll')
 
-        "/rest/curate/spectra/curateAllByQuery"(controller: 'spectraCuration',action:  'curateAllByQuery')
+        "/rest/curate/spectra/curateAllByQuery"(controller: 'spectraCuration', action: 'curateAllByQuery')
 
 
         /**
@@ -246,19 +246,26 @@ class UrlMappings {
 
         "/rest/statistics/jobs/pending"(controller: 'statistics', action: 'statisticsForPendingJobs')
 
+
         /**
          * news related items
          */
-        "/rest/news"(resources: 'News')
+        "/rest/news" (resources: 'News')
 
-        "/rest/news/query/announcements"(controller: 'news', action: 'listAnnouncements')
+        "/rest/news/query/announcements" (controller: 'news', action: 'listAnnouncements')
 
-        "/rest/news/query/notifications"(controller: 'news', action: 'listNotifications')
+        "/rest/news/query/notifications" (controller: 'news', action: 'listNotifications')
 
-        "/rest/news/query/uploads"(controller: 'news',
-                action: 'listUploads')
-        "/rest/news/query/milestones"(controller: 'news',
-                action: 'listMilestones')
+        "/rest/news/query/uploads" (controller: 'news', action: 'listUploads')
+
+        "/rest/news/query/milestones" (controller: 'news', action: 'listMilestones')
+
+
+        /**
+         * webhooks
+         */
+        "/rest/webhooks/gnps/$id/$event?" (controller: 'webhook', action: 'gnpsUpdate')
+
 
         /**
          * TODO ALL DEPRECATED!!!!
