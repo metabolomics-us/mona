@@ -9,8 +9,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Spectrum {{spectrum.id}} for
-                        {{spectrum.biologicalCompound.names[0].name}}</h3>
+                    <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.biologicalCompound.names[0].name}}</h3>
                 </div>
 
                 <div class="panel-body">
@@ -28,7 +27,7 @@
                             <div class="panel top17 panel-default" ng-show="spectrum.score">
                                 <div class="panel-heading">
                                     Explanation for the score of {{spectrum.score.score | number
-                                    :4}}/({{spectrum.score.scaledScore | number :1}} stars
+                                    :4}}/{{spectrum.score.scaledScore | number :1}} stars
                                 </div>
                                 <div class="panel-body">
                                     Green elements show that this had a positive impact, while red elements display a
@@ -57,7 +56,18 @@
                         </div>
                     </div>
 
-                    <div class="row top17">
+                    <div class="row top5">
+                        <div class="col-md-12">
+                            <ul class="list-unstyled">
+                                <li><div class="h5" ng-bind-html="origin"></div></li>
+                                <li><div class="h5" ng-bind-html="authors"></div></li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row top5">
                         <div ng-show="spectrum.tags.length" class="col-md-8">
                             <ul class="list-inline">
                                 <li ng-repeat="tag in spectrum.tags">
@@ -75,7 +85,7 @@
                         <div class="col-md-12">
                             <ul class="list-inline">
                                 <li>
-                                    <div class="h5">Hash: <span gw-spectra-id-query value="spectrum">{{spectrum.hash}}</span></div>
+                                    <div class="h5">Splash: <span gw-spectra-id-query value="spectrum">{{spectrum.hash}}</span></div>
                                 </li>
                                 <li>
                                     <div class="h5">
@@ -126,8 +136,8 @@
                                             </thead>
                                             <tbody>
                                             <tr ng-repeat="ion in massSpec | orderBy:ionTableSort:ionTableSortReverse">
-                                                <td>{{ion.ion | number : 4}}</td>
-                                                <td>{{ion.intensity | number : 4}}</td>
+                                                <td>{{ion.ion | number : 6}}</td>
+                                                <td>{{ion.intensity | number : 6}}</td>
                                                 <td>
                                                     {{ion.annotation}}
 

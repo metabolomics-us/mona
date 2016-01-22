@@ -275,7 +275,6 @@ beans {
                 generateHashKeyRule,
                 dropNoneWantedMetaDataRule,
                 remapMetadataNames,
-                removeTinyIonRule,
                 lcmsSpectraIdentification,
                 gcmsSpectraIdentification,
                 calculateMassAccuracyRule,
