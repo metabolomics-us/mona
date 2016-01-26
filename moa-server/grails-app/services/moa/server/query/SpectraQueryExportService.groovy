@@ -138,14 +138,18 @@ class SpectraQueryExportService {
                 writer.append("[\n")
             }
 
+            boolean firstSpectrum = true;
+
             for (int i = 0; i < queryCount; i += QUERY_SIZE) {
                 def result = spectraQueryService.query(json, QUERY_SIZE, i)
 
                 for (Spectrum s : result) {
                     if (format == "json") {
                         // Append comma and newline
-                        if (i > 0) {
+                        if (!firstSpectrum) {
                             writer.append(",\n")
+                        } else {
+                            firstSpectrum = false;
                         }
 
                         writer.append((s as JSON).toString())
