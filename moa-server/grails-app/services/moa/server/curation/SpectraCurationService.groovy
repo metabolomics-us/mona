@@ -56,6 +56,7 @@ class SpectraCurationService {
         boolean result;
 
         if (spectrum) {
+            // If no bean is specified, run the full workflow
             if (bean == null) {
                 log.info("starting curation for: ${spectraCurationWorkflow}")
 
