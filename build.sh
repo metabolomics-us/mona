@@ -1,4 +1,5 @@
 #!/bin/bash
+echo compiling on host $HOSTNAME
 
 #simple build file for our docker image of the latest version
 
@@ -23,7 +24,7 @@ then
 fi
 
 #assmeble docker file
-if [ "$HOSTNAME" == "trashcan.fiehnlab.ucdavis.edu" ]
+if [ "$HOSTNAME" == "trashcan.genomecenter.ucdavis.edu" ]
 then
   eval "$(docker-machine env cloud)"
 fi
@@ -35,15 +36,13 @@ cp ../../moa-client/mona-client.zip client.zip
 
 bash build.sh push
 
-if [ "$HOSTNAME" == "trashcan.fiehnlab.ucdavis.edu" ]
+if [ "$HOSTNAME" == "trashcan.genomecenter.ucdavis.edu" ]
 then
+	echo "building cloud configuration"
   cd ../cloud
 
   cp ../../moa-server/target/mona-server.war root.war
   cp ../../moa-client/mona-client.zip client.zip
-
-  $(boot2docker shellinit)
-
   bash build.sh push
 fi
 
