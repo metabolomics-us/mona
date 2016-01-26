@@ -119,7 +119,7 @@ class SpectraPersistenceService {
                 if (mass > 0 && intensity > 0) {
                     Ion ion = new Ion()
                     ion.spectrum = spectrum
-                    ion.intensity = intensity/max
+                    ion.intensity = intensity / max
                     ion.mass = mass
 
                     ion.save()

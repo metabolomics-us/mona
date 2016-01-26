@@ -88,7 +88,7 @@ class SpectraQueryService {
         long begin = System.currentTimeMillis()
         def resultList = []
 
-        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block2,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ?  limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
+        sql.eachRow("SELECT spectrum_id AS id, calculatesimilarity(?,spectrum_id) AS similarity FROM splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block2,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ?  limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
             def hit = [:]
             hit.id = row.id
             hit.similarity = row.similarity
@@ -607,8 +607,8 @@ class SpectraQueryService {
             //if we have an inchi key
             if (json.compound.inchiKey) {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
-                queryOfDoomWhere += "("
 
+                queryOfDoomWhere += "("
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "co")
                 queryOfDoomWhere += ")"
 
@@ -619,9 +619,7 @@ class SpectraQueryService {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 queryOfDoomWhere += "("
-
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "co")
-
                 queryOfDoomWhere += ")"
             }
 
