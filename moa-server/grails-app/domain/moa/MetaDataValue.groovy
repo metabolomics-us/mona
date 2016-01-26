@@ -2,6 +2,7 @@ package moa
 
 import curation.scoring.Scoreable
 import moa.scoring.Score
+import moa.server.UpdateSpectrumTimestampService
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,6 +11,7 @@ import moa.scoring.Score
  * Time: 4:44 PM
  */
 class MetaDataValue implements Scoreable {
+    def updateSpectrumTimestampService
 
     Date dateCreated
     Date lastUpdated
@@ -107,11 +109,11 @@ class MetaDataValue implements Scoreable {
         return metaData?.category?.name
     }
 
-    public String getMetaDataId(){
+    public String getMetaDataId() {
         return metaData?.id
     }
 
-    public boolean getHidden(){
+    public boolean getHidden() {
         return metaData?.hidden
     }
 
@@ -124,5 +126,21 @@ class MetaDataValue implements Scoreable {
                 "value=" + value +
                 ", metaData=" + metaData +
                 '}';
+    }
+
+
+    def afterInsert() {
+        updateSpectrumTimestampService.updateTimestampByMetaData(this)
+    }
+
+    def afterUpdate() {
+        updateSpectrumTimestampService.updateTimestampByMetaData(this)
+    }
+
+    def afterDelete() {
+        // Mark owner as updated only if removing now
+        if (!deleted) {
+            updateSpectrumTimestampService.updateTimestampByMetaData(this)
+        }
     }
 }

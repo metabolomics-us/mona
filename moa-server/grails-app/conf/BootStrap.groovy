@@ -18,9 +18,7 @@ class BootStrap {
     def sessionFactory
 
     def init = { servletContext ->
-
         def session = sessionFactory.currentSession
-
         //session.setFlushMode(FlushMode.COMMIT)
 
         log.info("Setting up users and marshallers...")

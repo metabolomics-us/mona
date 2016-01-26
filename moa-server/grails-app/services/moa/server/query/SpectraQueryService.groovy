@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import grails.converters.JSON
 import grails.transaction.Transactional
 import groovy.sql.Sql
+import groovy.time.TimeCategory
 import moa.Spectrum
 import moa.Tag
 import moa.server.statistics.StatisticsService
@@ -103,6 +104,19 @@ class SpectraQueryService {
 
         statisticsService.acquire(System.currentTimeMillis() - begin, "similarity search", "search duration", "search")
         return resultList
+    }
+
+    /**
+     * returns a list of recently updated spectra
+     * @param lastUpdated
+     */
+    def findIdsBylastUpdated(Date lastUpdated) {
+        use(TimeCategory) {
+            // Take into account issues with lastUpdated times being set before starting the curation task
+            def timestamp = (lastUpdated - 30.seconds).toTimestamp().toString()
+
+            return Spectrum.executeQuery("SELECT s.id FROM Spectrum s, SupportsMetaData m WHERE s.id = m.id AND m.lastUpdated > '$timestamp'")
+        }
     }
 
     /**

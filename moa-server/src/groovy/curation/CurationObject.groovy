@@ -20,27 +20,27 @@ final class CurationObject {
         this.object = object
     }
 
-    boolean isSpectra(){
+    boolean isSpectra() {
         return object instanceof Spectrum
     }
 
-    boolean isMetaData(){
+    boolean isMetaData() {
         return object instanceof MetaDataValue
     }
 
-    boolean isCompound(){
+    boolean isCompound() {
         return object instanceof Compound
     }
 
-    boolean isSupportsMetaDataObject(){
+    boolean isSupportsMetaDataObject() {
         return  object instanceof SupportsMetaData
     }
 
-    boolean isScoreable(){
+    boolean isScoreable() {
         object instanceof Scoreable
     }
 
-    void refreshObject(){
+    void refreshObject() {
 
         this.object = this.object.get(this.object.id)
     }
@@ -49,7 +49,7 @@ final class CurationObject {
      * provides us with the spectrum object
      * @return
      */
-    Spectrum getObjectAsSpectra(){
+    Spectrum getObjectAsSpectra() {
         return object as Spectrum
     }
 
@@ -57,7 +57,7 @@ final class CurationObject {
      * a scorable instance of an object
      * @return
      */
-    Scoreable getObjectAsScoreable(){
+    Scoreable getObjectAsScoreable() {
         return object as Scoreable
     }
     /**
