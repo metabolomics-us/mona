@@ -6,7 +6,7 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('typeaheadFocus', typeaheadFocus)
+        .directive('typeaheadFocus', typeaheadFocus)
 
     function typeaheadFocus() {
         var directive = {

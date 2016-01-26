@@ -5,22 +5,22 @@ import moa.Submitter
 
 class SubmitterController extends RestfulController {
 
-	static responseFormats = ['json']
+    static responseFormats = ['json']
 
     public SubmitterController() {
-		super(Submitter)
-	}
+        super(Submitter)
+    }
 
-	/**
-	 * otherwise grails won't populate the json fields
-	 * @return
-	 */
-	@Override
-	protected Map getParametersToBind() {
-		if (request.JSON) {
-			params.putAll(request.JSON)
-		}
+    /**
+     * otherwise grails won't populate the json fields
+     * @return
+     */
+    @Override
+    protected Map getParametersToBind() {
+        if (request.JSON) {
+            params.putAll(request.JSON)
+        }
 
         params
-	}
+    }
 }
