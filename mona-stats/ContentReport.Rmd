@@ -318,7 +318,7 @@ from
 
 
 ```{r,echo=FALSE,fig.width=5, fig.height=3, fig.align='center'}
-qplot(data=experimentalVsPredictedSpectraReport,x=experimentalVsPredictedSpectraReport$database,y=experimentalVsPredictedSpectraReport$count,geom="bar",stat="identity",xlab="type of spectra",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ coord_flip()
+ggplot(data=experimentalVsPredictedSpectraReport,x=experimentalVsPredictedSpectraReport$database,y=experimentalVsPredictedSpectraReport$count,geom="bar",stat="identity",xlab="type of spectra",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ coord_flip()
 ```
 
 Sadly this information, was not provided for every available spectrum in the system.
@@ -364,7 +364,7 @@ spectraCountForDatabases = sqldf(qr)
 Since MoNA was designed a system holding millions of spectra, we successfully integrated several external databases. This includes databases like $`r listOfExternalDatabases`$ and others. 
 
 ```{r,echo=FALSE,fig.width=5, fig.height=2.5, fig.align='center'}
-qplot(data=spectraCountForDatabases,x=spectraCountForDatabases$database,y=spectraCountForDatabases$count,geom="bar",stat="identity",xlab="origin",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggplot(data=spectraCountForDatabases,x=spectraCountForDatabases$database,y=spectraCountForDatabases$count,geom="bar",stat="identity",xlab="origin",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 ```{r,echo=FALSE,fig.width=5, fig.height=3, fig.align='center'}
@@ -504,7 +504,7 @@ from
 
 ```{r,echo=FALSE, fig.width=7,fig.height=3}
 
-qplot(data=duplicatedSpectraReport,x=c('total','uniquespectra','duplicated'),y=c(duplicatedSpectraReport$total,duplicatedSpectraReport$uniquespectra,duplicatedSpectraReport$duplicated),geom="bar",stat="identity",xlab="spectra",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+ggplot(data=duplicatedSpectraReport,x=c('total','uniquespectra','duplicated'),y=c(duplicatedSpectraReport$total,duplicatedSpectraReport$uniquespectra,duplicatedSpectraReport$duplicated),geom="bar",stat="identity",xlab="spectra",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   coord_flip()
 
 ```
@@ -632,7 +632,7 @@ from
 
 
 ```{r,echo=FALSE,fig.width=7, fig.height=4, fig.align='center'}
-qplot(data=aquistionMethodReport,x=aquistionMethodReport$method,y=aquistionMethodReport$count,geom="bar",stat="identity",xlab="aquisition method",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ coord_flip()
+ggplot(data=aquistionMethodReport,x=aquistionMethodReport$method,y=aquistionMethodReport$count,geom="bar",stat="identity",xlab="aquisition method",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1))+ coord_flip()
 ```
 
 
@@ -721,7 +721,7 @@ from
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=4, fig.align='center'}
-qplot(data=msLevelTypeReport,x=msLevelTypeReport$value,y=msLevelTypeReport$count,geom="bar",stat="identity",xlab="MS Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(data=msLevelTypeReport,x=msLevelTypeReport$value,y=msLevelTypeReport$count,geom="bar",stat="identity",xlab="MS Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ### Ion Mode
@@ -809,7 +809,7 @@ from
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=4, fig.align='center'}
-qplot(data=ionModeReport,x=ionModeReport$value,y=ionModeReport$count,geom="bar",stat="identity",xlab="Ion Mode",ylab="count of spectra") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(data=ionModeReport,x=ionModeReport$value,y=ionModeReport$count,geom="bar",stat="identity",xlab="Ion Mode",ylab="count of spectra") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ### Precursor Types
@@ -823,7 +823,7 @@ precursorTypeReport = sqldf("
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
-qplot(data=precursorTypeReport,x=precursorTypeReport$value,y=precursorTypeReport$count,geom="bar",stat="identity",xlab="Precursor Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(data=precursorTypeReport,x=precursorTypeReport$value,y=precursorTypeReport$count,geom="bar",stat="identity",xlab="Precursor Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ### Derivatisation
@@ -841,7 +841,7 @@ derivativeTypeReport = sqldf("
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
-qplot(data=derivativeTypeReport,x=derivativeTypeReport$value,y=derivativeTypeReport$count,geom="bar",stat="identity",xlab="Derivative Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(data=derivativeTypeReport,x=derivativeTypeReport$value,y=derivativeTypeReport$count,geom="bar",stat="identity",xlab="Derivative Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 
@@ -855,7 +855,7 @@ instrumentTypeReport = sqldf("
 ```
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
-qplot(data=instrumentTypeReport,x=instrumentTypeReport$value,y=instrumentTypeReport$count,geom="bar",stat="identity",xlab="Instrument Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(data=instrumentTypeReport,x=instrumentTypeReport$value,y=instrumentTypeReport$count,geom="bar",stat="identity",xlab="Instrument Type",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 ## Usage of Labels and Tags
@@ -870,7 +870,7 @@ select count(*) as count ,text as value from tag a, tag_link b, splash d where a
 
 
 ```{r,echo=FALSE,fig.width=7, fig.height=8, fig.align='center'}
-qplot(data=tagsDistribtution,x=tagsDistribtution$value,y=tagsDistribtution$count,geom="bar",stat="identity",xlab="Tag/Label",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(data=tagsDistribtution,x=tagsDistribtution$value,y=tagsDistribtution$count,geom="bar",stat="identity",xlab="Tag/Label",ylab="count of spectra") + theme_bw()+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 ```
 
 
@@ -1102,13 +1102,13 @@ metaDataTypeReport = sqldf("
 
 ```{r,echo=FALSE,fig.width=8, fig.height=10, fig.align='center'}
 
-qplot(data=split(metaDataTypeReport,1:2)[[1]],x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
+ggplot(data=split(metaDataTypeReport,1:2)[[1]],x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()
 
 ```
 
 ```{r,echo=FALSE,fig.width=8, fig.height=10, fig.align='center'}
 
-qplot(data=split(metaDataTypeReport,1:2)[[2]],x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()+ theme(axis.ticks = element_blank())
+ggplot(data=split(metaDataTypeReport,1:2)[[2]],x=name,y=count,geom="bar",stat="identity",xlab="Meta Data Type",ylab="count of values", fill=type)+ theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + coord_flip()+ theme(axis.ticks = element_blank())
 
 ```
 
