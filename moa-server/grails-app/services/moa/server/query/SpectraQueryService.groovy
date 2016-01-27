@@ -235,7 +235,7 @@ class SpectraQueryService {
 
         executionParams.put("deleted", new Boolean(false))
 
-        (where, joins, fields, orderBy, group, having) = handleJsonLastUpdatedData(json, where, joins, executionParams, fields, orderBy, group, having)
+        (where, joins, fields, orderBy, group, having) = handleJsonLastUpdatedField(json, where, joins, executionParams, fields, orderBy, group, having)
         debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         (where, joins, fields, orderBy, group, having) = handleJsonSpectraData(json, where, joins, executionParams, fields, orderBy, group, having)
@@ -299,7 +299,7 @@ class SpectraQueryService {
      * works on the json lastUpdated data and creates a query based on a timestamp
      *
      */
-    private List handleJsonLastpdatedData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
+    private List handleJsonLastUpdatedField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
         // check that the last updated field exists and that it matches the postgres timestamp format
         if (json.lastUpdated && json.lastUpdated ==~ /\d{4}-\d{1,2}-\d{1,2}( \d{2}:\d{2}(:\d{2}(\.\d{3})?)?)?/) {
             queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
