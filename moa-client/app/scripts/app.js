@@ -25,18 +25,20 @@
         'angularMasspecPlotter',
         'infinite-scroll',
         'mgcrea.bootstrap.affix',
-        'pascalprecht.translate'
+        'pascalprecht.translate',
+        'viewhead'
     ])
 
         /**
          * HTTP configuration
          */
         /* @ngInject */
-        .config(function($httpProvider) {
+        .config(function($httpProvider,$locationProvider) {
             // Enable cross domain access
             $httpProvider.defaults.useXDomain = true;
             delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
+            $locationProvider.html5Mode(true);
             // Interceptor to handle 500 errors
             //$httpProvider.interceptors.push('httpResponseInterceptor');
         })
