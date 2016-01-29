@@ -10,11 +10,16 @@
 // 'test/spec/**/*.js'
 
 
+
 module.exports = function (grunt) {
 
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
 
+    // for grunt:serve to rewrite URLS and use HTML5 form
+    var serveStatic = require('serve-static');
+    var pushState = require('grunt-connect-pushstate/lib/utils').pushState;
+    var modRewrite = require('connect-modrewrite');
 
     // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
@@ -74,6 +79,7 @@ module.exports = function (grunt) {
                 // Change this to '0.0.0.0' to access the server from outside.
                 hostname: '0.0.0.0',
                 livereload: 35729
+
             },
             livereload: {
                 options: {
@@ -81,7 +87,15 @@ module.exports = function (grunt) {
                     base: [
                         '.tmp',
                         '<%= yeoman.app %>'
-                    ]
+                    ],
+                    middleware: function(connect,options) {
+                        return [
+                            modRewrite(['^[^\\.]*$ /index.html [L]']),
+                            pushState(),
+                            serveStatic('.tmp'),
+                            connect().use('/bower_components',serveStatic('bower_components')),
+                            serveStatic(options.base[1])];
+                    }
                 }
             },
             test: {
