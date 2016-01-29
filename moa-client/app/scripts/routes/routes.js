@@ -162,7 +162,6 @@
                 controller: 'SubmitterController'
             })
 
-
             .when('/documentation/license', {
                 templateUrl: 'views/documentation/license.html'
             })

@@ -35,8 +35,8 @@
         /* @ngInject */
         .config(function($httpProvider,$locationProvider) {
             // Enable cross domain access
-            $httpProvider.defaults.useXDomain = true;
-            delete $httpProvider.defaults.headers.common['X-Requested-With'];
+            //$httpProvider.defaults.useXDomain = true;
+            //delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
             $locationProvider.html5Mode(true);
             // Interceptor to handle 500 errors
