@@ -38,7 +38,7 @@
             //$httpProvider.defaults.useXDomain = true;
             //delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
-            $locationProvider.html5Mode(true);
+
             // Interceptor to handle 500 errors
             //$httpProvider.interceptors.push('httpResponseInterceptor');
         })
