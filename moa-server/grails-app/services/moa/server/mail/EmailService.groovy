@@ -42,11 +42,11 @@ class EmailService {
         Submitter user = Submitter.findByEmailAddress(emailAddress)
 
         String body = "Dear "+ user.firstName +",\n\n";
-        body += "Thank you for your query download request.  $queryCount spectra were exported.\n\n"
-        body += "You may retrieve the download result in msp format from:\n"
+        body += "Thank you for your query download request.  $queryCount spectra were exported.  "
+        body += "Your download results will be available from the following link for the next 7 days:\n"
         body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id\n\n"
-        body += "You may also download your query in JSON format from:\n"
-        body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id/json\n\n"
+//        body += "You may also download your query in JSON format from:\n"
+//        body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id/json\n\n"
         body += "Best Regards,\nMoNA Development Team"
 
         sendMessage(emailAddress, 'Your MoNA download results are ready!', body)
