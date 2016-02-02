@@ -1,5 +1,6 @@
 package moa.server.query
 
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
 import grails.converters.JSON
 import moa.Spectrum
 import moa.SpectrumQueryDownload
@@ -8,6 +9,8 @@ import moa.server.convert.SpectraConversionService
 import moa.server.mail.EmailService
 import org.apache.commons.io.FileUtils
 import org.apache.ivy.util.FileUtil
+import org.apache.tools.zip.ZipEntry
+import org.apache.tools.zip.ZipOutputStream
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.SessionFactory
@@ -91,39 +94,34 @@ class SpectraQueryExportService {
         // Create new download file object
         def queryDownload = SpectrumQueryDownload.findOrCreateByLabel(label);
 
+        def queryFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}-query.json"
+        def exportFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}.${format}"
+        def compressedFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}.zip"
+
         if (!queryDownload.query) {
             queryDownload.query = query.toString();
-            queryDownload.queryFile = "${downloadPath}/export-$label-query.json"
-            queryDownload.exportFile = "${downloadPath}/export-$label.$format"
+            queryDownload.queryFile = queryFilename
+            queryDownload.exportFile = compressedFilename
         }
 
         // Get the number of spectra in our query results
         def queryCount = spectraQueryService.getCountForQuery(json)
         queryDownload.queryCount = queryCount
 
+        // Save query download object
+        queryDownload.save(flush: true)
+        queryDownload.errors.allErrors.each { println it }
+
         log.info("Counted $queryCount spectra")
 
 
         // Export query to file
-        File queryFile = new File(queryDownload.queryFile)
+        File queryFile = new File(queryFilename)
+        File exportFile = new File(exportFilename)
         log.debug("storing result at: ${queryFile.getAbsolutePath()}")
 
-        boolean moveExportFile = false
-        File exportFile
-
-        if (queryFile.exists()) {
-            log.info("Query file ${queryFile.getName()} exists, creating temporary dump file")
-
-            exportFile = new File(queryDownload.exportFile +".tmp")
-            moveExportFile = true
-        } else {
-            log.info("Exporting query file " + queryFile.getName())
-
-            queryFile.createNewFile()
-            FileUtils.writeStringToFile(queryFile, json.toString())
-
-            exportFile = new File(queryDownload.exportFile)
-        }
+        queryFile.createNewFile()
+        FileUtils.writeStringToFile(queryFile, json.toString())
 
 
         // Perform query in chunks and export data
@@ -168,20 +166,46 @@ class SpectraQueryExportService {
             if (format == "json") {
                 writer.append("\n]")
             }
+        }
 
-            return
+
+        // Compress generated export
+        File compressedFile = new File(compressedFilename)
+        File compressedTemporaryFile = new File(compressedFilename +".tmp")
+
+        log.info("Compressing ${exportFile.getName()}")
+
+        ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(compressedTemporaryFile))
+
+        zipFile.withStream { zipOutputStream ->
+            // Add file entry and write data
+            log.info(exportFilename)
+            zipOutputStream.putNextEntry(new ZipEntry(exportFile.getName()))
+
+            // Stream with a defined buffer as exports may be very large
+            new FileInputStream(exportFile).withStream { inputStream ->
+                def buffer = new byte[1024]
+                def length
+
+                while((length = inputStream.read(buffer, 0, 1024)) > -1) {
+                    zipOutputStream.write(buffer, 0, length)
+                }
+            }
+
+            zipOutputStream.closeEntry()
+
+            // Remove export file if arching is successful
+            FileUtils.forceDelete(exportFile)
         }
 
 
         // Move temporary export file to stored location
-        if(moveExportFile) {
-            File toFile = new File(queryDownload.exportFile)
-            FileUtils.forceDelete(toFile)
-            FileUtils.moveFile(exportFile, toFile)
+        if(compressedFile.exists()) {
+            FileUtils.forceDelete(compressedFile)
         }
 
-        queryDownload.save(flush: true)
-        queryDownload.errors.allErrors.each { println it }
+        FileUtils.moveFile(compressedTemporaryFile, compressedFile)
+
 
         return queryDownload
     }
