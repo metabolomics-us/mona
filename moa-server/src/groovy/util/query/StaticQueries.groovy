@@ -46,6 +46,78 @@ class StaticQueries {
     "metadata": [],
     "tags": []
 }""")
+
+        save("massbank", "MassBank", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "massbank"
+            }
+        }
+    ]
+}""")
+
+        save("massbank", "RESPECT", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "respect"
+            }
+        }
+    ]
+}""")
+
+        save("hmdb", "HMDB", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "hmdb"
+            }
+        }
+    ]
+}""")
+
+        save("hmdb", "GNPS", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "gnps"
+            }
+        }
+    ]
+}""")
+
+        save("hmdb", "LipidBlast", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "lipidblast"
+            }
+        }
+    ]
+}""")
+
+        save("hmdb", "FAHFA", """{
+    "compound": {},
+    "metadata": [],
+    "tags": [
+        {
+            "name": {
+                "eq": "fahfa"
+            }
+        }
+    ]
+}""")
     }
 
 
