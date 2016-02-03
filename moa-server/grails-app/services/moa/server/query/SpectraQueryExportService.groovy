@@ -97,7 +97,7 @@ class SpectraQueryExportService {
         format = format ?: getFileFormat(json)
 
         // Create new download file object
-        def queryDownload = SpectrumQueryDownload.findOrCreateByLabel(label);
+        def queryDownload = SpectrumQueryDownload.findOrCreateByLabel("${label}-${format}");
 
         def queryFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}-query.json"
         def exportFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}.${format}"
@@ -178,7 +178,7 @@ class SpectraQueryExportService {
         File compressedFile = new File(compressedFilename)
         File compressedTemporaryFile = new File(compressedFilename +".tmp")
 
-        log.info("Compressing ${exportFile.getName()}")
+        log.info("Compressing ${exportFile.getName()} -> ${compressedFile.getName()}")
 
         ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(compressedTemporaryFile))
 
