@@ -101,7 +101,7 @@ class SpectraQueryExportService {
 
         def queryFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}-query.json"
         def exportFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}.${format}"
-        def compressedFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}.zip"
+        def compressedFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}-${format}.zip"
 
         if (!queryDownload.query) {
             queryDownload.query = query.toString();
