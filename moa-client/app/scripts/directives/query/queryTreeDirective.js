@@ -25,9 +25,12 @@
                     '<p class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +' | orderBy:\'-queryCount\'">' +
                     '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length"></i>' +
                     '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i> ' +
-                    '    <a href="" ng-click="executeQuery(node)"><i class="fa fa-search"></i> {{node.formattedLabel}}</a> ({{node.queryCount | number:0}})'+
-                    '    <span class="pull-right" ng-if="node.queryExport !== null"><a href="" ng-click="downloadQuery(node)"><i class="fa fa-download"></i> Download JSON</a></span>' +
-                    '    <span class="pull-right" ng-if="node.queryExport === null">Export generation in progress...</span>' +
+                    '    <a href="" ng-click="executeQuery(node)"><i class="fa fa-search"></i> {{node.formattedLabel}}</a> ({{node.queryCount | number:0}} spectra)'+
+                    '    <span class="pull-right">' +
+                    '        <span ng-if="node.jsonExport !== null"><a href="" ng-click="downloadJSON(node)"><i class="fa fa-download"></i> Download JSON</a></span>  ' +
+                    '        <span ng-if="node.mspExport !== null"><a href="" ng-click="downloadMSP(node)"><i class="fa fa-download"></i> Download MSP</a></span>  ' +
+                    '        <span ng-if="node.jsonExport === null && node.mspExport === null">Export generation in progress...</span>' +
+                    '   </span>' +
                     '</p>'+
                     '<div class="list-group" data-ng-repeat-end ng-if="node.children.length" data-query-tree-view data-query-tree-depth="'+ (depth + 1) +'" data-tree-id="'+ treeId +'" data-tree-model="node.children"></div>';
 
