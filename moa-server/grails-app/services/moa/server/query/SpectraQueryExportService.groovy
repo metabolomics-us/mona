@@ -1,6 +1,5 @@
 package moa.server.query
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
 import grails.converters.JSON
 import moa.Spectrum
 import moa.SpectrumQueryDownload
@@ -8,7 +7,6 @@ import moa.query.Query
 import moa.server.convert.SpectraConversionService
 import moa.server.mail.EmailService
 import org.apache.commons.io.FileUtils
-import org.apache.ivy.util.FileUtil
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
 import org.codehaus.groovy.grails.commons.GrailsApplication
@@ -47,23 +45,23 @@ class SpectraQueryExportService {
     int QUERY_SIZE = 100
 
 
-    def exportQueryByLabel(def query, def label) {
+    def exportQueryByLabel(def query, def label, def format) {
         log.info("Starting download job for $label")
-        def queryDownload = exportQuery(query, label)
+        def queryDownload = exportQuery(query, label, format)
 
         def queryObject = Query.findByLabel(label)
-        queryObject.queryExport = queryDownload
+        queryObject.jsonExport = queryDownload
         queryObject.save(flush: true)
 
         log.info("Export of spectra complete for $label, id ${queryDownload.id}")
     }
 
 
-    def exportQueryByEmailAddress(def query, def emailAddress, def startTime) {
+    def exportQueryByEmailAddress(def query, def emailAddress, def startTime, def format) {
         log.info("Starting download job for " + emailAddress)
 
         def label = "${emailAddress.split('@')[0]}-$startTime"
-        def queryDownload = exportQuery(query, label)
+        def queryDownload = exportQuery(query, label, format)
 
 
         // Email results
@@ -71,7 +69,7 @@ class SpectraQueryExportService {
         emailService.sendDownloadEmail(emailAddress, queryDownload.queryCount, queryDownload.id)
     }
 
-    private SpectrumQueryDownload exportQuery(def query, def label) {
+    private SpectrumQueryDownload exportQuery(def query, def label, def format) {
         // Get query as JSON
         def json = (query instanceof JSONObject) ? query : JSON.parse(query);
 
@@ -89,7 +87,7 @@ class SpectraQueryExportService {
 
 
         // Determine output format
-        String format = getFileFormat(json)
+        format = format ?: getFileFormat(json)
 
         // Create new download file object
         def queryDownload = SpectrumQueryDownload.findOrCreateByLabel(label);
