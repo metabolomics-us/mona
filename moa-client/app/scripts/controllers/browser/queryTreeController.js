@@ -14,8 +14,12 @@
             $location.path('/spectra/browse');
         };
 
-        $scope.downloadQuery = function(node) {
-            window.location.href = REST_BACKEND_SERVER +'/rest/spectra/search/download/'+ node.queryExport.id;
+        $scope.downloadJSON = function(node) {
+            window.location.href = REST_BACKEND_SERVER +'/rest/spectra/search/download/'+ node.jsonExport.id;
+        };
+
+        $scope.downloadMSP = function(node) {
+            window.location.href = REST_BACKEND_SERVER +'/rest/spectra/search/download/'+ node.mspExport.id;
         };
 
         (function() {
