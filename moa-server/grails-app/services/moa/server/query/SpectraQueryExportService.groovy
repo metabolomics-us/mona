@@ -49,8 +49,15 @@ class SpectraQueryExportService {
         log.info("Starting download job for $label")
         def queryDownload = exportQuery(query, label, format)
 
+        // Assign query download object to the predefined query object
         def queryObject = Query.findByLabel(label)
-        queryObject.jsonExport = queryDownload
+
+        if (format == "msp") {
+            queryObject.mspExport = queryDownload
+        } else {
+            queryObject.jsonExport = queryDownload
+        }
+
         queryObject.save(flush: true)
 
         log.info("Export of spectra complete for $label, id ${queryDownload.id}")
