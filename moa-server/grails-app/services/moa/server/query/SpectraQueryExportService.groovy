@@ -70,7 +70,6 @@ class SpectraQueryExportService {
         def label = "${emailAddress.split('@')[0]}-$startTime"
         def queryDownload = exportQuery(query, label, format)
 
-
         // Email results
         log.info("Export of spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
         emailService.sendDownloadEmail(emailAddress, queryDownload.queryCount, queryDownload.id)
