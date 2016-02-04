@@ -2,7 +2,6 @@ package util.query
 
 import grails.util.Environment
 import moa.query.Query
-import moa.server.query.PredefinedQueryService
 import org.apache.log4j.Logger
 
 /**
@@ -52,9 +51,7 @@ class StaticQueries {
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "massbank"
-            }
+            "name": { "eq": "massbank" }
         }
     ]
 }""")
@@ -64,9 +61,7 @@ class StaticQueries {
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "respect"
-            }
+            "name": { "eq": "respect" }
         }
     ]
 }""")
@@ -76,45 +71,39 @@ class StaticQueries {
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "hmdb"
-            }
+            "name": { "eq": "hmdb" }
         }
     ]
 }""")
 
-        save("hmdb", "GNPS", """{
+        save("gnps", "GNPS", """{
     "compound": {},
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "gnps"
-            }
+            "name": { "eq": "gnps" }
         }
     ]
 }""")
 
-        save("hmdb", "LipidBlast", """{
+
+
+        save("lipidblast", "LipidBlast", """{
     "compound": {},
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "lipidblast"
-            }
+            "name": { "eq": "lipidblast" }
         }
     ]
 }""")
 
-        save("hmdb", "FAHFA", """{
+        save("fahfa", "FAHFA", """{
     "compound": {},
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "fahfa"
-            }
+            "name": { "eq": "fahfa" }
         }
     ]
 }""")
