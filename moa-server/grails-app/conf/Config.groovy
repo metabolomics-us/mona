@@ -214,7 +214,7 @@ environments {
     production {
 
         //we don't want to loose our queues in case of a crash
-        queuesAreDurable = false
+        queuesAreDurable = true
 
         rabbitmq {
             connection = {
