@@ -18,6 +18,19 @@ grails {
 //                        '/rest/spectra/batch/**': protectedFilters,
                         '/rest/spectra/search/export': protectedFilters,
 
+                        // Protect all non-authentication endpoints in certain conditions
+                        '/rest/spectra/**': protectedFilters,
+                        '/rest/compounds/**': protectedFilters,
+                        '/rest/meta/**': protectedFilters,
+                        '/rest/submitters/**': protectedFilters,
+                        '/rest/news/**': protectedFilters,
+                        '/rest/statistics/**': protectedFilters,
+                        '/rest/tags/**': protectedFilters,
+                        '/rest/queue/**': protectedFilters,
+                        '/rest/webhooks/**': protectedFilters,
+                        '/rest/stored/**': protectedFilters,
+                        '/rest/limited/**': protectedFilters,
+
                         // Allow anonymous access in general
                         // Should have filterInvocationInterceptor at the end, but results in blank pages
                         '/**': 'anonymousAuthenticationFilter,restTokenValidationFilter,restExceptionTranslationFilter'
@@ -32,6 +45,19 @@ grails {
 
 //                    '/rest/spectra/batch/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
                     '/rest/spectra/search/export': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+
+                    // Protect all non-authentication endpoints in certain conditions
+                    '/rest/spectra/**/': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/compounds/**/': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/meta/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/submitters/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/news/**/': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/statistics/**/': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/tags/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/queue/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/webhooks/**/': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/stored/**/': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
+                    '/rest/limited/**': ['ROLE_USER', 'ROLE_CURATOR', 'ROLE_ADMIN'],
 
                     // Allow anonymous access in general
                     // Should have filterInvocationInterceptor at the end, but results in blank pages
