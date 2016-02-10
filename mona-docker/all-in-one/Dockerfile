@@ -48,6 +48,8 @@ RUN /etc/init.d/postgresql start && \
 
 USER root
 
+ENV PGPASSWORD mona
+
 ADD includes/postgresql/pg_hba.conf /etc/postgresql/9.5/main/pg_hba.conf
 ADD includes/postgresql/postgresql.conf /etc/postgresql/9.5/main/postgresql.conf
 
@@ -60,7 +62,7 @@ RUN chmod 700 /var/lib/postgresql
 
 # Configuire Jetty
 ADD http://eclipse.org/downloads/download.php?file=/jetty/8.1.17.v20150415/dist/jetty-distribution-8.1.17.v20150415.tar.gz&r=1 /opt/jetty.tar.gz
-RUN tar -xvf /opt/jetty.tar.gz -C /opt/
+RUN tar -xf /opt/jetty.tar.gz -C /opt/
 RUN rm /opt/jetty.tar.gz
 RUN mv /opt/jetty-distribution-* /opt/jetty
 RUN rm -rf /opt/jetty/webapps.demo
@@ -81,7 +83,7 @@ RUN chmod 644 /etc/logrotate.d/nginx
 
 
 # Configure MoNA
-ADD includes/mona/root.war /opt/jetty/webapps/root.war
+ADD includes/mona/mona-server.war /opt/jetty/webapps/root.war
 
 RUN mkdir /opt/mona
 ADD includes/mona/client.zip /opt/mona/mona.zip
@@ -90,6 +92,8 @@ RUN unzip -q /opt/mona/mona.zip -d /opt/mona
 
 
 # Configure environment
+COPY includes/mona/*.sql /root/
+
 ENV HOME /root
 WORKDIR /root
 ADD includes/.bashrc /root/.bashrc
@@ -110,4 +114,4 @@ EXPOSE 80
 
 
 
-CMD ["bash"]
+ENTRYPOINT ["./start.sh"]
