@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# MoNA docker container name
-MY_HOSTNAME="mona/all-in-one:latest"
 
 # Directory in which to store the PostgreSQL data, RabbitMQ data and MoNA exports
 DATA_DIR=/data/mona
@@ -13,6 +11,10 @@ SITE_URL="gose.fiehnlab.ucdavis.edu"
 PORT=8080
 
 
+
+# MoNA docker container name
+MONA_IMAGE_NAME="mona/all-in-one:latest"
+
 # Start up the docker container
 docker run -it \
            -h mona \
@@ -21,4 +23,4 @@ docker run -it \
            -v $DATA_DIR:/data \
            -e SITE_URL=$SITE_URL \
            -e SITE_PORT=$PORT \
-           $MY_HOSTNAME
+           $MONA_IMAGE_NAME
