@@ -4,7 +4,7 @@
 IMAGE_NAME="mona/all-in-one"
 
 # Build docker image
-docker build -t $IMAGE_NAME . | tee build.log || exit 1
+docker build -t $IMAGE_NAME --rm=true . | tee build.log || exit 1
 
 # Tag the docker container
 ID=$(tail -1 build.log | awk '{print $3;}')

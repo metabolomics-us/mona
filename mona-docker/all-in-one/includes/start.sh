@@ -35,7 +35,7 @@ fi
 # Fix server url in MoNA client
 echo "Fixing server url in MoNA web-app..."
 
-if [ -z "$STATE" ]; then
+if [ -z "$SITE_URL" ]; then
 	sed -i "s/mona.fiehnlab.ucdavis.edu/localhost:$SITE_PORT/" /opt/mona/scripts/*.scripts.js
 else
 	sed -i "s/mona.fiehnlab.ucdavis.edu/$SITE_URL:$SITE_PORT/" /opt/mona/scripts/*.scripts.js
