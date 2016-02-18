@@ -9,7 +9,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('ViewSpectrumController', ViewSpectrumController);
+        .controller('ViewSpectrumController', ViewSpectrumController);
 
     /* @ngInject */
     function ViewSpectrumController($scope, $location, $log, CookieService, Spectrum, delayedSpectrum) {
