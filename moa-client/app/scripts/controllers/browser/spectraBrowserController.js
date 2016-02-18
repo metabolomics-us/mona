@@ -5,14 +5,12 @@
  *
  * @param $scope
  * @param Spectrum
- * @param Compound
  * @param $uibModal
- * @param $routeParams
  * @param SpectraQueryBuilderService
- * @param MetadataService
- * @param $log
  * @param $location
  * @param SpectrumCache
+ * @param $rootScope
+ * @param $timeout
  * @constructor
  */
 
@@ -20,11 +18,11 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SpectraBrowserController', SpectraBrowserController)
+        .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, Compound, $uibModal, $routeParams, SpectraQueryBuilderService,
-                                      MetadataService, TaggingService, $log, $location, SpectrumCache, $rootScope, $timeout) {
+    function SpectraBrowserController($scope, Spectrum, $uibModal, SpectraQueryBuilderService, $location,
+                                      SpectrumCache, $rootScope, $timeout) {
 
         $scope.table = false;
         /**

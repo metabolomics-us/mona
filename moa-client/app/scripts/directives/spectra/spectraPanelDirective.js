@@ -5,7 +5,7 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('displaySpectraPanel', displaySpectraPanel);
+        .directive('displaySpectraPanel', displaySpectraPanel);
 
     function displaySpectraPanel() {
         var directive = {
