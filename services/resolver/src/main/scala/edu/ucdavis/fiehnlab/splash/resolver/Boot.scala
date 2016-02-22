@@ -16,7 +16,7 @@ import spray.httpx.SprayJsonSupport._
 import scala.collection.immutable.Nil
 import scala.concurrent.Future
 import MediaTypes._
-
+import spray.caching._
 
 import MonaJSONFormat._
 
@@ -28,11 +28,11 @@ object Boot extends App with SimpleRoutingApp {
 
   val findSpectraForInchI = new FindSpectraForInchi(system)
 
+
   /**
     * server part
     */
   startServer(interface = "0.0.0.0", port = 8080) {
-
     get {
 
       pathSingleSlash {
@@ -40,6 +40,7 @@ object Boot extends App with SimpleRoutingApp {
         complete(index)
       } ~
         path("rest" / "spectra" / Segment) { value =>
+
           complete(findSpectraForInchI.resolve(value))
         }
     }

@@ -5,6 +5,7 @@ import java.util.logging.Logger
 
 import akka.actor.ActorSystem
 import akka.util.Timeout
+import spray.caching.{SimpleLruCache, Cache}
 import spray.client.pipelining._
 import spray.http.HttpRequest
 import spray.httpx.SprayJsonSupport
@@ -34,7 +35,9 @@ import scala.concurrent.duration.Duration
   * Created by wohlgemuth on 2/18/16.
   */
 
-class FindSpectraForInchi(val system: ActorSystem) extends SprayJsonSupport with AdditionalFormats  {
+class FindSpectraForInchi(val system: ActorSystem) extends SprayJsonSupport with AdditionalFormats {
+
+  val cache: Cache[List[Spectrum]] = new SimpleLruCache(500, 10)
 
   implicit val timeout = Timeout(6000, TimeUnit.MINUTES)
 
@@ -50,12 +53,7 @@ class FindSpectraForInchi(val system: ActorSystem) extends SprayJsonSupport with
     */
   def resolve(inchiKey: String): List[SpectraRetrievedResult] = {
 
-
-    val response: Future[List[Spectrum]] = pipeline(Post("http://mona.fiehnlab.ucdavis.edu/rest/spectra/search",
-      s"""
-         {"compound":{"inchiKey":{"eq":"${inchiKey}"}},"metadata":[],"tags":[]}
-      """.asJson.asJsObject))
-
+    val response = loadData(inchiKey)
 
     val result = Await.result(response, 900 seconds).collect({
       case a: Spectrum =>
@@ -63,5 +61,13 @@ class FindSpectraForInchi(val system: ActorSystem) extends SprayJsonSupport with
     })
 
     result
+  }
+
+  def loadData(inchiKey: String): Future[List[Spectrum]] = cache(inchiKey){
+    pipeline(Post("http://mona.fiehnlab.ucdavis.edu/rest/spectra/search",
+      s"""
+         {"compound":{"inchiKey":{"eq":"${inchiKey}"}},"metadata":[],"tags":[]}
+      """.asJson.asJsObject))
+
   }
 }

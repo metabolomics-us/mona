@@ -92,7 +92,7 @@ case class Spectrum(
                      id: Option[Double],
                      lastUpdated: Option[String],
                      metaData: Option[List[MetaData]],
-                     predictedCompound: Option[String],
+                     predictedCompound: Option[Compound],
                      score: Option[Score],
                      spectrum: Option[String],
                      splash: Option[Splash],
