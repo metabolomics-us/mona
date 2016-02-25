@@ -11,6 +11,6 @@ service nginx start
 
 cd /opt/jetty
 
-java -XX:MaxPermSize=1024m -server -Xmx16164m -jar start.jar "jetty.home=/opt/jetty"
+java -XX:MaxPermSize=1024m -server -Xmx49152m -jar start.jar "jetty.home=/opt/jetty"
 
 #java -XX:-UseGCOverheadLimit -XX:MaxPermSize=1024m -server -Xmx16164m -jar start.jar "jetty.home=/opt/jetty"
