@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.ucdavis.fiehnlab.mona</groupId>
+  <artifactId>backend</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>backend</name>
+  <url>http://maven.apache.org</url>
+
+  <parent>
+    <groupId>edu.ucdavis.fiehnlab</groupId>
+    <artifactId>fiehnlab-pom</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <packaging>pom</packaging>
+  <modules>
+    <module>core</module>
+    <module>services</module>
+    <module>clients</module>
+  </modules>
+
+
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>edu.ucdavis.fiehnlab.splash</groupId>
+        <artifactId>core</artifactId>
+        <version>1.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.typesafe.scala-logging</groupId>
+        <artifactId>scala-logging_2.11</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        <artifactId>domain</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+</project>
