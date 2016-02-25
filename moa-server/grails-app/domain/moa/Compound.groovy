@@ -37,12 +37,12 @@ class Compound extends SupportsMetaData {
     /**
      * names associated to this compound
      */
-    Set<Name> names
+    List<Name> names
 
     /**
      * assoicated comments
      */
-    Set<Comment> comments
+    List<Comment> comments
 
     /**
      * associated inchi code

@@ -88,7 +88,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     /**
      * comments
      */
-    Set<Comment> comments
+    List<Comment> comments
 
     /**
      * compound links
