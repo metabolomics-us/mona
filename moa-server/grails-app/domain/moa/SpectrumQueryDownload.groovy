@@ -25,5 +25,14 @@ class SpectrumQueryDownload {
     String exportFile
     String query
     String label
+
+    /**
+     * count of spectra that satisfy the corresponding query
+     */
     int queryCount
+
+    /**
+     * Size of export in bytes
+     */
+    int exportSize
 }

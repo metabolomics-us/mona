@@ -211,6 +211,12 @@ class SpectraQueryExportService {
         FileUtils.moveFile(compressedTemporaryFile, compressedFile)
 
 
+        // Log filesize
+        queryDownload.exportSize = compressedFile.length()
+        queryDownload.save(flush: true)
+        queryDownload.errors.allErrors.each { println it }
+
+
         return queryDownload
     }
 
