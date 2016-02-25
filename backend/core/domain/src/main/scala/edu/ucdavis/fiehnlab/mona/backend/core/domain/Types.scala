@@ -7,26 +7,19 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain
 case class MetaData(
                      category: Option[String],
                      computed: Option[Boolean],
-                     dateCreated: Option[String],
                      deleted: Option[Boolean],
                      hidden: Option[Boolean],
-                     id: Option[Double],
-                     lastUpdated: Option[String],
-                     metaDataId: Option[String],
                      name: Option[String],
-                     reasonForSuspicion: Option[String],
-                     score: Option[String],
-                     suspect: Option[Boolean],
+                     score: Option[List[Score]],
                      unit: Option[String],
                      url: Option[String],
-                     value: Option[String]
+                     value: Option[Any]
                    )
 
 case class Names(
                   computed: Option[Boolean],
-                  lastUpdated: Option[String],
                   name: Option[String],
-                  score: Option[String],
+                  score: Option[Double],
                   source: Option[String]
                 )
 
@@ -36,10 +29,9 @@ case class Tags(
                )
 
 case class Compound(
-                     id: Option[Double],
+                     id: Option[String],
                      inchi: Option[String],
                      inchiKey: Option[String],
-                     lastUpdated: Option[String],
                      metaData: Option[List[MetaData]],
                      molFile: Option[String],
                      names: Option[List[Names]],
@@ -54,18 +46,18 @@ case class Impacts(
 
 case class Score(
                   impacts: Option[List[Impacts]],
-                  relativeScore: Option[Double],
-                  scaledScore: Option[Double],
+                  relativeScore: Option[Double], //ns
+                  scaledScore: Option[Double], //ns
                   score: Option[Double]
                 )
 
 case class Splash(
-                   block1: Option[String],
-                   block2: Option[String],
-                   block3: Option[String],
-                   id: Option[Double],
+                   block1: Option[String], //ns
+                   block2: Option[String], //ns
+                   block3: Option[String], //ns
                    splash: Option[String]
                  )
+
 
 case class Authorities(
                         authority: Option[String]
@@ -78,21 +70,19 @@ case class Submitter(
                       authorities: Option[List[Authorities]],
                       emailAddress: Option[String],
                       firstName: Option[String],
-                      id: Option[Double],
                       institution: Option[String],
                       lastName: Option[String],
-                      passwordExpired: Option[Boolean]
+                      passwordExpired: Option[Boolean] //ns
                     )
 
 case class Spectrum(
                      biologicalCompound: Option[Compound],
                      chemicalCompound: Option[Compound],
+                     predictedCompound: Option[Compound],
                      deleted: Option[Boolean],
-                     hash: Option[String],
-                     id: Option[Double],
+                     id: Option[String],
                      lastUpdated: Option[String],
                      metaData: Option[List[MetaData]],
-                     predictedCompound: Option[Compound],
                      score: Option[Score],
                      spectrum: Option[String],
                      splash: Option[Splash],
