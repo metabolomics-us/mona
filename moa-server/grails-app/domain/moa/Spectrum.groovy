@@ -8,7 +8,9 @@ import util.chemical.CompoundType
 class Spectrum extends SupportsMetaData implements Scoreable {
 
     static transients = [
-            "spectrum", "hash", "queryOptions",
+            "spectrum",
+            "hash",
+            "queryOptions",
             "chemicalCompound",
             "biologicalCompound",
             "predictedCompound"
@@ -43,9 +45,9 @@ class Spectrum extends SupportsMetaData implements Scoreable {
 
     static constraints = {
         comments nullable: true
-
         submitter nullable: true
         score nullable: true
+        library nullable: true
         splash nullable: true
         deleted nullable: true
         compoundLinks nullable: false
@@ -109,6 +111,19 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      * the score of this spectra
      */
     Score score
+
+    /**
+     * Origin information for this spectrum
+     */
+    Library library
+
+    /**
+     * Spectrum identifier from the origin
+     * @param compound
+     */
+    String libraryIdentifier
+
+
 
     void setChemicalCompound(Compound compound) {
         CompoundLink link = new CompoundLink()
