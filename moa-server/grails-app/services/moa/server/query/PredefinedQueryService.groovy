@@ -1,6 +1,8 @@
 package moa.server.query
 
+import grails.converters.JSON
 import moa.query.Query
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
  * Created by sajjan on 10/25/15.
@@ -12,7 +14,7 @@ class PredefinedQueryService {
         def queries = Query.findAll()
 
         queries.each {
-            it.count = spectraQueryService.getCountForQuery(it.query)
+            it.count = spectraQueryService.getCountForQuery(JSON.parse(it.query))
             it.save(flush: true)
         }
     }
