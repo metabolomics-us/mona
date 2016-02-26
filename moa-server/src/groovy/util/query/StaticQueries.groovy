@@ -14,7 +14,14 @@ class StaticQueries {
     private static Logger logger = Logger.getLogger(getClass())
 
     static void register() {
-        if(Environment.current == Environment.PRODUCTION) {
+        if(Environment.current == Environment.DEVELOPMENT || Environment.current == Environment.TEST) {
+            logger.info("Generating testing query tree definitions")
+
+            if(Query.findByLabel("Test") == null) {
+                Query.findOrSaveByLabelAndDescriptionAndQuery("Test", "test",
+                        "{\"compound\": {},\"metadata\": [{\"name\": \"accession\", \"value\": {\"eq\": \"AU102001\"}}], \"tags\": []}")
+            }
+        } else if(Environment.current == Environment.PRODUCTION) {
             logger.info("Generating query tree definitions")
 
             defineGeneralQueries()
@@ -23,14 +30,7 @@ class StaticQueries {
             defineVirtualLCMSQueries()
         }
 
-        if(Environment.current == Environment.DEVELOPMENT) {
-            logger.info("Generating testing query tree definitions")
 
-            if(Query.findByLabel("Test") == null) {
-                Query.findOrSaveByLabelAndDescriptionAndQuery("Test", "test",
-                        "{\"compound\": {},\"metadata\": [{\"name\": \"accession\", \"value\": {\"eq\": \"AU102001\"}}], \"tags\": []}")
-            }
-        }
     }
 
     private static void save(String label, String description, String query) {
