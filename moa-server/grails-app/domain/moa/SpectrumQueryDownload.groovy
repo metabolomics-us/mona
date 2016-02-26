@@ -9,6 +9,7 @@ class SpectrumQueryDownload {
 
     static constraints = {
         emailAddress nullable: true, blank: true
+        exportSize nullable: true
     }
 
     static mapping = {
@@ -29,10 +30,10 @@ class SpectrumQueryDownload {
     /**
      * count of spectra that satisfy the corresponding query
      */
-    int queryCount
+    Integer queryCount
 
     /**
      * Size of export in bytes
      */
-    int exportSize
+    Long exportSize
 }

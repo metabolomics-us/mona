@@ -209,7 +209,6 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     String getHash() {
         if (splash != null) {
             return splash.getSplash();
-
         }
 
         return "not yet calculated!"
