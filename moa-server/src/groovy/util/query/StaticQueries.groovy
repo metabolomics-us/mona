@@ -19,14 +19,15 @@ class StaticQueries {
 
             defineGeneralQueries()
             defineGCMSQueries()
-            defineLCMSQueries()
+            defineExperimentalLCMSQueries()
+            defineVirtualLCMSQueries()
         }
 
         if(Environment.current == Environment.DEVELOPMENT) {
             logger.info("Generating testing query tree definitions")
 
             if(Query.findByLabel("Test") == null) {
-                def x = Query.findOrSaveByLabelAndDescriptionAndQuery("Test", "test",
+                Query.findOrSaveByLabelAndDescriptionAndQuery("Test", "test",
                         "{\"compound\": {},\"metadata\": [{\"name\": \"accession\", \"value\": {\"eq\": \"AU102001\"}}], \"tags\": []}")
             }
         }
@@ -40,13 +41,13 @@ class StaticQueries {
 
 
     private static void defineGeneralQueries() {
-        save("all spectra", "all spectra", """{
+        save("All Spectra", "All Spectra", """{
     "compound": {},
     "metadata": [],
     "tags": []
 }""")
 
-        save("massbank", "MassBank", """{
+        save("MassBank", "MassBank", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -56,7 +57,7 @@ class StaticQueries {
     ]
 }""")
 
-        save("massbank", "RESPECT", """{
+        save("RESPECT", "RESPECT", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -66,7 +67,7 @@ class StaticQueries {
     ]
 }""")
 
-        save("hmdb", "HMDB", """{
+        save("HMDB", "HMDB", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -76,7 +77,7 @@ class StaticQueries {
     ]
 }""")
 
-        save("gnps", "GNPS", """{
+        save("GNPS", "GNPS", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -88,7 +89,7 @@ class StaticQueries {
 
 
 
-        save("lipidblast", "LipidBlast", """{
+        save("LipidBlast", "LipidBlast", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -98,7 +99,7 @@ class StaticQueries {
     ]
 }""")
 
-        save("fahfa", "FAHFA", """{
+        save("FAHFA", "FAHFA", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -111,8 +112,10 @@ class StaticQueries {
 
 
     private static void defineGCMSQueries() {
-        String label = "GCMS"
-        List instrumentType = ["GC-EI-TOF", "CI-B", "GC-EI-QQ", "EI-B"]
+        String label = "GC-MS"
+        String label_tag = "GCMS"
+        List ionMode = ["positive", "negative"]
+        List ionizationType = ["CI", "EI"]
 
 
         save("${label}", "${label} spectra", """{
@@ -120,76 +123,68 @@ class StaticQueries {
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "${label}"
-            }
+            "name": { "eq": "${label_tag}" }
         }
     ]
 }""")
 
-        // derivatized
-        save("${label} - derivatized", "derivatized ${label} spectra", """{
+        // ion mode
+        ionMode.each { mode ->
+            save("${label} - ${mode.capitalize()}", "${mode.capitalize()} mode ${label} spectra", """{
     "compound": {},
     "metadata": [
         {
-            "name": "derivative type",
-            "value": {
-                "like": "%"
-            }
+            "name": "ion mode",
+            "value": { "eq": "${mode}" }
         }
     ],
     "tags": [
         {
-            "name": {
-                "eq": "${label}"
-            }
+            "name": { "eq": "${label_tag}" }
         }
     ]
 }""")
+        }
 
-        instrumentType.each { t ->
-            // with derivative type
-            save("${label} - derivatized - ${t}", "derivatized ${label} spectra with instrument type ${t}", """{
+        ionizationType.each { type ->
+            // with ion mode
+            ionMode.each { mode ->
+                save("${label} - ${type} - ${mode.capitalize()}", "${mode.capitalize()} mode ${label} spectra with instrument type ${type}", """{
     "compound": {},
     "metadata": [
         {
-            "name": "derivative type",
-            "value": {
-                "like": "%"
-            }
+            "name": "ion mode",
+            "value": { "eq": "${mode}" }
         },
         {
             "name": "instrument type",
-            "value": {
-                "eq": "${t}"
-            }
+            "value": { "like": "%${type}%" }
         }
     ],
     "tags": [
         {
-            "name": {
-                "eq": "${label}"
-            }
+            "name": { "eq": "${label_tag}" }
         }
     ]
 }""")
+            }
 
-            // without derivative type
-            save("${label} - ${t}", "${label} spectra with instrument type ${t}", """{
+            // without ion mode
+            save("${label} - ${type}", "${label} spectra with instrument type ${type}", """{
     "compound": {},
     "metadata": [
         {
+            "name": "derivative type",
+            "value": { "like": "%" }
+        },
+        {
             "name": "instrument type",
-            "value": {
-                "eq": "${t}"
-            }
+            "value": { "like": "%${type}%" }
         }
     ],
     "tags": [
         {
-            "name": {
-                "eq": "${label}"
-            }
+            "name": { "eq": "${label_tag}" }
         }
     ]
 }""")
@@ -197,92 +192,152 @@ class StaticQueries {
     }
 
 
-    private static void defineLCMSQueries() {
-        String label = "LCMS"
-        List mode = ["virtual", "experimental"]
-        List acq = ["positive", "negative"]
+    private static void defineExperimentalLCMSQueries() {
+        String label = "LC-MS"
+        String label_tag = "LCMS"
+        List ionMode = ["positive", "negative"]
+        List ionizationType = ["CI", "ESI"]
 
         save("${label}", "${label} spectra", """{
     "compound": {},
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "${label}"
-            }
+            "name": { "eq": "${label_tag}" }
         }
     ]
 }""")
 
-        /**
-         * build different modes
-         */
-        mode.each { m ->
-            save("${label} - ${m}", "${m} ${label} spectra", """{
+        // ms/ms
+        save("${label} - MS/MS", "${label}/MS spectra", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "ms level",
+            "value": { "eq": "MS2" }
+        }
+    ],
+    "tags": [
+        {
+            "name": { "eq": "${label_tag}" }
+        }
+    ]
+}""")
+
+        // ion mode
+        ionMode.each { mode ->
+            save("${label} - ${mode.capitalize()}", "${mode.capitalize()} mode ${label} spectra", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "ion mode",
+            "value": { "eq": "${mode}" }
+        }
+    ],
+    "tags": [
+        {
+            "name": { "eq": "${label_tag}" }
+        }
+    ]
+}""")
+
+            // ms/ms
+            save("${label} - MS/MS - ${mode.capitalize()}", "${mode.capitalize()} mode ${label}/MS spectra", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "ms level",
+            "value": { "eq": "MS2" }
+        },
+        {
+            "name": "ion mode",
+            "value": { "eq": "${mode}" }
+        }
+    ],
+    "tags": [
+        {
+            "name": { "eq": "${label_tag}" }
+        }
+    ]
+}""")
+        }
+
+        ionizationType.each { type ->
+            // with ion mode
+            ionMode.each { mode ->
+                save("${label} - ${type} - ${mode.capitalize()}", "${mode.capitalize()} mode ${label} spectra with instrument type ${type}", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "ion mode",
+            "value": { "eq": "${mode}" }
+        },
+        {
+            "name": "instrument type",
+            "value": { "like": "%${type}%" }
+        }
+    ],
+    "tags": [
+        {
+            "name": { "eq": "${label_tag}" }
+        }
+    ]
+}""")
+            }
+
+            // without ion mode
+            save("${label} - ${type}", "${label} spectra with instrument type ${type}", """{
+    "compound": {},
+    "metadata": [
+        {
+            "name": "derivative type",
+            "value": { "like": "%" }
+        },
+        {
+            "name": "instrument type",
+            "value": { "like": "%${type}%" }
+        }
+    ],
+    "tags": [
+        {
+            "name": { "eq": "${label_tag}" }
+        }
+    ]
+}""")
+        }
+    }
+
+
+    private static void defineVirtualLCMSQueries() {
+        String label = "LC-MS"
+        String label_tag = "LCMS"
+        List ionMode = ["positive", "negative"]
+
+        save("In-silico ${label}", "In-silico ${label} spectra", """{
     "compound": {},
     "metadata": [],
     "tags": [
         {
-            "name": {
-                "eq": "${label}"
-            }
-        },
-        {
-            "name": {
-                "eq": "${m}"
-            }
+            "name": { "eq": "${label_tag}" },
+            "name": { "eq": "virtual" }
         }
     ]
 }""")
 
-            /**
-             * different acquisitions
-             */
-            acq.each { a ->
-                //with mode
-                save("${label} - ${m} - ${a}", "${a} mode ${m} ${label} spectra", """{
+        // ion mode
+        ionMode.each { mode ->
+            save("In-silico ${label} - ${mode.capitalize()}", "In-silico ${mode.capitalize()} mode ${label} spectra", """{
     "compound": {},
     "metadata": [
         {
             "name": "ion mode",
-            "value": {
-            "eq": "${a}"
-            }
+            "value": { "eq": "${mode}" }
         }
     ],
     "tags": [
         {
-            "name": {
-                "eq": "${label}"
-            }
-        },
-        {
-            "name": {
-                "eq": "${m}"
-            }
-        }
-    ]
-}""")
-            }
-        }
-
-        acq.each {a ->
-            //without mode
-            save("${label} - ${a}","${a} mode ${label} spectra", """{
-    "compound": {},
-    "metadata": [
-        {
-            "name": "ion mode",
-            "value": {
-            "eq": "${a}"
-            }
-        }
-    ],
-    "tags": [
-        {
-            "name": {
-                "eq": "${label}"
-            }
+            "name": { "eq": "${label_tag}" },
+            "name": { "eq": "virtual" }
         }
     ]
 }""")
