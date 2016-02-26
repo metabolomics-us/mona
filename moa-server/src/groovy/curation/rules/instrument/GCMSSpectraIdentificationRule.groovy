@@ -19,7 +19,7 @@ class GCMSSpectraIdentificationRule extends AbstractMetaDataCentricRule {
 
     static {
         listOfAcceptedField.put INSTRUMENT, [".*gcms.*", ".*gc/ms.*"]
-        listOfAcceptedField.put INSTRUMENT_TYPE, [".*gc.*"]
+        listOfAcceptedField.put INSTRUMENT_TYPE, [".*gc.*", "ei-b"]
         listOfAcceptedField.put IONIZATION_ENERGY, ["ev"]
     }
 
