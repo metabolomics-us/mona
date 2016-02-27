@@ -47,7 +47,7 @@ class StaticQueries {
     "tags": []
 }""")
 
-        save("MassBank", "MassBank", """{
+        save("Libraries - MassBank", "MassBank", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -57,7 +57,7 @@ class StaticQueries {
     ]
 }""")
 
-        save("RESPECT", "RESPECT", """{
+        save("Libraries - RESPECT", "RESPECT", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -67,7 +67,7 @@ class StaticQueries {
     ]
 }""")
 
-        save("HMDB", "HMDB", """{
+        save("Libraries - HMDB", "HMDB", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -77,7 +77,7 @@ class StaticQueries {
     ]
 }""")
 
-        save("GNPS", "GNPS", """{
+        save("Libraries - GNPS", "GNPS", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -89,7 +89,7 @@ class StaticQueries {
 
 
 
-        save("LipidBlast", "LipidBlast", """{
+        save("Libraries - LipidBlast", "LipidBlast", """{
     "compound": {},
     "metadata": [],
     "tags": [
@@ -99,7 +99,7 @@ class StaticQueries {
     ]
 }""")
 
-        save("FAHFA", "FAHFA", """{
+        save("Libraries - FAHFA", "FAHFA", """{
     "compound": {},
     "metadata": [],
     "tags": [
