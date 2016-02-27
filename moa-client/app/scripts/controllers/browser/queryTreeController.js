@@ -29,7 +29,15 @@
             // Get predefined queries and build query tree
             Spectrum.getPredefinedQueries(
                 function(data) {
-                    // Identify node parents
+                    // Entry for libraries
+                    data.unshift({
+                        label: "Libraries",
+                        query: null,
+                        jsonExport: null,
+                        mspExport: null
+                    });
+
+                    // Set up all nodes
                     for (var i = 0; i < data.length; i++) {
                         $scope.queries[data[i].label] = data[i];
 
