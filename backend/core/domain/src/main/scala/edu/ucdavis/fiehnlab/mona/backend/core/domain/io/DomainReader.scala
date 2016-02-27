@@ -45,6 +45,11 @@ abstract class DomainReader[T: ClassTag] {
   def read(input: Reader, handler: DomainReadEventHandler[T]): Unit
 }
 
+/**
+  * simple event handler, don't see to many use for different implementations for it
+  * @param ev$1
+  * @tparam T
+  */
 abstract class DomainReadEventHandler[T: ClassTag] {
   def readEvent(event: T): Unit
 }

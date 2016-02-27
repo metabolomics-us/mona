@@ -1,95 +1,109 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
+
 /**
   * definition of the MoNA domain classes
+  * TODO: make DBRefs work with cascade save
   */
 
 object Types {
 
   case class MetaData(
-                       category: Option[String],
-                       computed: Option[Boolean],
-                       deleted: Option[Boolean],
-                       hidden: Option[Boolean],
-                       name: Option[String],
-                       score: Option[List[Score]],
-                       unit: Option[String],
-                       url: Option[String],
-                       value: Option[Any]
+                       category: String,
+                       computed: Boolean,
+                       deleted: Boolean,
+                       hidden: Boolean,
+                       name: String,
+                       score: Array[Score],
+                       unit: String,
+                       url: String,
+                       value: Any
                      )
 
   case class Names(
-                    computed: Option[Boolean],
-                    name: Option[String],
-                    score: Option[Double],
-                    source: Option[String]
+                    computed: Boolean,
+                    name: String,
+                    score: Double,
+                    source: String
                   )
 
   case class Tags(
-                   ruleBased: Option[Boolean],
-                   text: Option[String]
+                   ruleBased: Boolean,
+                   text: String
                  )
 
+  @Document(collection = "COMPOUND")
   case class Compound(
-                       id: Option[String],
-                       inchi: Option[String],
-                       inchiKey: Option[String],
-                       metaData: Option[List[MetaData]],
-                       molFile: Option[String],
-                       names: Option[List[Names]],
-                       tags: Option[List[Tags]]
+                       id: String,
+                       inchi: String,
+                       inchiKey: String,
+                       metaData: Array[MetaData],
+                       molFile: String,
+                       names: Array[Names],
+                       tags: Array[Tags]
                      )
 
 
   case class Impacts(
-                      impactValue: Option[Double],
-                      reason: Option[String]
+                      impactValue: Double,
+                      reason: String
                     )
 
   case class Score(
-                    impacts: Option[List[Impacts]],
-                    relativeScore: Option[Double], //ns
-                    scaledScore: Option[Double], //ns
-                    score: Option[Double]
+                    impacts: Array[Impacts],
+                    relativeScore: Double, //ns
+                    scaledScore: Double, //ns
+                    score: Double
                   )
 
   case class Splash(
-                     block1: Option[String], //ns
-                     block2: Option[String], //ns
-                     block3: Option[String], //ns
-                     splash: Option[String]
+                     block1: String, //ns
+                     block2: String, //ns
+                     block3: String, //ns
+                     splash: String
                    )
 
 
+  @Document(collection = "AUTHORITIES")
   case class Authorities(
-                          authority: Option[String]
+                          authority: String
                         )
 
+  @Document(collection = "SUBMITTER")
   case class Submitter(
-                        accountEnabled: Option[Boolean],
-                        accountExpired: Option[Boolean],
-                        accountLocked: Option[Boolean],
-                        authorities: Option[List[Authorities]],
-                        emailAddress: Option[String],
-                        firstName: Option[String],
-                        institution: Option[String],
-                        lastName: Option[String],
-                        passwordExpired: Option[Boolean] //ns
+                        accountEnabled: Boolean,
+                        accountExpired: Boolean,
+                        accountLocked: Boolean,
+                        @DBRef
+                        authorities: Array[Authorities],
+                        emailAddress: String,
+                        firstName: String,
+                        institution: String,
+                        lastName: String,
+                        passwordExpired: Boolean //ns
                       )
 
+  @Document(collection = "SPECTRUM")
   case class Spectrum(
-                       biologicalCompound: Option[Compound],
-                       chemicalCompound: Option[Compound],
-                       predictedCompound: Option[Compound],
-                       deleted: Option[Boolean],
-                       id: Option[String],
-                       lastUpdated: Option[String],
-                       metaData: Option[List[MetaData]],
-                       score: Option[Score],
-                       spectrum: Option[String],
-                       splash: Option[Splash],
-                       submitter: Option[Submitter],
-                       tags: Option[List[Tags]]
+                       @DBRef
+                       biologicalCompound: Compound,
+                       @DBRef
+                       chemicalCompound: Compound,
+                       @DBRef
+                       predictedCompound: Compound,
+                       deleted: Boolean,
+                       @Id
+                       id: String,
+                       lastUpdated: String,
+                       metaData: Array[MetaData],
+                       score: Score,
+                       spectrum: String,
+                       splash: Splash,
+                       @DBRef
+                       submitter: Submitter,
+                       tags: Array[Tags]
                      )
 
 }

@@ -18,8 +18,8 @@ class JSONDomainReaderTest extends FunSuite {
 
     val spectrum: Spectrum = reader.read(input)
 
-    assert(spectrum.splash.get.splash.get == "splash10-0z50000000-9c8c58860a0fadd33800")
-    assert(spectrum.chemicalCompound.get.inchiKey.get == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
+    assert(spectrum.splash.splash == "splash10-0z50000000-9c8c58860a0fadd33800")
+    assert(spectrum.chemicalCompound.inchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
 
   }
 
