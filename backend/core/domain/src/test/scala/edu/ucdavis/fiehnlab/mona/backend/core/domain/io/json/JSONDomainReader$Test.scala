@@ -14,6 +14,7 @@ class JSONDomainReader$Test extends FunSuite {
     val reader:DomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
     assert(reader.isInstanceOf[JSONDomainReader[Spectrum]])
+
   }
 
 }

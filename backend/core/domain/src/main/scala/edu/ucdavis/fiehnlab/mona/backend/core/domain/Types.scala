@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
 
@@ -19,6 +21,7 @@ object Types {
                        score: Array[Score],
                        unit: String,
                        url: String,
+                       @JsonDeserialize(using = classOf[NumberDeserializer])
                        value: Any
                      )
 
