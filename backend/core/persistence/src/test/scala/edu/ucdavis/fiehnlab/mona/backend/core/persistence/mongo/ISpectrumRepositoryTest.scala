@@ -101,6 +101,20 @@ class ISpectrumRepositoryTest extends WordSpec {
 
       }
 
+      "provide us with the possibility to query custom queries all data and paginate it" in {
+
+        val page:Page[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(0,30))
+
+        assert(page.isFirst)
+        assert(page.getTotalElements == 58)
+        assert(page.getTotalPages == 2)
+
+        val page2:Page[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(30,60))
+
+        assert(page2.isLast)
+
+      }
+
     }
   }
 

@@ -1,7 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
+import java.util
+
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.data.domain.{Pageable, PageImpl, Page}
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Repository
@@ -22,7 +26,31 @@ class ISpectrumRepositoryCustomImpl extends SpectrumRepositoryCustom {
     * @param query
     * @return
     */
+  @Cacheable(Array("spectrum"))
   override def executeQuery(query: Query): List[Spectrum] = {
     mongoOperations.find(query, classOf[Spectrum]).asScala.toList
+  }
+
+  /**
+    * pagination based approach to query the system
+    *
+    * @param query
+    * @param pageable
+    * @return
+    */
+  @Cacheable(Array("spectrum"))
+  override def executeQuery(query: Query, pageable: Pageable): Page[Spectrum] = {
+    val count = getCount(query)
+
+    query.`with`(pageable)
+
+    val result: util.List[Spectrum] = mongoOperations.find(query, classOf[Spectrum])
+
+    new PageImpl[Spectrum](result, pageable, count)
+  }
+
+  @Cacheable(Array("spectrum"))
+  def getCount(query: Query): Long = {
+    mongoOperations.count(query, classOf[Spectrum])
   }
 }
