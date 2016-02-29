@@ -18,12 +18,6 @@
                 controller: 'MainController'
             })
 
-            //browsing compounds
-            .when('/compounds', {
-                templateUrl: 'views/compounds/browse/compounds.html',
-                controller: 'CompoundBrowserController'
-            })
-
             //uploading a mass spec
             .when('/upload', {
                 templateUrl: 'views/spectra/upload/cleanAndUploadSpectra.html',
