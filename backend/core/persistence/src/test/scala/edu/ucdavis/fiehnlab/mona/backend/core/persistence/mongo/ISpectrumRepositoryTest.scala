@@ -9,6 +9,7 @@ import org.junit.runner.RunWith
 import org.scalatest.{WordSpec, FunSuite}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.mongodb.core.query.BasicQuery
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -84,6 +85,19 @@ class ISpectrumRepositoryTest extends WordSpec {
         val result:List[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
 
         assert(result.size == 58)
+
+      }
+
+      "provide us with the possibility to query all data and paginate it" in {
+        val page:Page[Spectrum] = spectrumRepository.findAll(new PageRequest(0,30))
+
+        assert(page.isFirst)
+        assert(page.getTotalElements == 58)
+        assert(page.getTotalPages == 2)
+
+        val page2:Page[Spectrum] = spectrumRepository.findAll(new PageRequest(30,60))
+
+        assert(page2.isLast)
 
       }
 
