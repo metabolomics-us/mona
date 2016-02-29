@@ -26,8 +26,8 @@ class ISpectrumRepositoryCustomImpl extends SpectrumRepositoryCustom {
     * @param query
     * @return
     */
-  override def executeQuery(query: Query): List[Spectrum] = {
-    mongoOperations.find(query, classOf[Spectrum]).asScala.toList
+  override def executeQuery(query: Query): java.util.List[Spectrum] = {
+    mongoOperations.find(query, classOf[Spectrum])
   }
 
   /**
@@ -38,16 +38,22 @@ class ISpectrumRepositoryCustomImpl extends SpectrumRepositoryCustom {
     * @return
     */
   override def executeQuery(query: Query, pageable: Pageable): Page[Spectrum] = {
-    val count = getCount(query)
+    val count = executeQueryCount(query)
 
     query.`with`(pageable)
 
-    val result: util.List[Spectrum] = mongoOperations.find(query, classOf[Spectrum])
+    val result: java.util.List[Spectrum] = mongoOperations.find(query, classOf[Spectrum])
 
     new PageImpl[Spectrum](result, pageable, count)
   }
 
-  def getCount(query: Query): Long = {
+  /**
+    * executes query count against the system
+    *
+    * @param query
+    * @return
+    */
+  override def executeQueryCount(query: Query): Long = {
     mongoOperations.count(query, classOf[Spectrum])
   }
 }

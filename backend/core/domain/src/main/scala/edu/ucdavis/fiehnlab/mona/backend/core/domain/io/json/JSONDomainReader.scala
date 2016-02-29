@@ -18,12 +18,6 @@ import scala.reflect.ClassTag
   */
 class JSONDomainReader[T: ClassTag](mapper: ObjectMapper) extends DomainReader[T] {
 
-  mapper.registerModule(DefaultScalaModule)
-
-  //required, in case we are provided with a list of value
-  mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
   /**
     * memory efficient reader
     *
@@ -38,15 +32,32 @@ class JSONDomainReader[T: ClassTag](mapper: ObjectMapper) extends DomainReader[T
 }
 
 /**
+  * default mapper for everything mona used
+  */
+object MonaMapper {
+  def create: ObjectMapper = {
+
+    println("creating new mapper")
+    val mapper = new ObjectMapper() with ScalaObjectMapper
+
+    mapper.registerModule(DefaultScalaModule)
+
+    //required, in case we are provided with a list of value
+    mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+    mapper
+  }
+}
+
+/**
   * simple way to create an DomainReader
   */
 object JSONDomainReader {
 
   def create[T: ClassTag] = {
 
-    val mapper = new ObjectMapper() with ScalaObjectMapper
-
-    new JSONDomainReader[T](mapper)
+    new JSONDomainReader[T](MonaMapper.create)
 
   }
 }

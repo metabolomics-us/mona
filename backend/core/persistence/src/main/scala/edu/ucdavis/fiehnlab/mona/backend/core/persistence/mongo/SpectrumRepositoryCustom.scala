@@ -15,7 +15,7 @@ trait SpectrumRepositoryCustom {
     * @param query
     * @return
     */
-  def executeQuery(query: Query): List[Spectrum]
+  def executeQuery(query: Query): java.util.List[Spectrum]
 
   /**
     * pagination based approach to query the system
@@ -32,7 +32,7 @@ trait SpectrumRepositoryCustom {
     * @param query
     * @return
     */
-  def executeQuery(query: String): List[Spectrum] = {
+  def executeQuery(query: String): java.util.List[Spectrum] = {
     executeQuery(new BasicQuery(query))
   }
 
@@ -44,4 +44,20 @@ trait SpectrumRepositoryCustom {
   def executeQuery(query: String, pageable: Pageable): Page[Spectrum] = {
     executeQuery(new BasicQuery(query), pageable)
   }
+
+  /**
+    * executes a query against the system and returns the count
+    * @param query
+    * @return
+    */
+  def executeQueryCount(query: String) : Long = {
+    executeQueryCount(new BasicQuery(query))
+  }
+
+  /**
+    * executes query count against the system
+    * @param query
+    * @return
+    */
+  def executeQueryCount(query: Query) : Long
 }

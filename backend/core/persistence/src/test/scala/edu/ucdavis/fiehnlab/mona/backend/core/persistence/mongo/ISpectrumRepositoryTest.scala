@@ -13,6 +13,7 @@ import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.mongodb.core.query.BasicQuery
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 2/26/16.
@@ -63,26 +64,26 @@ class ISpectrumRepositoryTest extends WordSpec {
 
         assert(result.size == 1)
 
-        assert(result.head.biologicalCompound.inchiKey == "KKSDGJDHHZEWEP-UHFFFAOYSA-N")
+        assert(result.asScala.head.biologicalCompound.inchiKey == "KKSDGJDHHZEWEP-UHFFFAOYSA-N")
       }
 
       "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
-        val result:List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
+        val result:java.util.List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
 
         assert(result.size == 1)
       }
 
       "provide us with the possibility to query data, for a specific metadata filed" in {
 
-        val result:List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }""")
+        val result:java.util.List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }""")
 
         assert(result.size == 2)
       }
 
       "provide us with the possibility to query data, by a tag query" in {
 
-        val result:List[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
+        val result:java.util.List[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
 
         assert(result.size == 58)
 
