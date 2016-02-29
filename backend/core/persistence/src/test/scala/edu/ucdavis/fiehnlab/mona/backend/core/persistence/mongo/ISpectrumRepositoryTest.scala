@@ -65,13 +65,28 @@ class ISpectrumRepositoryTest extends WordSpec {
         assert(result.head.biologicalCompound.inchiKey == "KKSDGJDHHZEWEP-UHFFFAOYSA-N")
       }
 
-      "provide us with the possibility to query data, by providing a string and query in a range of values" in {
+      "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
-        val result:List[Spectrum] = spectrumRepository.executeQuery("{biologicalCompound.metaData: { $elem } }")
+        val result:List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
 
-        println(result.size)
+        assert(result.size == 1)
+      }
+
+      "provide us with the possibility to query data, for a specific metadata filed" in {
+
+        val result:List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }""")
+
+        assert(result.size == 2)
+      }
+
+      "provide us with the possibility to query data, by a tag query" in {
+
+        val result:List[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
+
+        assert(result.size == 58)
 
       }
+
     }
   }
 
