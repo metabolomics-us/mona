@@ -66,7 +66,11 @@ class ISpectrumRepositoryTest extends WordSpec {
       }
 
       "provide us with the possibility to query data, by providing a string and query in a range of values" in {
-        fail("todo!!!")
+
+        val result:List[Spectrum] = spectrumRepository.executeQuery("{biologicalCompound.metaData: { $elem } }")
+
+        println(result.size)
+
       }
     }
   }

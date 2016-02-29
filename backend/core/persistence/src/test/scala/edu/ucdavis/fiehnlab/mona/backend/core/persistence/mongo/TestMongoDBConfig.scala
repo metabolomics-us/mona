@@ -11,7 +11,10 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration
 @EnableAutoConfiguration
 @Configuration
 class TestMongoDBConfig extends AbstractMongoConfiguration{
-  override def mongo(): Mongo =  new MongoClient("127.0.0.1")
+
+  val getServer = scala.util.Properties.envOrElse("MONGO_SERVER", "127.0.0.1" )
+
+  override def mongo(): Mongo =  new MongoClient(getServer)
 
   override def getDatabaseName: String = "mona-test"
 }

@@ -18,7 +18,7 @@ object Types {
                        deleted: Boolean,
                        hidden: Boolean,
                        name: String,
-                       score: Array[Score],
+                       score: Score,
                        unit: String,
                        url: String,
                        @JsonDeserialize(using = classOf[NumberDeserializer])
