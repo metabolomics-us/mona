@@ -1,9 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.{JsonSerialize, JsonDeserialize}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
+
+import scala.beans.BeanProperty
 
 /**
   * definition of the MoNA domain classes
@@ -108,5 +111,4 @@ object Types {
                        submitter: Submitter,
                        tags: Array[Tags]
                      )
-
 }
