@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
   * Created by wohlgemuth on 2/26/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RepositoryConfiguration], classOf[TestMongoDBConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[RepositoryConfiguration]))
 class ISpectrumRepositoryTest extends WordSpec {
 
   @Autowired

@@ -1,6 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
 import java.io.Reader
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility
+import com.fasterxml.jackson.annotation.JsonInclude.Include
+import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.MetaData
@@ -37,7 +40,6 @@ class JSONDomainReader[T: ClassTag](mapper: ObjectMapper) extends DomainReader[T
 object MonaMapper {
   def create: ObjectMapper = {
 
-    println("creating new mapper")
     val mapper = new ObjectMapper() with ScalaObjectMapper
 
     mapper.registerModule(DefaultScalaModule)
@@ -45,7 +47,8 @@ object MonaMapper {
     //required, in case we are provided with a list of value
     mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
+    mapper.setSerializationInclusion(Include.NON_NULL);
+//    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
     mapper
   }
 }
@@ -67,27 +70,36 @@ object JSONDomainReader {
   */
 class NumberDeserializer extends JsonDeserializer[Any] {
   override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Any = {
-    val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
 
-    val content = jsonNode.textValue
+    try {
+      val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
 
-    if (content.toLowerCase.equals("true")) {
-      true
-    }
-    else if (content.toLowerCase().equals("false")) {
-      false
-    }
-    else {
-      try {
-        content.toInt
-      } catch {
-        case e: NumberFormatException => try {
-          content.toDouble
+      val content = jsonNode.textValue
+
+      if (content != null) {
+        if (content.toLowerCase.equals("true")) {
+          true
         }
-        catch {
-          case e2: NumberFormatException => content
+        else if (content.toLowerCase().equals("false")) {
+          false
+        }
+        else {
+          try {
+            content.toInt
+          } catch {
+            case e: NumberFormatException => try {
+              content.toDouble
+            }
+            catch {
+              case e2: NumberFormatException => content
+            }
+          }
         }
       }
+      content
+    }
+    catch {
+      case e: Exception => e.printStackTrace()
     }
   }
 }
