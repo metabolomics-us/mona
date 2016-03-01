@@ -104,7 +104,7 @@ class StaticQueries {
     "metadata": [],
     "tags": [
         {
-            "name": { "eq": "fahfa" }
+            "name": { "eq": "FAHFA" }
         }
     ]
 }""")
@@ -173,10 +173,6 @@ class StaticQueries {
             save("${label} - ${type}", "${label} spectra with instrument type ${type}", """{
     "compound": {},
     "metadata": [
-        {
-            "name": "derivative type",
-            "value": { "like": "%" }
-        },
         {
             "name": "instrument type",
             "value": { "like": "%${type}%" }
@@ -289,10 +285,6 @@ class StaticQueries {
             save("${label} - ${type}", "${label} spectra with instrument type ${type}", """{
     "compound": {},
     "metadata": [
-        {
-            "name": "derivative type",
-            "value": { "like": "%" }
-        },
         {
             "name": "instrument type",
             "value": { "like": "%${type}%" }
