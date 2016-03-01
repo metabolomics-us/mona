@@ -98,9 +98,9 @@ class SpectraQueryExportService {
         // Create new download file object
         def queryDownload = SpectrumQueryDownload.findOrCreateByLabel("${label}-${format}");
 
-        def queryFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}-query.json"
-        def exportFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}.${format}"
-        def compressedFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}-${format}.zip"
+        def queryFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}-query.json"
+        def exportFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}.${format}"
+        def compressedFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}-${format}.zip"
 
         if (!queryDownload.query) {
             queryDownload.query = query.toString();
