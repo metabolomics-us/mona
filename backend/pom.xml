@@ -32,12 +32,6 @@
       </dependency>
 
       <dependency>
-        <groupId>com.typesafe.scala-logging</groupId>
-        <artifactId>scala-logging_2.11</artifactId>
-        <version>3.1.0</version>
-      </dependency>
-
-      <dependency>
         <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         <artifactId>domain</artifactId>
         <version>1.0-SNAPSHOT</version>
@@ -46,6 +40,12 @@
       <dependency>
         <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         <artifactId>persistence</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+
+      <dependency>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        <artifactId>rest</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
 
