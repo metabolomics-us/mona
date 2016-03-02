@@ -175,11 +175,13 @@
                 }
             }
 
-            for (var i = 0; i < delayedSpectrum.chemicalCompound.metaData.length; i++) {
-                var name = delayedSpectrum.chemicalCompound.metaData[i].name.toLowerCase();
+            if(delayedSpectrum.chemicalCompound !== null) {
+                for (var i = 0; i < delayedSpectrum.chemicalCompound.metaData.length; i++) {
+                    var name = delayedSpectrum.chemicalCompound.metaData[i].name.toLowerCase();
 
-                if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                    delayedSpectrum.chemicalCompound.metaData[i].value = truncateMass(delayedSpectrum.chemicalCompound.metaData[i].value);
+                    if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                        delayedSpectrum.chemicalCompound.metaData[i].value = truncateMass(delayedSpectrum.chemicalCompound.metaData[i].value);
+                    }
                 }
             }
 
