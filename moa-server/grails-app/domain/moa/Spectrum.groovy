@@ -19,9 +19,6 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     Date dateCreated
     Date lastUpdated
 
-    /**
-     * contains one biological compound and one chemical compound
-     */
     static hasOne = [
             submitter: Submitter,
             splash   : Splash
@@ -48,6 +45,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
         submitter nullable: true
         score nullable: true
         library nullable: true
+        libraryIdentifier nullable: true
         splash nullable: true
         deleted nullable: true
         compoundLinks nullable: false
