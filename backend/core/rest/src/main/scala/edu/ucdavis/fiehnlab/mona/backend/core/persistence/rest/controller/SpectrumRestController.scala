@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{AsyncResult, Async}
 import org.springframework.web.bind.annotation._
 import scala.collection.JavaConverters._
@@ -116,9 +117,22 @@ class SpectrumRestController extends LazyLogging {
     */
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET))
-  def get(@PathVariable("id") spectrum: String): Future[Spectrum] = new AsyncResult[Spectrum](
-    spectrumRepository.findOne(spectrum)
-  )
+  def get(@PathVariable("id") spectrum: String): Future[ResponseEntity[Spectrum]] = {
+
+    logger.info(s"qery for spectra ${spectrum}")
+    if (spectrumRepository.exists(spectrum)) {
+      logger.info("it exists already")
+      new AsyncResult[ResponseEntity[Spectrum]](
+        new ResponseEntity[Spectrum](spectrumRepository.findOne(spectrum), HttpStatus.OK)
+      )
+    }
+    else {
+      logger.info("spectra wasn't found")
+      new AsyncResult[ResponseEntity[Spectrum]](
+        new ResponseEntity[Spectrum](HttpStatus.NOT_FOUND)
+      )
+    }
+  }
 
 
   /**
@@ -131,5 +145,36 @@ class SpectrumRestController extends LazyLogging {
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.DELETE))
   def delete(@PathVariable("id") spectrum: String) = spectrumRepository.delete(spectrum)
 
+  /**
+    * saves the provided spectrum at the given path
+    *
+    * @param id
+    * @param spectrum
+    * @return
+    */
+  @Async
+  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
+  def put(@PathVariable("id") id: String, @RequestBody spectrum: Spectrum): Future[Spectrum] = {
+
+    if (id == spectrum.id) {
+
+      logger.info("updating existing spectrum")
+      new AsyncResult[Spectrum](
+        spectrumRepository.save(spectrum.copy(id = id))
+      )
+
+    }
+    else {
+      logger.info(s"moving spectrum from id ${spectrum.id} to ${id}")
+      spectrumRepository.delete(spectrum.id)
+
+      val newSpectrum = spectrum.copy(id = id)
+      val result = spectrumRepository.save(newSpectrum)
+
+      new AsyncResult[Spectrum](
+        result
+      )
+    }
+  }
 
 }
