@@ -184,7 +184,7 @@
                 s.biologicalCompound.inchiKey = spectra.inchiKey;
                 s.biologicalCompound.inchi = spectra.inchi;
 
-                if (spectra.molFile !== null) {
+                if (angular.isDefined(spectra.molFile) && spectra.molFile !== null) {
                     s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
                 }
 
