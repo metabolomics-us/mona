@@ -18,7 +18,6 @@
   <modules>
     <module>core</module>
     <module>services</module>
-    <module>clients</module>
     <module>utilities</module>
   </modules>
 
