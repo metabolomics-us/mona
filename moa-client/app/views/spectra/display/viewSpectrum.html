@@ -56,11 +56,10 @@
                         </div>
                     </div>
 
-                    <div class="row top5">
+                    <div class="row top5" ng-if="spectrum.library !== null">
                         <div class="col-md-12">
                             <ul class="list-unstyled">
-                                <li><div class="h5" ng-bind-html="origin"></div></li>
-                                <li><div class="h5" ng-bind-html="authors"></div></li>
+                                <li><div class="h5"><span data-display-library-reference spectrum="spectrum"></span></div></li>
                             </ul>
                         </div>
                     </div>
