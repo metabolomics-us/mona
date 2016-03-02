@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
 import java.io.{File, FileReader}
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.RepositoryConfiguration
 import org.junit.runner.RunWith
@@ -116,6 +116,23 @@ class ISpectrumRepositoryTest extends WordSpec {
 
       }
 
+      "we should be able to update a spectra with new properties" in {
+        val spectrum = spectrumRepository.findAll().asScala.head
+
+        val splash:Splash = spectrum.splash.copy(splash = "tada")
+        val spectrum2:Spectrum = spectrum.copy(splash = splash)
+
+        val countBefore = spectrumRepository.count()
+
+        spectrumRepository.save(spectrum2)
+
+        val countAfter = spectrumRepository.count()
+
+        val spectrum3 = spectrumRepository.findOne(spectrum2.id)
+
+        assert(spectrum3.splash.splash == spectrum2.splash.splash)
+        assert(countBefore == countAfter)
+      }
     }
   }
 

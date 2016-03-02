@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper, JSONDomainReader}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.Application
@@ -130,6 +130,66 @@ class SpectrumRestControllerTest extends WordSpec {
         for (spec <- exampleRecords) {
           assert(firstRecords.contains(spec) == false)
         }
+      }
+
+      "we should be able to update a spectra with new properties" in {
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+
+        val splash: Splash = spectrum.splash.copy(splash = "tada")
+        val modifiedSpectrum: Spectrum = spectrum.copy(splash = splash)
+        val countBefore = spectrumRepository.count()
+
+        given().contentType("application/json; charset=UTF-8").body(modifiedSpectrum).when().post("/spectra").then().statusCode(200)
+
+        val countAfter = spectrumRepository.count()
+        val spectrumAfterUpdate = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${modifiedSpectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+
+        assert(spectrumAfterUpdate.splash.splash == modifiedSpectrum.splash.splash)
+        assert(countBefore == countAfter)
+      }
+
+      "we should be able to receive a spectra by it's ID using GET at /rest/spectra/{id}" in {
+
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+
+        assert(spectrum.id.equals(spectrumByID.id))
+
+      }
+
+      "if a spectra doesn't exist at /rest/spectra/{id}, we should receive a 404 " in {
+        given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA1234").then().statusCode(404)
+      }
+
+      "we should be able to move a spectrum from one id to another using PUT as /rest/spectra " in {
+
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+
+        val spectrumIdMoved = given().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+
+        given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200)
+
+      }
+
+
+      "we should be able to update a spectrum at a given path using PUT as /rest/spectra " in {
+
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+
+        val spectrumIdMoved = given().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
+
+        val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
+
+
+        //should not exist anymore
+        given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(404)
+
+
       }
     }
   }
