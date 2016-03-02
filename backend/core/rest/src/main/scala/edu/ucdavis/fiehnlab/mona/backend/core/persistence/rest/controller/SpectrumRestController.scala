@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller
 import java.lang.Iterable
 import java.util.concurrent.Future
 
-import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,7 +21,7 @@ import scala.collection.JavaConverters._
   */
 @RestController
 @RequestMapping(Array("/rest/spectra"))
-class SpectrumRestController extends LazyLogging {
+class SpectrumRestController {
 
   /**
     * this is the utilized repository, doing all the heavy lifting
@@ -41,9 +40,7 @@ class SpectrumRestController extends LazyLogging {
   @Async
   def listAllSpectra(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[Iterable[Spectrum]] = new AsyncResult[Iterable[Spectrum]](
     if (size != null) {
-      logger.info(s"max spectra request ${size}")
       if (page != null) {
-        logger.info(s"current page request ${page}")
         spectrumRepository.findAll(new PageRequest(page, size)).getContent
       }
       else {
@@ -119,15 +116,12 @@ class SpectrumRestController extends LazyLogging {
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET))
   def get(@PathVariable("id") spectrum: String): Future[ResponseEntity[Spectrum]] = {
 
-    logger.info(s"qery for spectra ${spectrum}")
     if (spectrumRepository.exists(spectrum)) {
-      logger.info("it exists already")
       new AsyncResult[ResponseEntity[Spectrum]](
         new ResponseEntity[Spectrum](spectrumRepository.findOne(spectrum), HttpStatus.OK)
       )
     }
     else {
-      logger.info("spectra wasn't found")
       new AsyncResult[ResponseEntity[Spectrum]](
         new ResponseEntity[Spectrum](HttpStatus.NOT_FOUND)
       )
@@ -157,15 +151,12 @@ class SpectrumRestController extends LazyLogging {
   def put(@PathVariable("id") id: String, @RequestBody spectrum: Spectrum): Future[Spectrum] = {
 
     if (id == spectrum.id) {
-
-      logger.info("updating existing spectrum")
       new AsyncResult[Spectrum](
         spectrumRepository.save(spectrum.copy(id = id))
       )
 
     }
     else {
-      logger.info(s"moving spectrum from id ${spectrum.id} to ${id}")
       spectrumRepository.delete(spectrum.id)
 
       val newSpectrum = spectrum.copy(id = id)
