@@ -28,7 +28,7 @@ class CalculateMassAccuracyRule extends AbstractCurationRule {
         Double theoreticalMass = null
 
 
-        spectrum.chemicalCompound.listAvailableValues().each { MetaDataValue value ->
+        spectrum.biologicalCompound.listAvailableValues().each { MetaDataValue value ->
             for (String option : ["total exact mass"]) {
                 if (value.getName().toLowerCase().equals(option)) {
                     theoreticalMass = Double.parseDouble(value.getValue().toString())
