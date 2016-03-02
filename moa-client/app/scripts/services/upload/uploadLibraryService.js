@@ -184,32 +184,24 @@
                 s.biologicalCompound.inchiKey = spectra.inchiKey;
                 s.biologicalCompound.inchi = spectra.inchi;
 
-                s.chemicalCompound.inchiKey = spectra.inchiKey;
-                s.chemicalCompound.inchi = spectra.inchi;
-
                 if (spectra.molFile !== null) {
-                    s.chemicalCompound.molFile = spectra.molFile.toString('utf8');
                     s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
                 }
 
                 //assign all the defined names of the spectra
                 s.biologicalCompound.names = [];
-                s.chemicalCompound.names = [];
 
                 if (angular.isDefined(spectra.name)) {
                     s.biologicalCompound.names.push(spectra.name);
-                    s.chemicalCompound.names.push(spectra.name);
                 }
 
                 if (angular.isDefined(spectra.names)) {
                     for (var i = 0; i < spectra.names.length; i++) {
                         s.biologicalCompound.names.push(spectra.names[i]);
-                        s.chemicalCompound.names.push(spectra.names[i]);
                     }
                 }
 
                 s.biologicalCompound.metaData = [];
-                s.chemicalCompound.metaData = [];
 
                 s.spectrum = spectra.spectrum;
 
@@ -273,7 +265,6 @@
         self.buildSpectrum = function() {
             var spectrum = new Spectrum();
             spectrum.biologicalCompound = {names: []};
-            spectrum.chemicalCompound = {names: []};
             spectrum.tags = [];
             spectrum.metaData = [];
 
