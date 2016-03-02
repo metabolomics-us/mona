@@ -30,8 +30,11 @@ class CompoundShouldBeDerivatizedRule extends AbstractCurationRule {
     boolean executeRule(CurationObject toValidate) {
 
         Spectrum spectrum = toValidate.getObjectAsSpectra()
-        //first check if chemical and biological compound are the same
 
+        if (spectrum.chemicalCompound == null)
+            return true
+
+        //first check if chemical and biological compound are the same
         if (spectrum.biologicalCompound.id == spectrum.chemicalCompound.id) {
 
             //let's check if there is a predicted compound available
