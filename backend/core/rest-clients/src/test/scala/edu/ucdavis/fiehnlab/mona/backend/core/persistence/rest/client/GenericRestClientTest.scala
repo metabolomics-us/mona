@@ -67,7 +67,7 @@ class GenericRestClientTest extends FunSuite with BeforeAndAfter {
 
     assert(result.id == "newTestId")
 
-    assert(spectrumRestClient.get("newTestId") == "newTestId")
+    assert(spectrumRestClient.get("newTestId").id == "newTestId")
 
   }
 
