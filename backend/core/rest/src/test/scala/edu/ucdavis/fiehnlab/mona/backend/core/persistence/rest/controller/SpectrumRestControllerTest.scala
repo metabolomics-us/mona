@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.Query
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper, JSONDomainReader}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumRepositoryCustom
@@ -106,13 +107,13 @@ class SpectrumRestControllerTest extends WordSpec {
       }
 
       "we should be able to execute custom queries at /rest/spectra/search using POST" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body("""{"tags" : {$elemMatch : { text : "LCMS" } } }""").post("/spectra/search").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body(Query("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
         assert(exampleRecords.length == spectrumRepository.count())
       }
 
       "we should be able to execute custom queries at /rest/spectra/search?size=10 using POST limiting it to 10 records" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body("""{"tags" : {$elemMatch : { text : "LCMS" } } }""").post("/spectra/search?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body(Query("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
         assert(exampleRecords.length == 10)
       }
@@ -120,10 +121,10 @@ class SpectrumRestControllerTest extends WordSpec {
 
       "we should be able to execute custom queries at /rest/spectra/search?size=10 using POST limiting it to 10 records and access page 1" in {
 
-        val firstRecords = given().contentType("application/json; charset=UTF-8").when().body("""{"tags" : {$elemMatch : { text : "LCMS" } } }""").post("/spectra/search?size=10&page=0").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val firstRecords = given().contentType("application/json; charset=UTF-8").when().body(Query("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search?size=10&page=0").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(firstRecords.length == 10)
 
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body("""{"tags" : {$elemMatch : { text : "LCMS" } } }""").post("/spectra/search?size=10&page=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body(Query("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search?size=10&page=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
         assert(exampleRecords.length == 10)
 
