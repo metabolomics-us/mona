@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.Query
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{MediaType, HttpEntity, HttpHeaders}
 import org.springframework.web.client.{RestOperations, RestTemplate}
@@ -25,12 +26,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
   def count(query: Option[String] = None): Long = query match {
     case Some(x) =>
 
-      val headers = new HttpHeaders()
-      headers.setContentType(MediaType.APPLICATION_JSON);
-
-      val entity = new HttpEntity[String](x,headers)
-
-      restOperations.postForObject(s"$basePath/count", entity, classOf[Long])
+      restOperations.postForObject(s"$basePath/count", Query(x), classOf[Long])
 
     case _ => restOperations.getForObject(s"$basePath/count", classOf[Long])
   }
@@ -94,7 +90,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
     }
 
     val path = query match {
-      case Some(a) => s"$basePath/query$utilizedPageSize$pageToLookAt"
+      case Some(a) => s"$basePath/search$utilizedPageSize$pageToLookAt"
       case _ => s"$basePath$utilizedPageSize$pageToLookAt"
     }
 
@@ -102,7 +98,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
       restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
     }
     else {
-      restOperations.postForObject(path, query, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
+      restOperations.postForObject(path, Query(query.get), classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
     }
   }
 
