@@ -3,7 +3,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.GenericRestClient
-import org.springframework.context.annotation.{Configuration, Bean}
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.{PropertySource, Configuration, Bean}
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.{RestOperations, RestTemplate}
 
@@ -12,6 +13,9 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
   */
 @Configuration
 class RestClientConfig {
+
+  @Value("${mona.rest.server.url}")
+  val monaServerUrl:String = null
 
   @Bean
   def restOperations: RestOperations = {
@@ -26,9 +30,6 @@ class RestClientConfig {
     converter.setObjectMapper(MonaMapper.create)
     converter
   }
-
-  @Bean
-  def monaServerUrl = s"http://localhost:8080/rest/spectra"
 
   @Bean
   def spectrumRestClient:GenericRestClient[Spectrum,String] = {

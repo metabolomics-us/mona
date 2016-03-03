@@ -112,3 +112,16 @@ object Types {
                        tags: Array[Tags]
                      )
 }
+
+/**
+  * makes serializations simpler
+  */
+object HelperTypes{
+
+  /**
+    * a simple query
+    * @param query
+    */
+  case class Query( query:String)
+
+}

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.{Pageable, PageImpl, Page}
 import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.{BasicQuery, Query}
 import org.springframework.stereotype.Repository
 import scala.collection.JavaConverters._
 
@@ -16,6 +16,29 @@ import scala.collection.JavaConverters._
   */
 @Repository
 class ISpectrumRepositoryCustomImpl extends SpectrumRepositoryCustom {
+
+  /**
+    * simple wrapper, so we don't have to use a query object
+    *
+    * @param query
+    * @return
+    */
+  override def executeQuery(query: String): util.List[Spectrum] = executeQuery(new BasicQuery(query))
+
+  /**
+    * executes a query against the system and returns the count
+    *
+    * @param query
+    * @return
+    */
+  override def executeQueryCount(query: String): Long = executeQueryCount(new BasicQuery(query))
+
+  /**
+    *
+    * @param query
+    * @return
+    */
+  override def executeQuery(query: String, pageable: Pageable): Page[Spectrum] = executeQuery(new BasicQuery(query),pageable)
 
   @Autowired
   val mongoOperations: MongoOperations = null
@@ -26,7 +49,7 @@ class ISpectrumRepositoryCustomImpl extends SpectrumRepositoryCustom {
     * @param query
     * @return
     */
-  override def executeQuery(query: Query): java.util.List[Spectrum] = {
+  def executeQuery(query: Query): java.util.List[Spectrum] = {
     mongoOperations.find(query, classOf[Spectrum])
   }
 
@@ -37,7 +60,7 @@ class ISpectrumRepositoryCustomImpl extends SpectrumRepositoryCustom {
     * @param pageable
     * @return
     */
-  override def executeQuery(query: Query, pageable: Pageable): Page[Spectrum] = {
+  def executeQuery(query: Query, pageable: Pageable): Page[Spectrum] = {
     val count = executeQueryCount(query)
 
     query.`with`(pageable)
@@ -53,7 +76,7 @@ class ISpectrumRepositoryCustomImpl extends SpectrumRepositoryCustom {
     * @param query
     * @return
     */
-  override def executeQueryCount(query: Query): Long = {
+  def executeQueryCount(query: Query): Long = {
     mongoOperations.count(query, classOf[Spectrum])
   }
 }

@@ -59,14 +59,6 @@ class ISpectrumRepositoryTest extends WordSpec {
         assert(spectrumRepository.count() == exampleRecords.length)
       }
 
-      "provide us with a custom way to query data" in {
-        val result = spectrumRepository.executeQuery(new BasicQuery(s"""{"biologicalCompound.inchiKey" : "KKSDGJDHHZEWEP-UHFFFAOYSA-N"}"""))
-
-        assert(result.size == 1)
-
-        assert(result.asScala.head.biologicalCompound.inchiKey == "KKSDGJDHHZEWEP-UHFFFAOYSA-N")
-      }
-
       "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
         val result:java.util.List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")

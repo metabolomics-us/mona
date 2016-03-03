@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import org.springframework.beans.factory.annotation.{Value, Autowired}
 import org.springframework.boot.test.{IntegrationTest, SpringApplicationConfiguration}
-import org.springframework.context.annotation.{Primary, Bean}
+import org.springframework.context.annotation.{Import, Configuration, Primary, Bean}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
@@ -20,25 +20,13 @@ import org.springframework.test.context.web.WebAppConfiguration
   * Created by wohlgemuth on 3/2/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[Application], classOf[RestClientConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientConfig],classOf[Application]))
 @WebAppConfiguration
-@IntegrationTest(Array("server.port:0"))
+@IntegrationTest(Array("server.port:44444"))
 class GenericRestClientTest extends FunSuite with BeforeAndAfter {
 
   @Autowired
   val spectrumRestClient: GenericRestClient[Spectrum, String] = null
-
-
-  @Autowired
-  val spectrumRepository: ISpectrumRepositoryCustom = null
-
-
-  @Value( """${local.server.port}""")
-  val port: Int = 0
-
-  @Bean
-  @Primary
-  def monaServerUrl = s"http://localhost:$port/rest/spectra"
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
@@ -50,7 +38,7 @@ class GenericRestClientTest extends FunSuite with BeforeAndAfter {
     */
   before {
     for (spec <- exampleRecords) {
-      spectrumRepository.save(spec)
+      spectrumRestClient.add(spec)
     }
   }
 
@@ -58,7 +46,9 @@ class GenericRestClientTest extends FunSuite with BeforeAndAfter {
     * clean the system
     */
   after {
-    spectrumRepository.deleteAll()
+    spectrumRestClient.list().foreach(x =>
+      spectrumRestClient.delete(x.id)
+    )
   }
 
   test("testCount") {
@@ -77,7 +67,7 @@ class GenericRestClientTest extends FunSuite with BeforeAndAfter {
 
     assert(result.id == "newTestId")
 
-    assert(spectrumRepository.findOne("newTestId").id == "newTestId")
+    assert(spectrumRestClient.get("newTestId") == "newTestId")
 
   }
 
@@ -106,19 +96,22 @@ class GenericRestClientTest extends FunSuite with BeforeAndAfter {
   }
 
   test("testList$default$1") {
-    fail()
+    val data = spectrumRestClient.list(pageSize = Some(10))
+    assert(data.length == 10)
   }
 
   test("testList$default$2") {
-    fail()
+    val dataFirst = spectrumRestClient.list(pageSize = Some(10), page = Some(0))
+    val dataSecond = spectrumRestClient.list(pageSize = Some(10), page = Some(1))
+
+    assert(dataFirst.length == 10)
+
+    assert((dataFirst.toSet diff dataSecond.toSet).size == 10)
   }
 
   test("testList$default$3") {
-    fail()
-  }
+    val data = spectrumRestClient.list(Some("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""))
+    assert(data.length == exampleRecords.length)
 
-  test("testAdd") {
-    fail()
   }
-
 }
