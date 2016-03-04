@@ -183,8 +183,7 @@
                                             <tbody>
                                             <tr ng-show="spectra.length == 0">
                                             </tr>
-                                            <tr ng-repeat="s in similarSpectra | orderBy:-similarity"
-                                                ng-click="viewSpectrum(s.id)">
+                                            <tr ng-repeat="s in similarSpectra | orderBy:'-similarity'" ng-click="viewSpectrum(s.id)">
                                                 <td>{{s.id}}</td>
                                                 <td>
                                                     <ul class="list-unstyled">
@@ -207,7 +206,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <p class="text-center">{{spectrum.similarity | number:0}} / 1000</p>
+                                                    <p class="text-center">{{s.similarity | number:0}} / 1000</p>
                                                 </td>
                                             </tr>
                                             </tbody>
