@@ -69,7 +69,7 @@ class JSONDomainReaderTest extends WordSpec {
 
             case "Tocris Bioscience" =>
 
-              s"the Tocris Bioscience should be of type Integer" in {
+              "the Tocris Bioscience should be of type Integer" in {
                 assert(metaData.value.isInstanceOf[Int])
                 assert(metaData.value.asInstanceOf[Int] === 1623)
 

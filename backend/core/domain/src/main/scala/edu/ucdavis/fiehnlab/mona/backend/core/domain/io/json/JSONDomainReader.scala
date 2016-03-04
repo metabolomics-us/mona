@@ -48,7 +48,6 @@ object MonaMapper {
     mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.setSerializationInclusion(Include.NON_NULL);
-//    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
     mapper
   }
 }
@@ -69,6 +68,7 @@ object JSONDomainReader {
   * tries to convert a number or boolean object from a string
   */
 class NumberDeserializer extends JsonDeserializer[Any] {
+
   override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Any = {
 
     try {
@@ -96,7 +96,9 @@ class NumberDeserializer extends JsonDeserializer[Any] {
           }
         }
       }
-      content
+      else{
+        content
+      }
     }
     catch {
       case e: Exception => e.printStackTrace()

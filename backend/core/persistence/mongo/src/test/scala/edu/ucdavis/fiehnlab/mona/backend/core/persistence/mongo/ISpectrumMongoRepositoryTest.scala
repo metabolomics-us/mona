@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterAll, WordSpec, FunSuite}
-import org.springframework.beans.factory.annotation.{Value, Autowired}
+import org.springframework.beans.factory.annotation.{Qualifier, Value, Autowired}
 import org.springframework.boot.autoconfigure.{SpringBootApplication, EnableAutoConfiguration}
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation._
@@ -15,6 +15,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration
 import org.springframework.data.mongodb.core.query.BasicQuery
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
@@ -30,7 +31,8 @@ import scala.collection.JavaConverters._
 class ISpectrumMongoRepositoryTest extends WordSpec{
 
   @Autowired
-  val spectrumRepository: ISpectrumMongoRepositoryCustom = null
+  @Qualifier("spectrumMongoRepository")
+  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
@@ -47,54 +49,54 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
         assert(exampleRecords.length == 58)
       }
     }
-    spectrumRepository.deleteAll()
+    spectrumMongoRepository.deleteAll()
 
-    assert(spectrumRepository.count() == 0)
+    assert(spectrumMongoRepository.count() == 0)
 
     "issues standard crud commands " should {
 
       for (spectrum <- exampleRecords) {
-        val size = spectrumRepository.count()
+        val size = spectrumMongoRepository.count()
 
-        spectrumRepository.save(spectrum)
-        val newSize = spectrumRepository.count()
+        spectrumMongoRepository.save(spectrum)
+        val newSize = spectrumMongoRepository.count()
 
         assert(newSize == size + 1)
       }
 
       s" increase the amount of data in the system by ${exampleRecords.length}" in {
-        assert(spectrumRepository.count() == exampleRecords.length)
+        assert(spectrumMongoRepository.count() == exampleRecords.length)
       }
 
       "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
-        val result:java.util.List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
         assert(result.size == 1)
       }
 
       "provide us with the possibility to query data, for a specific metadata filed" in {
 
-        val result:java.util.List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }""")
 
         assert(result.size == 2)
       }
 
       "provide us with the possibility to query data, by a tag query" in {
 
-        val result:java.util.List[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
 
         assert(result.size == 58)
 
       }
 
       "provide us with the possibility to query all data and paginate it" in {
-        val page:Page[Spectrum] = spectrumRepository.findAll(new PageRequest(0,30))
+        val page:Page[Spectrum] = spectrumMongoRepository.findAll(new PageRequest(0,30))
 
         assert(page.isFirst)
         assert(page.getTotalElements == 58)
         assert(page.getTotalPages == 2)
 
-        val page2:Page[Spectrum] = spectrumRepository.findAll(new PageRequest(30,60))
+        val page2:Page[Spectrum] = spectrumMongoRepository.findAll(new PageRequest(30,60))
 
         assert(page2.isLast)
 
@@ -102,31 +104,31 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 
       "provide us with the possibility to query custom queries all data and paginate it" in {
 
-        val page:Page[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(0,30))
+        val page:Page[Spectrum] = spectrumMongoRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(0,30))
 
         assert(page.isFirst)
         assert(page.getTotalElements == 58)
         assert(page.getTotalPages == 2)
 
-        val page2:Page[Spectrum] = spectrumRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(30,60))
+        val page2:Page[Spectrum] = spectrumMongoRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(30,60))
 
         assert(page2.isLast)
 
       }
 
       "we should be able to update a spectra with new properties" in {
-        val spectrum = spectrumRepository.findAll().asScala.head
+        val spectrum = spectrumMongoRepository.findAll().asScala.head
 
         val splash:Splash = spectrum.splash.copy(splash = "tada")
         val spectrum2:Spectrum = spectrum.copy(splash = splash)
 
-        val countBefore = spectrumRepository.count()
+        val countBefore = spectrumMongoRepository.count()
 
-        spectrumRepository.save(spectrum2)
+        spectrumMongoRepository.save(spectrum2)
 
-        val countAfter = spectrumRepository.count()
+        val countAfter = spectrumMongoRepository.count()
 
-        val spectrum3 = spectrumRepository.findOne(spectrum2.id)
+        val spectrum3 = spectrumMongoRepository.findOne(spectrum2.id)
 
         assert(spectrum3.splash.splash == spectrum2.splash.splash)
         assert(countBefore == countAfter)
@@ -135,6 +137,9 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
   }
 }
 
+@EnableMongoRepositories(basePackageClasses = Array(
+  classOf[ISpectrumMongoRepositoryCustom]
+), excludeFilters = Array())
 @Configuration
 class MyTestConfig extends AbstractMongoConfiguration{
   val server: String = scala.util.Properties.envOrElse("MONGO_SERVER", "127.0.0.1" )
