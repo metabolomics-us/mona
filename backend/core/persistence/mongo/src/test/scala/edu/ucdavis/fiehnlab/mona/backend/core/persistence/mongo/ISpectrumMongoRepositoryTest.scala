@@ -70,20 +70,20 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 
       "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
         assert(result.size == 1)
       }
 
       "provide us with the possibility to query data, for a specific metadata filed" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }""")
 
         assert(result.size == 2)
       }
 
       "provide us with the possibility to query data, by a tag query" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
 
         assert(result.size == 58)
 
@@ -104,13 +104,13 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 
       "provide us with the possibility to query custom queries all data and paginate it" in {
 
-        val page:Page[Spectrum] = spectrumMongoRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(0,30))
+        val page:Page[Spectrum] = spectrumMongoRepository.nativeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(0,30))
 
         assert(page.isFirst)
         assert(page.getTotalElements == 58)
         assert(page.getTotalPages == 2)
 
-        val page2:Page[Spectrum] = spectrumMongoRepository.executeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(30,60))
+        val page2:Page[Spectrum] = spectrumMongoRepository.nativeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(30,60))
 
         assert(page2.isLast)
 
@@ -133,6 +133,26 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
         assert(spectrum3.splash.splash == spectrum2.splash.splash)
         assert(countBefore == countAfter)
       }
+
+      "we should be able to execute RSQL queries like biologicalCompound.inchiKey==?" in {
+        val spectrum = spectrumMongoRepository.findAll().asScala.head
+
+        val result = spectrumMongoRepository.rsqlQuery(s"biologicalCompound.inchiKey==${spectrum.biologicalCompound.inchiKey}")
+
+        assert(result.size() == 1)
+      }
+
+      "we should be able to execute RSQL queries like biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'" in {
+        val result = spectrumMongoRepository.rsqlQuery(s"biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'")
+        assert(result.size() == 1)
+      }
+
+      "we should be able to execute RSQL queries like biologicalCompound.names.name=='*ACID'" ignore {
+        val result = spectrumMongoRepository.rsqlQuery("metaData==(name=='license' and value=='CC BY-SA')")
+        assert(result.size() == 1)
+      }
+
+
     }
   }
 }

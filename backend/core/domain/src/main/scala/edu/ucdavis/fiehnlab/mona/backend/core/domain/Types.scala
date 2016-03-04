@@ -16,7 +16,7 @@ import scala.beans.BeanProperty
 object Types {
 
   case class MetaData(
-                       category: String,
+                       category: String ,
                        computed: Boolean,
                        deleted: Boolean,
                        hidden: Boolean,
