@@ -28,10 +28,10 @@ import scala.collection.JavaConverters._
 @SpringApplicationConfiguration(Array(classOf[MyTestConfig],classOf[RepositoryConfiguration]))
 @ComponentScan
 @EnableAutoConfiguration
-class ISpectrumRepositoryTest extends WordSpec{
+class ISpectrumMongoRepositoryTest extends WordSpec{
 
   @Autowired
-  val spectrumRepository: ISpectrumRepositoryCustom = null
+  val spectrumRepository: ISpectrumMongoRepositoryCustom = null
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)

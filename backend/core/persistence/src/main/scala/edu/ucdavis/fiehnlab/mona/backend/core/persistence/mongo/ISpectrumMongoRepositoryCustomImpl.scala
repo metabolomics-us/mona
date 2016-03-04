@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
   * Created by wohlgemuth on 2/26/16.
   */
 @Repository
-class ISpectrumRepositoryCustomImpl extends SpectrumRepositoryCustom {
+class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom {
 
   /**
     * simple wrapper, so we don't have to use a query object
