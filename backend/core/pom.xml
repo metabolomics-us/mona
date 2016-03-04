@@ -16,6 +16,6 @@
     <module>domain</module>
     <module>persistence</module>
     <module>rest</module>
-    <module>rest-clients</module>
+    <module>client</module>
   </modules>
 </project>
