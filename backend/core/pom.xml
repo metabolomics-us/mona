@@ -17,5 +17,6 @@
     <module>persistence</module>
     <module>rest</module>
     <module>client</module>
+    <module>amqp</module>
   </modules>
 </project>
