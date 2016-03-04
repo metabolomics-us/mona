@@ -40,6 +40,21 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
   def add(dao: T): T = restOperations.postForObject(basePath, dao, classTag[T].runtimeClass).asInstanceOf[T]
 
   /**
+    * adds on object to service in a concurrent fashion
+    * actual implementation will decided how to handle this
+    * @param dao
+    */
+  def addAsync(dao:T) : Unit = add(dao)
+
+  /**
+    * updates the object in a concurrent session
+    * actual implementation will decide how to handle this
+    * @param dao
+    * @param id
+    */
+  def updateAsync(dao:T, id:ID) : Unit = update(dao,id)
+
+  /**
     * updates a type in the system
     *
     * @param dao
