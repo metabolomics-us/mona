@@ -223,20 +223,9 @@
                             <h4>Compound Properties</h4>
 
                             <uib-accordion close-others="false">
-                                <uib-accordion-group
-                                        ng-if="spectrum.predictedCompound != null"
-                                        is-open="accordionStatus.isDerivatizedCompoundOpen">
-                                    <uib-accordion-heading>
-                                        <div>Computed Derivatization Product<i class="pull-right glyphicon"
-                                                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isDerivatizedCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isDerivatizedCompoundOpen}"></i>
-                                        </div>
-                                    </uib-accordion-heading>
-                                    <div display-compound-info compound="spectrum.predictedCompound"></div>
-                                </uib-accordion-group>
-
                                 <uib-accordion-group is-open="accordionStatus.isBiologicalCompoundOpen">
                                     <uib-accordion-heading>
-                                        <div>Substance <i class="pull-right glyphicon"
+                                        <div>Compound <i class="pull-right glyphicon"
                                                           ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
@@ -246,11 +235,21 @@
 
                                 <uib-accordion-group is-open="accordionStatus.isChemicalCompoundOpen" ng-if="spectrum.chemicalCompound !== null">
                                     <uib-accordion-heading>
-                                        <div>Provided Derivatized Substance<i class="pull-right glyphicon"
+                                        <div>Provided Derivatized Product<i class="pull-right glyphicon"
                                                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
                                     <div display-compound-info compound="spectrum.chemicalCompound"></div>
+                                </uib-accordion-group>
+                                <uib-accordion-group
+                                    ng-if="spectrum.predictedCompound != null"
+                                    is-open="accordionStatus.isDerivatizedCompoundOpen">
+                                    <uib-accordion-heading>
+                                        <div>Computed Derivatization Product<i class="pull-right glyphicon"
+                                                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isDerivatizedCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isDerivatizedCompoundOpen}"></i>
+                                        </div>
+                                    </uib-accordion-heading>
+                                    <div display-compound-info compound="spectrum.predictedCompound"></div>
                                 </uib-accordion-group>
                             </uib-accordion>
                         </div>
