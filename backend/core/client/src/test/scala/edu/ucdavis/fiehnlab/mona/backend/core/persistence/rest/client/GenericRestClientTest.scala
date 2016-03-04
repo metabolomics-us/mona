@@ -37,6 +37,10 @@ class GenericRestClientTest extends FunSuite with BeforeAndAfter {
     * some test data to work with
     */
   before {
+    spectrumRestClient.list().foreach(x =>
+      spectrumRestClient.delete(x.id)
+    )
+
     for (spec <- exampleRecords) {
       spectrumRestClient.add(spec)
     }
