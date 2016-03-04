@@ -1,22 +1,32 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config
 
 import com.mongodb.{Mongo, MongoClient}
+import com.typesafe.scalalogging.LazyLogging
+import org.springframework.beans.factory.annotation.{Value, Autowired}
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration
 
 /**
-  * Created by wohlgemuth on 2/29/16.
+  * mongo specific database configuratoin
   */
 @Configuration
-@ConfigurationProperties
-class MongoConfig extends AbstractMongoConfiguration {
+class MongoConfig extends AbstractMongoConfiguration with LazyLogging {
 
-  val server: String  = scala.util.Properties.envOrElse("MONGO_SERVER", "127.0.0.1" )
+  @Value("${mona.persistence.host}")
+  val server: String = null
 
-  val database: String  = scala.util.Properties.envOrElse("MONGO_DATABASE", "mona-test" )
+  @Value("${mona.persistence.database}")
+  val database: String = null
 
-  override def mongo(): Mongo = new MongoClient(server)
+  override def mongo(): Mongo = {
+    logger.info(s"creating new client to server: ${server}")
+    new MongoClient(server)
+  }
 
-  override def getDatabaseName: String = database
+  override def getDatabaseName: String = {
+    logger.info(s"utilizing database: ${database}")
+    database
+  }
 }

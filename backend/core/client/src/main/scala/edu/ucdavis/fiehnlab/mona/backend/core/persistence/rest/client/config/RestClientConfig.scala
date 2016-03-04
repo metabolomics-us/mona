@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.GenericRestClient
@@ -12,7 +13,7 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
   * Created by wohlg_000 on 3/2/2016.
   */
 @Configuration
-class RestClientConfig {
+class RestClientConfig extends LazyLogging {
 
   @Value("${mona.rest.server.url}")
   val monaServerUrl:String = null
@@ -33,6 +34,7 @@ class RestClientConfig {
 
   @Bean
   def spectrumRestClient:GenericRestClient[Spectrum,String] = {
+    logger.info(s"connecting to mona rest server at ${monaServerUrl}")
     new GenericRestClient[Spectrum,String](monaServerUrl)
   }
 }

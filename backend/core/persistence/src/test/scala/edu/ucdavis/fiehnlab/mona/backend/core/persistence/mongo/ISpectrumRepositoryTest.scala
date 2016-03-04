@@ -2,25 +2,33 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
 import java.io.{File, FileReader}
 
+import com.mongodb.{MongoClient, Mongo}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.RepositoryConfiguration
 import org.junit.runner.RunWith
-import org.scalatest.{WordSpec, FunSuite}
-import org.springframework.beans.factory.annotation.Autowired
+import org.scalatest.{BeforeAndAfterAll, WordSpec, FunSuite}
+import org.springframework.beans.factory.annotation.{Value, Autowired}
+import org.springframework.boot.autoconfigure.{SpringBootApplication, EnableAutoConfiguration}
 import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.context.annotation._
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.data.domain.{Page, PageRequest}
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration
 import org.springframework.data.mongodb.core.query.BasicQuery
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.web.WebAppConfiguration
 import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 2/26/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RepositoryConfiguration]))
-class ISpectrumRepositoryTest extends WordSpec {
+@SpringApplicationConfiguration(Array(classOf[MyTestConfig],classOf[RepositoryConfiguration]))
+@ComponentScan
+@EnableAutoConfiguration
+class ISpectrumRepositoryTest extends WordSpec{
 
   @Autowired
   val spectrumRepository: ISpectrumRepositoryCustom = null
@@ -62,7 +70,6 @@ class ISpectrumRepositoryTest extends WordSpec {
       "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
         val result:java.util.List[Spectrum] = spectrumRepository.executeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
-
         assert(result.size == 1)
       }
 
@@ -126,6 +133,20 @@ class ISpectrumRepositoryTest extends WordSpec {
         assert(countBefore == countAfter)
       }
     }
+  }
+}
+
+@Configuration
+class MyTestConfig extends AbstractMongoConfiguration{
+  val server: String = scala.util.Properties.envOrElse("MONGO_SERVER", "127.0.0.1" )
+  val database: String = "monatest"
+
+  override def mongo(): Mongo = {
+    new MongoClient(server)
+  }
+
+  override def getDatabaseName: String = {
+    database
   }
 
 }
