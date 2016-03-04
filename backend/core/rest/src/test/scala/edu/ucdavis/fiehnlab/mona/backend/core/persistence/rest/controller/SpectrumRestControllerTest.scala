@@ -9,7 +9,7 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.Query
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper, JSONDomainReader}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.Application
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -34,7 +34,7 @@ class SpectrumRestControllerTest extends WordSpec {
 
 
   @Autowired
-  val spectrumRepository: ISpectrumRepositoryCustom = null
+  val spectrumRepository: ISpectrumMongoRepositoryCustom = null
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)

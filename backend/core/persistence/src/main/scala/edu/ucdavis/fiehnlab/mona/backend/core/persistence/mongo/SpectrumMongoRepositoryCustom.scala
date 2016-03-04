@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.query.{BasicQuery, Query}
 /**
   * Created by wohlgemuth on 2/26/16.
   */
-trait SpectrumRepositoryCustom {
+trait SpectrumMongoRepositoryCustom {
   /**
     * simple wrapper, so we don't have to use a query object
     *

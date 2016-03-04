@@ -9,4 +9,4 @@ import org.springframework.data.repository.{PagingAndSortingRepository, CrudRepo
 /**
   * Created by wohlgemuth on 2/26/16.
   */
-trait ISpectrumRepositoryCustom extends PagingAndSortingRepository[Spectrum, String] with SpectrumRepositoryCustom
+trait ISpectrumMongoRepositoryCustom extends PagingAndSortingRepository[Spectrum, String] with SpectrumMongoRepositoryCustom

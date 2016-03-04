@@ -5,7 +5,7 @@ import java.util.concurrent.Future
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.Query
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.{HttpStatus, ResponseEntity}
@@ -28,7 +28,7 @@ class SpectrumRestController {
     * this is the utilized repository, doing all the heavy lifting
     */
   @Autowired
-  val spectrumRepository: ISpectrumRepositoryCustom = null
+  val spectrumRepository: ISpectrumMongoRepositoryCustom = null
 
   /**
     * this will return all the specified data in the system
