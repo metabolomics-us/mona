@@ -58,6 +58,14 @@
                 <artifactId>mongo</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
+
+
+            <dependency>
+                <groupId>com.github.rutledgepaulv</groupId>
+                <artifactId>rest-query-engine</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

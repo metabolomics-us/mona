@@ -2,6 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
 import java.util
 
+import com.github.rutledgepaulv.qbuilders.visitors.MongoVisitor
+import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
@@ -23,7 +25,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom {
     * @param query
     * @return
     */
-  override def executeQuery(query: String): util.List[Spectrum] = executeQuery(new BasicQuery(query))
+  override def nativeQuery(query: String): util.List[Spectrum] = nativeQuery(new BasicQuery(query))
 
   /**
     * executes a query against the system and returns the count
@@ -31,14 +33,14 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom {
     * @param query
     * @return
     */
-  override def executeQueryCount(query: String): Long = executeQueryCount(new BasicQuery(query))
+  override def nativeQueryCount(query: String): Long = executeQueryCount(new BasicQuery(query))
 
   /**
     *
     * @param query
     * @return
     */
-  override def executeQuery(query: String, pageable: Pageable): Page[Spectrum] = executeQuery(new BasicQuery(query),pageable)
+  override def nativeQuery(query: String, pageable: Pageable): Page[Spectrum] = nativeQuery(new BasicQuery(query), pageable)
 
   @Autowired
   val mongoOperations: MongoOperations = null
@@ -49,7 +51,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom {
     * @param query
     * @return
     */
-  def executeQuery(query: Query): java.util.List[Spectrum] = {
+  def nativeQuery(query: Query): java.util.List[Spectrum] = {
     mongoOperations.find(query, classOf[Spectrum])
   }
 
@@ -60,7 +62,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom {
     * @param pageable
     * @return
     */
-  def executeQuery(query: Query, pageable: Pageable): Page[Spectrum] = {
+  def nativeQuery(query: Query, pageable: Pageable): Page[Spectrum] = {
     val count = executeQueryCount(query)
 
     query.`with`(pageable)
@@ -78,5 +80,53 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom {
     */
   def executeQueryCount(query: Query): Long = {
     mongoOperations.count(query, classOf[Spectrum])
+  }
+
+  /**
+    * executes an RSQL query
+    *
+    * @param query
+    * @return
+    */
+  override def rsqlQuery(query: String): util.List[Spectrum] = {
+    nativeQuery(buildRSQLQuery(query))
+  }
+
+  /**
+    * builds a RSQL query object
+    *
+    * @param query
+    * @return
+    */
+  def buildRSQLQuery(query: String): Query = {
+    val pipeline = QueryConversionPipeline.defaultPipeline()
+
+    val condition = pipeline.apply(query, classOf[Spectrum])
+
+    val criteria = condition.query(new MongoVisitor())
+
+    val toExecute = new Query();
+    toExecute.addCriteria(criteria)
+
+    toExecute
+  }
+
+  /**
+    * executes the given query and returns it's count
+    *
+    * @param query
+    * @return
+    */
+  override def rsqlQueryCount(query: String): Long = {
+    executeQueryCount(buildRSQLQuery(query))
+  }
+
+  /**
+    *
+    * @param query
+    * @return
+    */
+  override def rsqlQuery(query: String, pageable: Pageable): Page[Spectrum] = {
+    nativeQuery(buildRSQLQuery(query), pageable)
   }
 }

@@ -14,17 +14,41 @@ trait SpectrumMongoRepositoryCustom {
     * @param query
     * @return
     */
-  def executeQuery(query: String): java.util.List[Spectrum]
+  def nativeQuery(query: String): java.util.List[Spectrum]
   /**
     *
     * @param query
     * @return
     */
-  def executeQuery(query: String, pageable: Pageable): Page[Spectrum]
+  def nativeQuery(query: String, pageable: Pageable): Page[Spectrum]
   /**
     * executes a query against the system and returns the count
+ *
     * @param query
     * @return
     */
-  def executeQueryCount(query: String) : Long
+  def nativeQueryCount(query: String) : Long
+
+  /**
+    * executes an RSQL query
+ *
+    * @param query
+    * @return
+    */
+  def rsqlQuery(query:String): java.util.List[Spectrum]
+
+  /**
+    *
+    * @param query
+    * @return
+    */
+  def rsqlQuery(query: String, pageable: Pageable): Page[Spectrum]
+
+  /**
+    * executes the given query and returns it's count
+    *
+    * @param query
+    * @return
+    */
+  def rsqlQueryCount(query: String) : Long
 }

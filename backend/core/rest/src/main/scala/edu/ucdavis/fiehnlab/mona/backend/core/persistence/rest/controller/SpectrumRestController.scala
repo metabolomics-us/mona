@@ -65,11 +65,11 @@ class SpectrumRestController {
   def searchSpectra(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestBody query: Query): Future[java.util.List[Spectrum]] = new AsyncResult[java.util.List[Spectrum]](
     if (size != null)
       if (page != null)
-        spectrumRepository.executeQuery(query.query, new PageRequest(page, size)).getContent
+        spectrumRepository.nativeQuery(query.query, new PageRequest(page, size)).getContent
       else
-        spectrumRepository.executeQuery(query.query, new PageRequest(0, size)).getContent
+        spectrumRepository.nativeQuery(query.query, new PageRequest(0, size)).getContent
     else
-      spectrumRepository.executeQuery(query.query)
+      spectrumRepository.nativeQuery(query.query)
   )
 
   /**
@@ -80,7 +80,7 @@ class SpectrumRestController {
   @RequestMapping(path = Array("/count"), method = Array(RequestMethod.POST))
   @Async
   def searchSpectraCount(@RequestBody query: Query): Future[Long] = {
-    new AsyncResult[Long](spectrumRepository.executeQueryCount(query.query))
+    new AsyncResult[Long](spectrumRepository.nativeQueryCount(query.query))
   }
 
   /**
