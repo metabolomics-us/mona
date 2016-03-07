@@ -63,9 +63,27 @@
             <dependency>
                 <groupId>com.github.rutledgepaulv</groupId>
                 <artifactId>rest-query-engine</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>0.5-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.rutledgepaulv</groupId>
+                <artifactId>q-builders</artifactId>
+                <version>1.3-SNAPSHOT</version>
             </dependency>
 
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>ossrh</id>
+            <name>Repository for snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
 </project>

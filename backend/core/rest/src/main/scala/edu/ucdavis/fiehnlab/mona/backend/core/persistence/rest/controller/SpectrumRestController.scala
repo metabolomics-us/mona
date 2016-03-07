@@ -73,6 +73,26 @@ class SpectrumRestController {
   )
 
   /**
+    * this executes a search against the reposiroty and can cause out of memory errors. We recommend to utilize this method with
+    * pagination as well
+    *
+    * @param query
+    * @return
+    */
+  @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET))
+  @Async
+  def RSQL(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestParam(value = "query", required = true) query: Query): Future[java.util.List[Spectrum]] = new AsyncResult[java.util.List[Spectrum]](
+    if (size != null)
+      if (page != null)
+        spectrumRepository.rsqlQuery(query.query, new PageRequest(page, size)).getContent
+      else
+        spectrumRepository.rsqlQuery(query.query, new PageRequest(0, size)).getContent
+    else
+      spectrumRepository.rsqlQuery(query.query)
+  )
+
+
+  /**
     * this method returns the counts of objects, which would be received by the given query
     *
     * @return

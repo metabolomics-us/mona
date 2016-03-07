@@ -112,6 +112,15 @@ class SpectrumRestControllerTest extends WordSpec {
         assert(exampleRecords.length == spectrumRepository.count())
       }
 
+
+      "we should be able to execute custom queries at /rest/spectra/search using GET" in {
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+
+        assert(exampleRecords.length == 1)
+      }
+
+
+
       "we should be able to execute custom queries at /rest/spectra/search?size=10 using POST limiting it to 10 records" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body(Query("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
