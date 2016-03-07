@@ -42,17 +42,19 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
   /**
     * adds on object to service in a concurrent fashion
     * actual implementation will decided how to handle this
+    *
     * @param dao
     */
-  def addAsync(dao:T) : Unit = add(dao)
+  def addAsync(dao: T): Unit = add(dao)
 
   /**
     * updates the object in a concurrent session
     * actual implementation will decide how to handle this
+    *
     * @param dao
     * @param id
     */
-  def updateAsync(dao:T, id:ID) : Unit = update(dao,id)
+  def updateAsync(dao: T, id: ID): Unit = update(dao, id)
 
   /**
     * updates a type in the system
@@ -104,17 +106,22 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
       case _ => ""
     }
 
-    val path = query match {
-      case Some(a) => s"$basePath/search$utilizedPageSize$pageToLookAt"
-      case _ => s"$basePath$utilizedPageSize$pageToLookAt"
+    val pathToInvoke = query match {
+      case Some(a) =>
+        val path = s"$basePath/search$utilizedPageSize$pageToLookAt"
+
+        if (path.contains("?")) {
+          s"$basePath$utilizedPageSize$pageToLookAt&query=${a}"
+        }
+        else {
+          s"$basePath$utilizedPageSize$pageToLookAt?query=${a}"
+        }
+      case _ =>
+        s"$basePath$utilizedPageSize$pageToLookAt"
     }
 
-    if (query.isEmpty) {
-      restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
-    }
-    else {
-      restOperations.postForObject(path, Query(query.get), classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
-    }
+    restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
+
   }
 
 }

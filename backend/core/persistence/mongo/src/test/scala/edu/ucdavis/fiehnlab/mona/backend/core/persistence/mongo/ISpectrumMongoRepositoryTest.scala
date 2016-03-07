@@ -5,6 +5,7 @@ import java.io.{File, FileReader}
 import com.mongodb.{MongoClient, Mongo}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.CascadeConfig
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterAll, WordSpec, FunSuite}
 import org.springframework.beans.factory.annotation.{Qualifier, Value, Autowired}
@@ -135,9 +136,8 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
       }
 
       "we should be able to execute RSQL queries like biologicalCompound.inchiKey==?" in {
-        val spectrum = spectrumMongoRepository.findAll().asScala.head
 
-        val result = spectrumMongoRepository.rsqlQuery(s"biologicalCompound.inchiKey==${spectrum.biologicalCompound.inchiKey}")
+        val result = spectrumMongoRepository.rsqlQuery(s"biologicalCompound.inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N")
 
         assert(result.size() == 1)
       }
@@ -163,13 +163,16 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 @EnableMongoRepositories(basePackageClasses = Array(
   classOf[ISpectrumMongoRepositoryCustom]
 ), excludeFilters = Array())
+@Import(Array(classOf[CascadeConfig]))
 @Configuration
 class MyTestConfig extends AbstractMongoConfiguration{
   val server: String = scala.util.Properties.envOrElse("MONGO_SERVER", "127.0.0.1" )
   val database: String = "monatest"
 
   override def mongo(): Mongo = {
-    new MongoClient(server)
+    val client = new MongoClient(server)
+    client.getDB(getDatabaseName).dropDatabase()
+    client
   }
 
   override def getDatabaseName: String = {
