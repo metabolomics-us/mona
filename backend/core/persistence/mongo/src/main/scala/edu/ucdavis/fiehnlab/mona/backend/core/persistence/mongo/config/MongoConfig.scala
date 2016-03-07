@@ -4,7 +4,7 @@ import com.mongodb.{Mongo, MongoClient}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.{Value}
-import org.springframework.context.annotation.{Configuration}
+import org.springframework.context.annotation.{Import, Configuration}
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
@@ -12,8 +12,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
   * mongo specific database configuratoin
   */
 @Configuration
+@Import(Array(classOf[CascadeConfig]))
 @EnableMongoRepositories(basePackageClasses = Array(
-classOf[ISpectrumMongoRepositoryCustom]
+  classOf[ISpectrumMongoRepositoryCustom]
 ), excludeFilters = Array())
 class MongoConfig extends AbstractMongoConfiguration with LazyLogging {
 

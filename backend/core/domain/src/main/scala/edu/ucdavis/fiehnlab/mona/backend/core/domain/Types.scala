@@ -2,10 +2,12 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
 import com.fasterxml.jackson.databind.annotation.{JsonSerialize, JsonDeserialize}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.CascadeSave
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
 
+import scala.annotation.meta.field
 import scala.beans.BeanProperty
 
 /**
@@ -16,7 +18,7 @@ import scala.beans.BeanProperty
 object Types {
 
   case class MetaData(
-                       category: String ,
+                       category: String,
                        computed: Boolean,
                        deleted: Boolean,
                        hidden: Boolean,
@@ -42,7 +44,6 @@ object Types {
 
   @Document(collection = "COMPOUND")
   case class Compound(
-                       id: String,
                        inchi: String,
                        inchiKey: String,
                        metaData: Array[MetaData],
@@ -71,57 +72,50 @@ object Types {
                      splash: String
                    )
 
-
-  @Document(collection = "AUTHORITIES")
-  case class Authorities(
-                          authority: String
-                        )
-
-  @Document(collection = "SUBMITTER")
   case class Submitter(
-                        accountEnabled: Boolean,
-                        accountExpired: Boolean,
-                        accountLocked: Boolean,
-                        @DBRef
-                        authorities: Array[Authorities],
                         emailAddress: String,
                         firstName: String,
                         institution: String,
-                        lastName: String,
-                        passwordExpired: Boolean //ns
+                        lastName: String
                       )
+
+  case class Author(
+                     emailAddress: String,
+                     firstName: String,
+                     institution: String,
+                     lastName: String
+                    )
 
   @Document(collection = "SPECTRUM")
   case class Spectrum(
-                       @DBRef
                        biologicalCompound: Compound,
-                       @DBRef
                        chemicalCompound: Compound,
-                       @DBRef
                        predictedCompound: Compound,
                        deleted: Boolean,
-                       @Id
+                       @(Id@field)
                        id: String,
                        lastUpdated: String,
                        metaData: Array[MetaData],
                        score: Score,
                        spectrum: String,
                        splash: Splash,
-                       @DBRef
                        submitter: Submitter,
-                       tags: Array[Tags]
+                       tags: Array[Tags],
+                       authors:Array[Author]
                      )
+
 }
 
 /**
   * makes serializations simpler
   */
-object HelperTypes{
+object HelperTypes {
 
   /**
     * a simple query
+    *
     * @param query
     */
-  case class Query( query:String)
+  case class Query(query: String)
 
 }

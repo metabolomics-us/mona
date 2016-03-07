@@ -114,7 +114,7 @@ class GenericRestClientTest extends FunSuite with BeforeAndAfter {
   }
 
   test("testList$default$3") {
-    val data = spectrumRestClient.list(Some("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""))
+    val data = spectrumRestClient.list(Some(""" tags=q='text==LCMS' """))
     assert(data.length == exampleRecords.length)
 
   }
