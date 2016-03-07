@@ -147,12 +147,15 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
         assert(result.size() == 1)
       }
 
-      "we should be able to execute RSQL queries like biologicalCompound.names.name=='*ACID'" ignore {
-        val result = spectrumMongoRepository.rsqlQuery("metaData==(name=='license' and value=='CC BY-SA')")
-        assert(result.size() == 1)
+      "we should be able to execute RSQL queries like metaData=q='name==\"license\" and value==\"CC BY-SA\"'" in {
+        val result = spectrumMongoRepository.rsqlQuery("metaData=q='name==\"license\" and value==\"CC BY-SA\"'")
+        assert(result.size() == 58)
       }
 
-
+      "we should be able to execute RSQL queries like chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=411.31 and value=lt=411.4'" ignore {
+        val result = spectrumMongoRepository.rsqlQuery("chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=411.31 and value=lt=411.4'")
+        assert(result.size == 1)
+      }
     }
   }
 }

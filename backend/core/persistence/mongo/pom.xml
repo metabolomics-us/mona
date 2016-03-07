@@ -51,5 +51,10 @@
             <groupId>com.github.rutledgepaulv</groupId>
             <artifactId>rest-query-engine</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.rutledgepaulv</groupId>
+            <artifactId>q-builders</artifactId>
+        </dependency>
     </dependencies>
 </project>
