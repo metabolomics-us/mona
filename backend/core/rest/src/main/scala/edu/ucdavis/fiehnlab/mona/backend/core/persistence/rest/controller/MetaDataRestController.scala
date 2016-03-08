@@ -7,9 +7,11 @@ import com.mongodb.DBObject
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.data.mongodb.core.query.BasicQuery
 import org.springframework.scheduling.annotation.{AsyncResult, Async}
-import org.springframework.web.bind.annotation.{RequestMapping, RequestMethod, RestController}
+import org.springframework.web.bind.annotation.{PathVariable, RequestMapping, RequestMethod, RestController}
+import org.springframework.data.mongodb.core.aggregation.Aggregation._
+import org.springframework.data.mongodb.core.query.{Criteria, BasicQuery}
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlg_000 on 3/7/2016.
@@ -38,13 +40,21 @@ class MetaDataRestController {
     )
   }
 
-  @RequestMapping(path = Array("/value"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/value/{value}"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaDataValue : Future[java.util.List[Any]] = {
+  def listMetaDataValue(@PathVariable("value") value: String): Future[java.util.List[Any]] = {
+
+
+    val aggregations = newAggregation(
+      unwind("$metaData"),
+      `match`(Criteria.where("metaData.name").is(value)),
+      group("metaData.value")
+    )
+
+    val result:List[Any] = mongoOperations.aggregate(aggregations, "SPECTRUM", classOf[DBObject]).asScala.collect{ case x:DBObject => x.get("_id")}.toList
 
     new AsyncResult[util.List[Any]](
-
-      mongoOperations.getCollection("SPECTRUM").distinct("metaData.value",).asInstanceOf[java.util.List[Any]]
+      result.asJava
     )
   }
 }
