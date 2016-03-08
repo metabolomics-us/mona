@@ -45,16 +45,18 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
     //58 spectra for us to work with
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new FileReader(new File("src/test/resources/monaRecords.json")))
 
+
     "reading our records" should {
       s"results in ${exampleRecords.length} records" in {
         assert(exampleRecords.length == 58)
       }
     }
-    spectrumMongoRepository.deleteAll()
 
-    assert(spectrumMongoRepository.count() == 0)
 
     "issues standard crud commands " should {
+
+      spectrumMongoRepository.deleteAll()
+      assert(spectrumMongoRepository.count() == 0)
 
       for (spectrum <- exampleRecords) {
         val size = spectrumMongoRepository.count()

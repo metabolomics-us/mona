@@ -5,6 +5,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.CascadeSave
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
 
 import scala.annotation.meta.field
@@ -18,33 +19,44 @@ import scala.beans.BeanProperty
 object Types {
 
   case class MetaData(
+                       @(Indexed@field)
                        category: String,
+                       @(Indexed@field)
                        computed: Boolean,
+                       @(Indexed@field)
                        deleted: Boolean,
+                       @(Indexed@field)
                        hidden: Boolean,
+                       @(Indexed@field)
                        name: String,
                        score: Score,
+                       @(Indexed@field)
                        unit: String,
                        url: String,
+                       @(Indexed@field)
                        @JsonDeserialize(using = classOf[NumberDeserializer])
                        value: Any
                      )
 
   case class Names(
+                    @(Indexed@field)
                     computed: Boolean,
+                    @(Indexed@field)
                     name: String,
                     score: Double,
                     source: String
                   )
 
   case class Tags(
+                   @(Indexed@field)
                    ruleBased: Boolean,
+                   @(Indexed@field)
                    text: String
                  )
 
-  @Document(collection = "COMPOUND")
   case class Compound(
                        inchi: String,
+                       @(Indexed@field)
                        inchiKey: String,
                        metaData: Array[MetaData],
                        molFile: String,
@@ -69,6 +81,7 @@ object Types {
                      block1: String, //ns
                      block2: String, //ns
                      block3: String, //ns
+                     @(Indexed@field)
                      splash: String
                    )
 
@@ -80,11 +93,15 @@ object Types {
                       )
 
   case class Author(
+                     @(Indexed@field)
                      emailAddress: String,
+                     @(Indexed@field)
                      firstName: String,
+                     @(Indexed@field)
                      institution: String,
+                     @(Indexed@field)
                      lastName: String
-                    )
+                   )
 
   @Document(collection = "SPECTRUM")
   case class Spectrum(
@@ -101,7 +118,7 @@ object Types {
                        splash: Splash,
                        submitter: Submitter,
                        tags: Array[Tags],
-                       authors:Array[Author]
+                       authors: Array[Author]
                      )
 
 }
