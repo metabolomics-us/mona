@@ -105,16 +105,16 @@ grails.project.dependency.resolution = {
         compile("java3d:vecmath:1.3.1")
         compile("net.sf.jni-inchi:jni-inchi:0.7")
 
-	    compile("com.fasterxml.jackson.core:jackson-core:2.3.2")
-	    compile("com.fasterxml.jackson.core:jackson-databind:2.3.0")
-	    compile("com.github.fge:json-schema-validator:2.2.6"){
-		excludes "javax.mail:mailapi","mailapi"
-	}
+        compile("com.fasterxml.jackson.core:jackson-core:2.3.2")
+        compile("com.fasterxml.jackson.core:jackson-databind:2.3.0")
+        compile("com.github.fge:json-schema-validator:2.2.6") {
+            excludes "javax.mail:mailapi","mailapi"
+        }
 
         compile("edu.ucdavis.fiehnlab.splash:java:1.4-SNAPSHOT")
 
         //compile("javax.mail:mail:1.4")
-	compile 'javax.mail:javax.mail-api:1.5.4'
+        compile 'javax.mail:javax.mail-api:1.5.4'
         compile("com.sun.mail:javax.mail:1.5.4")
         //compile("com.sun.mail:smtp:1.5.4")
     }

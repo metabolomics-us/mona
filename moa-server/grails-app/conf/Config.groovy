@@ -212,9 +212,8 @@ environments {
     }
 
     production {
-
         //we don't want to loose our queues in case of a crash
-        queuesAreDurable = false
+        queuesAreDurable = true
 
         rabbitmq {
             connection = {
@@ -235,7 +234,30 @@ environments {
             timeframeInDays = 7
 
         }
+    }
 
+    allinone {
+        //we don't want to loose our queues in case of a crash
+        queuesAreDurable = true
+
+        rabbitmq {
+            connection = {
+                connection host: "localhost", username: "mona", password: "mona", threads: Runtime.getRuntime().availableProcessors() - 2
+            }
+        }
+        grails.logging.jul.usebridge = false
+
+        logdirectory = "/data/mona/log/"
+        queryDownloadDirectory = "/data/mona/export/"
+
+        repository {
+            //where to dump the data
+            directory = "/data/mona/repository"
+
+            //timeframe of days we dump the uploaded data from
+            timeframeInDays = 7
+
+        }
     }
 }
 

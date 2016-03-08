@@ -266,6 +266,11 @@ class UrlMappings {
          */
         "/rest/webhooks/gnps/$id/$event?" (controller: 'webhook', action: 'gnpsUpdate')
 
+        /**
+         * defined libraries
+         */
+        "/rest/libraries" (resources: 'Library')
+
 
         /**
          * TODO ALL DEPRECATED!!!!
