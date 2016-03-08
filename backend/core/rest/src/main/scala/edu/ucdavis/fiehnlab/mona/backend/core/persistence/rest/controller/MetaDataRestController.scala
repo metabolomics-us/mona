@@ -35,9 +35,18 @@ class MetaDataRestController {
   @RequestMapping(path = Array("/names"), method = Array(RequestMethod.GET))
   @Async
   def listMetaDataName: Future[java.util.List[String]] = {
-    new AsyncResult[java.util.List[String]](
-      mongoOperations.getCollection("SPECTRUM").distinct("metaData.value").asInstanceOf[java.util.List[String]]
+
+    val aggregations = newAggregation(
+      unwind("$metaData"),
+      group("metaData.name")
     )
+
+    val result:List[String] = mongoOperations.aggregate(aggregations, "SPECTRUM", classOf[DBObject]).asScala.collect{ case x:DBObject => x.get("_id").toString}.toList
+
+    new AsyncResult[util.List[String]](
+      result.asJava
+    )
+
   }
 
   @RequestMapping(path = Array("/value/{value}"), method = Array(RequestMethod.GET))
