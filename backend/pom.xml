@@ -61,7 +61,7 @@
             <dependency>
                 <groupId>com.github.rutledgepaulv</groupId>
                 <artifactId>rest-query-engine</artifactId>
-                <version>0.5-SNAPSHOT</version>
+                <version>0.6.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.github.rutledgepaulv</groupId>
