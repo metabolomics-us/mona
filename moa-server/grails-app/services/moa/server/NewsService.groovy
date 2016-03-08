@@ -32,11 +32,11 @@ class NewsService {
 
         String message = "a spectrum was just submitted by ${spectrum.submitter.firstName} ${spectrum.submitter.lastName} for "
 
-        if(spectrum.chemicalCompound.names != null && spectrum.chemicalCompound.names.size() > 0){
-            message += spectrum.chemicalCompound.names[0].name
+        if(spectrum.biologicalCompound.names != null && spectrum.biologicalCompound.names.size() > 0){
+            message += spectrum.biologicalCompound.names[0].name
         }
         else{
-            message += spectrum.chemicalCompound.inchiKey
+            message += spectrum.biologicalCompound.inchiKey
         }
 
         createNews(

@@ -1,8 +1,6 @@
 <div>
     <div class="row">
         <div class="col-md-8">
-
-
             <div>
                 <table class="table">
                     <thead>
@@ -25,23 +23,17 @@
                     <tr ng-repeat="meta in compound.metaData |  filter: {category: '!external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | unique:'name' | orderBy : 'name':true  ">
 
                         <td class="col-lg-4 col-md-6">
-                            <span gw-meta-query value="meta" compound="true">
-
-                            {{meta.name}}
-                            </span>
+                            <span gw-meta-query value="meta" compound="true">{{meta.name}}</span>
                         </td>
                         <td class="col-lg-8 col-md-6">
                             {{meta.value}} {{meta.unit}}
 
                             <!-- display this, if there seems to be something odd with this value -->
-                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
-
-                            </i>
+                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle"></i>
 
                             <!-- display this, if it's a computed value -->
                             <i ng-show="meta.computed == true" class="fa fa-flask" tooltip-placement="top"
                                tooltip="This value was computed via automated curation"></i>
-
                         </td>
                     </tr>
 

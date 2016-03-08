@@ -31,6 +31,9 @@ class GCMSDerivatizationDoesntMatchCompound extends AbstractCurationRule {
         if (isGCMSSpectra(toValidate)) {
             Spectrum spectrum = toValidate.getObjectAsSpectra()
 
+            if (spectrum.chemicalCompound == null)
+                return true
+
             Compound bio = spectrum.biologicalCompound
             Compound chem = spectrum.chemicalCompound
 

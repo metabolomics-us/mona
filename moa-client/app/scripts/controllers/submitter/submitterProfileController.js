@@ -5,7 +5,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SubmitterProfileController', SubmitterProfileController);
+        .controller('SubmitterProfileController', SubmitterProfileController);
 
     /* @ngInject */
     function SubmitterProfileController($scope, $location, AuthenticationService, SpectraQueryBuilderService) {

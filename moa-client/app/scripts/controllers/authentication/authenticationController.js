@@ -5,7 +5,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('AuthenticationController', AuthenticationController);
+        .controller('AuthenticationController', AuthenticationController);
 
     /* @ngInject */
     function AuthenticationController($scope, $rootScope, $uibModal, AuthenticationService) {

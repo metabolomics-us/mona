@@ -49,9 +49,6 @@ class SpectraPersistenceService {
         if (json.biologicalCompound == null) {
             throw new exception.ValidationException("sorry you need to provide a biologicalCompound!")
         }
-        if (json.chemicalCompound == null) {
-            throw new exception.ValidationException("sorry you need to provide a chemicalCompound!")
-        }
 
 
         json = dropIds(json);
@@ -70,8 +67,11 @@ class SpectraPersistenceService {
         //add a submitter
         spectrum.submitter = submitterService.findOrCreateSubmitter(json.submitter)
 
-        spectrum.biologicalCompound = compoundService.buildCompound(json.biologicalCompound);
-        spectrum.chemicalCompound = compoundService.buildCompound(json.chemicalCompound)
+        spectrum.biologicalCompound = compoundService.buildCompound(json.biologicalCompound)
+
+        if (json.chemicalCompound != null) {
+            spectrum.chemicalCompound = compoundService.buildCompound(json.chemicalCompound)
+        }
 
 
         if (!spectrum.validate()) {

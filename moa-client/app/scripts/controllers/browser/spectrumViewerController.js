@@ -9,7 +9,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('ViewSpectrumController', ViewSpectrumController);
+        .controller('ViewSpectrumController', ViewSpectrumController);
 
     /* @ngInject */
     function ViewSpectrumController($scope, $location, $log, CookieService, Spectrum, delayedSpectrum) {
@@ -175,51 +175,15 @@
                 }
             }
 
-            for (var i = 0; i < delayedSpectrum.chemicalCompound.metaData.length; i++) {
-                var name = delayedSpectrum.chemicalCompound.metaData[i].name.toLowerCase();
+            if(delayedSpectrum.chemicalCompound !== null) {
+                for (var i = 0; i < delayedSpectrum.chemicalCompound.metaData.length; i++) {
+                    var name = delayedSpectrum.chemicalCompound.metaData[i].name.toLowerCase();
 
-                if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                    delayedSpectrum.chemicalCompound.metaData[i].value = truncateMass(delayedSpectrum.chemicalCompound.metaData[i].value);
+                    if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                        delayedSpectrum.chemicalCompound.metaData[i].value = truncateMass(delayedSpectrum.chemicalCompound.metaData[i].value);
+                    }
                 }
             }
-
-
-            // Temporary Origin String
-            var tags = [];
-            for (var i = 0; i < delayedSpectrum.tags.length; i++) {
-                tags.push(delayedSpectrum.tags[i].text);
-            }
-
-            if (tags.indexOf('massbank') > -1) {
-                var accession = null;
-                var authors = null;
-
-                for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
-                    if (delayedSpectrum.metaData[i].name == 'accession')
-                        accession = delayedSpectrum.metaData[i].value;
-                    if (delayedSpectrum.metaData[i].name == 'authors')
-                        authors = delayedSpectrum.metaData[i].value;
-                }
-
-                $scope.origin = 'Originally submitted to the MassBank Spectral Database as <a href="http://www.massbank.jp/jsp/Dispatcher.jsp?type=disp&id='+ accession +'&site=23">'+ accession +'</a>';
-                $scope.authors = 'Authors: '+ authors;
-            } else if(tags.indexOf('gnps')) {
-                var accession = null;
-                var authors = [];
-
-                for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
-                    if (delayedSpectrum.metaData[i].name == 'spectrumid')
-                        accession = delayedSpectrum.metaData[i].value;
-                    if (delayedSpectrum.metaData[i].name == 'authors')
-                        authors.push(delayedSpectrum.metaData[i].value);
-                }
-
-                $scope.origin = 'Originally submitted to the GNPS Library as <a href="http://gnps.ucsd.edu/ProteoSAFe/gnpslibraryspectrum.jsp?SpectrumID='+ accession +'">'+ accession +'</a>';
-                $scope.authors = 'Authors: '+ authors.join(', ');
-            } else {
-                $scope.origin = "Originally submitted to the MoNA Spectral Library";
-            }
-
 
             //
             // Create mass spectrum table

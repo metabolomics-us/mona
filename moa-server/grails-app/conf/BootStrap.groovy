@@ -1,4 +1,5 @@
 import grails.converters.JSON
+import grails.util.Environment
 import moa.*
 import moa.query.Query
 import moa.scoring.Impact
@@ -38,10 +39,20 @@ class BootStrap {
             }
         }
 
-        // Fiehnlab Members
-        addUser("Gert", "Wohlgemuth", "wohlgemuth@ucdavis.edu", "password", "University of California, Davis", true)
-        addUser("Sajjan", "Mehta", "ssmehta@ucdavis.edu", "password", "University of California, Davis", true)
-        addUser("Diego", "Pedrosa", "dpedrosa@ucdavis.edu", "password", "University of California, Davis", true)
+
+        // Create users and roles
+        if (Environment.getCurrent().name == "allinone") {
+            log.info("Creating admin user for all-in-one configuration...")
+
+            addUser("Admin", "User", "admin@mona", "password", "MoNA", true)
+        } else {
+            // Fiehnlab Members
+            log.info("Setting up Fiehn lab members...")
+
+            addUser("Gert", "Wohlgemuth", "wohlgemuth@ucdavis.edu", "password", "University of California, Davis", true)
+            addUser("Sajjan", "Mehta", "ssmehta@ucdavis.edu", "password", "University of California, Davis", true)
+            addUser("Diego", "Pedrosa", "dpedrosa@ucdavis.edu", "password", "University of California, Davis", true)
+        }
 
 
         // Register domain object marshallers
@@ -64,7 +75,7 @@ class BootStrap {
                 DomainClassMarshaller.createExcludeMarshaller(Name, ["class", "id", "compound", "dateCreated"])
         )
         JSON.registerObjectMarshaller(MetaData,
-                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class", "value", "dateCreated"])
+                DomainClassMarshaller.createExcludeMarshaller(MetaData, ["class", "value", "dateCreated", "lastUpdated", "category"])
         )
         JSON.registerObjectMarshaller(MetaDataValue,
                 DomainClassMarshaller.createExcludeMarshaller(MetaDataValue, ["class", "owner", "metaData"])
@@ -92,6 +103,9 @@ class BootStrap {
         )
         JSON.registerObjectMarshaller(Splash,
                 DomainClassMarshaller.createExcludeMarshaller(Splash, ["class", "spectrum"])
+        )
+        JSON.registerObjectMarshaller(Library,
+                DomainClassMarshaller.createExcludeMarshaller(Library, ["class"])
         )
 //        JSON.registerObjectMarshaller(Ion,
 //                DomainClassMarshaller.createExcludeMarshaller(Ion, ["class","spectrum","id","dateCreated","lastUpdated"])
