@@ -135,7 +135,7 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
         assert(countBefore == countAfter)
       }
 
-      "we should be able to execute RSQL queries like biologicalCompound.inchiKey==?" in {
+      "we should be able to execute RSQL queries like biologicalCompound.inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N" in {
 
         val result = spectrumMongoRepository.rsqlQuery(s"biologicalCompound.inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N")
 
@@ -152,10 +152,16 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
         assert(result.size() == 58)
       }
 
-      "we should be able to execute RSQL queries like chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=411.31 and value=lt=411.4'" ignore {
-        val result = spectrumMongoRepository.rsqlQuery("chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=411.31 and value=lt=411.4'")
-        assert(result.size == 1)
+      "we should be able to execute RSQL queries like chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'" in {
+        val result = spectrumMongoRepository.rsqlQuery("chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'")
+        assert(result.size == 2)
       }
+
+      "we should be able to execute RSQL queries like chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'" in {
+        val result = spectrumMongoRepository.rsqlQuery("chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'")
+        assert(result.size == 2)
+      }
+
     }
   }
 }
