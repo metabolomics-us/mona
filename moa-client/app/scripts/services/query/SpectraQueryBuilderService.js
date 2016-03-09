@@ -7,7 +7,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .service('SpectraQueryBuilderService', spectraQueryBuilderService);
+      .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
     /* @ngInject */
     function SpectraQueryBuilderService(QueryCache, MetadataService, $log) {
