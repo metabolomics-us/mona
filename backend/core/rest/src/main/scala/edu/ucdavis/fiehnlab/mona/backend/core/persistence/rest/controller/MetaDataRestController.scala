@@ -4,11 +4,12 @@ import java.util
 import java.util.concurrent.Future
 
 import com.mongodb.DBObject
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.scheduling.annotation.{AsyncResult, Async}
-import org.springframework.web.bind.annotation.{PathVariable, RequestMapping, RequestMethod, RestController}
+import org.springframework.web.bind.annotation._
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.data.mongodb.core.query.{Criteria, BasicQuery}
 import scala.collection.JavaConverters._
@@ -49,14 +50,13 @@ class MetaDataRestController {
 
   }
 
-  @RequestMapping(path = Array("/value/{value}"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/values"), method = Array(RequestMethod.POST))
   @Async
-  def listMetaDataValue(@PathVariable("value") value: String): Future[java.util.List[Any]] = {
-
+  def listMetaDataValue(@RequestBody metaDataName: WrappedString): Future[java.util.List[Any]] = {
 
     val aggregations = newAggregation(
       unwind("$metaData"),
-      `match`(Criteria.where("metaData.name").is(value)),
+      `match`(Criteria.where("metaData.name").is(metaDataName.string)),
       group("metaData.value")
     )
 

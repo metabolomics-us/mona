@@ -131,8 +131,8 @@ object HelperTypes {
   /**
     * a simple query
     *
-    * @param query
+    * @param string
     */
-  case class Query(query: String)
+  case class WrappedString(string: String)
 
 }
