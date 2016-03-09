@@ -18,5 +18,6 @@
     <module>rest</module>
     <module>client</module>
     <module>amqp</module>
+    <module>workflow</module>
   </modules>
 </project>
