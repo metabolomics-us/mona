@@ -5,26 +5,26 @@ import java.util
 import com.github.rutledgepaulv.qbuilders.visitors.{ElasticsearchVisitor, MongoVisitor}
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.{QueryBuilders, QueryBuilder}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
-import org.springframework.data.elasticsearch.core.query.{CriteriaQuery, NativeSearchQueryBuilder, NativeSearchQuery}
+import org.springframework.data.elasticsearch.core.query.{StringQuery, CriteriaQuery, NativeSearchQueryBuilder, NativeSearchQuery}
 import org.springframework.data.mongodb.core.query.Query
 
 /**
   * Created by wohlg_000 on 3/3/2016.
   */
-class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCustom{
+class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCustom {
 
   @Autowired
-  val elasticsearchTemplate:ElasticsearchTemplate = null
+  val elasticsearchTemplate: ElasticsearchTemplate = null
 
   /**
     * @param query
     * @return
     */
-  override def nativeQuery(query: String): util.List[Spectrum] = ???
+  override def nativeQuery(query: String): util.List[Spectrum] = elasticsearchTemplate.queryForList(getSearch(query), classOf[Spectrum])
 
   /**
     *
@@ -32,7 +32,12 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @return
     *
     */
-  override def nativeQuery(query: String, pageable: Pageable): Page[Spectrum] = ???
+  override def nativeQuery(query: String, pageable: Pageable): Page[Spectrum] = {
+    val search = getSearch(query)
+    search.setPageable(pageable)
+
+    elasticsearchTemplate.queryForPage(search, classOf[Spectrum])
+  }
 
   /**
     * converts the RSQL String for us to a Query Object
@@ -40,7 +45,14 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @param query
     * @return
     */
-  override def buildRSQLQuery(query: String): String = ???
+  override def buildRSQLQuery(query: String): String = {
+    val pipeline = QueryConversionPipeline.defaultPipeline()
+    val condition = pipeline.apply(query, classOf[Spectrum])
+    val qb: QueryBuilder = condition.query(new ElasticsearchVisitor())
+
+
+    ""
+  }
 
   /**
     * executes a query against the system and returns the count
@@ -48,5 +60,9 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @param query
     * @return
     */
-  override def nativeQueryCount(query: String): Long = ???
+  override def nativeQueryCount(query: String): Long = elasticsearchTemplate.count(getSearch(query))
+
+  def getSearch(query: String): NativeSearchQuery = {
+    new NativeSearchQuery(QueryBuilders.wrapperQuery(query))
+  }
 }
