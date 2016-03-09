@@ -38,6 +38,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>rsql</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
