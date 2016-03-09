@@ -14,6 +14,4 @@ import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 2/26/16.
   */
-trait SpectrumMongoRepositoryCustom extends RSQLRepositoryCustom[Spectrum] {
-
-}
+trait SpectrumMongoRepositoryCustom extends RSQLRepositoryCustom[Spectrum]

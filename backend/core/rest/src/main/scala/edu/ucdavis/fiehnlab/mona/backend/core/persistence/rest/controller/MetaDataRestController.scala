@@ -21,7 +21,6 @@ import scala.collection.JavaConverters._
 @RequestMapping(Array("/rest/metaData"))
 class MetaDataRestController {
 
-
   @Autowired
   val mongoOperations: MongoOperations = null
 
