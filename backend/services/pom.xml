@@ -13,8 +13,6 @@
   <name>services</name>
   <url>http://maven.apache.org</url>
   <modules>
-    <module>scoring</module>
-    <module>curation</module>
     <module>webhooks</module>
     <module>query</module>
   </modules>
