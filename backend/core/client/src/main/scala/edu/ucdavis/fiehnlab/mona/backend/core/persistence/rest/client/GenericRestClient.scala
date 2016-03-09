@@ -20,7 +20,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
   val monaRestServer:String = null
 
   @Autowired
-  val restOperations: RestOperations = null
+  protected val restOperations: RestOperations = null
 
   //build our request path on the fly for us
   def requestPath = s"$monaRestServer/$basePath"
