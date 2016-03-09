@@ -20,30 +20,10 @@ import scala.reflect._
 trait RSQLRepositoryCustom[T] {
 
   /**
-    *
     * @param query
     * @return
     */
-  def nativeQuery(query: Query): java.util.List[T]
-
-  /**
-    *
-    * @param query
-    * @return
-    */
-  def nativeQuery(query: Query, pageable: Pageable): Page[T]
-
-  /**
-    * @param query
-    * @return
-    */
-  def nativeQueryCount(query: Query): Long
-
-  /**
-    * @param query
-    * @return
-    */
-  def nativeQuery(query: String): util.List[T] = nativeQuery(new BasicQuery(query))
+  def nativeQuery(query: String): util.List[T]
 
   /**
     * executes a query against the system and returns the count
@@ -51,7 +31,7 @@ trait RSQLRepositoryCustom[T] {
     * @param query
     * @return
     */
-  def nativeQueryCount(query: String): Long = nativeQueryCount(new BasicQuery(query))
+  def nativeQueryCount(query: String): Long
 
   /**
     *
@@ -59,7 +39,7 @@ trait RSQLRepositoryCustom[T] {
     * @return
     *
     */
-  def nativeQuery(query: String, pageable: Pageable): Page[T] = nativeQuery(new BasicQuery(query), pageable)
+  def nativeQuery(query: String, pageable: Pageable): Page[T]
 
 
   /**
@@ -93,5 +73,5 @@ trait RSQLRepositoryCustom[T] {
     * @param query
     * @return
     */
-  def buildRSQLQuery(query: String): Query
+  def buildRSQLQuery(query: String): String
 }

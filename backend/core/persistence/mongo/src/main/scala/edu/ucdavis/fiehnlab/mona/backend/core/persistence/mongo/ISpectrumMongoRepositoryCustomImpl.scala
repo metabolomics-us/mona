@@ -58,7 +58,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
     * @param query
     * @return
     */
-  override def nativeQueryCount(query: Query): Long = mongoOperations.count(query, classOf[Spectrum])
+  def nativeQueryCount(query: Query): Long = mongoOperations.count(query, classOf[Spectrum])
 
   /**
     * converts the RSQL String for us to a Query Object
@@ -66,13 +66,37 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
     * @param query
     * @return
     */
-  override def buildRSQLQuery(query: String): Query = {
+  override def buildRSQLQuery(query: String): String = {
+
     val pipeline = QueryConversionPipeline.defaultPipeline()
     val condition = pipeline.apply(query, classOf[Spectrum])
     val criteria = condition.query(new MongoVisitor())
+
     val toExecute = new Query()
     toExecute.addCriteria(criteria)
 
-    toExecute
+    toExecute.getQueryObject.toString
   }
+
+  /**
+    * @param query
+    * @return
+    */
+  override def nativeQuery(query: String): util.List[Spectrum] = nativeQuery(new BasicQuery(query))
+
+  /**
+    *
+    * @param query
+    * @return
+    *
+    */
+  override def nativeQuery(query: String, pageable: Pageable): Page[Spectrum] = nativeQuery(new BasicQuery(query), pageable)
+
+  /**
+    * executes a query against the system and returns the count
+    *
+    * @param query
+    * @return
+    */
+  override def nativeQueryCount(query: String): Long = nativeQueryCount(new BasicQuery(query))
 }
