@@ -84,7 +84,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     */
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
-  def put(@PathVariable("id") id: String, @RequestBody spectrum: Spectrum): Future[Spectrum] = {
+  override def put(@PathVariable("id") id: String, @RequestBody spectrum: Spectrum): Future[Spectrum] = {
 
     if (id == spectrum.id) {
       new AsyncResult[Spectrum](

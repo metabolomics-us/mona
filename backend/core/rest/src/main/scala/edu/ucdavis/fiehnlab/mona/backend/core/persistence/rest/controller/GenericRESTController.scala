@@ -6,6 +6,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller
 
 import java.util.concurrent.Future
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
@@ -111,4 +112,19 @@ abstract class GenericRESTController[T] {
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.DELETE))
   def delete(@PathVariable("id") spectrum: String) = getRepository.delete(spectrum)
 
+
+  /**
+    * saves the provided spectrum at the given path
+    *
+    * @param id
+    * @param spectrum
+    * @return
+    */
+  @Async
+  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
+  def put(@PathVariable("id") id: String, @RequestBody spectrum: T): Future[T] = {
+    new AsyncResult[T](
+      getRepository.save(spectrum)
+    )
+  }
 }
