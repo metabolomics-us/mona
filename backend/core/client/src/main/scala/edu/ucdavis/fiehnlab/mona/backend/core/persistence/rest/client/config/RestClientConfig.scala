@@ -16,7 +16,10 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
 class RestClientConfig extends LazyLogging {
 
   @Value("${mona.rest.server.url}")
-  val monaServerUrl:String = null
+  val monaServerUrl: String = null
+
+  @Bean(name = Array[String]("monaRestServer"))
+  def monaRestServer: String = monaServerUrl
 
   @Bean
   def restOperations: RestOperations = {
@@ -33,8 +36,7 @@ class RestClientConfig extends LazyLogging {
   }
 
   @Bean
-  def spectrumRestClient:GenericRestClient[Spectrum,String] = {
-    logger.info(s"connecting to mona rest server at ${monaServerUrl}")
-    new GenericRestClient[Spectrum,String](monaServerUrl)
+  def spectrumRestClient: GenericRestClient[Spectrum, String] = {
+    new GenericRestClient[Spectrum, String]("rest/spectra")
   }
 }

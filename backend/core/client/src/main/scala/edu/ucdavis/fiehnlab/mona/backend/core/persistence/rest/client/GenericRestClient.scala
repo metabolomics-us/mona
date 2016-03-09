@@ -1,7 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.Query
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.http.{MediaType, HttpEntity, HttpHeaders}
 import org.springframework.web.client.{RestOperations, RestTemplate}
 
@@ -12,10 +13,19 @@ import scala.reflect._
 /**
   * a generic approach to connect to a REST server and execute operations against it. It assumes compliance with CRUD operations
   */
-class GenericRestClient[T: ClassTag, ID](basePath: String) {
+class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
+
+  @Autowired
+  @Qualifier("monaRestServer")
+  val monaRestServer:String = null
 
   @Autowired
   val restOperations: RestOperations = null
+
+  //build our request path on the fly for us
+  def requestPath = s"$monaRestServer/$basePath"
+
+  logger.info(s"utilizing base path for queries: ${requestPath}")
 
   /**
     * returns the count of the database content, which can be narrowed down by an optional quyery
@@ -26,9 +36,9 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
   def count(query: Option[String] = None): Long = query match {
     case Some(x) =>
 
-      restOperations.postForObject(s"$basePath/count", Query(x), classOf[Long])
+      restOperations.postForObject(s"$requestPath/count", Query(x), classOf[Long])
 
-    case _ => restOperations.getForObject(s"$basePath/count", classOf[Long])
+    case _ => restOperations.getForObject(s"$requestPath/count", classOf[Long])
   }
 
   /**
@@ -37,7 +47,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
     * @param dao
     * @return
     */
-  def add(dao: T): T = restOperations.postForObject(basePath, dao, classTag[T].runtimeClass).asInstanceOf[T]
+  def add(dao: T): T = restOperations.postForObject(s"$requestPath", dao, classTag[T].runtimeClass).asInstanceOf[T]
 
   /**
     * adds on object to service in a concurrent fashion
@@ -63,7 +73,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
     * @return
     */
   def update(dao: T, id: ID): T = {
-    restOperations.put(s"${basePath}/${id}", dao)
+    restOperations.put(s"$requestPath/${id}", dao)
     get(id)
   }
 
@@ -72,7 +82,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
     *
     * @param id
     */
-  def delete(id: ID) = restOperations.delete(s"$basePath/$id")
+  def delete(id: ID) = restOperations.delete(s"$requestPath/$id")
 
   /**
     * loads the object specified by the id
@@ -80,7 +90,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
     * @param id
     * @return
     */
-  def get(id: ID): T = restOperations.getForObject(s"$basePath/$id", classTag[T].runtimeClass).asInstanceOf[T]
+  def get(id: ID): T = restOperations.getForObject(s"$requestPath/$id", classTag[T].runtimeClass).asInstanceOf[T]
 
   /**
     * list data matching the optional conditions or returns all
@@ -108,16 +118,16 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) {
 
     val pathToInvoke = query match {
       case Some(a) =>
-        val path = s"$basePath/search$utilizedPageSize$pageToLookAt"
+        val path = s"$requestPath/search$utilizedPageSize$pageToLookAt"
 
         if (path.contains("?")) {
-          s"$basePath$utilizedPageSize$pageToLookAt&query=${a}"
+          s"$path&query=${a}"
         }
         else {
-          s"$basePath$utilizedPageSize$pageToLookAt?query=${a}"
+          s"$path?query=${a}"
         }
       case _ =>
-        s"$basePath$utilizedPageSize$pageToLookAt"
+        s"$requestPath$utilizedPageSize$pageToLookAt"
     }
 
     restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
