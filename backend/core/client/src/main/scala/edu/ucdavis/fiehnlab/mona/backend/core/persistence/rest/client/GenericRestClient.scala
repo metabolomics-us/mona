@@ -1,7 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client
 
+import javax.annotation.PostConstruct
+
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.Query
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.http.{MediaType, HttpEntity, HttpHeaders}
 import org.springframework.web.client.{RestOperations, RestTemplate}
@@ -25,7 +27,10 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
   //build our request path on the fly for us
   def requestPath = s"$monaRestServer/$basePath"
 
-  logger.info(s"utilizing base path for queries: ${requestPath}")
+  @PostConstruct
+  def init = {
+    logger.info(s"utilizing base path for queries: ${requestPath}")
+  }
 
   /**
     * returns the count of the database content, which can be narrowed down by an optional quyery
@@ -36,7 +41,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
   def count(query: Option[String] = None): Long = query match {
     case Some(x) =>
 
-      restOperations.postForObject(s"$requestPath/count", Query(x), classOf[Long])
+      restOperations.postForObject(s"$requestPath/count", WrappedString(x), classOf[Long])
 
     case _ => restOperations.getForObject(s"$requestPath/count", classOf[Long])
   }
@@ -130,6 +135,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
         s"$requestPath$utilizedPageSize$pageToLookAt"
     }
 
+    logger.info("invoking: " + pathToInvoke)
     restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
 
   }

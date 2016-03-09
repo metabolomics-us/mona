@@ -39,4 +39,5 @@ class RestClientConfig extends LazyLogging {
   def spectrumRestClient: GenericRestClient[Spectrum, String] = {
     new GenericRestClient[Spectrum, String]("rest/spectra")
   }
+
 }

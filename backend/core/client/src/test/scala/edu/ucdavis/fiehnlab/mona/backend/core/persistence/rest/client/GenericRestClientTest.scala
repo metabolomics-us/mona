@@ -4,14 +4,12 @@ import java.io.{File, FileReader}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.Application
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import org.springframework.beans.factory.annotation.{Value, Autowired}
 import org.springframework.boot.test.{IntegrationTest, SpringApplicationConfiguration}
-import org.springframework.context.annotation.{Import, Configuration, Primary, Bean}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration

@@ -7,6 +7,7 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
@@ -45,7 +46,7 @@ class MetaDataRestControllerTest extends WordSpec {
       override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
     }))
 
-    RestAssured.baseURI = s"http://localhost:${port}/rest/metaData"
+    RestAssured.baseURI = s"http://localhost:${port}/rest"
 
     "when connected we should be able to" should {
 
@@ -61,12 +62,12 @@ class MetaDataRestControllerTest extends WordSpec {
 
 
       "we should be able to query all meta data names from the service" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().get("/names").then().statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/names").then().statusCode(200).extract().body().as(classOf[Array[String]])
         assert(result.length == 44)
       }
 
       "we should be able to query all the meta data values for a specific name" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().get("/value/authors").then().statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("authors")).post("/metaData/values").then().statusCode(200).extract().body().as(classOf[Array[String]])
 
         assert(result.length == 1)
 

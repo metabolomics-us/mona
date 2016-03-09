@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller
 import java.lang.Iterable
 import java.util.concurrent.Future
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.Query
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
@@ -62,14 +62,14 @@ class SpectrumRestController {
     */
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.POST))
   @Async
-  def searchSpectra(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestBody query: Query): Future[java.util.List[Spectrum]] = new AsyncResult[java.util.List[Spectrum]](
+  def searchSpectra(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestBody query: WrappedString): Future[java.util.List[Spectrum]] = new AsyncResult[java.util.List[Spectrum]](
     if (size != null)
       if (page != null)
-        spectrumRepository.nativeQuery(query.query, new PageRequest(page, size)).getContent
+        spectrumRepository.nativeQuery(query.string, new PageRequest(page, size)).getContent
       else
-        spectrumRepository.nativeQuery(query.query, new PageRequest(0, size)).getContent
+        spectrumRepository.nativeQuery(query.string, new PageRequest(0, size)).getContent
     else
-      spectrumRepository.nativeQuery(query.query)
+      spectrumRepository.nativeQuery(query.string)
   )
 
   /**
@@ -81,14 +81,14 @@ class SpectrumRestController {
     */
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET))
   @Async
-  def RSQL(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestParam(value = "query", required = true) query: Query): Future[java.util.List[Spectrum]] = new AsyncResult[java.util.List[Spectrum]](
+  def RSQL(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestParam(value = "query", required = true) query: WrappedString): Future[java.util.List[Spectrum]] = new AsyncResult[java.util.List[Spectrum]](
     if (size != null)
       if (page != null)
-        spectrumRepository.rsqlQuery(query.query, new PageRequest(page, size)).getContent
+        spectrumRepository.rsqlQuery(query.string, new PageRequest(page, size)).getContent
       else
-        spectrumRepository.rsqlQuery(query.query, new PageRequest(0, size)).getContent
+        spectrumRepository.rsqlQuery(query.string, new PageRequest(0, size)).getContent
     else
-      spectrumRepository.rsqlQuery(query.query)
+      spectrumRepository.rsqlQuery(query.string)
   )
 
 
@@ -99,8 +99,8 @@ class SpectrumRestController {
     */
   @RequestMapping(path = Array("/count"), method = Array(RequestMethod.POST))
   @Async
-  def searchSpectraCount(@RequestBody query: Query): Future[Long] = {
-    new AsyncResult[Long](spectrumRepository.nativeQueryCount(query.query))
+  def searchSpectraCount(@RequestBody query: WrappedString): Future[Long] = {
+    new AsyncResult[Long](spectrumRepository.nativeQueryCount(query.string))
   }
 
   /**
