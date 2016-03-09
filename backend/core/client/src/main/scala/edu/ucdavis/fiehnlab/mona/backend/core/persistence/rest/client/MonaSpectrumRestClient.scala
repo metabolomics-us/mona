@@ -13,7 +13,7 @@ class MonaSpectrumRestClient(val server: String) extends GenericRestClient[Spect
   /**
     * returns a list of all available metadata names
     */
-  def getAvailableMetaDataNames : Array[String] = {
+  def listMetaDataNames : Array[String] = {
     restOperations.getForObject(s"$server/$metaDataPath/names",classOf[Array[String]])
   }
 
@@ -22,7 +22,7 @@ class MonaSpectrumRestClient(val server: String) extends GenericRestClient[Spect
     *
     * @param name
     */
-  def getAvailableMetaDataValues(name: String):Array[Any] = {
+  def listMetaDataValues(name: String):Array[Any] = {
     restOperations.getForObject(s"$server/$metaDataPath/values/$name",classOf[Array[Any]])
   }
 

@@ -48,18 +48,18 @@ class MonaSpectrumRestClientTest extends FunSuite  with BeforeAndAfter {
 
   test("testGetAvailableMetaDataNames") {
 
-    val set = monaSpectrumRestClient.getAvailableMetaDataNames
+    val set = monaSpectrumRestClient.listMetaDataNames
 
     assert(set.size > 0)
   }
 
   test("testGetAvailableMetaDataValues") {
 
-    val set:Array[String] = monaSpectrumRestClient.getAvailableMetaDataNames
+    val set:Array[String] = monaSpectrumRestClient.listMetaDataNames
 
     assert(set.size > 0)
     for(s <- set){
-      val content = monaSpectrumRestClient.getAvailableMetaDataValues(s)
+      val content = monaSpectrumRestClient.listMetaDataValues(s)
       assert(content.size > 0)
     }
   }
