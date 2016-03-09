@@ -17,6 +17,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>rsql</module>
         <module>mongo</module>
         <module>elastic</module>
     </modules>
