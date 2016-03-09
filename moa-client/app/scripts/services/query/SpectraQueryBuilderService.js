@@ -10,7 +10,8 @@
       .service('SpectraQueryBuilderService', spectraQueryBuilderService);
 
     /* @ngInject */
-    function spectraQueryBuilderService(QueryCache, MetadataService) {
+    function SpectraQueryBuilderService(QueryCache, MetadataService, $log) {
+
         /**
          * provides us with the current query
          * @returns {*|QueryCache.spectraQuery}
@@ -70,6 +71,9 @@
                 tags = [];
             }
 
+            /* Tolerances are not used, and so the REST calls and logic are disabled
+             TODO Re-enable upon addition of correct data types in database
+
             // Get all metadata in a single dictionary
             var meta = {};
 
@@ -83,6 +87,7 @@
                     $log.error('metadata failed: ' + error);
                 }
             );
+            */
 
 
             // Handle all query components
@@ -92,7 +97,7 @@
                 }
 
                 else if (element === "nameFilter" && query[element]) {
-                    compiled.compound.name = {like: '%' + query[element] + '%'};
+                    compiled.compound.name = {ilike: '%' + query[element] + '%'};
                 }
 
                 else if (element === "inchiFilter" && query[element]) {
@@ -102,6 +107,9 @@
                         compiled.compound.inchiKey = {like: query[element]};
                     }
                 }
+
+                /* Tolerances are not used, and so the REST calls and logic are disabled
+                   TODO Re-enable upon addition of correct data types in database
 
                 // Ignore tolerance values
                 else if (element.indexOf("_tolerance", element.length - 10) !== -1) {
@@ -122,6 +130,7 @@
                         }
                     }
                 }
+                */
             });
 
 

@@ -30,6 +30,9 @@ class PredictedMMinus15Rule extends AbstractCurationRule {
     boolean executeRule(CurationObject toValidate) {
         Spectrum spectrum = toValidate.getObjectAsSpectra()
 
+        if (spectrum.chemicalCompound == null)
+            return true
+
         //calculate the predicted compound in case it's missing
         if (spectrum.predictedCompound == null) {
             logger.debug("trying to predict a compound for this spectrum: ${spectrum.id}")

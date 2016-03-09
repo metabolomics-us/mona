@@ -88,7 +88,7 @@ class SpectraQueryService {
         long begin = System.currentTimeMillis()
         def resultList = []
 
-        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block2,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ?  limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
+        sql.eachRow("SELECT spectrum_id AS id, calculatesimilarity(?,spectrum_id) AS similarity FROM splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block2,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ?  limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
             def hit = [:]
             hit.id = row.id
             hit.similarity = row.similarity
@@ -113,7 +113,7 @@ class SpectraQueryService {
     def findIdsBylastUpdated(Date lastUpdated) {
         use(TimeCategory) {
             // Take into account issues with lastUpdated times being set before starting the curation task
-            def timestamp = (lastUpdated - 30.seconds).toTimestamp().toString()
+            def timestamp = (lastUpdated - 5.seconds).toTimestamp().toString()
 
             return Spectrum.executeQuery("SELECT s.id FROM Spectrum s, SupportsMetaData m WHERE s.id = m.id AND m.lastUpdated > '$timestamp'")
         }
@@ -134,13 +134,8 @@ class SpectraQueryService {
                 return []
             }
 
-            def result = Spectrum.executeQuery("""
-                    select s
-                        from Spectrum as s
-                        where s.id in (:ids)
-                        """ + order, [ids: ids.collect({
-                it.id
-            })] , [readOnly: true])
+            def result = Spectrum.executeQuery("""SELECT s FROM Spectrum AS s WHERE s.id in (:ids)""" + order,
+                    [ids: ids.collect({ it.id })] , [readOnly: true])
 
             //add known fields to the spectrum
             result.each { Spectrum s ->
@@ -240,19 +235,22 @@ class SpectraQueryService {
 
         executionParams.put("deleted", new Boolean(false))
 
-        (where, joins, fields, orderBy, group, having) = handleJsonSpectraData(json, where, joins, executionParams, fields, orderBy, group, having)
+        (where, joins, fields, orderBy, group, having) = handleJsonLastUpdatedField(json, where, joins, executionParams, fields, orderBy, group, having, count)
         debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
-        (where, joins, fields, orderBy, group, having) = handleJsonCompoundField(json, where, joins, executionParams, fields, orderBy, group, having)
+        (where, joins, fields, orderBy, group, having) = handleJsonSpectraData(json, where, joins, executionParams, fields, orderBy, group, having, count)
         debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
-        (where, joins, fields, orderBy, group, having) = handleSpectraJsonMetadataFields(json, where, joins, executionParams, fields, orderBy, group, having)
+        (where, joins, fields, orderBy, group, having) = handleJsonCompoundField(json, where, joins, executionParams, fields, orderBy, group, having, count)
         debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
-        (where, joins, fields, orderBy, group, having) = handleJsonTagsField(json, where, joins, executionParams, fields, orderBy, group, having)
+        (where, joins, fields, orderBy, group, having) = handleSpectraJsonMetadataFields(json, where, joins, executionParams, fields, orderBy, group, having, count)
         debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
-        (where, joins, fields, orderBy, group, having) = handleJsonSubmitterField(json, where, joins, executionParams, fields, orderBy, group, having)
+        (where, joins, fields, orderBy, group, having) = handleJsonTagsField(json, where, joins, executionParams, fields, orderBy, group, having, count)
+        debugModification(joins, fields, orderBy, group, having, where, executionParams)
+
+        (where, joins, fields, orderBy, group, having) = handleJsonSubmitterField(json, where, joins, executionParams, fields, orderBy, group, having, count)
         debugModification(joins, fields, orderBy, group, having, where, executionParams)
 
         //working on the ordering
@@ -298,6 +296,20 @@ class SpectraQueryService {
     }
 
     /**
+     * works on the json lastUpdated data and creates a query based on a timestamp
+     *
+     */
+    private List handleJsonLastUpdatedField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having, boolean count = false) {
+        // check that the last updated field exists and that it matches the postgres timestamp format
+        if (json.lastUpdated && json.lastUpdated ==~ /\d{4}-\d{1,2}-\d{1,2}( \d{2}:\d{2}(:\d{2}(\.\d{3})?)?)?/) {
+            queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
+            queryOfDoomWhere += " s.lastUpdated >= ${json.lastUpdated}"
+        }
+
+        [queryOfDoomWhere, queryOfDoomJoins, fields, orderBy, group, having]
+    }
+
+    /**
      * works on the json spectra data itself and creates an or query based on the provided id's or hashes
      *
      *{*  id : [1235 || id : "mona-hashcode" ]
@@ -307,7 +319,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
+    private List handleJsonSpectraData(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having, boolean count = false) {
         if (json.id) {
             log.debug("debug analyzing id query part:\n ${json.match as JSON}")
 
@@ -464,7 +476,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonSubmitterField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams, String fields, String orderBy, String group, String having) {
+    private List handleJsonSubmitterField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, executionParams, String fields, String orderBy, String group, String having, boolean count = false) {
         //handling submitter
         if (json.submitter) {
 
@@ -502,7 +514,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonTagsField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
+    private List handleJsonTagsField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having, boolean count = false) {
         //handling tags
         if (json.tags) {
 
@@ -541,7 +553,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleSpectraJsonMetadataFields(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
+    private List handleSpectraJsonMetadataFields(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having, boolean count = false) {
         //if we have a metadata object specified
         if (json.metadata) {
 
@@ -580,7 +592,7 @@ class SpectraQueryService {
      * @param executionParams
      * @return
      */
-    private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having) {
+    private List handleJsonCompoundField(Map json, String queryOfDoomWhere, String queryOfDoomJoins, Map executionParams, String fields, String orderBy, String group, String having, boolean count = false) {
         log.info("incomming query in compound method:\n\n$queryOfDoomWhere\n\n")
 
         //if we have a compound
@@ -598,17 +610,22 @@ class SpectraQueryService {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 queryOfDoomWhere += "("
-
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "name", [json.compound.name.entrySet().value[0]], json.compound.name.keySet()[0], executionParams, 0, "cn")
                 queryOfDoomWhere += ")"
 
+                // Support sorting by name similarity
+                if (!count) {
+                    executionParams."_name_sim_value_0" = json.compound.name.entrySet().value[0].replaceAll('%', '')
+                    fields = "$fields, max(textmatch(cn.name, :_name_sim_value_0)) as nameSimilarity"
+                    orderBy = "$orderBy, nameSimilarity DESC"
+                }
             }
 
             //if we have an inchi key
             if (json.compound.inchiKey) {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
-                queryOfDoomWhere += "("
 
+                queryOfDoomWhere += "("
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "inchiKey", [json.compound.inchiKey.entrySet().value[0]], json.compound.inchiKey.keySet()[0], executionParams, 0, "co")
                 queryOfDoomWhere += ")"
 
@@ -619,9 +636,7 @@ class SpectraQueryService {
                 queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
                 queryOfDoomWhere += "("
-
                 (queryOfDoomWhere, executionParams) = QueryHelper.buildComparisonField(queryOfDoomWhere, "id", [json.compound.id.entrySet().value[0]], json.compound.id.keySet()[0], executionParams, 0, "co")
-
                 queryOfDoomWhere += ")"
             }
 

@@ -2,8 +2,6 @@ package moa.query
 
 import grails.converters.JSON
 import moa.SpectrumQueryDownload
-import moa.server.query.PredefinedQueryService
-import moa.server.query.SpectraQueryService
 import util.FireJobs
 
 /**
@@ -19,7 +17,8 @@ class Query {
         query nullable: false
         label nullable: false
         description nullable: false
-        queryExport nullable: true
+        jsonExport nullable: true
+        mspExport nullable: true
     }
 
     static mapping = {
@@ -50,9 +49,14 @@ class Query {
     int queryCount
 
     /**
-     * associated query export
+     * associated query export in JSON format
      */
-    SpectrumQueryDownload queryExport
+    SpectrumQueryDownload jsonExport
+
+    /**
+     * associated query export in MSP format
+     */
+    SpectrumQueryDownload mspExport
 
 
     def beforeInsert() {
@@ -60,6 +64,10 @@ class Query {
     }
 
     def afterInsert() {
+        // Generate JSON export
         FireJobs.fireSpectraQueryExportJob([query: query, label: label])
+
+        // Generate MSP export
+        FireJobs.fireSpectraQueryExportJob([query: query, label: label, format: "msp"])
     }
 }

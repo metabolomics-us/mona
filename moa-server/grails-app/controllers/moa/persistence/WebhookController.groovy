@@ -32,7 +32,7 @@ class WebhookController extends RestfulController {
     }
 
     def gnpsUpdate() {
-        def id = params.id as long
+        def id = params.id
         def event = params.event
 
         log.info("Received GNPS update (event = $event) for $id")

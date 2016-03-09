@@ -25,12 +25,8 @@
         return directive;
     }
 
-
-
     //TODO: Delete once app works
-    function linkFunc($scope, element, attrs, ngModel) {
-
-    }
+    function linkFunc($scope, element, attrs, ngModel) {}
 
     //controller to handle building new queries
     /* @ngInject */

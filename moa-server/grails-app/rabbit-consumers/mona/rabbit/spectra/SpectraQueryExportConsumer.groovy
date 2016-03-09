@@ -53,12 +53,13 @@ class SpectraQueryExportConsumer {
 
                     // Use a datetime string as an identifier for this job
                     String startTime = data.containsKey('startTime') ? data.startTime : new Date().format('yyyyMMddHHmmssSSS');
+                    String format = data.containsKey('format') ? data.format : null
 
                     try {
                         if(data.containsKey('emailAddress')) {
-                            spectraQueryExportService.exportQueryByEmailAddress(data.query, data.emailAddress, startTime)
+                            spectraQueryExportService.exportQueryByEmailAddress(data.query, data.emailAddress, startTime, format)
                         } else {
-                            spectraQueryExportService.exportQueryByLabel(data.query, data.label)
+                            spectraQueryExportService.exportQueryByLabel(data.query, data.label, format)
                         }
 
                         long end = System.currentTimeMillis()

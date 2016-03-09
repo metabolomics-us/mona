@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('StatisticsController', statisticsController);
+        .controller('StatisticsController', StatisticsController);
 
     /* @ngInject */
-    function statisticsController($scope, StatisticsService, $uibModal, statistics) {
+    function StatisticsController($scope, statistics) {
         $scope.data = statistics;
     }
 })();
