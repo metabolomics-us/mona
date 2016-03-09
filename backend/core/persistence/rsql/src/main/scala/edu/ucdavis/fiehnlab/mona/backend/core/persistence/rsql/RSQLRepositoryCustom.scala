@@ -5,9 +5,12 @@ import java.util
 import com.github.rutledgepaulv.qbuilders.visitors.MongoVisitor
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import jdk.nashorn.internal.ir.visitor.NodeVisitor
 import org.springframework.data.domain.{Page, Pageable}
-import org.springframework.data.mongodb.core.query.{BasicQuery, Query}
+import org.springframework.data.mongodb.core.query.{Criteria, BasicQuery, Query}
 import org.springframework.data.repository.NoRepositoryBean
+
+import scala.reflect._
 
 /**
   * Created by wohlgemuth on 3/9/16.
@@ -15,7 +18,6 @@ import org.springframework.data.repository.NoRepositoryBean
 
 @NoRepositoryBean
 trait RSQLRepositoryCustom[T] {
-
 
   /**
     *
@@ -54,7 +56,7 @@ trait RSQLRepositoryCustom[T] {
   /**
     *
     * @param query
-    * @returngit pull
+    * @return
     *
     */
   def nativeQuery(query: String, pageable: Pageable): Page[T] = nativeQuery(new BasicQuery(query), pageable)
@@ -91,15 +93,5 @@ trait RSQLRepositoryCustom[T] {
     * @param query
     * @return
     */
-  def buildRSQLQuery(query: String): Query = {
-
-    val pipeline = QueryConversionPipeline.defaultPipeline()
-    val condition = pipeline.apply(query, classOf[Spectrum])
-    val criteria = condition.query(new MongoVisitor())
-
-    val toExecute = new Query()
-    toExecute.addCriteria(criteria)
-
-    toExecute
-  }
+  def buildRSQLQuery(query: String): Query
 }
