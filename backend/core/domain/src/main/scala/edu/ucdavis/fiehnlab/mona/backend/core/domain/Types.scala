@@ -85,6 +85,7 @@ object Types {
                      splash: String
                    )
 
+  @Document(collection = "SUBMITTER")
   case class Submitter(
                         emailAddress: String,
                         firstName: String,

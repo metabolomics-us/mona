@@ -39,6 +39,7 @@ class SpectrumRestControllerTest extends WordSpec {
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
+
   "we will be connecting to the REST controller" when {
 
     RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
