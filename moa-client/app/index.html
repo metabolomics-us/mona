@@ -12,6 +12,7 @@
     <title ng-bind="APP_NAME"></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
 
@@ -23,13 +24,13 @@
 
     <link rel="stylesheet" href="/bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css"/>
     <!-- endbuild -->
-    <!-- build:css({.tmp,app}) styles/main.css -->
 
+
+    <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="/lib/chemdoodle/ChemDoodleWeb.css">
 
     <link rel="stylesheet" href="/styles/main.css">
     <link rel="stylesheet" href="/styles/autocomplete.css">
-
 
     <!-- endbuild -->
 
@@ -163,6 +164,7 @@
 <script src="scripts/filters/spectraDownloadFilter.js"></script>
 <script src="scripts/filters/titleCaseFilter.js"></script>
 <script src="scripts/filters/curlFilter.js"></script>
+<script src="scripts/filters/byteFormatFilter.js"></script>
 
 <!-- controllers -->
 <script src="scripts/controllers/main.js"></script>
@@ -186,8 +188,6 @@
 <script src="scripts/controllers/documentation/DocumentationTermController.js"></script>
 
 <!-- directives -->
-
-
 <script src="scripts/directives/sketcherDirective.js"></script>
 <script src="scripts/directives/autocompleteDirective.js"></script>
 <script src="scripts/directives/disableEnterEventDirective.js"></script>
@@ -226,6 +226,7 @@
 <script src="scripts/directives/submitter/spectraTopScoresForUsersDirective.js"></script>
 <script src="scripts/directives/spectra/spectraDownloadDirective.js"></script>
 <script src="scripts/directives/spectra/spectraPanelDirective.js"></script>
+<script src="scripts/directives/spectra/spectraLibraryDirective.js"></script>
 
 <!-- none bower js -->
 <script src="lib/chemdoodle/ChemDoodleWeb-unpacked.js"></script>

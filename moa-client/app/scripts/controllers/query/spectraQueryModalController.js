@@ -4,10 +4,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('QuerySpectrumModalController', querySpectrumModalController);
+        .controller('QuerySpectrumModalController', QuerySpectrumModalController);
 
     /* @ngInject */
-    function querySpectrumModalController($scope, $uibModalInstance, SpectraQueryBuilderService) {
+    function QuerySpectrumModalController($scope, $uibModalInstance, SpectraQueryBuilderService) {
         /**
          * Store accordion status
          * @type {{name: boolean}}

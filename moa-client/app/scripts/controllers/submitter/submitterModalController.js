@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SubmitterModalController', submitterModalController);
+        .controller('SubmitterModalController', SubmitterModalController);
 
     /* @ngInject */
-    function submitterModalController($scope, Submitter, $uibModalInstance, newSubmitter) {
+    function SubmitterModalController($scope, Submitter, $uibModalInstance, newSubmitter) {
         /**
          * contains our results
          * @type {{}}

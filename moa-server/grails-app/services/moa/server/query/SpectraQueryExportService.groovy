@@ -7,10 +7,12 @@ import moa.query.Query
 import moa.server.convert.SpectraConversionService
 import moa.server.mail.EmailService
 import org.apache.commons.io.FileUtils
-import org.apache.ivy.util.FileUtil
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.SessionFactory
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 /**
  * Created by sajjan on 8/31/15.
@@ -44,31 +46,37 @@ class SpectraQueryExportService {
     int QUERY_SIZE = 100
 
 
-    def exportQueryByLabel(def query, def label) {
+    def exportQueryByLabel(def query, def label, def format) {
         log.info("Starting download job for $label")
-        def queryDownload = exportQuery(query, label)
+        def queryDownload = exportQuery(query, label, format)
 
+        // Assign query download object to the predefined query object
         def queryObject = Query.findByLabel(label)
-        queryObject.queryExport = queryDownload
+
+        if (format == "msp") {
+            queryObject.mspExport = queryDownload
+        } else {
+            queryObject.jsonExport = queryDownload
+        }
+
         queryObject.save(flush: true)
 
         log.info("Export of spectra complete for $label, id ${queryDownload.id}")
     }
 
 
-    def exportQueryByEmailAddress(def query, def emailAddress, def startTime) {
+    def exportQueryByEmailAddress(def query, def emailAddress, def startTime, def format) {
         log.info("Starting download job for " + emailAddress)
 
         def label = "${emailAddress.split('@')[0]}-$startTime"
-        def queryDownload = exportQuery(query, label)
-
+        def queryDownload = exportQuery(query, label, format)
 
         // Email results
         log.info("Export of spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
         emailService.sendDownloadEmail(emailAddress, queryDownload.queryCount, queryDownload.id)
     }
 
-    private SpectrumQueryDownload exportQuery(def query, def label) {
+    private SpectrumQueryDownload exportQuery(def query, def label, def format) {
         // Get query as JSON
         def json = (query instanceof JSONObject) ? query : JSON.parse(query);
 
@@ -86,44 +94,39 @@ class SpectraQueryExportService {
 
 
         // Determine output format
-        String format = getFileFormat(json)
+        format = format ?: getFileFormat(json)
 
         // Create new download file object
-        def queryDownload = SpectrumQueryDownload.findOrCreateByLabel(label);
+        def queryDownload = SpectrumQueryDownload.findOrCreateByLabel("${label}-${format}");
+
+        def queryFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}-query.json"
+        def exportFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}.${format}"
+        def compressedFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}-${format}.zip"
 
         if (!queryDownload.query) {
             queryDownload.query = query.toString();
-            queryDownload.queryFile = "${downloadPath}/export-$label-query.json"
-            queryDownload.exportFile = "${downloadPath}/export-$label.$format"
+            queryDownload.queryFile = queryFilename
+            queryDownload.exportFile = compressedFilename
         }
 
         // Get the number of spectra in our query results
         def queryCount = spectraQueryService.getCountForQuery(json)
         queryDownload.queryCount = queryCount
 
+        // Save query download object
+        queryDownload.save(flush: true)
+        queryDownload.errors.allErrors.each { println it }
+
         log.info("Counted $queryCount spectra")
 
 
         // Export query to file
-        File queryFile = new File(queryDownload.queryFile)
+        File queryFile = new File(queryFilename)
+        File exportFile = new File(exportFilename)
         log.debug("storing result at: ${queryFile.getAbsolutePath()}")
 
-        boolean moveExportFile = false
-        File exportFile
-
-        if (queryFile.exists()) {
-            log.info("Query file ${queryFile.getName()} exists, creating temporary dump file")
-
-            exportFile = new File(queryDownload.exportFile +".tmp")
-            moveExportFile = true
-        } else {
-            log.info("Exporting query file " + queryFile.getName())
-
-            queryFile.createNewFile()
-            FileUtils.writeStringToFile(queryFile, json.toString())
-
-            exportFile = new File(queryDownload.exportFile)
-        }
+        queryFile.createNewFile()
+        FileUtils.writeStringToFile(queryFile, json.toString())
 
 
         // Perform query in chunks and export data
@@ -138,14 +141,18 @@ class SpectraQueryExportService {
                 writer.append("[\n")
             }
 
+            boolean firstSpectrum = true;
+
             for (int i = 0; i < queryCount; i += QUERY_SIZE) {
                 def result = spectraQueryService.query(json, QUERY_SIZE, i)
 
                 for (Spectrum s : result) {
                     if (format == "json") {
                         // Append comma and newline
-                        if (i > 0) {
+                        if (!firstSpectrum) {
                             writer.append(",\n")
+                        } else {
+                            firstSpectrum = false;
                         }
 
                         writer.append((s as JSON).toString())
@@ -164,20 +171,51 @@ class SpectraQueryExportService {
             if (format == "json") {
                 writer.append("\n]")
             }
+        }
 
-            return
+
+        // Compress generated export
+        File compressedFile = new File(compressedFilename)
+        File compressedTemporaryFile = new File(compressedFilename +".tmp")
+
+        log.info("Compressing ${exportFile.getName()} -> ${compressedFile.getName()}")
+
+        ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(compressedTemporaryFile))
+
+        zipFile.withStream { zipOutputStream ->
+            // Add file entry and write data
+            log.info(exportFilename)
+            zipOutputStream.putNextEntry(new ZipEntry(exportFile.getName()))
+
+            // Stream with a defined buffer as exports may be very large
+            new FileInputStream(exportFile).withStream { inputStream ->
+                def buffer = new byte[1024]
+                def length
+
+                while((length = inputStream.read(buffer, 0, 1024)) > -1) {
+                    zipOutputStream.write(buffer, 0, length)
+                }
+            }
+
+            zipOutputStream.closeEntry()
+
+            // Remove export file if arching is successful
+            FileUtils.forceDelete(exportFile)
         }
 
 
         // Move temporary export file to stored location
-        if(moveExportFile) {
-            File toFile = new File(queryDownload.exportFile)
-            FileUtils.forceDelete(toFile)
-            FileUtils.moveFile(exportFile, toFile)
+        if(compressedFile.exists()) {
+            FileUtils.forceDelete(compressedFile)
         }
 
+        FileUtils.moveFile(compressedTemporaryFile, compressedFile)
+
+        // Log filesize
+        queryDownload.exportSize = compressedFile.length()
         queryDownload.save(flush: true)
         queryDownload.errors.allErrors.each { println it }
+
 
         return queryDownload
     }

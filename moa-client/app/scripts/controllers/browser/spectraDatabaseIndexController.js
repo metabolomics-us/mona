@@ -5,10 +5,11 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SpectraDatabaseIndexController', spectraDatabaseIndexController);
+      .controller('SpectraDatabaseIndexController', SpectraDatabaseIndexController);
+
 
     /* @ngInject */
-    function spectraDatabaseIndexController($scope, $http, $location, SpectraQueryBuilderService, MetadataService, REST_BACKEND_SERVER) {
+    function SpectraDatabaseIndexController($scope, $http, $location, SpectraQueryBuilderService, MetadataService, REST_BACKEND_SERVER) {
         /**
          * Metadata that we wish to display
          * @type {string[]}

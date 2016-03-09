@@ -56,19 +56,16 @@
                         </div>
                     </div>
 
-                    <div class="row top5">
+                    <div class="row top5" ng-if="spectrum.library !== null">
                         <div class="col-md-12">
                             <ul class="list-unstyled">
-                                <li><div class="h5" ng-bind-html="origin"></div></li>
-                                <li><div class="h5" ng-bind-html="authors"></div></li>
+                                <li><div class="h5"><span data-display-library-reference spectrum="spectrum"></span></div></li>
                             </ul>
                         </div>
                     </div>
 
-
-
                     <div class="row top5">
-                        <div ng-show="spectrum.tags.length" class="col-md-8">
+                        <div class="col-md-8">
                             <ul class="list-inline">
                                 <li ng-repeat="tag in spectrum.tags">
                                     <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
@@ -118,7 +115,7 @@
 
                                 <uib-accordion-group is-open="accordionStatus.isIonTableOpen">
                                     <uib-accordion-heading>
-                                        <div>Ion Table
+                                        <div>Ion Table / Peak Table
                                             <i class="pull-right glyphicon"
                                                ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen,
                                                     'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i>
@@ -178,8 +175,7 @@
                                             <tr>
                                                 <th></th>
                                                 <th class="text-center">Name</th>
-                                                <th class="text-right" style="width: 110px">Bio. Structure</th>
-                                                <th class="text-right" style="width: 110px">Chem. Structure</th>
+                                                <th class="text-right" style="width: 110px">Structure</th>
                                                 <th class="text-right" style="width: 110px">Spectrum</th>
                                                 <th class="text-center">Similarity Score</th>
                                             </tr>
@@ -187,12 +183,12 @@
                                             <tbody>
                                             <tr ng-show="spectra.length == 0">
                                             </tr>
-                                            <tr ng-repeat="spectrum in similarSpectra | orderBy:-similarity"
-                                                ng-click="viewSpectrum(spectrum.id)">
-                                                <td>{{spectrum.id}}</td>
+                                            <tr ng-repeat="s in similarSpectra | orderBy:-similarity"
+                                                ng-click="viewSpectrum(s.id)">
+                                                <td>{{s.id}}</td>
                                                 <td>
                                                     <ul class="list-unstyled">
-                                                        <li ng-repeat="name in spectrum.chemicalCompound.names | limitTo:3">
+                                                        <li ng-repeat="name in s.biologicalCompound.names | limitTo:3">
                                                             {{name.name}}
                                                         </li>
                                                     </ul>
@@ -201,19 +197,12 @@
                                                     <div class="center-block" chemical-sketcher readonly="true"
                                                          width="100"
                                                          height="100"
-                                                         id="bioSketch_{{spectrum.id}}"
+                                                         id="bioSketch_{{s.id}}"
                                                          ng-model="spectrum.biologicalCompound"></div>
                                                 </td>
                                                 <td>
-                                                    <div class="center-block" chemical-sketcher readonly="true"
-                                                         width="100"
-                                                         height="100"
-                                                         id="chemSketch_{{spectrum.id}}"
-                                                         ng-model="spectrum.chemicalCompound"></div>
-                                                </td>
-                                                <td>
                                                     <div class="masspec-mini">
-                                                        <mass-spec id="massSpec_{{spectrum.id}}" mini
+                                                        <mass-spec id="massSpec_{{s.id}}" mini
                                                                    ng-model="spectrum.spectrum"></mass-spec>
                                                     </div>
                                                 </td>
@@ -256,7 +245,7 @@
                                     <div display-compound-info compound="spectrum.biologicalCompound"></div>
                                 </uib-accordion-group>
 
-                                <uib-accordion-group is-open="accordionStatus.isChemicalCompoundOpen">
+                                <uib-accordion-group is-open="accordionStatus.isChemicalCompoundOpen" ng-if="spectrum.chemicalCompound !== null">
                                     <uib-accordion-heading>
                                         <div>Provided Derivatized Substance<i class="pull-right glyphicon"
                                                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i>

@@ -5,10 +5,11 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('AuthenticationController', authenticationController);
+      .controller('AuthenticationController', AuthenticationController);
+
 
     /* @ngInject */
-    function authenticationController($scope, $rootScope, $uibModal, AuthenticationService) {
+    function AuthenticationController($scope, $rootScope, $uibModal, AuthenticationService) {
         var ADMIN_ROLE_NAME = 'ROLE_ADMIN';
         var self = this;
 

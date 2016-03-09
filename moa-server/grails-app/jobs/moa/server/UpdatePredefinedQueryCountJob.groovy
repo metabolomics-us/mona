@@ -5,7 +5,7 @@ import moa.server.query.PredefinedQueryService
 /**
  * Created by sajjan on 10/1/15.
  */
-class UpdatePredefinedQueryJob {
+class UpdatePredefinedQueryCountJob {
     def concurrent = false
 
     def group = "update"

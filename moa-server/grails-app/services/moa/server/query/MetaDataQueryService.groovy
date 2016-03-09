@@ -187,7 +187,7 @@ class MetaDataQueryService {
                         }
                         // and unit inside value
                         else if (key.equals("unit")) {
-	                        // implemented below -- code duplication warning!!!
+                            // implemented below -- code duplication warning!!!
                         } else {
                             def impl = estimateMetaDataValueImpl(current.value."${key}".toString())
 
@@ -216,7 +216,7 @@ class MetaDataQueryService {
         if (current.unit != null) {
             whereQuery = addRequiredAnd(whereQuery)
 
-	        //long form
+            //long form
             if (current.unit instanceof Map) {
                 current.unit.keySet().each { String key ->
                     if (current.unit."${key}") {
