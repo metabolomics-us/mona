@@ -20,7 +20,6 @@ import org.springframework.data.elasticsearch.annotations.NestedField._
 
 object Types {
 
-  
   case class MetaData(
                        
                        @(Indexed@field)
@@ -45,7 +44,6 @@ object Types {
                        
                        url: String,
                        
-                       @(Field@field)(`type` = FieldType.String)
                        @(Indexed@field)
                        @JsonDeserialize(using = classOf[NumberDeserializer])
                        value: Any

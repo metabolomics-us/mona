@@ -50,7 +50,7 @@ class SubmitterRestControllerTest extends WordSpec {
 
     "while working in it" should {
 
-      "we should be able to add spectra using POST at /rest/submitters" in {
+      "we should be able to add submitter using POST at /rest/submitters" in {
 
         submitterRepository.deleteAll()
 
@@ -65,7 +65,7 @@ class SubmitterRestControllerTest extends WordSpec {
         assert(submitterRepository.count() == exampleRecords.length)
       }
 
-      "we should be able to query all the spectra using GET at /rest/submitters" in {
+      "we should be able to query all the submitter using GET at /rest/submitters" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/submitters").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(submitterRepository.count() == exampleRecords.length)
       }
