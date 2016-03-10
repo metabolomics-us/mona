@@ -108,7 +108,7 @@ object Types {
 
   //this is way to uggly, we might really need to use DAO's :(
   @Document(collection = "SPECTRUM")
-  @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum")
+  @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum")
   case class Spectrum(
                        @(Field@field)(`type` = FieldType.Nested)
                        biologicalCompound: Compound,

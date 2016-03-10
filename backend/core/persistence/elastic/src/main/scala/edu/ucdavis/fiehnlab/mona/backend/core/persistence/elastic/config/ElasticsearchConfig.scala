@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.ISpectrumElasticRepositoryCustom
 import org.elasticsearch.node.NodeBuilder
 import org.springframework.context.annotation.{Bean, Configuration, PropertySource}
@@ -17,6 +18,7 @@ class ElasticsearchConfig {
 
   @Bean
   def elasticsearchTemplate: ElasticsearchOperations = {
-    new ElasticsearchTemplate(new NodeBuilder().local(true).node().client());
+    val template = new ElasticsearchTemplate(new NodeBuilder().local(true).node().client())
+    template
   }
 }
