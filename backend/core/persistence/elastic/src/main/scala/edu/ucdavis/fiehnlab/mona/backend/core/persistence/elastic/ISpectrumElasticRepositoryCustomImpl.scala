@@ -6,17 +6,18 @@ import com.github.rutledgepaulv.qbuilders.visitors.{ElasticsearchVisitor, MongoV
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder
 import org.elasticsearch.index.query.{QueryBuilders, QueryBuilder}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
-import org.springframework.data.elasticsearch.core.query.{StringQuery, CriteriaQuery, NativeSearchQueryBuilder, NativeSearchQuery}
+import org.springframework.data.elasticsearch.core.query._
 import org.springframework.data.mongodb.core.query.Query
 
 /**
   * Created by wohlg_000 on 3/3/2016.
   */
-class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCustom with LazyLogging{
+class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCustom with LazyLogging {
 
   @Autowired
   val elasticsearchTemplate: ElasticsearchTemplate = null
@@ -50,7 +51,6 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     val pipeline = QueryConversionPipeline.defaultPipeline()
     val condition = pipeline.apply(query, classOf[Spectrum])
     val qb: QueryBuilder = condition.query(new ElasticsearchVisitor())
-
     qb.toString
   }
 
@@ -62,8 +62,13 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     */
   override def nativeQueryCount(query: String): Long = elasticsearchTemplate.count(getSearch(query))
 
-  def getSearch(query: String): NativeSearchQuery = {
-    logger.info(s"running query:\n${query}\n")
-    new NativeSearchQuery(QueryBuilders.wrapperQuery(query))
+  def getSearch(query: String): SearchQuery = {
+    logger.info(s"query string: \n\n${query}\n\n")
+
+
+    val search = QueryBuilders.boolQuery().must(
+      QueryBuilders.wrapperQuery(query)
+    )
+    new NativeSearchQuery(search)
   }
 }
