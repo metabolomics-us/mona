@@ -163,7 +163,6 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
         val result = spectrumMongoRepository.rsqlQuery("chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'")
         assert(result.size == 2)
       }
-
     }
   }
 }
