@@ -64,11 +64,6 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
 
   def getSearch(query: String): SearchQuery = {
     logger.info(s"query string: \n\n${query}\n\n")
-
-
-    val search = QueryBuilders.boolQuery().must(
-      QueryBuilders.wrapperQuery(query)
-    )
-    new NativeSearchQuery(search)
+    new NativeSearchQuery(QueryBuilders.wrapperQuery(query))
   }
 }

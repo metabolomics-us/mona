@@ -1,7 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql
 
 import java.io.{File, FileReader}
+import java.lang.Iterable
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.{WordSpec, FunSuite}
@@ -10,11 +12,12 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.TestContextManager
 
 import scala.reflect.ClassTag
+import scala.collection.JavaConverters
 
 /**
   * Created by wohlg_000 on 3/9/2016.
   */
-abstract class RSQLRepositoryCustomTest[T:ClassTag] extends WordSpec {
+abstract class RSQLRepositoryCustomTest[T:ClassTag] extends WordSpec with LazyLogging{
 
 
   //required for spring and scala tes
@@ -39,17 +42,24 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag] extends WordSpec {
       getRepository.deleteAll()
       assert(getRepository.count() == 0)
 
-      for (spectrum <- exampleRecords) {
-        val size = getRepository.count()
+      s"we should be able to store our data" in {
+        for (spectrum <- exampleRecords) {
+          val size = getRepository.count()
 
-        getRepository.save(spectrum)
-        val newSize = getRepository.count()
+          val result = getRepository.save(spectrum)
+          assert(result.isInstanceOf[T])
 
-        assert(newSize == size + 1)
+          val newSize = getRepository.count()
+
+          assert(newSize == size + 1)
+        }
+
       }
 
       s"we should have ${exampleRecords.length} records in the repository now" in {
         assert(getRepository.count() == 58)
+
+        val data:Iterable[T] = getRepository.findAll()
       }
 
 
