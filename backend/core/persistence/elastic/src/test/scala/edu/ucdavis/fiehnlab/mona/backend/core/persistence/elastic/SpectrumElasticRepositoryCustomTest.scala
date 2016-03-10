@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.data.elasticsearch.annotations.Document
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
