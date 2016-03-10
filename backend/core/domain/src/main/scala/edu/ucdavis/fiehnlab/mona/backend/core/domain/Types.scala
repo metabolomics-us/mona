@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
 
 import scala.annotation.meta.field
 import scala.beans.BeanProperty
+import org.springframework.data.elasticsearch.annotations.{FieldType, Field}
+import org.springframework.data.elasticsearch.annotations.NestedField._
 
 /**
   * definition of the MoNA domain classes
@@ -104,15 +106,21 @@ object Types {
                      lastName: String
                    )
 
+  //this is way to uggly, we might really need to use DAO's :(
   @Document(collection = "SPECTRUM")
+  @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum")
   case class Spectrum(
+                       @(Field@field)(`type` = FieldType.Nested)
                        biologicalCompound: Compound,
+                       @(Field@field)(`type` = FieldType.Nested)
                        chemicalCompound: Compound,
+                       @(Field@field)(`type` = FieldType.Nested)
                        predictedCompound: Compound,
                        deleted: Boolean,
                        @(Id@field)
                        id: String,
                        lastUpdated: String,
+                       @(Field@field)(`type` = FieldType.Nested)
                        metaData: Array[MetaData],
                        score: Score,
                        spectrum: String,

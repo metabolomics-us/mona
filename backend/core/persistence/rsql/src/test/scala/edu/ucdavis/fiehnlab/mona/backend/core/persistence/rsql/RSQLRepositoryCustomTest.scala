@@ -20,14 +20,13 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag] extends WordSpec {
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  "a repository is loaded with 58 compounds" when {
 
+  //58 spectra for us to work with
+  val exampleRecords: Array[T] = JSONDomainReader.create[Array[T]].read(new FileReader(new File("src/test/resources/monaRecords.json")))
+
+  s"a repository is loaded with ${exampleRecords.length} compounds" when {
 
     assert(getRepository != null)
-
-    //58 spectra for us to work with
-    val exampleRecords: Array[T] = JSONDomainReader.create[Array[T]].read(new FileReader(new File("src/test/resources/monaRecords.json")))
-
 
     "reading our records" should {
       s"results in ${exampleRecords.length} records" in {
@@ -48,6 +47,11 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag] extends WordSpec {
 
         assert(newSize == size + 1)
       }
+
+      s"we should have ${exampleRecords.length} records in the repository now" in {
+        assert(getRepository.count() == 58)
+      }
+
 
       "we should be able to execute RSQL queries like biologicalCompound.inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N" in {
 

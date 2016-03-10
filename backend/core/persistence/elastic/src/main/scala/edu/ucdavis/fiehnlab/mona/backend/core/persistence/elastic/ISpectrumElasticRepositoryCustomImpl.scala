@@ -4,6 +4,7 @@ import java.util
 
 import com.github.rutledgepaulv.qbuilders.visitors.{ElasticsearchVisitor, MongoVisitor}
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import org.elasticsearch.index.query.{QueryBuilders, QueryBuilder}
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +16,7 @@ import org.springframework.data.mongodb.core.query.Query
 /**
   * Created by wohlg_000 on 3/3/2016.
   */
-class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCustom {
+class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCustom with LazyLogging{
 
   @Autowired
   val elasticsearchTemplate: ElasticsearchTemplate = null
@@ -50,8 +51,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     val condition = pipeline.apply(query, classOf[Spectrum])
     val qb: QueryBuilder = condition.query(new ElasticsearchVisitor())
 
-
-    ""
+    qb.toString
   }
 
   /**
@@ -63,6 +63,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   override def nativeQueryCount(query: String): Long = elasticsearchTemplate.count(getSearch(query))
 
   def getSearch(query: String): NativeSearchQuery = {
+    logger.info(s"running query:\n${query}\n")
     new NativeSearchQuery(QueryBuilders.wrapperQuery(query))
   }
 }
