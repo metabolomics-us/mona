@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import org.springframework.data.elasticsearch.annotations.Document
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import org.springframework.stereotype.Repository
 
@@ -10,4 +9,6 @@ import org.springframework.stereotype.Repository
   */
 @Repository("spectrumElasticRepository")
 trait ISpectrumElasticRepositoryCustom  extends ElasticsearchRepository[Spectrum, String]  with SpectrumElasticRepositoryCustom{
+
+  def findByBiologicalCompoundInchiKey(inchiKey: String) : java.util.List[Spectrum]
 }

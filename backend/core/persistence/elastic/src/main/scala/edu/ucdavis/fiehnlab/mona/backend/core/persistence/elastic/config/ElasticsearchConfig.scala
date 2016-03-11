@@ -5,6 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.ISpectrumElasticRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{EntityMapperImpl}
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.{InetSocketTransportAddress, TransportAddress}
@@ -21,7 +22,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(basePackageClasses = Array(
   classOf[ISpectrumElasticRepositoryCustom]
 ))
-@Import(Array(classOf[DomainConfig]))
 class ElasticsearchConfig extends LazyLogging {
 
   // @Value("${mona.persistence.elastic.port}")
@@ -29,17 +29,22 @@ class ElasticsearchConfig extends LazyLogging {
   // @Value("${mona.persistence.elastic.host}")
   val hostname: String = "127.0.0.1"
 
-  @Autowired
-  val objectMapper:ObjectMapper = null
-
+  /**
+    * this defines our custom wired elastic search template
+    * @return
+    */
   @Bean
   def elasticsearchTemplate: ElasticsearchOperations = {
 
-    val template= new ElasticsearchTemplate(new NodeBuilder().local(true).node().client(),new EntityMapperImpl(objectMapper))
-    //val template = new ElasticsearchTemplate(client,new EntityMapperImpl(objectMapper))
+    //val template= new ElasticsearchTemplate(new NodeBuilder().local(true).node().client(),new EntityMapperImpl())
+    val template = new ElasticsearchTemplate(client,new EntityMapperImpl())
     template
   }
 
+  /**
+    * this defines the elastic client and where we want to connect from
+    * @return
+    */
   @Bean
   def client: Client = {
     logger.info(s"connecting to ${hostname}:${port}")
@@ -48,18 +53,6 @@ class ElasticsearchConfig extends LazyLogging {
     client.addTransportAddress(address)
 
     client
-  }
-
-
-  /**
-    * takes care of all the seriz
-    * @param mapper
-    */
-  class EntityMapperImpl(val mapper: ObjectMapper) extends EntityMapper {
-
-    override def mapToString(`object`: scala.Any): String = mapper.writeValueAsString(`object`)
-
-    override def mapToObject[T](source: String, clazz: Class[T]): T = mapper.readValue(source, clazz)
   }
 
 }

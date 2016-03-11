@@ -17,13 +17,13 @@ import scala.reflect._
   */
 
 @NoRepositoryBean
-trait RSQLRepositoryCustom[T] {
+trait RSQLRepositoryCustom[T,Q] {
 
   /**
     * @param query
     * @return
     */
-  def nativeQuery(query: String): util.List[T]
+  def nativeQuery(query: Q): util.List[T]
 
   /**
     * executes a query against the system and returns the count
@@ -31,7 +31,7 @@ trait RSQLRepositoryCustom[T] {
     * @param query
     * @return
     */
-  def nativeQueryCount(query: String): Long
+  def nativeQueryCount(query: Q): Long
 
   /**
     *
@@ -39,7 +39,7 @@ trait RSQLRepositoryCustom[T] {
     * @return
     *
     */
-  def nativeQuery(query: String, pageable: Pageable): Page[T]
+  def nativeQuery(query: Q, pageable: Pageable): Page[T]
 
 
   /**
@@ -73,5 +73,5 @@ trait RSQLRepositoryCustom[T] {
     * @param query
     * @return
     */
-  def buildRSQLQuery(query: String): String
+  def buildRSQLQuery(query: String): Q
 }

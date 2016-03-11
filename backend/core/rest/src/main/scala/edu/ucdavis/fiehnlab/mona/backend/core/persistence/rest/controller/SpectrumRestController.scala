@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.mongodb.core.query.BasicQuery
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{AsyncResult, Async}
@@ -36,11 +37,11 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   def search(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestBody query: WrappedString): Future[java.util.List[Spectrum]] = new AsyncResult[java.util.List[Spectrum]](
     if (size != null)
       if (page != null)
-        getRepository.nativeQuery(query.string, new PageRequest(page, size)).getContent
+        getRepository.nativeQuery(new BasicQuery(query.string), new PageRequest(page, size)).getContent
       else
-        getRepository.nativeQuery(query.string, new PageRequest(0, size)).getContent
+        getRepository.nativeQuery(new BasicQuery(query.string), new PageRequest(0, size)).getContent
     else
-      getRepository.nativeQuery(query.string)
+      getRepository.nativeQuery(new BasicQuery(query.string))
   )
 
   /**
@@ -71,7 +72,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @RequestMapping(path = Array("/count"), method = Array(RequestMethod.POST))
   @Async
   def searchCount(@RequestBody query: WrappedString): Future[Long] = {
-    new AsyncResult[Long](getRepository.nativeQueryCount(query.string))
+    new AsyncResult[Long](getRepository.nativeQueryCount(new BasicQuery(query.string)))
   }
 
 

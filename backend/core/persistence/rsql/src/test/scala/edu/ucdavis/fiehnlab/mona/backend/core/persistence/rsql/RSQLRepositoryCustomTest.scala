@@ -17,7 +17,7 @@ import scala.collection.JavaConverters
 /**
   * Created by wohlg_000 on 3/9/2016.
   */
-abstract class RSQLRepositoryCustomTest[T:ClassTag] extends WordSpec with LazyLogging{
+abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with LazyLogging{
 
 
   //required for spring and scala tes
@@ -92,5 +92,5 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag] extends WordSpec with LazyLo
     }
   }
 
-  def getRepository: RSQLRepositoryCustom[T] with CrudRepository[T, String]
+  def getRepository: RSQLRepositoryCustom[T,Q] with CrudRepository[T, String]
 }
