@@ -21,12 +21,6 @@ import org.springframework.data.elasticsearch.annotations.NestedField._
 
 object Types {
 
-    //should not be longer required
-    //   val value_number:Double = 0// value.value.toString.toDouble
-    //   val value_text:String = ""//value.value.asInstanceOf[String]
-    //   val value_boolean:Boolean = false//value.value.asInstanceOf[Boolean]
-
-
   case class MetaData(
 
                        @(Indexed@field)
@@ -34,9 +28,6 @@ object Types {
 
                        @(Indexed@field)
                        computed: Boolean,
-
-                       @(Indexed@field)
-                       deleted: Boolean,
 
                        @(Indexed@field)
                        hidden: Boolean,
@@ -81,7 +72,6 @@ object Types {
 
 
   case class Compound(
-
 
                        inchi: String,
                        @(Indexed@field)
@@ -166,13 +156,8 @@ object Types {
   @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
   case class Spectrum(
 
-                       //                       @(Field@field)(`type` = FieldType.Nested)
                        biologicalCompound: Compound,
-
-                       //                     @(Field@field)(`type` = FieldType.Nested)
                        chemicalCompound: Compound,
-
-                       //                   @(Field@field)(`type` = FieldType.Nested)
                        predictedCompound: Compound,
 
                        @(Indexed@field)
@@ -199,7 +184,6 @@ object Types {
                        @(Field@field)(`type` = FieldType.Nested)
                        authors: Array[Author]
                      )
-
 }
 
 /**
