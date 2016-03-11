@@ -1,10 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper
 
+import java.lang.reflect.Field
+import java.util
+
 import com.fasterxml.jackson.core.{JsonGenerator, JsonParser}
 import com.fasterxml.jackson.databind._
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.node.JsonNodeType
+import com.fasterxml.jackson.databind.ser.{BeanSerializerModifier, BeanSerializer}
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Value, MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{ MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.TupleSerialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{NumberDeserializer, MonaMapper}
 import org.springframework.data.elasticsearch.core.EntityMapper
 
@@ -16,8 +23,9 @@ class EntityMapperImpl() extends EntityMapper {
   val mapper = MonaMapper.create
   val module = new SimpleModule()
 
-  module.addSerializer(classOf[Value], new ElasticMetaDataSerializer)
-  module.addDeserializer(classOf[Value], new ElasticMedaDataDeserializer)
+  module.addSerializer(classOf[MetaData], new ElasticMetaDataSerializer)
+  module.addDeserializer(classOf[MetaData], new ElasticMedaDataDeserializer)
+
 
   mapper.registerModule(module)
 
@@ -27,36 +35,77 @@ class EntityMapperImpl() extends EntityMapper {
 }
 
 /**
-  * generates JSON sub entries for us, under the value element
+  * custom serializer, which transform tuples, so that elastic search has only one value for mapping
   */
-class ElasticMetaDataSerializer extends JsonSerializer[Value] with LazyLogging {
-  override def serialize(t: Value, jsonGenerator: JsonGenerator, serializerProvider: SerializerProvider): Unit = {
-
+class ElasticMetaDataSerializer extends JsonSerializer[MetaData] with LazyLogging {
+  override def serialize(value: MetaData, jsonGenerator: JsonGenerator, serializerProvider: SerializerProvider): Unit = {
     jsonGenerator.writeStartObject()
-    t.value match {
+    val fields: Array[Field] = value.getClass.getDeclaredFields
 
-      case x: Boolean => jsonGenerator.writeBooleanField("value_boolean", x)
-      case x: Double => jsonGenerator.writeNumberField("value_number", x)
-      case x: Long => jsonGenerator.writeNumberField("value_number", x)
-      case x: Int => jsonGenerator.writeNumberField("value_number", x)
-      case x: Float => jsonGenerator.writeNumberField("value_number", x)
-      case _ =>
-        jsonGenerator.writeStringField("value_text", t.value.toString)
+    for (field <- fields) {
+      try {
+        field.setAccessible(true)
+        //check for annotation
+        if (field.getAnnotation(classOf[TupleSerialize]) != null) {
+          val t = field.get(value)
+
+          t match {
+            case x: java.lang.Boolean => jsonGenerator.writeBooleanField("value_boolean", x)
+            case x: java.lang.Double => jsonGenerator.writeNumberField("value_number", x)
+            case x: java.lang.Long => jsonGenerator.writeNumberField("value_number", x)
+            case x: java.lang.Integer => jsonGenerator.writeNumberField("value_number", x)
+            case x: java.lang.Float => jsonGenerator.writeNumberField("value_number", x)
+            case _ =>
+              jsonGenerator.writeStringField("value_text", t.toString)
+          }
+        }
+        //write normal fields
+        else {
+          jsonGenerator.writeObjectField(field.getName, field.get(value))
+        }
+      }
+      catch {
+        case e: IllegalArgumentException =>
+          logger.warn(e.getMessage, e)
+        case e: IllegalAccessException =>
+          logger.warn(e.getMessage, e)
+      }
     }
     jsonGenerator.writeEndObject()
-
   }
 }
 
 /**
-  * this is reading the value element back again
+  * builds a meta data object based on it's given properties and tries to evalualte the value correctly for the
+  * different representations
   */
-class ElasticMedaDataDeserializer extends JsonDeserializer[Value] with LazyLogging {
+class ElasticMedaDataDeserializer extends JsonDeserializer[MetaData] with LazyLogging {
   val numberDeserializer: NumberDeserializer = new NumberDeserializer
+  val monaMapper = MonaMapper.create
 
-  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Value = {
+  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): MetaData = {
+    val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
 
-    logger.info("desializing....")
-    new Value(0)
+    //our result object
+    val metaData = monaMapper.treeToValue(jsonNode,classOf[MetaData])
+
+    //lets find our custom fields and map them to the value
+    val text = jsonNode.get("value_text")
+    val number = jsonNode.get("value_number")
+    val boolean = jsonNode.get("value_boolean")
+
+    if(text != null){
+      metaData.copy(value = text.asText())
+    }
+    else if(number != null){
+      metaData.copy(value = number.asText())
+    }
+    else if(boolean != null){
+      metaData.copy(value = boolean.asBoolean())
+    }
+    else{
+      logger.warn("we found no custom field, investigate! returning default object")
+      metaData
+    }
   }
 }

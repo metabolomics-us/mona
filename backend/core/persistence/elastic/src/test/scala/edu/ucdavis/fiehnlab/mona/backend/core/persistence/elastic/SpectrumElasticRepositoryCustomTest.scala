@@ -43,7 +43,13 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
 
       assert(spectrumElasticRepository.count() == 58)
 
+      val it = result.iterator()
 
+      assert(it.hasNext)
+
+      while(it.hasNext){
+        println(it.next())
+      }
     }
 
     "for example the find by inchi key" in {
@@ -53,7 +59,6 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
 
       var count = 0
       while (it.hasNext) {
-        println(it.next())
         count = count + 1
       }
 

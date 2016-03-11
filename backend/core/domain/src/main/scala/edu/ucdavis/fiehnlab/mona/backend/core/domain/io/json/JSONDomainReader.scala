@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Value, MetaData}
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{ MetaData}
 
 import scala.reflect._
 
@@ -67,13 +68,18 @@ object JSONDomainReader {
 /**
   * tries to convert a number or boolean object from a string
   */
-class NumberDeserializer extends JsonDeserializer[Any] {
+class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging{
 
+  /**
+    * tries to convert a value to a number/boolean/text on the fly
+    * @param jsonParser
+    * @param deserializationContext
+    * @return
+    */
   override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Any = {
 
     try {
       val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
-
       val content = jsonNode.textValue
 
       if (content != null) {
@@ -104,10 +110,4 @@ class NumberDeserializer extends JsonDeserializer[Any] {
       case e: Exception => e.printStackTrace()
     }
   }
-}
-
-class MetaDataValueDeserializer extends JsonDeserializer[Value]{
-  val numberDeserializer:NumberDeserializer = new NumberDeserializer
-
-  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Value = new Value(numberDeserializer.deserialize(jsonParser,deserializationContext))
 }

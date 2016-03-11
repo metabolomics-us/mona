@@ -3,8 +3,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.{JsonSerialize, JsonDeserialize}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{MetaDataValue, CascadeSave}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MetaDataValueDeserializer, NumberDeserializer}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{TupleSerialize, CascadeSave}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{NumberDeserializer}
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
@@ -21,17 +21,11 @@ import org.springframework.data.elasticsearch.annotations.NestedField._
 
 object Types {
 
-  case class Value(
-                    value:Any
-                  ) {
-
-
     //should not be longer required
- //   val value_number:Double = 0// value.value.toString.toDouble
- //   val value_text:String = ""//value.value.asInstanceOf[String]
- //   val value_boolean:Boolean = false//value.value.asInstanceOf[Boolean]
+    //   val value_number:Double = 0// value.value.toString.toDouble
+    //   val value_text:String = ""//value.value.asInstanceOf[String]
+    //   val value_boolean:Boolean = false//value.value.asInstanceOf[Boolean]
 
-  }
 
   case class MetaData(
 
@@ -57,9 +51,9 @@ object Types {
 
                        url: String,
 
-                       @JsonDeserialize(using = classOf[MetaDataValueDeserializer])
-                       value: Value
-
+                       @(TupleSerialize@field)
+                       @JsonDeserialize(using = classOf[NumberDeserializer])
+                       value: Any
                      )
 
   case class Names(
@@ -172,13 +166,13 @@ object Types {
   @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
   case class Spectrum(
 
-//                       @(Field@field)(`type` = FieldType.Nested)
+                       //                       @(Field@field)(`type` = FieldType.Nested)
                        biologicalCompound: Compound,
 
-  //                     @(Field@field)(`type` = FieldType.Nested)
+                       //                     @(Field@field)(`type` = FieldType.Nested)
                        chemicalCompound: Compound,
 
-    //                   @(Field@field)(`type` = FieldType.Nested)
+                       //                   @(Field@field)(`type` = FieldType.Nested)
                        predictedCompound: Compound,
 
                        @(Indexed@field)
