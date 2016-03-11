@@ -21,7 +21,7 @@ class ElasticMetaDataSerializerTest extends FunSuite {
     val generator = factory.createGenerator(content)
     generator.setPrettyPrinter(new DefaultPrettyPrinter())
 
-    val data = MetaData("none", false, false, false, "test", null, null, null, "test")
+    val data = MetaData("none",  false, false, "test", null, null, null, "test")
 
     serializer.serialize(data, generator, null);
     generator.close()
@@ -42,7 +42,7 @@ class ElasticMetaDataSerializerTest extends FunSuite {
     val generator = factory.createGenerator(content)
     generator.setPrettyPrinter(new DefaultPrettyPrinter())
 
-    val data = MetaData("none", false, false, false, "test", null, null, null, true)
+    val data = MetaData("none", false, false, "test", null, null, null, true)
 
     serializer.serialize(data, generator, null);
     generator.close()
@@ -63,7 +63,7 @@ class ElasticMetaDataSerializerTest extends FunSuite {
     val generator = factory.createGenerator(content)
     generator.setPrettyPrinter(new DefaultPrettyPrinter())
 
-    val data = MetaData("none", false, false, false, "test", null, null, null, 123.23)
+    val data = MetaData("none", false, false, "test", null, null, null, 123.23)
 
     serializer.serialize(data, generator, null);
     generator.close()

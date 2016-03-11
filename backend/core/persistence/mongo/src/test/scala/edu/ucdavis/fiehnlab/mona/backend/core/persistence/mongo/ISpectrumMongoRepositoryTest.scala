@@ -2,19 +2,26 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
 import java.io.{File, FileReader}
 
-import com.mongodb.{MongoClient, Mongo}
+import com.mongodb.{MongoClientOptions, MongoClient, Mongo}
+import de.flapdoodle.embed.mongo.{MongodProcess, MongodExecutable, MongodStarter}
+import de.flapdoodle.embed.mongo.config.{IMongodConfig, MongodConfigBuilder}
+import de.flapdoodle.embed.mongo.distribution.Version
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.CascadeConfig
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterAll, WordSpec, FunSuite}
 import org.springframework.beans.factory.annotation.{Qualifier, Value, Autowired}
+import org.springframework.boot.autoconfigure.mongo.MongoProperties
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
 import org.springframework.boot.autoconfigure.{SpringBootApplication, EnableAutoConfiguration}
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation._
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+import org.springframework.core.env.Environment
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration
+import org.springframework.data.mongodb.core.{MongoTemplate, MongoOperations}
 import org.springframework.data.mongodb.core.query.BasicQuery
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.springframework.test.context.{ContextConfiguration, TestContextManager}
@@ -26,10 +33,10 @@ import scala.collection.JavaConverters._
   * Created by wohlgemuth on 2/26/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(Array(classOf[MyTestConfig]))
+@SpringApplicationConfiguration(Array(classOf[EmbeddedMongoDBConfiguration]))
 @ComponentScan
 @EnableAutoConfiguration
-class ISpectrumMongoRepositoryTest extends WordSpec{
+class ISpectrumMongoRepositoryTest extends WordSpec {
 
   @Autowired
   @Qualifier("spectrumMongoRepository")
@@ -73,33 +80,33 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 
       "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }"""))
+        val result: java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }"""))
         assert(result.size == 1)
       }
 
       "provide us with the possibility to query data, for a specific metadata filed" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }"""))
+        val result: java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }"""))
 
         assert(result.size == 2)
       }
 
       "provide us with the possibility to query data, by a tag query" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""))
+        val result: java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""))
 
         assert(result.size == 58)
 
       }
 
       "provide us with the possibility to query all data and paginate it" in {
-        val page:Page[Spectrum] = spectrumMongoRepository.findAll(new PageRequest(0,30))
+        val page: Page[Spectrum] = spectrumMongoRepository.findAll(new PageRequest(0, 30))
 
         assert(page.isFirst)
         assert(page.getTotalElements == 58)
         assert(page.getTotalPages == 2)
 
-        val page2:Page[Spectrum] = spectrumMongoRepository.findAll(new PageRequest(30,60))
+        val page2: Page[Spectrum] = spectrumMongoRepository.findAll(new PageRequest(30, 60))
 
         assert(page2.isLast)
 
@@ -107,13 +114,13 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 
       "provide us with the possibility to query custom queries all data and paginate it" in {
 
-        val page:Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""),new PageRequest(0,30))
+        val page: Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""), new PageRequest(0, 30))
 
         assert(page.isFirst)
         assert(page.getTotalElements == 58)
         assert(page.getTotalPages == 2)
 
-        val page2:Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""),new PageRequest(30,60))
+        val page2: Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""), new PageRequest(30, 60))
 
         assert(page2.isLast)
 
@@ -122,8 +129,8 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
       "we should be able to update a spectra with new properties" in {
         val spectrum = spectrumMongoRepository.findAll().asScala.head
 
-        val splash:Splash = spectrum.splash.copy(splash = "tada")
-        val spectrum2:Spectrum = spectrum.copy(splash = splash)
+        val splash: Splash = spectrum.splash.copy(splash = "tada")
+        val spectrum2: Spectrum = spectrum.copy(splash = splash)
 
         val countBefore = spectrumMongoRepository.count()
 
@@ -172,18 +179,42 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 ), excludeFilters = Array())
 @Import(Array(classOf[CascadeConfig]))
 @Configuration
-class MyTestConfig extends AbstractMongoConfiguration{
-  val server: String = scala.util.Properties.envOrElse("MONGO_SERVER", "127.0.0.1" )
-  val database: String = "monatest"
+class EmbeddedMongoDBConfiguration {
 
-  override def mongo(): Mongo = {
-    val client = new MongoClient(server)
-    client.getDB(getDatabaseName).dropDatabase()
-    client
+  @Autowired(required = false)
+  val options: MongoClientOptions = null
+
+  @Autowired
+  val enviorment: Environment = null
+
+  @Bean(destroyMethod = "close")
+  def mongo(mongodProcess: MongodProcess): Mongo = {
+    val net = mongodProcess.getConfig.net()
+    val properties = new MongoProperties()
+    properties.setHost(net.getServerAddress.getHostName)
+    properties.setPort(net.getPort)
+    properties.createMongoClient(this.options, enviorment)
   }
 
-  override def getDatabaseName: String = {
-    database
+  @Bean(destroyMethod = "stop")
+  def mongodProcess(mongodExecutable: MongodExecutable): MongodProcess = mongodExecutable.start()
+
+  @Bean(destroyMethod = "stop")
+  def mongodExecutable(mongodStarter: MongodStarter, iMongodConfig: IMongodConfig): MongodExecutable = {
+    mongodStarter.prepare(iMongodConfig)
   }
 
+  @Bean
+  def mongodConfig(): IMongodConfig = {
+    new MongodConfigBuilder().version(Version.Main.PRODUCTION)
+      .build()
+  }
+
+  @Bean
+  def mongodStarter(): MongodStarter = MongodStarter.getDefaultInstance
+
+  @Bean(name = Array("mongoOperation","mongoTemplate"))
+  def mongoOperations(mongo: Mongo): MongoOperations = {
+    new MongoTemplate(mongo, "monatest")
+  }
 }

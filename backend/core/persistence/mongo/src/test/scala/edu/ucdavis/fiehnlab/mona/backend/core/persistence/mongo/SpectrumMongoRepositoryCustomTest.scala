@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlg_000 on 3/9/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(Array(classOf[MyTestConfig]))
+@SpringApplicationConfiguration(Array(classOf[EmbeddedMongoDBConfiguration]))
 @ComponentScan
 @EnableAutoConfiguration
 class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,Query] {
