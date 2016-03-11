@@ -22,7 +22,7 @@ class CascadeCallback(val source: Any, val mongoOperations: MongoOperations) ext
       if (fieldValue != null) {
         val callback = new FieldCallBack
 
-        logger.debug(s"updating references for field: ${fieldValue}")
+        logger.debug(s"updating references for field: $fieldValue")
 
         ReflectionUtils.doWithFields(fieldValue.getClass, callback)
 

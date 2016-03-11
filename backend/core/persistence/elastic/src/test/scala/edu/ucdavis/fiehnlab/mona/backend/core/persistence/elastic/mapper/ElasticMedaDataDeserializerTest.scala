@@ -35,7 +35,7 @@ class ElasticMedaDataDeserializerTest extends FunSuite {
   }
 
   test("testDeserializeString") {
-    val data = MetaData("none", false, false, false, "test", null, null, null, "test")
+    val data = MetaData("none", false,  false, "test", null, null, null, "test")
 
     val json = getJson(data)
 
@@ -49,7 +49,7 @@ class ElasticMedaDataDeserializerTest extends FunSuite {
   }
 
   test("testDeserializeInt") {
-    val data = MetaData("none", false, false, false, "test", null, null, null, 123)
+    val data = MetaData("none", false, false, "test", null, null, null, 123)
 
     val json = getJson(data)
 
@@ -63,7 +63,7 @@ class ElasticMedaDataDeserializerTest extends FunSuite {
   }
 
   test("testDeserializeDouble") {
-    val data = MetaData("none", false, false, false, "test", null, null, null, 12.21)
+    val data = MetaData("none", false, false, "test", null, null, null, 12.21)
 
     val json = getJson(data)
 

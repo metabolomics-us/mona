@@ -25,12 +25,12 @@ class MongoConfig extends AbstractMongoConfiguration with LazyLogging {
   val database: String = null
 
   override def mongo(): Mongo = {
-    logger.info(s"creating new client to server: ${server}")
+    logger.info(s"creating new client to server: $server")
     new MongoClient(server)
   }
 
   override def getDatabaseName: String = {
-    logger.info(s"utilizing database: ${database}")
+    logger.info(s"utilizing database: $database")
     database
   }
 }

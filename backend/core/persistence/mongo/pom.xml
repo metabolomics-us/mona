@@ -19,10 +19,16 @@
             <groupId>com.typesafe.scala-logging</groupId>
             <artifactId>scala-logging_2.11</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>rsql</artifactId>
@@ -51,5 +57,19 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <version>1.50.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
