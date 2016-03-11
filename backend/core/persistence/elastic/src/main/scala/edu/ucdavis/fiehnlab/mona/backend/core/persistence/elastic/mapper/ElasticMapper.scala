@@ -84,7 +84,7 @@ class ElasticMedaDataDeserializer extends JsonDeserializer[MetaData] with LazyLo
   val monaMapper = MonaMapper.create
 
   override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): MetaData = {
-    val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
+    val jsonNode: JsonNode = monaMapper.readTree(jsonParser)
 
     //our result object
     val metaData = monaMapper.treeToValue(jsonNode,classOf[MetaData])
@@ -98,7 +98,12 @@ class ElasticMedaDataDeserializer extends JsonDeserializer[MetaData] with LazyLo
       metaData.copy(value = text.asText())
     }
     else if(number != null){
-      metaData.copy(value = number.asText())
+      try {
+        metaData.copy(value = number.toString.toInt)
+      }
+      catch {
+        case x:NumberFormatException => metaData.copy(value = number.asDouble())
+      }
     }
     else if(boolean != null){
       metaData.copy(value = boolean.asBoolean())
