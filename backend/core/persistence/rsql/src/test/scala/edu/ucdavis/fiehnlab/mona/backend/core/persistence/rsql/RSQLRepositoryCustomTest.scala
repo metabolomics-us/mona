@@ -13,6 +13,7 @@ import org.springframework.test.context.TestContextManager
 
 import scala.reflect.ClassTag
 import scala.collection.JavaConverters
+import scala.util.Properties
 
 /**
   * Created by wohlg_000 on 3/9/2016.
@@ -23,6 +24,8 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
+
+  val keepRunning = Properties.envOrElse("keep.server.running","false").toBoolean
 
   //58 spectra for us to work with
   val exampleRecords: Array[T] = JSONDomainReader.create[Array[T]].read(new FileReader(new File("src/test/resources/monaRecords.json")))
@@ -90,7 +93,18 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
         assert(result.size == 2)
       }
     }
+
+    "if specified the server should stay online, this can be done using the env variabel 'keep.server.running=true' " in {
+      if(keepRunning){
+        while (keepRunning) {
+          logger.warn("waiting forever till you kill me!")
+          Thread.sleep(300000); // Every 5 minutes
+        }
+      }
+    }
   }
+
+
 
   def getRepository: RSQLRepositoryCustom[T,Q] with CrudRepository[T, String]
 }

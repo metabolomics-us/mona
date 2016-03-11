@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

@@ -4,6 +4,7 @@ import java.lang.Iterable
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.EmbeddedElasticSearchConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustomTest, RSQLRepositoryCustom}
 import org.elasticsearch.index.query.QueryBuilder
 import org.junit.runner.RunWith
@@ -22,7 +23,7 @@ import scala.collection.JavaConverters
   * Created by wohlg_000 on 3/9/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(Array(classOf[ElasticsearchConfig]))
+@SpringApplicationConfiguration(Array(classOf[EmbeddedElasticSearchConfiguration]))
 @ComponentScan
 @EnableAutoConfiguration
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,QueryBuilder] {
