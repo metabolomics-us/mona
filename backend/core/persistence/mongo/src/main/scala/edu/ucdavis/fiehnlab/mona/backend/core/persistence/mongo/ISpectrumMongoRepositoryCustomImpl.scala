@@ -66,7 +66,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
     * @param query
     * @return
     */
-  override def buildRSQLQuery(query: String): String = {
+  override def buildRSQLQuery(query: String): Query = {
 
     val pipeline = QueryConversionPipeline.defaultPipeline()
     val condition = pipeline.apply(query, classOf[Spectrum])
@@ -75,28 +75,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
     val toExecute = new Query()
     toExecute.addCriteria(criteria)
 
-    toExecute.getQueryObject.toString
+    toExecute
   }
 
-  /**
-    * @param query
-    * @return
-    */
-  override def nativeQuery(query: String): util.List[Spectrum] = nativeQuery(new BasicQuery(query))
-
-  /**
-    *
-    * @param query
-    * @return
-    *
-    */
-  override def nativeQuery(query: String, pageable: Pageable): Page[Spectrum] = nativeQuery(new BasicQuery(query), pageable)
-
-  /**
-    * executes a query against the system and returns the count
-    *
-    * @param query
-    * @return
-    */
-  override def nativeQueryCount(query: String): Long = nativeQueryCount(new BasicQuery(query))
 }

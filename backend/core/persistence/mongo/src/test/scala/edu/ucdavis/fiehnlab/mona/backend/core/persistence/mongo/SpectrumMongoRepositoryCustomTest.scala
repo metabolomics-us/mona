@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -19,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @SpringApplicationConfiguration(Array(classOf[MyTestConfig]))
 @ComponentScan
 @EnableAutoConfiguration
-class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum] {
+class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,Query] {
 
   @Autowired
   @Qualifier("spectrumMongoRepository")
@@ -28,5 +29,5 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  override def getRepository: RSQLRepositoryCustom[Spectrum] with CrudRepository[Spectrum, String] = spectrumMongoRepository
+  override def getRepository: RSQLRepositoryCustom[Spectrum,Query] with CrudRepository[Spectrum, String] = spectrumMongoRepository
 }

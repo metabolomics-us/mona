@@ -73,20 +73,20 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 
       "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }"""))
         assert(result.size == 1)
       }
 
       "provide us with the possibility to query data, for a specific metadata filed" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }"""))
 
         assert(result.size == 2)
       }
 
       "provide us with the possibility to query data, by a tag query" in {
 
-        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")
+        val result:java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""))
 
         assert(result.size == 58)
 
@@ -107,13 +107,13 @@ class ISpectrumMongoRepositoryTest extends WordSpec{
 
       "provide us with the possibility to query custom queries all data and paginate it" in {
 
-        val page:Page[Spectrum] = spectrumMongoRepository.nativeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(0,30))
+        val page:Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""),new PageRequest(0,30))
 
         assert(page.isFirst)
         assert(page.getTotalElements == 58)
         assert(page.getTotalPages == 2)
 
-        val page2:Page[Spectrum] = spectrumMongoRepository.nativeQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }""",new PageRequest(30,60))
+        val page2:Page[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"tags" : {$elemMatch : { text : "LCMS" } } }"""),new PageRequest(30,60))
 
         assert(page2.isLast)
 

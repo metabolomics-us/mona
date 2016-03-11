@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.MetaData
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Value, MetaData}
 
 import scala.reflect._
 
@@ -104,4 +104,10 @@ class NumberDeserializer extends JsonDeserializer[Any] {
       case e: Exception => e.printStackTrace()
     }
   }
+}
+
+class MetaDataValueDeserializer extends JsonDeserializer[Value]{
+  val numberDeserializer:NumberDeserializer = new NumberDeserializer
+
+  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Value = new Value(numberDeserializer.deserialize(jsonParser,deserializationContext))
 }

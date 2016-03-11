@@ -1,8 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic
 
+import java.lang.Iterable
+
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustomTest, RSQLRepositoryCustom}
+import org.elasticsearch.index.query.QueryBuilder
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
@@ -13,6 +16,7 @@ import org.springframework.data.elasticsearch.annotations.Document
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import scala.collection.JavaConverters
 
 /**
   * Created by wohlg_000 on 3/9/2016.
@@ -21,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @SpringApplicationConfiguration(Array(classOf[ElasticsearchConfig]))
 @ComponentScan
 @EnableAutoConfiguration
-class SpectrumElasticRepositoryCustomTest  extends RSQLRepositoryCustomTest[Spectrum] {
+class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,QueryBuilder] {
 
   @Autowired
   @Qualifier("spectrumElasticRepository")
@@ -30,6 +34,32 @@ class SpectrumElasticRepositoryCustomTest  extends RSQLRepositoryCustomTest[Spec
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  override def getRepository: RSQLRepositoryCustom[Spectrum] with CrudRepository[Spectrum, String] = spectrumElasticRepository
+  override def getRepository: RSQLRepositoryCustom[Spectrum,QueryBuilder] with CrudRepository[Spectrum, String] = spectrumElasticRepository
 
+  "we should be able to call the custom methods here" should {
+
+    "load all data" in {
+      val result: Iterable[Spectrum] = spectrumElasticRepository.findAll()
+
+      assert(spectrumElasticRepository.count() == 58)
+
+
+    }
+
+    "for example the find by inchi key" in {
+      val result: Iterable[Spectrum] = spectrumElasticRepository.findByBiologicalCompoundInchiKey("UYTPUPDQBNUYGX-UHFFFAOYSA-N")
+
+      val it = result.iterator()
+
+      var count = 0
+      while (it.hasNext) {
+        println(it.next())
+        count = count + 1
+      }
+
+
+      assert(count > 0)
+
+    }
+  }
 }
