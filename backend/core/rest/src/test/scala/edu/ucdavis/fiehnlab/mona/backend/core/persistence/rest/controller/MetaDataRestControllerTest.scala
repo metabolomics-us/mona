@@ -12,6 +12,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.Application
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
 import org.junit.runner.RunWith
 import org.scalatest.{WordSpec, FunSuite}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -19,12 +20,13 @@ import org.springframework.boot.test.{IntegrationTest, SpringApplicationConfigur
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 
 /**
   * Created by wohlgemuth on 3/8/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[Application]))
+@SpringApplicationConfiguration(classes = Array(classOf[Application],classOf[EmbeddedRestServerConfig]))
 @WebAppConfiguration
 @IntegrationTest(Array("server.port:0"))
 class MetaDataRestControllerTest extends WordSpec {

@@ -18,7 +18,7 @@ import org.springframework.test.context.web.WebAppConfiguration
   * Created by wohlgemuth on 3/2/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientConfig],classOf[Application]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientConfig],classOf[Application],classOf[Emb]))
 @WebAppConfiguration
 @IntegrationTest(Array("server.port:44444"))
 class GenericRestClientTest extends FunSuite with BeforeAndAfter {
