@@ -6,10 +6,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.MonaRestServer
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import org.springframework.beans.factory.annotation.{Value, Autowired}
-import org.springframework.boot.test.{IntegrationTest, SpringApplicationConfiguration}
+import org.springframework.boot.test.{WebIntegrationTest, IntegrationTest, SpringApplicationConfiguration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
@@ -18,10 +19,11 @@ import org.springframework.test.context.web.WebAppConfiguration
   * Created by wohlgemuth on 3/2/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientConfig],classOf[MonaRestServer]))
-@WebAppConfiguration
-@IntegrationTest(Array("server.port:44444"))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig]))
+@WebIntegrationTest(Array("server.port=44444"))
 class GenericRestClientTest extends FunSuite with BeforeAndAfter {
+  @Value( """${local.server.port}""")
+  val port: Int = 0
 
   @Autowired
   val spectrumRestClient: GenericRestClient[Spectrum, String] = null
