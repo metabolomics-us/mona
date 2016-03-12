@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql
 
-import java.io.{File, FileReader}
+import java.io.{InputStreamReader, File, FileReader}
 import java.lang.Iterable
 
 import com.typesafe.scalalogging.LazyLogging
@@ -27,8 +27,9 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
 
   val keepRunning = Properties.envOrElse("keep.server.running","false").toBoolean
 
+
   //58 spectra for us to work with
-  val exampleRecords: Array[T] = JSONDomainReader.create[Array[T]].read(new FileReader(new File("src/test/resources/monaRecords.json")))
+  val exampleRecords: Array[T] = JSONDomainReader.create[Array[T]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
   s"a repository is loaded with ${exampleRecords.length} compounds" when {
 

@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustomTest, RSQLRepositoryCustom}
 import org.elasticsearch.index.query.QueryBuilder
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.scalatest.{Ignore, FunSuite}
 import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationConfiguration
@@ -26,6 +26,7 @@ import scala.collection.JavaConverters
 @SpringApplicationConfiguration(Array(classOf[EmbeddedElasticSearchConfiguration]))
 @ComponentScan
 @EnableAutoConfiguration
+@Ignore
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,QueryBuilder] {
 
   @Autowired

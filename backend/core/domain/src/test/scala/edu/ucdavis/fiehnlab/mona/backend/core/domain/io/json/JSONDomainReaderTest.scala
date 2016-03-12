@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
-import java.io.FileReader
+import java.io.{InputStreamReader, FileReader}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types._
 import org.scalatest.{WordSpec, FunSuite}
@@ -24,7 +24,7 @@ class JSONDomainReaderTest extends WordSpec {
 
     "it should be able to read a spectrum" should {
 
-      val input = new FileReader("src/test/resources/monaRecord.json")
+      val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
 
       val spectrum: Spectrum = reader.read(input)
 
@@ -88,7 +88,7 @@ class JSONDomainReaderTest extends WordSpec {
 
     val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
 
-    val input = new FileReader("src/test/resources/monaRecords.json")
+    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json"))
 
     "it should cause no erros" should {
       val result: Array[Spectrum] = reader.read(input)

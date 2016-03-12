@@ -12,13 +12,13 @@ import org.springframework.context.annotation.{Import, ComponentScan}
 @ComponentScan
 @EnableAutoConfiguration
 @Import(Array(classOf[MongoConfig], classOf[RESTConfig]))
-class Application
+class MonaRestServer
 
-object Application {
+object MonaRestServer {
 
   def main(args: Array[String]): Unit = {
 
-    val app = new SpringApplication(classOf[Application])
+    val app = new SpringApplication(classOf[MonaRestServer])
     app.run(args: _*)
   }
 
