@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.Application
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.MonaRestServer
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
 import org.junit.runner.RunWith
 import org.scalatest.{WordSpec, FunSuite}
@@ -26,7 +26,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedM
   * Created by wohlgemuth on 3/8/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[Application],classOf[EmbeddedRestServerConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[MonaRestServer],classOf[EmbeddedRestServerConfig]))
 @WebAppConfiguration
 @IntegrationTest(Array("server.port:0"))
 class MetaDataRestControllerTest extends WordSpec {

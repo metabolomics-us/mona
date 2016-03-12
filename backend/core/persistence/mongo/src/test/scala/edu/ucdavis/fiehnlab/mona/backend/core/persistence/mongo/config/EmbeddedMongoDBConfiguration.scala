@@ -1,9 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config
 
+import java.io.File
+
 import com.mongodb.{Mongo, MongoClientOptions}
-import de.flapdoodle.embed.mongo.config.{IMongodConfig, MongodConfigBuilder}
+import com.typesafe.scalalogging.LazyLogging
+import de.flapdoodle.embed.mongo.config._
 import de.flapdoodle.embed.mongo.distribution.Version
-import de.flapdoodle.embed.mongo.{MongodExecutable, MongodProcess, MongodStarter}
+import de.flapdoodle.embed.mongo.{Command, MongodExecutable, MongodProcess, MongodStarter}
+import de.flapdoodle.embed.process.config.io.ProcessOutput
+import de.flapdoodle.embed.process.extract.UserTempNaming
+import de.flapdoodle.embed.process.io.{IStreamProcessor, Processors}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
@@ -20,7 +26,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 ), excludeFilters = Array())
 @Import(Array(classOf[CascadeConfig]))
 @Configuration
-class EmbeddedMongoDBConfiguration {
+class EmbeddedMongoDBConfiguration extends LazyLogging{
 
   @Autowired(required = false)
   val options: MongoClientOptions = null
@@ -38,7 +44,10 @@ class EmbeddedMongoDBConfiguration {
   }
 
   @Bean(destroyMethod = "stop")
-  def mongodProcess(mongodExecutable: MongodExecutable): MongodProcess = mongodExecutable.start()
+  def mongodProcess(mongodExecutable: MongodExecutable): MongodProcess = {
+    logger.warn("creating new mongodb process")
+    mongodExecutable.start()
+  }
 
   @Bean(destroyMethod = "stop")
   def mongodExecutable(mongodStarter: MongodStarter, iMongodConfig: IMongodConfig): MongodExecutable = {
@@ -52,10 +61,20 @@ class EmbeddedMongoDBConfiguration {
   }
 
   @Bean
-  def mongodStarter(): MongodStarter = MongodStarter.getDefaultInstance
+  def mongodStarter(): MongodStarter = {
+    val outPut = Processors.named("[mongo >",new IStreamProcessor {
+
+      override def onProcessed(): Unit = {}
+      override def process(block: String): Unit = logger.debug(block)
+    })
+    val config = new RuntimeConfigBuilder().defaults(Command.MongoD).artifactStore(new ExtractedArtifactStoreBuilder().defaults(Command.MongoD).download(new DownloadConfigBuilder().defaultsForCommand(Command.MongoD).build()).executableNaming(new UserTempNaming)).processOutput(new ProcessOutput(outPut,outPut,outPut)).build()
+    MongodStarter.getInstance(config)
+  }
 
   @Bean(name = Array("mongoOperation","mongoTemplate"))
   def mongoOperations(mongo: Mongo): MongoOperations = {
+    logger.warn("creating new mongodb template")
+
     new MongoTemplate(mongo, "monatest")
   }
 }
