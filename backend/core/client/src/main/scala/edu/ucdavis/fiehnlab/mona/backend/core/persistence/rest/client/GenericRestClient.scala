@@ -6,6 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.http.{MediaType, HttpEntity, HttpHeaders}
+import org.springframework.stereotype.Component
 import org.springframework.web.client.{RestOperations, RestTemplate}
 
 import scala.reflect.ClassTag
@@ -15,6 +16,7 @@ import scala.reflect._
 /**
   * a generic approach to connect to a REST server and execute operations against it. It assumes compliance with CRUD operations
   */
+@Component
 class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
 
   @Autowired
