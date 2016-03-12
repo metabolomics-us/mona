@@ -10,9 +10,12 @@ import de.flapdoodle.embed.mongo.{Command, MongodExecutable, MongodProcess, Mong
 import de.flapdoodle.embed.process.config.io.ProcessOutput
 import de.flapdoodle.embed.process.extract.UserTempNaming
 import de.flapdoodle.embed.process.io.{IStreamProcessor, Processors}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.mongo.MongoProperties
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
+import org.springframework.boot.autoconfigure.mongo.{MongoAutoConfiguration, MongoProperties}
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.core.env.Environment
 import org.springframework.data.mongodb.core.{MongoOperations, MongoTemplate}
@@ -23,11 +26,12 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
   */
 @EnableMongoRepositories(basePackageClasses = Array(
   classOf[ISpectrumMongoRepositoryCustom]
-), excludeFilters = Array())
-@Import(Array(classOf[CascadeConfig]))
+))
+@Import(Array(classOf[CascadeConfig],classOf[DomainConfig]))
+@EnableAutoConfiguration
 @Configuration
 class EmbeddedMongoDBConfiguration extends LazyLogging{
-
+/*
   @Autowired(required = false)
   val options: MongoClientOptions = null
 
@@ -77,4 +81,7 @@ class EmbeddedMongoDBConfiguration extends LazyLogging{
 
     new MongoTemplate(mongo, "monatest")
   }
+
+*/
+
 }

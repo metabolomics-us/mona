@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller
 
-import java.io.{File, FileReader}
+import java.io.{InputStreamReader, File, FileReader}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
@@ -16,7 +16,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.test.{IntegrationTest, SpringApplicationConfiguration}
+import org.springframework.boot.test.{WebIntegrationTest, IntegrationTest, SpringApplicationConfiguration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
@@ -26,9 +26,8 @@ import com.jayway.restassured.RestAssured._
   * Created by wohlgemuth on 3/1/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[MonaRestServer],classOf[EmbeddedRestServerConfig]))
-@WebAppConfiguration
-@IntegrationTest(Array("server.port:0"))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig]))
+@WebIntegrationTest(Array("server.port=0"))
 class SpectrumRestControllerTest extends WordSpec {
 
   @Value( """${local.server.port}""")
@@ -58,7 +57,7 @@ class SpectrumRestControllerTest extends WordSpec {
 
         spectrumRepository.deleteAll()
 
-        val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new FileReader(new File("src/test/resources/monaRecords.json")))
+        val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
         val countBefore = spectrumRepository.count()
 

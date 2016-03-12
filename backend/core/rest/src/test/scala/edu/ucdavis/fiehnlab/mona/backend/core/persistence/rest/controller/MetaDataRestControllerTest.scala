@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller
 
-import java.io.{File, FileReader}
+import java.io.{InputStreamReader, File, FileReader}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
@@ -16,7 +16,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config
 import org.junit.runner.RunWith
 import org.scalatest.{WordSpec, FunSuite}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.test.{IntegrationTest, SpringApplicationConfiguration}
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.test.{WebIntegrationTest, IntegrationTest, SpringApplicationConfiguration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
@@ -26,13 +27,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedM
   * Created by wohlgemuth on 3/8/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[MonaRestServer],classOf[EmbeddedRestServerConfig]))
-@WebAppConfiguration
-@IntegrationTest(Array("server.port:0"))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig]))
+@WebIntegrationTest(Array("server.port=0"))
 class MetaDataRestControllerTest extends WordSpec {
 
   @Value( """${local.server.port}""")
-  val port: Int = 8080
+  val port: Int = 0
 
 
   @Autowired
@@ -56,7 +56,7 @@ class MetaDataRestControllerTest extends WordSpec {
 
 
       //58 spectra for us to work with
-      val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new FileReader(new File("src/test/resources/monaRecords.json")))
+      val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
       assert(exampleRecords.length == 58)
 
       //save each record
@@ -64,7 +64,7 @@ class MetaDataRestControllerTest extends WordSpec {
 
 
       "we should be able to query all meta data names from the service" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/names").then().statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names").then().statusCode(200).extract().body().as(classOf[Array[String]])
         assert(result.length == 44)
       }
 

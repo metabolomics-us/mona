@@ -4,13 +4,14 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConf
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.config.RESTConfig
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.annotation.{Import, ComponentScan}
+import org.springframework.context.annotation.{Configuration, Import, ComponentScan}
 
 /**
   * Created by wohlgemuth on 2/29/16.
   */
-@ComponentScan
+@Configuration
 @EnableAutoConfiguration
+@ComponentScan
 @Import(Array(classOf[MongoConfig], classOf[RESTConfig]))
 class MonaRestServer
 
