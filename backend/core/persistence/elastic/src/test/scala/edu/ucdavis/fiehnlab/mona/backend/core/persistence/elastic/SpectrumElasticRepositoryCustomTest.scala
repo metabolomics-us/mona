@@ -26,7 +26,7 @@ import scala.collection.JavaConverters
 @SpringApplicationConfiguration(Array(classOf[EmbeddedElasticSearchConfiguration]))
 @ComponentScan
 @EnableAutoConfiguration
-@Ignore
+//@Ignore
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,QueryBuilder] {
 
   @Autowired
