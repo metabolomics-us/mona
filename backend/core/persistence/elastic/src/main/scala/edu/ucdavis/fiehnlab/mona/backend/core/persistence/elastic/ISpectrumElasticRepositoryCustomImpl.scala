@@ -6,6 +6,7 @@ import com.github.rutledgepaulv.qbuilders.visitors.{ElasticsearchVisitor, MongoV
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.CustomElasticSearchVisitor
 import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder
 import org.elasticsearch.index.query.{QueryBuilders, QueryBuilder}
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +51,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   override def buildRSQLQuery(query: String): QueryBuilder = {
     val pipeline = QueryConversionPipeline.defaultPipeline()
     val condition = pipeline.apply(query, classOf[Spectrum])
-    val qb: QueryBuilder = condition.query(new ElasticsearchVisitor())
+    val qb: QueryBuilder = condition.query(new CustomElasticSearchVisitor())
     qb
   }
 
