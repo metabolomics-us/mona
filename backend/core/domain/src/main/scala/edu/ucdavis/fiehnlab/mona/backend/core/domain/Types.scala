@@ -33,6 +33,7 @@ object Types {
                        hidden: Boolean,
 
                        @(Indexed@field)
+                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                        name: String,
 
                        score: Score,
