@@ -53,9 +53,11 @@ object Types {
   case class Names(
 
                     @(Indexed@field)
+                    @(Field@field)(`type` = FieldType.Boolean,index = FieldIndex.not_analyzed)
                     computed: Boolean,
 
                     @(Indexed@field)
+                    @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                     name: String,
 
                     score: Double,
