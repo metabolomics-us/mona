@@ -32,7 +32,7 @@ class RemoveIdenticalSpectraRule extends AbstractCurationRule {
 
             logger.info("received spectrum: ${spectrum.id}")
             logger.info("received splash: ${spectrum.splash}")
-            logger.info("received compound: ${spectrum.chemicalCompound}")
+            logger.info("received compound: ${spectrum.biologicalCompound}")
 
             List<Spectrum> identical = new ArrayList<>(10)
 
@@ -42,7 +42,7 @@ class RemoveIdenticalSpectraRule extends AbstractCurationRule {
                     ],
                     compound: [
                             inchiKey: [
-                                    eq: spectrum.chemicalCompound.inchiKey
+                                    eq: spectrum.biologicalCompound.inchiKey
                             ]
                     ]
 

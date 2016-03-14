@@ -7,7 +7,7 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .config(configure);
+        .config(configure);
 
     /* @ngInject */
     function configure($routeProvider) {
@@ -15,13 +15,7 @@
             //defining the root url
             .when('/', {
                 templateUrl: 'views/main.html',
-                controller: 'MainCtrl'
-            })
-
-            //browsing compounds
-            .when('/compounds', {
-                templateUrl: 'views/compounds/browse/compounds.html',
-                controller: 'CompoundBrowserController'
+                controller: 'MainController'
             })
 
             //uploading a mass spec

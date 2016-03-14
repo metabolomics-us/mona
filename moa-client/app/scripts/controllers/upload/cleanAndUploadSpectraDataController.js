@@ -5,7 +5,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('CleanSpectraDataController', CleanSpectraDataController);
+        .controller('CleanSpectraDataController', CleanSpectraDataController);
 
     /* @ngInject */
     function CleanSpectraDataController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService,

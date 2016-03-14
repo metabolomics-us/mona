@@ -57,7 +57,7 @@ class SpectraUploadConsumer {
                     long end = System.currentTimeMillis()
 
                     long needed = end - begin
-                    log.debug("stored spectra with id: ${result.id}, InChI: ${result.chemicalCompound.inchiKey}, which took ${needed / 1000}")
+                    log.debug("stored spectra with id: ${result.id}, InChI: ${result.biologicalCompound.inchiKey}, which took ${needed / 1000}")
 
                     statisticsService.acquire(needed, "${result.id}", "spectra import time", "import")
 

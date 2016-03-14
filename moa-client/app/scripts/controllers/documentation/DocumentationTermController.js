@@ -4,7 +4,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('DocumentationTermController', DocumentationTermController)
+        .controller('DocumentationTermController', DocumentationTermController);
 
     /* @ngInject */
     function DocumentationTermController($scope) {
