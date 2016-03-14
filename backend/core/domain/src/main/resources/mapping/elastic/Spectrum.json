@@ -1,0 +1,328 @@
+{
+  "spectrum": {
+    "aliases": {},
+    "mappings": {
+      "spectrum": {
+        "properties": {
+          "authors": {
+            "type": "nested"
+          },
+          "biologicalCompound": {
+            "properties": {
+              "inchi": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "inchiKey": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "metaData": {
+                "type": "nested",
+                "properties": {
+                  "category": {
+                    "type": "string"
+                  },
+                  "computed": {
+                    "type": "boolean"
+                  },
+                  "hidden": {
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  },
+                  "url": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  },
+                  "value_number": {
+                    "type": "long"
+                  },
+                  "value_text": {
+                    "type": "string"
+                  }
+                }
+              },
+              "molFile": {
+                "type": "string"
+              },
+              "names": {
+                "type": "nested",
+                "properties": {
+                  "computed": {
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "double"
+                  },
+                  "source": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  }
+                }
+              },
+              "tags": {
+                "type": "nested",
+                "properties": {
+                  "ruleBased": {
+                    "type": "boolean"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "chemicalCompound": {
+            "properties": {
+              "inchi": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "inchiKey": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "metaData": {
+                "type": "nested",
+                "properties": {
+                  "category": {
+                    "type": "string"
+                  },
+                  "computed": {
+                    "type": "boolean"
+                  },
+                  "hidden": {
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  },
+                  "url": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  },
+                  "value_number": {
+                    "type": "long"
+                  },
+                  "value_text": {
+                    "type": "string"
+                  }
+                }
+              },
+              "molFile": {
+                "type": "string"
+              },
+              "names": {
+                "type": "nested",
+                "properties": {
+                  "computed": {
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "double"
+                  },
+                  "source": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  }
+                }
+              },
+              "tags": {
+                "type": "nested",
+                "properties": {
+                  "ruleBased": {
+                    "type": "boolean"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "lastUpdated": {
+            "type": "date",
+            "format": "dateOptionalTime"
+          },
+          "metaData": {
+            "type": "nested",
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "computed": {
+                "type": "boolean"
+              },
+              "hidden": {
+                "type": "boolean"
+              },
+              "name": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "url": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "value_number": {
+                "type": "double"
+              },
+              "value_text": {
+                "type": "string"
+              }
+            }
+          },
+          "predictedCompound": {
+            "properties": {
+              "inchi": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "inchiKey": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "metaData": {
+                "type": "nested",
+                "properties": {
+                  "unit": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  },
+                  "url": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  }
+                }
+              },
+              "names": {
+                "type": "nested",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  }
+                }
+              },
+              "tags": {
+                "type": "nested"
+              }
+            }
+          },
+          "score": {
+            "properties": {
+              "impacts": {
+                "properties": {
+                  "impactValue": {
+                    "type": "double"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              },
+              "relativeScore": {
+                "type": "double"
+              },
+              "scaledScore": {
+                "type": "double"
+              },
+              "score": {
+                "type": "double"
+              }
+            }
+          },
+          "spectrum": {
+            "type": "string"
+          },
+          "splash": {
+            "properties": {
+              "block1": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "block2": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "block3": {
+                "type": "string",
+                "index": "not_analyzed"
+              },
+              "splash": {
+                "type": "string",
+                "index": "not_analyzed"
+              }
+            }
+          },
+          "submitter": {
+            "properties": {
+              "emailAddress": {
+                "type": "string"
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              }
+            }
+          },
+          "tags": {
+            "type": "nested",
+            "properties": {
+              "ruleBased": {
+                "type": "boolean"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "refresh_interval": "-1",
+        "number_of_shards": "1",
+        "store": {
+          "type": "fs"
+        },
+        "creation_date": "1457926145598",
+        "number_of_replicas": "0",
+        "version": {
+          "created": "1050299"
+        },
+        "uuid": "Jne1rxxDTzqMBlwwJ0bvDw"
+      }
+    },
+    "warmers": {}
+  }
+}

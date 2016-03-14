@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
 
 import scala.annotation.meta.field
 import scala.beans.{BeanInfo, BeanProperty}
-import org.springframework.data.elasticsearch.annotations.{FieldIndex, FieldType, Field}
+import org.springframework.data.elasticsearch.annotations.{Mapping, FieldIndex, FieldType, Field}
 import org.springframework.data.elasticsearch.annotations.NestedField._
 
 /**
@@ -161,6 +161,7 @@ object Types {
   //this is way to uggly, we might really need to use DAO's :(
   @Document(collection = "SPECTRUM")
   @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
+  //@Mapping(mappingPath = "/mappings/elastic/Spectrum.json")
   case class Spectrum(
 
                        @(Field@field)(`type` = FieldType.Object)
