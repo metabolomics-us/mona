@@ -78,7 +78,7 @@ object Types {
 
                        inchiKey: String,
 
-                       @(Field@field)(`type` = FieldType.Nested)
+                       @(Field)(`type` = FieldType.Nested)
                        metaData: Array[MetaData],
 
                        molFile: String,
