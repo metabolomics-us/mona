@@ -6,9 +6,8 @@ import com.github.rutledgepaulv.qbuilders.visitors.{ElasticsearchVisitor, MongoV
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.CustomElasticSearchVisitor
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder
-import org.elasticsearch.index.query.{FilterBuilder, QueryBuilders, QueryBuilder}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.CustomElastic1SearchVisitor
+import org.elasticsearch.index.query.{ QueryBuilder}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{PageRequest, Page, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
@@ -27,7 +26,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @param query
     * @return
     */
-  override def nativeQuery(query: FilterBuilder): util.List[Spectrum] = elasticsearchTemplate.queryForList(getSearch(query), classOf[Spectrum])
+  override def nativeQuery(query: QueryBuilder): util.List[Spectrum] = elasticsearchTemplate.queryForList(getSearch(query), classOf[Spectrum])
 
   /**
     *
@@ -35,7 +34,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @return
     *
     */
-  override def nativeQuery(query: FilterBuilder, pageable: Pageable): Page[Spectrum] = {
+  override def nativeQuery(query: QueryBuilder, pageable: Pageable): Page[Spectrum] = {
     val search = getSearch(query)
     search.setPageable(pageable)
 
@@ -48,10 +47,10 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @param query
     * @return
     */
-  override def buildRSQLQuery(query: String): FilterBuilder = {
+  override def buildRSQLQuery(query: String): QueryBuilder = {
     val pipeline = QueryConversionPipeline.defaultPipeline()
     val condition = pipeline.apply(query, classOf[Spectrum])
-    val qb: FilterBuilder = condition.query(new CustomElasticSearchVisitor())
+    val qb: QueryBuilder = condition.query(new CustomElastic1SearchVisitor())
     qb
   }
 
@@ -61,13 +60,13 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @param query
     * @return
     */
-  override def nativeQueryCount(query: FilterBuilder): Long = elasticsearchTemplate.count(getSearch(query))
+  override def nativeQueryCount(query: QueryBuilder): Long = elasticsearchTemplate.count(getSearch(query))
 
-  def getSearch(queryFilter: FilterBuilder): SearchQuery = {
-    val queryBuilder = QueryBuilders.matchAllQuery()
+  def getSearch(queryBuilder: QueryBuilder): SearchQuery = {
+
 
     //uggly but best solution I gound so far. If we do it without pagination request, spring will always limit it to 10 results.
-    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withFilter(queryFilter).withPageable(new PageRequest(0,1000000)).build()
+    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0,1000000)).build()
     query
   }
 }

@@ -111,8 +111,14 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
         val result = getRepository.rsqlQuery("chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'")
         assert(result.size == 2)
       }
+
+      "we should be able to execute RSQL queries like metaData=q='name=\"ion mode\" and value=negative' in " in {
+        val result = getRepository.rsqlQuery("metaData=q='name==\"ion mode\" and value==negative'")
+        assert(result.size == 25)
+      }
     }
 
+    //MUST BE LAST
     "if specified the server should stay online, this can be done using the env variabel 'keep.server.running=true' " in {
       if(keepRunning){
         while (keepRunning) {
