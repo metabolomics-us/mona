@@ -8,7 +8,9 @@ import util.chemical.CompoundType
 class Spectrum extends SupportsMetaData implements Scoreable {
 
     static transients = [
-            "spectrum", "hash", "queryOptions",
+            "spectrum",
+            "hash",
+            "queryOptions",
             "chemicalCompound",
             "biologicalCompound",
             "predictedCompound"
@@ -17,9 +19,6 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     Date dateCreated
     Date lastUpdated
 
-    /**
-     * contains one biological compound and one chemical compound
-     */
     static hasOne = [
             submitter: Submitter,
             splash   : Splash
@@ -43,9 +42,10 @@ class Spectrum extends SupportsMetaData implements Scoreable {
 
     static constraints = {
         comments nullable: true
-
         submitter nullable: true
         score nullable: true
+        library nullable: true
+        libraryIdentifier nullable: true
         splash nullable: true
         deleted nullable: true
         compoundLinks nullable: false
@@ -88,7 +88,7 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     /**
      * comments
      */
-    Set<Comment> comments
+    List<Comment> comments
 
     /**
      * compound links
@@ -109,6 +109,19 @@ class Spectrum extends SupportsMetaData implements Scoreable {
      * the score of this spectra
      */
     Score score
+
+    /**
+     * Origin information for this spectrum
+     */
+    Library library
+
+    /**
+     * Spectrum identifier from the origin
+     * @param compound
+     */
+    String libraryIdentifier
+
+
 
     void setChemicalCompound(Compound compound) {
         CompoundLink link = new CompoundLink()
@@ -194,7 +207,6 @@ class Spectrum extends SupportsMetaData implements Scoreable {
     String getHash() {
         if (splash != null) {
             return splash.getSplash();
-
         }
 
         return "not yet calculated!"

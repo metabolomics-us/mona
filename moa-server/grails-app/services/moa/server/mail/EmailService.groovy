@@ -13,8 +13,8 @@ import javax.mail.internet.MimeMessage
  */
 class EmailService {
     def sendMessage(String to, String subject, String body) {
-        def host = "smtp.mandrillapp.com"
-        def username = "ssmehta@ucdavis.edu"
+        def host = "smtp.sendgrid.net"
+        def username = "ssmehta-mona"
         def password = "_kz61FdVFNHrmiNbzuTOlQ"
 
         Properties props = System.getProperties()
@@ -41,13 +41,18 @@ class EmailService {
     def sendDownloadEmail(String emailAddress, long queryCount, long id) {
         Submitter user = Submitter.findByEmailAddress(emailAddress)
 
-        String body = "Dear "+ user.firstName +",\n\n";
-        body += "Thank you for your query download request.  $queryCount spectra were exported.  "
-        body += "Your download results will be available from the following link for the next 7 days:\n"
-        body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id\n\n"
-//        body += "You may also download your query in JSON format from:\n"
-//        body += "http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/$id/json\n\n"
-        body += "Best Regards,\nMoNA Development Team"
+        String body = """Dear ${user.firstName},
+
+Thank you for your query download request.
+${queryCount} ${queryCount > 1 ? "spectra" : "spectrum"} were exported.
+Your download results will be available from the following
+link for the next 7 days:
+
+http://mona.fiehnlab.ucdavis.edu/rest/spectra/search/download/${id}
+
+Best Regards,
+
+MoNA Development Team"""
 
         sendMessage(emailAddress, 'Your MoNA download results are ready!', body)
     }

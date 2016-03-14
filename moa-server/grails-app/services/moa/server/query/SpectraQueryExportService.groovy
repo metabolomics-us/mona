@@ -7,11 +7,12 @@ import moa.query.Query
 import moa.server.convert.SpectraConversionService
 import moa.server.mail.EmailService
 import org.apache.commons.io.FileUtils
-import org.apache.tools.zip.ZipEntry
-import org.apache.tools.zip.ZipOutputStream
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.SessionFactory
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 /**
  * Created by sajjan on 8/31/15.
@@ -70,7 +71,6 @@ class SpectraQueryExportService {
         def label = "${emailAddress.split('@')[0]}-$startTime"
         def queryDownload = exportQuery(query, label, format)
 
-
         // Email results
         log.info("Export of spectra complete, id ${queryDownload.id}, sending notification email to $emailAddress")
         emailService.sendDownloadEmail(emailAddress, queryDownload.queryCount, queryDownload.id)
@@ -99,9 +99,9 @@ class SpectraQueryExportService {
         // Create new download file object
         def queryDownload = SpectrumQueryDownload.findOrCreateByLabel("${label}-${format}");
 
-        def queryFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}-query.json"
-        def exportFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}.${format}"
-        def compressedFilename = "${downloadPath}/export-${label.replaceAll(' ', '_')}-${format}.zip"
+        def queryFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}-query.json"
+        def exportFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}.${format}"
+        def compressedFilename = "${downloadPath}/MoNA-export-${label.replaceAll(' ', '_')}-${format}.zip"
 
         if (!queryDownload.query) {
             queryDownload.query = query.toString();
@@ -210,6 +210,11 @@ class SpectraQueryExportService {
         }
 
         FileUtils.moveFile(compressedTemporaryFile, compressedFile)
+
+        // Log filesize
+        queryDownload.exportSize = compressedFile.length()
+        queryDownload.save(flush: true)
+        queryDownload.errors.allErrors.each { println it }
 
 
         return queryDownload

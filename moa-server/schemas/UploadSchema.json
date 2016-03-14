@@ -1,0 +1,162 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+
+    "tag": {
+      "title": "Tag Schema",
+      "type": "object",
+      "properties": {
+        "text": {"type": "string"},
+        "ruleBased": {"type": "boolean"}
+      },
+      "required": ["text"],
+      "additionalProperties": false
+    },
+    "comment": {
+      "type": "object",
+      "properties": {
+        "comment": {"type": "string"}
+      },
+      "required": ["comment"],
+      "additionalProperties": false
+    },
+    "metaDataItem": {
+      "title": "MetaData Item Schema",
+      "type": "object",
+      "properties": {
+        "category": {"type": "string"},
+        "computed": {"type": "boolean"},
+        "name": {"type": "string"},
+        "suspect": {"type": "boolean"},
+        "reasonForSuspicion": {"type": "string"},
+        "type": {"type": "string"},
+        "unit": {
+          "anyOf": [
+            {},
+            {"type": "null"},
+            {"type": "string"}
+          ]
+        },
+        "value": {"type": "string"}
+      }
+    },
+
+    "compound": {
+      "title": "Compound Schema",
+      "type": "object",
+      "properties": {
+        "inchi": {
+          "type": "string",
+          "pattern": "^InChI=.*$"
+        },
+        "inchiKey": {
+          "type": "string",
+          "pattern": "[A-Z]{14}-[A-Z]{10}-[A-Z]"
+        },
+        "molFile": {"type": "string"},
+        "metaData": {
+          "type": "array",
+          "items": [
+            {"$ref": "#/definitions/metaDataItem"}
+          ]
+        },
+        "names": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "comments": {
+          "type": "array",
+          "items": [
+            {"$ref": "#/definitions/comment"}
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": [
+            {"$ref": "#/definitions/tag"}
+          ]
+        },
+        "dateCreated": {"type": "string"},
+        "lastUpdated": {"type": "string"},
+        "id": {"type": "integer"}
+      },
+      "anyOf": [
+        {"required": ["molFile"]},
+        {"required": ["inchi"]}
+      ],
+      "additionalProperties": false
+    },
+
+    "submitter": {
+      "type": "object",
+      "properties": {
+        "firstName": {"type": "string"},
+        "lastName": {"type": "string"},
+        "emailAddress": {"type": "string"},
+        "institution": {"type": "string"},
+        "dateCreated": {"type": "string"},
+        "lastUpdated": {"type": "string"},
+        "id": {"type": "integer"}
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "emailAddress"
+      ]
+    }
+  },
+  "title": "Spectrum Upload Schema",
+  "type": "object",
+  "properties": {
+    "spectrum": {
+      "type": "string",
+      "pattern": "^(?:\\d+?(?:\\.\\d+?)?):(?:\\d+?(?:\\.\\d+?)?)(?: (?:\\d+?(?:\\.\\d+?)?):(?:\\d+?(?:\\.\\d+?)?))*?$"
+    },
+    "biologicalCompound": {"$ref": "#/definitions/compound"},
+    "chemicalCompound": {"$ref": "#/definitions/compound"},
+    "predictedCompound": {
+      "anyOf": [
+        {},
+        {"type": "null"},
+        {"$ref": "#/definitions/compound"}
+      ]
+    },
+    "metaData": {
+      "type": "array",
+      "items": [
+        {"$ref": "#/definitions/metaDataItem"}
+      ]
+    },
+    "submitter": {"$ref": "#/definitions/submitter"},
+    "comments": {
+      "type": "array",
+      "items": [
+        {"$ref": "#/definitions/comment"}
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": [
+        {"$ref": "#/definitions/tag"}
+      ]
+    },
+    "dateCreated": {"type": "string"},
+    "lastUpdated": {"type": "string"},
+    "id": {"type": "integer"}
+  },
+  "required": [
+    "spectrum",
+    "biologicalCompound",
+    "chemicalCompound",
+    "submitter"
+  ],
+  "additionalProperties": false
+}
