@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.CustomEla
 import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder
 import org.elasticsearch.index.query.{FilterBuilder, QueryBuilders, QueryBuilder}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{Page, Pageable}
+import org.springframework.data.domain.{PageRequest, Page, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.elasticsearch.core.query._
 import org.springframework.data.mongodb.core.query.Query
@@ -66,8 +66,8 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   def getSearch(queryFilter: FilterBuilder): SearchQuery = {
     val queryBuilder = QueryBuilders.matchAllQuery()
 
-    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withFilter(queryFilter).build()
-//    query.setPageable()
+    //uggly but best solution I gound so far. If we do it without pagination request, spring will always limit it to 10 results.
+    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withFilter(queryFilter).withPageable(new PageRequest(0,1000000)).build()
     query
   }
 }

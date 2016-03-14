@@ -34,6 +34,7 @@ class EmbeddedElasticSearchConfiguration extends LazyLogging{
     val nodeBuilder = new NodeBuilder()
     nodeBuilder.local(true)
     nodeBuilder.settings().put("http.enabled", true)
+    nodeBuilder.settings().put("index.search.slowlog.threshold.query.warn","0ms")
 
     logger.info("creating client")
     val client = nodeBuilder.node().client()
@@ -45,6 +46,7 @@ class EmbeddedElasticSearchConfiguration extends LazyLogging{
     val elasticsearchTemplate = new ElasticsearchTemplate(
       client, new EntityMapperImpl())
 
+    //force recreationg of indexes
     elasticsearchTemplate.deleteIndex(classOf[Spectrum])
     elasticsearchTemplate.createIndex(classOf[Spectrum])
     elasticsearchTemplate.refresh(classOf[Spectrum], true)
