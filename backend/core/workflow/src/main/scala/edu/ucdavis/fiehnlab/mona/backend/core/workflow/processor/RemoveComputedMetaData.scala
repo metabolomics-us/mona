@@ -1,15 +1,20 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow.processor
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
+import org.springframework.stereotype.Component
 
 /**
   * Created by wohlgemuth on 3/11/16.
   */
+@Component
+@Step(name = "RemoveComputedMetaData")
 class RemoveComputedMetaData extends ItemProcessor[Spectrum,Spectrum]{
 
   /**
     * processes the given spectrum and removes all it's computed meta data
+    *
     * @param spectrum to be processed
     * @return processed spectrum
     */
@@ -25,6 +30,7 @@ class RemoveComputedMetaData extends ItemProcessor[Spectrum,Spectrum]{
 
   /**
     * only keep metadata where computed == false
+    *
     * @param metaData
     * @return
     */
