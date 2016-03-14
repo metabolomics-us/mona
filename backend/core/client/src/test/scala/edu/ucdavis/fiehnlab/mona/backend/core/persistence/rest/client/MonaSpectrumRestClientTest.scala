@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client
 
-import java.io.{File, FileReader}
+import java.io.{InputStreamReader, File, FileReader}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
@@ -29,7 +29,7 @@ class MonaSpectrumRestClientTest extends FunSuite  with BeforeAndAfter {
   //required for spring and scala tes
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new FileReader(new File("src/test/resources/monaRecords.json")))
+  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
 
   /**
