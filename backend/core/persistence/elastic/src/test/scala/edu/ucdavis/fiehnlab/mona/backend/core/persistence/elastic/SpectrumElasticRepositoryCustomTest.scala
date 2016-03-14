@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustomTest, RSQLRepositoryCustom}
 import org.elasticsearch.index.query.{QueryBuilder}
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfterEach}
+import org.scalatest.{Ignore, BeforeAndAfterEach}
 import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.repository.CrudRepository
@@ -20,7 +20,7 @@ import scala.collection.JavaConverters
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedElasticSearchConfiguration]))
-//@Ignore
+@Ignore
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,QueryBuilder] with BeforeAndAfterEach  {
   @Autowired
   val elasticsearchTemplate: ElasticsearchTemplate = null
