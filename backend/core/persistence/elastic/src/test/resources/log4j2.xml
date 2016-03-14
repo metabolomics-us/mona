@@ -6,7 +6,8 @@
     </Console>
 </Appenders>
 <Loggers>
-    <Root level="info">
+    <Logger name="org.elasticsearch" level="debug"/>
+    <Root level="debug">
         <AppenderRef ref="Console"/>
     </Root>
 </Loggers>

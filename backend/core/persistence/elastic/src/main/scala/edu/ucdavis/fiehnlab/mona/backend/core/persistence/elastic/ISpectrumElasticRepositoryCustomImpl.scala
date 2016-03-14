@@ -66,8 +66,6 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   def getSearch(queryFilter: FilterBuilder): SearchQuery = {
     val queryBuilder = QueryBuilders.matchAllQuery()
 
-    logger.info(""+queryBuilder)
-    logger.info(""+queryFilter)
     val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withFilter(queryFilter).build()
 //    query.setPageable()
     query

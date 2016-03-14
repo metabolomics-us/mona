@@ -29,6 +29,8 @@ import scala.collection.JavaConverters
 @EnableAutoConfiguration
 //@Ignore
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,FilterBuilder] with BeforeAndAfterEach  {
+  @Autowired
+  val elasticsearchTemplate: ElasticsearchTemplate = null
 
   @Autowired
   @Qualifier("spectrumElasticRepository")
@@ -59,4 +61,5 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
 
     }
   }
+
 }
