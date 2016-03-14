@@ -28,6 +28,7 @@
             <artifactId>scala-logging_2.11</artifactId>
         </dependency>
 
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -72,7 +73,6 @@
             <artifactId>rest</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
