@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
 
 import scala.annotation.meta.field
 import scala.beans.{BeanInfo, BeanProperty}
-import org.springframework.data.elasticsearch.annotations.{FieldType, Field}
+import org.springframework.data.elasticsearch.annotations.{FieldIndex, FieldType, Field}
 import org.springframework.data.elasticsearch.annotations.NestedField._
 
 /**
@@ -37,9 +37,11 @@ object Types {
 
                        score: Score,
 
+                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                        @(Indexed@field)
                        unit: String,
 
+                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                        url: String,
 
                        @(TupleSerialize@field)
@@ -57,28 +59,29 @@ object Types {
 
                     score: Double,
 
+                    @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                     source: String
                   )
 
 
   case class Tags(
                    @(Indexed@field)
-
                    ruleBased: Boolean,
-                   @(Indexed@field)
 
+                   @(Indexed@field)
                    text: String
                  )
 
 
   case class Compound(
 
+                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                        inchi: String,
                        @(Indexed@field)
-
+                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                        inchiKey: String,
 
-                       @(Field)(`type` = FieldType.Nested)
+                       @(Field@field)(`type` = FieldType.Nested)
                        metaData: Array[MetaData],
 
                        molFile: String,
@@ -113,12 +116,16 @@ object Types {
 
   case class Splash(
 
+                     @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                      block1: String, //ns
 
+                     @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                      block2: String, //ns
 
+                     @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                      block3: String, //ns
 
+                     @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
                      @(Indexed@field)
                      splash: String
                    )
@@ -156,8 +163,11 @@ object Types {
   @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
   case class Spectrum(
 
+                       @(Field@field)(`type` = FieldType.Object)
                        biologicalCompound: Compound,
+                       @(Field@field)(`type` = FieldType.Object)
                        chemicalCompound: Compound,
+                       @(Field@field)(`type` = FieldType.Object)
                        predictedCompound: Compound,
 
                        @(Indexed@field)
@@ -170,12 +180,16 @@ object Types {
                        @(Field@field)(`type` = FieldType.Nested)
                        metaData: Array[MetaData],
 
+                       @(Field@field)(`type` = FieldType.Object)
                        score: Score,
 
+                       @(Field@field)(`type` = FieldType.String)
                        spectrum: String,
 
+                       @(Field@field)(`type` = FieldType.Object)
                        splash: Splash,
 
+                       @(Field@field)(`type` = FieldType.Object)
                        submitter: Submitter,
 
                        @(Field@field)(`type` = FieldType.Nested)
