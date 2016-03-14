@@ -3,9 +3,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.GenericRestClient
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.{MonaSpectrumRestClient, GenericRestClient}
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.{PropertySource, Configuration, Bean}
+import org.springframework.context.annotation.{ComponentScan, PropertySource, Configuration, Bean}
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.{RestOperations, RestTemplate}
 
@@ -38,6 +38,11 @@ class RestClientConfig extends LazyLogging {
   @Bean
   def spectrumRestClient: GenericRestClient[Spectrum, String] = {
     new GenericRestClient[Spectrum, String]("rest/spectra")
+  }
+
+  @Bean
+  def monaSpectrumRestClient:MonaSpectrumRestClient = {
+    new MonaSpectrumRestClient
   }
 
 }
