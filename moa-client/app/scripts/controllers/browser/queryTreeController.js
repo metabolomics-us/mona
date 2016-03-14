@@ -29,7 +29,15 @@
             // Get predefined queries and build query tree
             Spectrum.getPredefinedQueries(
                 function(data) {
-                    // Identify node parents
+                    // Entry for libraries
+                    data.unshift({
+                        label: "Libraries",
+                        query: null,
+                        jsonExport: null,
+                        mspExport: null
+                    });
+
+                    // Set up all nodes
                     for (var i = 0; i < data.length; i++) {
                         $scope.queries[data[i].label] = data[i];
 
@@ -37,14 +45,11 @@
                         data[i].depth = label.length;
                         data[i].id = i;
                         data[i].children = [];
+                    }
 
-                        data[i].formattedLabel = '';
-                        for (var j = 0; j < label.length; j++) {
-                            if (j > 0)
-                                data[i].formattedLabel += ', ';
-                            data[i].formattedLabel += $filter('titlecase')(label[j]);
-                        }
-
+                    // Identify node parents
+                    for (var i = 0; i < data.length; i++) {
+                        var label = data[i].label.split(' - ');
                         data[i].singleLabel = label.pop();
                         var parentLabel = label.join(" - ");
 
