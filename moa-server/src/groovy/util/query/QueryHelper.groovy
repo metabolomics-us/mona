@@ -34,7 +34,7 @@ class QueryHelper {
                 conditionTranslation = "="
                 break
             case "like":
-                conditionTranslation = "like"
+                conditionTranslation = "ilike"
                 break
             case "ilike":
                 conditionTranslation = "ilike"
@@ -103,7 +103,7 @@ class QueryHelper {
 
             // like and ilike work only on textual data
             if (!(value instanceof String) && condition.equals("like")) {
-                throw new RuntimeException("Can't use 'like' or 'ilike with numeric data")
+                throw new RuntimeException("Can't use 'like' or 'ilike' with numeric data")
             }
 
             if (fieldName == "id") {

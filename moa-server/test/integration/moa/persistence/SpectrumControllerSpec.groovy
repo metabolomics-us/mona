@@ -80,12 +80,6 @@ class SpectrumControllerSpec extends IntegrationSpec {
         Spectrum s = Spectrum.findById(Spectrum.first().id)
         println s as JSON
 
-        s.chemicalCompound.names.contains('Alanine')
-        s.chemicalCompound.names.contains('DL-Alanine')
-        s.chemicalCompound.inchi == 'InChI=1S/C3H7NO2/c1-2(4)3(5)6/h2H,4H2,1H3,(H,5,6)'
-        s.chemicalCompound.inchiKey == 'QNAYBMKLOCPYGJ-UHFFFAOYSA-N'
-        s.chemicalCompound.metaData.size() == 0
-
         s.biologicalCompound.names.contains('Alanine')
         s.biologicalCompound.names.contains('DL-Alanine')
         s.biologicalCompound.inchi == 'InChI=1S/C3H7NO2/c1-2(4)3(5)6/h2H,4H2,1H3,(H,5,6)'

@@ -5,7 +5,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SubmitterController', SubmitterController);
+        .controller('SubmitterController', SubmitterController);
 
     /* @ngInject */
     function SubmitterController($scope, Submitter, $uibModal) {

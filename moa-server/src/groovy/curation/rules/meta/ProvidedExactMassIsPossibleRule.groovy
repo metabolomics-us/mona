@@ -31,6 +31,9 @@ class ProvidedExactMassIsPossibleRule extends AbstractMetaDataCentricRule{
 
         Spectrum spectrum = value.owner
 
+        if (spectrum.chemicalCompound == null)
+            return false
+
         if(value.name == field){
             String val = value.getValue().toString()
 
