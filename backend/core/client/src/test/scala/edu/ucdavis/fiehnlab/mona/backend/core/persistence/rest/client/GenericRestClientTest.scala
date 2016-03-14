@@ -19,7 +19,7 @@ import org.springframework.test.context.web.WebAppConfiguration
   * Created by wohlgemuth on 3/2/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientConfig],classOf[EmbeddedRestServerConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class GenericRestClientTest extends FunSuite with BeforeAndAfter {
   @Value( """${local.server.port}""")
