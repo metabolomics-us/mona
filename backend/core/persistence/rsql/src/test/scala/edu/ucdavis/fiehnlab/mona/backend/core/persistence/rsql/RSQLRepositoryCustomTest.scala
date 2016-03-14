@@ -79,8 +79,26 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
         assert(result.size() == 1)
       }
 
+      "we should be able to execute RSQL queries like splash.block1=='splash10'" in {
+        val result = getRepository.rsqlQuery(s"splash.block1==splash10")
+        assert(result.size() == exampleRecords.length)
+      }
+
+      "we should be able to execute RSQL queries like splash.block1=='splash10' with pagination" in {
+        val result:Page[T] = getRepository.rsqlQuery(s"splash.block1==splash10",new PageRequest(0,10))
+
+        assert(result.getContent.size() == 10)
+        assert(result.getTotalPages == 6)
+      }
+
+
+      "we should be able query by id==\"3488925\"" in {
+        val result = getRepository.rsqlQuery(s"id==3488925")
+        assert(result.size() == 1)
+      }
+
       "we should be able to execute RSQL queries like metaData=q='name==\"license\" and value==\"CC BY-SA\"'" in {
-        val result = getRepository.rsqlQuery("metaData=q='name==\"license\" and value==\"CC BY-SA\"'")
+        val result = getRepository.rsqlQuery("metaData=q='name==license and value==\"CC BY-SA\"'")
         assert(result.size() == 58)
       }
 

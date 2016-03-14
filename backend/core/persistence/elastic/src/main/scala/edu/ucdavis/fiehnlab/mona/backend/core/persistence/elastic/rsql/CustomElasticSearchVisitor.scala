@@ -5,20 +5,21 @@ import com.github.rutledgepaulv.qbuilders.nodes.ComparisonNode
 import com.github.rutledgepaulv.qbuilders.visitors.ElasticsearchVisitor
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.{FilterBuilder, QueryBuilder}
 
 /**
   * Created by wohlg on 3/13/2016.
   */
-class CustomElasticSearchVisitor extends ElasticsearchVisitor with LazyLogging{
+class CustomElasticSearchVisitor extends Elasticsearch1Visitor with LazyLogging{
 
   /**
     * checks for value fields and makes sure they are correctly formated for the queries
     * it would be nicer to utilize annotations for this, but its sadly not possible
+ *
     * @param node
     * @return
     */
-  override def visit(node: ComparisonNode): QueryBuilder = node.getField match {
+  override def visit(node: ComparisonNode): FilterBuilder = node.getField match {
     case "value" =>
       single(node.getValues) match {
         case x:Number =>
