@@ -2,6 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.workflow
 
 import java.util
 
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
+
 import scala.collection.JavaConverters._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
@@ -14,13 +16,14 @@ import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.{ApplicationListener, ApplicationContext}
 import org.springframework.stereotype.Component
 
+import scala.collection.mutable.ListBuffer
 import scala.reflect._
 
 
 /**
   * defines a standard processing workflow
   */
-class Workflow[TYPE:ClassTag] extends ApplicationListener[ContextRefreshedEvent] with LazyLogging {
+abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationListener[ContextRefreshedEvent] with LazyLogging {
 
   @Autowired
   val applicationContext: ApplicationContext = null
@@ -28,33 +31,43 @@ class Workflow[TYPE:ClassTag] extends ApplicationListener[ContextRefreshedEvent]
   /**
     * internal graph for our workflow
     */
-  val graph = new Graph[String, Node[TYPE,TYPE], Edge]
+  val graph = new Graph[String, Node[TYPE, TYPE], Edge]
 
   /**
-    * executes the workflow for the given toProcess
-    *
-    * @param toProcess
-    * @return
+    * associated listener
     */
-  def run(toProcess: TYPE): Unit = {
-    run(toProcess, graph.heads.head)
-  }
+  @Autowired(required = false)
+  val listeners: java.util.List[WorkflowListener[TYPE]] = null
 
   /**
     * iterative approach to process all defined annotation data
     *
     * @param toProcess
-    * @param node
+    * @param node by default it's the head node
     */
-  protected def run(toProcess: TYPE, node: Node[TYPE,TYPE]): Unit = {
+  def run(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): Any
 
-    val step = node.step
+  /**
+    * fires a finishing event
+    *
+    * @param toProcess
+    * @param step
+    */
+  def fireFinishingEvent(toProcess: TYPE, step: ProcessingStep[TYPE, TYPE]): Unit = {
+    if (listeners != null) {
+      listeners.asScala.foreach(_.finishedProcessing(toProcess, step.processor.getClass.getAnnotation(classOf[Step])))
+    }
+  }
 
-    logger.debug(s"executing workflow step ${step.name}, ${step.description}")
-    val result:TYPE = step.processor.process(toProcess)
-
-    graph.getChildren(node).foreach { child =>
-      run(result, child)
+  /**
+    * fires an event every time a process starts
+    *
+    * @param toProcess
+    * @param step
+    */
+  def fireStartingEvent(toProcess: TYPE, step: ProcessingStep[TYPE, TYPE]): Unit = {
+    if (listeners != null) {
+      listeners.asScala.foreach(_.startedProcessing(toProcess, step.processor.getClass.getAnnotation(classOf[Step])))
     }
   }
 
@@ -77,32 +90,37 @@ class Workflow[TYPE:ClassTag] extends ApplicationListener[ContextRefreshedEvent]
 
       case processor: ItemProcessor[TYPE, TYPE] =>
 
+
         logger.info("found processor...")
         val step: Step = bean.getClass.getAnnotation(classOf[Step])
 
-        logger.info("\t => with the correct annotation")
+        if (step.workflow() == this.name) {
+          logger.info("\t => with the correct annotation")
 
-        val name = generateNodeIdentifier(step, processor)
+          val name = generateNodeIdentifier(step, processor)
 
-        //build the new processing step
-        val proccessingStep = ProcessingStep(name, processor, step.description())
+          //build the new processing step
+          val proccessingStep = ProcessingStep(name, processor, step.description())
 
-        //create a new node
-        val node = Node[TYPE,TYPE](name, proccessingStep, step.description())
-        graph.addNode(node)
+          //create a new node
+          val node = Node[TYPE, TYPE](name, proccessingStep, step.description())
+          graph.addNode(node)
 
-        val parent = getPreviousStepId(step)
+          val parent = getPreviousStepId(step)
 
-        logger.info(s"previous step name: ${parent}")
+          logger.info(s"previous step name: ${parent}")
 
-        if (parent == "None") {
-          logger.info("this is the root node")
+          if (parent == "None") {
+            logger.info("this is the root node")
+          }
+          else {
+            logger.info(s"step is mapped from ${parent} to ${name}")
+            graph.addEdge(new Edge(parent, name))
+          }
         }
         else {
-          logger.info(s"step is mapped from ${parent} to ${name}")
-          graph.addEdge(new Edge(parent, name))
+          logger.debug(s"skipping step $step since it belongs to a different workflow")
         }
-
       case _ =>
         logger.debug(s"unsupported bean found: ${bean.getClass}")
     }
@@ -134,7 +152,7 @@ class Workflow[TYPE:ClassTag] extends ApplicationListener[ContextRefreshedEvent]
         }
         else {
           logger.info("generating identifier information for the previous step")
-          generateNodeIdentifier(referenceId, parentBean,true)
+          generateNodeIdentifier(referenceId, parentBean, true)
         }
       }
     }
@@ -151,7 +169,7 @@ class Workflow[TYPE:ClassTag] extends ApplicationListener[ContextRefreshedEvent]
     * @param processor
     * @return
     */
-  def generateNodeIdentifier(step: Step, processor: Any, parentScan:Boolean = false): String = {
+  def generateNodeIdentifier(step: Step, processor: Any, parentScan: Boolean = false): String = {
     var name = step.name()
     //assigning class name as default
     if (name == "None") name = processor.getClass.getName
@@ -162,7 +180,7 @@ class Workflow[TYPE:ClassTag] extends ApplicationListener[ContextRefreshedEvent]
         logger.debug(s"node name is unique ${name}")
         name
       case _ =>
-        if(!parentScan)
+        if (!parentScan)
           throw new NameAlreadyRegisteredException(s"a node with the name '${name}' was already registered, please use unique names")
         else
           name
@@ -184,8 +202,8 @@ class Workflow[TYPE:ClassTag] extends ApplicationListener[ContextRefreshedEvent]
     }
 
 
-    if(graph.heads.isEmpty){
-      throw new WorkflowException(s"you need to annotate at least 1 workflow step with @Step and ensure it's of the type ${ classTag[TYPE].runtimeClass}")
+    if (graph.heads.isEmpty) {
+      throw new WorkflowException(s"you need to annotate at least 1 workflow step with @Step and ensure it's of the type ${classTag[TYPE].runtimeClass}")
     }
     else if (graph.heads.size != 1) {
       throw new WorkflowException(s"the defined workflow results in more than 1 beginning, please ensure you define a directional graph. Heads were ${graph.heads}")

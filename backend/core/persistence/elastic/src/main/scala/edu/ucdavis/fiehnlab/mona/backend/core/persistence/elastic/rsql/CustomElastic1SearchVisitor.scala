@@ -4,6 +4,7 @@ import com.github.rutledgepaulv.qbuilders.builders.QBuilder
 import com.github.rutledgepaulv.qbuilders.nodes.ComparisonNode
 import com.github.rutledgepaulv.qbuilders.operators.ComparisonOperator
 import com.github.rutledgepaulv.qbuilders.visitors.ElasticsearchVisitor
+import com.github.rutledgepaulv.qbuilders.visitors.ElasticsearchVisitor.Context
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import org.elasticsearch.index.query.{FilterBuilder, QueryBuilder}
@@ -20,7 +21,12 @@ class CustomElastic1SearchVisitor extends ElasticsearchVisitor with LazyLogging{
     * @param node
     * @return
     */
-  override def visit(node: ComparisonNode): QueryBuilder = {
+  override def visit(node: ComparisonNode, context: Context): QueryBuilder = {
+
+    val path = node.getField
+
+    logger.info(""+path)
+    /*
 
     //rename fields
     node.getField match {
@@ -39,7 +45,10 @@ class CustomElastic1SearchVisitor extends ElasticsearchVisitor with LazyLogging{
 
       case _ =>
     }
+    */
 
-    super.visit(node)
+    super.visit(node,context)
   }
+
+
 }

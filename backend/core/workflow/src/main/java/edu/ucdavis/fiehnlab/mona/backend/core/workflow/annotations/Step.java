@@ -39,4 +39,9 @@ public @interface Step{
      */
     Class previousClass() default Void.class;
 
+    /**
+     * which workflow does this step belong to
+     * @return
+     */
+    String workflow() default "default";
 }

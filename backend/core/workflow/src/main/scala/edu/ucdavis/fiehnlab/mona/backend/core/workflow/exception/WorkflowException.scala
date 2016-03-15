@@ -9,6 +9,8 @@ class WorkflowException(message:String) extends Exception(message){
 
 }
 
+class WorkflowDoesntSupportMoreThanOneChieldExcpetion(message: String) extends WorkflowException(message)
+
 class NameAlreadyRegisteredException(message: String) extends WorkflowException(message)
 
 class ReferencedClassNotFound(message: String) extends WorkflowException(message)
