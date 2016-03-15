@@ -31,57 +31,5 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableAutoConfiguration
 @Configuration
 class EmbeddedMongoDBConfiguration extends LazyLogging{
-/*
-  @Autowired(required = false)
-  val options: MongoClientOptions = null
-
-  @Autowired
-  val enviorment: Environment = null
-
-  @Bean(destroyMethod = "close")
-  def mongo(mongodProcess: MongodProcess): Mongo = {
-    val net = mongodProcess.getConfig.net()
-    val properties = new MongoProperties()
-    properties.setHost(net.getServerAddress.getHostName)
-    properties.setPort(net.getPort)
-    properties.createMongoClient(this.options, enviorment)
-  }
-
-  @Bean(destroyMethod = "stop")
-  def mongodProcess(mongodExecutable: MongodExecutable): MongodProcess = {
-    logger.warn("creating new mongodb process")
-    mongodExecutable.start()
-  }
-
-  @Bean(destroyMethod = "stop")
-  def mongodExecutable(mongodStarter: MongodStarter, iMongodConfig: IMongodConfig): MongodExecutable = {
-    mongodStarter.prepare(iMongodConfig)
-  }
-
-  @Bean
-  def mongodConfig(): IMongodConfig = {
-    new MongodConfigBuilder().version(Version.Main.PRODUCTION)
-      .build()
-  }
-
-  @Bean
-  def mongodStarter(): MongodStarter = {
-    val outPut = Processors.named("[mongo >",new IStreamProcessor {
-
-      override def onProcessed(): Unit = {}
-      override def process(block: String): Unit = logger.debug(block)
-    })
-    val config = new RuntimeConfigBuilder().defaults(Command.MongoD).artifactStore(new ExtractedArtifactStoreBuilder().defaults(Command.MongoD).download(new DownloadConfigBuilder().defaultsForCommand(Command.MongoD).build()).executableNaming(new UserTempNaming)).processOutput(new ProcessOutput(outPut,outPut,outPut)).build()
-    MongodStarter.getInstance(config)
-  }
-
-  @Bean(name = Array("mongoOperation","mongoTemplate"))
-  def mongoOperations(mongo: Mongo): MongoOperations = {
-    logger.warn("creating new mongodb template")
-
-    new MongoTemplate(mongo, "monatest")
-  }
-
-*/
 
 }

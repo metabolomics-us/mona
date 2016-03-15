@@ -20,7 +20,6 @@ import scala.collection.JavaConverters._
 class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,Query] {
 
   @Autowired
-  @Qualifier("spectrumMongoRepository")
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
 
   //required for spring and scala tes

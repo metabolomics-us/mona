@@ -89,7 +89,7 @@ object Types {
 
                        molFile: String,
 
-                       @(Field@field)(`type` = FieldType.Nested)
+                       @(Field@field)(`type` = FieldType.Nested,includeInParent = true)
                        names: Array[Names],
 
                        @(Field@field)(`type` = FieldType.Nested)
@@ -164,7 +164,6 @@ object Types {
   //this is way to uggly, we might really need to use DAO's :(
   @Document(collection = "SPECTRUM")
   @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
-  //@Mapping(mappingPath = "/mappings/elastic/Spectrum.json")
   case class Spectrum(
 
                        @(Field@field)(`type` = FieldType.Object)
@@ -173,9 +172,6 @@ object Types {
                        chemicalCompound: Compound,
                        @(Field@field)(`type` = FieldType.Object)
                        predictedCompound: Compound,
-
-                       @(Indexed@field)
-                       deleted: Boolean,
 
                        @(Id@field)
                        id: String,
