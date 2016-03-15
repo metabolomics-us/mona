@@ -23,7 +23,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 ))
 @Import(Array(classOf[ElasticsearchConfig]))
 class EmbeddedElasticSearchConfiguration extends LazyLogging{
-  
+
   @Primary
   @Bean
   def elasticClient:Client = {

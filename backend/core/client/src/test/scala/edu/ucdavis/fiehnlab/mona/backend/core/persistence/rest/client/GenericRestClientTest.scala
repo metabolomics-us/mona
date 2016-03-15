@@ -4,7 +4,7 @@ import java.io.{InputStreamReader, File, FileReader}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.{RestClientTestConfig, RestClientConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, FunSuite}
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlgemuth on 3/2/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientConfig],classOf[EmbeddedRestServerConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class GenericRestClientTest extends FunSuite with BeforeAndAfter {
   @Value( """${local.server.port}""")
