@@ -28,7 +28,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(basePackageClasses = Array(
   classOf[ISpectrumMongoRepositoryCustom]
 ))
-@Import(Array(classOf[CascadeConfig],classOf[DomainConfig]))
+@Import(Array(classOf[CascadeConfig],classOf[DomainConfig],classOf[EmbeddedMongoAutoConfiguration]))
 @EnableAutoConfiguration
 @Configuration
 class EmbeddedMongoDBConfiguration extends LazyLogging{
