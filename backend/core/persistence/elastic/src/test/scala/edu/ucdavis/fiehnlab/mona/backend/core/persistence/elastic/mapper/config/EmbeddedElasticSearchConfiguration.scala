@@ -28,6 +28,7 @@ class EmbeddedElasticSearchConfiguration extends LazyLogging{
   @Bean
   def elasticClient:Client = {
 
+    logger.info("creating new client")
     ESLoggerFactory.getRootLogger().setLevel("DEBUG");
 
     val nodeBuilder = new NodeBuilder()
@@ -35,7 +36,7 @@ class EmbeddedElasticSearchConfiguration extends LazyLogging{
     nodeBuilder.settings().put("http.enabled", true)
     nodeBuilder.settings().put("index.search.slowlog.threshold.query.warn","0ms")
 
-    logger.info("creating client")
+    logger.info("created client")
     nodeBuilder.node().client()
   }
 }
