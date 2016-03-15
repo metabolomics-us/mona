@@ -32,21 +32,17 @@ class ElasticsearchConfig extends LazyLogging {
 
   /**
     * this defines our custom wired elastic search template
- *
+    *
     * @return
     */
   @Bean
-  def elasticsearchTemplate: ElasticsearchOperations = {
-
-    //val template= new ElasticsearchTemplate(new NodeBuilder().local(true).node().client(),new EntityMapperImpl())
-    val template = new ElasticsearchTemplate(elasticClient, new EntityMapperImpl())
-
-    template
+  def elasticsearchTemplate(elasticClient: Client): ElasticsearchOperations = {
+    new ElasticsearchTemplate(elasticClient, new EntityMapperImpl())
   }
 
   /**
     * this defines the elastic client and where we want to connect from
- *
+    *
     * @return
     */
   @Bean
@@ -60,6 +56,6 @@ class ElasticsearchConfig extends LazyLogging {
   }
 
   @Bean
-  def mappingUpdater:MappingUpdater = new MappingUpdater
+  def mappingUpdater: MappingUpdater = new MappingUpdater
 
 }
