@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.{RestClientTestConfig, RestClientConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.scalatest.{WordSpec, BeforeAndAfter, FunSuite}
 import org.springframework.beans.factory.annotation.{Value, Autowired}
 import org.springframework.boot.test.{WebIntegrationTest, SpringApplicationConfiguration}
 import org.springframework.test.context.TestContextManager
@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
-class GenericRestClientTest extends FunSuite with BeforeAndAfter {
+class GenericRestClientTest extends WordSpec {
   @Value( """${local.server.port}""")
   val port: Int = 0
 
@@ -29,91 +29,92 @@ class GenericRestClientTest extends FunSuite with BeforeAndAfter {
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-
   /**
     * some test data to work with
     */
-  before {
-    spectrumRestClient.list().foreach(x =>
-      spectrumRestClient.delete(x.id)
-    )
+  "when we start a client" when {
 
-    for (spec <- exampleRecords) {
-      spectrumRestClient.add(spec)
+
+    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+
+    "we should be able to delete all data" in {
+      spectrumRestClient.list().foreach(x =>
+        spectrumRestClient.delete(x.id)
+      )
     }
-  }
 
-  /**
-    * clean the system
-    */
-  after {
-    spectrumRestClient.list().foreach(x =>
-      spectrumRestClient.delete(x.id)
-    )
-  }
+    "we should be able to spectra" in {
+      for (spec <- exampleRecords) {
+        spectrumRestClient.add(spec)
+      }
+    }
 
-  test("testCount") {
-    assert(spectrumRestClient.count() == 58)
-  }
+    "we should have 58 spectra" in {
+      assert(spectrumRestClient.count() == 58)
+    }
 
-  test("testCount$default$1") {
-    val test = spectrumRestClient.list().head
-    assert(spectrumRestClient.count(Some(s"""{"_id":"${test.id}"}""")) == 1)
-  }
+    "it should be possible to execute count queries" in {
+      val test = spectrumRestClient.list().head
+      assert(spectrumRestClient.count(Some(s"""{"_id":"${test.id}"}""")) == 1)
+    }
 
-  test("testUpdate") {
-    val test = spectrumRestClient.list().head
+    "it should be possible to update values" in {
+      val test = spectrumRestClient.list().head
 
-    val result = spectrumRestClient.update(test, "newTestId")
+      val result = spectrumRestClient.update(test, "newTestId")
 
-    assert(result.id == "newTestId")
+      assert(result.id == "newTestId")
 
-    assert(spectrumRestClient.get("newTestId").id == "newTestId")
+      assert(spectrumRestClient.get("newTestId").id == "newTestId")
 
-  }
+    }
 
-  test("testGet") {
+    "it should be possible to get values" in {
+      val records = spectrumRestClient.list()
+      val spectrum = spectrumRestClient.get(records.head.id)
 
-    val spectrum = spectrumRestClient.get(exampleRecords.head.id)
+      assert(spectrum.id == records.head.id)
+    }
 
-    assert(spectrum.id == exampleRecords.head.id)
-  }
+    "it should be possible to list all values" in {
+      val data = spectrumRestClient.list()
+      assert(data.length == exampleRecords.length)
+    }
 
-  test("testDelete") {
+    "it should be possible to paginate" in {
+      val data = spectrumRestClient.list(pageSize = Some(10))
+      assert(data.length == 10)
+    }
 
-    val countBefore = spectrumRestClient.count()
 
-    spectrumRestClient.delete(exampleRecords.head.id)
+    "it should be possible to paginate over several pages" in {
+      val dataFirst = spectrumRestClient.list(pageSize = Some(10), page = Some(0))
+      val dataSecond = spectrumRestClient.list(pageSize = Some(10), page = Some(1))
 
-    val countAfter = spectrumRestClient.count()
+      assert(dataFirst.length == 10)
 
-    assert(countBefore - countAfter == 1)
+      assert((dataFirst.toSet diff dataSecond.toSet).size == 10)
 
-  }
+    }
 
-  test("testList") {
-    val data = spectrumRestClient.list()
-    assert(data.length == exampleRecords.length)
-  }
+    "it should be possible to execute queries " in {
+      val data = spectrumRestClient.list(Some(""" tags=q='text==LCMS' """))
+      assert(data.length == exampleRecords.length)
 
-  test("testList$default$1") {
-    val data = spectrumRestClient.list(pageSize = Some(10))
-    assert(data.length == 10)
-  }
+    }
 
-  test("testList$default$2") {
-    val dataFirst = spectrumRestClient.list(pageSize = Some(10), page = Some(0))
-    val dataSecond = spectrumRestClient.list(pageSize = Some(10), page = Some(1))
 
-    assert(dataFirst.length == 10)
+    "it should be possible to delete values" in {
+      val records = spectrumRestClient.list()
 
-    assert((dataFirst.toSet diff dataSecond.toSet).size == 10)
-  }
+      val countBefore = spectrumRestClient.count()
 
-  test("testList$default$3") {
-    val data = spectrumRestClient.list(Some(""" tags=q='text==LCMS' """))
-    assert(data.length == exampleRecords.length)
+      spectrumRestClient.delete(records.head.id)
 
+      val countAfter = spectrumRestClient.count()
+
+      assert(countBefore - countAfter == 1)
+
+    }
   }
 }

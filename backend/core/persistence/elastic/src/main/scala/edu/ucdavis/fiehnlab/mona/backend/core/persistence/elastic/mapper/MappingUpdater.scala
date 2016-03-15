@@ -13,6 +13,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations
 
 import org.elasticsearch.common.xcontent.XContentFactory._
 import org.springframework.stereotype.Component
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 3/15/16.
@@ -50,7 +51,7 @@ class MappingUpdater extends LazyLogging {
 
     logger.debug(s"object is mapped as ${typeName}")
 
-    var build = jsonBuilder()
+    var build = jsonBuilder().prettyPrint()
 
 
     build = build.startObject()
@@ -62,7 +63,7 @@ class MappingUpdater extends LazyLogging {
     build = buildMetaData(build)
 
     //build the compound properties
-    List("biologicalCompound","chemicalCompound", "predictedCompound").foreach{ compound=>
+    List("biologicalCompound", "chemicalCompound", "predictedCompound").foreach { compound =>
       build = build.startObject(compound)
       build = build.startObject("properties")
       build = buildMetaData(build)
@@ -73,6 +74,8 @@ class MappingUpdater extends LazyLogging {
     build = build.endObject()
     build = build.endObject()
 
+    logger.debug(s"sending new mapping to server")
+
     elasticClient.admin().indices().preparePutMapping(indexName).setType(typeName).setSource(build).execute().actionGet()
 
     logger.debug("mapping should be updated")
@@ -80,6 +83,7 @@ class MappingUpdater extends LazyLogging {
 
   /**
     * builds the metadata envelope for us
+    *
     * @param builder
     * @return
     */
