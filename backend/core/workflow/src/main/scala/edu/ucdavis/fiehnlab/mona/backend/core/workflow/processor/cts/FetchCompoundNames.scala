@@ -11,5 +11,7 @@ import org.springframework.batch.item.ItemProcessor
 @Step(description = "this fetches all names from the CTS system and updates MoNA with them",previousClass = classOf[RemoveComputedMetaData])
 class FetchCompoundNames extends ItemProcessor[Spectrum,Spectrum] {
 
-  override def process(i: Spectrum): Spectrum = ???
+  override def process(i: Spectrum): Spectrum = {
+    i
+  }
 }

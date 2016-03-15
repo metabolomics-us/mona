@@ -43,6 +43,11 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
   private val edges = scala.collection.mutable.Set[AbstractEdge[ID]]()
 
   /**
+    * returns all the nodes of the graph
+    * @return
+    */
+  def nodes:Iterable[Vertex] = nodeIndex.values
+  /**
     * size of our graph
     * @return
     */
@@ -94,11 +99,13 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
   }
 
   /**
-    * returns the head of the graph, obviously
+    * returns the heads of the graph, obviously
     * @return
     */
-  def head : Vertex = {
-    getNode(nodeIndex.keys.filter(getParents(_).isEmpty).head).get
+  def heads : Set[Vertex] = {
+    nodeIndex.keys.filter(getParents(_).isEmpty).collect {
+      case x: ID => getNode(x).get
+    }.toArray[Vertex].toSet[Vertex]
   }
 
   /**
