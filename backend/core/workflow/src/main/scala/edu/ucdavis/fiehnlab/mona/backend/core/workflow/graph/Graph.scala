@@ -43,6 +43,11 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
   private val edges = scala.collection.mutable.Set[AbstractEdge[ID]]()
 
   /**
+    * size of our graph
+    * @return
+    */
+  def size:Int = nodeIndex.size
+  /**
     * adding a node at the given vertex
     *
     * @param vertex
@@ -140,7 +145,7 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
   *
   * @param name
   */
-case class ProcessingStep(val name: String, val processor: ItemProcessor[Spectrum, Spectrum])
+case class ProcessingStep(val name: String, val processor: ItemProcessor[Spectrum, Spectrum], val description:String)
 
 
 /**

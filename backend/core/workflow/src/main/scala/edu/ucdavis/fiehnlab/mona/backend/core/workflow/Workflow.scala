@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Component
-import org.springframework.util.ReflectionUtils
 
 
 /**
@@ -33,9 +32,34 @@ class Workflow extends BeanPostProcessor with LazyLogging {
     * @param spectrum
     * @return
     */
-  def run(spectrum: Spectrum) = {
-
+  def run(spectrum: Spectrum) : Unit = {
+    run(spectrum,graph.head)
   }
+
+  /**
+    * iterative approach to process all defined annotation data
+    * @param spectrum
+    * @param node
+    */
+  protected def run(spectrum:Spectrum, node:Node ) : Unit= {
+
+    logger.debug(s"working on spectrum with id ${spectrum.id}")
+    val step = node.step
+
+    logger.debug(s"executing workflow step ${step.name}, ${step.description}")
+    val result = step.processor.process(spectrum)
+
+    graph.getChildren(node).foreach { child: Node =>
+      run(result, child)
+    }
+  }
+
+  /**
+    * mow many steps do we need to execute
+    *
+    * @return
+    */
+  def stepSize = graph.size
 
   /**
     * does nothing in this instance
@@ -74,7 +98,7 @@ class Workflow extends BeanPostProcessor with LazyLogging {
           var parentClass = step.previousClass()
 
           //build the new processing step
-          val proccessingStep = ProcessingStep(name, processor)
+          val proccessingStep = ProcessingStep(name, processor,step.description())
 
           //assigning class name as default
           if (name == "None") {
@@ -104,11 +128,6 @@ class Workflow extends BeanPostProcessor with LazyLogging {
         }
       case _ =>
         logger.debug(s"unsupported bean found: ${bean.getClass}")
-
-
     }
-
   }
-
-
 }
