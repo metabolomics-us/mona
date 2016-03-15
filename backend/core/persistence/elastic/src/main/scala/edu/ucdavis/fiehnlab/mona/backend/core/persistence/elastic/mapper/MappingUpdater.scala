@@ -96,7 +96,6 @@ class MappingUpdater extends LazyLogging {
       .field("type", "double")
       .field("index", "not_analyzed")
       .endObject()
-
       .endObject()
       .endObject()
   }

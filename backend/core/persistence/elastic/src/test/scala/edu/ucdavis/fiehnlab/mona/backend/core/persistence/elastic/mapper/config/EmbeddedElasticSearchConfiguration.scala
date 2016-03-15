@@ -23,34 +23,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 ))
 @Import(Array(classOf[ElasticsearchConfig]))
 class EmbeddedElasticSearchConfiguration extends LazyLogging{
-
-  /**
-    * defines an embeded server, which has web access
- *
-    * @return
-    */
-  @Primary
-  @Bean
-  def elasticsearchTemplate(client:Client) : ElasticsearchOperations = {
-
-
-    logger.info("force deletion of index")
-
-
-    logger.info("creating new template")
-    val elasticsearchTemplate = new ElasticsearchTemplate(
-      client, new EntityMapperImpl())
-
-    //force recreationg of indexes
-    logger.info("deleting index")
-    elasticsearchTemplate.deleteIndex(classOf[Spectrum])
-    elasticsearchTemplate.createIndex(classOf[Spectrum])
-    elasticsearchTemplate.refresh(classOf[Spectrum], true)
-
-    logger.info("template is done")
-    elasticsearchTemplate
-  }
-
+  
   @Primary
   @Bean
   def elasticClient:Client = {
