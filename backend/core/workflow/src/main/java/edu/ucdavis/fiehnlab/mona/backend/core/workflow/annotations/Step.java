@@ -1,6 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations;
 
 import org.springframework.stereotype.Component;
+import scala.None;
+import scala.xml.Null;
 
 import java.lang.annotation.*;
 
@@ -35,6 +37,6 @@ public @interface Step{
      * optional class value for the step, if you don't want to use names.
      * @return
      */
-    Class previousClass() default void.class;
+    Class previousClass() default Void.class;
 
 }

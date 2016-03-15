@@ -11,4 +11,8 @@ class WorkflowException(message:String) extends Exception(message){
 
 class NameAlreadyRegisteredException(message: String) extends WorkflowException(message)
 
+class ReferencedClassNotFound(message: String) extends WorkflowException(message)
 
+class ParentAndParentClassSpecifiedException() extends WorkflowException("please only specify a parent or a parent class, but not both")
+
+class RefrenceBeanHasNotBeenAnnotatedException(message:String) extends WorkflowException(message)

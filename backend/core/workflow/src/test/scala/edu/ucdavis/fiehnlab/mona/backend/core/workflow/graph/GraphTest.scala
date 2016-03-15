@@ -70,7 +70,7 @@ class GraphTest extends WordSpec {
       }
 
       "the head should be 'a'" in {
-        assert(graph.head == graph.getNode("a").get)
+        assert(graph.heads.size == 1)
       }
 
       "there should be 2 tails" in {

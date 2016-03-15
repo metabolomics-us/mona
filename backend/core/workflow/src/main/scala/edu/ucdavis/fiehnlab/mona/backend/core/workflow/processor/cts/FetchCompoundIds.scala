@@ -10,5 +10,7 @@ import org.springframework.batch.item.ItemProcessor
   */
 @Step(description = "this fetches all external compounds id's from the CTS system and updates MoNA with them",previousClass = classOf[RemoveComputedMetaData])
 class FetchCompoundIds extends ItemProcessor[Spectrum,Spectrum]{
-  override def process(i: Spectrum): Spectrum = ???
+  override def process(i: Spectrum): Spectrum = {
+    i
+  }
 }
