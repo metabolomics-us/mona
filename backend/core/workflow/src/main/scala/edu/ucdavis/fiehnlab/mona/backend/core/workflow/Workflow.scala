@@ -4,7 +4,6 @@ import java.util
 
 import scala.collection.JavaConverters._
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.{WorkflowException, RefrenceBeanHasNotBeenAnnotatedException, ParentAndParentClassSpecifiedException, NameAlreadyRegisteredException}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph._
@@ -15,12 +14,13 @@ import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.{ApplicationListener, ApplicationContext}
 import org.springframework.stereotype.Component
 
+import scala.reflect._
+
 
 /**
   * defines a standard processing workflow
   */
-@Component
-class Workflow extends ApplicationListener[ContextRefreshedEvent] with LazyLogging {
+class Workflow[TYPE:ClassTag] extends ApplicationListener[ContextRefreshedEvent] with LazyLogging {
 
   @Autowired
   val applicationContext: ApplicationContext = null
@@ -28,33 +28,32 @@ class Workflow extends ApplicationListener[ContextRefreshedEvent] with LazyLoggi
   /**
     * internal graph for our workflow
     */
-  val graph: Graph[String, Node, Edge] = new Graph[String, Node, Edge]
+  val graph = new Graph[String, Node[TYPE,TYPE], Edge]
 
   /**
-    * executes the workflow for the given spectrum
+    * executes the workflow for the given toProcess
     *
-    * @param spectrum
+    * @param toProcess
     * @return
     */
-  def run(spectrum: Spectrum): Unit = {
-    run(spectrum, graph.heads.head)
+  def run(toProcess: TYPE): Unit = {
+    run(toProcess, graph.heads.head)
   }
 
   /**
     * iterative approach to process all defined annotation data
     *
-    * @param spectrum
+    * @param toProcess
     * @param node
     */
-  protected def run(spectrum: Spectrum, node: Node): Unit = {
+  protected def run(toProcess: TYPE, node: Node[TYPE,TYPE]): Unit = {
 
-    logger.debug(s"working on spectrum with id ${spectrum.id}")
     val step = node.step
 
     logger.debug(s"executing workflow step ${step.name}, ${step.description}")
-    val result = step.processor.process(spectrum)
+    val result:TYPE = step.processor.process(toProcess)
 
-    graph.getChildren(node).foreach { child: Node =>
+    graph.getChildren(node).foreach { child =>
       run(result, child)
     }
   }
@@ -76,7 +75,7 @@ class Workflow extends ApplicationListener[ContextRefreshedEvent] with LazyLoggi
     logger.info(s"searching for annotations: ${bean}")
     bean match {
 
-      case processor: ItemProcessor[Spectrum, Spectrum] =>
+      case processor: ItemProcessor[TYPE, TYPE] =>
 
         logger.info("found processor...")
         val step: Step = bean.getClass.getAnnotation(classOf[Step])
@@ -89,7 +88,7 @@ class Workflow extends ApplicationListener[ContextRefreshedEvent] with LazyLoggi
         val proccessingStep = ProcessingStep(name, processor, step.description())
 
         //create a new node
-        val node = Node(name, proccessingStep, step.description())
+        val node = Node[TYPE,TYPE](name, proccessingStep, step.description())
         graph.addNode(node)
 
         val parent = getPreviousStepId(step)
@@ -135,7 +134,7 @@ class Workflow extends ApplicationListener[ContextRefreshedEvent] with LazyLoggi
         }
         else {
           logger.info("generating identifier information for the previous step")
-          generateNodeIdentifier(referenceId, parentBean)
+          generateNodeIdentifier(referenceId, parentBean,true)
         }
       }
     }
@@ -152,7 +151,7 @@ class Workflow extends ApplicationListener[ContextRefreshedEvent] with LazyLoggi
     * @param processor
     * @return
     */
-  def generateNodeIdentifier(step: Step, processor: Any): String = {
+  def generateNodeIdentifier(step: Step, processor: Any, parentScan:Boolean = false): String = {
     var name = step.name()
     //assigning class name as default
     if (name == "None") name = processor.getClass.getName
@@ -163,7 +162,10 @@ class Workflow extends ApplicationListener[ContextRefreshedEvent] with LazyLoggi
         logger.debug(s"node name is unique ${name}")
         name
       case _ =>
-        throw new NameAlreadyRegisteredException(s"a node with the name '${name}' was already registered, please use unique names")
+        if(!parentScan)
+          throw new NameAlreadyRegisteredException(s"a node with the name '${name}' was already registered, please use unique names")
+        else
+          name
     }
   }
 
@@ -182,7 +184,10 @@ class Workflow extends ApplicationListener[ContextRefreshedEvent] with LazyLoggi
     }
 
 
-    if (graph.heads.size != 1) {
+    if(graph.heads.isEmpty){
+      throw new WorkflowException(s"you need to annotate at least 1 workflow step with @Step and ensure it's of the type ${ classTag[TYPE].runtimeClass}")
+    }
+    else if (graph.heads.size != 1) {
       throw new WorkflowException(s"the defined workflow results in more than 1 beginning, please ensure you define a directional graph. Heads were ${graph.heads}")
     }
     logger.debug("all steps are processed")
