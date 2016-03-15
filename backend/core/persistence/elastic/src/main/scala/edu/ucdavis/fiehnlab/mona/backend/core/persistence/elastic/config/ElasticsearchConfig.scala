@@ -5,13 +5,13 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{EntityMapperImpl}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{MappingUpdater, EntityMapperImpl}
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.{InetSocketTransportAddress, TransportAddress}
 import org.elasticsearch.node.NodeBuilder
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{Import, Bean, Configuration, PropertySource}
+import org.springframework.context.annotation._
 import org.springframework.data.elasticsearch.core.{EntityMapper, ElasticsearchTemplate, ElasticsearchOperations}
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
 
@@ -22,6 +22,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(basePackageClasses = Array(
   classOf[ISpectrumElasticRepositoryCustom]
 ))
+@ComponentScan
 class ElasticsearchConfig extends LazyLogging {
 
   // @Value("${mona.persistence.elastic.port}")
@@ -31,23 +32,25 @@ class ElasticsearchConfig extends LazyLogging {
 
   /**
     * this defines our custom wired elastic search template
+ *
     * @return
     */
   @Bean
   def elasticsearchTemplate: ElasticsearchOperations = {
 
     //val template= new ElasticsearchTemplate(new NodeBuilder().local(true).node().client(),new EntityMapperImpl())
-    val template = new ElasticsearchTemplate(client,new EntityMapperImpl())
+    val template = new ElasticsearchTemplate(elasticClient, new EntityMapperImpl())
 
     template
   }
 
   /**
     * this defines the elastic client and where we want to connect from
+ *
     * @return
     */
   @Bean
-  def client: Client = {
+  def elasticClient: Client = {
     logger.info(s"connecting to ${hostname}:${port}")
     val client = new TransportClient()
     val address = new InetSocketTransportAddress(hostname, port)
@@ -55,5 +58,8 @@ class ElasticsearchConfig extends LazyLogging {
 
     client
   }
+
+  @Bean
+  def mappingUpdater:MappingUpdater = new MappingUpdater
 
 }

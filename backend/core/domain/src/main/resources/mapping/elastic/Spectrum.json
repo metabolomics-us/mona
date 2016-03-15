@@ -1,8 +1,7 @@
 {
-  "spectrum": {
-    "aliases": {},
     "mappings": {
       "spectrum": {
+        "dynamic":      "strict",
         "properties": {
           "authors": {
             "type": "nested"
@@ -30,7 +29,8 @@
                     "type": "boolean"
                   },
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "index": "not_analyzed"
                   },
                   "unit": {
                     "type": "string",
@@ -44,7 +44,8 @@
                     "type": "long"
                   },
                   "value_text": {
-                    "type": "string"
+                    "type": "string",
+                    "index": "not_analyzed"
                   }
                 }
               },
@@ -58,7 +59,8 @@
                     "type": "boolean"
                   },
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "index": "not_analyzed"
                   },
                   "score": {
                     "type": "double"
@@ -105,7 +107,8 @@
                     "type": "boolean"
                   },
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "index": "not_analyzed"
                   },
                   "unit": {
                     "type": "string",
@@ -119,7 +122,8 @@
                     "type": "long"
                   },
                   "value_text": {
-                    "type": "string"
+                    "type": "string",
+                    "index": "not_analyzed"
                   }
                 }
               },
@@ -133,7 +137,8 @@
                     "type": "boolean"
                   },
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "index": "not_analyzed"
                   },
                   "score": {
                     "type": "double"
@@ -180,7 +185,8 @@
                 "type": "boolean"
               },
               "name": {
-                "type": "string"
+                "type": "string",
+                "index": "not_analyzed"
               },
               "unit": {
                 "type": "string",
@@ -194,7 +200,8 @@
                 "type": "double"
               },
               "value_text": {
-                "type": "string"
+                "type": "string",
+                "index": "not_analyzed"
               }
             }
           },
@@ -211,6 +218,10 @@
               "metaData": {
                 "type": "nested",
                 "properties": {
+                  "name": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  },
                   "unit": {
                     "type": "string",
                     "index": "not_analyzed"
@@ -224,6 +235,13 @@
               "names": {
                 "type": "nested",
                 "properties": {
+                  "computed": {
+                    "type": "boolean"
+                  },
+                  "name": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                  },
                   "source": {
                     "type": "string",
                     "index": "not_analyzed"
@@ -307,22 +325,5 @@
           }
         }
       }
-    },
-    "settings": {
-      "index": {
-        "refresh_interval": "-1",
-        "number_of_shards": "1",
-        "store": {
-          "type": "fs"
-        },
-        "creation_date": "1457926145598",
-        "number_of_replicas": "0",
-        "version": {
-          "created": "1050299"
-        },
-        "uuid": "Jne1rxxDTzqMBlwwJ0bvDw"
-      }
-    },
-    "warmers": {}
+    }
   }
-}
