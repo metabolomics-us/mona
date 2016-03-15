@@ -33,7 +33,6 @@ class SpectrumRestControllerTest extends WordSpec {
   @Value( """${local.server.port}""")
   val port: Int = 0
 
-
   @Autowired
   val spectrumRepository: ISpectrumMongoRepositoryCustom = null
 

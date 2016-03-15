@@ -10,7 +10,7 @@ import org.springframework.context.annotation.{ComponentScan, Import, Configurat
   * Created by wohlg on 3/11/2016.
   */
 @Configuration
-@Import(Array(classOf[EmbeddedMongoDBConfiguration],classOf[EmbeddedElasticSearchConfiguration],classOf[DomainConfig]))
+@Import(Array(classOf[EmbeddedMongoDBConfiguration],classOf[EmbeddedElasticSearchConfiguration]))
 @ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller"))
 class EmbeddedRestServerConfig {
 
