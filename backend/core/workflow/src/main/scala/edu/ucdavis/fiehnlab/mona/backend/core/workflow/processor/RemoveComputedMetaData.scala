@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component
 /**
   * Created by wohlgemuth on 3/11/16.
   */
-@Component
-@Step(name = "RemoveComputedMetaData")
+@Step(description = "this step will remove all computed metadata from the given spectrum")
 class RemoveComputedMetaData extends ItemProcessor[Spectrum,Spectrum]{
 
   /**
