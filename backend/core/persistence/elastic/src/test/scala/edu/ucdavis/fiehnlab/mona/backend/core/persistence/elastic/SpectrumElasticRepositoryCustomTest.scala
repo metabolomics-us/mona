@@ -20,7 +20,6 @@ import scala.collection.JavaConverters
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedElasticSearchConfiguration]))
-@Ignore
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,QueryBuilder] with BeforeAndAfterEach  {
   @Autowired
   val elasticsearchTemplate: ElasticsearchTemplate = null

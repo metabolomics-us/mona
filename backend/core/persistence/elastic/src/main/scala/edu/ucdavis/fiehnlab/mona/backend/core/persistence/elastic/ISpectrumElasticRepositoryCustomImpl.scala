@@ -50,7 +50,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   override def buildRSQLQuery(query: String): QueryBuilder = {
     val pipeline = QueryConversionPipeline.defaultPipeline()
     val condition = pipeline.apply(query, classOf[Spectrum])
-    val qb: QueryBuilder = condition.query(new CustomElastic1SearchVisitor())
+    val qb: QueryBuilder = condition.query(new CustomElastic1SearchVisitor(),new ElasticsearchVisitor.Context())
     qb
   }
 
