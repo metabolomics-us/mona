@@ -1,5 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow
 
+import java.io.{InputStreamReader, FileReader}
+
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -17,20 +21,24 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 class WorkflowTest extends WordSpec {
 
   @Autowired
-  val workflow:Workflow = null
+  val workflow: Workflow = null
+
+  val reader = JSONDomainReader.create[Spectrum]
+  val spectrumGiven: Spectrum = reader.read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
+
+
 
   "a workflow given data" when {
     "it should find all beans " should {
       "which have the annotation @Step" in {
-        //no idea how to test this...
+        //we should find some at least
+        assert(workflow.stepSize > 0)
       }
 
-      "it should build a graph internally" in {
-        val graph = workflow.graph
-
-
+      "it should executed all the steps for the applied data set" in {
+        workflow.run(spectrumGiven)
       }
     }
   }
