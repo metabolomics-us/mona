@@ -152,7 +152,7 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
   *
   * @param name
   */
-case class ProcessingStep(val name: String, val processor: ItemProcessor[Spectrum, Spectrum], val description:String)
+case class ProcessingStep[INPUT,OUTPUT](val name: String, val processor: ItemProcessor[INPUT, OUTPUT], val description:String)
 
 
 /**
@@ -162,7 +162,7 @@ case class ProcessingStep(val name: String, val processor: ItemProcessor[Spectru
   * @param step
   * @param description
   */
-case class Node(id: String, step: ProcessingStep, description: String) extends AbstractVertex[String]
+case class Node[INPUT,OUTPUT](id: String, step: ProcessingStep[INPUT,OUTPUT], description: String) extends AbstractVertex[String]
 
 /**
   * relation between nodes
