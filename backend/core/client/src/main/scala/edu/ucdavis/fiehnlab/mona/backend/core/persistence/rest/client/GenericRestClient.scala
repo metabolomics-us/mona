@@ -16,7 +16,6 @@ import scala.reflect._
 /**
   * a generic approach to connect to a REST server and execute operations against it. It assumes compliance with CRUD operations
   */
-@Component
 class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
 
   @Autowired
