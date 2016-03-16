@@ -142,7 +142,7 @@ class SpectrumRestControllerTest extends WordSpec {
         assert(exampleRecords.length == 10)
 
         for (spec <- exampleRecords) {
-          assert(firstRecords.contains(spec) == false)
+          assert(!firstRecords.contains(spec))
         }
       }
 

@@ -72,7 +72,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @RequestMapping(path = Array("/count"), method = Array(RequestMethod.POST))
   @Async
   def searchCount(@RequestBody query: WrappedString): Future[Long] = {
-    new AsyncResult[Long](getRepository.nativeQueryCount(new BasicQuery(query.string)))
+    new AsyncResult[Long](getRepository.rsqlQueryCount(query.string))
   }
 
 
