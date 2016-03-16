@@ -9,7 +9,7 @@ import org.springframework.context.annotation.{ComponentScan, Configuration}
   * Created by wohlg on 3/15/2016.
   */
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService], classOf[SpectrumRestController], classOf[SpectrumElasticEventListener]))
+@ComponentScan(basePackageClasses = Array(classOf[SpectrumRestController],classOf[SpectrumPersistenceService],classOf[SpectrumElasticEventListener]))
 class RestServerConfig {
 
 }

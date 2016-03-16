@@ -6,9 +6,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
+import org.junit.Ignore
 import org.junit.runner.RunWith
-import org.scalatest.{Ignore, WordSpec}
+import org.scalatest.{ WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.{TestContextManager, ContextConfiguration}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -19,8 +21,7 @@ import scala.util.Properties
   * Created by wohlg on 3/15/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedRestServerConfig]))
-@Ignore
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig]))
 class SpectrumPersistenceServiceTest extends WordSpec {
   val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
 
@@ -33,7 +34,7 @@ class SpectrumPersistenceServiceTest extends WordSpec {
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
-  "a spectrum persistence service " should {
+  "a spectrum persistence service " ignore {
 
     "ensure we start with an empty repository" in {
       assert(spectrumPersistenceService.count() == 0)
