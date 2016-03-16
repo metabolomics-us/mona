@@ -36,7 +36,7 @@ class ElasticsearchConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def elasticsearchTemplate(elasticClient: Client): ElasticsearchOperations = {
+  def elasticsearchTemplate(elasticClient: Client): ElasticsearchTemplate = {
     new ElasticsearchTemplate(elasticClient, new EntityMapperImpl())
   }
 

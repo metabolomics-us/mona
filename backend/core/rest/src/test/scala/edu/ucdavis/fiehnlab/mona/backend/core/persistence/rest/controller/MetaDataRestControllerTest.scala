@@ -11,17 +11,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.MonaRestServer
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
 import org.junit.runner.RunWith
 import org.scalatest.{WordSpec, FunSuite}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.{WebIntegrationTest, IntegrationTest, SpringApplicationConfiguration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.web.WebAppConfiguration
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 
 /**
   * Created by wohlgemuth on 3/8/16.

@@ -26,7 +26,9 @@ class SpectrumElasticEventListener extends PersitenceEventListener[Spectrum] {
     *
     * @param event
     */
-  override def updated(event: PersistenceEvent[Spectrum]): Unit = spectrumElasticRepository.save(event.content)
+  override def updated(event: PersistenceEvent[Spectrum]): Unit = {
+    spectrumElasticRepository.saveOrUpdate(event.content)
+  }
 
   /**
     * an entry was deleted from the system

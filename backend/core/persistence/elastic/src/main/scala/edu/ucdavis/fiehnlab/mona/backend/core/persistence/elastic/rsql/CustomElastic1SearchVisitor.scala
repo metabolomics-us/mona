@@ -19,13 +19,10 @@ class CustomElastic1SearchVisitor extends ElasticSearchVisitor with LazyLogging 
     case "value" =>
       single(node.getValues) match {
         case x: Number =>
-          logger.debug(s"building number  query for ${x}")
           "value_number"
         case x: java.lang.Boolean =>
-          logger.debug(s"building boolean query for ${x}")
           "value_boolean"
         case _ =>
-          logger.debug(s"building text query for ${node.getValues}")
           "value_text"
       }
 

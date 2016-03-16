@@ -10,12 +10,17 @@ import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.scalatest.{ WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.context.annotation.{Configuration, ComponentScan, Import}
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.{TestContextManager, ContextConfiguration}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.util.Properties
+
 
 /**
   * Created by wohlg on 3/15/2016.
@@ -34,7 +39,7 @@ class SpectrumPersistenceServiceTest extends WordSpec {
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
-  "a spectrum persistence service " ignore {
+  "a spectrum persistence service " must {
 
     "ensure we start with an empty repository" in {
       assert(spectrumPersistenceService.count() == 0)
@@ -111,15 +116,21 @@ class SpectrumPersistenceServiceTest extends WordSpec {
 
     "update data" in {
 
-      val spectrum: Spectrum = exampleRecords(10)
+      val countBefore = spectrumPersistenceService.count()
+      val spectrum: Spectrum = spectrumPersistenceService.query().iterator.next()
 
       val toUpdate = spectrum.copy(spectrum = "1:1")
 
+      assert(spectrum.id == toUpdate.id)
       spectrumPersistenceService.update(toUpdate)
 
       val updated = spectrumPersistenceService.get(spectrum.id)
 
       assert(updated.spectrum == "1:1")
+
+      val countAfter = spectrumPersistenceService.count()
+
+      assert(countAfter == countBefore)
     }
 
     "present us with a count for data in the repository" in {

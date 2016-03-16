@@ -73,6 +73,7 @@ object Types {
                    ruleBased: Boolean,
 
                    @(Indexed@field)
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                    text: String
                  )
 
@@ -176,6 +177,7 @@ object Types {
 
                        @(Id@field)
                        id: String,
+
                        lastUpdated: String,
 
                        @(Field@field)(`type` = FieldType.Nested)
