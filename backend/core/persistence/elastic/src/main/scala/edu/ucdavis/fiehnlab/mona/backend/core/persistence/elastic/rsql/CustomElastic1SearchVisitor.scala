@@ -7,7 +7,7 @@ import org.elasticsearch.index.query.{FilterBuilder, QueryBuilder}
 /**
   * Created by wohlg on 3/13/2016.
   */
-class CustomElastic1SearchVisitor extends ElasticsearchVisitor with LazyLogging {
+class CustomElastic1SearchVisitor extends ElasticSearchVisitor with LazyLogging {
 
   /**
     * maps the field name from value to value_*
