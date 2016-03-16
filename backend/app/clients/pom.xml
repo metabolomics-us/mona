@@ -11,6 +11,10 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
     <artifactId>clients</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>uploader</module>
+    </modules>
 
 
 </project>
