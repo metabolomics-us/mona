@@ -3,15 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>server</artifactId>
+        <artifactId>clients</artifactId>
         <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
-    <artifactId>node</artifactId>
+    <artifactId>uploader</artifactId>
 
-    <description>This project, provides a MoNA server which can be utilized in a single or multi node cluster</description>
+    <description>this project provides a simple client to upload data to the server using a mona json input file</description>
 
 </project>
