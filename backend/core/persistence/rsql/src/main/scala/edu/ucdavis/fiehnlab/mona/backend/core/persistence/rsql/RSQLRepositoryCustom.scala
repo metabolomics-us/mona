@@ -74,4 +74,13 @@ trait RSQLRepositoryCustom[T,Q] {
     * @return
     */
   def buildRSQLQuery(query: String): Q
+
+  /**
+    * saves our updaes a given element
+    * implementation can be slow but should not cause
+    * duplicated saves
+    * @param value
+    * @return
+    */
+  def saveOrUpdate(value:T) : Unit
 }

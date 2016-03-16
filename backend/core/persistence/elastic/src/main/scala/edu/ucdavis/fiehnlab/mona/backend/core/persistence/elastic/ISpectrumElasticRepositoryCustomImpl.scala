@@ -8,7 +8,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.{Context, CustomElastic1SearchVisitor}
 import org.elasticsearch.index.query.{ QueryBuilder}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.data.domain.{PageRequest, Page, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.elasticsearch.core.query._
@@ -66,5 +66,17 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     //uggly but best solution I found so far. If we do it without pagination request, spring will always limit it to 10 results.
     val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0,1000000)).build()
     query
+  }
+
+  /**
+    * saves our updaes a given element
+    * implementation can be slow but should not cause
+    * duplicated saves
+    *
+    * @param value
+    * @return
+    */
+  override def saveOrUpdate(value: Spectrum): Unit = {
+    elasticsearchTemplate.index(new IndexQueryBuilder().withObject(value).build())
   }
 }

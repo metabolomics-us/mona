@@ -9,9 +9,7 @@ import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.{ISubmitterMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.MonaRestServer
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -19,7 +17,6 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.{WebIntegrationTest, IntegrationTest, SpringApplicationConfiguration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.web.WebAppConfiguration
 
 /**
   * Created by sajjan on 3/9/16.

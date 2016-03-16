@@ -78,4 +78,13 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
     toExecute
   }
 
+  /**
+    * saves our updaes a given element
+    * implementation can be slow but should not cause
+    * duplicated saves
+    *
+    * @param value
+    * @return
+    */
+  override def saveOrUpdate(value: Spectrum): Unit = mongoOperations.save(value)
 }

@@ -14,7 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration
+import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchDataAutoConfiguration, ElasticsearchAutoConfiguration}
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
 import org.springframework.boot.autoconfigure.mongo.{MongoAutoConfiguration, MongoProperties}
 import org.springframework.context.annotation.{Bean, Configuration, Import}
@@ -29,7 +29,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
   classOf[ISpectrumMongoRepositoryCustom]
 ))
 @Import(Array(classOf[CascadeConfig],classOf[DomainConfig],classOf[EmbeddedMongoAutoConfiguration]))
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude = Array(classOf[ElasticsearchDataAutoConfiguration]))
 @Configuration
 class EmbeddedMongoDBConfiguration extends LazyLogging{
 

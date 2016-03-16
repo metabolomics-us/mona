@@ -116,6 +116,25 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
         val result = getRepository.rsqlQuery("metaData=q='name==\"ion mode\" and value==negative'")
         assert(result.size == 25)
       }
+
+      "we should be able to execute RSQL queries like tags=q='text==LCMS' in " in {
+        val result = getRepository.rsqlQuery("tags=q='text==LCMS'")
+        assert(result.size == 58)
+      }
+
+      "readding the same events should be an update" in {
+        val count = getRepository.count()
+
+        val it = getRepository.findAll().iterator()
+
+        while(it.hasNext){
+          getRepository.saveOrUpdate(it.next())
+        }
+
+        assert(count == getRepository.count())
+
+
+      }
     }
 
     //MUST BE LAST

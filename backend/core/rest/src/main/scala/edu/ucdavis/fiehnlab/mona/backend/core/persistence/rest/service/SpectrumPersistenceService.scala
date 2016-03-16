@@ -86,8 +86,8 @@ class SpectrumPersistenceService extends LazyLogging {
     * @return
     */
   def update(spectrum: Spectrum) = {
-    spectrumMongoRepository.save(spectrum)
-    fireUpdateEvent(spectrum)
+    val result = spectrumMongoRepository.save(spectrum)
+    fireUpdateEvent(result)
   }
 
   /**
@@ -97,7 +97,7 @@ class SpectrumPersistenceService extends LazyLogging {
     * @return
     */
   def delete(spectrum: Spectrum) = {
-    spectrumMongoRepository.delete(spectrum)
+    spectrumMongoRepository.delete(spectrum.id)
     fireDeleteEvent(spectrum)
   }
 
