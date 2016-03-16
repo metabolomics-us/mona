@@ -47,6 +47,7 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
       assert(getRepository.count() == 0)
 
       s"we should be able to store our data" in {
+
         for (spectrum <- exampleRecords) {
           val size = getRepository.count()
 
