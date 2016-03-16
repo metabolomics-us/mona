@@ -11,7 +11,7 @@ import de.flapdoodle.embed.process.config.io.ProcessOutput
 import de.flapdoodle.embed.process.extract.UserTempNaming
 import de.flapdoodle.embed.process.io.{IStreamProcessor, Processors}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchDataAutoConfiguration, ElasticsearchAutoConfiguration}
@@ -28,8 +28,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(basePackageClasses = Array(
   classOf[ISpectrumMongoRepositoryCustom]
 ))
-@Import(Array(classOf[CascadeConfig],classOf[DomainConfig],classOf[EmbeddedMongoAutoConfiguration]))
-@EnableAutoConfiguration(exclude = Array(classOf[ElasticsearchDataAutoConfiguration]))
+@EnableAutoConfiguration
+@Import(Array(classOf[MongoConfig]))
 @Configuration
 class EmbeddedMongoDBConfiguration extends LazyLogging{
 

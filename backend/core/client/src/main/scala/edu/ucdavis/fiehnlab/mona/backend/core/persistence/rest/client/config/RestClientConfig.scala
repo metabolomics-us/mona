@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.{MonaSpectrumRestClient, GenericRestClient}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{MonaSpectrumRestClient, GenericRestClient}
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.{ComponentScan, PropertySource, Configuration, Bean}
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter

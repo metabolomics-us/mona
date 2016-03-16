@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.controller.config.EmbeddedRestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
 import org.springframework.context.annotation.Import
 
 /**
