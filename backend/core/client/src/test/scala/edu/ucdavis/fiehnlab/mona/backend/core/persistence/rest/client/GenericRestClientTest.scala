@@ -55,7 +55,7 @@ class GenericRestClientTest extends WordSpec {
 
     "it should be possible to execute count queries" in {
       val test = spectrumRestClient.list().head
-      assert(spectrumRestClient.count(Some(s"""{"_id":"${test.id}"}""")) == 1)
+      assert(spectrumRestClient.count(Some(s"""id==${test.id}""")) == 1)
     }
 
     "it should be possible to update values" in {

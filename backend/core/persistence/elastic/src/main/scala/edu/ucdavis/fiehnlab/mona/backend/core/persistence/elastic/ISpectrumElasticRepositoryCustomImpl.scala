@@ -60,12 +60,10 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @param query
     * @return
     */
-  override def nativeQueryCount(query: QueryBuilder): Long = elasticsearchTemplate.count(getSearch(query))
+  override def nativeQueryCount(query: QueryBuilder): Long = elasticsearchTemplate.count(getSearch(query),classOf[Spectrum])
 
   def getSearch(queryBuilder: QueryBuilder): SearchQuery = {
-
-
-    //uggly but best solution I gound so far. If we do it without pagination request, spring will always limit it to 10 results.
+    //uggly but best solution I found so far. If we do it without pagination request, spring will always limit it to 10 results.
     val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0,1000000)).build()
     query
   }

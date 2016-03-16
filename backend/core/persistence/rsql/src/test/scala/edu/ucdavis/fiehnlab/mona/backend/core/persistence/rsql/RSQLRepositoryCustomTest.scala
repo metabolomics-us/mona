@@ -119,7 +119,7 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
     }
 
     //MUST BE LAST
-    "if specified the server should stay online, this can be done using the env variabel 'keep.server.running=true' " in {
+    "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
       if(keepRunning){
         while (keepRunning) {
           logger.warn("waiting forever till you kill me!")
