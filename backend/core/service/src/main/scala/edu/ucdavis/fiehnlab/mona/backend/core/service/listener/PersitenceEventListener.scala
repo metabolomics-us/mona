@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.listener
+package edu.ucdavis.fiehnlab.mona.backend.core.service.listener
 
 /**
   * this listener is used to inform subscribers about changes to the mona database system. They should be annotated as @Component, which will automatically add them to the related classes

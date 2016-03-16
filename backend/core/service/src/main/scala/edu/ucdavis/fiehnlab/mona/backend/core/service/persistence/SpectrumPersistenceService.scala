@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.service
+package edu.ucdavis.fiehnlab.mona.backend.core.service.persistence
 
 import java.util.Date
 
@@ -6,8 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.listener.{PersistenceEvent, PersitenceEventListener}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.listener.PersistenceEvent
+import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest, Pageable}
 import org.springframework.stereotype.Service
