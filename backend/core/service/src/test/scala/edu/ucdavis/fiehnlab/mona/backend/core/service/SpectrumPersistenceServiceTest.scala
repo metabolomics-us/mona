@@ -4,16 +4,19 @@ import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.util.Properties
+import scala.collection.JavaConverters._
 
 
 /**
@@ -27,6 +30,11 @@ class SpectrumPersistenceServiceTest extends WordSpec {
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
+  @Autowired
+  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+
+  @Autowired
+  val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
@@ -44,17 +52,13 @@ class SpectrumPersistenceServiceTest extends WordSpec {
     }
 
     s"store ${exampleRecords.length} records" in {
-      exampleRecords.foreach { spectrum =>
-        val countBefore = spectrumPersistenceService.count()
-        spectrumPersistenceService.add(spectrum)
-        assert(spectrumPersistenceService.count() == countBefore + 1)
-      }
-
+      spectrumPersistenceService.save(exampleRecords.toList.asJava)
       assert(spectrumPersistenceService.count() == exampleRecords.length)
+      assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
     }
 
     "query all data" in {
-      val result = spectrumPersistenceService.query().iterator
+      val result = spectrumPersistenceService.findAll().iterator
 
       var count = 0
       while (result.hasNext) {
@@ -64,8 +68,14 @@ class SpectrumPersistenceServiceTest extends WordSpec {
 
       assert(count == exampleRecords.length)
     }
+
+    "query all data with pagination " in {
+      val result: Page[Spectrum] = spectrumPersistenceService.findAll(new PageRequest(0, 10))
+      assert(result.getTotalPages() == 6)
+    }
+
     "query data with the query tags=q='text==LCMS'" in {
-      val result = spectrumPersistenceService.query("tags=q='text==LCMS'").iterator
+      val result = spectrumPersistenceService.findAll("tags=q='text==LCMS'").iterator
 
       var count = 0
       while (result.hasNext) {
@@ -77,7 +87,7 @@ class SpectrumPersistenceServiceTest extends WordSpec {
     }
 
     "query data with the query metaData=q='name==\"ion mode\" and value==positive'" in {
-      val result = spectrumPersistenceService.query("""metaData=q='name=="ion mode" and value==positive'""").iterator
+      val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""").iterator
 
       var count = 0
       while (result.hasNext) {
@@ -90,7 +100,7 @@ class SpectrumPersistenceServiceTest extends WordSpec {
 
 
     "query data with the query metaData=q='name==\"ion mode\" and value==negative'" in {
-      val result = spectrumPersistenceService.query("""metaData=q='name=="ion mode" and value==negative'""").iterator
+      val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""").iterator
 
       var count = 0
       while (result.hasNext) {
@@ -103,7 +113,7 @@ class SpectrumPersistenceServiceTest extends WordSpec {
 
 
     "query data with pagination" in {
-      val result = spectrumPersistenceService.query("""metaData=q='name=="ion mode" and value==negative'""", new PageRequest(0, 10))
+      val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", new PageRequest(0, 10))
       assert(result.getTotalPages == 3)
       assert(result.getContent.size() == 10)
     }
@@ -111,14 +121,14 @@ class SpectrumPersistenceServiceTest extends WordSpec {
     "update data" in {
 
       val countBefore = spectrumPersistenceService.count()
-      val spectrum: Spectrum = spectrumPersistenceService.query().iterator.next()
+      val spectrum: Spectrum = spectrumPersistenceService.findAll().iterator.next()
 
       val toUpdate = spectrum.copy(spectrum = "1:1")
 
       assert(spectrum.id == toUpdate.id)
       spectrumPersistenceService.update(toUpdate)
 
-      val updated = spectrumPersistenceService.get(spectrum.id)
+      val updated = spectrumPersistenceService.findOne(spectrum.id)
 
       assert(updated.spectrum == "1:1")
 
@@ -133,6 +143,29 @@ class SpectrumPersistenceServiceTest extends WordSpec {
 
     "present us with a count for specific queries" in {
       assert(spectrumPersistenceService.count("metaData=q='name==\"ion mode\" and value==negative'") == 25)
+    }
+
+    "delete 1 spectra in the repository" ignore {
+      val spectra: Spectrum = spectrumPersistenceService.findAll(new PageRequest(1, 10)).getContent.get((5))
+      val count = spectrumPersistenceService.count()
+      spectrumPersistenceService.delete(spectra)
+      assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
+      assert(spectrumPersistenceService.count() - 1 == count)
+    }
+
+    "delete 10 spectra in the repository by utilizing the iterable method" ignore {
+      val spectra = spectrumPersistenceService.findAll(new PageRequest(0, 10)).getContent
+      val count = spectrumPersistenceService.count()
+      spectrumPersistenceService.delete(spectra)
+
+      assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
+      assert(spectrumPersistenceService.count() - 10 == count)
+    }
+
+    "delete all data in the repository" ignore {
+      spectrumPersistenceService.deleteAll()
+      assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
+      assert(spectrumPersistenceService.count() == 0)
     }
 
     "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {

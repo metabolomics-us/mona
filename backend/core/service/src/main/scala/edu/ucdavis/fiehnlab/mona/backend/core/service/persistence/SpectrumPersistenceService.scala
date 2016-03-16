@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.persistence
 
+import java.lang
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
@@ -8,8 +9,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISp
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{Page, PageRequest, Pageable}
+import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
+import org.springframework.data.repository.{PagingAndSortingRepository, CrudRepository}
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 import scala.collection.JavaConverters._
 
@@ -18,7 +21,7 @@ import scala.collection.JavaConverters._
   * as well as providing users with feedback for auditing
   */
 @Service
-class SpectrumPersistenceService extends LazyLogging {
+class SpectrumPersistenceService extends LazyLogging with PagingAndSortingRepository[Spectrum, String]{
 
   /**
     * contains all listeneres in the system to tell subscripers that something with the backend happend
@@ -40,7 +43,8 @@ class SpectrumPersistenceService extends LazyLogging {
     *
     * @param spectrum
     */
-  def fireAddEvent(spectrum: Spectrum) = {
+  final def fireAddEvent(spectrum: Spectrum) = {
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been added")
     if (persistenceEventListeners != null) {
       persistenceEventListeners.asScala.foreach(_.added(new PersistenceEvent[Spectrum](spectrum, new Date())))
     }
@@ -51,7 +55,8 @@ class SpectrumPersistenceService extends LazyLogging {
     *
     * @param spectrum
     */
-  def fireDeleteEvent(spectrum: Spectrum) = {
+  final def fireDeleteEvent(spectrum: Spectrum) = {
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been deleted")
     if (persistenceEventListeners != null) {
       persistenceEventListeners.asScala.foreach(_.deleted(new PersistenceEvent[Spectrum](spectrum, new Date())))
     }
@@ -62,22 +67,11 @@ class SpectrumPersistenceService extends LazyLogging {
     *
     * @param spectrum
     */
-  def fireUpdateEvent(spectrum: Spectrum) = {
+  final def fireUpdateEvent(spectrum: Spectrum) = {
+    logger.debug(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been updated")
     if (persistenceEventListeners != null) {
       persistenceEventListeners.asScala.foreach(_.updated(new PersistenceEvent[Spectrum](spectrum, new Date())))
     }
-
-  }
-
-  /**
-    * stores a spectrum in the backend
-    *
-    * @param spectrum
-    * @return
-    */
-  def add(spectrum: Spectrum) = {
-    val s = spectrumMongoRepository.save(spectrum)
-    fireAddEvent(s)
   }
 
   /**
@@ -86,10 +80,18 @@ class SpectrumPersistenceService extends LazyLogging {
     * @param spectrum
     * @return
     */
-  def update(spectrum: Spectrum) = {
+  final def update(spectrum: Spectrum):Spectrum = {
     val result = spectrumMongoRepository.save(spectrum)
     fireUpdateEvent(result)
+    result
   }
+
+  /**
+    * updates the given spectra
+ *
+    * @param spectra
+    */
+  def update(spectra:lang.Iterable[Spectrum]):Unit = spectra.asScala.foreach(update(_))
 
   /**
     * removes the spectrum from the repository
@@ -97,8 +99,8 @@ class SpectrumPersistenceService extends LazyLogging {
     * @param spectrum
     * @return
     */
-  def delete(spectrum: Spectrum) = {
-    spectrumMongoRepository.delete(spectrum.id)
+  def delete(spectrum: Spectrum):Unit = {
+    spectrumMongoRepository.delete(spectrum)
     fireDeleteEvent(spectrum)
   }
 
@@ -108,44 +110,50 @@ class SpectrumPersistenceService extends LazyLogging {
     * @param id
     * @return
     */
-  def get(id: String): Spectrum = {
+  def findOne(id: String): Spectrum = {
     spectrumMongoRepository.findOne(id)
   }
 
+  /**
+    * santas little helper
+    *
+    * @param request
+    * @return
+    */
+  private def findDataForQuery(rsqlQuery : String, request:Pageable): Page[Spectrum] = {
+    //no need to hit elastic here, since no qury is executed
+    if (rsqlQuery == "") spectrumMongoRepository.findAll(request)
+    //let elastic deal with the request
+    else spectrumElasticRepository.rsqlQuery(rsqlQuery, request)
+  }
+
+  /**
+    * find all data without a query
+    *
+    * @return
+    */
+  def findAll() : lang.Iterable[Spectrum] = findAll("")
   /**
     * queries for all the spectra matching this RSQL query
     *
     * @param rsqlQuery
     * @return
     */
-  def query(rsqlQuery: String = ""): Iterable[Spectrum] = {
-
-    /**
-      * santas little helper
-      *
-      * @param request
-      * @return
-      */
-    def findDataForQuery(request:PageRequest): Page[Spectrum] = {
-      if (rsqlQuery == "") spectrumMongoRepository.findAll(request)
-      else this.query(rsqlQuery, request)
-    }
-
-
-    var result = findDataForQuery(new PageRequest(0, 10))
+  def findAll(rsqlQuery: String): lang.Iterable[Spectrum] = {
+    var result = findDataForQuery(rsqlQuery,new PageRequest(0, 10))
     var it = result.iterator()
 
     /**
       * used to keep the memory footprint small for large data collection
       */
-    new Iterable[Spectrum]() {
+    new lang.Iterable[Spectrum]() {
 
       /**
         * defines our custom batch fetching iterator
         *
         * @return
         */
-      override def iterator: Iterator[Spectrum] = new Iterator[Spectrum] {
+      override def iterator: java.util.Iterator[Spectrum] = new java.util.Iterator[Spectrum] {
         var currentResult = 0
 
         override def hasNext: Boolean = {
@@ -159,7 +167,7 @@ class SpectrumPersistenceService extends LazyLogging {
             if (result.getNumber < result.getNumberOfElements) {
               logger.debug("fetching new set of spectra" +
                 "")
-              result = findDataForQuery(new PageRequest(result.getNumber + 1, 10))
+              result = findDataForQuery(rsqlQuery,new PageRequest(result.getNumber + 1, 10))
               it = result.iterator()
             }
             else {
@@ -180,14 +188,14 @@ class SpectrumPersistenceService extends LazyLogging {
     * @param pageable
     * @return
     */
-  def query(rsqlQuery: String, pageable: Pageable): Page[Spectrum] = spectrumElasticRepository.rsqlQuery(rsqlQuery, pageable)
+  def findAll(rsqlQuery: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(rsqlQuery,pageable)
 
   /**
     * returns the count of all spectra
     *
     * @return
     */
-  def count(): Long = spectrumElasticRepository.count()
+  def count(): Long = spectrumMongoRepository.count()
 
   /**
     * returns the count matching the given RSQL query
@@ -195,4 +203,83 @@ class SpectrumPersistenceService extends LazyLogging {
     * @return
     */
   def count(rsqlQuery: String): Long = spectrumElasticRepository.rsqlQueryCount(rsqlQuery)
+
+  /**
+    * delete all objects in the system
+    */
+  override def deleteAll(): Unit = findAll().asScala.foreach(delete(_))
+
+  /**
+    * find all spectra with the given id
+    *
+    * @param ids
+    * @return
+    */
+  override def findAll(ids: lang.Iterable[String]): lang.Iterable[Spectrum] = spectrumMongoRepository.findAll()
+
+  /**
+    * kinda inefficient, since it has to find the object first
+    *
+    * @param id
+    */
+  final override def delete(id: String): Unit = {
+    logger.debug(s"deleting spectrum with id: ${id}")
+    val spectrum = findOne(id)
+    delete(spectrum)
+  }
+
+  /**
+    * delete all entities for the spectrym
+    *
+    * @param entities
+    */
+  override def delete(entities: lang.Iterable[_ <: Spectrum]): Unit = {
+    val iterator = entities.iterator()
+
+    while(iterator.hasNext){
+      delete(iterator.next())
+    }
+  }
+
+  /**
+    *
+    * @param entity
+    * @tparam S
+    * @return
+    */
+  final override def save[S <: Spectrum](entity: S): S = {
+    val result = spectrumMongoRepository.save(entity)
+    fireAddEvent(result)
+    result
+  }
+
+  override def save[S <: Spectrum](entities: lang.Iterable[S]): lang.Iterable[S] = {
+    entities.asScala.collect{
+      case x:S=> save(x)
+    }.asJava
+  }
+
+  /**
+    * checks if the given id exist in the database
+    *
+    * @param id
+    * @return
+    */
+  override def exists(id: String): Boolean = spectrumMongoRepository.exists(id)
+
+  /**
+    * finds all data with sorting.
+ *
+    * @param sort
+    * @return
+    */
+  override def findAll(sort: Sort): lang.Iterable[Spectrum] = spectrumMongoRepository.findAll(sort)
+
+  /**
+    * finds all with pagination
+ *
+    * @param pageable
+    * @return
+    */
+  override def findAll(pageable: Pageable): Page[Spectrum] = findAll("",pageable)
 }
