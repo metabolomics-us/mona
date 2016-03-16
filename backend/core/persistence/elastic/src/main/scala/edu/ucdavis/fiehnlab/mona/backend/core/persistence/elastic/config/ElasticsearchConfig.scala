@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{MappingUpdater, EntityMapperImpl}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.{InetSocketTransportAddress, TransportAddress}
@@ -22,7 +22,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(basePackageClasses = Array(
   classOf[ISpectrumElasticRepositoryCustom]
 ))
-@ComponentScan
+@ComponentScan(basePackageClasses = Array(classOf[ISpectrumElasticRepositoryCustom]))
 class ElasticsearchConfig extends LazyLogging {
 
   // @Value("${mona.persistence.elastic.port}")
