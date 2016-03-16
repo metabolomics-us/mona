@@ -1,8 +1,8 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.listener
+package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.listener.PersistenceEvent
+import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

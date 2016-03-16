@@ -108,6 +108,11 @@
                 <artifactId>elastic</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>

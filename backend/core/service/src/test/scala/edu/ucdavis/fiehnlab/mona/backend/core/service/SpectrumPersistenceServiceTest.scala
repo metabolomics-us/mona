@@ -1,10 +1,10 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.service
+package edu.ucdavis.fiehnlab.mona.backend.core.service
 
 import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +20,7 @@ import scala.util.Properties
   * Created by wohlg on 3/15/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig]))
 class SpectrumPersistenceServiceTest extends WordSpec {
   val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
 
