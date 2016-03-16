@@ -33,6 +33,13 @@ class MappingUpdater extends LazyLogging {
     */
   @PostConstruct
   def updateMappings = {
+
+    logger.debug("creating index")
+    elasticsearchTemplate.createIndex(classOf[Spectrum])
+
+    logger.debug("refreshing index")
+    elasticsearchTemplate.refresh(classOf[Spectrum], true)
+
     logger.debug("updating mapping")
     updateTextValueMapping
 
@@ -45,6 +52,7 @@ class MappingUpdater extends LazyLogging {
     * generates a mapping for the text value field to ensure its not analyze
     */
   protected def updateTextValueMapping = {
+
 
     val typeName = "spectrum"
     val indexName = "spectrum"

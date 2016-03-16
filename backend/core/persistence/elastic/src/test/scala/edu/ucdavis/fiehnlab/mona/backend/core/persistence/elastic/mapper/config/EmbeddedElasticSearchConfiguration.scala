@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config
 
+import java.io.File
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
@@ -28,6 +30,10 @@ class EmbeddedElasticSearchConfiguration extends LazyLogging{
   @Bean
   def elasticClient:Client = {
 
+    val fileElasticDirectory = new File(File.createTempFile("elastic-temp","temp").getParent,s"elastic-${System.currentTimeMillis()}")
+    fileElasticDirectory.mkdirs()
+    fileElasticDirectory.deleteOnExit()
+
     logger.info("creating new client")
     ESLoggerFactory.getRootLogger().setLevel("DEBUG");
 
@@ -35,6 +41,10 @@ class EmbeddedElasticSearchConfiguration extends LazyLogging{
     nodeBuilder.local(true)
     nodeBuilder.settings().put("http.enabled", true)
     nodeBuilder.settings().put("index.search.slowlog.threshold.query.warn","0ms")
+    nodeBuilder.settings().put("path.data",new File(fileElasticDirectory,"data").getAbsolutePath)
+    nodeBuilder.settings().put("path.logs",new File(fileElasticDirectory,"logs").getAbsolutePath)
+    nodeBuilder.settings().put("path.work",new File(fileElasticDirectory,"work").getAbsolutePath)
+
 
     logger.info("created client")
     nodeBuilder.node().client()

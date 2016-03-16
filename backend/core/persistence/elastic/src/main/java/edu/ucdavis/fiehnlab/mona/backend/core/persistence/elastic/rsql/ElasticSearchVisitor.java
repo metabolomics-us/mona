@@ -12,16 +12,16 @@ import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-public class ElasticsearchVisitor extends ContextualNodeVisitor<QueryBuilder, Context> {
+public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Context> {
 
     protected static final Function<Object, Object> IDENTITY = object -> object;
     protected final Function<Object, Object> normalizer;
 
-    public ElasticsearchVisitor() {
+    public ElasticSearchVisitor() {
         this(IDENTITY);
     }
 
-    public ElasticsearchVisitor(Function<Object, Object> normalizer) {
+    public ElasticSearchVisitor(Function<Object, Object> normalizer) {
         this.normalizer = normalizer;
     }
 
