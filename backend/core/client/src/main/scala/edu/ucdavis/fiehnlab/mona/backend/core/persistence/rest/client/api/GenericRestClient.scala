@@ -50,7 +50,9 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
     * @param dao
     * @return
     */
-  def add(dao: T): T = restOperations.postForObject(s"$requestPath", dao, classTag[T].runtimeClass).asInstanceOf[T]
+  def add(dao: T): T = {
+    restOperations.postForObject(s"$requestPath", dao, classTag[T].runtimeClass).asInstanceOf[T]
+  }
 
   /**
     * adds on object to service in a concurrent fashion
@@ -132,10 +134,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
       case _ =>
         s"$requestPath$utilizedPageSize$pageToLookAt"
     }
-
-    logger.info("invoking: " + pathToInvoke)
     restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
-
   }
 
 }

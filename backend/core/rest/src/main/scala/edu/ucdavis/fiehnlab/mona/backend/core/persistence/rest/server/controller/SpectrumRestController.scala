@@ -71,7 +71,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
     if (id == spectrum.id) {
       new AsyncResult[Spectrum](
-        getRepository.save(spectrum.copy(id = id))
+        spectrumPersistenceService.update(spectrum.copy(id = id))
       )
 
     }

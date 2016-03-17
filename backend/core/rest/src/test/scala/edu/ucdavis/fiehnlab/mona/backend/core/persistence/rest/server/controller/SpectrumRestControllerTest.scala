@@ -42,7 +42,10 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
   "we will be connecting to the REST controller" when {
 
     RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
-      override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
+      override def create(aClass: Class[_], s: String): ObjectMapper = {
+        logger.info("registering rest assured mapper")
+        MonaMapper.create
+      }
     }))
 
 
@@ -63,11 +66,7 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
 
         for (spectrum <- exampleRecords) {
 
-
-          logger.debug("before upload")
-          spectrum.biologicalCompound.metaData.foreach{x =>
-            logger.info(s"${x.name} - ${x.value}")
-          }
+          logger.debug("starting post request")
           given().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
         }
 
