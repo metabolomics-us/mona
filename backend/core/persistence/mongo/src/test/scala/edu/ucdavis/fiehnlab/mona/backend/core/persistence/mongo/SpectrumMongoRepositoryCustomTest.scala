@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
@@ -20,7 +21,6 @@ import scala.collection.JavaConverters._
 class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,Query] {
 
   @Autowired
-  @Qualifier("spectrumMongoRepository")
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
 
   //required for spring and scala tes

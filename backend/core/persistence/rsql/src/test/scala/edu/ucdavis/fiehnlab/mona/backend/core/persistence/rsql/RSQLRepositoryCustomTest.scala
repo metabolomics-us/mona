@@ -47,6 +47,7 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
       assert(getRepository.count() == 0)
 
       s"we should be able to store our data" in {
+
         for (spectrum <- exampleRecords) {
           val size = getRepository.count()
 
@@ -116,10 +117,29 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
         val result = getRepository.rsqlQuery("metaData=q='name==\"ion mode\" and value==negative'")
         assert(result.size == 25)
       }
+
+      "we should be able to execute RSQL queries like tags=q='text==LCMS' in " in {
+        val result = getRepository.rsqlQuery("tags=q='text==LCMS'")
+        assert(result.size == 58)
+      }
+
+      "readding the same events should be an update" in {
+        val count = getRepository.count()
+
+        val it = getRepository.findAll().iterator()
+
+        while(it.hasNext){
+          getRepository.saveOrUpdate(it.next())
+        }
+
+        assert(count == getRepository.count())
+
+
+      }
     }
 
     //MUST BE LAST
-    "if specified the server should stay online, this can be done using the env variabel 'keep.server.running=true' " in {
+    "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
       if(keepRunning){
         while (keepRunning) {
           logger.warn("waiting forever till you kill me!")

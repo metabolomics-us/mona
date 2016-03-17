@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 import com.fasterxml.jackson.databind.annotation.{JsonSerialize, JsonDeserialize}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{TupleSerialize, CascadeSave}
@@ -33,36 +33,37 @@ object Types {
                        hidden: Boolean,
 
                        @(Indexed@field)
-                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                        name: String,
 
                        score: Score,
 
-                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                        @(Indexed@field)
                        unit: String,
 
-                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                        url: String,
 
                        @(TupleSerialize@field)
-                       @JsonDeserialize(using = classOf[NumberDeserializer])
+                       @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
                        value: Any
+
                      )
 
   case class Names(
 
                     @(Indexed@field)
-                    @(Field@field)(`type` = FieldType.Boolean,index = FieldIndex.not_analyzed)
+                    @(Field@field)(`type` = FieldType.Boolean, index = FieldIndex.not_analyzed)
                     computed: Boolean,
 
                     @(Indexed@field)
-                    @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                     name: String,
 
                     score: Double,
 
-                    @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                     source: String
                   )
 
@@ -72,16 +73,17 @@ object Types {
                    ruleBased: Boolean,
 
                    @(Indexed@field)
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                    text: String
                  )
 
 
   case class Compound(
 
-                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                        inchi: String,
                        @(Indexed@field)
-                       @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                        inchiKey: String,
 
                        @(Field@field)(`type` = FieldType.Nested)
@@ -89,7 +91,7 @@ object Types {
 
                        molFile: String,
 
-                       @(Field@field)(`type` = FieldType.Nested)
+                       @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                        names: Array[Names],
 
                        @(Field@field)(`type` = FieldType.Nested)
@@ -119,16 +121,16 @@ object Types {
 
   case class Splash(
 
-                     @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      block1: String, //ns
 
-                     @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      block2: String, //ns
 
-                     @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      block3: String, //ns
 
-                     @(Field@field)(`type` = FieldType.String,index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      @(Indexed@field)
                      splash: String
                    )
@@ -164,7 +166,6 @@ object Types {
   //this is way to uggly, we might really need to use DAO's :(
   @Document(collection = "SPECTRUM")
   @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
-  //@Mapping(mappingPath = "/mappings/elastic/Spectrum.json")
   case class Spectrum(
 
                        @(Field@field)(`type` = FieldType.Object)
@@ -174,11 +175,9 @@ object Types {
                        @(Field@field)(`type` = FieldType.Object)
                        predictedCompound: Compound,
 
-                       @(Indexed@field)
-                       deleted: Boolean,
-
                        @(Id@field)
                        id: String,
+
                        lastUpdated: String,
 
                        @(Field@field)(`type` = FieldType.Nested)
@@ -202,6 +201,7 @@ object Types {
                        @(Field@field)(`type` = FieldType.Nested)
                        authors: Array[Author]
                      )
+
 }
 
 /**

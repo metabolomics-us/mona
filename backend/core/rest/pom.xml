@@ -17,11 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-            <artifactId>domain</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>mongo</artifactId>
+            <artifactId>service</artifactId>
         </dependency>
 
         <dependency>
@@ -53,11 +49,6 @@
             <artifactId>mongo</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>elastic</artifactId>
         </dependency>
 
         <dependency>
