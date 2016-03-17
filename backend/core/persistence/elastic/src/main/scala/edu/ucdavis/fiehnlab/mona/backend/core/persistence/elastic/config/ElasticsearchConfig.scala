@@ -1,10 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{MappingUpdater, EntityMapperImpl}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{ElasticMedaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
@@ -37,7 +39,25 @@ class ElasticsearchConfig extends LazyLogging {
     */
   @Bean
   def elasticsearchTemplate(elasticClient: Client): ElasticsearchTemplate = {
-    new ElasticsearchTemplate(elasticClient, new EntityMapperImpl())
+    new ElasticsearchTemplate(elasticClient, new EntityMapper with LazyLogging {
+
+      val mapper = MonaMapper.create
+
+      val module = new SimpleModule()
+
+      module.addSerializer(classOf[MetaData], new ElasticMetaDataSerializer)
+      module.addDeserializer(classOf[MetaData], new ElasticMedaDataDeserializer)
+
+
+      mapper.registerModule(module)
+
+      logger.debug("created new entity mapper for elastic specific operations")
+
+      override def mapToString(`object`: scala.Any): String = mapper.writeValueAsString(`object`)
+
+      override def mapToObject[T](source: String, clazz: Class[T]): T = mapper.readValue(source, clazz)
+    }
+    )
   }
 
   /**

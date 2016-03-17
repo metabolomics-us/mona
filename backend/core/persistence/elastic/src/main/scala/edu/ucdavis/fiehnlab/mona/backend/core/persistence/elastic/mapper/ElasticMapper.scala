@@ -16,29 +16,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{NumberDeserializer
 import org.springframework.data.elasticsearch.core.EntityMapper
 
 /**
-  * this class is needed to tell elastic search what kind of mapper we want to use
-  */
-class EntityMapperImpl() extends EntityMapper {
-
-  val mapper = MonaMapper.create
-  val module = new SimpleModule()
-
-  module.addSerializer(classOf[MetaData], new ElasticMetaDataSerializer)
-  module.addDeserializer(classOf[MetaData], new ElasticMedaDataDeserializer)
-
-
-  mapper.registerModule(module)
-
-  override def mapToString(`object`: scala.Any): String = mapper.writeValueAsString(`object`)
-
-  override def mapToObject[T](source: String, clazz: Class[T]): T = mapper.readValue(source, clazz)
-}
-
-/**
   * custom serializer, which transform tuples, so that elastic search has only one value for mapping
   */
 class ElasticMetaDataSerializer extends JsonSerializer[MetaData] with LazyLogging {
   override def serialize(value: MetaData, jsonGenerator: JsonGenerator, serializerProvider: SerializerProvider): Unit = {
+
     jsonGenerator.writeStartObject()
     val fields: Array[Field] = value.getClass.getDeclaredFields
 
@@ -56,7 +38,12 @@ class ElasticMetaDataSerializer extends JsonSerializer[MetaData] with LazyLoggin
             case x: java.lang.Integer => jsonGenerator.writeNumberField("value_number", x.toString.toDouble)
             case x: java.lang.Float => jsonGenerator.writeNumberField("value_number", x.toString.toDouble)
             case _ =>
-              jsonGenerator.writeStringField("value_text", t.toString)
+              if(t != null) {
+                jsonGenerator.writeStringField("value_text", t.toString)
+              }
+              else{
+                throw new RuntimeException(s"object was null for ${value}, which is not permitted!")
+              }
           }
         }
         //write normal fields

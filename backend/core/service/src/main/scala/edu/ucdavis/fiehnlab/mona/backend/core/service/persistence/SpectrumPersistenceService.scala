@@ -7,6 +7,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
@@ -33,10 +34,10 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * provides us with access to all spectra in the mongo database
     */
   @Autowired
-  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+  val spectrumMongoRepository: PagingAndSortingRepository[Spectrum,String] with RSQLRepositoryCustom[Spectrum,String] = null
 
   @Autowired
-  val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
+  val spectrumElasticRepository: PagingAndSortingRepository[Spectrum,String] with RSQLRepositoryCustom[Spectrum,String] = null
 
   /**
     * will be invoked everytime a spectrum was added to the system

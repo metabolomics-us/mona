@@ -46,7 +46,7 @@ object Types {
                        url: String,
 
                        @(TupleSerialize@field)
-                       @JsonDeserialize(using = classOf[NumberDeserializer])
+                       @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
                        value: Any
 
                      )

@@ -3,13 +3,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.logging.ESLoggerFactory;
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.EntityMapperImpl
 import org.elasticsearch.node.NodeBuilder
 import org.springframework.context.annotation.{Primary, Import, Bean, Configuration}
 import org.springframework.data.elasticsearch.core.{ElasticsearchTemplate, ElasticsearchOperations}

@@ -77,7 +77,6 @@ class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging{
     * @return
     */
   override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Any = {
-
     try {
       val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
       val content = jsonNode.textValue
@@ -97,12 +96,14 @@ class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging{
               content.toDouble
             }
             catch {
-              case e2: NumberFormatException => content
+              case e2: NumberFormatException =>
+                content
             }
           }
         }
       }
       else{
+        logger.warn("content is null!")
         content
       }
     }
