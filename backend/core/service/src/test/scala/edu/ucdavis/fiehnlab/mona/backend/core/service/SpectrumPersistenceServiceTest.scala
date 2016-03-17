@@ -167,6 +167,7 @@ class SpectrumPersistenceServiceTest extends WordSpec with LazyLogging{
     "delete all data in the repository" in {
       logger.info(s"spectra before delete ${spectrumPersistenceService.count()}")
       spectrumPersistenceService.deleteAll()
+      logger.info(s"spectra after delete ${spectrumPersistenceService.count()}")
       assert(spectrumPersistenceService.count() == 0)
     }
 
