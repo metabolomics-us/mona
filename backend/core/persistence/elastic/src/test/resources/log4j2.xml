@@ -6,8 +6,9 @@
     </Console>
 </Appenders>
 <Loggers>
-    <Logger name="org.elasticsearch" level="debug"/>
-    <Logger name="org.springframework.web.context.request.async" level="info"/>
+    <Logger name="edu.ucdavis" level="debug"/>
+    <Logger name="org.elasticsearch" level="warn"/>
+    <Logger name="org.springframework.web.context.request.async" level="warn"/>
     <Root level="info">
         <AppenderRef ref="Console"/>
     </Root>

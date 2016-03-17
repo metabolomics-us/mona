@@ -1,17 +1,19 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{EntityMapperImpl}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{ElasticMedaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.{InetSocketTransportAddress, TransportAddress}
 import org.elasticsearch.node.NodeBuilder
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{Import, Bean, Configuration, PropertySource}
+import org.springframework.context.annotation._
 import org.springframework.data.elasticsearch.core.{EntityMapper, ElasticsearchTemplate, ElasticsearchOperations}
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
 
@@ -22,6 +24,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(basePackageClasses = Array(
   classOf[ISpectrumElasticRepositoryCustom]
 ))
+@ComponentScan(basePackageClasses = Array(classOf[ISpectrumElasticRepositoryCustom]))
 class ElasticsearchConfig extends LazyLogging {
 
   // @Value("${mona.persistence.elastic.port}")
@@ -31,23 +34,39 @@ class ElasticsearchConfig extends LazyLogging {
 
   /**
     * this defines our custom wired elastic search template
+    *
     * @return
     */
   @Bean
-  def elasticsearchTemplate: ElasticsearchOperations = {
+  def elasticsearchTemplate(elasticClient: Client): ElasticsearchTemplate = {
+    new ElasticsearchTemplate(elasticClient, new EntityMapper with LazyLogging {
 
-    //val template= new ElasticsearchTemplate(new NodeBuilder().local(true).node().client(),new EntityMapperImpl())
-    val template = new ElasticsearchTemplate(client,new EntityMapperImpl())
+      val mapper = MonaMapper.create
 
-    template
+      val module = new SimpleModule()
+
+      module.addSerializer(classOf[MetaData], new ElasticMetaDataSerializer)
+      module.addDeserializer(classOf[MetaData], new ElasticMedaDataDeserializer)
+
+
+      mapper.registerModule(module)
+
+      logger.debug("created new entity mapper for elastic specific operations")
+
+      override def mapToString(`object`: scala.Any): String = mapper.writeValueAsString(`object`)
+
+      override def mapToObject[T](source: String, clazz: Class[T]): T = mapper.readValue(source, clazz)
+    }
+    )
   }
 
   /**
     * this defines the elastic client and where we want to connect from
+    *
     * @return
     */
   @Bean
-  def client: Client = {
+  def elasticClient: Client = {
     logger.info(s"connecting to ${hostname}:${port}")
     val client = new TransportClient()
     val address = new InetSocketTransportAddress(hostname, port)
@@ -55,5 +74,8 @@ class ElasticsearchConfig extends LazyLogging {
 
     client
   }
+
+  @Bean
+  def mappingUpdater: MappingUpdater = new MappingUpdater
 
 }

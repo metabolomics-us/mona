@@ -15,6 +15,7 @@
   <modules>
     <module>domain</module>
     <module>persistence</module>
+    <module>service</module>
     <module>rest</module>
     <module>client</module>
     <module>amqp</module>
