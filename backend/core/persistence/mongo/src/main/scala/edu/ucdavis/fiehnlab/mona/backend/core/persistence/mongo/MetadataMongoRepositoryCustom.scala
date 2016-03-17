@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom

@@ -4,6 +4,7 @@ import com.github.rutledgepaulv.qbuilders.visitors.MongoVisitor
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import java.util.LinkedHashMap
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageImpl, Pageable, Sort}
 import org.springframework.data.mongodb.core.MongoOperations
@@ -11,6 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.data.mongodb.core.query.{Criteria, Query}
 import org.springframework.stereotype.Repository
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 2/26/16.
@@ -97,7 +99,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom
       Aggregation.limit(limit))
 
     val results = mongoOperations.aggregate(aggregationQuery, classOf[Spectrum],
-      classOf[util.LinkedHashMap[String, Object]]).getMappedResults.asScala
+      classOf[LinkedHashMap[String, Object]]).getMappedResults.asScala
 
     val typedResults = results.map(x => (x.get("value").asInstanceOf[AnyVal], x.get("total").asInstanceOf[Int]))
 
