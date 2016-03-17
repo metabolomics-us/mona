@@ -1,17 +1,15 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
 import org.springframework.dao.InvalidDataAccessApiUsageException
-import org.springframework.data.domain.{PageRequest, Page}
-import org.springframework.data.mongodb.core.query.{BasicQuery, Query}
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration]))
