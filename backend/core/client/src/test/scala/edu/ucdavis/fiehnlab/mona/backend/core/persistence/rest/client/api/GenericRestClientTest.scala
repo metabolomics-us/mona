@@ -42,7 +42,7 @@ class GenericRestClientTest extends WordSpec {
       )
     }
 
-    "we should be able to spectra" in {
+    "we should be able to add spectra" in {
       for (spec <- exampleRecords) {
         spectrumRestClient.add(spec)
       }

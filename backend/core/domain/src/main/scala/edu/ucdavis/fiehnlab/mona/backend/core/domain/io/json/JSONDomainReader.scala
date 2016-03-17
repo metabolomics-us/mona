@@ -72,43 +72,23 @@ class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging{
 
   /**
     * tries to convert a value to a number/boolean/text on the fly
+    *
     * @param jsonParser
     * @param deserializationContext
     * @return
     */
   override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Any = {
-    try {
-      val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
-      val content = jsonNode.textValue
+    val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
 
-      if (content != null) {
-        if (content.toLowerCase.equals("true")) {
-          true
-        }
-        else if (content.toLowerCase().equals("false")) {
-          false
-        }
-        else {
-          try {
-            content.toInt
-          } catch {
-            case e: NumberFormatException => try {
-              content.toDouble
-            }
-            catch {
-              case e2: NumberFormatException =>
-                content
-            }
-          }
-        }
-      }
-      else{
-        logger.warn("content is null!")
-        content
-      }
+    if (jsonNode.isNumber) {
+      jsonNode.numberValue()
     }
-    catch {
-      case e: Exception => e.printStackTrace()
+    else if(jsonNode.isBoolean){
+      jsonNode.booleanValue()
+    }
+
+    else{
+      jsonNode.textValue()
     }
   }
 }
