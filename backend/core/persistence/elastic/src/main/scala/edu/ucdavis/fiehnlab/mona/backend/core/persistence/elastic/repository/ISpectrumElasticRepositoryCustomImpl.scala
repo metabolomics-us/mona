@@ -10,6 +10,7 @@ import org.elasticsearch.action.delete.{DeleteRequestBuilder, DeleteRequest}
 import org.elasticsearch.client.Client
 import org.elasticsearch.index.query._
 import org.elasticsearch.search.SearchHit
+import org.elasticsearch.search.aggregations.{AggregationBuilders, AggregationBuilder}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
@@ -68,7 +69,8 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
 
   def getSearch(queryBuilder: QueryBuilder): SearchQuery = {
     //uggly but best solution I found so far. If we do it without pagination request, spring will always limit it to 10 results.
-    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0,1000000)).build()
+    //TODO obviously onces the delete bug doesnt happen anymore we should get rid of the aggregations
+    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0,1000000)).addAggregation(AggregationBuilders.terms("by_id").field("id")).build()
     query
   }
 

@@ -14,4 +14,10 @@
 
     <description>This project, provides a MoNA server which can be utilized in a single or multi node cluster</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>rest</artifactId>
+        </dependency>
+    </dependencies>
 </project>
