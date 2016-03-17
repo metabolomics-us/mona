@@ -7,11 +7,13 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -25,13 +27,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig],classOf[EmbeddedRestServerConfig]))
 @WebIntegrationTest(Array("server.port=0"))
-class SpectrumRestControllerTest extends WordSpec {
+class SpectrumRestControllerTest extends WordSpec with LazyLogging{
 
   @Value( """${local.server.port}""")
   val port: Int = 0
 
   @Autowired
-  val spectrumRepository: ISpectrumMongoRepositoryCustom = null
+  val spectrumRepository: SpectrumPersistenceService = null
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
@@ -60,6 +62,12 @@ class SpectrumRestControllerTest extends WordSpec {
         assert(countBefore == 0)
 
         for (spectrum <- exampleRecords) {
+
+
+          logger.debug("before upload")
+          spectrum.biologicalCompound.metaData.foreach{x =>
+            logger.info(s"${x.name} - ${x.value}")
+          }
           given().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
         }
 
@@ -107,40 +115,10 @@ class SpectrumRestControllerTest extends WordSpec {
         assert(countBefore - countAfter == 10)
       }
 
-      "we should be able to execute custom queries at /rest/spectra/search using POST" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-
-        assert(exampleRecords.length == spectrumRepository.count())
-      }
-
-
       "we should be able to execute custom queries at /rest/spectra/search using GET" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
         assert(exampleRecords.length == 1)
-      }
-
-
-
-      "we should be able to execute custom queries at /rest/spectra/search?size=10 using POST limiting it to 10 records" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-
-        assert(exampleRecords.length == 10)
-      }
-
-
-      "we should be able to execute custom queries at /rest/spectra/search?size=10 using POST limiting it to 10 records and access page 1" in {
-
-        val firstRecords = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search?size=10&page=0").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-        assert(firstRecords.length == 10)
-
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("""{"tags" : {$elemMatch : { text : "LCMS" } } }""")).post("/spectra/search?size=10&page=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-
-        assert(exampleRecords.length == 10)
-
-        for (spec <- exampleRecords) {
-          assert(!firstRecords.contains(spec))
-        }
       }
 
       "we should be able to update a spectra with new properties" in {

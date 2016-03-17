@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.{SerializationConfig, ObjectMapper}
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.springframework.context.annotation.{ComponentScan, Configuration, Primary, Bean}
 
@@ -9,10 +10,12 @@ import org.springframework.context.annotation.{ComponentScan, Configuration, Pri
   */
 
 @Configuration
-class DomainConfig {
+class DomainConfig extends LazyLogging{
 
   @Bean
-  @Primary
-  def objectMapper : ObjectMapper = MonaMapper.create
+  def objectMapper : ObjectMapper = {
+    logger.debug("creating new custom object mapper")
+    MonaMapper.create
+  }
 
 }
