@@ -81,36 +81,36 @@ class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging{
     val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
 
     if (jsonNode.isNumber) {
-      logger.debug(s"it's a number: ${jsonNode.numberValue()}")
+      jsonNode.numberValue()
     }
     else if(jsonNode.isBoolean){
-      logger.debug(s"it's a boolean: ${jsonNode.booleanValue()}")
+      jsonNode.booleanValue()
     }
     else {
       val content = jsonNode.textValue()
 
       if (content != null) {
         if (content.toLowerCase.equals("true")) {
-          return true
+           true
         }
         else if (content.toLowerCase().equals("false")) {
-          return false
+           false
         }
         else {
           try {
             content.toInt
           } catch {
             case e: NumberFormatException => try {
-              return content.toDouble
+               content.toDouble
             }
             catch {
-              case e2: NumberFormatException => return content
+              case e2: NumberFormatException =>  content
             }
           }
         }
       }
       else {
-        return content
+         content
       }
     }
   }
