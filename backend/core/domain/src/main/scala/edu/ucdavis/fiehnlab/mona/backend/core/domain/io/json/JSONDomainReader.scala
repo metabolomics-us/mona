@@ -20,7 +20,7 @@ import scala.reflect.ClassTag
 /**
   * Created by wohlgemuth on 2/25/16.
   */
-class JSONDomainReader[T: ClassTag](mapper: ObjectMapper) extends DomainReader[T] {
+class JSONDomainReader[T: ClassTag](mapper: ObjectMapper) extends DomainReader[T] with LazyLogging {
 
   /**
     * memory efficient reader
@@ -81,14 +81,37 @@ class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging{
     val jsonNode: JsonNode = jsonParser.getCodec.readTree(jsonParser)
 
     if (jsonNode.isNumber) {
-      jsonNode.numberValue()
+      logger.debug(s"it's a number: ${jsonNode.numberValue()}")
     }
     else if(jsonNode.isBoolean){
-      jsonNode.booleanValue()
+      logger.debug(s"it's a boolean: ${jsonNode.booleanValue()}")
     }
+    else {
+      val content = jsonNode.textValue()
 
-    else{
-      jsonNode.textValue()
+      if (content != null) {
+        if (content.toLowerCase.equals("true")) {
+          return true
+        }
+        else if (content.toLowerCase().equals("false")) {
+          return false
+        }
+        else {
+          try {
+            content.toInt
+          } catch {
+            case e: NumberFormatException => try {
+              return content.toDouble
+            }
+            catch {
+              case e2: NumberFormatException => return content
+            }
+          }
+        }
+      }
+      else {
+        return content
+      }
     }
   }
 }
