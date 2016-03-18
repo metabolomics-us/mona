@@ -7,11 +7,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{MonaSpectrumRestClient, GenericRestClient}
 import org.springframework.batch.item.ItemWriter
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 3/11/16.
   */
+@Component
 class RestRepositoryWriter extends ItemWriter[Spectrum] with LazyLogging{
 
   @Autowired
