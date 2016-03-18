@@ -4,7 +4,7 @@ import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.GenericRestClient
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{MonaSpectrumRestClient, GenericRestClient}
 import org.springframework.batch.item.ItemWriter
 import org.springframework.beans.factory.annotation.Autowired
 import scala.collection.JavaConverters._
@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
 class RestRepositoryWriter extends ItemWriter[Spectrum] with LazyLogging{
 
   @Autowired
-  val spectrumRestClient: GenericRestClient[Spectrum, String] = null
+  val monaSpectrumRestClient: MonaSpectrumRestClient = null
 
   /**
     * attempts to write all these spectra to the repository
@@ -27,11 +27,11 @@ class RestRepositoryWriter extends ItemWriter[Spectrum] with LazyLogging{
     for(spectrum <- items.asScala){
       if(spectrum.id == null){
         logger.debug("adding spectra to server")
-        spectrumRestClient.add(spectrum)
+        monaSpectrumRestClient.add(spectrum)
       }
       else{
         logger.debug(s"updating spectra on server ${spectrum.id}")
-        spectrumRestClient.update(spectrum,spectrum.id)
+        monaSpectrumRestClient.update(spectrum,spectrum.id)
       }
     }
   }

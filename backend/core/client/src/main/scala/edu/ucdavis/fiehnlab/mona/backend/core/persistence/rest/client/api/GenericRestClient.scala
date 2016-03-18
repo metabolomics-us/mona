@@ -4,20 +4,22 @@ import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.data.domain.{PageImpl, Page, Pageable}
 import org.springframework.web.client.RestOperations
-
+import scala.collection.JavaConverters._
 import scala.reflect.{ClassTag, _}
 
 
 /**
   * a generic approach to connect to a REST server and execute operations against it. It assumes compliance with CRUD operations
   */
-class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
+class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
 
   @Autowired
   @Qualifier("monaRestServer")
-  val monaRestServer:String = null
+  val monaRestServer: String = null
 
   @Autowired
   protected val restOperations: RestOperations = null
@@ -98,6 +100,42 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
   def get(id: ID): T = restOperations.getForObject(s"$requestPath/$id", classTag[T].runtimeClass).asInstanceOf[T]
 
   /**
+    * streams the results to the client
+    * @param query
+    * @return
+    */
+  def stream(query: Option[String], fetchSize:Option[Int] = Some(10)) : Iterable[T] = {
+    new DynamicIterable[T, Option[String]](query, fetchSize.get) {
+
+      /**
+        * required for the pagination
+        */
+      val internalCount = count(query)
+
+      /**
+        * loads more data from the server for the given query
+        */
+      override def fetchMoreData(query: Option[String], pageable: Pageable): Page[T] = {
+
+        var path: String = s"${requestPath}"
+
+        query match {
+          case Some(x) =>
+            path = s"${path}/search?size=${fetchSize}&page=${pageable.getPageNumber}&query=${x}"
+          case _ =>
+            path = s"${path}?size=${fetchSize}&page=${pageable.getPageNumber}"
+        }
+
+        logger.debug(s"calling path: ${path}")
+        val result = restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
+
+        logger.debug(s"received: ${result}")
+        new PageImpl[T](result.toList.asJava, pageable, internalCount)
+      }
+    }.asScala
+
+  }
+  /**
     * list data matching the optional conditions or returns all
     *
     * @param query    optional query to execute against the rest service
@@ -105,8 +143,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging{
     * @param pageSize optional page size
     * @return
     */
-  def list(query: Option[String] = None, page: Option[Int] = None, pageSize: Option[Int] = None): Array[T] = {
-
+  def list(query: Option[String] = None, page: Option[Int] = None, pageSize: Option[Int] = None): Iterable[T] = {
 
     val utilizedPageSize: String = pageSize match {
       case Some(a) => s"?size=$a"
