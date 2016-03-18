@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.metadata
 
 import java.util
 import java.util.concurrent.Future
@@ -8,10 +8,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.scheduling.annotation.{AsyncResult, Async}
-import org.springframework.web.bind.annotation._
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
-import org.springframework.data.mongodb.core.query.{Criteria, BasicQuery}
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.scheduling.annotation.{Async, AsyncResult}
+import org.springframework.web.bind.annotation._
+
 import scala.collection.JavaConverters._
 
 /**

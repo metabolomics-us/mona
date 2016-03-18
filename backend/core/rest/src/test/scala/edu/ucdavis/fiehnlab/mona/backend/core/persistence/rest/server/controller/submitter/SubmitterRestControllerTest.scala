@@ -1,20 +1,21 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
-import java.io.{InputStreamReader, File, FileReader}
+import java.io.InputStreamReader
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubmitterMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.StartServerConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.test.{WebIntegrationTest, IntegrationTest, SpringApplicationConfiguration}
+import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 

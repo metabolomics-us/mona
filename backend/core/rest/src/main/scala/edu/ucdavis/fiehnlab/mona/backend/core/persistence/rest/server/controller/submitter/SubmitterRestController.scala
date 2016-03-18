@@ -1,7 +1,8 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubmitterMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.web.bind.annotation.{RequestMapping, RestController}

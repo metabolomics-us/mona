@@ -1,7 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.SpectrumRestController
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum.SpectrumRestController
 import edu.ucdavis.fiehnlab.mona.backend.core.service.config.PersistenceServiceConfig
 import org.springframework.context.annotation.{Import, ComponentScan, Configuration}
 
@@ -10,7 +12,7 @@ import org.springframework.context.annotation.{Import, ComponentScan, Configurat
   */
 @Configuration
 @Import(Array(classOf[PersistenceServiceConfig]))
-@ComponentScan(basePackageClasses = Array(classOf[SpectrumRestController]))
+@ComponentScan(basePackageClasses = Array(classOf[GenericRESTController[Spectrum]]))
 class RestServerConfig {
 
 }

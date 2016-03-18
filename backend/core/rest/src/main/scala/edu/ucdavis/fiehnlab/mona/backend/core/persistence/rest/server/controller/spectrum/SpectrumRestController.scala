@@ -1,19 +1,17 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
-import java.lang.Iterable
 import java.util.concurrent.Future
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.mongodb.core.query.BasicQuery
 import org.springframework.data.repository.PagingAndSortingRepository
-import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.scheduling.annotation.{AsyncResult, Async}
+import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
+
 import scala.collection.JavaConverters._
 
 @RestController

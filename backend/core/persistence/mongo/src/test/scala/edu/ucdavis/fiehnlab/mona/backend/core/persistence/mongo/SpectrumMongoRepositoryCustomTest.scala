@@ -30,6 +30,20 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
 
   "mongo specific queries " should {
 
+
+    s"we should be able to reload our data" in {
+
+      for (spectrum <- exampleRecords) {
+        val size = getRepository.count()
+
+        val result = getRepository.save(spectrum)
+        val newSize = getRepository.count()
+
+        assert(newSize == size + 1)
+      }
+
+    }
+
     "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
       val result: java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }"""))
