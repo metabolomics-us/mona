@@ -4,13 +4,10 @@ import com.github.rutledgepaulv.qbuilders.visitors.MongoVisitor
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import java.util.LinkedHashMap
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{Page, PageImpl, Pageable, Sort}
+import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.data.mongodb.core.aggregation.Aggregation
-import org.springframework.data.mongodb.core.aggregation.Aggregation._
-import org.springframework.data.mongodb.core.query.{Criteria, Query}
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Repository
 import scala.collection.JavaConverters._
 
@@ -19,9 +16,7 @@ import scala.collection.JavaConverters._
   */
 
 @Repository
-class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom
-  with MetadataMongoRepositoryCustom
-  with LazyLogging {
+class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom with LazyLogging {
 
   @Autowired
   val mongoOperations: MongoOperations = null
@@ -76,34 +71,6 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom
     toExecute.addCriteria(criteria)
 
     toExecute
-  }
-
-  def listTopAggregates(name: String, skip: Int, limit: Long, metaDataGroup: Option[String] = None): Seq[(AnyVal, Int)] = {
-    if (name == null) throw new IllegalArgumentException("Metadata field must not be null")
-    // Null checking for numResults and metaDataGroup is checked by the compiler, and 
-    // positive long values for numResults is checked by the aggregation framework
-
-    val metaData = metaDataGroup map(_ + ".metaData") getOrElse "metaData"
-
-    val aggregationQuery = newAggregation(classOf[Spectrum],
-      project(metaData),
-      unwind("metaData"),
-      `match`(Criteria.where("metaData.name").is(name)),
-      project("metaData.value"),
-      group("value").count().as("total"),
-      project("total").and("value").previousOperation(),
-      // TODO If both sorts are omitted or pagination is not used, the tests are successful
-      sort(Sort.Direction.ASC, "value"),
-      sort(Sort.Direction.DESC, "total"),
-      Aggregation.skip(skip),
-      Aggregation.limit(limit))
-
-    val results = mongoOperations.aggregate(aggregationQuery, classOf[Spectrum],
-      classOf[LinkedHashMap[String, Object]]).getMappedResults.asScala
-
-    val typedResults = results.map(x => (x.get("value").asInstanceOf[AnyVal], x.get("total").asInstanceOf[Int]))
-
-    typedResults.toSeq
   }
 
   /**
