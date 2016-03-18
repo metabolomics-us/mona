@@ -5,6 +5,7 @@ import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
@@ -148,44 +149,14 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   def findAll(rsqlQuery: String): lang.Iterable[Spectrum] = {
 
     /**
-      * used to keep the memory footprint small for large data collection
+      * generates a new dynamic fetchable
       */
-    new lang.Iterable[Spectrum]() {
+    new DynamicIterable[Spectrum,String](rsqlQuery,fetchSize) {
 
       /**
-        * defines our custom batch fetching iterator
-        *
-        * @return
+        * loads more data from the server for the given query
         */
-      override def iterator: java.util.Iterator[Spectrum] = new java.util.Iterator[Spectrum] {
-        var result = findDataForQuery(rsqlQuery, new PageRequest(0, fetchSize))
-        var it = result.iterator()
-        var page:Int = 1
-
-        override def hasNext: Boolean = {
-          if (!it.hasNext) {
-            logger.debug(s"fetching new set of spectra, page ${result.getNumber} is exhausted")
-            result = findDataForQuery(rsqlQuery, new PageRequest(page, fetchSize))
-            it = result.iterator()
-            page = page + 1
-
-            if(!it.hasNext){
-              logger.debug(s"all data are loaded for query: ${rsqlQuery}")
-            }
-          }
-
-          it.hasNext
-        }
-
-        /**
-          * fetches the next spectrum from the database
-          *
-          * @return
-          */
-        override def next(): Spectrum = {
-          it.next()
-        }
-      }
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query,pageable)
     }
   }
 

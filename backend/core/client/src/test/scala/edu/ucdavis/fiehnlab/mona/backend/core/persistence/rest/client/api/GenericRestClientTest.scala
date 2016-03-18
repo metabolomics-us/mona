@@ -58,7 +58,7 @@ class GenericRestClientTest extends WordSpec {
     }
 
     "it should be possible to update values" in {
-      val test = spectrumRestClient.list().head
+      val test = spectrumRestClient.list().toList.head
 
       val result = spectrumRestClient.update(test, "newTestId")
 
@@ -69,26 +69,35 @@ class GenericRestClientTest extends WordSpec {
     }
 
     "it should be possible to get values" in {
-      val records = spectrumRestClient.list()
+      val records = spectrumRestClient.list().toList
       val spectrum = spectrumRestClient.get(records.head.id)
 
       assert(spectrum.id == records.head.id)
     }
 
     "it should be possible to list all values" in {
-      val data = spectrumRestClient.list()
-      assert(data.length == exampleRecords.length)
+      val count = spectrumRestClient.list().foldLeft(0)((sum,_) => sum + 1)
+      assert(count == 58)
     }
 
+
+    "it should be possible to stream all values" in {
+      val count = spectrumRestClient.list().foldLeft(0)((sum,_) => sum + 1)
+      assert(count == 58)
+    }
+
+
+
     "it should be possible to paginate" in {
-      val data = spectrumRestClient.list(pageSize = Some(10))
-      assert(data.length == 10)
+
+      val count = spectrumRestClient.list(pageSize = Some(10)).foldLeft(0)((sum,_) => sum + 1)
+      assert(count == 10)
     }
 
 
     "it should be possible to paginate over several pages" in {
-      val dataFirst = spectrumRestClient.list(pageSize = Some(10), page = Some(0))
-      val dataSecond = spectrumRestClient.list(pageSize = Some(10), page = Some(1))
+      val dataFirst = spectrumRestClient.list(pageSize = Some(10), page = Some(0)).toList
+      val dataSecond = spectrumRestClient.list(pageSize = Some(10), page = Some(1)).toList
 
       assert(dataFirst.length == 10)
 
@@ -98,7 +107,7 @@ class GenericRestClientTest extends WordSpec {
 
     "it should be possible to execute queries - Warning ELASTIST SEARCH WILL RETURN WRONG COUNT,HENCE >=" in {
       val data = spectrumRestClient.list(Some(""" tags=q='text==LCMS' """))
-      assert(data.length >= exampleRecords.length)
+      assert(data.toList.length >= exampleRecords.length)
 
     }
 
