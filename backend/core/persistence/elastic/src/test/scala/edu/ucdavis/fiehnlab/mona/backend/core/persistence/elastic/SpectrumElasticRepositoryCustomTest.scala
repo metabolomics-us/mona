@@ -34,25 +34,4 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
 
   override def getRepository: RSQLRepositoryCustom[Spectrum,QueryBuilder] with CrudRepository[Spectrum, String] = spectrumElasticRepository
 
-  "we should be able to call the custom methods here" should {
-
-    "load all data" in {
-      val result: Iterable[Spectrum] = spectrumElasticRepository.findAll()
-
-      assert(spectrumElasticRepository.count() == 58)
-
-      val it = result.iterator()
-      assert(it.hasNext)
-    }
-
-    "for example the find by inchi key" in {
-      val result: Iterable[Spectrum] = spectrumElasticRepository.findByBiologicalCompoundInchiKey("UYTPUPDQBNUYGX-UHFFFAOYSA-N")
-
-      val it = result.iterator()
-
-      assert(it.hasNext)
-
-    }
-  }
-
 }

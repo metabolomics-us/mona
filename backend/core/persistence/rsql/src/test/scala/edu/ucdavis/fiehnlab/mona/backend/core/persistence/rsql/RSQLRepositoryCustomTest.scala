@@ -33,18 +33,12 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
 
   s"a repository is loaded with ${exampleRecords.length} compounds" when {
 
-    assert(getRepository != null)
-
-    "reading our records" should {
-      s"results in ${exampleRecords.length} records" in {
-        assert(exampleRecords.length == 58)
-      }
-    }
-
     "issues standard crud commands " should {
 
-      getRepository.deleteAll()
-      assert(getRepository.count() == 0)
+      "we should be able to reset our data" in {
+        getRepository.deleteAll()
+        assert(getRepository.count() == 0)
+      }
 
       s"we should be able to store our data" in {
 
@@ -63,8 +57,6 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
 
       s"we should have ${exampleRecords.length} records in the repository now" in {
         assert(getRepository.count() == 58)
-
-        val data:Iterable[T] = getRepository.findAll()
       }
 
 
@@ -124,7 +116,6 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
       }
 
       "readding the same events should be an update" in {
-        val count = getRepository.count()
 
         val it = getRepository.findAll().iterator()
 
@@ -132,9 +123,34 @@ abstract class RSQLRepositoryCustomTest[T:ClassTag, Q] extends WordSpec with Laz
           getRepository.saveOrUpdate(it.next())
         }
 
-        assert(count == getRepository.count())
+        assert(getRepository.count() == exampleRecords.length)
 
 
+      }
+
+      "retrieve all data" in {
+        val result: Iterable[T] = getRepository.findAll()
+
+        assert(getRepository.count() == exampleRecords.length)
+
+        val it = result.iterator()
+        assert(it.hasNext)
+      }
+
+
+      "possible to delete one object" ignore {
+        assert(getRepository.count() == exampleRecords.length)
+        val one = getRepository.findAll().iterator().next()
+        getRepository.delete(one)
+        assert(exampleRecords.length - 1 == getRepository.count())
+      }
+
+
+      "possible to delete all data" in {
+
+        getRepository.deleteAll()
+
+        assert(0 == getRepository.count())
       }
     }
 

@@ -6,12 +6,16 @@ import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.{Context, CustomElastic1SearchVisitor}
-import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.action.delete.{DeleteRequestBuilder, DeleteRequest}
+import org.elasticsearch.client.Client
+import org.elasticsearch.index.query._
+import org.elasticsearch.search.SearchHit
+import org.elasticsearch.search.aggregations.{AggregationBuilders, AggregationBuilder}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.elasticsearch.core.query._
-
+import org.elasticsearch.index.query.QueryBuilders._
 /**
   * Created by wohlg_000 on 3/3/2016.
   */
@@ -19,6 +23,9 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
 
   @Autowired
   val elasticsearchTemplate: ElasticsearchTemplate = null
+
+  @Autowired
+  val elasticClient: Client = null
 
   /**
     * @param query
@@ -62,7 +69,8 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
 
   def getSearch(queryBuilder: QueryBuilder): SearchQuery = {
     //uggly but best solution I found so far. If we do it without pagination request, spring will always limit it to 10 results.
-    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0,1000000)).build()
+    //TODO obviously onces the delete bug doesnt happen anymore we should get rid of the aggregations
+    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0,1000000)).addAggregation(AggregationBuilders.terms("by_id").field("id")).build()
     query
   }
 
@@ -76,5 +84,30 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     */
   override def saveOrUpdate(value: Spectrum): Unit = {
     elasticsearchTemplate.index(new IndexQueryBuilder().withObject(value).build())
+  }
+
+  override def deleteByMe(value:Spectrum): Unit = {
+
+    val bulk = elasticClient.prepareBulk().setRefresh(true)
+
+    val hits: Array[SearchHit] = elasticClient.prepareSearch("spectrum").setTypes("spectrum").setQuery(filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("id", value.id))).setSize(1).execute().actionGet().getHits.getHits
+
+    if (hits.length > 0) {
+      hits.foreach { hit =>
+        logger.info(s"deleting object with id: ${hit.id}")
+        val deleteRequest = new DeleteRequest("spectrum", "spectrum", hit.getId)
+        deleteRequest.refresh(true)
+        bulk.add(deleteRequest)
+
+      }
+
+      bulk.execute().actionGet()
+
+      val count = elasticClient.prepareCount("spectrum").setQuery(matchAllQuery()).execute().actionGet().getCount
+      logger.error("my stupid count is: " + count)
+      deleteByMe(value)
+
+    }
+
   }
 }

@@ -37,6 +37,9 @@ class EmbeddedElasticSearchConfiguration extends LazyLogging{
     nodeBuilder.local(true)
     nodeBuilder.settings().put("http.enabled", true)
     nodeBuilder.settings().put("index.search.slowlog.threshold.query.warn","0ms")
+    nodeBuilder.settings().put("index.search.slowlog.threshold.fetch.debug","0ms")
+    nodeBuilder.settings().put("index.indexing.slowlog.threshold.query.info","0ms")
+
     nodeBuilder.settings().put("path.data",new File(fileElasticDirectory,"data").getAbsolutePath)
     nodeBuilder.settings().put("path.logs",new File(fileElasticDirectory,"logs").getAbsolutePath)
     nodeBuilder.settings().put("path.work",new File(fileElasticDirectory,"work").getAbsolutePath)

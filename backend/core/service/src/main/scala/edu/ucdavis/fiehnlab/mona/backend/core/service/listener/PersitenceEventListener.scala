@@ -23,6 +23,11 @@ trait PersitenceEventListener [T]{
     */
   def deleted(event:PersistenceEvent[T])
 
+  /**
+    * the priority of the listener
+    * @return
+    */
+  def priority:Int = 0
 }
 
 /**
