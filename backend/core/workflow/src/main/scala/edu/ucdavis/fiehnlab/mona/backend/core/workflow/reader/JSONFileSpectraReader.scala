@@ -22,28 +22,27 @@ class JSONFileSpectraReader extends ItemReader[Spectrum] with ItemStream with La
 
   override def read(): Spectrum = {
 
-    val token = parser.nextToken()
+    var token = parser.nextToken()
 
     if(token == JsonToken.START_ARRAY){
-      logger.debug("reading spectrum in array")
-
-      parser.nextToken()
-      val jsonNode: JsonNode = mapper.readTree(parser)
-
-      mapper.treeToValue(jsonNode,classOf[Spectrum])
+      logger.debug("we have several data spectra in this data set")
+      token = parser.nextToken()
     }
-    else if(token == JsonToken.END_ARRAY){
+
+
+    if(token == JsonToken.END_ARRAY){
       logger.debug("read all data")
       null
     }
-    else if(token == JsonToken.END_OBJECT){
-      null
+    else if(token == null){
+      throw new NoSuchElementException("we have no more data in this reader, all spectra have been read already!")
     }
     else{
       val jsonNode: JsonNode = mapper.readTree(parser)
-      mapper.treeToValue(jsonNode,classOf[Spectrum])
+      val spectrum = mapper.treeToValue(jsonNode,classOf[Spectrum])
+      logger.trace(s"read: ${spectrum}")
+      spectrum
     }
-    null
   }
 
   override def update(executionContext: ExecutionContext): Unit = {
