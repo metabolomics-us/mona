@@ -48,6 +48,18 @@ abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationLis
   def process(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): Any
 
   /**
+    * should not longer be utilized, instead the 'process' method should be used
+    * @param toProcess
+    * @param node
+    * @return
+    */
+  @Deprecated
+  final def run(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): Any = {
+    logger.warn("using deprecated method, this will go away soon...")
+    process(toProcess,node)
+  }
+
+  /**
     * fires a finishing event
     *
     * @param toProcess
