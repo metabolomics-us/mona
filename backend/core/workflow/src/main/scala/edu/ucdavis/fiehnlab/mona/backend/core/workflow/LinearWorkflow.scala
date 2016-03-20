@@ -1,16 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.{WorkflowDoesntSupportMoreThanOneChieldExcpetion, WorkflowException}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph.Node
+import org.springframework.batch.item.ItemProcessor
 
 import scala.reflect.ClassTag
 
 /**
   * a simple linear workflow
   */
-class LinearWorkflow[TYPE:ClassTag](name:String) extends Workflow[TYPE](name){
+class LinearWorkflow[TYPE:ClassTag](name:String) extends Workflow[TYPE](name) with ItemProcessor[TYPE, TYPE]{
 
-  override def run(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): TYPE = {
+  override def process(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): TYPE = {
 
     val step = node.step
 
@@ -27,12 +29,20 @@ class LinearWorkflow[TYPE:ClassTag](name:String) extends Workflow[TYPE](name){
       result
     }
     else if(children.size == 1){
-      run(result,children.head)
+      process(result,children.head)
     }
     else {
       throw new WorkflowDoesntSupportMoreThanOneChieldExcpetion(s"defined workflow had several children: ${children}" )
     }
   }
+
+  /**
+    * simple wrapper around the internal api
+ *
+    * @param item
+    * @return
+    */
+  override def process(item: TYPE): TYPE = process(item)
 }
 
 /**
@@ -42,9 +52,9 @@ class LinearWorkflow[TYPE:ClassTag](name:String) extends Workflow[TYPE](name){
   * @param name
   * @tparam TYPE
   */
-class GraphWorkflow[TYPE:ClassTag](name:String) extends Workflow[TYPE](name){
+class GraphWorkflow[TYPE:ClassTag](name:String) extends Workflow[TYPE](name) with ItemProcessor[TYPE,List[TYPE]]{
 
-  override def run(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): List[TYPE] = {
+  override def process(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): List[TYPE] = {
 
     val step = node.step
 
@@ -62,8 +72,15 @@ class GraphWorkflow[TYPE:ClassTag](name:String) extends Workflow[TYPE](name){
     }
     else {
       children.collect {
-        case child: Node[TYPE, TYPE] => run(result, child)
+        case child: Node[TYPE, TYPE] => process(result, child)
       }.flatten.toList
     }
   }
+
+  /**
+    * simple wrapper
+    * @param item
+    * @return
+    */
+  override def process(item: TYPE): List[TYPE] = process(item)
 }

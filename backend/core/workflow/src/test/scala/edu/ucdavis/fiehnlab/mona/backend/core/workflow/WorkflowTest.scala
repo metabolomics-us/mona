@@ -46,7 +46,7 @@ class WorkflowTest extends WordSpec {
       }
 
       "must run" in {
-        val result = workflow.run(data)
+        val result = workflow.process(data)
       }
 
       "the listener must have fired 3 times for finish events" in {
