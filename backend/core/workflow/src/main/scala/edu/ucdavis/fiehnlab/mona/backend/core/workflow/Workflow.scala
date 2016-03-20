@@ -45,7 +45,7 @@ abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationLis
     * @param toProcess
     * @param node by default it's the head node
     */
-  def run(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): Any
+  def process(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): Any
 
   /**
     * fires a finishing event
