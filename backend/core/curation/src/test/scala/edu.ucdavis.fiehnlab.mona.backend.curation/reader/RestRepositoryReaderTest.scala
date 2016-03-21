@@ -43,19 +43,13 @@ class RestRepositoryReaderTest extends WordSpec {
 
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
-
-    "we should be able to delete all data" in {
-      spectrumRestClient.list().foreach(x =>
-        spectrumRestClient.delete(x.id)
-      )
+    spectrumRestClient.list().foreach(x =>
+      spectrumRestClient.delete(x.id)
+    )
+    for (spec <- exampleRecords) {
+      spectrumRestClient.add(spec)
     }
 
-
-    "we should be able to add spectra" in {
-      for (spec <- exampleRecords) {
-        spectrumRestClient.add(spec)
-      }
-    }
 
     "read" in {
 
