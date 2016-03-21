@@ -86,28 +86,4 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     elasticsearchTemplate.index(new IndexQueryBuilder().withObject(value).build())
   }
 
-  override def deleteByMe(value:Spectrum): Unit = {
-
-    val bulk = elasticClient.prepareBulk().setRefresh(true)
-
-    val hits: Array[SearchHit] = elasticClient.prepareSearch("spectrum").setTypes("spectrum").setQuery(filteredQuery(QueryBuilders.matchAllQuery(), FilterBuilders.termFilter("id", value.id))).setSize(1).execute().actionGet().getHits.getHits
-
-    if (hits.length > 0) {
-      hits.foreach { hit =>
-        logger.info(s"deleting object with id: ${hit.id}")
-        val deleteRequest = new DeleteRequest("spectrum", "spectrum", hit.getId)
-        deleteRequest.refresh(true)
-        bulk.add(deleteRequest)
-
-      }
-
-      bulk.execute().actionGet()
-
-      val count = elasticClient.prepareCount("spectrum").setQuery(matchAllQuery()).execute().actionGet().getCount
-      logger.error("my stupid count is: " + count)
-      deleteByMe(value)
-
-    }
-
-  }
 }
