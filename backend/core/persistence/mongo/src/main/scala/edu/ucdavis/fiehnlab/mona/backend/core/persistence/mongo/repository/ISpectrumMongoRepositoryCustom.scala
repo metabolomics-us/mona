@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository
   * Created by wohlgemuth on 2/26/16.
   */
 @Repository("spectrumMongoRepository")
-trait ISpectrumMongoRepositoryCustom extends PagingAndSortingRepository[Spectrum, String] with SpectrumMongoRepositoryCustom{
-}
+trait ISpectrumMongoRepositoryCustom extends PagingAndSortingRepository[Spectrum, String] with SpectrumMongoRepositoryCustom
