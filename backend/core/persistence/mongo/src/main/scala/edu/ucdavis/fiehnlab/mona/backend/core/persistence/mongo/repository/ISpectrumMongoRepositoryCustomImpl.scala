@@ -9,6 +9,7 @@ import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Repository
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 2/26/16.
