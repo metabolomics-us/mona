@@ -78,6 +78,7 @@ class TestWorkflowConfig {
 
   /**
     * defining our workflow
+    *
     * @return
     */
   @Bean
@@ -87,6 +88,7 @@ class TestWorkflowConfig {
 
 /**
   * test class
+  *
   * @param name
   */
 case class LinearTest(name: String)
