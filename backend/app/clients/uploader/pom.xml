@@ -11,15 +11,35 @@
 
     <artifactId>uploader</artifactId>
 
-    <description>this project provides a simple client to upload data to the server using a mona json input file</description>
+    <description>this project provides a simple client to upload data to the server using a mona json input file. It will also allow to run all the curration rules locally, if so desired
+    </description>
 
+
+    <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>curation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.0</version>
+
                 <configuration>
                     <imageName>${docker.registry}/${docker.imageName}</imageName>
                     <baseImage>${docker.baseImage}</baseImage>
