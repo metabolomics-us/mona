@@ -1,11 +1,13 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.workflow.reader
+package edu.ucdavis.fiehnlab.mona.backend.curation.reader
 
 import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.GenericRestClient
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -13,24 +15,12 @@ import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegra
 import org.springframework.context.annotation.{Configuration, Bean}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.{RestClientTestConfig}
-
-@Configuration
-class ReaderConfig {
-  @Bean
-  def restRepositoryReaderAll = new RestRepositoryReader()
-
-  @Bean
-  def restRepositoryReaderWithQuery = new RestRepositoryReader("""metaData=q='name=="ion mode" and value==negative'""")
-
-
-}
 
 /**
   * Created by wohlgemuth on 3/18/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[WorkflowConfiguration], classOf[ReaderConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class RestRepositoryReaderTest extends WordSpec {
   @Value( """${local.server.port}""")

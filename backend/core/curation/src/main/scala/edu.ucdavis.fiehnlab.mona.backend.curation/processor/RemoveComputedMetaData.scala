@@ -1,9 +1,8 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.workflow.processor
+package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
-import org.springframework.stereotype.Component
 
 /**
   * Created by wohlgemuth on 3/11/16.

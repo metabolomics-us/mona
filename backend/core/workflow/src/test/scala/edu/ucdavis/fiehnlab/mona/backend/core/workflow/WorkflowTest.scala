@@ -1,10 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow
 
-import java.io.{InputStreamReader, FileReader}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
@@ -12,7 +9,6 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation.{Import, Bean, Configuration}
 import org.springframework.stereotype.Component

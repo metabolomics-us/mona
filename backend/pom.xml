@@ -23,6 +23,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>client</artifactId>
+                <type>test-jar</type>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>workflow</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.splash</groupId>

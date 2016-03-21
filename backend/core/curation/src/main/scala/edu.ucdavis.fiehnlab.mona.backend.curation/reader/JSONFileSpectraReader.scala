@@ -1,13 +1,13 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.workflow.reader
+package edu.ucdavis.fiehnlab.mona.backend.curation.reader
 
 import java.io.InputStream
 
-import com.fasterxml.jackson.core.{JsonToken, JsonFactory, JsonParser}
+import com.fasterxml.jackson.core.{JsonFactory, JsonToken, JsonParser}
 import com.fasterxml.jackson.databind.JsonNode
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.springframework.batch.item.{ExecutionContext, ItemStream, ItemReader}
+import org.springframework.batch.item.{ItemStream, ItemReader, ExecutionContext}
 
 /**
   * this reader is utilized to efficiently read a large amount of spectra into the system

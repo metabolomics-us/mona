@@ -1,6 +1,5 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.workflow.reader
+package edu.ucdavis.fiehnlab.mona.backend.curation.reader
 
-import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum

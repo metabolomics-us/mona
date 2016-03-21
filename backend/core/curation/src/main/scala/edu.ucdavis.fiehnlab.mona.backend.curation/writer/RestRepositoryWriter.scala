@@ -1,13 +1,14 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.workflow.writer
+package edu.ucdavis.fiehnlab.mona.backend.curation.writer
 
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{MonaSpectrumRestClient, GenericRestClient}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import org.springframework.batch.item.ItemWriter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
 import scala.collection.JavaConverters._
 
 /**
