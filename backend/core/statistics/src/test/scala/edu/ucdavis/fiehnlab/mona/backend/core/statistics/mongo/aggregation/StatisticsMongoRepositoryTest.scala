@@ -41,7 +41,7 @@ class StatisticsMongoRepositoryTest extends WordSpec {
   "Metadata aggregation queries" when {
 
     spectrumMongoRepository.deleteAll()
-    exampleRecords.foreach(spectrumMongoRepository.save)
+    exampleRecords.foreach(spectrumMongoRepository.save(_))
 
     "given a specific metadata field" must {
       "return the top records in the base metadata group" in {
