@@ -41,7 +41,7 @@ grails.project.dependency.resolution = {
         mavenLocal()
         grailsCentral()
         mavenCentral()
-        mavenRepo "http://repo.fiehnlab.ucdavis.edu:55000/content/groups/public"
+        mavenRepo "http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public"
 
         mavenRepo "http://download.java.net/maven/2/"
         mavenRepo "http://maven.antelink.com/content/repositories/central/"
