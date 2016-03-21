@@ -84,7 +84,4 @@ trait RSQLRepositoryCustom[T,Q] {
     * @return
     */
   def saveOrUpdate(value: T): Unit
-
-
-  def deleteByMe(value: T): Unit
 }

@@ -83,5 +83,4 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
     */
   override def saveOrUpdate(value: Spectrum): Unit = mongoOperations.save(value)
 
-  override def deleteByMe(value: Spectrum): Unit = mongoOperations.remove(value)
 }
