@@ -12,7 +12,7 @@ import org.springframework.batch.item.{ItemStream, ItemReader, ExecutionContext}
 /**
   * this reader is utilized to efficiently read a large amount of spectra into the system
   */
-class JSONFileSpectraReader extends ItemReader[Spectrum] with ItemStream with LazyLogging{
+class JSONFileSpectraReader extends ItemReader[Spectrum] with LazyLogging{
 
   var stream:InputStream = null
 
@@ -20,7 +20,17 @@ class JSONFileSpectraReader extends ItemReader[Spectrum] with ItemStream with La
 
   val mapper = MonaMapper.create
 
+  /**
+    * reads all the data and also takes care of closing/opening the streams
+    * @return
+    */
   override def read(): Spectrum = {
+
+    if(parser == null){
+      logger.debug("opening stream and creating new parser")
+      val factory = new JsonFactory
+      parser = factory.createParser(stream)
+    }
 
     var token = parser.nextToken()
 
@@ -31,7 +41,8 @@ class JSONFileSpectraReader extends ItemReader[Spectrum] with ItemStream with La
 
 
     if(token == JsonToken.END_ARRAY){
-      logger.debug("read all data")
+      logger.debug("read all data, closing stream")
+      stream.close()
       null
     }
     else if(token == null){
@@ -45,19 +56,4 @@ class JSONFileSpectraReader extends ItemReader[Spectrum] with ItemStream with La
     }
   }
 
-  override def update(executionContext: ExecutionContext): Unit = {
-
-
-  }
-
-  override def close(): Unit = {
-    if(stream != null){
-      stream.close()
-    }
-  }
-
-  override def open(executionContext: ExecutionContext): Unit = {
-    val factory = new JsonFactory
-    parser = factory.createParser(stream)
-  }
 }

@@ -21,12 +21,19 @@
         <module>app</module>
     </modules>
 
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>client</artifactId>
                 <type>test-jar</type>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>curation</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -161,7 +168,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
                 <executions>
                     <execution>
                         <goals>
@@ -171,5 +177,21 @@
                 </executions>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
     </build>
 </project>

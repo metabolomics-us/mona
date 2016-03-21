@@ -15,14 +15,8 @@ class JSONFileSpectraReaderTest extends WordSpec with LazyLogging{
 
     val reader = new JSONFileSpectraReader
 
-    val ctx = new ExecutionContext()
-    "open" in {
-
-      reader.stream = getClass.getResourceAsStream("/monaRecords.json")
-      reader.open(ctx)
-    }
-
     "read" in {
+      reader.stream = getClass.getResourceAsStream("/monaRecords.json")
 
       var spectra:Spectrum = reader.read()
 
@@ -36,11 +30,6 @@ class JSONFileSpectraReaderTest extends WordSpec with LazyLogging{
 
       }
       assert(counter == 58)
-    }
-
-
-    "close" in {
-      reader.close()
     }
 
   }

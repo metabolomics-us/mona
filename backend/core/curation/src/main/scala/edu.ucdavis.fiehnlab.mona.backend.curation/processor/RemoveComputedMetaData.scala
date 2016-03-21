@@ -7,7 +7,7 @@ import org.springframework.batch.item.ItemProcessor
 /**
   * Created by wohlgemuth on 3/11/16.
   */
-@Step(description = "this step will remove all computed metadata from the given spectrum")
+@Step(description = "this step will remove all computed metadata from the given spectrum",workflow = "spectra-curration")
 class RemoveComputedMetaData extends ItemProcessor[Spectrum,Spectrum]{
 
   /**
