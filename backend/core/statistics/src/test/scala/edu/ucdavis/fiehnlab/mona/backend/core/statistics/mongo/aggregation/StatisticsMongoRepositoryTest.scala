@@ -1,10 +1,17 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.repository
+package edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.aggregation
 
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.SpectrumMongoRepositoryCustomTest
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.EmbeddedMongoDBConfiguration
+import java.io.InputStreamReader
+
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.TestConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.repository.aggregation.IStatisticsMongoRepository
 import org.junit.runner.RunWith
+import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{TestContextManager, ContextConfiguration}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 /**
@@ -17,16 +24,25 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   *
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration]))
-class StatisticsMongoRepositoryTest extends SpectrumMongoRepositoryCustomTest /*RSQLRepositoryCustomTest[Spectrum,Query]*/ {
+@ContextConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration], classOf[TestConfig]))
+class StatisticsMongoRepositoryTest extends WordSpec {
 
   @Autowired
   @Qualifier("statisticsMongoRepository")
   val statisticsMongoRepository: IStatisticsMongoRepository = null
 
+  @Autowired
+  val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
+
+  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "Metadata aggregation queries" when {
+
+    spectrumMongoRepository.deleteAll()
+    exampleRecords.foreach(spectrumMongoRepository.save)
+
     "given a specific metadata field" must {
       "return the top records in the base metadata group" in {
         val msLevel = statisticsMongoRepository.aggregateByName("ms level")
