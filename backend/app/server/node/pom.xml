@@ -12,7 +12,8 @@
     <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
     <artifactId>node</artifactId>
 
-    <description>This project, provides a MoNA server which can be utilized in a single or multi node cluster</description>
+    <description>This project, provides a MoNA server which can be utilized in a single or multi node cluster
+    </description>
 
     <dependencies>
         <dependency>
@@ -20,4 +21,39 @@
             <artifactId>rest</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <configuration>
+                    <imageName>${docker.registry}/${docker.imageName}</imageName>
+                    <baseImage>${docker.baseImage}</baseImage>
+                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <exposes>
+                        <expose>8080</expose>
+                    </exposes>
+                    <!-- copy the service's jar file from target into the root directory of the image -->
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

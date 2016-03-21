@@ -1,41 +1,37 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.util
 
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import org.elasticsearch.client.Client
-import org.elasticsearch.common.logging.ESLoggerFactory;
+import org.elasticsearch.client.{Client, ElasticsearchClient}
+import org.elasticsearch.common.logging.ESLoggerFactory
 import org.elasticsearch.node.NodeBuilder
-import org.springframework.context.annotation.{Primary, Import, Bean, Configuration}
-import org.springframework.data.elasticsearch.core.{ElasticsearchTemplate, ElasticsearchOperations}
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
 
 /**
-  * Created by wohlg on 3/11/2016.
+  * Created by wohlgemuth on 3/21/16.
   */
-@Configuration
-@EnableElasticsearchRepositories(basePackageClasses = Array(
-  classOf[ISpectrumElasticRepositoryCustom]
-))
-@Import(Array(classOf[ElasticsearchConfig]))
-class EmbeddedElasticSearchConfiguration extends LazyLogging{
+object EmbeddedNodeBuilder extends LazyLogging{
 
-  @Primary
-  @Bean
-  def elasticClient:Client = {
+  /**
+    * configures an internal elastic search server
+    * @param deleteOnExit
+    * @param httpServer
+    * @return
+    */
+  def createClient(deleteOnExit:Boolean = true, httpServer:Boolean = true):Client = {
 
     val fileElasticDirectory = new File(File.createTempFile("elastic-temp","temp").getParent,s"elastic-${System.currentTimeMillis()}")
     fileElasticDirectory.mkdirs()
-    fileElasticDirectory.deleteOnExit()
+    if(deleteOnExit) {
+      fileElasticDirectory.deleteOnExit()
+    }
 
     logger.info("creating new client")
     ESLoggerFactory.getRootLogger().setLevel("DEBUG");
 
     val nodeBuilder = new NodeBuilder()
     nodeBuilder.local(true)
-    nodeBuilder.settings().put("http.enabled", true)
+    nodeBuilder.settings().put("http.enabled", httpServer)
     nodeBuilder.settings().put("index.search.slowlog.threshold.query.warn","0ms")
     nodeBuilder.settings().put("index.search.slowlog.threshold.fetch.debug","0ms")
     nodeBuilder.settings().put("index.indexing.slowlog.threshold.query.info","0ms")

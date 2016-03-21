@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>node</module>
+        <module>memory-node</module>
     </modules>
-
 
 </project>

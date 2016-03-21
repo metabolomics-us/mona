@@ -3,16 +3,41 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>clients</artifactId>
+        <artifactId>server</artifactId>
         <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>uploader</artifactId>
+    <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
+    <artifactId>memory-node</artifactId>
 
-    <description>this project provides a simple client to upload data to the server using a mona json input file</description>
+    <description>This is a server node, completely running in memory and should be considered for local testing only. It obviously should not be used in a cluster environment</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>rest</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
@@ -24,7 +49,12 @@
                     <imageName>${docker.registry}/${docker.imageName}</imageName>
                     <baseImage>${docker.baseImage}</baseImage>
                     <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-
+                    <exposes>
+                        <expose>8080</expose>
+                        <expose>9200</expose>
+                        <expose>9300</expose>
+                        <expose>27017</expose>
+                    </exposes>
                     <!-- copy the service's jar file from target into the root directory of the image -->
                     <resources>
                         <resource>

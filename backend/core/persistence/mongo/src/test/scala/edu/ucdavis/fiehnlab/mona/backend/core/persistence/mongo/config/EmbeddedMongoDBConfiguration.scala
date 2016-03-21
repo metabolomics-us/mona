@@ -25,9 +25,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 /**
   * Created by wohlg on 3/11/2016.
   */
-@EnableMongoRepositories(basePackageClasses = Array(
-  classOf[ISpectrumMongoRepositoryCustom]
-))
 @EnableAutoConfiguration
 @Import(Array(classOf[MongoConfig]))
 @Configuration
