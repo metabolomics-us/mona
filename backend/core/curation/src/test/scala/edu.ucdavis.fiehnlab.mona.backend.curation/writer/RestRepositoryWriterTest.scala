@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.workflow.writer
+package edu.ucdavis.fiehnlab.mona.backend.curation.writer
 
 import java.io.InputStreamReader
 
@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.GenericRestClient
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.reader.RestRepositoryReader
+import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.{WordSpec, FunSuite}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
   * Created by wohlg on 3/11/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[WorkflowConfiguration]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig],classOf[TestConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class RestRepositoryWriterTest extends WordSpec {
 

@@ -6,9 +6,12 @@
     </Console>
 </Appenders>
 <Loggers>
+    <!--
     <Logger name="edu.ucdavis" level="debug"/>
     <Logger name="org.elasticsearch" level="debug"/>
     <Logger name="org.springframework.web.context.request.async" level="info"/>
+
+    -->
     <Root level="info">
         <AppenderRef ref="Console"/>
     </Root>

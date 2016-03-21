@@ -1,8 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import org.springframework.batch.item.ItemProcessor
-import sun.security.provider.certpath.Vertex
 
 import scala.collection.concurrent.TrieMap
 import scala.reflect.ClassTag

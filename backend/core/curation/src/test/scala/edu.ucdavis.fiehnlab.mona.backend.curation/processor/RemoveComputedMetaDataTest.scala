@@ -1,6 +1,6 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.workflow.processor
+package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
-import java.io.FileReader
+import java.io.{InputStreamReader, FileReader}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
@@ -17,7 +17,7 @@ class RemoveComputedMetaDataTest extends WordSpec {
 
     val processor = new RemoveComputedMetaData
 
-    val input = new FileReader("src/test/resources/monaRecord.json")
+    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
 
     val spectrumGiven: Spectrum = reader.read(input)
 
