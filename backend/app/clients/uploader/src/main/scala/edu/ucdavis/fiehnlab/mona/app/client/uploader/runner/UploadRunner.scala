@@ -1,11 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.app.client.uploader.runner
 
 import com.typesafe.scalalogging.LazyLogging
-import org.springframework.batch.core.{JobParameter, JobParameters, JobParametersBuilder, Job}
 import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.batch.core.{Job, JobParametersBuilder}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.{ApplicationArguments, ApplicationRunner, CommandLineRunner}
+import org.springframework.boot.{ApplicationArguments, ApplicationRunner}
 import org.springframework.stereotype.Component
+
 import scala.collection.JavaConverters._
 
 /**

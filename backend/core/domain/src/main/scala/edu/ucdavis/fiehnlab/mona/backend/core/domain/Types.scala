@@ -1,208 +1,201 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
-import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
-import com.fasterxml.jackson.databind.annotation.{JsonSerialize, JsonDeserialize}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{TupleSerialize, CascadeSave}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{NumberDeserializer}
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.TupleSerialize
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
 import org.springframework.data.annotation.Id
+import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
 import org.springframework.data.mongodb.core.index.Indexed
-import org.springframework.data.mongodb.core.mapping.{DBRef, Document}
+import org.springframework.data.mongodb.core.mapping.Document
 
 import scala.annotation.meta.field
-import scala.beans.{BeanInfo, BeanProperty}
-import org.springframework.data.elasticsearch.annotations.{Mapping, FieldIndex, FieldType, Field}
-import org.springframework.data.elasticsearch.annotations.NestedField._
 
 /**
   * definition of the MoNA domain classes
   * TODO: make DBRefs work with cascade save
   */
 
-object Types {
+case class MetaData(
 
-  case class MetaData(
+                     @(Indexed@field)
+                     category: String,
 
-                       @(Indexed@field)
-                       category: String,
+                     @(Indexed@field)
+                     computed: Boolean,
 
-                       @(Indexed@field)
-                       computed: Boolean,
+                     @(Indexed@field)
+                     hidden: Boolean,
 
-                       @(Indexed@field)
-                       hidden: Boolean,
+                     @(Indexed@field)
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     name: String,
 
-                       @(Indexed@field)
-                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                       name: String,
+                     score: Score,
 
-                       score: Score,
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     @(Indexed@field)
+                     unit: String,
 
-                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                       @(Indexed@field)
-                       unit: String,
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     url: String,
 
-                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                       url: String,
+                     @(TupleSerialize@field)
+                     @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
+                     value: Any
 
-                       @(TupleSerialize@field)
-                       @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
-                       value: Any
+                   )
 
-                     )
+case class Names(
 
-  case class Names(
+                  @(Indexed@field)
+                  @(Field@field)(`type` = FieldType.Boolean, index = FieldIndex.not_analyzed)
+                  computed: Boolean,
 
-                    @(Indexed@field)
-                    @(Field@field)(`type` = FieldType.Boolean, index = FieldIndex.not_analyzed)
-                    computed: Boolean,
+                  @(Indexed@field)
+                  @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                  name: String,
 
-                    @(Indexed@field)
-                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                    name: String,
+                  score: Double,
 
-                    score: Double,
+                  @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                  source: String
+                )
 
-                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                    source: String
+
+case class Tags(
+                 @(Indexed@field)
+                 ruleBased: Boolean,
+
+                 @(Indexed@field)
+                 @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                 text: String
+               )
+
+
+case class Compound(
+
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     inchi: String,
+                     @(Indexed@field)
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     inchiKey: String,
+
+                     @(Field@field)(`type` = FieldType.Nested)
+                     metaData: Array[MetaData],
+
+                     molFile: String,
+
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
+                     names: Array[Names],
+
+                     @(Field@field)(`type` = FieldType.Nested)
+                     tags: Array[Tags]
+                   )
+
+
+case class Impacts(
+
+                    impactValue: Double,
+
+                    reason: String
                   )
 
 
-  case class Tags(
-                   @(Indexed@field)
-                   ruleBased: Boolean,
+case class Score(
 
-                   @(Indexed@field)
+                  impacts: Array[Impacts],
+
+                  relativeScore: Double, //ns
+
+                  scaledScore: Double, //ns
+
+                  score: Double
+                )
+
+
+case class Splash(
+
                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   text: String
+                   block1: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block2: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block3: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   @(Indexed@field)
+                   splash: String
                  )
 
 
-  case class Compound(
+@Document(collection = "SUBMITTER")
+case class Submitter(
 
-                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                       inchi: String,
-                       @(Indexed@field)
-                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                       inchiKey: String,
+                      emailAddress: String,
 
-                       @(Field@field)(`type` = FieldType.Nested)
-                       metaData: Array[MetaData],
+                      firstName: String,
 
-                       molFile: String,
+                      institution: String,
 
-                       @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                       names: Array[Names],
-
-                       @(Field@field)(`type` = FieldType.Nested)
-                       tags: Array[Tags]
-                     )
-
-
-  case class Impacts(
-
-                      impactValue: Double,
-
-                      reason: String
+                      lastName: String
                     )
 
+case class Author(
+                   @(Indexed@field)
 
-  case class Score(
+                   emailAddress: String,
+                   @(Indexed@field)
 
-                    impacts: Array[Impacts],
+                   firstName: String,
+                   @(Indexed@field)
 
-                    relativeScore: Double, //ns
+                   institution: String,
+                   @(Indexed@field)
 
-                    scaledScore: Double, //ns
+                   lastName: String
+                 )
 
-                    score: Double
-                  )
+//this is way to uggly, we might really need to use DAO's :(
+@Document(collection = "SPECTRUM")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
+case class Spectrum(
 
+                     @(Field@field)(`type` = FieldType.Object)
+                     biologicalCompound: Compound,
+                     @(Field@field)(`type` = FieldType.Object)
+                     chemicalCompound: Compound,
+                     @(Field@field)(`type` = FieldType.Object)
+                     predictedCompound: Compound,
 
-  case class Splash(
+                     @(Id@field)
+                     id: String,
 
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     block1: String, //ns
+                     lastUpdated: String,
 
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     block2: String, //ns
+                     @(Field@field)(`type` = FieldType.Nested)
+                     metaData: Array[MetaData],
 
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     block3: String, //ns
+                     @(Field@field)(`type` = FieldType.Object)
+                     score: Score,
 
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     @(Indexed@field)
-                     splash: String
+                     @(Field@field)(`type` = FieldType.String)
+                     spectrum: String,
+
+                     @(Field@field)(`type` = FieldType.Object)
+                     splash: Splash,
+
+                     @(Field@field)(`type` = FieldType.Object)
+                     submitter: Submitter,
+
+                     @(Field@field)(`type` = FieldType.Nested)
+                     tags: Array[Tags],
+
+                     @(Field@field)(`type` = FieldType.Nested)
+                     authors: Array[Author]
                    )
 
-
-  @Document(collection = "SUBMITTER")
-  case class Submitter(
-
-                        emailAddress: String,
-
-                        firstName: String,
-
-                        institution: String,
-
-                        lastName: String
-                      )
-
-  case class Author(
-                     @(Indexed@field)
-
-                     emailAddress: String,
-                     @(Indexed@field)
-
-                     firstName: String,
-                     @(Indexed@field)
-
-                     institution: String,
-                     @(Indexed@field)
-
-                     lastName: String
-                   )
-
-  //this is way to uggly, we might really need to use DAO's :(
-  @Document(collection = "SPECTRUM")
-  @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
-  case class Spectrum(
-
-                       @(Field@field)(`type` = FieldType.Object)
-                       biologicalCompound: Compound,
-                       @(Field@field)(`type` = FieldType.Object)
-                       chemicalCompound: Compound,
-                       @(Field@field)(`type` = FieldType.Object)
-                       predictedCompound: Compound,
-
-                       @(Id@field)
-                       id: String,
-
-                       lastUpdated: String,
-
-                       @(Field@field)(`type` = FieldType.Nested)
-                       metaData: Array[MetaData],
-
-                       @(Field@field)(`type` = FieldType.Object)
-                       score: Score,
-
-                       @(Field@field)(`type` = FieldType.String)
-                       spectrum: String,
-
-                       @(Field@field)(`type` = FieldType.Object)
-                       splash: Splash,
-
-                       @(Field@field)(`type` = FieldType.Object)
-                       submitter: Submitter,
-
-                       @(Field@field)(`type` = FieldType.Nested)
-                       tags: Array[Tags],
-
-                       @(Field@field)(`type` = FieldType.Nested)
-                       authors: Array[Author]
-                     )
-
-}
 
 /**
   * makes serializations simpler

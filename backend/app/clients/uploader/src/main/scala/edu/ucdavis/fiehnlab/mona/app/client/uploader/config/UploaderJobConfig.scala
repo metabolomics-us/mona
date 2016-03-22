@@ -1,22 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.app.client.uploader.config
 
 
-import java.io.{FileInputStream, BufferedInputStream, File}
-
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{LinearWorkflow, Workflow}
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurrationConfig
-import edu.ucdavis.fiehnlab.mona.backend.curation.reader.JSONFileSpectraReader
-import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
-import org.springframework.batch.core.{JobExecution, JobExecutionListener, Step, Job}
-import org.springframework.batch.core.configuration.annotation.{StepScope, StepBuilderFactory, JobBuilderFactory, EnableBatchProcessing}
+import org.springframework.batch.core.configuration.annotation.{EnableBatchProcessing, JobBuilderFactory, StepBuilderFactory}
 import org.springframework.batch.core.launch.support.RunIdIncrementer
-import org.springframework.batch.item.{ItemReader, ItemProcessor, ItemWriter}
-import org.springframework.beans.factory.annotation.{Value, Autowired}
-import org.springframework.context.annotation.{ComponentScan, Import, Bean, Configuration}
+import org.springframework.batch.core.{Job, JobExecution, JobExecutionListener, Step}
+import org.springframework.batch.item.{ItemProcessor, ItemReader, ItemWriter}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 
 /**
   * Created by wohlgemuth on 3/21/16.
@@ -63,11 +58,10 @@ class UploaderJobConfig extends LazyLogging {
     jobBuilderFactory.get("uploadSpectraJob").incrementer(new RunIdIncrementer).listener(listener).flow(uploadSpectraStep).end().build()
 
   }
-
-  /*
+/*
     @Bean
     def uploadAndCurrationSpectraStep: Step = {
-      stepBuilderFactory.get("uploadAndCurrationSpectraStep").chunk(10).reader(jsonFileReader).processor(process).writer(restRepositoryWriter).build()
+      stepBuilderFactory.get("uploadAndCurrationSpectraStep").chunk(10).reader(jsonFileReader).processor(currationWorkflow).writer(restRepositoryWriter).build()
       null
     }
 

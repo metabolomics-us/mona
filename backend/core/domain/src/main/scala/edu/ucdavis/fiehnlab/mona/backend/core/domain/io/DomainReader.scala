@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io
 
-import java.io.{File, FileReader, Reader}
+import java.io.Reader
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag

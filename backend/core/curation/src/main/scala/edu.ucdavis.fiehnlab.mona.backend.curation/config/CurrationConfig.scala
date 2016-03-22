@@ -1,16 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.config
 
-import java.io.{FileInputStream, BufferedInputStream, File}
+import java.io.{BufferedInputStream, File, FileInputStream}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.LinearWorkflow
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.JSONFileSpectraReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
-import org.springframework.batch.core.configuration.annotation.{StepScope, StepBuilderFactory, JobBuilderFactory}
+import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.{ItemProcessor, ItemReader, ItemWriter}
-import org.springframework.beans.factory.annotation.{Value, Autowired}
-import org.springframework.context.annotation.{Configuration, Bean}
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.{Bean, Configuration}
 
 /**
   * defines a handful of different beans to simplify work with curration tasks
@@ -33,6 +33,7 @@ class CurrationConfig extends LazyLogging{
 
   /**
     * should be utilized in jobs to persist entities at the mona backend
+ *
     * @return
     */
   @Bean

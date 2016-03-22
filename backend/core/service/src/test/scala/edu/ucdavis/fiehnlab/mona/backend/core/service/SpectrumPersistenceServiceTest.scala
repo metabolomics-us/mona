@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.service
 import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
@@ -16,8 +16,8 @@ import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
-import scala.util.Properties
 import scala.collection.JavaConverters._
+import scala.util.Properties
 
 
 /**

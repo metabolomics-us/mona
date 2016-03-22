@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.repository.aggre
 import java.util.LinkedHashMap
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations

@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config
 
-import com.mongodb.{Mongo}
+import com.mongodb.Mongo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{ISubmitterMongoRepository, ISpectrumMongoRepositoryCustom}
-import org.springframework.beans.factory.annotation.{Value}
-import org.springframework.context.annotation.{Bean, ComponentScan, Import, Configuration}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{ISpectrumMongoRepositoryCustom, ISubmitterMongoRepository}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 

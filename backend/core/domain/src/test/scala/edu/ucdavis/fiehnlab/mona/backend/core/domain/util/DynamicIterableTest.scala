@@ -2,7 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.util
 
 import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.WordSpec
-import org.springframework.data.domain.{PageImpl, Page, Pageable}
+import org.springframework.data.domain.{Page, PageImpl, Pageable}
+
 import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/18/16.

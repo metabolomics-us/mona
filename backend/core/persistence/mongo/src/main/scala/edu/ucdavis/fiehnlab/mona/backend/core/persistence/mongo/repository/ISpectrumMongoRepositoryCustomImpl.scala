@@ -3,13 +3,12 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 import com.github.rutledgepaulv.qbuilders.visitors.MongoVisitor
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Repository
-import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 2/26/16.

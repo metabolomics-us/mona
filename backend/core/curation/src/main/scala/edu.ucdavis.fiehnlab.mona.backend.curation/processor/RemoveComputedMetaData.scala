@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
 

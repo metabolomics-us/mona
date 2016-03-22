@@ -1,6 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql;
 
-import com.github.rutledgepaulv.qbuilders.nodes.*;
+import com.github.rutledgepaulv.qbuilders.nodes.AndNode;
+import com.github.rutledgepaulv.qbuilders.nodes.ComparisonNode;
+import com.github.rutledgepaulv.qbuilders.nodes.OrNode;
 import com.github.rutledgepaulv.qbuilders.operators.ComparisonOperator;
 import com.github.rutledgepaulv.qbuilders.visitors.ContextualNodeVisitor;
 import org.elasticsearch.index.query.BoolQueryBuilder;

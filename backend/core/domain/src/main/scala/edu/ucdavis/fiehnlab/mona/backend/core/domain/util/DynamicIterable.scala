@@ -1,12 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.util
 
-import java.util
-import java.util.Iterator
 import java.lang.Iterable
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import org.springframework.data.domain.{Page, Pageable, PageRequest}
+import org.springframework.data.domain.{Page, PageRequest, Pageable}
 
 /**
   * Created by wohlgemuth on 3/18/16.

@@ -1,16 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Splash
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
-import org.springframework.data.domain.{PageRequest, Page}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.mongodb.core.query.{BasicQuery, Query}
 import org.springframework.data.repository.CrudRepository
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+
 import scala.collection.JavaConverters._
 
 /**

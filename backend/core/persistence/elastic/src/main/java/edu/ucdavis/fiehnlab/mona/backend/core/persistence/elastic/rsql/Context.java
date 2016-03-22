@@ -1,7 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql;
 
-import com.github.rutledgepaulv.qbuilders.structures.FieldPath;
-
 /**
  * Created by wohlgemuth on 3/15/16.
  */

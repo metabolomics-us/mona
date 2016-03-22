@@ -2,15 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql
 
 import java.util
 
-import com.github.rutledgepaulv.qbuilders.visitors.MongoVisitor
-import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
-import jdk.nashorn.internal.ir.visitor.NodeVisitor
 import org.springframework.data.domain.{Page, Pageable}
-import org.springframework.data.mongodb.core.query.{Criteria, BasicQuery, Query}
 import org.springframework.data.repository.NoRepositoryBean
-
-import scala.reflect._
 
 /**
   * Created by wohlgemuth on 3/9/16.

@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
-import java.io.{InputStreamReader, FileReader}
+import java.io.InputStreamReader
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types._
-import org.scalatest.{WordSpec, FunSuite}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import org.scalatest.WordSpec
 
 /**
   * Created by wohlgemuth on 2/25/16.

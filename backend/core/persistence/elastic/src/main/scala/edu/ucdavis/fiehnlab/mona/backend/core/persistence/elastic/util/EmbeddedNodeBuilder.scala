@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.util
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import org.elasticsearch.client.{Client, ElasticsearchClient}
+import org.elasticsearch.client.Client
 import org.elasticsearch.common.logging.ESLoggerFactory
 import org.elasticsearch.node.NodeBuilder
 

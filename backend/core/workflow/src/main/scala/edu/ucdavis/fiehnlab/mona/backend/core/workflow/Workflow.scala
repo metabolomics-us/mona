@@ -2,21 +2,17 @@ package edu.ucdavis.fiehnlab.mona.backend.core.workflow
 
 import java.util
 
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
-
-import scala.collection.JavaConverters._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.{WorkflowException, RefrenceBeanHasNotBeenAnnotatedException, ParentAndParentClassSpecifiedException, NameAlreadyRegisteredException}
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.{NameAlreadyRegisteredException, ParentAndParentClassSpecifiedException, RefrenceBeanHasNotBeenAnnotatedException, WorkflowException}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph._
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.event.ContextRefreshedEvent
-import org.springframework.context.{ApplicationListener, ApplicationContext}
-import org.springframework.stereotype.Component
+import org.springframework.context.{ApplicationContext, ApplicationListener}
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.JavaConverters._
 import scala.reflect._
 
 

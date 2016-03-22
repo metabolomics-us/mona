@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.reflection
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.data.mongodb.core.mapping.event.{BeforeConvertEvent, AbstractMongoEventListener}
+import org.springframework.data.mongodb.core.mapping.event.{AbstractMongoEventListener, BeforeConvertEvent}
 import org.springframework.util.ReflectionUtils
 
 /**

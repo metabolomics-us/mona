@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.springframework.stereotype.Component
 
 /**
