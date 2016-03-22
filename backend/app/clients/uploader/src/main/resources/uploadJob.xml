@@ -1,0 +1,22 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/batch
+	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <bean name="/CurrationConfig" class="edu.ucdavis.fiehnlab.mona.backend.curation.config.CurrationConfig" />
+
+    <batch:job id="uploadAndCurrationSpectraJob">
+        <batch:step id="uploadAndCurrationSpectraStep">
+            <batch:tasklet>
+                <batch:chunk reader="jsonFileReader"
+                             writer="restRepositoryWriter" processor="currationWorkflow"
+                             commit-interval="1">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+</beans>
