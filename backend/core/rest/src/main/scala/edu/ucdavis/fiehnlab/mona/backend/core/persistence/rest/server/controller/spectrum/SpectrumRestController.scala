@@ -33,14 +33,14 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     */
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET))
   @Async
-  def searchRSQL(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestParam(value = "query", required = true) query: WrappedString): Future[java.util.List[Spectrum]] = new AsyncResult[java.util.List[Spectrum]](
+  def searchRSQL(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestParam(value = "query", required = true) query: WrappedString): Future[Iterable[Spectrum]] = new AsyncResult[Iterable[Spectrum]](
     if (size != null)
       if (page != null)
-        spectrumPersistenceService.findAll(query.string, new PageRequest(page, size)).getContent
+        spectrumPersistenceService.findAll(query.string, new PageRequest(page, size)).getContent.asScala
       else
-        spectrumPersistenceService.findAll(query.string, new PageRequest(0, size)).getContent
+        spectrumPersistenceService.findAll(query.string, new PageRequest(0, size)).getContent.asScala
     else
-      spectrumPersistenceService.findAll(query.string).asScala.toList.asJava
+      spectrumPersistenceService.findAll(query.string).asScala
   )
 
 
