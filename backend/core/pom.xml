@@ -16,11 +16,11 @@
     <module>domain</module>
     <module>persistence</module>
     <module>statistics</module>
-    <module>amqp</module>
     <module>service</module>
     <module>rest</module>
     <module>client</module>
     <module>workflow</module>
     <module>curation</module>
+    <module>amqp</module>
   </modules>
 </project>
