@@ -30,17 +30,23 @@
     ])
 
         /**
-         * HTTP configuration
+         * Global $http error handling
+         * usage: in app.config
          */
         /* @ngInject */
-        .config(function($httpProvider,$locationProvider) {
-            // Enable cross domain access
-            //$httpProvider.defaults.useXDomain = true;
-            //delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
-
-            // Interceptor to handle 500 errors
-            //$httpProvider.interceptors.push('httpResponseInterceptor');
+        .config(function($provide,$httpProvider) {
+          $provide.factory('httpInterceptor', function ($q,$location) {
+              return {
+                  response: function (response) {
+                      return response || $q.when(response);
+                  },
+                  responseError: function (rejection) {
+                      $location.path('/');
+                      return $q.reject(rejection);
+                  }
+              };
+          });
+          $httpProvider.interceptors.push('httpInterceptor');
         })
 
         /**
