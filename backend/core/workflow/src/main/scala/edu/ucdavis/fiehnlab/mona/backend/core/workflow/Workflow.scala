@@ -223,3 +223,17 @@ abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationLis
     logger.debug("all steps are processed")
   }
 }
+
+/**
+  * a conditional action, which can return true or false. Implmented classes need to be annotated with the Condition annotation to define the behavior
+  * @tparam T
+  */
+trait Conditional[T] {
+
+  /**
+    * evaluate the object value and return a value depending on the evaluation
+    * @param value
+    * @return
+    */
+  def evaluate(value:T) : Boolean
+}

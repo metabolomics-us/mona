@@ -2,12 +2,13 @@ package edu.ucdavis.fiehnlab.mona.app.client.uploader
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchDataAutoConfiguration, ElasticsearchAutoConfiguration}
 
 /**
   * Created by wohlg on 3/19/2016.
   */
 
-@SpringBootApplication
+@SpringBootApplication(exclude = Array(classOf[ElasticsearchDataAutoConfiguration],classOf[ElasticsearchAutoConfiguration]))
 class Uploader {
 
 }
