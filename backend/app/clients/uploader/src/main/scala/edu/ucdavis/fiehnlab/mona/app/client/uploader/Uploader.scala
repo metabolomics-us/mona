@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.app.client.uploader
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchDataAutoConfiguration, ElasticsearchAutoConfiguration}
+import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchAutoConfiguration, ElasticsearchDataAutoConfiguration}
 
 /**
   * Created by wohlg on 3/19/2016.

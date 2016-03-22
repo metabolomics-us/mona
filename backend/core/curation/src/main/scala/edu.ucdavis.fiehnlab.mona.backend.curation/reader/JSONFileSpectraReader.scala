@@ -2,12 +2,12 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.reader
 
 import java.io.InputStream
 
-import com.fasterxml.jackson.core.{JsonFactory, JsonToken, JsonParser}
+import com.fasterxml.jackson.core.{JsonFactory, JsonParser, JsonToken}
 import com.fasterxml.jackson.databind.JsonNode
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.springframework.batch.item.{ItemStream, ItemReader, ExecutionContext}
+import org.springframework.batch.item.ItemReader
 
 /**
   * this reader is utilized to efficiently read a large amount of spectra into the system
@@ -22,6 +22,7 @@ class JSONFileSpectraReader extends ItemReader[Spectrum] with LazyLogging{
 
   /**
     * reads all the data and also takes care of closing/opening the streams
+ *
     * @return
     */
   override def read(): Spectrum = {

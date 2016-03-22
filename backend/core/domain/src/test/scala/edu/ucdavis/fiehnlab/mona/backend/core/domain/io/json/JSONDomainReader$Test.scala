@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types._
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainReader
 import org.scalatest.FunSuite
 

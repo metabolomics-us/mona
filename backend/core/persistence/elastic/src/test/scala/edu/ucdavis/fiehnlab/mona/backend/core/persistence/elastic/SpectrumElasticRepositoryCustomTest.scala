@@ -1,20 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic
 
-import java.lang.Iterable
-
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.EmbeddedElasticSearchConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustomTest, RSQLRepositoryCustom}
-import org.elasticsearch.index.query.{QueryBuilder}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
+import org.elasticsearch.index.query.QueryBuilder
 import org.junit.runner.RunWith
-import org.scalatest.{Ignore, BeforeAndAfterEach}
-import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
+import org.scalatest.BeforeAndAfterEach
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.repository.CrudRepository
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import scala.collection.JavaConverters
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 
 /**
   * Created by wohlg_000 on 3/9/2016.

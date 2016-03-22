@@ -2,9 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.reader
 
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.scalatest.WordSpec
-import org.springframework.batch.item.ExecutionContext
 
 /**
   * Created by wohlgemuth on 3/18/16.

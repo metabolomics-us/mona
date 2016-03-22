@@ -1,18 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql
 
-import java.io.{InputStreamReader, File, FileReader}
+import java.io.InputStreamReader
 import java.lang.Iterable
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.{WordSpec, FunSuite}
-import org.springframework.data.domain.{PageRequest, Page}
+import org.scalatest.WordSpec
+import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.TestContextManager
 
 import scala.reflect.ClassTag
-import scala.collection.JavaConverters
 import scala.util.Properties
 
 /**

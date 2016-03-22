@@ -8,9 +8,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.batch.item.ItemProcessor
-import org.springframework.beans.factory.annotation.{Qualifier, Autowired}
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.context.annotation.{Import, Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner

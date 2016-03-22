@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow
 
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.{WorkflowDoesntSupportMoreThanOneChieldExcpetion, WorkflowException}
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.WorkflowDoesntSupportMoreThanOneChieldExcpetion
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph.Node
 import org.springframework.batch.item.ItemProcessor
 

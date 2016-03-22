@@ -2,9 +2,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper
 
 import java.io.StringWriter
 
-import com.fasterxml.jackson.core.{JsonParser, JsonFactory}
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.MetaData
+import com.fasterxml.jackson.core.{JsonFactory, JsonParser}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData
 import org.scalatest.FunSuite
 
 /**

@@ -1,20 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{MetaData, Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{ElasticMedaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.{InetSocketTransportAddress, TransportAddress}
-import org.elasticsearch.node.NodeBuilder
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.springframework.context.annotation._
-import org.springframework.data.elasticsearch.core.{EntityMapper, ElasticsearchTemplate, ElasticsearchOperations}
+import org.springframework.data.elasticsearch.core.{ElasticsearchTemplate, EntityMapper}
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
 
 /**

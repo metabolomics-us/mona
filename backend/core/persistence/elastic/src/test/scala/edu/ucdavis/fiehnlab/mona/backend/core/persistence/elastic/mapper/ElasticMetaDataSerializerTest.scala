@@ -1,10 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper
 
-import java.io.{StringWriter, ByteArrayOutputStream}
+import java.io.StringWriter
 
+import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import com.fasterxml.jackson.core.{PrettyPrinter, JsonFactory, JsonGenerator}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{ MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData
 import org.scalatest.FunSuite
 
 /**

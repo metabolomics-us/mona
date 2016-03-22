@@ -1,19 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper
 
 import java.lang.reflect.Field
-import java.util
 
 import com.fasterxml.jackson.core.{JsonGenerator, JsonParser}
 import com.fasterxml.jackson.databind._
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.databind.node.JsonNodeType
-import com.fasterxml.jackson.databind.ser.{BeanSerializerModifier, BeanSerializer}
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.TupleSerialize
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{NumberDeserializer, MonaMapper}
-import org.springframework.data.elasticsearch.core.EntityMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper, NumberDeserializer}
 
 /**
   * custom serializer, which transform tuples, so that elastic search has only one value for mapping

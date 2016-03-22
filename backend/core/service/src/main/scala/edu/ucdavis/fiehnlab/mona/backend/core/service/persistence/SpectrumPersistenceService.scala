@@ -4,17 +4,14 @@ import java.lang
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
-import org.springframework.data.repository.{PagingAndSortingRepository, CrudRepository}
+import org.springframework.data.domain.{Page, Pageable, Sort}
+import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 import scala.collection.JavaConverters._
 

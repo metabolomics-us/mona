@@ -3,17 +3,14 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.xcontent.XContentBuilder
+import org.elasticsearch.common.xcontent.XContentFactory._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.DependsOn
-import org.springframework.data.elasticsearch.annotations.Document
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations
-
-import org.elasticsearch.common.xcontent.XContentFactory._
 import org.springframework.stereotype.Component
-import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 3/15/16.

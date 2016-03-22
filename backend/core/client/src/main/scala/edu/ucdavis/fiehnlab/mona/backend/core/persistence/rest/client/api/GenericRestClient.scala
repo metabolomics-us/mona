@@ -6,8 +6,9 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.data.domain.{PageImpl, Page, Pageable}
+import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.web.client.RestOperations
+
 import scala.collection.JavaConverters._
 import scala.reflect.{ClassTag, _}
 

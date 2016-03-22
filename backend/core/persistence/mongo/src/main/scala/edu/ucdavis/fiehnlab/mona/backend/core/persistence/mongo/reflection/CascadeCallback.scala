@@ -3,9 +3,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.reflection
 import java.lang.reflect.Field
 
 import com.typesafe.scalalogging.LazyLogging
-import org.springframework.data.mongodb.core.mapping.DBRef
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.CascadeSave
 import org.springframework.data.mongodb.core.MongoOperations
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.util.ReflectionUtils;
 
 /**

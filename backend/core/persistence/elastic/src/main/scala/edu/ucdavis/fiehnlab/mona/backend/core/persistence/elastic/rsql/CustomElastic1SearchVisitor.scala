@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql
 
 import com.github.rutledgepaulv.qbuilders.nodes.ComparisonNode
 import com.typesafe.scalalogging.LazyLogging
-import org.elasticsearch.index.query.{FilterBuilder, QueryBuilder}
 
 /**
   * Created by wohlg on 3/13/2016.

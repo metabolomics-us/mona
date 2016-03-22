@@ -1,21 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
 import java.io.Reader
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include
-import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.{ MetaData}
-
-import scala.reflect._
-
 import com.fasterxml.jackson.databind._
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.{DomainReadEventHandler, DomainReader}
 
-import scala.reflect.ClassTag
+import scala.reflect.{ClassTag, _}
 
 /**
   * Created by wohlgemuth on 2/25/16.
