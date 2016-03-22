@@ -26,61 +26,71 @@
         'infinite-scroll',
         'mgcrea.bootstrap.affix',
         'pascalprecht.translate',
-        'viewhead'
+        'viewhead',
+        'ngFlash'
     ])
 
-        /**
-         * Global $http error handling
-         * usage: in app.config
-         */
+    /**
+     * Global $http error handling
+     * usage: in app.config
+     */
         /* @ngInject */
-        .config(function($provide,$httpProvider) {
-          $provide.factory('httpInterceptor', function ($q,$location) {
+      .config(function($provide, $httpProvider) {
+          $provide.factory('httpInterceptor', function($q, $location, $rootScope) {
+              $rootScope.httpError = [];
               return {
-                  response: function (response) {
+                  requestError: function(rejection) {
+                      return $q.reject(rejection);
+                  },
+                  response: function(response) {
                       return response || $q.when(response);
                   },
-                  responseError: function (rejection) {
+                  responseError: function(rejection) {
+                      $rootScope.httpError.push (rejection);
                       $location.path('/');
                       return $q.reject(rejection);
                   }
               };
           });
+
+          $httpProvider.defaults.useXDomain = true;
+          delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
           $httpProvider.interceptors.push('httpInterceptor');
-        })
+      })
 
-        /**
-         * Set translator language for dialog service
-         */
+    /**
+     * Set translator language for dialog service
+     */
         /* @ngInject */
-        .config(function($translateProvider) {
-            $translateProvider.preferredLanguage('en-US');
-            $translateProvider.useSanitizeValueStrategy('sanitize');
-        })
+      .config(function($translateProvider) {
+          $translateProvider.preferredLanguage('en-US');
+          $translateProvider.useSanitizeValueStrategy('sanitize');
+      })
 
-        /**
-         * App name
-         */
+    /**
+     * App name
+     */
         /* @ngInject */
-        .run(function($rootScope) {
-            $rootScope.APP_NAME = 'MassBank of North America';
-            $rootScope.APP_NAME_ABBR = 'MoNA';
-            $rootScope.APP_VERSION = 'alpha-2';
-        })
+      .run(function($rootScope) {
+          $rootScope.APP_NAME = 'MassBank of North America';
+          $rootScope.APP_NAME_ABBR = 'MoNA';
+          $rootScope.APP_VERSION = 'alpha-2';
+      })
 
-        /**
-         * Prompt user before leaving the page if spectra are being uploaded.
-         * Uses $injector to bypass timeout error when testing with protractor.
-         */
+    /**
+     * Prompt user before leaving the page if spectra are being uploaded.
+     * Uses $injector to bypass timeout error when testing with protractor.
+     */
         /* @ngInject */
-        .run(function($window, $injector) {
-            $window.onbeforeunload = function(e) {
-                var service = $injector.get('UploadLibraryService');
+      .run(function($window, $injector) {
+          $window.onbeforeunload = function(e) {
+              var service = $injector.get('UploadLibraryService');
 
-                if (service.isUploading()) {
-                    var progress = parseInt(((service.completedSpectraCount / service.uploadedSpectraCount) * 100), 10);
-                    return 'MoNA is ' + progress + '% done with processing and uploading spectra.';
-                }
-            };
-        });
+              if (service.isUploading()) {
+                  var progress = parseInt(((service.completedSpectraCount / service.uploadedSpectraCount) * 100), 10);
+                  return 'MoNA is ' + progress + '% done with processing and uploading spectra.';
+              }
+          };
+      });
 })();

@@ -32,7 +32,8 @@
     "metisMenu": "1.0.1",
     "paralleljs": "*",
     "angular-filter": "~0.5.8",
-    "angularjs-viewhead": "~0.0.1"
+    "angularjs-viewhead": "~0.0.1",
+    "angular-flash-alert": "^2.2.5"
   },
   "devDependencies": {
     "protractor": "~2.5.1",
