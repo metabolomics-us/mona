@@ -11,7 +11,7 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer
 import org.springframework.batch.core.{Job, JobExecution, JobExecutionListener, Step}
 import org.springframework.batch.item.{ItemProcessor, ItemReader, ItemWriter}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
+import org.springframework.context.annotation._
 
 /**
   * Created by wohlgemuth on 3/21/16.
@@ -19,6 +19,7 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 @Configuration
 @EnableBatchProcessing
 @Import(Array(classOf[RestClientConfig], classOf[WorkflowConfiguration],classOf[CurrationConfig]))
+@ImportResource(Array("classpath:uploadJob.xml"))
 @ComponentScan(Array("edu.ucdavis.fiehnlab.mona.backend.curation"))
 class UploaderJobConfig extends LazyLogging {
 
@@ -58,17 +59,5 @@ class UploaderJobConfig extends LazyLogging {
     jobBuilderFactory.get("uploadSpectraJob").incrementer(new RunIdIncrementer).listener(listener).flow(uploadSpectraStep).end().build()
 
   }
-/*
-    @Bean
-    def uploadAndCurrationSpectraStep: Step = {
-      stepBuilderFactory.get("uploadAndCurrationSpectraStep").chunk(10).reader(jsonFileReader).processor(currationWorkflow).writer(restRepositoryWriter).build()
-      null
-    }
 
-    @Bean
-    def uploadAndCurrationSpectraJob: Job = {
-      jobBuilderFactory.get("uploadAndCurrationSpectraJob").incrementer(new RunIdIncrementer).listener(listener).flow(uploadAndCurrationSpectraStep).end().build()
-    }
-
-    */
 }

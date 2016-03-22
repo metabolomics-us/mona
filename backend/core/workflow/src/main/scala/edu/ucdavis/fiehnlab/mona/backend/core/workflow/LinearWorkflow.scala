@@ -41,7 +41,7 @@ class LinearWorkflow[TYPE:ClassTag](name:String) extends Workflow[TYPE](name) wi
     * @param item
     * @return
     */
-  override def process(item: TYPE): TYPE = process(item)
+  override def process(item: TYPE): TYPE = process(item,graph.heads.head)
 }
 
 /**

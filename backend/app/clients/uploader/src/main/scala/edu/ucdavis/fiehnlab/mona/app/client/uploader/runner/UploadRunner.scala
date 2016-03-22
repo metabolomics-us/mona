@@ -21,6 +21,8 @@ class UploadRunner extends ApplicationRunner with LazyLogging{
   @Autowired
   val uploadSpectraJob:Job = null
 
+  @Autowired
+  val uploadAndCurrationSpectraJob:Job = null
   /**
     * runs the actual application and populates our jobs
     *
@@ -34,7 +36,7 @@ class UploadRunner extends ApplicationRunner with LazyLogging{
 
         val parameters = new JobParametersBuilder().addString("pathToFile",file).toJobParameters
 
-        jobLauncher.run(uploadSpectraJob,parameters)
+        jobLauncher.run(uploadAndCurrationSpectraJob,parameters)
 
       }
     }
