@@ -125,9 +125,13 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     */
   private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[Spectrum] = {
     //no need to hit elastic here, since no qury is executed
-    if (rsqlQuery == "") spectrumMongoRepository.findAll(request)
+    if (rsqlQuery == ""){
+      spectrumMongoRepository.findAll(request)
+    }
     //let elastic deal with the request
-    else spectrumElasticRepository.rsqlQuery(rsqlQuery, request)
+    else {
+      spectrumElasticRepository.rsqlQuery(rsqlQuery, request)
+    }
   }
 
   /**
