@@ -18,46 +18,7 @@ import org.springframework.context.annotation._
   */
 @Configuration
 @EnableBatchProcessing
-@Import(Array(classOf[RestClientConfig], classOf[WorkflowConfiguration],classOf[CurrationConfig]))
+@Import(Array(classOf[RestClientConfig], classOf[WorkflowConfiguration], classOf[CurrationConfig]))
 @ImportResource(Array("classpath:uploadJob.xml"))
 @ComponentScan(Array("edu.ucdavis.fiehnlab.mona.backend.curation"))
-class UploaderJobConfig extends LazyLogging {
-
-  @Autowired
-  val jobBuilderFactory: JobBuilderFactory = null
-
-  @Autowired
-  val stepBuilderFactory: StepBuilderFactory = null
-
-  @Autowired
-  val currationWorkflow:ItemProcessor[Spectrum,Spectrum] = null
-
-  @Autowired
-  val restRepositoryWriter: ItemWriter[Spectrum] = null
-
-  @Autowired
-  val jsonFileReader:ItemReader[Spectrum] = null
-
-
-  @Bean
-  def listener: JobExecutionListener = {
-    new JobExecutionListener {
-
-      override def beforeJob(jobExecution: JobExecution): Unit = logger.info("starting job...")
-
-      override def afterJob(jobExecution: JobExecution): Unit = logger.info("finished job")
-    }
-  }
-
-  @Bean
-  def uploadSpectraStep: Step = {
-    stepBuilderFactory.get("uploadSpectraStep").chunk(10).reader(jsonFileReader).writer(restRepositoryWriter).build()
-  }
-
-  @Bean
-  def uploadSpectraJob: Job = {
-    jobBuilderFactory.get("uploadSpectraJob").incrementer(new RunIdIncrementer).listener(listener).flow(uploadSpectraStep).end().build()
-
-  }
-
-}
+class UploaderJobConfig extends LazyLogging
