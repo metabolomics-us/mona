@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Types.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{LinearWorkflow, Workflow}
+import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurrationConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.JSONFileSpectraReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.batch.core.{JobExecution, JobExecutionListener, Step, Job}
@@ -22,7 +23,7 @@ import org.springframework.context.annotation.{ComponentScan, Import, Bean, Conf
   */
 @Configuration
 @EnableBatchProcessing
-@Import(Array(classOf[RestClientConfig], classOf[WorkflowConfiguration]))
+@Import(Array(classOf[RestClientConfig], classOf[WorkflowConfiguration],classOf[CurrationConfig]))
 @ComponentScan(Array("edu.ucdavis.fiehnlab.mona.backend.curation"))
 class UploaderJobConfig extends LazyLogging {
 
@@ -32,38 +33,15 @@ class UploaderJobConfig extends LazyLogging {
   @Autowired
   val stepBuilderFactory: StepBuilderFactory = null
 
-  /**
-    * writer to utilize
-    *
-    * @return
-    */
-  @Bean
-  def restRepositoryWriter: ItemWriter[Spectrum] = {
-    new RestRepositoryWriter()
-  }
+  @Autowired
+  val currationWorkflow:ItemProcessor[Spectrum,Spectrum] = null
 
-  /**
-    * reader to utilize
-    *
-    * @return
-    */
-  @Bean
-  @StepScope
-  def jsonFileReader(@Value("#{jobParameters[pathToFile]}")
-                     file: String): ItemReader[Spectrum] = {
-    val reader = new JSONFileSpectraReader()
+  @Autowired
+  val restRepositoryWriter: ItemWriter[Spectrum] = null
 
-    if(new File(file).exists()){
-      logger.debug("a file was provided")
-      reader.stream = new BufferedInputStream(new FileInputStream(file))
-    }
-    else{
-      logger.warn("provided file did not exist, trying to load from classpath")
-      reader.stream = getClass.getResourceAsStream(file)
-    }
+  @Autowired
+  val jsonFileReader:ItemReader[Spectrum] = null
 
-    reader
-  }
 
   @Bean
   def listener: JobExecutionListener = {
@@ -75,19 +53,9 @@ class UploaderJobConfig extends LazyLogging {
     }
   }
 
-  /**
-    * generate a workflow of the name curation
-    *
-    * @return
-    */
-  @Bean
-  def process: ItemProcessor[Spectrum, Spectrum] = {
-    new LinearWorkflow[Spectrum](name = "spectra-curration")
-  }
-
   @Bean
   def uploadSpectraStep: Step = {
-    stepBuilderFactory.get("uploadSpectraStep").chunk(10).reader(jsonFileReader(null)).writer(restRepositoryWriter).build()
+    stepBuilderFactory.get("uploadSpectraStep").chunk(10).reader(jsonFileReader).writer(restRepositoryWriter).build()
   }
 
   @Bean

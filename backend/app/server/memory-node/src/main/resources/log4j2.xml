@@ -6,9 +6,9 @@
     </Console>
 </Appenders>
 <Loggers>
-    <Logger name="edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization.MongoCountListener" level="debug"/>
-    <Logger name="edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization.ElasticCountListener" level="debug"/>
-    <Logger name="edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization.SpectrumElasticEventListener" level="debug"/>
+    <Logger name="edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization.MongoCountListener" level="warn"/>
+    <Logger name="edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization.ElasticCountListener" level="warn"/>
+    <Logger name="edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization.SpectrumElasticEventListener" level="warn"/>
 
     <Logger name="org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongo" level="warn"/>
     <Logger name="edu.ucdavis" level="debug"/>
