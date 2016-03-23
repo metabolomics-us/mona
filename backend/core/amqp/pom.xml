@@ -11,5 +11,12 @@
 
     <artifactId>amqp</artifactId>
 
+    <description>This module provides basic message handling and message based workflow processing for us</description>
+    <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>curation</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
