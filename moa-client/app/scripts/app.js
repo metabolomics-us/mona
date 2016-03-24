@@ -46,7 +46,7 @@
                       return response || $q.when(response);
                   },
                   responseError: function(rejection) {
-                      $rootScope.httpError.push (rejection);
+                      $rootScope.httpError.push(rejection);
                       $location.path('/');
                       return $q.reject(rejection);
                   }
