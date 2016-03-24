@@ -13,5 +13,5 @@ class MonaNode
   * starter
   */
 object MonaNode extends App {
-  SpringApplication.run(classOf[MonaNode]);
+  SpringApplication.run(classOf[MonaNode])
 }

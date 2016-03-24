@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation._
 
 import scala.collection.JavaConverters._
 
+@CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/spectra"))
 class SpectrumRestController extends GenericRESTController[Spectrum] {

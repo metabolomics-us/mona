@@ -7,11 +7,13 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
+import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.StartServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.BasicRestSecurityConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -23,10 +25,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 /**
   * Created by wohlgemuth on 3/1/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig],classOf[EmbeddedRestServerConfig]))
 @WebIntegrationTest(Array("server.port=0"))
-class SpectrumRestControllerTest extends WordSpec with LazyLogging{
+abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogging{
 
   @Value( """${local.server.port}""")
   val port: Int = 0
@@ -52,8 +53,11 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
 
     "while working in it" should {
 
+      "we need to be authenticated to POST at /rest/spectra" in {
+        given().contentType("application/json; charset=UTF-8").body(Spectrum).when().post("/spectra").then().statusCode(401)
+      }
 
-      "we should be able to add spectra using POST at /rest/spectra" in {
+      "we should be able to add spectra using POST at /rest/spectra with authentication" in {
 
         spectrumRepository.deleteAll()
 
@@ -68,7 +72,7 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
         for (spectrum <- exampleRecords) {
 
           logger.debug("starting post request")
-          given().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
+          authentificate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
         }
 
         val countAfter = spectrumRepository.count()
@@ -101,13 +105,22 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
         }
       }
 
+      "we need to be authenticated to delete spectra " in {
+        given().when().delete(s"/spectra/111").then().statusCode(401)
+      }
+
+      "we need to be an admin to delete spectra " in {
+        authentificate("test","test-secret").when().delete(s"/spectra/111").then().statusCode(403)
+      }
+
+
       "we should be able to delete a spectra using DELETE at /rest/spectra" in {
         val firstRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
         val countBefore = spectrumRepository.count()
 
         for (spec <- firstRecords) {
-          given().when().delete(s"/spectra/${spec.id}").then().statusCode(200)
+          authentificate().when().delete(s"/spectra/${spec.id}").then().statusCode(200)
         }
 
         val countAfter = spectrumRepository.count()
@@ -128,7 +141,7 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
         val modifiedSpectrum: Spectrum = spectrum.copy(splash = splash)
         val countBefore = spectrumRepository.count()
 
-        given().contentType("application/json; charset=UTF-8").body(modifiedSpectrum).when().post("/spectra").then().statusCode(200)
+        authentificate().contentType("application/json; charset=UTF-8").body(modifiedSpectrum).when().post("/spectra").then().statusCode(200)
 
         val countAfter = spectrumRepository.count()
         val spectrumAfterUpdate = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${modifiedSpectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
@@ -157,12 +170,15 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
 
         val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumIdMoved = given().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumIdMoved = authentificate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
         given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200)
 
       }
 
+      "we need to be authentificated for PUT requestes" in {
+        given().contentType("application/json; charset=UTF-8").when().body(Spectrum).put(s"/spectra/TADA_NEW_ID").then().statusCode(401).extract().body().as(classOf[Spectrum])
+      }
 
       "we should be able to update a spectrum at a given path using PUT as /rest/spectra " in {
 
@@ -170,7 +186,7 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
 
         val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumIdMoved = given().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumIdMoved = authentificate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
         val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
@@ -181,5 +197,22 @@ class SpectrumRestControllerTest extends WordSpec with LazyLogging{
 
       }
     }
+  }
+
+  //does the authentification for required requests
+  def authentificate(user:String = "admin",password:String = "secret"): RequestSpecification
+}
+
+/**
+  * tests basic authentification
+  */
+@RunWith(classOf[SpringJUnit4ClassRunner])
+class BasicSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest{
+
+  //required for spring and scala tes
+  new TestContextManager(this.getClass()).prepareTestInstance(this)
+
+  override def authentificate(user:String,password:String): RequestSpecification = {
+    given().auth().basic(user, password)
   }
 }
