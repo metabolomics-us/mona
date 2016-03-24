@@ -17,6 +17,7 @@
     <module>persistence</module>
     <module>statistics</module>
     <module>service</module>
+    <module>auth</module>
     <module>rest</module>
     <module>client</module>
     <module>workflow</module>
