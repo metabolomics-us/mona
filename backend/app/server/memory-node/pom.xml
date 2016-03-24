@@ -11,6 +11,7 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
     <artifactId>memory-node</artifactId>
+	<packaging>jar</packaging>
 
     <description>This is a server node, completely running in memory and should be considered for local testing only. It obviously should not be used in a cluster environment</description>
 
@@ -41,6 +42,18 @@
 
     <build>
         <plugins>
+			<plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.3.3.RELEASE</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>

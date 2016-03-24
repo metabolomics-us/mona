@@ -11,7 +11,8 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
     <artifactId>node</artifactId>
-
+	<packaging>jar</packaging>
+	
     <description>This project, provides a MoNA server which can be utilized in a single or multi node cluster
     </description>
 
@@ -24,6 +25,18 @@
 
     <build>
         <plugins>
+			<plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.3.3.RELEASE</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
