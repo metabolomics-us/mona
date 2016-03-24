@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.5</version>
+        </dependency>
+        <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
         </dependency>
