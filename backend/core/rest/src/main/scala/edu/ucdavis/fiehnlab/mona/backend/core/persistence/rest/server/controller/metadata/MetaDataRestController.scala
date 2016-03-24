@@ -18,6 +18,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by wohlg_000 on 3/7/2016.
   */
+@CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/metaData"))
 class MetaDataRestController {
