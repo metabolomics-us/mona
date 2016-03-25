@@ -1,14 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.filter
 
+import java.util
+import java.util.Date
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import javax.servlet.{FilterChain, ServletException, ServletRequest, ServletResponse}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
-import io.jsonwebtoken.MalformedJwtException
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.TokenSecret
+import io.jsonwebtoken.{Claims, Jwts, MalformedJwtException}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint
 import org.springframework.security.authentication.{AuthenticationManager, AuthenticationServiceException}
-import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.{Authentication, AuthenticationException, GrantedAuthority}
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.web.filter.GenericFilterBean
@@ -18,9 +22,25 @@ import scala.collection.JavaConverters._
   * this filter intercepts all requests and does the authentication for us
   * to ensure our services are protected
   */
-class JWTAuthenticationFilter(authenticationManager: AuthenticationManager,loginService: LoginService) extends GenericFilterBean {
+class JWTAuthenticationFilter(authenticationManager: AuthenticationManager,tokenSecret:TokenSecret) extends GenericFilterBean {
 
   val entryPoint: AuthenticationEntryPoint = new Http401AuthenticationEntryPoint("authorization failed!")
+
+
+  /**
+    * TODO doesn't really belong here, should be moved
+    * does the authentication for the given token
+    *
+    * @param token
+    * @return
+    */
+  def authenticate(token:String) : Authentication = {
+
+    val claims:Claims = Jwts.parser().setSigningKey(tokenSecret.value).parseClaimsJws(token).getBody
+
+    new JWTAuthentication(claims)
+  }
+
 
   /**
     * ensures the user is authenticated and has the correct rights
@@ -52,7 +72,7 @@ class JWTAuthenticationFilter(authenticationManager: AuthenticationManager,login
 
       try {
 
-        val auth = authenticationManager.authenticate(loginService.authenticate(token))
+        val auth = authenticationManager.authenticate(authenticate(token))
         SecurityContextHolder.getContext.setAuthentication(auth)
 
         logger.debug("continue down the chain...")
@@ -74,5 +94,62 @@ class JWTAuthenticationFilter(authenticationManager: AuthenticationManager,login
         }
     }
 
+  }
+}
+
+/**
+  * our custom token based authentication
+  * @param claims
+  */
+final class JWTAuthentication(claims:Claims) extends Authentication {
+
+  var authenticated:Boolean = false
+
+  override def getDetails: AnyRef = claims
+
+  override def getPrincipal: AnyRef = claims.getSubject
+
+  override def isAuthenticated: Boolean = authenticated
+
+  /**
+    * generates all roles in the claim
+    *
+    * @return
+    */
+  override def getAuthorities: util.Collection[_ <: GrantedAuthority] = claims.get("roles").asInstanceOf[java.util.List[String]].asScala.collect{case x:String => new SimpleGrantedAuthority(x)}.asJava
+
+  override def getCredentials: AnyRef = ""
+
+  override def setAuthenticated(isAuthenticated: Boolean): Unit = authenticated = isAuthenticated
+
+  override def getName: String = claims.getSubject
+
+
+  /**
+    * checks if the provided token is expired or still valid
+    * current
+    *
+    * @return
+    */
+  def isExpired : Boolean = {
+    if(claims.getExpiration != null) {
+      claims.getExpiration.before(new Date())
+    }
+    else{
+      false
+    }
+  }
+
+  /**
+    * token is not yet active
+    * @return
+    */
+  def isNotYetActive : Boolean = {
+    if(claims.getNotBefore != null){
+      claims.getNotBefore.after(new Date())
+    }
+    else{
+      false
+    }
   }
 }

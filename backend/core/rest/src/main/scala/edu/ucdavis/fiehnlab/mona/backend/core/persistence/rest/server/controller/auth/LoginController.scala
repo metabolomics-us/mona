@@ -1,13 +1,14 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.controller
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.auth
 
 import java.util.Date
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types._
-import io.jsonwebtoken.{SignatureAlgorithm, Jwts, Jwt}
+import io.jsonwebtoken.{Jwts, SignatureAlgorithm}
 import org.apache.commons.lang.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.{RequestMethod, RequestBody, RequestMapping, RestController}
+import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
+
 import scala.collection.JavaConverters._
 
 /**

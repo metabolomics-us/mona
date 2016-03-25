@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.controller
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
@@ -7,15 +7,15 @@ import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.config.AuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginResponse, LoginRequest, Role, User}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, LoginResponse, Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
-
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.JWTRestSecurityConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.test.{WebIntegrationTest, SpringApplicationConfiguration}
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
@@ -25,7 +25,7 @@ import scala.collection.JavaConverters._
   * Created by wohlgemuth on 3/24/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration], classOf[AuthenticationConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration], classOf[AuthenticationConfig],classOf[JWTRestSecurityConfig],classOf[EmbeddedRestServerConfig]))
 @WebIntegrationTest(Array("server.port=0"))
 class LoginControllerTest extends WordSpec {
 

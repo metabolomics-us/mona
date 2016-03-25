@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.config.AuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.filter.JWTAuthenticationFilter
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.provider.{JWTAuthenticationProvider, MonaAuthenticationProvider}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.TokenSecret
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint
 import org.springframework.context.annotation.{Bean, Configuration, Import}
@@ -21,13 +22,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import scala.collection.JavaConverters._
 
 /**
-  * basic security class for our usage
+  * this is an abstract base class and utilized to secure the different routes in Mona
+  * it should be implemented by concreate classes, which provide the actual security configuration
+  *
+  * please be aware that only 1 class should be used for authorization, since they are mutably exclusive
+  *
   */
 abstract class RestSecurity extends WebSecurityConfigurerAdapter {
 
   /**
-    * does our basic authentification for us
-    *
+    * this bean with configure our custom authentication providers into the central authentication manager
+    * which will be used in the security configurations
+    */
+  @Bean
+  def authenticationManager(provider:AuthenticationProvider): AuthenticationManager = new ProviderManager(List[AuthenticationProvider](provider).asJava)
+
+  /**
+    * this method configures authorized access to the system
+    * and protects the urls with the specified methods and credentials
     * @param http
     */
   override final def configure(http: HttpSecurity): Unit = {
@@ -37,6 +49,8 @@ abstract class RestSecurity extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
       //saves need to be authentifiated
       .antMatchers(HttpMethod.POST, "/rest/spectra/**").authenticated()
+      .antMatchers(HttpMethod.POST, "/rest/submitters/**").authenticated()
+
       //updates needs authentication
       .antMatchers(HttpMethod.PUT).authenticated()
       //deletes need authentication
@@ -55,7 +69,8 @@ abstract class RestSecurity extends WebSecurityConfigurerAdapter {
   def prepare(http: HttpSecurity): HttpSecurity
 
   /**
-    * here we configure what needs no security
+    * this method configures, which parts of the system and which methods do not need
+    * any form of security in place and can be openly accessed
     *
     * @param web
     */
@@ -72,13 +87,9 @@ abstract class RestSecurity extends WebSecurityConfigurerAdapter {
   }
 }
 
-
 /**
-  * utilizes basic authentication
-  */
-
-/**
-  * utilizes a httpBasic authentication for security resons
+  * this configuration provides you with http basic authentication and
+  * utilizes the mona authentication provider internally
   */
 @Configuration
 @EnableWebSecurity
@@ -92,13 +103,21 @@ class BasicRestSecurityConfig extends RestSecurity {
     */
   override def prepare(http: HttpSecurity): HttpSecurity = http.csrf().disable().httpBasic().and()
 
+  /**
+    * executes the authentication for us
+    * @return
+    */
   @Bean
-  def monaAuthenticationProvider: MonaAuthenticationProvider = new MonaAuthenticationProvider
+  def authenticationProvider: MonaAuthenticationProvider = new MonaAuthenticationProvider
 
 }
 
 /**
-  * utilizes JWT based authentication
+  * this configuration provides a Json Web Token based configuration
+  * and requires the user to first login
+  * and than submit his token with every request
+  *
+  * this has to be done utilizing the Authorization header and the Bearer schema
   */
 @Import(Array(classOf[AuthenticationConfig]))
 @Configuration
@@ -107,15 +126,7 @@ class BasicRestSecurityConfig extends RestSecurity {
 class JWTRestSecurityConfig extends RestSecurity {
 
   /**
-    * the actual manager
-    * @param provider
-    * @return
-    */
-  @Bean
-  def authenticationManager(provider:AuthenticationProvider): AuthenticationManager = new ProviderManager(List[AuthenticationProvider](provider).asJava)
-
-  /**
-    * token based authentication
+    * token based authentication provider
     *
     * @return
     */
@@ -123,7 +134,7 @@ class JWTRestSecurityConfig extends RestSecurity {
   def authenticationProvider: JWTAuthenticationProvider = new JWTAuthenticationProvider()
 
   @Autowired
-  val loginService:LoginService = null
+  val token:TokenSecret = null
   /**
     * prepares our security object
     *
@@ -131,6 +142,6 @@ class JWTRestSecurityConfig extends RestSecurity {
     * @return
     */
   override def prepare(http: HttpSecurity): HttpSecurity = {
-    http.csrf().disable().httpBasic().disable().addFilterBefore(new JWTAuthenticationFilter(authenticationManager(),loginService),classOf[UsernamePasswordAuthenticationFilter])
+    http.csrf().disable().httpBasic().disable().addFilterBefore(new JWTAuthenticationFilter(authenticationManager(),token),classOf[UsernamePasswordAuthenticationFilter])
   }
 }
