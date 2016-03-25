@@ -23,7 +23,7 @@ class UserRepositoryTest extends WordSpec {
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  "IAuthenticationRepositoryTest" should {
+  "UserRepositoryTest" should {
 
     "findByUserName" in {
 

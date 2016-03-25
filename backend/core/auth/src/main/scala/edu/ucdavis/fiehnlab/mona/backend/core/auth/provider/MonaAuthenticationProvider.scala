@@ -1,17 +1,19 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.provider
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.{JWTAuthentication, LoginService}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, Role}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.security.authentication.{AuthenticationProvider, UsernamePasswordAuthenticationToken}
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+
 import scala.collection.JavaConverters._
 
 /**
-  * implmentation of an authentication provider in case people
-  * want to use this approach
+  * implementation of an authentication provider in case people
+  * want to use the direct database approach. Mostly interessting in case of Basic authentication
   */
 class MonaAuthenticationProvider extends AuthenticationProvider with LazyLogging {
 

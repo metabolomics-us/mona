@@ -84,7 +84,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
         for (spectrum <- exampleRecords) {
 
           logger.debug("starting post request")
-          authentificate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
+          authenticate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
         }
 
         val countAfter = spectrumRepository.count()
@@ -122,7 +122,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
       }
 
       "we need to be an admin to delete spectra " in {
-        authentificate("test", "test-secret").when().delete(s"/spectra/111").then().statusCode(403)
+        authenticate("test", "test-secret").when().delete(s"/spectra/111").then().statusCode(403)
       }
 
 
@@ -132,7 +132,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
         val countBefore = spectrumRepository.count()
 
         for (spec <- firstRecords) {
-          authentificate().when().delete(s"/spectra/${spec.id}").then().statusCode(200)
+          authenticate().when().delete(s"/spectra/${spec.id}").then().statusCode(200)
         }
 
         val countAfter = spectrumRepository.count()
@@ -153,7 +153,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
         val modifiedSpectrum: Spectrum = spectrum.copy(splash = splash)
         val countBefore = spectrumRepository.count()
 
-        authentificate().contentType("application/json; charset=UTF-8").body(modifiedSpectrum).when().post("/spectra").then().statusCode(200)
+        authenticate().contentType("application/json; charset=UTF-8").body(modifiedSpectrum).when().post("/spectra").then().statusCode(200)
 
         val countAfter = spectrumRepository.count()
         val spectrumAfterUpdate = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${modifiedSpectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
@@ -182,7 +182,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
 
         val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumIdMoved = authentificate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
         given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200)
 
@@ -198,7 +198,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
 
         val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumIdMoved = authentificate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
         val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
@@ -212,7 +212,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
   }
 
   //does the authentification for required requests
-  def authentificate(user: String = "admin", password: String = "secret"): RequestSpecification
+  def authenticate(user: String = "admin", password: String = "secret"): RequestSpecification
 }
 
 /**
@@ -226,7 +226,7 @@ class BasicAuthSpectrumRestControllerTest extends AbstractSpectrumRestController
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  override def authentificate(user: String, password: String): RequestSpecification = {
+  override def authenticate(user: String, password: String): RequestSpecification = {
     given().auth().basic(user, password)
   }
 }
@@ -242,7 +242,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractSpectrumRestController
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  override def authentificate(user: String, password: String): RequestSpecification = {
+  override def authenticate(user: String, password: String): RequestSpecification = {
     val token = "12345"
     given().header("Authorization",s"Bearer ${token}")
   }
