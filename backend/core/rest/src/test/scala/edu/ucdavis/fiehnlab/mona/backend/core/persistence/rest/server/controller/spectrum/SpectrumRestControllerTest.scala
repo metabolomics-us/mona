@@ -9,31 +9,36 @@ import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Splash, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.StartServerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.BasicRestSecurityConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.{JWTRestSecurityConfig, BasicRestSecurityConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.service.config.PersistenceServiceConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-
+import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/1/16.
   */
-@SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig],classOf[EmbeddedRestServerConfig]))
-@WebIntegrationTest(Array("server.port=0"))
-abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogging{
+abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogging {
 
   @Value( """${local.server.port}""")
   val port: Int = 0
 
   @Autowired
   val spectrumRepository: SpectrumPersistenceService = null
+
+  @Autowired
+  val userRepository:UserRepository = null
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
@@ -52,6 +57,13 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
     RestAssured.baseURI = s"http://localhost:${port}/rest"
 
     "while working in it" should {
+
+
+      "reset the user base" in {
+        userRepository.deleteAll()
+        userRepository.save(User("admin","secret",Array(Role("ADMIN")).toList.asJava))
+        userRepository.save(User("test","test-secret"))
+      }
 
       "we need to be authenticated to POST at /rest/spectra" in {
         given().contentType("application/json; charset=UTF-8").body(Spectrum).when().post("/spectra").then().statusCode(401)
@@ -110,7 +122,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
       }
 
       "we need to be an admin to delete spectra " in {
-        authentificate("test","test-secret").when().delete(s"/spectra/111").then().statusCode(403)
+        authentificate("test", "test-secret").when().delete(s"/spectra/111").then().statusCode(403)
       }
 
 
@@ -200,19 +212,39 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
   }
 
   //does the authentification for required requests
-  def authentificate(user:String = "admin",password:String = "secret"): RequestSpecification
+  def authentificate(user: String = "admin", password: String = "secret"): RequestSpecification
 }
 
 /**
   * tests basic authentification
   */
+@SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig], classOf[EmbeddedRestServerConfig], classOf[BasicRestSecurityConfig]))
+@WebIntegrationTest(Array("server.port=0"))
 @RunWith(classOf[SpringJUnit4ClassRunner])
-class BasicSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest{
+class BasicAuthSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest {
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  override def authentificate(user:String,password:String): RequestSpecification = {
+  override def authentificate(user: String, password: String): RequestSpecification = {
     given().auth().basic(user, password)
   }
 }
+
+/**
+  * tests basic authentification
+  */
+@SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig], classOf[EmbeddedRestServerConfig], classOf[JWTRestSecurityConfig]))
+@WebIntegrationTest(Array("server.port=0"))
+@RunWith(classOf[SpringJUnit4ClassRunner])
+class TokenAuthSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest {
+
+  //required for spring and scala tes
+  new TestContextManager(this.getClass()).prepareTestInstance(this)
+
+  override def authentificate(user: String, password: String): RequestSpecification = {
+    val token = "12345"
+    given().header("Authorization",s"Bearer ${token}")
+  }
+}
+

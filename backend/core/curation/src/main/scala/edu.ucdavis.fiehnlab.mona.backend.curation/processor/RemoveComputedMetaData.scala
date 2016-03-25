@@ -23,7 +23,7 @@ class RemoveComputedMetaData extends ItemProcessor[Spectrum,Spectrum]{
     val processedChemicalCompound = spectrum.chemicalCompound.copy(metaData = filterMetaData(spectrum.chemicalCompound.metaData))
 
     //assemble return object
-    metaDataRemoved.copy(biologicalCompound = processedBiologicalCompound, chemicalCompound = processedChemicalCompound, predictedCompound = null)
+    metaDataRemoved.copy(biologicalCompound = processedBiologicalCompound, chemicalCompound = processedChemicalCompound)
   }
 
   /**

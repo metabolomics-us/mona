@@ -23,4 +23,11 @@ trait ISubmitterMongoRepository extends PagingAndSortingRepository[Submitter, St
     * @return
     */
   def findByFirstName(firstName:String) : java.lang.Iterable[Submitter]
+
+  /**
+    * returns the submitter by it's id property
+    * @param id
+    * @return
+    */
+  def findById(id:String) : Submitter
 }

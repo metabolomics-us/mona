@@ -31,6 +31,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>auth</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>curation</artifactId>
