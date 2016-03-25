@@ -66,12 +66,12 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
         userRepository.save(User("test","test-secret"))
       }
 
-      "we need to be authenticated to POST at /rest/spectra" in {
-        given().contentType("application/json; charset=UTF-8").body(Spectrum).when().post("/spectra").then().statusCode(401)
-      }
-
       "we should be able to just make an unauthenticated GET request" in {
         given().contentType("application/json; charset=UTF-8").body(Spectrum).when().get("/spectra").then().statusCode(200)
+      }
+
+      "we need to be authenticated to POST at /rest/spectra" in {
+        given().contentType("application/json; charset=UTF-8").body(Spectrum).when().post("/spectra").then().statusCode(401)
       }
 
       "we should be able to add spectra using POST at /rest/spectra with authentication" in {
@@ -244,13 +244,22 @@ class BasicAuthSpectrumRestControllerTest extends AbstractSpectrumRestController
 @RunWith(classOf[SpringJUnit4ClassRunner])
 class TokenAuthSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest {
 
+  var token:String = null
+
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
+  /**
+    * generates a token and utilizes it for the authentication
+    * @param user
+    * @param password
+    * @return
+    */
   override def authenticate(user: String, password: String): RequestSpecification = {
-    val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest(user, password)).when().post("/rest/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+    val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest(user, password)).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
 
     assert(response.token != null)
+    logger.debug(s"generated token is ${response.token}")
     given().header("Authorization",s"Bearer ${response.token}")
   }
 }
