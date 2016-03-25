@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.provider
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.{JWTAuthentication, LoginService}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, Role}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.security.authentication.{AuthenticationProvider, UsernamePasswordAuthenticationToken}
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority

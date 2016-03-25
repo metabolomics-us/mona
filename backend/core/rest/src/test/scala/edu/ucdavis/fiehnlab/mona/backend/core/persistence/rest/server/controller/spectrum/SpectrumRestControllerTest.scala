@@ -14,7 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, LoginRes
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.StartServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.{AbstractGenericRESTControllerTest, StartServerConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.{BasicRestSecurityConfig, JWTRestSecurityConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.service.config.PersistenceServiceConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
@@ -30,16 +30,26 @@ import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/1/16.
   */
-abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogging {
+abstract class AbstractSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra"){
 
-  @Value( """${local.server.port}""")
-  val port: Int = 0
+
+  /**
+    * object to use for gets
+    *
+    * @return
+    */
+  override def getValue: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
+
+  /**
+    * returns an id for us for testing
+    *
+    * @return
+    */
+  override def getId: String = getValue.id
 
   @Autowired
   val spectrumRepository: SpectrumPersistenceService = null
 
-  @Autowired
-  val userRepository:UserRepository = null
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
@@ -47,32 +57,7 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
 
   "we will be connecting to the REST controller" when {
 
-    RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
-      override def create(aClass: Class[_], s: String): ObjectMapper = {
-        logger.info("registering rest assured mapper")
-        MonaMapper.create
-      }
-    }))
-
-
-    RestAssured.baseURI = s"http://localhost:${port}/rest"
-
     "while working in it" should {
-
-
-      "reset the user base" in {
-        userRepository.deleteAll()
-        userRepository.save(User("admin","secret",Array(Role("ADMIN")).toList.asJava))
-        userRepository.save(User("test","test-secret"))
-      }
-
-      "we should be able to just make an unauthenticated GET request" in {
-        given().contentType("application/json; charset=UTF-8").body(Spectrum).when().get("/spectra").then().statusCode(200)
-      }
-
-      "we need to be authenticated to POST at /rest/spectra" in {
-        given().contentType("application/json; charset=UTF-8").body(Spectrum).when().post("/spectra").then().statusCode(401)
-      }
 
       "we should be able to add spectra using POST at /rest/spectra with authentication" in {
 
@@ -216,8 +201,6 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
     }
   }
 
-  //does the authentification for required requests
-  def authenticate(user: String = "admin", password: String = "secret"): RequestSpecification
 }
 
 /**
@@ -249,18 +232,5 @@ class TokenAuthSpectrumRestControllerTest extends AbstractSpectrumRestController
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  /**
-    * generates a token and utilizes it for the authentication
-    * @param user
-    * @param password
-    * @return
-    */
-  override def authenticate(user: String, password: String): RequestSpecification = {
-    val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest(user, password)).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
-
-    assert(response.token != null)
-    logger.debug(s"generated token is ${response.token}")
-    given().header("Authorization",s"Bearer ${response.token}")
-  }
 }
 

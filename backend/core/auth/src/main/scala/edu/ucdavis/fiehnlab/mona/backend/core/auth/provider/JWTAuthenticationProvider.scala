@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.provider
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.{JWTAuthentication, LoginService}
-import org.springframework.beans.factory.annotation.Autowired
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.filter.JWTAuthentication
 import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
@@ -12,9 +11,6 @@ import org.springframework.security.core.Authentication
   * token based authentication provider
   */
 class JWTAuthenticationProvider extends AuthenticationProvider with LazyLogging{
-
-  @Autowired
-  val loginService:LoginService = null
 
   override def authenticate(authentication: Authentication): Authentication = {
 
