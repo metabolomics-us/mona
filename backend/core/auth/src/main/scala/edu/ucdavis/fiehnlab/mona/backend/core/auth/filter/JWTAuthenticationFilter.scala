@@ -18,19 +18,9 @@ import scala.collection.JavaConverters._
   * this filter intercepts all requests and does the authentication for us
   * to ensure our services are protected
   */
-class JWTAuthenticationFilter extends GenericFilterBean {
+class JWTAuthenticationFilter(authenticationManager: AuthenticationManager,loginService: LoginService) extends GenericFilterBean {
 
-  @Autowired
-  val authenticationManager: AuthenticationManager = null
-
-  @Autowired(required = false)
   val entryPoint: AuthenticationEntryPoint = new Http401AuthenticationEntryPoint("authorization failed!")
-
-  /**
-    * the secret key used for encoding our keys
-    */
-  @Autowired
-  val loginService: LoginService = null
 
   /**
     * ensures the user is authenticated and has the correct rights

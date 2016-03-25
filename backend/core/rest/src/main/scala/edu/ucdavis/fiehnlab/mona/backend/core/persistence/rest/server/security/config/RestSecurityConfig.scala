@@ -68,7 +68,7 @@ abstract class RestSecurity extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/metaData/**")
 
       //no authentication for authentication
-      .antMatchers(HttpMethod.POST, "/rest/auth/**")
+      .antMatchers(HttpMethod.POST, "/rest/auth/login")
   }
 }
 
@@ -114,9 +114,6 @@ class JWTRestSecurityConfig extends RestSecurity {
   @Bean
   def authenticationManager(provider:AuthenticationProvider): AuthenticationManager = new ProviderManager(List[AuthenticationProvider](provider).asJava)
 
-  @Bean
-  def filter:JWTAuthenticationFilter = new JWTAuthenticationFilter
-
   /**
     * token based authentication
     *
@@ -125,6 +122,8 @@ class JWTRestSecurityConfig extends RestSecurity {
   @Bean
   def authenticationProvider: JWTAuthenticationProvider = new JWTAuthenticationProvider()
 
+  @Autowired
+  val loginService:LoginService = null
   /**
     * prepares our security object
     *
@@ -132,6 +131,6 @@ class JWTRestSecurityConfig extends RestSecurity {
     * @return
     */
   override def prepare(http: HttpSecurity): HttpSecurity = {
-    http.csrf().disable().httpBasic().disable().addFilterBefore(filter,classOf[UsernamePasswordAuthenticationFilter])
+    http.csrf().disable().httpBasic().disable().addFilterBefore(new JWTAuthenticationFilter(authenticationManager(),loginService),classOf[UsernamePasswordAuthenticationFilter])
   }
 }
