@@ -44,6 +44,7 @@ class JWTAuthenticationFilter extends GenericFilterBean {
     logger.debug("filtering...")
     val request = servletRequest.asInstanceOf[HttpServletRequest]
     val response = servletResponse.asInstanceOf[HttpServletResponse]
+    logger.debug(s"url: ${request.getRequestURL} with ${request.getMethod}")
     try {
       val authHeader = request.getHeaderNames.asScala.filter( _.toLowerCase() == "authorization").toList
 
@@ -70,7 +71,7 @@ class JWTAuthenticationFilter extends GenericFilterBean {
       catch {
         case e: AuthenticationException => throw e
         case e: MalformedJwtException => throw new AuthenticationServiceException(s"JWT token was malformed: ${token}",e)
-        case e: Exception => throw new AuthenticationServiceException("sorry an unexspected error happened", e)
+        case e: Exception => throw new AuthenticationServiceException("sorry an unexpected error happened", e)
       }
     }
     catch {
