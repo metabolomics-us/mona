@@ -9,6 +9,7 @@ import org.apache.commons.lang.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.{RequestMethod, RequestBody, RequestMapping, RestController}
 import scala.collection.JavaConverters._
+
 /**
   * JWT based token authentification for our mona based services
   */
@@ -25,7 +26,7 @@ class LoginController {
     * the secret key used for encoding our keys
     */
   @Autowired
-  val tokenSecret:TokenSecret = null
+  val tokenSecret: TokenSecret = null
 
   @Autowired
   val loginService: LoginService = null
@@ -36,14 +37,15 @@ class LoginController {
     val user = loginService.login(request)
 
     val issueDate = new Date()
-    val experiationDate = DateUtils.addHours(issueDate,timeOfLife)
+    val experiationDate = DateUtils.addHours(issueDate, timeOfLife)
 
     //associated roles
-    val roles = user.roles.asScala.collect{
-      case x:Role => x.name
-    }
+    val roles = user.roles.asScala.collect {
+      case x: Role => x.name
+    }.asJava
 
-    new LoginResponse(Jwts.builder().setSubject(user.username).claim("roles",roles).setIssuedAt(issueDate).setExpiration(experiationDate).signWith(SignatureAlgorithm.HS256, tokenSecret.value).compact())
+    new LoginResponse(Jwts.builder().setSubject(user.username).claim("roles", roles).setIssuedAt(issueDate).setExpiration(experiationDate).signWith(SignatureAlgorithm.HS256, tokenSecret.value).compact())
 
   }
+
 }

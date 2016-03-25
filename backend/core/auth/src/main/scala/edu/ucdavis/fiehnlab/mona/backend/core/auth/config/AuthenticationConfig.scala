@@ -21,27 +21,19 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 class AuthenticationConfig {
 
   /**
-    * provides us with access to the required authentication provider
-    * to be used by our applications
- *
-    * @return
-    */
-  @Bean
-  def authenticationProvider:MonaAuthenticationProvider = new MonaAuthenticationProvider()
-
-  /**
-    * the service which actually does the logins for us
-    *
-    * @return
-    */
-  @Bean
-  def loginService:LoginService = new MongoLoginService
-
-  /**
     * secret used for encryption of the token
     *
     * @return
     */
   @Bean
   def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
+
+  /**
+    * the service which actually does the login for us
+    *
+    * @return
+    */
+  @Bean
+  def loginService:LoginService = new MongoLoginService
+
 }

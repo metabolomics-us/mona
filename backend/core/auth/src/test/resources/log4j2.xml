@@ -6,7 +6,7 @@
     </Console>
 </Appenders>
 <Loggers>
-    <Logger name="edu.ucdavis" level="info"/>
+    <Logger name="edu.ucdavis" level="debug"/>
     <Logger name="org.elasticsearch.node" level="error"/>
     <Logger name="org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongo" level="warn"/>
 
