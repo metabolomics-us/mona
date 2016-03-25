@@ -10,12 +10,12 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Splash, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, LoginResponse, Role, User}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.StartServerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.{JWTRestSecurityConfig, BasicRestSecurityConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.{BasicRestSecurityConfig, JWTRestSecurityConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.service.config.PersistenceServiceConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
@@ -25,6 +25,7 @@ import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegra
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+
 import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/1/16.
@@ -67,6 +68,10 @@ abstract class AbstractSpectrumRestControllerTest extends WordSpec with LazyLogg
 
       "we need to be authenticated to POST at /rest/spectra" in {
         given().contentType("application/json; charset=UTF-8").body(Spectrum).when().post("/spectra").then().statusCode(401)
+      }
+
+      "we should be able to just make an unauthenticated GET request" in {
+        given().contentType("application/json; charset=UTF-8").body(Spectrum).when().get("/spectra").then().statusCode(200)
       }
 
       "we should be able to add spectra using POST at /rest/spectra with authentication" in {
@@ -243,8 +248,10 @@ class TokenAuthSpectrumRestControllerTest extends AbstractSpectrumRestController
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   override def authenticate(user: String, password: String): RequestSpecification = {
-    val token = "12345"
-    given().header("Authorization",s"Bearer ${token}")
+    val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest(user, password)).when().post("/rest/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+
+    assert(response.token != null)
+    given().header("Authorization",s"Bearer ${response.token}")
   }
 }
 

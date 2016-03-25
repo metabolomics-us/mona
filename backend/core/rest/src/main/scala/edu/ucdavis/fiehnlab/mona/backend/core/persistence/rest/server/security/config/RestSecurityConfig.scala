@@ -68,8 +68,7 @@ abstract class RestSecurity extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/metaData/**")
 
       //no authentication for authentication
-      .antMatchers(HttpMethod.POST, "/rest/auth/login")
-
+      .antMatchers(HttpMethod.POST, "/rest/auth/**")
   }
 }
 
