@@ -61,7 +61,7 @@ class SubmitterRestControllerTest extends WordSpec {
           given().contentType("application/json; charset=UTF-8").body(spectrum.submitter).when().post("/submitters").then().statusCode(200)
         }
 
-        assert(submitterRepository.count() == exampleRecords.length)
+        assert(submitterRepository.count() == 1)
       }
 
       "we should be able to query all the submitter using GET at /rest/submitters" in {

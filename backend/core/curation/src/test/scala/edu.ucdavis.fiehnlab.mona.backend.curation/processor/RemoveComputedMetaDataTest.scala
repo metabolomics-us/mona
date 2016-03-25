@@ -48,10 +48,6 @@ class RemoveComputedMetaDataTest extends WordSpec {
 
       }
 
-      "and remove the predicted compound" in {
-        assert(processedSpectrum.predictedCompound == null)
-      }
-
     }
   }
 }

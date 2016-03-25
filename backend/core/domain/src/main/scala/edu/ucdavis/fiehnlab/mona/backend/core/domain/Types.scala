@@ -11,8 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 import scala.annotation.meta.field
 
 /**
-  * definition of the MoNA domain classes
-  * TODO: make DBRefs work with cascade save
+  * definition of the MoNA domain classes and accepts arbitrary values, which needs to be supported by different
+  * serializers
   */
 
 case class MetaData(
@@ -39,6 +39,15 @@ case class MetaData(
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      url: String,
 
+                     /**
+                       * should be limited to the following classes
+                       *
+                       * String
+                       * Integer
+                       * Double
+                       * Boolean
+                       *
+                       */
                      @(TupleSerialize@field)
                      @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
                      value: Any
@@ -72,6 +81,17 @@ case class Tags(
                )
 
 
+/**
+  * this defines a compound in the system, which can be computed or provided
+  *
+  * @param inchi
+  * @param inchiKey
+  * @param metaData
+  * @param molFile
+  * @param names
+  * @param tags
+  * @param computed
+  */
 case class Compound(
 
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
@@ -89,7 +109,10 @@ case class Compound(
                      names: Array[Names],
 
                      @(Field@field)(`type` = FieldType.Nested)
-                     tags: Array[Tags]
+                     tags: Array[Tags],
+
+                     @(Indexed@field)
+                     computed: Boolean = false
                    )
 
 
@@ -130,8 +153,24 @@ case class Splash(
                  )
 
 
+/**
+  * defines the submitter for a spectrum an is basically the person who uploaded it
+  * to the system
+  *
+  * @param id an internal id
+  * @param emailAddress
+  * @param firstName
+  * @param institution
+  * @param lastName
+  */
 @Document(collection = "SUBMITTER")
 case class Submitter(
+
+                      /**
+                        * primary id for the user, can be any string
+                        */
+                      @(Id@field)
+                      id: String,
 
                       emailAddress: String,
 
@@ -142,9 +181,16 @@ case class Submitter(
                       lastName: String
                     )
 
+/**
+  * this defines an author, which actually acquired the spectra
+  *
+  * @param emailAddress
+  * @param firstName
+  * @param institution
+  * @param lastName
+  */
 case class Author(
                    @(Indexed@field)
-
                    emailAddress: String,
                    @(Indexed@field)
 
@@ -157,7 +203,21 @@ case class Author(
                    lastName: String
                  )
 
-//this is way to uggly, we might really need to use DAO's :(
+/**
+  * this is the actual definition of a persistent spectrum in the MoNA database system
+  *
+  * @param biologicalCompound The compound how it was observed in nature
+  * @param chemicalCompound   The compound how it was observed in the instrument
+  * @param id
+  * @param lastUpdated
+  * @param metaData
+  * @param score
+  * @param spectrum
+  * @param splash
+  * @param submitter
+  * @param tags
+  * @param authors
+  */
 @Document(collection = "SPECTRUM")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
 case class Spectrum(
@@ -166,8 +226,6 @@ case class Spectrum(
                      biologicalCompound: Compound,
                      @(Field@field)(`type` = FieldType.Object)
                      chemicalCompound: Compound,
-                     @(Field@field)(`type` = FieldType.Object)
-                     predictedCompound: Compound,
 
                      @(Id@field)
                      id: String,
@@ -193,9 +251,25 @@ case class Spectrum(
                      tags: Array[Tags],
 
                      @(Field@field)(`type` = FieldType.Nested)
-                     authors: Array[Author]
+                     authors: Array[Author],
+
+                     @(Field@field)(`type` = FieldType.Object)
+                     library: Library
                    )
 
+/**
+  * this is anm optional defined library, which declares from which source the spectrum is coming
+  *
+  * @param name
+  * @param description
+  * @param url
+  */
+case class Library(
+                    name: String,
+                    description: String,
+                    url: String
+
+                  )
 
 /**
   * makes serializations simpler

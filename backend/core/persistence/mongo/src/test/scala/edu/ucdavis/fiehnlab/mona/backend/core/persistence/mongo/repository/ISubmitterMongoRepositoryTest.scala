@@ -28,7 +28,7 @@ class ISubmitterMongoRepositoryTest extends WordSpec {
       assert(submitterMongoRepository.count() == 0)
     }
     "add submitter" in {
-      submitterMongoRepository.save(Submitter("wohlgemuth@ucdavis.edu","gert","uc davis", "wohlgemuth"))
+      submitterMongoRepository.save(Submitter("wohlgemuth","wohlgemuth@ucdavis.edu","gert","uc davis", "wohlgemuth"))
       assert(submitterMongoRepository.count() == 1)
     }
     "findByFirstName" in {
