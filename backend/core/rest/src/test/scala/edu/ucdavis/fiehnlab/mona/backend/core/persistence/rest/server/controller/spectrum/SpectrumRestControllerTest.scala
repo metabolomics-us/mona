@@ -2,31 +2,20 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 
 import java.io.InputStreamReader
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
-import com.jayway.restassured.config.ObjectMapperConfig
-import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.jayway.restassured.specification.RequestSpecification
-import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, LoginResponse, Role, User}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{BasicRestSecurityConfig, EmbeddedRestServerConfig, JWTRestSecurityConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.{AbstractGenericRESTControllerTest, StartServerConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.{BasicRestSecurityConfig, JWTRestSecurityConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.service.config.PersistenceServiceConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
-import org.springframework.context.annotation.Import
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.annotation.DirtiesContext.ClassMode
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-
-import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/1/16.
   */
@@ -206,13 +195,13 @@ abstract class AbstractSpectrumRestControllerTest extends AbstractGenericRESTCon
 /**
   * tests basic authentification
   */
-@SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig], classOf[EmbeddedRestServerConfig], classOf[BasicRestSecurityConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[BasicRestSecurityConfig]))
 @WebIntegrationTest(Array("server.port=0"))
 @RunWith(classOf[SpringJUnit4ClassRunner])
 class BasicAuthSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest {
 
   //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+ testContextManager.prepareTestInstance(this)
 
   override def authenticate(user: String, password: String): RequestSpecification = {
     given().auth().basic(user, password)
@@ -222,15 +211,13 @@ class BasicAuthSpectrumRestControllerTest extends AbstractSpectrumRestController
 /**
   * tests basic authentification
   */
-@SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig], classOf[EmbeddedRestServerConfig], classOf[JWTRestSecurityConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTRestSecurityConfig]))
 @WebIntegrationTest(Array("server.port=0"))
 @RunWith(classOf[SpringJUnit4ClassRunner])
 class TokenAuthSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest {
 
-  var token:String = null
-
   //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  testContextManager.prepareTestInstance(this)
 
 }
 

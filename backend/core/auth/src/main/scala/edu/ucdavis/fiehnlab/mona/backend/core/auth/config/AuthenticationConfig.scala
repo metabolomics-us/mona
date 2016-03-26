@@ -1,10 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.filter.JWTAuthenticationFilter
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.provider.MonaAuthenticationProvider
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.{LoginService, MongoLoginService}
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import org.springframework.context.annotation._
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories

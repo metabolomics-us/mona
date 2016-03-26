@@ -1,16 +1,11 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config
-
-import java.util
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.config.AuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.filter.JWTAuthenticationFilter
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.provider.{JWTAuthenticationProvider, MonaAuthenticationProvider}
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.TokenSecret
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint
 import org.springframework.context.annotation.{Bean, Configuration, Import}
-import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.{AuthenticationManager, AuthenticationProvider, ProviderManager}
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
