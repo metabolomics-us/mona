@@ -30,15 +30,11 @@ class RestClientConfig extends LazyLogging {
   @Value("${mona.rest.server.port}")
   val monaServerPort: Int = 0
 
-  @Value("${mona.rest.server.user}")
-  val userName: String = null
-
-  @Value("${mona.rest.server.password}")
-  val password: String = null
 
   @Bean(name = Array[String]("monaRestServer"))
   def monaRestServer: String = s"http://${monaServerHost}:${monaServerPort}"
 
+  /*
   @Bean
   def requestFactory() : HttpComponentsClientHttpRequestFactory = {
     val host = new HttpHost(monaServerHost,monaServerPort)
@@ -55,6 +51,16 @@ class RestClientConfig extends LazyLogging {
   @Bean
   def restOperations(factory:HttpComponentsClientHttpRequestFactory) : RestOperations = {
     val rest: RestTemplate = new RestTemplate(factory)
+    rest.getMessageConverters.add(0, mappingJacksonHttpMessageConverter)
+    rest
+  }
+
+  */
+
+
+  @Bean
+  def restOperations : RestOperations = {
+    val rest: RestTemplate = new RestTemplate()
     rest.getMessageConverters.add(0, mappingJacksonHttpMessageConverter)
     rest
   }
