@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.provider.MonaAuthenticationProvider
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.{LoginService, MongoLoginService}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
@@ -29,12 +28,5 @@ class EmbeddedAuthConfig {
     */
   @Bean
   def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
-
-  /**
-    * executes the authentication for us
-    * @return
-    */
-  @Bean
-  def authenticationProvider: MonaAuthenticationProvider = new MonaAuthenticationProvider
 
 }

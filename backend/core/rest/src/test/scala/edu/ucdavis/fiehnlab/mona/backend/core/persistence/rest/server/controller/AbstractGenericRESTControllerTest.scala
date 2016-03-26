@@ -8,6 +8,7 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
@@ -40,6 +41,9 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
   @Autowired
   val userRepository: UserRepository = null
 
+  @Autowired
+  val loginService:LoginService = null
+
   //required for spring and scala tes
   testContextManager.prepareTestInstance(this)
 
@@ -52,7 +56,8 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
     * @return
     */
   def authenticate(user: String = "admin", password: String = "secret"): RequestSpecification = {
-    val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest(user, password)).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+    val response = loginService.login(new LoginRequest(user,password))
+
 
     assert(response.token != null)
     logger.debug(s"generated token is ${response.token}")

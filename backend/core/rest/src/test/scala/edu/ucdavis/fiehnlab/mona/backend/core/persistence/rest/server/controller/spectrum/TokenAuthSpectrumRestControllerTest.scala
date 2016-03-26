@@ -3,23 +3,23 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 import java.io.InputStreamReader
 
 import com.jayway.restassured.RestAssured._
-import com.jayway.restassured.specification.RequestSpecification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{BasicRestSecurityConfig, EmbeddedRestServerConfig, JWTRestSecurityConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, JWTRestSecurityConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
-import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.annotation.DirtiesContext.ClassMode
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 /**
   * Created by wohlgemuth on 3/1/16.
   */
-abstract class AbstractSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra"){
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTRestSecurityConfig]))
+@WebIntegrationTest(Array("server.port=0"))
+@RunWith(classOf[SpringJUnit4ClassRunner])
+class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra"){
 
 
   /**
@@ -189,37 +189,6 @@ abstract class AbstractSpectrumRestControllerTest extends AbstractGenericRESTCon
       }
     }
   }
-
-}
-/*
-/**
-  * tests basic authentification
-  */
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[BasicRestSecurityConfig]))
-@WebIntegrationTest(Array("server.port=0"))
-@RunWith(classOf[SpringJUnit4ClassRunner])
-class BasicAuthSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest {
-
-  //required for spring and scala tes
- testContextManager.prepareTestInstance(this)
-
-  override def authenticate(user: String, password: String): RequestSpecification = {
-    given().auth().basic(user, password)
-  }
-}
-
-*/
-
-/**
-  * tests basic authentification
-  */
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTRestSecurityConfig]))
-@WebIntegrationTest(Array("server.port=0"))
-@RunWith(classOf[SpringJUnit4ClassRunner])
-class TokenAuthSpectrumRestControllerTest extends AbstractSpectrumRestControllerTest {
-
-  //required for spring and scala tes
-  testContextManager.prepareTestInstance(this)
 
 }
 
