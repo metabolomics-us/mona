@@ -21,8 +21,14 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-            <artifactId>auth</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>jwt</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>

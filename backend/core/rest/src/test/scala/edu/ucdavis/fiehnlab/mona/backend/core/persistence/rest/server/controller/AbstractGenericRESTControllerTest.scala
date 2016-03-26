@@ -8,10 +8,10 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.test.context.TestContextManager
