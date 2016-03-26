@@ -114,7 +114,7 @@ class BasicRestSecurityConfig extends RestSecurity {
   *
   * this has to be done utilizing the Authorization header and the Bearer schema
   */
-@Import(Array(classOf[AuthenticationConfig]))
+//@Import(Array(classOf[AuthenticationConfig]))
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity

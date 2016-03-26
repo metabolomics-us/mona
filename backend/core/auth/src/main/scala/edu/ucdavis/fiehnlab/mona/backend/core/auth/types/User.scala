@@ -30,17 +30,6 @@ case class User(
                  roles: java.util.List[Role] = new util.ArrayList[Role]()
                )
 
-/**
-  * a login token
-  */
-case class LoginResponse(token:String)
-
-/**
-  * a login request
-  * @param username
-  * @param password
-  */
-case class LoginRequest(username:String, password:String)
 
 /**
   * secret to be used for the token

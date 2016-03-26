@@ -8,13 +8,11 @@ import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, LoginResponse, Role, User}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.{ApplicationContext, ApplicationContextAware}
-import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.annotation.DirtiesContext.ClassMode
 import org.springframework.test.context.TestContextManager
 
 import scala.collection.JavaConverters._
@@ -23,7 +21,7 @@ import scala.collection.JavaConverters._
   * an abstract test to provides us with a simple way to test complex controllers
   * and all their operation including authorization
   */
-abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends SpringControllerTest {
+abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends AbstractSpringControllerTest {
 
   /**
     * object to use for gets
@@ -117,18 +115,10 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
 /**
   * provides us with a simple, elegant way to refresh the application context between runs
   */
-@DirtiesContext(classMode=ClassMode.AFTER_CLASS)
-class SpringControllerTest extends WordSpec with BeforeAndAfterAll with LazyLogging{
+abstract class AbstractSpringControllerTest extends WordSpec with BeforeAndAfterAll with LazyLogging{
 
   val testContextManager = new TestContextManager(getClass)
 
-  override protected def beforeAll(): Unit = {
-
-    //required for spring and scala tes
-    testContextManager.prepareTestInstance(this)
-
-    super.beforeAll()
-  }
 
   @Value( """${local.server.port}""")
   val port: Int = 0

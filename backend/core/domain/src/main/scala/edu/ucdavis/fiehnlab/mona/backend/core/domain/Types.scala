@@ -272,7 +272,7 @@ case class Library(
                   )
 
 /**
-  * makes serializations simpler
+  * makes serializations and authorizations simpler
   */
 object HelperTypes {
 
@@ -283,4 +283,16 @@ object HelperTypes {
     */
   case class WrappedString(string: String)
 
+
+  /**
+    * a login token
+    */
+  case class LoginResponse(token:String)
+
+  /**
+    * a login request
+    * @param username
+    * @param password
+    */
+  case class LoginRequest(username:String, password:String)
 }

@@ -2,7 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.provider
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, Role}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.Role
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.{AuthenticationProvider, UsernamePasswordAuthenticationToken}
 import org.springframework.security.core.Authentication
