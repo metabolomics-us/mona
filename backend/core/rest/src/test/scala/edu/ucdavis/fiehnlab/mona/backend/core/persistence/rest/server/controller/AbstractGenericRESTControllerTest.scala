@@ -9,11 +9,12 @@ import com.jayway.restassured.specification.RequestSpecification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, LoginResponse, Role, User}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
-import org.scalatest.WordSpec
+import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.context.{ApplicationContext, ApplicationContextAware}
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.annotation.DirtiesContext.ClassMode
 import org.springframework.test.context.TestContextManager
 
 import scala.collection.JavaConverters._
@@ -22,32 +23,32 @@ import scala.collection.JavaConverters._
   * an abstract test to provides us with a simple way to test complex controllers
   * and all their operation including authorization
   */
-abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends WordSpec with LazyLogging{
+abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends SpringControllerTest {
 
   /**
     * object to use for gets
+    *
     * @return
     */
   def getValue : TYPE
 
   /**
     * returns an id for us for testing
+    *
     * @return
     */
   def getId : String
-
-  @Value( """${local.server.port}""")
-  val port: Int = 0
 
   @Autowired
   val userRepository: UserRepository = null
 
   //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  testContextManager.prepareTestInstance(this)
 
 
   /**
     * token based authorization is our default approach
+    *
     * @param user
     * @param password
     * @return
@@ -111,4 +112,30 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
 
     }
   }
+}
+
+/**
+  * provides us with a simple, elegant way to refresh the application context between runs
+  */
+@DirtiesContext(classMode=ClassMode.AFTER_CLASS)
+class SpringControllerTest extends WordSpec with BeforeAndAfterAll with LazyLogging{
+
+  val testContextManager = new TestContextManager(getClass)
+
+  override protected def beforeAll(): Unit = {
+
+    //required for spring and scala tes
+    testContextManager.prepareTestInstance(this)
+
+    super.beforeAll()
+  }
+
+  @Value( """${local.server.port}""")
+  val port: Int = 0
+
+  //configure the mapper for rest assured
+  RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
+    override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
+  }))
+
 }

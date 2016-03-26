@@ -1,20 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.auth
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
-import com.jayway.restassured.config.ObjectMapperConfig
-import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.config.AuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{LoginRequest, LoginResponse, Role, User}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.JWTRestSecurityConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, JWTRestSecurityConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.SpringControllerTest
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -27,11 +22,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration], classOf[AuthenticationConfig],classOf[JWTRestSecurityConfig],classOf[EmbeddedRestServerConfig]))
 @WebIntegrationTest(Array("server.port=0"))
-class LoginControllerTest extends WordSpec {
-
-
-  @Value( """${local.server.port}""")
-  val port: Int = 0
+class LoginControllerTest extends SpringControllerTest {
 
   @Autowired
   val userRepository: UserRepository = null
@@ -40,27 +31,23 @@ class LoginControllerTest extends WordSpec {
 
   "LoginControllerTest" should {
 
-    RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
-      override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
-    }))
-
-    RestAssured.baseURI = s"http://localhost:${port}/"
+    RestAssured.baseURI = s"http://localhost:${port}/rest"
 
     "login" must {
 
-      userRepository.deleteAll()
-      userRepository.save(new User("admin", "password", List(Role("admin")).asJava))
-
       "create a token" in {
 
-        val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "password")).when().post("/rest/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+        userRepository.deleteAll()
+        userRepository.save(new User("admin", "password", List(Role("admin")).asJava))
+
+        val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "password")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
 
         assert(response.token != null)
 
       }
       "fail with an invalid user" in {
 
-          given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin2312", "password")).when().post("/rest/auth/login").then().statusCode(500)
+          given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin2312", "password")).when().post("/auth/login").then().statusCode(500)
 
       }
     }

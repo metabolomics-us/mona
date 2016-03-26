@@ -11,12 +11,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.StartServerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.security.config.JWTRestSecurityConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, JWTRestSecurityConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.{SpringControllerTest, StartServerConfig}
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -27,11 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig],classOf[EmbeddedRestServerConfig],classOf[JWTRestSecurityConfig]))
 @WebIntegrationTest(Array("server.port=0"))
-class MetaDataRestControllerTest extends WordSpec {
-
-  @Value( """${local.server.port}""")
-  val port: Int = 0
-
+class MetaDataRestControllerTest extends SpringControllerTest {
 
   @Autowired
   val spectrumRepository: ISpectrumMongoRepositoryCustom = null

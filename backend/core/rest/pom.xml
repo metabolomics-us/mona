@@ -91,6 +91,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.scalaspring</groupId>
+            <artifactId>scalatest-spring_2.11</artifactId>
+            <version>0.2.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
