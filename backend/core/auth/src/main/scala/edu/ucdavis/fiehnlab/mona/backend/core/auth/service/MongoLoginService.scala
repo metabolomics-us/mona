@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.service
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -16,12 +16,16 @@ class MongoLoginService extends LoginService with LazyLogging{
   @Autowired
   val userRepository: UserRepository = null
 
+  @Autowired
+  val tokenService:TokenService = null
+
   /**
-    * does a login for the current user
+    * does a login and returns a token for us, which can be used internally
+    * or externally
     *
     * @return
     */
-  override def login(request: LoginRequest): User = {
+  override def login(request: LoginRequest): LoginResponse = {
 
     logger.debug(s"login in ${request.username}")
 
@@ -35,7 +39,7 @@ class MongoLoginService extends LoginService with LazyLogging{
     }
     else {
       logger.debug("login was successful")
-      user
+      LoginResponse(tokenService.generateToken(user))
     }
   }
 }
