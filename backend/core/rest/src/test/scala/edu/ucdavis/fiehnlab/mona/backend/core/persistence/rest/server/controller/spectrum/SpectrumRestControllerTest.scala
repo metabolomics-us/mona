@@ -7,7 +7,7 @@ import com.jayway.restassured.specification.RequestSpecification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{BasicRestSecurityConfig, EmbeddedRestServerConfig, JWTRestSecurityConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.{AbstractGenericRESTControllerTest, StartServerConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -191,7 +191,7 @@ abstract class AbstractSpectrumRestControllerTest extends AbstractGenericRESTCon
   }
 
 }
-
+/*
 /**
   * tests basic authentification
   */
@@ -207,6 +207,8 @@ class BasicAuthSpectrumRestControllerTest extends AbstractSpectrumRestController
     given().auth().basic(user, password)
   }
 }
+
+*/
 
 /**
   * tests basic authentification

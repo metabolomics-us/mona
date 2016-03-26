@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
+import java.util
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse, WrappedString}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
+import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
 import org.springframework.web.client.RestOperations
 
 import scala.collection.JavaConverters._
@@ -17,6 +19,13 @@ import scala.reflect.{ClassTag, _}
   * a generic approach to connect to a REST server and execute operations against it. It assumes compliance with CRUD operations
   */
 class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
+
+  /**
+    * internal private
+    * authorization token
+    * which should be kept secret
+    */
+  private var token: String = null
 
   @Autowired
   @Qualifier("monaRestServer")
@@ -55,7 +64,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @return
     */
   def add(dao: T): T = {
-    restOperations.postForObject(s"$requestPath", dao, classTag[T].runtimeClass).asInstanceOf[T]
+    restOperations.exchange(s"$requestPath",HttpMethod.POST, new HttpEntity[T](dao,buildHeaders), classTag[T].runtimeClass).getBody.asInstanceOf[T]
   }
 
   /**
@@ -82,7 +91,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @return
     */
   def update(dao: T, id: ID): T = {
-    restOperations.put(s"$requestPath/${id}", dao)
+    restOperations.exchange(s"$requestPath/${id}",HttpMethod.PUT, new HttpEntity[T](dao,buildHeaders),classTag[T].runtimeClass)
     get(id)
   }
 
@@ -91,7 +100,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     *
     * @param id
     */
-  def delete(id: ID) = restOperations.delete(s"$requestPath/$id")
+  def delete(id: ID) = restOperations.exchange(s"$requestPath/$id",HttpMethod.DELETE,new HttpEntity[Nothing](buildHeaders),classTag[T].runtimeClass)
 
   /**
     * loads the object specified by the id
@@ -103,10 +112,11 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
 
   /**
     * streams the results to the client
+    *
     * @param query
     * @return
     */
-  def stream(query: Option[String], fetchSize:Option[Int] = Some(10)) : Iterable[T] = {
+  def stream(query: Option[String], fetchSize: Option[Int] = Some(10)): Iterable[T] = {
     new DynamicIterable[T, Option[String]](query, fetchSize.get) {
 
       /**
@@ -137,6 +147,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     }.asScala
 
   }
+
   /**
     * list data matching the optional conditions or returns all
     *
@@ -176,4 +187,35 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
   }
 
+  /**
+    * executes a login against the server
+    *
+    * @param username
+    * @param password
+    */
+  final def login(username: String, password: String): GenericRestClient[T, ID] = {
+    val token = restOperations.postForObject(s"$monaRestServer/rest/auth/login", LoginRequest(username, password), classOf[LoginResponse]).token
+    login(token)
+  }
+
+  /**
+    * logs in with the provided token
+    *
+    * @param token
+    */
+  final def login(token: String): GenericRestClient[T, ID] = {
+    this.token = token
+    this
+  }
+
+  /**
+    * builds our headers for authorization
+    * @return
+    */
+  private def buildHeaders : HttpHeaders = {
+    val header = new HttpHeaders()
+    header.set("Authorization", s"Bearer $token")
+    header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON));
+    header
+  }
 }

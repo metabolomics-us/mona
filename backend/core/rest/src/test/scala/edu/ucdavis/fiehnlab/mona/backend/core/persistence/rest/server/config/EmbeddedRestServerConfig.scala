@@ -10,7 +10,7 @@ import org.springframework.context.annotation.{Configuration, Import}
   * Created by wohlg on 3/11/2016.
   */
 @Configuration
-@Import(Array(classOf[EmbeddedElasticSearchConfiguration], classOf[EmbeddedMongoDBConfiguration], classOf[RestServerConfig],classOf[AuthenticationConfig],classOf[EmbeddedAuthConfig]))
+@Import(Array(classOf[EmbeddedElasticSearchConfiguration], classOf[EmbeddedMongoDBConfiguration], classOf[RestServerConfig],classOf[EmbeddedAuthConfig]))
 class EmbeddedRestServerConfig extends LazyLogging {
 
 }

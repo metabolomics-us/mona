@@ -4,6 +4,7 @@ import java.util.Date
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types._
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
 import io.jsonwebtoken.{Jwts, SignatureAlgorithm}
 import org.apache.commons.lang.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
