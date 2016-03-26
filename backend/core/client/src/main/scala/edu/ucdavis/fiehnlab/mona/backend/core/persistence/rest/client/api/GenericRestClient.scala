@@ -4,7 +4,8 @@ import java.util
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse, WrappedString}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, WrappedString}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
@@ -30,6 +31,9 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
   @Autowired
   @Qualifier("monaRestServer")
   val monaRestServer: String = null
+
+  @Autowired
+  val loginService:LoginService = null
 
   @Autowired
   protected val restOperations: RestOperations = null
@@ -188,14 +192,15 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
   }
 
   /**
-    * executes a login against the server
+    * executes a login against the provided login server
     *
     * @param username
     * @param password
     */
   final def login(username: String, password: String): GenericRestClient[T, ID] = {
-    val token = restOperations.postForObject(s"$monaRestServer/rest/auth/login", LoginRequest(username, password), classOf[LoginResponse]).token
+    val token = loginService.login(new LoginRequest(username,password)).token
     login(token)
+
   }
 
   /**

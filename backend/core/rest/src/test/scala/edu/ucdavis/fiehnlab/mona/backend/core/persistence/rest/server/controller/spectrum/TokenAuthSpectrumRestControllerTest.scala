@@ -3,9 +3,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 import java.io.InputStreamReader
 
 import com.jayway.restassured.RestAssured._
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, JWTRestSecurityConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 /**
   * Created by wohlgemuth on 3/1/16.
   */
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTRestSecurityConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=0"))
 @RunWith(classOf[SpringJUnit4ClassRunner])
 class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra"){
