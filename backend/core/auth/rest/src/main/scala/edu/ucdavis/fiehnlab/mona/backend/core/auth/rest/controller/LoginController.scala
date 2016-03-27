@@ -7,7 +7,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
 
 /**
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, Req
 class LoginController {
 
  @Autowired
+ @Qualifier("loginServiceDelegate")
   val loginService: LoginService = null
 
   @RequestMapping(path = Array("/login"), method = Array(RequestMethod.POST))

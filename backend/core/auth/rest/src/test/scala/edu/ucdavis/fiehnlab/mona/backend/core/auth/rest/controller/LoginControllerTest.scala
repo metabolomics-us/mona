@@ -75,7 +75,7 @@ class TestConfig {
     * @return
     */
   @Bean
-  def loginService:LoginService = new MongoLoginService
+  def loginServiceDelegate:LoginService = new MongoLoginService
 
 
   /**
