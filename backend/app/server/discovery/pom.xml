@@ -10,8 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.ucdavis.fiehnlab.mona.app.server</groupId>
-    <artifactId>oauth</artifactId>
+    <artifactId>discovery</artifactId>
 
-    <description>This will provide us with a simple authentication server</description>
+    <description>This module provides the discovery service and allows us to easily keep track of all the internal mona services</description>
 
 </project>

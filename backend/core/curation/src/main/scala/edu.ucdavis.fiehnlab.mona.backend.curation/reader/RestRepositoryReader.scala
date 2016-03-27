@@ -45,6 +45,7 @@ class RestRepositoryReader(@BeanProperty val query: String = "",@BeanProperty va
     }
     else {
       //as defined by spring batch standards
+      result = null
       null
     }
   }

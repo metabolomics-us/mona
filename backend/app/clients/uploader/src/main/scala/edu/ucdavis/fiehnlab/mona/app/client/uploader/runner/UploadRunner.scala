@@ -1,7 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.app.client.uploader.runner
 
-import java.io.File
-
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.batch.core.{Job, JobParametersBuilder}

@@ -17,5 +17,6 @@
     <modules>
         <module>api</module>
         <module>jwt</module>
+        <module>rest</module>
     </modules>
 </project>

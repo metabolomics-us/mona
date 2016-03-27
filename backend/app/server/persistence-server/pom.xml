@@ -9,11 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
-    <artifactId>node</artifactId>
+    <groupId>edu.ucdavis.fiehnlab.mona.app.server</groupId>
+    <artifactId>persistence-server</artifactId>
 	<packaging>jar</packaging>
 	
-    <description>This project, provides a MoNA server which can be utilized in a single or multi node cluster
+    <description>This project provides us with the mona persistence service and api as a standalone server
     </description>
 
     <dependencies>
