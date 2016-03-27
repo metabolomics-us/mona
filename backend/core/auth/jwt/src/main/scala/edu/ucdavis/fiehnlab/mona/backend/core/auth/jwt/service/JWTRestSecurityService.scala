@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.filter.JWTAuthenticationFilter
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.filter.JWTAuthenticationFilter
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
