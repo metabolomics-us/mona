@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.service
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}

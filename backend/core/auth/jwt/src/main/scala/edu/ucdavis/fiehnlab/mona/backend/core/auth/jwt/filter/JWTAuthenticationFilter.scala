@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.filter
 
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import javax.servlet.{FilterChain, ServletRequest, ServletResponse}

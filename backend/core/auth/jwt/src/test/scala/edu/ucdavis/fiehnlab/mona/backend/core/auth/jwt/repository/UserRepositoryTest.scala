@@ -1,6 +1,7 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.repository
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.config.{EmbeddedAuthConfig, JWTAuthenticationConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
