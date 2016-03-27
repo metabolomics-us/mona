@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.filter
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
 
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.JWTAuthenticationService
 import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.core.AuthenticationException
