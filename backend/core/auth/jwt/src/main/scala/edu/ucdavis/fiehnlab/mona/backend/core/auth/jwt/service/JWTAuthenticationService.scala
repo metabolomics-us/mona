@@ -1,11 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.AuthenticationService
+import java.util
+import java.util.Date
+
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.types.TokenSecret
 import io.jsonwebtoken.{Claims, Jwts, MalformedJwtException}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.security.authentication.AuthenticationServiceException
-import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.{Authentication, GrantedAuthority}
+import scala.collection.JavaConverters._
 
 /**
   * provides us with a token based authorization service
@@ -46,6 +51,64 @@ class JWTAuthenticationService extends AuthenticationService {
     }
     catch {
       case e: MalformedJwtException => throw new AuthenticationServiceException(s"JWT token was malformed: ${token}", e)
+    }
+  }
+}
+/**
+  * our custom token based authentication
+  *
+  * @param claims
+  */
+final class JWTAuthentication(claims: Claims) extends Authentication {
+
+  var authenticated: Boolean = false
+
+  override def getDetails: AnyRef = claims
+
+  override def getPrincipal: AnyRef = claims.getSubject
+
+  override def isAuthenticated: Boolean = authenticated
+
+  /**
+    * generates all roles in the claim
+    *
+    * @return
+    */
+  override def getAuthorities: util.Collection[_ <: GrantedAuthority] = claims.get("roles").asInstanceOf[java.util.List[String]].asScala.collect { case x: String => new SimpleGrantedAuthority(x) }.asJava
+
+  override def getCredentials: AnyRef = ""
+
+  override def setAuthenticated(isAuthenticated: Boolean): Unit = authenticated = isAuthenticated
+
+  override def getName: String = claims.getSubject
+
+
+  /**
+    * checks if the provided token is expired or still valid
+    * current
+    *
+    * @return
+    */
+  def isExpired: Boolean = {
+    if (claims.getExpiration != null) {
+      claims.getExpiration.before(new Date())
+    }
+    else {
+      false
+    }
+  }
+
+  /**
+    * token is not yet active
+    *
+    * @return
+    */
+  def isNotYetActive: Boolean = {
+    if (claims.getNotBefore != null) {
+      claims.getNotBefore.after(new Date())
+    }
+    else {
+      false
     }
   }
 }

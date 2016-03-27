@@ -1,8 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.MongoLoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.TokenSecret
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.types.TokenSecret
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
+
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.EmbeddedElasticSearchConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration

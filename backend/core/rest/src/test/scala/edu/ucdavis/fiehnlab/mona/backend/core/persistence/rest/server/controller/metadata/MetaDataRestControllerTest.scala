@@ -7,12 +7,12 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.config.JWTAuthenticationConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired

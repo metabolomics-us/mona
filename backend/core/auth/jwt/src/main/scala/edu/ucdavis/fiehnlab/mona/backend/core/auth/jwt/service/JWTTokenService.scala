@@ -2,12 +2,13 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 
 import java.util.Date
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.TokenService
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.types.TokenSecret
+
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import io.jsonwebtoken.{Jwts, SignatureAlgorithm}
 import org.apache.commons.lang.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
+
 import scala.collection.JavaConverters._
 
 /**
