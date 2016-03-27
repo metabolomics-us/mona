@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.types
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.types
 
 import java.util
 

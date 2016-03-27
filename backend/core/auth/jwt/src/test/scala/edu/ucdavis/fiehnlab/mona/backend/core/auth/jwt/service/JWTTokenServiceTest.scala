@@ -1,13 +1,12 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.config.{EmbeddedAuthConfig, JWTAuthenticationConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.EmbeddedAuthConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 
 /**
   * defines how to use a token service and ensure

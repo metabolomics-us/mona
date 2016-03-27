@@ -1,7 +1,7 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.config
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.config
 
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.{JWTAuthenticationService, JWTRestSecurityService, JWTTokenService}
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.repository.UserRepository
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 

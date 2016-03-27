@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt
 
 import java.util
 import java.util.Date
