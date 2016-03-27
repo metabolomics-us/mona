@@ -3,13 +3,15 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 import java.util
 import java.util.Date
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.types.TokenSecret
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.AuthenticationService
 import io.jsonwebtoken.{Claims, Jwts, MalformedJwtException}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.{Authentication, GrantedAuthority}
+
 import scala.collection.JavaConverters._
 
 /**

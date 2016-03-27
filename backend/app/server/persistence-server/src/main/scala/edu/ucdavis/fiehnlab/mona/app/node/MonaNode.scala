@@ -1,8 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.app.node
 
-import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.SpringBootApplication
-
 /**
   * Created by wohlgemuth on 3/17/16.
   */

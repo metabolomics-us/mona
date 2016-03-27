@@ -13,10 +13,12 @@
     <artifactId>server</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>node</module>
+        <module>discovery</module>
+        <module>proxy</module>
+        <module>persistence-server</module>
         <module>memory-node</module>
-        <module>oauth</module>
-        <module>basicauth</module>
+        <module>configuration</module>
+        <module>auth-server</module>
     </modules>
 
 </project>

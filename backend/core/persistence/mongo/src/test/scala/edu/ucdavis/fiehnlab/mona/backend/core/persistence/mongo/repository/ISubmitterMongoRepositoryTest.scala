@@ -5,8 +5,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedM
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+
 import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/23/16.

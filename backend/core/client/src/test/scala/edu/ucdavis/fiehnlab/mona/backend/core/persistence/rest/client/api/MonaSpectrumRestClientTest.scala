@@ -2,11 +2,11 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
 import java.io.InputStreamReader
 
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfter, FunSuite}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlg_000 on 3/8/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig],classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class MonaSpectrumRestClientTest extends AbstractRestClientTest {
 

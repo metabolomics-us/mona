@@ -3,17 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>server</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
+        <artifactId>auth</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.app.server</groupId>
-    <artifactId>basic</artifactId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+    <artifactId>rest</artifactId>
 
-    <description>
-        this provides a server which handles http basic authentication for us
-    </description>
+    <description>This provides a simple delegate around any given login service and is mostly used for rest based application to authenticate against it</description>
 
 </project>

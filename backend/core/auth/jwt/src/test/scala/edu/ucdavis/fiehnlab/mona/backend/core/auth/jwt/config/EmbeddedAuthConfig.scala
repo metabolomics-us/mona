@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.types.TokenSecret
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import org.springframework.context.annotation.{Bean, Configuration, Import}

@@ -36,6 +36,11 @@
             <artifactId>client</artifactId>
             <type>test-jar</type>
         </dependency>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>jwt</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

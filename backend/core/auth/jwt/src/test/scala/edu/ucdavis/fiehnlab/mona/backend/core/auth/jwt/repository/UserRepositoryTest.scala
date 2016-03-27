@@ -1,17 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.EmbeddedAuthConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.repository.UserRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.{EmbeddedAuthConfig, JWTAuthenticationConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-
-import scala.collection.JavaConverters._
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 /**
   *
   * Created by wohlgemuth on 3/24/16.
