@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
-class MonaSpectrumRestClientTest extends GenericRestClientTest {
+class MonaSpectrumRestClientTest extends AbstractRestClientTest {
 
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
