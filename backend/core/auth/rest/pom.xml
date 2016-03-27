@@ -10,8 +10,114 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
-    <artifactId>rest</artifactId>
+    <artifactId>rest-auth-server</artifactId>
 
     <description>This provides a simple delegate around any given login service and is mostly used for rest based application to authenticate against it</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <!-- test dependencies -->
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>jwt</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>mongo</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>mongo</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>elastic</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>auth</artifactId>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.scalaspring</groupId>
+            <artifactId>scalatest-spring_2.11</artifactId>
+            <version>0.2.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
 </project>
