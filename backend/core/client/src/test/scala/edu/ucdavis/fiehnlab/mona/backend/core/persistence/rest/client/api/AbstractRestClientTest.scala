@@ -19,10 +19,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/2/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig]))
-@WebIntegrationTest(Array("server.port=44444"))
-class GenericRestClientTest extends WordSpec {
+abstract class AbstractRestClientTest extends WordSpec {
   @Value( """${local.server.port}""")
   val port: Int = 0
 
