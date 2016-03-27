@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.repository
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.springframework.data.repository.PagingAndSortingRepository
