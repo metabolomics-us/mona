@@ -37,10 +37,6 @@ class RemoveComputedDataTest extends WordSpec {
         assert(processedSpectrum.chemicalCompound.metaData.forall(!_.computed))
       }
 
-      "remove the predicted compound" in {
-        assert(processedSpectrum.predictedCompound == null)
-      }
-
       "remove the computed names for the biological compound" in {
         assert(processedSpectrum.biologicalCompound.names.forall(!_.computed))
       }
