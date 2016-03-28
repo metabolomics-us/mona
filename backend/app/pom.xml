@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>backend</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.mona</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>app</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>server</module>
+        <module>clients</module>
+    </modules>
+
+    <properties>
+        <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
+        <docker.baseImage>java</docker.baseImage>
+        <docker.imageName>${project.name}</docker.imageName>
+        <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
+    </properties>
+
+
+    <description>All modules under this module, will be used to build standalone applications and will required docker to work.</description>
+
+</project>
