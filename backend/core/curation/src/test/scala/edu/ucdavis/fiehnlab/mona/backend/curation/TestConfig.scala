@@ -7,7 +7,7 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
   * Created by wohlg on 3/20/2016.
   */
 @Configuration
-@ComponentScan(Array("edu.ucdavis.fiehnlab.mona.backend.curation"))
+@ComponentScan(Array("edu/ucdavis/fiehnlab/mona/backend/curation"))
 class TestConfig {
   @Bean
   def restRepositoryReaderAll = new RestRepositoryReader()
