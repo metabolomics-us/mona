@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.curation.processor.cts.instrument
+package edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum, Tags}
