@@ -19,5 +19,6 @@
         <module>rsql</module>
         <module>mongo</module>
         <module>elastic</module>
+        <module>service</module>
     </modules>
 </project>

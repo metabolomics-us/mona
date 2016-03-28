@@ -55,7 +55,6 @@ class RestRepositoryWriterTest extends WordSpec {
         monaSpectrumRestClient.login("admin", "secret")
 
       }
-
       "upload them to the server" in {
 
         writer.write(exampleRecords.toList.asJava)

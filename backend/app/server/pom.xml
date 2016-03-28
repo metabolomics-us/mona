@@ -13,12 +13,9 @@
     <artifactId>server</artifactId>
     <packaging>pom</packaging>
     <modules>
+        <module>configuration</module>
         <module>discovery</module>
         <module>proxy</module>
-        <module>persistence-server</module>
         <module>memory-node</module>
-        <module>configuration</module>
-        <module>auth-server</module>
     </modules>
-
 </project>
