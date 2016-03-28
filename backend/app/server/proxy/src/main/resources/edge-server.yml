@@ -1,0 +1,41 @@
+spring:
+  application:
+     name: edge-proxy
+
+info:
+  component: Zuul Edge Server
+
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+  health:
+    sensitive: false
+
+#defines all the routes based on it's provided services
+zuul:
+  ignoredServices: "*"
+
+  routes:
+
+    #access to all our spectra
+    spectra:
+      path: /rest/spectra/**
+      stripPrefix: false
+      serviceId: persistence-service
+
+    #access to all our spectra
+    metadata:
+      path: /rest/metaData/**
+      stripPrefix: false
+      serviceId: persistence-service
+
+    #access for authentication
+    auth-service :
+      path: /rest/auth/**
+      stripPrefix: false
+
+
+server:
+  port: 8080

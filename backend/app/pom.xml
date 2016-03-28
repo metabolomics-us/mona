@@ -16,13 +16,6 @@
         <module>clients</module>
     </modules>
 
-    <properties>
-        <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
-        <docker.baseImage>java</docker.baseImage>
-        <docker.imageName>mona-${project.name}</docker.imageName>
-        <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
-    </properties>
-
 
     <description>All modules under this module, will be used to build standalone applications and will required docker to work.</description>
 

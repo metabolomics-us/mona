@@ -23,7 +23,7 @@ class JWTTokenService extends TokenService {
   /**
     * time how long a token is valid for in hours
     */
-  val timeOfLife = 24
+  val timeOfLife = 24*7
 
   /**
     * generates a token for us

@@ -21,9 +21,25 @@
         <module>app</module>
     </modules>
 
+    <properties>
+        <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
+        <docker.baseImage>java</docker.baseImage>
+        <docker.imageName>mona-${project.name}</docker.imageName>
+        <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
+    </properties>
 
     <dependencyManagement>
+
         <dependencies>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-parent</artifactId>
+                <version>brixton.m3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
                 <artifactId>rest-auth-server</artifactId>
@@ -160,7 +176,7 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
                 <artifactId>service</artifactId>
                 <version>${project.version}</version>
             </dependency>
