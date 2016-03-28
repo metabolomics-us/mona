@@ -1,7 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
-import javax.lang.model.element.Name
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Names, Spectrum, Tags}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
@@ -42,7 +40,6 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     spectrum.copy(
       biologicalCompound = filteredBiologicalCompound,
       chemicalCompound = filteredChemicalCompound,
-      predictedCompound =  null,
       metaData = filterMetaData(spectrum.metaData),
       tags = filterTags(spectrum.tags)
     )
