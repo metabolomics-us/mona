@@ -19,5 +19,5 @@ class RestLoginService(val remoteServer:String, val remotePort:Int, val protocol
     *
     * @return
     */
-  override def login(request: LoginRequest): LoginResponse = restOperations.postForEntity(s"${protocol}://${remoteServer}:${remotePort}/rest/auth/login",request,classOf[LoginResponse]).asInstanceOf[LoginResponse]
+  override def login(request: LoginRequest): LoginResponse = restOperations.postForEntity(s"${protocol}://${remoteServer}:${remotePort}/rest/auth/login",request,classOf[LoginResponse]).getBody
 }

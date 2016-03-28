@@ -5,6 +5,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
   */
 
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -18,14 +19,15 @@ import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, Req
   */
 @RestController
 @RequestMapping(value = Array("/rest/auth"))
-class LoginController {
+class LoginController extends LazyLogging {
 
- @Autowired
- @Qualifier("loginServiceDelegate")
+  @Autowired
+  @Qualifier("loginServiceDelegate")
   val loginService: LoginService = null
 
   @RequestMapping(path = Array("/login"), method = Array(RequestMethod.POST))
   def login(@RequestBody request: LoginRequest): LoginResponse = {
+    logger.debug(s"forwarding authentication request to: ${loginService}")
     loginService.login(request)
   }
 }

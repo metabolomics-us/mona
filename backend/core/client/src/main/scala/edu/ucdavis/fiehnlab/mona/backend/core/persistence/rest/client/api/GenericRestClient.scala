@@ -198,6 +198,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param password
     */
   final def login(username: String, password: String): GenericRestClient[T, ID] = {
+    logger.debug(s"logging in using service: ${loginService}")
     val token = loginService.login(new LoginRequest(username,password)).token
     login(token)
 
@@ -209,6 +210,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param token
     */
   final def login(token: String): GenericRestClient[T, ID] = {
+    logger.debug("utilizing token for authorization in this instance")
     this.token = token
     this
   }

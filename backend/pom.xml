@@ -25,6 +25,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+                <artifactId>rest-auth-server</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>client</artifactId>
                 <type>test-jar</type>
