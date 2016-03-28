@@ -25,9 +25,41 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+                <artifactId>rest-auth-server</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>client</artifactId>
                 <type>test-jar</type>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+                <artifactId>jwt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>auth</artifactId>
+                <type>test-jar</type>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+                <artifactId>api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>auth</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

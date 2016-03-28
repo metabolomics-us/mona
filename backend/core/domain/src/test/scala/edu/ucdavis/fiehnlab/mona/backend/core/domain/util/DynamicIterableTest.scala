@@ -41,7 +41,9 @@ class DynamicIterableTest extends WordSpec with LazyLogging{
         var count = 0
 
         while(it.hasNext){
-          logger.debug(s"fetched: ${it.next()}")
+          val next = it.next()
+
+          logger.debug(s"fetched: ${next}")
           count = count + 1
 
         }

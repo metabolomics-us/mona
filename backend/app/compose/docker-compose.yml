@@ -1,0 +1,21 @@
+mongodb:
+  image: tutum/mongodb
+  ports:
+    - "27017:27017"
+    - "28017:28017"
+  environment:
+    AUTH: "no"
+
+elastic:
+  image: elasticsearch
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+
+mona:
+  image: eros.fiehnlab.ucdavis.edu/node
+  ports:
+    - "8080:8080"
+  links:
+    - mongodb
+    - elastic

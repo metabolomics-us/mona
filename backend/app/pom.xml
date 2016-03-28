@@ -19,7 +19,7 @@
     <properties>
         <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
         <docker.baseImage>java</docker.baseImage>
-        <docker.imageName>${project.name}</docker.imageName>
+        <docker.imageName>mona-${project.name}</docker.imageName>
         <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
     </properties>
 

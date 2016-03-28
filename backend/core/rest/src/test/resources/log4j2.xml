@@ -6,12 +6,13 @@
     </Console>
 </Appenders>
 <Loggers>
+    <!--
     <Logger name="edu.ucdavis" level="debug"/>
+    <Logger name="org.elasticsearch" level="debug"/>
+    <Logger name="org.springframework.web.context.request.async" level="info"/>
 
-    <Logger name="org.springframework.boot.autoconfigure.mongo" level="warn"/>
-    <Logger name="org.springframework" level="info"/>
-    <Logger name="com.fasterxml.jackson" level="debug"/>
-    <Root level="info">
+    -->
+    <Root level="warn">
         <AppenderRef ref="Console"/>
     </Root>
 </Loggers>

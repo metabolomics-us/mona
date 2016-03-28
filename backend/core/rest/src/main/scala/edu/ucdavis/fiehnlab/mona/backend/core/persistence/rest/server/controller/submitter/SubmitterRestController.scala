@@ -5,11 +5,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubm
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
-import org.springframework.web.bind.annotation.{RequestMapping, RestController}
+import org.springframework.web.bind.annotation.{CrossOrigin, RequestMapping, RestController}
 
 /**
   * Created by wohlgemuth on 3/7/16.
   */
+@CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/submitters"))
 class SubmitterRestController extends GenericRESTController[Submitter] {
