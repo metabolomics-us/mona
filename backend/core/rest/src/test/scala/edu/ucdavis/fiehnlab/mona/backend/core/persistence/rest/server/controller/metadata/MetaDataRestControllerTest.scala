@@ -7,15 +7,15 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.StartServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -24,13 +24,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlgemuth on 3/8/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[StartServerConfig],classOf[EmbeddedRestServerConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=0"))
-class MetaDataRestControllerTest extends WordSpec {
-
-  @Value( """${local.server.port}""")
-  val port: Int = 0
-
+class MetaDataRestControllerTest extends AbstractSpringControllerTest {
 
   @Autowired
   val spectrumRepository: ISpectrumMongoRepositoryCustom = null

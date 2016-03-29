@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Splash
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}

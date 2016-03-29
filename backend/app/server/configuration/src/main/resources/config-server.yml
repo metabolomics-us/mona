@@ -1,0 +1,11 @@
+#where is our configuration for the server for testing
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: file://src/main/config
+
+#on which port do we run
+server:
+  port: 1111
