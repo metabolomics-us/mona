@@ -1,0 +1,47 @@
+#basic configuration how to connect to the configuration server
+spring:
+  appliction:
+    name: edge-server
+  cloud:
+    config:
+      uri:  ${SPRING_CONFIG_URI:http://localhost:1111}
+
+#basic information who we are
+info:
+  component: Zuul Edge Server
+
+
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+  health:
+    sensitive: false
+
+#defines all the routes based on it's provided services
+zuul:
+  ignoredServices: "*"
+
+  routes:
+
+    #access to all our spectra
+    spectra:
+      path: /rest/spectra/**
+      stripPrefix: false
+      serviceId: persistence-service
+
+    #access to all our spectra
+    metadata:
+      path: /rest/metaData/**
+      stripPrefix: false
+      serviceId: persistence-service
+
+    #access for authentication
+    auth-service :
+      path: /rest/auth/**
+      stripPrefix: false
+
+#on which port do we run
+server:
+  port: 8080

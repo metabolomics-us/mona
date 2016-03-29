@@ -5,8 +5,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedM
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+
 import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/23/16.
@@ -28,7 +29,7 @@ class ISubmitterMongoRepositoryTest extends WordSpec {
       assert(submitterMongoRepository.count() == 0)
     }
     "add submitter" in {
-      submitterMongoRepository.save(Submitter("wohlgemuth@ucdavis.edu","gert","uc davis", "wohlgemuth"))
+      submitterMongoRepository.save(Submitter("wohlgemuth","wohlgemuth@ucdavis.edu","gert","uc davis", "wohlgemuth"))
       assert(submitterMongoRepository.count() == 1)
     }
     "findByFirstName" in {
