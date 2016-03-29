@@ -75,6 +75,7 @@
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
                             <include>${project.build.finalName}.jar</include>
+                            <include>src/main/config</include>
                         </resource>
                     </resources>
                 </configuration>

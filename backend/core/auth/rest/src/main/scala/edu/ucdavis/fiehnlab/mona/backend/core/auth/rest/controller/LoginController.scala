@@ -6,7 +6,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
 
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.User
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
