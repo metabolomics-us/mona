@@ -43,7 +43,8 @@ zuul:
       stripPrefix: false
 
   host:
-    maxTotalConnections:  1000
+    maxTotalConnections:  10000
+    maxPerRouteConnections: 1000
 
 #on which port do we run
 server:

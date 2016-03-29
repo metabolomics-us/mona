@@ -28,27 +28,25 @@ class RestClientConfig extends LazyLogging {
   val monaServerPort: Int = 0
 
   @Value("${mona.rest.client.connections.total:10}")
-  val monaMaxConnections: Int = 0
+  val monaMaxConnections:Int =0
 
   @Value("${mona.rest.client.connections.route:5}")
-  val monaMaxRouteConnections: Int = 0
+  val monaMaxRouteConnections:Int=0
 
   @Bean(name = Array[String]("monaRestServer"))
   def monaRestServer: String = s"http://${monaServerHost}:${monaServerPort}"
 
   /**
     * rest operations interface, configured with a custom object mapper
-    *
     * @return
     */
   @Bean
-  def restOperations: RestOperations = {
+  def restOperations : RestOperations = {
 
     val httpClient = HttpClientBuilder.create()
       .setMaxConnTotal(monaMaxConnections)
       .setMaxConnPerRoute(monaMaxRouteConnections)
       .build()
-
 
     val rest: RestTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient))
     rest.getMessageConverters.add(0, mappingJacksonHttpMessageConverter)
@@ -57,16 +55,14 @@ class RestClientConfig extends LazyLogging {
 
   /**
     * provides us with an easy way to authenticate against the services
-    *
     * @return
     */
   @Bean
   @Primary
-  def loginService: LoginService = new RestLoginService(monaServerHost, monaServerPort)
+  def loginService:LoginService = new RestLoginService(monaServerHost,monaServerPort)
 
   /**
     * generates our mapping converter
-    *
     * @return
     */
   @Bean
@@ -78,7 +74,7 @@ class RestClientConfig extends LazyLogging {
 
 
   @Bean
-  def monaSpectrumRestClient: MonaSpectrumRestClient = {
+  def monaSpectrumRestClient:MonaSpectrumRestClient = {
     new MonaSpectrumRestClient
   }
 
