@@ -1,7 +1,7 @@
 #basic configuration how to connect to the configuration server
 spring:
-  appliction:
-    name: edge-server
+  application:
+    name: proxy-service
   cloud:
     config:
       uri:  ${SPRING_CONFIG_URI:http://localhost:1111}
