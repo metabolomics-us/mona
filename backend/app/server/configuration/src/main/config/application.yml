@@ -1,0 +1,6 @@
+# shared configuration over all services
+
+mona:
+  security:
+    #secret key to be used for authorizations, should be provided as randomly generated env variable during boot
+    secret: ${MONA_SECRET_AUTH_TOKEN:fjhsdkfhsdiokhf}

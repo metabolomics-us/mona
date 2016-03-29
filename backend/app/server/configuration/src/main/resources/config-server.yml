@@ -4,7 +4,7 @@ spring:
     config:
       server:
         git:
-          uri: file://src/main/config
+          uri: file://${user.dir}/src/main/config
 
 #on which port do we run
 server:

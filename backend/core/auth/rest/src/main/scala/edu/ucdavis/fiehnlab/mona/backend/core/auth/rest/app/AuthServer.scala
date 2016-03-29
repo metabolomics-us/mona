@@ -27,13 +27,14 @@ class AuthServer {
   def loginServiceDelegate:LoginService = new MongoLoginService
 
 
-  /**
+  /**00
     * need a central server for getting this value otherwise all hell breaks loos
     *
     * @return
     */
   @Bean
   def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
+
 
 }
 
