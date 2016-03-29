@@ -1,11 +1,19 @@
 #where is our configuration for the server for testing
 spring:
+  application:
+    name: config-service
   cloud:
     config:
       server:
         git:
-          uri: file://src/main/config
+          uri: file://${user.dir}/src/main/config
 
 #on which port do we run
 server:
   port: 1111
+
+#we want to register the config server with eureka
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SPRING_DISCOVERY_URI:http://localhost:8761/eureka/}

@@ -1,0 +1,21 @@
+# shared configuration over all services
+
+mona:
+  security:
+    #secret key to be used for authorizations, should be provided as randomly generated env variable during boot
+    secret: ${MONA_SECRET_AUTH_TOKEN:fjhsdkfhsdiokhf}
+
+# Discovery Server Access to be shared over all applications
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SPRING_DISCOVERY_URI:http://localhost:8761/eureka/}
+
+# Spring data configuration
+spring:
+  data:
+    #for mongo db
+    mongodb:
+      host: ${MONGODB_HOST:127.0.0.1}
+      port: ${MONGODB_PORT:27017}
+      database: ${MONGODB_DATABASE:mona}

@@ -65,7 +65,7 @@
                     <baseImage>${docker.baseImage}</baseImage>
                     <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
                     <exposes>
-                        <expose>8080</expose>
+                        <expose>8761</expose>
                     </exposes>
                     <!-- copy the service's jar file from target into the root directory of the image -->
                     <resources>

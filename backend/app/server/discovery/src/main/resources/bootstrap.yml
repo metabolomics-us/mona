@@ -1,10 +1,7 @@
 #basic configuration how to connect to the configuration server
 spring:
   appliction:
-    name: registration
-  cloud:
-    config:
-      uri:  ${SPRING_CONFIG_URI:http://localhost:1111}
+    name: discovery
 
 #our local server port
 server:

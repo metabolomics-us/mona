@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.writer
 
+import javax.annotation.PostConstruct
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
@@ -10,10 +12,16 @@ import org.springframework.stereotype.Component
   * Created by wohlgemuth on 3/11/16.
   */
 @Component
-class RestRepositoryWriter extends WriterAdapter with LazyLogging {
+class RestRepositoryWriter(val loginToken:String) extends WriterAdapter with LazyLogging {
 
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
+
+  @PostConstruct
+  def authorize = {
+    logger.debug("logging in to server")
+    monaSpectrumRestClient.login(loginToken)
+  }
 
   /**
     * attempts to write all these spectra to the repository
