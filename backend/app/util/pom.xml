@@ -9,12 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
-    <artifactId>server</artifactId>
     <packaging>pom</packaging>
+
+    <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
+    <artifactId>util</artifactId>
+
     <modules>
-        <module>configuration</module>
-        <module>discovery</module>
-        <module>proxy</module>
+        <module>memory-node</module>
     </modules>
+
 </project>
