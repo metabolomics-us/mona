@@ -1,0 +1,20 @@
+#basic configuration how to connect to the configuration server
+spring:
+  appliction:
+    name: registration
+  cloud:
+    config:
+      uri:  ${SPRING_CONFIG_URI:http://localhost:1111}
+
+#our local server port
+server:
+  port: 8761
+
+#eureka server settings
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    server:
+      waitTimeInMsWhenSyncEmpty: 0
+

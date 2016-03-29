@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
@@ -15,6 +16,7 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.collection.JavaConverters._
+import scala.util.Properties
 
 /**
   * Created by wohlg on 3/27/2016.
@@ -22,7 +24,9 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig],classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
-class RestLoginServiceTest extends WordSpec {
+class RestLoginServiceTest extends WordSpec with LazyLogging{
+
+  val keepRunning = Properties.envOrElse("keep.server.running","false").toBoolean
 
   @Autowired
   val loginService:LoginService = null
@@ -46,7 +50,19 @@ class RestLoginServiceTest extends WordSpec {
     }
 
     "login" in {
-      loginService.login(LoginRequest("admin","secret"))
+      val token = loginService.login(LoginRequest("admin","secret"))
+      logger.info(s"my token is ${token.token}")
+
+    }
+
+    //MUST BE LAST
+    "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
+      if(keepRunning){
+        while (keepRunning) {
+          logger.warn("waiting forever till you kill me!")
+          Thread.sleep(300000); // Every 5 minutes
+        }
+      }
     }
 
   }
