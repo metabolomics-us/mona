@@ -42,6 +42,9 @@ zuul:
       path: /rest/auth/**
       stripPrefix: false
 
+  host:
+    maxTotalConnections:  1000
+
 #on which port do we run
 server:
   port: 8080
