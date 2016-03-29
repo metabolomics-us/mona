@@ -14,6 +14,6 @@ class DiscoveryServer {
 }
 
 object DiscoveryServer extends App {
-  System.setProperty("spring.config.name", "registration-server");
+  //System.setProperty("spring.config.name", "registration-server");
   new SpringApplication(classOf[DiscoveryServer]).run()
 }
