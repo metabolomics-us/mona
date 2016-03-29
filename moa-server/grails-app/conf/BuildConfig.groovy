@@ -41,7 +41,7 @@ grails.project.dependency.resolution = {
         mavenLocal()
         grailsCentral()
         mavenCentral()
-        mavenRepo "http://repo.fiehnlab.ucdavis.edu:55000/content/groups/public"
+        mavenRepo "http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public"
 
         mavenRepo "http://download.java.net/maven/2/"
         mavenRepo "http://maven.antelink.com/content/repositories/central/"
@@ -111,7 +111,8 @@ grails.project.dependency.resolution = {
             excludes "javax.mail:mailapi","mailapi"
         }
 
-        compile("edu.ucdavis.fiehnlab.splash:java:1.4-SNAPSHOT")
+        //compile("edu.ucdavis.fiehnlab.splash:java:1.4")
+        compile("edu.ucdavis.fiehnlab.splash:core:1.4")
 
         //compile("javax.mail:mail:1.4")
         compile 'javax.mail:javax.mail-api:1.5.4'
