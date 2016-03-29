@@ -3,7 +3,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation._
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -16,11 +18,11 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
 @Import(Array(classOf[DomainConfig]))
 class RestClientConfig extends LazyLogging {
 
-  @Value("${mona.rest.server.host}")
+  @Value("${mona.rest.server.host:localhost}")
   val monaServerHost: String = null
 
 
-  @Value("${mona.rest.server.port}")
+  @Value("${mona.rest.server.port:8080}")
   val monaServerPort: Int = 0
 
 
@@ -37,6 +39,14 @@ class RestClientConfig extends LazyLogging {
     rest.getMessageConverters.add(0, mappingJacksonHttpMessageConverter)
     rest
   }
+
+  /**
+    * provides us with an easy way to authenticate against the services
+    * @return
+    */
+  @Bean
+  @Primary
+  def loginService:LoginService = new RestLoginService(monaServerHost,monaServerPort)
 
   /**
     * generates our mapping converter

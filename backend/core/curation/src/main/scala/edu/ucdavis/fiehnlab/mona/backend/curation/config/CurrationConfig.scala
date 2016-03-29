@@ -17,7 +17,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
   * and assorted issues
   */
 @Configuration
-class CurrationConfig extends LazyLogging{
+class CurrationConfig extends LazyLogging {
 
 
   /**
@@ -33,12 +33,14 @@ class CurrationConfig extends LazyLogging{
 
   /**
     * should be utilized in jobs to persist entities at the mona backend
- *
+    *
     * @return
     */
   @Bean
-  def restRepositoryWriter: ItemWriter[Spectrum] = {
-    new RestRepositoryWriter()
+  @StepScope
+  def restRepositoryWriter(@Value("#{jobParameters[loginToken]}")
+                           loginToken: String): ItemWriter[Spectrum] = {
+    new RestRepositoryWriter(loginToken)
   }
 
   /**
@@ -54,12 +56,12 @@ class CurrationConfig extends LazyLogging{
                      file: String): ItemReader[Spectrum] = {
     val reader = new JSONFileSpectraReader()
 
-    if(new File(file).exists()){
+    if (new File(file).exists()) {
       logger.debug("a file was provided")
       reader.stream = new BufferedInputStream(new FileInputStream(file))
     }
-    else{
-      logger.warn("provided file did not exist, trying to load from classpath")
+    else {
+      logger.warn(s"provided file ${file} did not exist, trying to load from classpath")
       reader.stream = getClass.getResourceAsStream(file)
     }
 
