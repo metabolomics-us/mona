@@ -1,21 +1,51 @@
-mongodb:
-  image: tutum/mongodb
-  ports:
-    - "27017:27017"
-    - "28017:28017"
-  environment:
-    AUTH: "no"
+version: '2'
 
-elastic:
-  image: elasticsearch
-  ports:
-    - "9200:9200"
-    - "9300:9300"
+services:
+  mongodb:
+    image: tutum/mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      AUTH: "no"
 
-mona:
-  image: eros.fiehnlab.ucdavis.edu/node
-  ports:
-    - "8080:8080"
-  links:
-    - mongodb
-    - elastic
+#  elastic:
+#    image: elasticsearch
+#    ports:
+#      - "9200:9200"
+#      - "9300:9300"
+
+  discovery:
+    image: eros.fiehnlab.ucdavis.edu/mona-discovery
+    ports:
+      - "8761:8761"
+    depends_on:
+      - mongodb
+#      - elastic
+
+  config:
+    image: eros.fiehnlab.ucdavis.edu/mona-configuration
+    ports:
+      - "1111:1111"
+    depends_on:
+      - discovery
+
+  auth:
+    image: eros.fiehnlab.ucdavis.edu/mona-rest-auth-server
+    ports:
+      - "3333:3333"
+    depends_on:
+      - config
+    
+  persistence:
+    image: eros.fiehnlab.ucdavis.edu/mona-rest-persistence-server
+    ports:
+      - "2222:2222"
+    depends_on:
+      - auth
+    
+  mona:
+    image: eros.fiehnlab.ucdavis.edu/mona-proxy
+    ports:
+      - "8080:8080"
+    depends_on:
+      - persistence
