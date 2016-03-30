@@ -1,0 +1,9 @@
+#by default do not autostart our jobs
+spring:
+  batch:
+    job:
+      enabled:  false
+
+logging:
+  level:
+    ROOT:  DEBUG

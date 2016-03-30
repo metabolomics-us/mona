@@ -9,7 +9,7 @@
     <!--
      here we import our define writers, readers and processors
     -->
-    <bean name="/CurrationConfig" class="edu.ucdavis.fiehnlab.mona.backend.curation.config.CurrationConfig" />
+    <bean name="/CurrationConfig" class="edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig" />
 
 
     <!--
