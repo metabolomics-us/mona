@@ -7,14 +7,14 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import org.springframework.web.client.HttpServerErrorException
+import org.springframework.web.client.{HttpClientErrorException, HttpServerErrorException}
 
 /**
   * A writer to persiste values to the repository, it has a silent retry feature and will attempt to retry saving the result
   * in case of error N times before it surrenders and throws an exceptions
   */
 @Component
-class RestRepositoryWriter(val loginToken:String, val retrySilently:Boolean = true, val maxRetries:Int = 10) extends WriterAdapter with LazyLogging {
+class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = true, val maxRetries: Int =50, val recoveryPauseInMS:Long = 5000) extends WriterAdapter with LazyLogging {
 
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
@@ -25,7 +25,7 @@ class RestRepositoryWriter(val loginToken:String, val retrySilently:Boolean = tr
     monaSpectrumRestClient.login(loginToken)
   }
 
-  private var counter:Int = 0
+  private var counter: Int = 0
 
   /**
     * how many tries are left for the current data set
@@ -49,14 +49,20 @@ class RestRepositoryWriter(val loginToken:String, val retrySilently:Boolean = tr
       else {
         logger.debug(s"updating spectra on server ${spectrum.id}")
 
-        val s = monaSpectrumRestClient.get(spectrum.id)
+        try {
+          val s = monaSpectrumRestClient.get(spectrum.id)
 
-        if (s != null) {
+
           monaSpectrumRestClient.updateAsync(spectrum, spectrum.id)
-        }
-        else {
-          logger.debug("server was not aware of id, assuming it's a backup and adding it instead")
-          monaSpectrumRestClient.add(spectrum)
+        } catch {
+          case e: HttpClientErrorException =>
+            if (e.getMessage.contains("404")) {
+              logger.debug("server was not aware of id, assuming it's a backup and adding it instead")
+              monaSpectrumRestClient.add(spectrum)
+            }
+            else {
+              throw e
+            }
         }
 
       }
@@ -68,20 +74,19 @@ class RestRepositoryWriter(val loginToken:String, val retrySilently:Boolean = tr
       }
     }
     catch {
-      case e:HttpServerErrorException =>
-        logger.warn(e.getMessage)
+      case e: HttpServerErrorException =>
 
-        if(retrySilently && retriesLeft > 0){
-          retriesLeft = retriesLeft -1
-          logger.debug(s"attempting recovery ${maxRetries - retriesLeft} out of ${maxRetries}")
+        if (retrySilently && retriesLeft > 0) {
+          retriesLeft = retriesLeft - 1
+          logger.warn(s"${e.getMessage} attempting recovery ${maxRetries - retriesLeft} out of ${maxRetries}")
 
-          Thread.currentThread().wait(1000)
+          Thread.sleep(recoveryPauseInMS)
           write(spectrum)
 
           //success time to reset the retires
           retriesLeft = maxRetries
         }
-        else{
+        else {
           throw e
         }
     }
