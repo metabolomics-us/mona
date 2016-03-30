@@ -40,7 +40,7 @@ class RestRepositoryReaderTest extends WordSpec {
   @Autowired
   val userRepository: UserRepository = null
 
-  //required for spring and scala tes
+  //required for spring and scala test
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
