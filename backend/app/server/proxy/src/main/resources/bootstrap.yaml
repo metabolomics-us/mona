@@ -42,15 +42,15 @@ zuul:
       path: /rest/auth/**
       stripPrefix: false
 
-  host:
-    maxTotalConnections:  300
-    maxPerRouteConnections: 100
+##  host:
+##    maxTotalConnections:  200
+#    maxPerRouteConnections: 20
 
 #on which port do we run
 server:
   port: 8080
 
-# logging settings
-logging:
-  level:
-    org.apache.catalina.http11.InternalNioInputBuffer: DEBUG
+ribbon:
+  maxAutoRetries: 10
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
