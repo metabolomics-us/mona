@@ -15,5 +15,12 @@ trait LoginService {
     */
   def login(request: LoginRequest) : LoginResponse
 
+  /**
+    * does a login for the current user
+    * and returns a response or throws a related exception
+    *
+    * @return
+    */
+  def login(username: String, password: String): LoginResponse = login(LoginRequest(username, password))
 }
 
