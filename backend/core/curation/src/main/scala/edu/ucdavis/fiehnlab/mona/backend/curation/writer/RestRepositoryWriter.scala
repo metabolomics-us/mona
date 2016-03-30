@@ -39,6 +39,5 @@ class RestRepositoryWriter(val loginToken:String) extends WriterAdapter with Laz
       logger.debug(s"updating spectra on server ${spectrum.id}")
       monaSpectrumRestClient.update(spectrum, spectrum.id)
     }
-
   }
 }

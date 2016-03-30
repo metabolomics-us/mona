@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{GenericRestClient, MonaSpectrumRestClient}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
@@ -18,11 +18,12 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.collection.JavaConverters._
+
 /**
   * Created by wohlg on 3/11/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig],classOf[TestConfig],classOf[JWTAuthenticationConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class RestRepositoryWriterTest extends WordSpec {
 
@@ -32,12 +33,10 @@ class RestRepositoryWriterTest extends WordSpec {
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
 
-
-  @Autowired
-  val userRepository: UserRepository = null
-
   @Autowired
   val writer: RestRepositoryWriter = null
+
+  //required for spring and scala test
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "a writer " when {
@@ -45,18 +44,7 @@ class RestRepositoryWriterTest extends WordSpec {
 
     "given a list of spectra" should {
 
-
-
-      "we need to login " in {
-        userRepository.deleteAll()
-        userRepository.save(User("admin", "secret", Array(Role("ADMIN")).toList.asJava))
-
-
-        monaSpectrumRestClient.login("admin", "secret")
-
-      }
       "upload them to the server" in {
-
         writer.write(exampleRecords.toList.asJava)
 
         assert(monaSpectrumRestClient.count() == exampleRecords.length)
