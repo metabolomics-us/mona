@@ -17,7 +17,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
   * and assorted issues
   */
 @Configuration
-class CurrationConfig extends LazyLogging {
+class CurationConfig extends LazyLogging {
 
 
   /**
@@ -71,5 +71,4 @@ class CurrationConfig extends LazyLogging {
 
     reader
   }
-
 }
