@@ -49,7 +49,7 @@ class SpectrumPersistenceServiceTest extends WordSpec with LazyLogging{
     }
 
     "have at least one listener assigned " in {
-      assert(spectrumPersistenceService.persistenceEventListeners.size() != 0)
+      assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() != 0)
     }
 
     s"store ${exampleRecords.length} records" in {
