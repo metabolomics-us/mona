@@ -1,6 +1,12 @@
 version: '2'
 
 services:
+
+################################################################################################################
+#This section provides us with the required databases and should be changed later
+#to define a cluster setup for production user
+################################################################################################################
+
   mongodb:
     image: tutum/mongodb
     ports:
@@ -8,44 +14,81 @@ services:
     environment:
       AUTH: "no"
 
-#  elastic:
-#    image: elasticsearch
-#    ports:
-#      - "9200:9200"
-#      - "9300:9300"
+  #mona only supports 1.7.5 at this point in time
+  elasticsearch:
+     image: elasticsearch:1.7.5
+     ports:
+       - "9200:9200"
+       - "9300:9300"
 
+
+################################################################################################################
+# This section defines our required services, need to connect mona apps
+# to each other
+################################################################################################################
+
+# The discovery service provided us with a local overview of our services
+# and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
     image: eros.fiehnlab.ucdavis.edu/mona-discovery
     ports:
       - "8761:8761"
-    depends_on:
-      - mongodb
-#      - elastic
+
+# The configuration service, provides to every client his required configuration
+# the client needs to have a bootstrap.yml to register against it
 
   config:
     image: eros.fiehnlab.ucdavis.edu/mona-configuration
     ports:
       - "1111:1111"
+
+    #####
+    # define that the required discovery service needs to be named 'discovery'
+    links:
+      - discovery
+
+    ####
+    # the list of our dependend services
     depends_on:
       - discovery
 
-  auth:
-    image: eros.fiehnlab.ucdavis.edu/mona-rest-auth-server
-    ports:
-      - "3333:3333"
-    depends_on:
-      - config
+    #we will be waiting 5 minutes for the discovery service to start up an than start any jar file.
+    #java opts can be overriden in the container
+    #the configuration points the task as the right ip address for the discovery server
+    entrypoint: ./wait-for-it.sh discovery:8761 -t 300 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
+
+# this proxy server is the main entry point for mona and should be preferable always be used
+
+#  proxy:
+#    image: eros.fiehnlab.ucdavis.edu/mona-proxy
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - discovery
+
+
+################################################################################################################
+# This section defines our required services, need to connect mona apps
+# to each other
+################################################################################################################
+
+#  auth:
+#    image: eros.fiehnlab.ucdavis.edu/mona-rest-auth-server
+#    ports:
+#      - "3333:3333"
+#    depends_on:
+#      - config
     
-  persistence:
-    image: eros.fiehnlab.ucdavis.edu/mona-rest-persistence-server
-    ports:
-      - "2222:2222"
-    depends_on:
-      - auth
+#  persistence:
+#    image: eros.fiehnlab.ucdavis.edu/mona-rest-persistence-server
+#    ports:
+#      - "2222:2222"
+#    depends_on:
+#      - auth
     
-  mona:
-    image: eros.fiehnlab.ucdavis.edu/mona-proxy
-    ports:
-      - "8080:8080"
-    depends_on:
-      - persistence
+#  proxy:
+#    image: eros.fiehnlab.ucdavis.edu/mona-proxy
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - discovery
