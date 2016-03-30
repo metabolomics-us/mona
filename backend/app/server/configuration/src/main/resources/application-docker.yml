@@ -1,0 +1,7 @@
+#we want to register the config server with eureka
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
