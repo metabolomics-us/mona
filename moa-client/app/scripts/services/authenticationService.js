@@ -9,16 +9,17 @@
       .service('AuthenticationService', authenticationService);
 
     /* @ngInject */
-    function authenticationService(Submitter, $q, $http, $rootScope, CookieService, REST_BACKEND_SERVER) {
+    function authenticationService(Submitter, $log, $q, $http, $rootScope, CookieService, REST_BACKEND_SERVER) {
         var self = this;
         self.loggingIn = false;
 
         function handleLoginSuccess(response) {
-            var data = response.data;
-            $rootScope.currentUser = data;
-            $http.defaults.headers.common['X-Auth-Token'] = data.access_token;
-            CookieService.update('AuthorizationToken', data.access_token);
-            $rootScope.$broadcast('auth:login-success', data, response.status, response.headers, response.config);
+            var token = response.data.token;
+            $log.info(response);
+            $rootScope.currentUser = {username: response.config.data.username, access_token: token};
+            $http.defaults.headers.common['X-Auth-Token'] = token;
+            CookieService.update('AuthorizationToken', token);
+            $rootScope.$broadcast('auth:login-success', token, response.status, response.headers, response.config);
             self.loggingIn = false;
         }
 
@@ -34,7 +35,7 @@
             $rootScope.$broadcast('auth:login-error', response.data, response.status, response.headers, response.config);
             self.loggingIn = false;
         }
-        
+
         /**
          * log us in
          */
