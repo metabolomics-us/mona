@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.config
 
-import java.io.{BufferedInputStream, File, FileInputStream}
+import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundException}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -17,7 +17,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
   * and assorted issues
   */
 @Configuration
-class CurrationConfig extends LazyLogging {
+class CurationConfig extends LazyLogging {
 
 
   /**
@@ -54,6 +54,10 @@ class CurrationConfig extends LazyLogging {
   @StepScope
   def jsonFileReader(@Value("#{jobParameters[pathToFile]}")
                      file: String): ItemReader[Spectrum] = {
+
+    if(file == null){
+      throw new FileNotFoundException("you need to provide a file name, but instead the parameter was null!")
+    }
     val reader = new JSONFileSpectraReader()
 
     if (new File(file).exists()) {
@@ -67,5 +71,4 @@ class CurrationConfig extends LazyLogging {
 
     reader
   }
-
 }

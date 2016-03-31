@@ -33,7 +33,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
   val monaRestServer: String = null
 
   @Autowired
-  val loginService:LoginService = null
+  val loginService: LoginService = null
 
   @Autowired
   protected val restOperations: RestOperations = null
@@ -68,7 +68,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @return
     */
   def add(dao: T): T = {
-    restOperations.exchange(s"$requestPath",HttpMethod.POST, new HttpEntity[T](dao,buildHeaders), classTag[T].runtimeClass).getBody.asInstanceOf[T]
+    restOperations.exchange(s"$requestPath", HttpMethod.POST, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass).getBody.asInstanceOf[T]
   }
 
   /**
@@ -86,7 +86,8 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param dao
     * @param id
     */
-  def updateAsync(dao: T, id: ID): Unit = update(dao, id)
+  def updateAsync(dao: T, id: ID): Unit = restOperations.exchange(s"$requestPath/${id}", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
+
 
   /**
     * updates a type in the system
@@ -95,7 +96,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @return
     */
   def update(dao: T, id: ID): T = {
-    restOperations.exchange(s"$requestPath/${id}",HttpMethod.PUT, new HttpEntity[T](dao,buildHeaders),classTag[T].runtimeClass)
+    restOperations.exchange(s"$requestPath/${id}", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
     get(id)
   }
 
@@ -104,7 +105,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     *
     * @param id
     */
-  def delete(id: ID) = restOperations.exchange(s"$requestPath/$id",HttpMethod.DELETE,new HttpEntity[Nothing](buildHeaders),classTag[T].runtimeClass)
+  def delete(id: ID) = restOperations.exchange(s"$requestPath/$id", HttpMethod.DELETE, new HttpEntity[Nothing](buildHeaders), classTag[T].runtimeClass)
 
   /**
     * loads the object specified by the id
@@ -199,7 +200,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     */
   final def login(username: String, password: String): GenericRestClient[T, ID] = {
     logger.debug(s"logging in using service: ${loginService}")
-    val token = loginService.login(new LoginRequest(username,password)).token
+    val token = loginService.login(new LoginRequest(username, password)).token
     login(token)
 
   }
@@ -217,9 +218,10 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
 
   /**
     * builds our headers for authorization
+    *
     * @return
     */
-  private def buildHeaders : HttpHeaders = {
+  private def buildHeaders: HttpHeaders = {
     val header = new HttpHeaders()
     header.set("Authorization", s"Bearer $token")
     header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON));

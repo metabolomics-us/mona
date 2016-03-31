@@ -19,17 +19,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
         <!-- eureka client -->
@@ -47,6 +36,26 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <id>download-remote-resources</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <get src="https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh" dest="${project.build.directory}" />
+                                <chmod file="${project.build.directory}/wait-for-it.sh" perm="777"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -75,8 +84,16 @@
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
                             <include>${project.build.finalName}.jar</include>
-                            <include>src/main/config</include>
+                            <include>wait-for-it.sh</include>
                         </resource>
+
+
+                        <resource>
+                            <directory>src/main/config</directory>
+                            <targetPath>/src/main/config</targetPath>
+                            <include>*</include>
+                        </resource>
+
                     </resources>
                 </configuration>
 

@@ -1,22 +1,36 @@
 # README #
 
-To build the mongo based nodes:
+ports for cluster service nodes:
+- persistence svr: 2222
+- configuration svr: 1111
+- discovery service: 8761
+- auth server: 3333
+- proxy service: 8080 (entry point)
 
+
+ports for in-memory node:
+- embedded mongo db: 27017
+- mona rest client: 8080
+- elasticsearch client: 9200
+- elasticsearch web???: 9300
+
+Building the nodes:
+
+Common:
 - check/setup docker configuration
 	for Mac/Win:
 	  eval "$(docker-machine env default)"
 	for linux:
 	  N/A
+	  
 - run 'mvn clean install' on the backend folder to compile and create the docker images
 
+To run the in-memory node docker continer:
 - To create the containers manually:
-	run 'docker run [--name <whateveryouwanttonameyourimage>] -p 80:8080 [-p::9200 -p::9300 -p::27017] -eros.fiehnlab.ucdavis.edu/<memory-node | node>' 
-		to start the docker container of choice (in memory or a cluster node)
-		port 8080: maps the web client to port 80 on docker host (required if you want to use the system)
-		port 9200: maps elasticsearch command-line client to same port on host (optional)
-		port 9300: maps elasticsearch web client to same port on host (optional)
-		port 27017: maps mongo client to same port on host
+	run 'docker run [--name <whateveryouwanttonameyourimage>] -p=80:8080 [-p=9200:9200 -p=9300:9300 -p=27017:27017] eros.fiehnlab.ucdavis.edu/mona-memory-node' 
+		to start the docker container of choice
 
+To run the cluster service nodes using docker compose: (WIP)
 - To run the cluster node using docker-compose:
 	'cd app/compose'
 	run 'docker-compose up -d'
