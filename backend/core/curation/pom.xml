@@ -12,7 +12,7 @@
 
     <artifactId>curation</artifactId>
 
-    <description>This project contails all MoNA related core curration tasks and workflow definitions</description>
+    <description>This project contails all MoNA related core curation tasks and workflow definitions</description>
 
     <dependencies>
         <dependency>

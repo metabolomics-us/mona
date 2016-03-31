@@ -19,7 +19,7 @@
         <batch:step id="uploadAndCurrationSpectraStep">
             <batch:tasklet>
                 <batch:chunk reader="jsonFileReader"
-                             writer="restRepositoryWriter" processor="currationWorkflow"
+                             writer="restRepositoryWriter" processor="curationWorkflow"
                              commit-interval="1">
                 </batch:chunk>
             </batch:tasklet>
