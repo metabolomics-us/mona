@@ -7,7 +7,7 @@ import org.springframework.batch.item.ItemProcessor
 /**
   * Created by wohlgemuth on 3/11/16.
   */
-@Step(description = "this step will remove all computed metadata, names and tags from the given spectrum", workflow = "spectra-curration")
+@Step(description = "this step will remove all computed metadata, names and tags from the given spectrum", workflow = "spectra-curation")
 class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
 
   /**
@@ -19,22 +19,26 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
   override def process(spectrum: Spectrum): Spectrum = {
 
     val filteredBiologicalCompound =
-      if (spectrum.biologicalCompound != null)
+      if (spectrum.biologicalCompound != null) {
         spectrum.biologicalCompound.copy(
           metaData = filterMetaData(spectrum.biologicalCompound.metaData),
           names = filterNames(spectrum.biologicalCompound.names),
           tags = filterTags(spectrum.biologicalCompound.tags)
         )
-      else null
+      } else {
+        null
+      }
 
     val filteredChemicalCompound =
-      if (spectrum.biologicalCompound != null)
+      if (spectrum.biologicalCompound != null) {
         spectrum.chemicalCompound.copy(
           metaData = filterMetaData(spectrum.chemicalCompound.metaData),
           names = filterNames(spectrum.chemicalCompound.names),
           tags = filterTags(spectrum.chemicalCompound.tags)
         )
-      else null
+      } else {
+        null
+      }
 
     // assembled filtered spectrum
     spectrum.copy(
@@ -51,7 +55,13 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     * @param metaData
     * @return
     */
-  def filterMetaData(metaData: Array[MetaData]) : Array[MetaData] = metaData.filter(!_.computed)
+  def filterMetaData(metaData: Array[MetaData]) : Array[MetaData] = {
+    if(metaData != null) {
+      metaData.filter(!_.computed)
+    } else {
+      null
+    }
+  }
 
   /**
     * only keep names where computed = false
@@ -59,7 +69,13 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     * @param names
     * @return
     */
-  def filterNames(names: Array[Names]) : Array[Names] = names.filter(!_.computed)
+  def filterNames(names: Array[Names]) : Array[Names] = {
+    if(names != null) {
+      names.filter(!_.computed)
+    } else {
+      null
+    }
+  }
 
   /**
     * only keep metadata where ruleBased = false
@@ -67,5 +83,11 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     * @param tags
     * @return
     */
-  def filterTags(tags: Array[Tags]) : Array[Tags] = tags.filter(!_.ruleBased)
+  def filterTags(tags: Array[Tags]) : Array[Tags] = {
+    if(tags != null) {
+      tags.filter(!_.ruleBased)
+    } else {
+      null
+    }
+  }
 }
