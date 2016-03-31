@@ -15,8 +15,8 @@
     <!--
       this defines a simple job for the upload and curration of a spectra, retrieved from the reader and send to the writer
     -->
-    <batch:job id="uploadAndCurrationSpectraJob">
-        <batch:step id="uploadAndCurrationSpectraStep">
+    <batch:job id="uploadAndCurationSpectraJob">
+        <batch:step id="uploadAndCurationSpectraStep">
             <batch:tasklet>
                 <batch:chunk reader="jsonFileReader"
                              writer="restRepositoryWriter" processor="curationWorkflow"
