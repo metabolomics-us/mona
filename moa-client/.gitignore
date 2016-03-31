@@ -5,6 +5,7 @@ dist
 .sass-cache
 app/bower_components
 coverage/
+../backend/data/
 
 .classpath
 .project
