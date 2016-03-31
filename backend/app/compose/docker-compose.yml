@@ -33,6 +33,10 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-discovery
     ports:
       - "8761:8761"
+    depends_on:
+      - mongodb
+      - elasticsearch
+    entrypoint: ./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
 
 # The configuration service, provides to every client his required configuration
 # the client needs to have a bootstrap.yml to register against it
@@ -55,16 +59,22 @@ services:
     #we will be waiting 5 minutes for the discovery service to start up an than start any jar file.
     #java opts can be overriden in the container
     #the configuration points the task as the right ip address for the discovery server
-    entrypoint: ./wait-for-it.sh discovery:8761 -t 300 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: ./wait-for-it.sh discovery:8761 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
 
 # this proxy server is the main entry point for mona and should be preferable always be used
 
-#  proxy:
-#    image: eros.fiehnlab.ucdavis.edu/mona-proxy
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - discovery
+  proxy:
+    image: eros.fiehnlab.ucdavis.edu/mona-proxy
+    ports:
+      - "8080:8080"
+    depends_on:
+      - config
+
+    #we will be waiting 5 minutes for the discovery service to start up an than start any jar file.
+    #java opts can be overriden in the container
+    #the configuration points the task as the right ip address for the discovery server
+    #we also define the url for our configuration server here
+    entrypoint: ./wait-for-it.sh config:1111 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
 
 
 ################################################################################################################
@@ -72,23 +82,20 @@ services:
 # to each other
 ################################################################################################################
 
-#  auth:
-#    image: eros.fiehnlab.ucdavis.edu/mona-rest-auth-server
-#    ports:
-#      - "3333:3333"
-#    depends_on:
-#      - config
-    
-#  persistence:
-#    image: eros.fiehnlab.ucdavis.edu/mona-rest-persistence-server
-#    ports:
-#      - "2222:2222"
-#    depends_on:
-#      - auth
-    
-#  proxy:
-#    image: eros.fiehnlab.ucdavis.edu/mona-proxy
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - discovery
+  #this is our main authenticaiton service for the use in mona
+  auth:
+    image: eros.fiehnlab.ucdavis.edu/mona-rest-auth-server
+    depends_on:
+      - proxy
+      - mongodb
+      - elasticsearch
+    entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+
+  persistence:
+    image: eros.fiehnlab.ucdavis.edu/mona-rest-persistence-server
+
+    depends_on:
+      - proxy
+      - mongodb
+      - elasticsearch
+    entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
