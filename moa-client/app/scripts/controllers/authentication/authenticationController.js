@@ -77,9 +77,10 @@
          * Create a welcome message on login
          */
         $scope.$on('auth:login-success', function(event, data, status, headers, config) {
+
             AuthenticationService.getCurrentUser().then(function(data) {
                 console.log(JSON.stringify(data));
-                self.welcomeMessage = 'Welcome, ' + data.firstName + '!';
+                self.welcomeMessage = 'Welcome, ' + data.username + '!';
             });
         });
 
