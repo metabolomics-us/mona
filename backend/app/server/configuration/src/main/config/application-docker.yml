@@ -1,0 +1,7 @@
+#this is the docker specific configuration for the discovery host
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/

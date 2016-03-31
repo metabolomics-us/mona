@@ -9,7 +9,7 @@
     <!--
      here we import our define writers, readers and processors
     -->
-    <bean name="/CurrationConfig" class="edu.ucdavis.fiehnlab.mona.backend.curation.config.CurrationConfig" />
+    <bean name="/CurrationConfig" class="edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig" />
 
 
     <!--
@@ -34,7 +34,12 @@
             <batch:tasklet>
                 <batch:chunk reader="jsonFileReader"
                              writer="restRepositoryWriter"
-                             commit-interval="1">
+                             commit-interval="1" skip-limit="0"><!--
+                    <batch:skippable-exception-classes>
+                        <batch:include class="org.springframework.web.client.HttpClientErrorException"/>
+                    </batch:skippable-exception-classes>
+
+                    -->
                 </batch:chunk>
             </batch:tasklet>
         </batch:step>

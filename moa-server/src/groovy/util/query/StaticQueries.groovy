@@ -205,7 +205,7 @@ class StaticQueries {
 }""")
 
         // ms/ms
-        save("${label} - MS/MS", "${label}/MS spectra", """{
+        save("${label} - MSMS", "${label}/MS spectra", """{
     "compound": {},
     "metadata": [
         {
@@ -238,7 +238,7 @@ class StaticQueries {
 }""")
 
             // ms/ms
-            save("${label} - MS/MS - ${mode.capitalize()}", "${mode.capitalize()} mode ${label}/MS spectra", """{
+            save("${label} - MSMS - ${mode.capitalize()}", "${mode.capitalize()} mode ${label}/MS spectra", """{
     "compound": {},
     "metadata": [
         {

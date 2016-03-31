@@ -16,7 +16,5 @@ class ConfigServer {
 }
 
 object ConfigServer extends App{
-
-  System.setProperty("spring.config.name", "config-server");
   new SpringApplication(classOf[ConfigServer]).run()
 }

@@ -7,7 +7,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.service.listener._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
@@ -26,11 +26,6 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * how many results to fetch at a time
     */
   val fetchSize = 10
-  /**
-    * contains all listeneres in the system to tell subscripers that something with the backend happend
-    */
-  @Autowired(required = false)
-  val persistenceEventListeners: java.util.List[PersitenceEventListener[Spectrum]] = null
 
   /**
     * provides us with access to all spectra in the mongo database
@@ -41,6 +36,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   @Autowired
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
+  @Autowired(required = false)
+  val eventScheduler:EventScheduler[Spectrum] = null
   /**
     * will be invoked everytime a spectrum was added to the system
     *
@@ -48,8 +45,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     */
   final def fireAddEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been added")
-    if (persistenceEventListeners != null) {
-      persistenceEventListeners.asScala.sortBy(_.priority).reverse.foreach(_.added(new PersistenceEvent[Spectrum](spectrum, new Date())))
+    if (eventScheduler != null) {
+      eventScheduler.scheduleEventProcessing(AddEvent[Spectrum](spectrum, new Date()))
     }
   }
 
@@ -60,8 +57,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     */
   final def fireDeleteEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been deleted")
-    if (persistenceEventListeners != null) {
-      persistenceEventListeners.asScala.sortBy(_.priority).reverse.foreach(_.deleted(new PersistenceEvent[Spectrum](spectrum, new Date())))
+    if (eventScheduler != null) {
+      eventScheduler.scheduleEventProcessing(DeleteEvent[Spectrum](spectrum, new Date()))
     }
   }
 
@@ -72,8 +69,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     */
   final def fireUpdateEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been updated")
-    if (persistenceEventListeners != null) {
-      persistenceEventListeners.asScala.sortBy(_.priority).reverse.foreach(_.updated(new PersistenceEvent[Spectrum](spectrum, new Date())))
+    if (eventScheduler != null) {
+      eventScheduler.scheduleEventProcessing(UpdateEvent[Spectrum](spectrum, new Date()))
     }
   }
 
