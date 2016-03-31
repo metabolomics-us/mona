@@ -15,7 +15,7 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
     * returns a list of all available metadata names
     */
   def listMetaDataNames : Array[String] = {
-    restOperations.getForObject(s"$monaRestServer/$metaDataPath/names",classOf[Array[String]])
+    restOperations.getForObject(s"$monaRestServer/$metaDataPath/names", classOf[Array[String]])
   }
 
   /**
@@ -25,7 +25,6 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
     */
   def listMetaDataValues(name: String):Array[Any] = {
     val url = s"$monaRestServer/$metaDataPath/values"
-    restOperations.postForObject(url,WrappedString(name),classOf[Array[Any]])
+    restOperations.postForObject(url,WrappedString(name), classOf[Array[Any]])
   }
-
 }
