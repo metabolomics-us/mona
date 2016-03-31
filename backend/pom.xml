@@ -21,12 +21,6 @@
         <module>app</module>
     </modules>
 
-    <properties>
-        <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
-        <docker.baseImage>java</docker.baseImage>
-        <docker.imageName>mona-${project.name}</docker.imageName>
-        <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
-    </properties>
 
     <dependencyManagement>
 
@@ -242,4 +236,95 @@
         </pluginManagement>
 
     </build>
+
+    <profiles>
+
+        <!-- this profile is building a docker image for us, which can be a standalone or deployed in a docker-compose file -->
+        <profile>
+            <id>docker-image</id>
+
+            <!-- will activate if you have a .docker file in your project directoy-->
+            <activation>
+                <file>
+                    <exists>.docker</exists>
+                </file>
+            </activation>
+
+
+            <properties>
+                <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
+                <docker.baseImage>java</docker.baseImage>
+                <docker.imageName>mona-${project.name}</docker.imageName>
+                <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
+                <docker.expose>8080</docker.expose>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <id>download-remote-resources</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <get src="https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh"
+                                             dest="${project.build.directory}"/>
+                                        <chmod file="${project.build.directory}/wait-for-it.sh" perm="777"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>repackage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.4.0</version>
+                        <configuration>
+                            <imageName>${docker.registry}/${docker.imageName}</imageName>
+                            <baseImage>${docker.baseImage}</baseImage>
+                            <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                            <exposes>
+                                <expose>${docker.expose}</expose>
+                            </exposes>
+                            <!-- copy the service's jar file from target into the root directory of the image -->
+                            <resources>
+                                <resource>
+                                    <targetPath>/</targetPath>
+                                    <directory>${project.build.directory}</directory>
+                                    <include>${project.build.finalName}.jar</include>
+                                    <include>wait-for-it.sh</include>
+                                </resource>
+                            </resources>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
