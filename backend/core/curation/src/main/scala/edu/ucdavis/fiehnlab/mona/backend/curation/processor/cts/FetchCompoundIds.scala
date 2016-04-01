@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.cts
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.{RemoveComputedData}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import org.springframework.batch.item.ItemProcessor
 
 /**

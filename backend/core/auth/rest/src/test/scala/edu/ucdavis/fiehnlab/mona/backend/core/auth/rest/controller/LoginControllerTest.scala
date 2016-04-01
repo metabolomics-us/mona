@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
+import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 

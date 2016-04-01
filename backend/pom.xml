@@ -312,6 +312,13 @@
                                     <include>wait-for-it.sh</include>
                                 </resource>
                             </resources>
+                            <forceTags>true</forceTags>
+
+                            <imageTags>
+                                <imageTag>${project.version}</imageTag>
+                                <imageTag>latest</imageTag>
+                            </imageTags>
+
                         </configuration>
 
                         <executions>
@@ -320,6 +327,17 @@
                                 <goals>
                                     <goal>build</goal>
                                 </goals>
+                            </execution>
+
+                            <execution>
+                                <id>push-image</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                                <configuration>
+                                    <imageName>${docker.registry}/${docker.imageName}:${project.version}</imageName>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
