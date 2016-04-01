@@ -24,7 +24,7 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
   val uploadSpectraJob: Job = null
 
   @Autowired
-  val uploadAndCurrationSpectraJob: Job = null
+  val uploadAndCurationSpectraJob: Job = null
 
   @Autowired
   val loginService: LoginService = null
@@ -76,6 +76,7 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
 
   /**
     * reads the file and does the actual authorization
+ *
     * @param token
     * @param applicationArguments
     */
@@ -88,7 +89,7 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
         val parameters = new JobParametersBuilder().addString("pathToFile", file).addString("loginToken",token).toJobParameters
 
         if (applicationArguments.containsOption("curate")) {
-          jobLauncher.run(uploadAndCurrationSpectraJob, parameters)
+          jobLauncher.run(uploadAndCurationSpectraJob, parameters)
         }
         else {
           jobLauncher.run(uploadSpectraJob, parameters)
