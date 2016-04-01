@@ -2,6 +2,8 @@
  * Created by wohlgemuth on 7/11/14.
  */
 
+// TODO: waiting for implementation of return user data for admin from authentication Service
+
 (function() {
     'use strict';
     angular.module('moaClientApp')

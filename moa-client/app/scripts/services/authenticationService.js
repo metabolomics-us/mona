@@ -3,6 +3,8 @@
  * a service to handle authentications and provides us with the currently logged in user
  */
 
+
+// TODO: waiting for implementation of return user data for admin
 (function() {
     'use strict';
     angular.module('moaClientApp')
