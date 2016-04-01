@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlgemuth on 4/1/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig],classOf[AkkaTestConfiguration]))
 class SpectrumPersistenceServiceWithAkkaHanderTest extends AbstractSpectrumPersistenceServiceTest with LazyLogging {
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 

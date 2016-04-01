@@ -248,7 +248,7 @@
 
         <!-- this profile is building a docker image for us, which can be a standalone or deployed in a docker-compose file -->
         <profile>
-            <id>docker-image</id>
+            <id>docker</id>
 
             <!-- will activate if you have a .docker file in your project directoy-->
             <activation>
