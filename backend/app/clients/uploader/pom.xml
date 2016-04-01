@@ -12,7 +12,7 @@
     <artifactId>uploader</artifactId>
 	<packaging>jar</packaging>
 
-    <description>this project provides a simple client to upload data to the server using a mona json input file. It will also allow to run all the curration rules locally, if so desired
+    <description>this project provides a simple client to upload data to the server using a mona json input file. It will also allow to run all the curation rules locally, if so desired
     </description>
 
 
