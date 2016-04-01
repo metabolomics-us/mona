@@ -9,8 +9,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfi
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.{CommandLineRunner, SpringApplication}
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.{CommandLineRunner, SpringApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.stereotype.Component

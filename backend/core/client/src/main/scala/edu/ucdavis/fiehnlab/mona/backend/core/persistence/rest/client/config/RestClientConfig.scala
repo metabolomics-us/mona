@@ -6,10 +6,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
-import org.apache.http.ConnectionReuseStrategy
 import org.apache.http.conn.HttpClientConnectionManager
 import org.apache.http.impl.client.HttpClientBuilder
-import org.apache.http.impl.conn.{BasicHttpClientConnectionManager, PoolingHttpClientConnectionManager}
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation._
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
