@@ -6,7 +6,7 @@ spring:
     config:
       server:
         git:
-          uri: file://${user.dir}/src/main/config
+          uri: https://wohlgemuth@bitbucket.org/fiehnlab/mona-config.git
 
 #on which port do we run
 server:

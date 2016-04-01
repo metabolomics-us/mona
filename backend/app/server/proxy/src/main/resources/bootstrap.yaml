@@ -4,25 +4,17 @@ spring:
     name: proxy-service
   cloud:
     config:
-      uri:  ${SPRING_CONFIG_URI:http://localhost:1111}
+      uri:  http://localhost:1111
 
 #basic information who we are
 info:
   component: Zuul Edge Server
 
-
-endpoints:
-  restart:
-    enabled: true
-  shutdown:
-    enabled: true
-  health:
-    sensitive: false
-
 #defines all the routes based on it's provided services
 zuul:
   ignoredServices: "*"
 
+  #defines all our available routes
   routes:
 
     #access to all our spectra
@@ -42,15 +34,26 @@ zuul:
       path: /rest/auth/**
       stripPrefix: false
 
-##  host:
-##    maxTotalConnections:  200
-#    maxPerRouteConnections: 20
+  #connection settings to avoid to many timeouts
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
 
 #on which port do we run
 server:
   port: 8080
 
+#configuration for the failover clients
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: THREAD
+          thread:
+            timeoutInMilliseconds: 61000
+
+
 ribbon:
-  maxAutoRetries: 10
-  ConnectTimeout: 3000
   ReadTimeout: 60000
+  ConnectTimeout: 6000
