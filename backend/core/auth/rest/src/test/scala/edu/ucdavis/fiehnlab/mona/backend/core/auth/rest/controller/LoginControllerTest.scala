@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import org.junit.runner.RunWith
@@ -59,6 +59,17 @@ class LoginControllerTest extends WordSpec {
 
           given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin2312", "password")).when().post("/auth/login").then().statusCode(500)
 
+        }
+
+        "provide us with info for a token" in {
+          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "password")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+
+          val info  = given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info/").then().statusCode(200).extract().body().as(classOf[LoginInfo])
+
+
+          assert(info.username == "admin")
+          assert(info.roles.size() == 1)
+          assert(info.roles.get(0) == "admin")
         }
       }
     }
