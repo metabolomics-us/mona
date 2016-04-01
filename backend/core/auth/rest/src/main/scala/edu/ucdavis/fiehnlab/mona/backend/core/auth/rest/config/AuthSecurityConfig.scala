@@ -24,6 +24,7 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
       .antMatchers(HttpMethod.POST, "/rest/auth/**")
+        .antMatchers(HttpMethod.GET, "/rest/auth/info")
 
   }
 

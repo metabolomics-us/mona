@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestOperations
@@ -20,4 +20,12 @@ class RestLoginService(val remoteServer:String, val remotePort:Int, val protocol
     * @return
     */
   override def login(request: LoginRequest): LoginResponse = restOperations.postForEntity(s"${protocol}://${remoteServer}:${remotePort}/rest/auth/login",request,classOf[LoginResponse]).getBody
+
+  /**
+    * generates publicly interesting info about the given token
+    *
+    * @param token
+    * @return
+    */
+  override def info(token: String): LoginInfo = restOperations.getForEntity(s"${protocol}://${remoteServer}:${remotePort}/rest/auth/info/${token}",classOf[LoginInfo]).getBody
 }

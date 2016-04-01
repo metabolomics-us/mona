@@ -46,5 +46,16 @@ class JWTTokenServiceTest extends WordSpec {
       assert(authenticationService.authenticate(token).isAuthenticated)
     }
 
+    "valid verify info" in {
+      val token = tokenService.generateToken(userRepository.findAll().iterator().next())
+
+      val info = tokenService.info(token)
+
+      assert(info.username == "test")
+      assert(info.roles.size() == 0)
+
+      assert(info.validFrom != null)
+      assert(info.validTo != null)
+    }
   }
 }
