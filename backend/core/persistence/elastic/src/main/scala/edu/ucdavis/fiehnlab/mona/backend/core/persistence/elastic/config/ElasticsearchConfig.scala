@@ -7,12 +7,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{ElasticMedaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import org.elasticsearch.client.Client
-import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.springframework.context.annotation._
 import org.springframework.data.elasticsearch.core.{ElasticsearchTemplate, EntityMapper}
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
-
 /**
   * Created by wohlg_000 on 3/9/2016.
   */
@@ -61,6 +58,7 @@ class ElasticsearchConfig extends LazyLogging {
     *
     * @return
     */
+  /*
   @Bean
   def elasticClient: Client = {
     logger.info(s"connecting to ${hostname}:${port}")
@@ -71,6 +69,7 @@ class ElasticsearchConfig extends LazyLogging {
     client
   }
 
+*/
   @Bean
   def mappingUpdater: MappingUpdater = new MappingUpdater
 

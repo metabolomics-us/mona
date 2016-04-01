@@ -1,18 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation
 
-import javax.inject.Qualifier
-
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginResponse
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.RestRepositoryReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Primary, Bean, ComponentScan, Configuration}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 
 import scala.collection.JavaConverters._
 

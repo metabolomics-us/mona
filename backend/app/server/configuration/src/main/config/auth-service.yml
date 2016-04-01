@@ -1,7 +1,0 @@
-#this is the specific configuration for the auth service and allows you to set a default username and password
-mona:
-  security:
-    auth:
-      admin:
-        username: ${MONA_SECRET_AUTH_USERNAME:admin}
-        password: ${MONA_SECRET_AUTH_PASSWORD:admin}

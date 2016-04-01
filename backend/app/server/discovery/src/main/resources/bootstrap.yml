@@ -9,6 +9,8 @@ server:
 
 #eureka server settings
 eureka:
+  instance:
+    preferIpAddress: true
   client:
     registerWithEureka: false
     fetchRegistry: false

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.{Bean, Configuration}
 
 /**
-  * defines a handful of different beans to simplify work with curration tasks
+  * defines a handful of different beans to simplify work with curation tasks
   * and assorted issues
   */
 @Configuration
@@ -27,8 +27,8 @@ class CurationConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def currationWorkflow: ItemProcessor[Spectrum, Spectrum] = {
-    new LinearWorkflow[Spectrum](name = "spectra-curration")
+  def curationWorkflow: ItemProcessor[Spectrum, Spectrum] = {
+    new LinearWorkflow[Spectrum](name = "spectra-curation")
   }
 
   /**
