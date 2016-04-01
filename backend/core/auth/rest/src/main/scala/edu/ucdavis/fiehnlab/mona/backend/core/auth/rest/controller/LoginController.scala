@@ -9,7 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
+import org.springframework.web.bind.annotation._
 
 /**
   * simple controller which allows us to authenticate against
@@ -25,10 +25,24 @@ class LoginController extends LazyLogging {
   @Qualifier("loginServiceDelegate")
   val loginService: LoginService = null
 
+  /**
+    * preforms the actual login for us
+    * @param request
+    * @return
+    */
   @RequestMapping(path = Array("/login"), method = Array(RequestMethod.POST))
   def login(@RequestBody request: LoginRequest): LoginResponse = {
     logger.debug(s"forwarding authentication request to: ${loginService}")
     loginService.login(request)
+  }
+
+  /**
+    * provides us with public info about this token
+    * @param request
+    */
+  @RequestMapping(path = Array("/info/"), method = Array(RequestMethod.POST))
+  def tokenInfo(@RequestBody request:LoginResponse) = {
+    loginService.info(request.token)
   }
 
 }

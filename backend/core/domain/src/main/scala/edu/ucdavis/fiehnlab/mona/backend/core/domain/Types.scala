@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
+import java.util.Date
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.TupleSerialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
@@ -295,4 +297,13 @@ object HelperTypes {
     * @param password
     */
   case class LoginRequest(username:String, password:String)
+
+  /**
+    * general information about a token to be retrieved from the server and can be useful for client side applications
+    * @param username
+    * @param validFrom
+    * @param validTo
+    * @param roles
+    */
+  case class LoginInfo(username:String, validFrom:Date, validTo: Date, roles:java.util.List[String])
 }

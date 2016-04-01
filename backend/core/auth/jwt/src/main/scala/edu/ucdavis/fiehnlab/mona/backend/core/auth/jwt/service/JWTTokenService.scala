@@ -5,7 +5,8 @@ import java.util.Date
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.TokenService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
-import io.jsonwebtoken.{Jwts, SignatureAlgorithm}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
+import io.jsonwebtoken.{Claims, Jwts, SignatureAlgorithm}
 import org.apache.commons.lang.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -43,5 +44,18 @@ class JWTTokenService extends TokenService {
     }.asJava
 
     Jwts.builder().setSubject(user.username).claim("roles", roles).setIssuedAt(issueDate).setExpiration(experiationDate).signWith(SignatureAlgorithm.HS256, tokenSecret.value).compact()
+  }
+
+  /**
+    * provide us with some information about this token
+    *
+    * @param token
+    * @return
+    */
+  override def info(token: String): LoginInfo = {
+    val claims: Claims = Jwts.parser().setSigningKey(tokenSecret.value).parseClaimsJws(token).getBody
+
+    new LoginInfo(claims.getSubject,claims.getIssuedAt,claims.getExpiration,claims.get("roles").asInstanceOf[java.util.List[String]])
+
   }
 }
