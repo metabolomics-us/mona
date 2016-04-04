@@ -47,14 +47,14 @@
                   },
                   responseError: function(rejection) {
                       $rootScope.httpError.push(rejection);
-                      $location.path('/');
+                      //$location.path('/'); enable this if we want to redirect users to index.html on error
                       return $q.reject(rejection);
                   }
               };
           });
 
-          $httpProvider.defaults.useXDomain = true;
-          delete $httpProvider.defaults.headers.common['X-Requested-With'];
+          //$httpProvider.defaults.useXDomain = true;
+          //delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
           $httpProvider.interceptors.push('httpInterceptor');
       })
