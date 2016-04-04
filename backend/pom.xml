@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>backend</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <name>backend</name>
     <url>http://maven.apache.org</url>
 
@@ -42,8 +42,8 @@
             </dependency>
 
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
-                <artifactId>rest-auth-server</artifactId>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>auth-server</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -108,8 +108,8 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>rest</artifactId>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>persistence-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -191,8 +191,8 @@
             </dependency>
 
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>rest</artifactId>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>persistence-server</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
@@ -248,7 +248,7 @@
 
         <!-- this profile is building a docker image for us, which can be a standalone or deployed in a docker-compose file -->
         <profile>
-            <id>docker-image</id>
+            <id>docker</id>
 
             <!-- will activate if you have a .docker file in your project directoy-->
             <activation>
@@ -291,7 +291,8 @@
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
-                        <executions>
+                        <version>1.3.3.RELEASE</version>
+			<executions>
                             <execution>
                                 <goals>
                                     <goal>repackage</goal>

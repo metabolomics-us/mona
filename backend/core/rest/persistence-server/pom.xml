@@ -1,34 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>auth</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        <artifactId>rest</artifactId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+    <artifactId>persistence-server</artifactId>
+    <version>1.1-SNAPSHOT</version>
+    <name>persistence-server</name>
+    <url>http://maven.apache.org</url>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
-    <artifactId>rest-auth-server</artifactId>
-
-    <description>This provides a simple delegate around any given login service and is mostly used for rest based application to authenticate against it</description>
-
-    <properties>
-        <docker.expose>3333</docker.expose>
-    </properties>
-
+    <description>This project provides the REST persistence interface</description>
     <dependencies>
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
-            <artifactId>api</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
 
 
         <!-- eureka client -->
@@ -49,16 +36,37 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>service</artifactId>
+        </dependency>
 
-        <!-- rest security -->
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
             <artifactId>jwt</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
 
         <!-- test dependencies -->
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -75,13 +83,6 @@
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>mongo</artifactId>
             <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>mongo</artifactId>
             <scope>test</scope>
         </dependency>
 
