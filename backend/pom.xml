@@ -338,7 +338,7 @@
                             </execution>
 
                             <execution>
-                                <id>push-image</id>
+                                <id>push-image-version</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>push</goal>
@@ -347,6 +347,17 @@
                                     <imageName>${docker.registry}/${docker.imageName}:${project.version}</imageName>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>push-image-latest</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                                <configuration>
+                                    <imageName>${docker.registry}/${docker.imageName}:latest</imageName>
+                                </configuration>
+                            </execution>
+
                         </executions>
                     </plugin>
                 </plugins>
