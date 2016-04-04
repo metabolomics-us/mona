@@ -43,11 +43,14 @@ class LoginControllerTest extends WordSpec {
     RestAssured.baseURI = s"http://localhost:${port}/rest"
 
     "users were setup" must {
-      userRepository.deleteAll()
-      userRepository.save(new User("admin", "password", List(Role("admin")).asJava))
 
       "login" should {
 
+        "ensure we have a valid user" in {
+          userRepository.deleteAll()
+          userRepository.save(new User("admin", "password", List(Role("admin")).asJava))
+        }
+        
         "create a token" in {
 
           val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "password")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
