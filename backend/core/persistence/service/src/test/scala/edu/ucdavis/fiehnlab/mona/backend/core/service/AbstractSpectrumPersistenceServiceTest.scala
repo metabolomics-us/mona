@@ -186,20 +186,3 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
     }
   }
 }
-
-
-
-
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig]))
-class SpectrumPersistenceServiceWithSynchronousEventHandlerTest extends AbstractSpectrumPersistenceServiceTest with LazyLogging {
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
-
-  "we must ensure" when {
-    "that our event scheduler " should {
-      "be of type EventScheduler" in {
-        assert(spectrumPersistenceService.eventScheduler.isInstanceOf[EventScheduler[Spectrum]])
-      }
-    }
-  }
-}
