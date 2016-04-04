@@ -32,15 +32,13 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
       .authorizeRequests()
-      //saves need to be authentifiated
+      //saves need to be authenticated
       .antMatchers(HttpMethod.POST, "/rest/users/**").authenticated()
 
       //updates needs authentication
       .antMatchers(HttpMethod.PUT).authenticated()
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
-      //nothing goes
-      .anyRequest().denyAll()
   }
   /**
     * ignore post requests to the auth url
