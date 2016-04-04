@@ -9,7 +9,7 @@ import org.springframework.batch.item.ItemProcessor
   * Created by wohlgemuth on 3/14/16.
   */
 @Step(description = "this fetches all external compounds id's from the CTS system and updates MoNA with them", previousClass = classOf[RemoveComputedData], workflow = "spectra-curation")
-class FetchCompoundIds extends ItemProcessor[Spectrum,Spectrum]{
+class FetchCompoundData extends ItemProcessor[Spectrum, Spectrum]{
   override def process(i: Spectrum): Spectrum = {
     i
   }
