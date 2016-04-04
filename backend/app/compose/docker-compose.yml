@@ -3,6 +3,12 @@ version: '2'
 services:
 
 ################################################################################################################
+# This section provides us with our persistent data layer. And should define all the different
+# images we consider for persistent storage
+################################################################################################################
+
+
+################################################################################################################
 #This section provides us with the required databases and should be changed later
 #to define a cluster setup for production user
 ################################################################################################################
@@ -20,6 +26,11 @@ services:
      ports:
        - "9200:9200"
        - "9300:9300"
+
+################################################################################################################
+# This section provides us with access to the required messaging queues and services for caching application
+# this would be mainly rabbitmq at this stage and redis.
+################################################################################################################
 
 
 ################################################################################################################
