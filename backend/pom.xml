@@ -25,7 +25,19 @@
     <dependencyManagement>
 
         <dependencies>
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>api-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>api-server</artifactId>
+                <scope>test</scope>
+                <type>test-jar</type>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
