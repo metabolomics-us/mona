@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.service.listener._
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.{Cacheable, CacheEvict}
 import org.springframework.data.domain.{Page, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Service
@@ -80,6 +81,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param spectrum
     * @return
     */
+  @CacheEvict(value = Array("spectra"))
   final def update(spectrum: Spectrum): Spectrum = {
     val result = spectrumMongoRepository.save(spectrum)
     fireUpdateEvent(result)
@@ -99,6 +101,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param spectrum
     * @return
     */
+  @CacheEvict(value = Array("spectra"))
   final def delete(spectrum: Spectrum): Unit = {
     spectrumMongoRepository.delete(spectrum)
     fireDeleteEvent(spectrum)
@@ -110,6 +113,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param id
     * @return
     */
+  @Cacheable(value = Array("spectra"))
   def findOne(id: String): Spectrum = {
     spectrumMongoRepository.findOne(id)
   }
@@ -144,6 +148,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param rsqlQuery
     * @return
     */
+  @Cacheable(value = Array("spectra"))
   def findAll(rsqlQuery: String): lang.Iterable[Spectrum] = {
 
     /**
@@ -172,6 +177,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @return
     */
+  @Cacheable(value = Array("spectra"))
   def count(): Long = spectrumMongoRepository.count()
 
   /**
@@ -179,11 +185,13 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @return
     */
+  @Cacheable(value = Array("spectra"))
   def count(rsqlQuery: String): Long = spectrumElasticRepository.rsqlQueryCount(rsqlQuery)
 
   /**
     * delete all objects in the system
     */
+  @CacheEvict(value = Array("spectra"),allEntries = true)
   override def deleteAll(): Unit = spectrumMongoRepository.findAll().asScala.foreach(delete(_))
 
   /**
@@ -192,6 +200,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param ids
     * @return
     */
+  @Cacheable(value = Array("spectra"))
   override def findAll(ids: lang.Iterable[String]): lang.Iterable[Spectrum] = spectrumMongoRepository.findAll(ids)
 
   /**
@@ -199,6 +208,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @param id
     */
+  @CacheEvict(value = Array("spectra"))
   final override def delete(id: String): Unit = {
     val spectrum = findOne(id)
     delete(spectrum)
@@ -223,6 +233,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @tparam S
     * @return
     */
+  @Cacheable(value = Array("spectra"))
   final override def save[S <: Spectrum](entity: S): S = {
     val result = spectrumMongoRepository.save(entity)
     fireAddEvent(result)
@@ -241,6 +252,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param id
     * @return
     */
+  @Cacheable(value = Array("spectra"))
   override def exists(id: String): Boolean = spectrumMongoRepository.exists(id)
 
   /**
