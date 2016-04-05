@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 
 import scala.annotation.meta.field
+import scala.beans.BeanProperty
 
 /**
   * definition of the MoNA domain classes and accepts arbitrary values, which needs to be supported by different
@@ -230,6 +231,7 @@ case class Spectrum(
                      chemicalCompound: Compound,
 
                      @(Id@field)
+                     @BeanProperty
                      id: String,
 
                      lastUpdated: String,

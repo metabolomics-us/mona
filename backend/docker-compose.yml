@@ -10,15 +10,14 @@ services:
 
 ################################################################################################################
 #This section provides us with the required databases and should be changed later
-#to define a cluster setup for production user
+#to define a cluster setup for production user as well as referencing shared storage
 ################################################################################################################
 
+  #just fixing the version to avoid surprises
   mongodb:
-    image: tutum/mongodb
+    image: mongo:3.2.4
     ports:
       - "27017:27017"
-    environment:
-      AUTH: "no"
 
   #mona only supports 1.7.5 at this point in time
   elasticsearch:
