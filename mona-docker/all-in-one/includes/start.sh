@@ -24,9 +24,21 @@ if [ ! -f /data/postgresql/PG_VERSION ]; then
 	chmod 700 /data/postgresql/
 	chown -R postgres:postgres /data/postgresql/
 
-	service postgresql start && \
-		psql -h localhost -U mona -d mona < mona_db_structure.sql && \
-		psql -h localhost -U mona -d mona < mona_admin_account.sql
+	if [ "$(ls -A /data/import)" ]; then
+		echo "Restoring MoNA database..."
+
+		# Dump using:
+		# pg_dump -U compound -h localhost -Fc -Z7 -b -v -f mona.pg_dump mona
+		echo "Loading /data/import/$(ls -t /data/import | head -n 1)"
+		service postgresql start && \
+			pg_restore -h localhost -U mona -d mona -Fc -v /data/import/$(ls -t /data/import | head -n 1)
+	else 
+		echo "Setting up empty MoNA database configuration..."
+
+		service postgresql start && \
+			psql -h localhost -U mona -d mona < mona_db_structure.sql && \
+			psql -h localhost -U mona -d mona < mona_admin_account.sql
+	fi
 else
 	service postgresql start
 fi

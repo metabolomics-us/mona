@@ -14,7 +14,7 @@ import org.springframework.web.client.{HttpClientErrorException, HttpServerError
   * in case of error N times before it surrenders and throws an exceptions
   */
 @Component
-class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = true, val maxRetries: Int =50, val recoveryPauseInMS:Long = 5000) extends WriterAdapter with LazyLogging {
+class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = true, val maxRetries: Int = 50, val recoveryPauseInMS:Long = 5000) extends WriterAdapter with LazyLogging {
 
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
