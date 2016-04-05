@@ -34,6 +34,11 @@ zuul:
       path: /rest/auth/**
       stripPrefix: false
 
+    #access for usermanagement
+    auth-service :
+      path: /rest/users/**
+      stripPrefix: false
+
   #connection settings to avoid to many timeouts
   host:
     socket-timeout-millis: 60000

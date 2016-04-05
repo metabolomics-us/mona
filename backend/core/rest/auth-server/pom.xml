@@ -27,6 +27,15 @@
             <artifactId>api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>mongo</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -68,6 +77,14 @@
             <scope>test</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -78,13 +95,6 @@
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>mongo</artifactId>
             <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>mongo</artifactId>
             <scope>test</scope>
         </dependency>
 

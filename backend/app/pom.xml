@@ -18,6 +18,6 @@
     </modules>
 
 
-    <description>All modules under this module, will be used to build standalone applications and will required docker to work.</description>
+    <description>All modules under this module, will be used to ç standalone applications and will required docker to work.</description>
 
 </project>
