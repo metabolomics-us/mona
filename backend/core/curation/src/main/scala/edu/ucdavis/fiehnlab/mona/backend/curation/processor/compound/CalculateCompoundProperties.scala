@@ -4,6 +4,7 @@ import java.io.StringReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Compound, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
+import edu.ucdavis.fiehnlab.mona.backend.curation.common.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import org.openscience.cdk.inchi.{InChIGenerator, InChIGeneratorFactory}
 import org.openscience.cdk.smiles.SmilesGenerator
@@ -56,25 +57,25 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] {
     // Get molecular properties
     val molecularFormula: IMolecularFormula = MolecularFormulaManipulator.getMolecularFormula(molecule)
 
-    metaData.append(new MetaData("computed", true, false, "chemical formula",
+    metaData.append(new MetaData("computed", true, false, CommonMetaData.CHEMICAL_FORMULA,
       null, null, null, MolecularFormulaManipulator.getString(molecularFormula)))
 
-    metaData.append(new MetaData("computed", true, false, "total exact mass",
+    metaData.append(new MetaData("computed", true, false, CommonMetaData.TOTAL_EXACT_MASS,
       null, null, null, MolecularFormulaManipulator.getTotalExactMass(molecularFormula)))
 
 
     // Calculate InChI
     val inchiGenerator: InChIGenerator = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule)
 
-    metaData.append(new MetaData("computed", true, false, "InChI",
+    metaData.append(new MetaData("computed", true, false, CommonMetaData.INCHI_CODE,
       null, null, null, inchiGenerator.getInchi))
 
-    metaData.append(new MetaData("computed", true, false, "InChIKey",
+    metaData.append(new MetaData("computed", true, false, CommonMetaData.INCHI_KEY,
       null, null, null, inchiGenerator.getInchiKey))
 
 
     // Calculate SMILES
-    metaData.append(new MetaData("computed", true, false, "SMILES",
+    metaData.append(new MetaData("computed", true, false, CommonMetaData.SMILES,
       null, null, null, SmilesGenerator.generic().create(molecule)))
 
 
