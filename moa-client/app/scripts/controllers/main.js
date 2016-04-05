@@ -11,9 +11,9 @@
             {image: 'images/spectrum-2.png', id: '931', name: 'Ro-42130'}
         ];
 
-        // create flash message on http error requests
+        // create flash message or console log http error requests
         if ($rootScope.httpError.length > 0) {
-            console.log($rootScope.httpError);
+
             (function() {
                 while ($rootScope.httpError.length !== 0) {
                     var curError = $rootScope.httpError.pop();
@@ -23,7 +23,13 @@
                         var url = curError.config.url;
                         var status = curError.status;
 
-                        var message = '<strong>Unable to</strong> ' + method + ' from ' + url + ' Status: ' + status;
+                        var message = 'Unable to ' + method + ' from ' + url + ' Status: ' + status;
+
+                        /* enable this if you would like to have flash message for errors
+                        *  place this directive for viewing
+                        *  <flash-message on-dismiss="myCallback(flash);"></flash-message>
+                        * /
+
                         //var id = Flash.create('danger', message, 10000, {class: 'custom-class', id: 'custom-id'}, true);
                         /* First argument (string) is the type of the flash alert.
                          * Second argument (string) is the message displays in the flash alert (HTML is ok).
