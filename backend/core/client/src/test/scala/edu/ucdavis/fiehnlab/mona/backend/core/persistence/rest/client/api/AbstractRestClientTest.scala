@@ -63,7 +63,7 @@ abstract class AbstractRestClientTest extends WordSpec {
         assert(spectrumRestClient.count() == 58)
       }
 
-      "it should be possible to execute count queries" ignore {
+      "it should be possible to execute count queries" in {
         val test = spectrumRestClient.list().head
         assert(spectrumRestClient.count(Some(s"""id==${test.id}""")) == 1)
       }

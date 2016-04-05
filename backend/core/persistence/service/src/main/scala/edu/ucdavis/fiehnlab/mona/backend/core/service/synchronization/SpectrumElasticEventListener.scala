@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
   * Created by wohlg on 3/15/2016.
   */
 @Component
-class SpectrumElasticEventListener extends PersitenceEventListener[Spectrum]with LazyLogging {
+class SpectrumElasticEventListener extends PersitenceEventListener[Spectrum] with LazyLogging {
 
   @Autowired
   val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
@@ -23,7 +23,7 @@ class SpectrumElasticEventListener extends PersitenceEventListener[Spectrum]with
     */
   override def added(event: PersistenceEvent[Spectrum]): Unit = {
     logger.debug(s"\t=>\tindexing spectra in elastic search ${event.content.id}")
-    spectrumElasticRepository.save(event.content)
+    spectrumElasticRepository.saveOrUpdate(event.content)
   }
 
   /**
