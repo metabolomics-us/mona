@@ -16,7 +16,7 @@ PORT=8080
 MONA_IMAGE_NAME="mona/all-in-one:latest"
 
 # Start up the docker container
-docker run -it \
+docker run -d \
            -h mona \
            -p $PORT:80 \
            -v /etc/localtime:/etc/localtime:ro \
