@@ -9,6 +9,4 @@ object CommonTags {
   val GCMS_SPECTRUM: String = "GCMS"
 
   val VIRTUAL_COMPOUND: String = "In-Silico"
-
-  val ANNOTATED_SPECTRUM: String = "Annotated"
 }
