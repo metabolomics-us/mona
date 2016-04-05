@@ -10,7 +10,7 @@ import org.springframework.batch.item.ItemProcessor
   * Created by sajjan on 3/16/16.
   */
 @Step(description = "this step will identify the given spectrum as GC/MS or LC/MS")
-class IdentifyChromatography extends ItemProcessor[Spectrum,Spectrum] with LazyLogging {
+class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   /**
     * criteria for GC/MS identification

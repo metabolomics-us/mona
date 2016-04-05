@@ -17,7 +17,6 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-
     val filteredBiologicalCompound =
       if (spectrum.biologicalCompound != null) {
         spectrum.biologicalCompound.copy(
@@ -40,7 +39,7 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
         null
       }
 
-    // assembled filtered spectrum
+    // Assembled filtered spectrum
     spectrum.copy(
       biologicalCompound = filteredBiologicalCompound,
       chemicalCompound = filteredChemicalCompound,
