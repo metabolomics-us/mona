@@ -6,7 +6,7 @@ import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.{Context, CustomElastic1SearchVisitor}
-import org.elasticsearch.client.Client
+import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.index.query._
 import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,9 +20,6 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
 
   @Autowired
   val elasticsearchTemplate: ElasticsearchTemplate = null
-
-  @Autowired
-  val elasticClient: Client = null
 
   /**
     * @param query
@@ -80,7 +77,35 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @return
     */
   override def saveOrUpdate(value: Spectrum): Unit = {
-    elasticsearchTemplate.index(new IndexQueryBuilder().withObject(value).build())
+/*
+    if(value.id != null) {
+      logger.info(s"updating index with existing id: ${value.id}")
+
+      val request = new IndexRequest()
+
+      request.source("spectra",value)
+      val query = new UpdateQueryBuilder().withDoUpsert(true).withId(value.id).withClass(classOf[Spectrum]).withIndexRequest(request).build()
+      elasticsearchTemplate.update(query)
+
+    }
+    else{
+      logger.info(s"inserting into index")
+
+      val query = new IndexQuery()
+      query.setType("spectrum")
+      query.setObject(value)
+      query.setIndexName("spectrum")
+      elasticsearchTemplate.index(query)
+
+    }
+
+    elasticsearchTemplate.refresh(classOf[Spectrum],true)
+
+    */
+
+    assert(value.id != null)
+    elasticsearchTemplate.index(new IndexQueryBuilder().withId(value.id).withObject(value).build())
+    elasticsearchTemplate.refresh(classOf[Spectrum],true)
   }
 
 }

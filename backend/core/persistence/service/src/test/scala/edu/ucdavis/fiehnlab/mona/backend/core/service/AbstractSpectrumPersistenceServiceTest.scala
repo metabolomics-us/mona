@@ -47,12 +47,12 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
       spectrumMongoRepository.deleteAll()
     }
 
-    List(1).foreach { iteration =>
-      s"we run every test several times, since we have caching, this one is iteration ${iteration}" should {
+    "ensure we start with an empty repository" in {
+      assert(spectrumPersistenceService.count() == 0)
+    }
 
-        "ensure we start with an empty repository" in {
-          assert(spectrumPersistenceService.count() == 0)
-        }
+    List(1, 2, 3).foreach { iteration =>
+      s"we run every test several times, since we have caching, this one is iteration ${iteration}" should {
 
         "have at least one listener assigned " in {
           assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() == 3)
@@ -162,7 +162,13 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
           val count = spectrumPersistenceService.count()
           spectrumPersistenceService.delete(spectra)
 
-          assert(spectrumPersistenceService.count() == count - 1)
+          eventually(timeout(10 seconds)) {
+
+            assert(spectrumPersistenceService.count() == count - 1)
+            assert(spectrumMongoRepository.count() == count - 1)
+            assert(spectrumElasticRepository.count() == count - 1)
+
+          }
         }
 
         "delete 10 spectra in the repository by utilizing the iterable method" in {
@@ -171,14 +177,27 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
           spectrumPersistenceService.delete(spectra)
 
           //assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
-          assert(spectrumPersistenceService.count() == count - 10)
+
+          eventually(timeout(10 seconds)) {
+            assert(spectrumPersistenceService.count() == count - 10)
+            assert(spectrumMongoRepository.count() == count - 10)
+            assert(spectrumElasticRepository.count() == count - 10)
+          }
         }
 
         "delete all data in the repository" in {
           logger.info(s"spectra before delete ${spectrumPersistenceService.count()}")
           spectrumPersistenceService.deleteAll()
           logger.info(s"spectra after delete ${spectrumPersistenceService.count()}")
-          assert(spectrumPersistenceService.count() == 0)
+
+          eventually(timeout(10 seconds)) {
+            logger.info(s"spectra after delete mongo ${spectrumMongoRepository.count()}")
+            logger.info(s"spectra after delete elastic ${spectrumElasticRepository.count()}")
+
+            assert(spectrumPersistenceService.count() == 0)
+            assert(spectrumMongoRepository.count() == 0)
+            assert(spectrumElasticRepository.count() == 0)
+          }
         }
 
         "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
