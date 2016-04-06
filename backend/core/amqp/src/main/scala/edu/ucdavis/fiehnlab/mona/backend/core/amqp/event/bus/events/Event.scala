@@ -8,4 +8,4 @@ import java.util.Date
   * @param content
   * @tparam T
   */
-abstract class Event[T](val content:T, dateFired:Date)
+abstract class Event[T](val content:T, dateFired:Date) extends Serializable
