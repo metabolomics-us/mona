@@ -1,11 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBusListener
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{ PersitenceEventListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.PersitenceEventListener
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

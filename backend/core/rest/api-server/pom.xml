@@ -33,9 +33,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- we always want jetty, cause jetty is cool -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+
+
+        <!-- configuration bus to refresh config files from git -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
         </dependency>
 
 

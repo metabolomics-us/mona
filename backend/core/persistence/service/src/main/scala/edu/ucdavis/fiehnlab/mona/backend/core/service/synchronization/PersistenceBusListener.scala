@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, EventBusListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.PersitenceEventListener
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.{Component, Service}
+import org.springframework.stereotype.Service
 
 /**
   * forwards events to the event bus listener

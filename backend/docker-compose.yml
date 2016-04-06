@@ -31,6 +31,13 @@ services:
 # this would be mainly rabbitmq at this stage and redis.
 ################################################################################################################
 
+  rabbitmq:
+    image:  rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
 
 ################################################################################################################
 # This section defines our required services, need to connect mona apps
@@ -46,6 +53,7 @@ services:
     depends_on:
       - mongodb
       - elasticsearch
+      - rabbitmq
     entrypoint: ./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
 
 # The configuration service, provides to every client his required configuration

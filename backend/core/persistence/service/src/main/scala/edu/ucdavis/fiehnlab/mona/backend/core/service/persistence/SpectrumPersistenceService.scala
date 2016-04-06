@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.persistence
 
 import java.lang
-import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.{AddEvent, DeleteEvent, UpdateEvent}
@@ -234,7 +233,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @tparam S
     * @return
     */
-  @Cacheable(value = Array("spectra"))
+  @CacheEvict(value = Array("spectra"))
   final override def save[S <: Spectrum](entity: S): S = {
     val result = spectrumMongoRepository.save(entity)
     fireAddEvent(result)
