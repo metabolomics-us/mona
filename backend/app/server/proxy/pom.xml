@@ -42,6 +42,12 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
+        <!-- configuration bus to refresh config files from git -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+        </dependency>
+
         <!-- we prepare to use jetty instead of tomcat -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

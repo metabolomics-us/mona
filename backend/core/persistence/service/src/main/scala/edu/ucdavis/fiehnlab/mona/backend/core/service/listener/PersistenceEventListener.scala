@@ -47,4 +47,3 @@ trait PersitenceEventListener[T] {
     */
   def priority: Int = 0
 }
-

@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.listener
 
-import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorSystem, Props}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig

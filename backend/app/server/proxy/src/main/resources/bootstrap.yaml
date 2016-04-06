@@ -30,14 +30,16 @@ zuul:
       serviceId: persistence-service
 
     #access for authentication
-    auth-service :
+    authentication :
       path: /rest/auth/**
       stripPrefix: false
+      serviceId: auth-service
 
     #access for usermanagement
-    auth-service :
+    users :
       path: /rest/users/**
       stripPrefix: false
+      serviceId: auth-service
 
   #connection settings to avoid to many timeouts
   host:
