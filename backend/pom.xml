@@ -18,8 +18,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
-        <module>app</module>
         <module>services</module>
+        <module>app</module>
     </modules>
 
 
