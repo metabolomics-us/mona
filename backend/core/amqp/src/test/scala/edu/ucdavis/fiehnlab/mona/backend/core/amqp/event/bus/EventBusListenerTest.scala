@@ -1,8 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 
+import java.util.Date
 import java.util.concurrent.CountDownLatch
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.{AddEvent, DeleteEvent, Event, UpdateEvent}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -20,52 +21,34 @@ import scala.concurrent.duration._
   * Created by wohlg on 4/6/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TestConfig], classOf[BusConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[TestConfig],classOf[BusConfig]))
 class EventBusListenerTest extends WordSpec with Eventually {
 
   @Autowired
   val eventBus: EventBus[String] = null
 
   @Autowired
-  val eventListener: EventBusTestListener = null
+  val eventListener: List[EventBusTestListener] = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "EventBusListenerTest" should {
 
-    "received add event" in {
-
-      eventBus.sendEvent(new AddEvent[String]("test-add"))
-      eventBus.sendEvent(new AddEvent[String]("test-add"))
-      eventBus.sendEvent(new UpdateEvent[String]("test-up"))
-      eventBus.sendEvent(new UpdateEvent[String]("test-up"))
-      eventBus.sendEvent(new DeleteEvent[String]("test-del"))
-      eventBus.sendEvent(new DeleteEvent[String]("test-del"))
-
-
-      eventually(timeout(10 seconds)) {
-        assert(eventListener.addedEvents.getCount == 0)
-      }
+    "assure we have several evnet listeners" in {
+      assert(eventListener.size == 10)
     }
-    "received update event" in {
+    "received event" in {
 
-      eventBus.sendEvent(new UpdateEvent[String]("test-up"))
-      eventBus.sendEvent(new UpdateEvent[String]("test-up"))
+      //each listener should have initially 2 events
+      eventListener.foreach{ x=> x.events.getCount == 2}
 
+      //send 2 events to the bus
+      eventBus.sendEvent(new Event[String]("test-add", new Date,"custom"))
+      eventBus.sendEvent(new Event[String]("test-add", new Date,"custom"))
 
-      eventually(timeout(10 seconds)) {
-        assert(eventListener.updatedEvents.getCount == 0)
-      }
-    }
-    "received del event" in {
-
-
-      eventBus.sendEvent(new DeleteEvent[String]("test-del"))
-      eventBus.sendEvent(new DeleteEvent[String]("test-del"))
-
-
-      eventually(timeout(10 seconds)) {
-        assert(eventListener.deletedEvents.getCount == 0)
+      //after all events are processed we should have processed these 2 events by all listeners
+      eventually(timeout(3 seconds)) {
+        eventListener.foreach{ x=> x.events.getCount == 0}
       }
     }
 
@@ -79,45 +62,33 @@ class TestConfig {
   @Bean
   def eventBus: EventBus[String] = new EventBus[String]
 
+  /**
+    * define 10 different event listeners
+    * @return
+    */
   @Bean
-  def listener: EventBusTestListener = new EventBusTestListener
-
+  def listener: List[EventBusTestListener] = List[EventBusTestListener](
+    new EventBusTestListener,
+    new EventBusTestListener,
+    new EventBusTestListener,
+    new EventBusTestListener,
+    new EventBusTestListener,
+    new EventBusTestListener,
+    new EventBusTestListener,
+    new EventBusTestListener,
+    new EventBusTestListener,
+    new EventBusTestListener
+  )
 
 }
 
 class EventBusTestListener extends EventBusListener[String] {
-  val addedEvents = new CountDownLatch(2)
-  val updatedEvents = new CountDownLatch(2)
-  val deletedEvents = new CountDownLatch(2)
+  val events = new CountDownLatch(2)
 
   /**
-    * an entry was added to the system
+    * an element has been received from the bus and should be now processed
     *
     * @param event
     */
-  override def added(event: Event[String]): Unit = {
-    addedEvents.countDown()
-    assert(event.content == "test-add")
-  }
-
-  /**
-    * the event was updated in the system
-    *
-    * @param event
-    */
-  override def updated(event: Event[String]): Unit = {
-    updatedEvents.countDown()
-    assert(event.content == "test-up")
-  }
-
-  /**
-    * an entry was deleted from the system
-    *
-    * @param event
-    */
-  override def deleted(event: Event[String]): Unit = {
-    deletedEvents.countDown()
-    assert(event.content == "test-del")
-
-  }
+  override def received(event: Event[String]): Unit = events.countDown()
 }

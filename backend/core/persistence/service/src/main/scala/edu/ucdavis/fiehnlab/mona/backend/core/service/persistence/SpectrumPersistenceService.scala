@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.persistence
 
 import java.lang
+import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.{AddEvent, DeleteEvent, UpdateEvent}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
@@ -38,7 +39,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
   @Autowired(required = false)
-  val eventScheduler:EventScheduler[Spectrum] = null
+  val eventScheduler: EventScheduler[Spectrum] = null
+
   /**
     * will be invoked everytime a spectrum was added to the system
     *
@@ -47,7 +49,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   final def fireAddEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been added")
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(AddEvent[Spectrum](spectrum))
+      eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.ADD))
     }
   }
 
@@ -59,7 +61,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   final def fireDeleteEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been deleted")
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(DeleteEvent[Spectrum](spectrum))
+      eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.DELETE))
     }
   }
 
@@ -71,7 +73,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   final def fireUpdateEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been updated")
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(UpdateEvent[Spectrum](spectrum))
+      eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.UPDATE))
     }
   }
 
@@ -126,7 +128,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     */
   private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[Spectrum] = {
     //no need to hit elastic here, since no qury is executed
-    if (rsqlQuery == ""){
+    if (rsqlQuery == "") {
       spectrumMongoRepository.findAll(request)
     }
     //let elastic deal with the request
@@ -154,12 +156,12 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     /**
       * generates a new dynamic fetchable
       */
-    new DynamicIterable[Spectrum,String](rsqlQuery,fetchSize) {
+    new DynamicIterable[Spectrum, String](rsqlQuery, fetchSize) {
 
       /**
         * loads more data from the server for the given query
         */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query,pageable)
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, pageable)
     }
   }
 
@@ -191,7 +193,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   /**
     * delete all objects in the system
     */
-  @CacheEvict(value = Array("spectra"),allEntries = true)
+  @CacheEvict(value = Array("spectra"), allEntries = true)
   override def deleteAll(): Unit = spectrumMongoRepository.findAll().asScala.foreach(delete(_))
 
   /**

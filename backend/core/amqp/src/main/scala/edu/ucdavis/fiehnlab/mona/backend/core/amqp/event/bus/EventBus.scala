@@ -24,7 +24,7 @@ class EventBus[T] extends LazyLogging{
     */
   def sendEvent(event:Event[T]) : Unit = {
     logger.debug(s"sending event to bus ${event}")
-    rabbitTemplate.convertAndSend("mona-event-bus",event)
+    rabbitTemplate.convertAndSend("mona-event-bus","",event)
   }
 }
 

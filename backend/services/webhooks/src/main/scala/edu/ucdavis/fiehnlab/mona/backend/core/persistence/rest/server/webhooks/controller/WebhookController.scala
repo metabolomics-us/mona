@@ -1,6 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller
 
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.WebHook
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.web.bind.annotation.{RequestMapping, RestController}
 
 /**
