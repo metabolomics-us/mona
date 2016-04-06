@@ -24,6 +24,28 @@ RUN apt-get update && \
 
 
 
+# Configuire Jetty
+ADD http://eclipse.org/downloads/download.php?file=/jetty/8.1.17.v20150415/dist/jetty-distribution-8.1.17.v20150415.tar.gz&r=1 /opt/jetty.tar.gz
+RUN tar -xf /opt/jetty.tar.gz -C /opt/
+RUN rm /opt/jetty.tar.gz
+RUN mv /opt/jetty-distribution-* /opt/jetty
+RUN rm -rf /opt/jetty/webapps.demo
+RUN useradd jetty -U -s /bin/false
+RUN chown -R jetty:jetty /opt/jetty
+
+
+
+# Configuire nginx
+RUN rm /etc/nginx/sites-enabled/default
+
+ADD includes/nginx/mona-client.conf /etc/nginx/sites-enabled/mona-client.conf
+ADD includes/nginx/awtstats.conf /etc/awstats/awstats.client.conf
+
+ADD includes/nginx/logrotate /etc/logrotate.d/nginx
+RUN chmod 644 /etc/logrotate.d/nginx
+
+
+
 # Configure RabbitMQ
 ENV RABBITMQ_LOG_BASE /data/rabbitmq/log
 ENV RABBITMQ_MNESIA_BASE /data/rabbitmq/mnesia
@@ -60,28 +82,6 @@ RUN chmod 700 /var/lib/postgresql
 
 
 
-# Configuire Jetty
-ADD http://eclipse.org/downloads/download.php?file=/jetty/8.1.17.v20150415/dist/jetty-distribution-8.1.17.v20150415.tar.gz&r=1 /opt/jetty.tar.gz
-RUN tar -xf /opt/jetty.tar.gz -C /opt/
-RUN rm /opt/jetty.tar.gz
-RUN mv /opt/jetty-distribution-* /opt/jetty
-RUN rm -rf /opt/jetty/webapps.demo
-RUN useradd jetty -U -s /bin/false
-RUN chown -R jetty:jetty /opt/jetty
-
-
-
-# Configuire nginx
-RUN rm /etc/nginx/sites-enabled/default
-
-ADD includes/nginx/mona-client.conf /etc/nginx/sites-enabled/mona-client.conf
-ADD includes/nginx/awtstats.conf /etc/awstats/awstats.client.conf
-
-ADD includes/nginx/logrotate /etc/logrotate.d/nginx
-RUN chmod 644 /etc/logrotate.d/nginx
-
-
-
 # Configure MoNA
 ADD includes/mona/mona-server.war /opt/jetty/webapps/root.war
 
@@ -100,6 +100,9 @@ ADD includes/.bashrc /root/.bashrc
 
 ADD includes/start.sh /root/start.sh
 RUN chmod +x /root/start.sh
+
+ADD includes/.pgpass /root/.pgpass
+RUN chmod 0600 /root/.pgpass
 
 
 

@@ -30,6 +30,19 @@
             <artifactId>workflow</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.splash</groupId>
+            <artifactId>core</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <!-- cdk dependencies -->
+        <dependency>
+            <groupId>org.openscience.cdk</groupId>
+            <artifactId>cdk-bundle</artifactId>
+            <version>1.5.12</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
