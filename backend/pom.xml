@@ -30,6 +30,11 @@
                 <artifactId>api-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>amqp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>

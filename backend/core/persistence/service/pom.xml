@@ -19,6 +19,11 @@
             <artifactId>domain</artifactId>
         </dependency>
         <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>amqp</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>mongo</artifactId>
         </dependency>

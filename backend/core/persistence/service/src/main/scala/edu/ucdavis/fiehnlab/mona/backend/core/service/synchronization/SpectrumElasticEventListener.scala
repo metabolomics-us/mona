@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{ PersitenceEventListener}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -21,7 +22,7 @@ class SpectrumElasticEventListener extends PersitenceEventListener[Spectrum] wit
     *
     * @param event
     */
-  override def added(event: PersistenceEvent[Spectrum]): Unit = {
+  override def added(event: Event[Spectrum]): Unit = {
     logger.debug(s"\t=>\tindexing spectra in elastic search ${event.content.id}")
     spectrumElasticRepository.saveOrUpdate(event.content)
   }
@@ -31,7 +32,7 @@ class SpectrumElasticEventListener extends PersitenceEventListener[Spectrum] wit
     *
     * @param event
     */
-  override def updated(event: PersistenceEvent[Spectrum]): Unit = {
+  override def updated(event: Event[Spectrum]): Unit = {
     logger.debug(s"\t=>\treindexing spectra in elastic search ${event.content.id}")
     spectrumElasticRepository.saveOrUpdate(event.content)
   }
@@ -41,7 +42,7 @@ class SpectrumElasticEventListener extends PersitenceEventListener[Spectrum] wit
     *
     * @param event
     */
-  override def deleted(event: PersistenceEvent[Spectrum]): Unit = {
+  override def deleted(event: Event[Spectrum]): Unit = {
     logger.debug(s"\t=>\tremoving spectra from elastic search ${event.content.id}")
     spectrumElasticRepository.delete(event.content)
   }

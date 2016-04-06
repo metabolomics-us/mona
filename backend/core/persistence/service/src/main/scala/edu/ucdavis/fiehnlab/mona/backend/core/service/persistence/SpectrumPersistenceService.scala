@@ -4,12 +4,13 @@ import java.lang
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.{AddEvent, DeleteEvent, UpdateEvent}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.service.listener._
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.{Cacheable, CacheEvict}
+import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.data.domain.{Page, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Service
@@ -47,7 +48,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   final def fireAddEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been added")
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(AddEvent[Spectrum](spectrum, new Date()))
+      eventScheduler.scheduleEventProcessing(AddEvent[Spectrum](spectrum))
     }
   }
 
@@ -59,7 +60,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   final def fireDeleteEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been deleted")
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(DeleteEvent[Spectrum](spectrum, new Date()))
+      eventScheduler.scheduleEventProcessing(DeleteEvent[Spectrum](spectrum))
     }
   }
 
@@ -71,7 +72,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   final def fireUpdateEvent(spectrum: Spectrum) = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been updated")
     if (eventScheduler != null) {
-      eventScheduler.scheduleEventProcessing(UpdateEvent[Spectrum](spectrum, new Date()))
+      eventScheduler.scheduleEventProcessing(UpdateEvent[Spectrum](spectrum))
     }
   }
 
