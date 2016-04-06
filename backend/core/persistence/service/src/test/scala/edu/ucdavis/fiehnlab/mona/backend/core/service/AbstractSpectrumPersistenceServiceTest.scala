@@ -55,7 +55,7 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
       s"we run every test several times, since we have caching, this one is iteration ${iteration}" should {
 
         "have at least one listener assigned " in {
-          assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() == 3)
+          assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() == 4)
         }
 
         s"store ${exampleRecords.length} records" in {
