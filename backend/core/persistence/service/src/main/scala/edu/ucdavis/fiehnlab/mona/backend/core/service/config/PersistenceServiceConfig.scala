@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, EventBusListener}
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
@@ -19,6 +18,11 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 @Import(Array(classOf[ElasticsearchConfig],classOf[MongoConfig],classOf[BusConfig]))
 class PersistenceServiceConfig {
 
+  /**
+    * required to notify the main event bus about spectra being modified events
+    * and should ensure that all parts of the cluster stay synchronized
+    * @return
+    */
   @Bean
   def eventBus:EventBus[Spectrum] = new EventBus[Spectrum]
 }
