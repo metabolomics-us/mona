@@ -1,30 +1,40 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.listener
 
+import com.typesafe.scalalogging.LazyLogging
+
 /**
   * this listener is used to inform subscribers about changes to the mona database system. They should be annotated as @Component, which will automatically add them to the related classes
   */
-trait PersitenceEventListener[T] {
+trait PersistenceEventListener[T] extends LazyLogging{
 
   /**
     * an entry was added to the system
     *
     * @param event
     */
-  def added(event: PersistenceEvent[T])
+  def added(event: PersistenceEvent[T]) = {}
 
   /**
     * the event was updated in the system
     *
     * @param event
     */
-  def updated(event: PersistenceEvent[T])
+  def updated(event: PersistenceEvent[T]) = {}
 
   /**
     * an entry was deleted from the system
     *
     * @param event
     */
-  def deleted(event: PersistenceEvent[T])
+  def deleted(event: PersistenceEvent[T]) = {}
+
+  /**
+    * a query event was reported
+    *
+    * @param event
+    */
+  def query(event: PersistenceEvent[T]) = {}
+
 
   /**
     * reacts to an event
@@ -35,7 +45,9 @@ trait PersitenceEventListener[T] {
     case x: UpdateEvent[T] => updated(x)
     case x: DeleteEvent[T] => deleted(x)
     case x: AddEvent[T] => added(x)
+    case x: QueryEvent[T] => query(x)
     case _ =>
+      logger.warn(s"unknown event encountered ${event}")
   }
 
   /**
@@ -60,3 +72,6 @@ case class UpdateEvent[T](override val content: T, override val firedAt: java.ut
 case class AddEvent[T](override val content: T, override val firedAt: java.util.Date) extends PersistenceEvent[T](content, firedAt)
 
 case class DeleteEvent[T](override val content: T, override val firedAt: java.util.Date) extends PersistenceEvent[T](content, firedAt)
+
+case class QueryEvent[T](override val content: T, override val firedAt: java.util.Date) extends PersistenceEvent[T](content, firedAt)
+
