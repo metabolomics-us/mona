@@ -14,6 +14,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>repository</module>
+        <module>webhooks</module>
     </modules>
 
 
