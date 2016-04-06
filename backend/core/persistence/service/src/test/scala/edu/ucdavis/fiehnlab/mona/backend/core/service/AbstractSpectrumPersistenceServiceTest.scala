@@ -55,7 +55,7 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
       s"we run every test several times, since we have caching, this one is iteration ${iteration}" should {
 
         "have at least one listener assigned " in {
-          assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() == 4)
+          assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() > 1)
         }
 
         s"store ${exampleRecords.length} records" in {
@@ -68,6 +68,9 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
           }
         }
 
+        "there should have been some event's been send to the event bus " in {
+
+        }
         "query all data" in {
           val result = spectrumPersistenceService.findAll().iterator
 
