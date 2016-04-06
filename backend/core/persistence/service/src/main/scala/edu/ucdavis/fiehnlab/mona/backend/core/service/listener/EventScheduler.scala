@@ -18,7 +18,7 @@ class EventScheduler[T] {
     * contains all listeneres in the system to tell subscripers that something with the backend happend
     */
   @Autowired(required = false)
-  val persistenceEventListeners: java.util.List[PersitenceEventListener[T]] = null
+  val persistenceEventListeners: java.util.List[PersistenceEventListener[T]] = null
 
   /**
     * schedules the processing of the given event to be processed down stream
@@ -62,7 +62,7 @@ class SchedulingActor[T] extends Actor {
     * @return
     */
   override def receive: Receive = {
-    case x: (java.util.List[PersitenceEventListener[T]], PersistenceEvent[T]) =>
+    case x: (java.util.List[PersistenceEventListener[T]], PersistenceEvent[T]) =>
       x._1.asScala.sortBy(_.priority).reverse.foreach(_.handleEvent(x._2))
   }
 }
