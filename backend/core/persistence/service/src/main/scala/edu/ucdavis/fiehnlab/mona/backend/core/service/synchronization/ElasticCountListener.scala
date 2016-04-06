@@ -1,9 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBusListener
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{ PersitenceEventListener}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -20,7 +22,7 @@ class ElasticCountListener  extends PersitenceEventListener[Spectrum] with LazyL
     *
     * @param event
     */
-  override def added(event: PersistenceEvent[Spectrum]): Unit = {
+  override def added(event: Event[Spectrum]): Unit = {
     logger.debug(s"added spectrum count is now ${spectrumElasticRepository.count()}")
   }
 
@@ -29,7 +31,7 @@ class ElasticCountListener  extends PersitenceEventListener[Spectrum] with LazyL
     *
     * @param event
     */
-  override def updated(event: PersistenceEvent[Spectrum]): Unit = {
+  override def updated(event: Event[Spectrum]): Unit = {
     logger.debug(s"updated spectrum count is now ${spectrumElasticRepository.count()}")
   }
 
@@ -38,7 +40,7 @@ class ElasticCountListener  extends PersitenceEventListener[Spectrum] with LazyL
     *
     * @param event
     */
-  override def deleted(event: PersistenceEvent[Spectrum]): Unit = {
+  override def deleted(event: Event[Spectrum]): Unit = {
     logger.debug(s"deleted spectrum count is now ${spectrumElasticRepository.count()}")
   }
 

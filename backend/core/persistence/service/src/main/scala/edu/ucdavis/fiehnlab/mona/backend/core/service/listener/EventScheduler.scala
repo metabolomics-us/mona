@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.service.listener
 
 import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorSystem, Props}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -25,7 +26,7 @@ class EventScheduler[T] {
     *
     * @param event
     */
-  def scheduleEventProcessing(event: PersistenceEvent[T]) = persistenceEventListeners.asScala.sortBy(_.priority).reverse.foreach(_.handleEvent(event))
+  def scheduleEventProcessing(event: Event[T]) = persistenceEventListeners.asScala.sortBy(_.priority).reverse.foreach(_.handleEvent(event))
 }
 
 /**
@@ -43,7 +44,7 @@ class AkkaEventScheduler[T] extends EventScheduler[T] {
     *
     * @param event
     */
-  override def scheduleEventProcessing(event: PersistenceEvent[T]): Unit = {
+  override def scheduleEventProcessing(event: Event[T]): Unit = {
     val actor = system.actorOf(Props[SchedulingActor[T]])
     actor ! (persistenceEventListeners, event)
   }
@@ -62,7 +63,7 @@ class SchedulingActor[T] extends Actor {
     * @return
     */
   override def receive: Receive = {
-    case x: (java.util.List[PersitenceEventListener[T]], PersistenceEvent[T]) =>
+    case x: (java.util.List[PersitenceEventListener[T]], Event[T]) =>
       x._1.asScala.sortBy(_.priority).reverse.foreach(_.handleEvent(x._2))
   }
 }
