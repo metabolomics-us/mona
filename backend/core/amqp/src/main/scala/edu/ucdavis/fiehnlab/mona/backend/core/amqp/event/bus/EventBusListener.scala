@@ -1,52 +1,68 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 
+import javax.annotation.PostConstruct
+
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.{AddEvent, DeleteEvent, Event, UpdateEvent}
-import org.springframework.amqp.rabbit.annotation.RabbitListener
-import org.springframework.stereotype.Service
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
+import org.springframework.amqp.core._
+import org.springframework.amqp.rabbit.connection.ConnectionFactory
+import org.springframework.amqp.rabbit.core.RabbitAdmin
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
+import org.springframework.amqp.support.converter.{JsonMessageConverter, MessageConverter}
+import org.springframework.beans.factory.annotation.Autowired
 
 /**
   * any instance of this class automatically receive events and should ensure that
   * they utilize is to react to them
   */
-@Service
-abstract class EventBusListener[T] extends LazyLogging{
+abstract class EventBusListener[T] extends MessageListener with LazyLogging {
+
+  @Autowired
+  private val connectionFactory: ConnectionFactory = null
+
+  @Autowired
+  private val messageConverter:MessageConverter = null
 
   /**
-    * an element has been received from the bus and should be now processed
- *
-    * @param event
+    * he we define the anomynous temp queue and the fan exchange
     */
-  @RabbitListener(queues = Array("mona-event-bus"))
-  final def received(event:Event[T]) : Unit = {
-    event match {
-      case x: UpdateEvent[T] => updated(x)
-      case x: DeleteEvent[T] => deleted(x)
-      case x: AddEvent[T] => added(x)
-      case _ =>
-        logger.debug(s"none supported event found ${event}")
-    }
+  @PostConstruct
+  def init = {
+    logger.info("configuring queue connection")
+    val rabbitAdmin = new RabbitAdmin(connectionFactory)
+    val queue = new AnonymousQueue()
+    val exchange = new FanoutExchange("mona-event-bus", true, false)
+
+    rabbitAdmin.declareQueue(queue)
+    rabbitAdmin.declareExchange(exchange)
+    rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange))
+    rabbitAdmin.afterPropertiesSet()
+
+    val container = new SimpleMessageListenerContainer()
+    container.setConnectionFactory(connectionFactory)
+    container.setQueues(queue)
+    container.setMessageListener(this)
+    container.setRabbitAdmin(rabbitAdmin)
+    container.setMessageConverter(messageConverter)
+
+    logger.info("starting container")
+    container.start()
+
   }
 
   /**
-    * an entry was added to the system
+    * an element has been received from the bus and should be now processed
     *
     * @param event
     */
-  def added(event: Event[T])
+  def received(event: Event[T]): Unit
 
   /**
-    * the event was updated in the system
-    *
-    * @param event
+    * receives and converts the message for us
+    * @param message
     */
-  def updated(event: Event[T])
-
-  /**
-    * an entry was deleted from the system
-    *
-    * @param event
-    */
-  def deleted(event: Event[T])
-
+  final override def onMessage(message: Message): Unit = {
+    logger.debug(s"message received: ${new String(message.getBody)}")
+    received(messageConverter.fromMessage(message).asInstanceOf[Event[T]])
+  }
 }
