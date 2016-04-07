@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestOperations
 

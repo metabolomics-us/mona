@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>backend</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.mona</groupId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.mona</groupId>
+    <artifactId>services</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>repository</module>
+        <module>webhooks</module>
+    </modules>
+
+
+    <description>This module will contain serveral service modules, required by mona to provide you with advanced configruations and should be mapped over the main proxy server</description>
+</project>

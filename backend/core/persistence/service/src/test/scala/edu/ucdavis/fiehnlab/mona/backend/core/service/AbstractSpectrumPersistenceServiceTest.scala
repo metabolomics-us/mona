@@ -3,25 +3,21 @@ package edu.ucdavis.fiehnlab.mona.backend.core.service
 import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{ReceivedEventCounter, EventBusListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{AkkaEventScheduler, EventScheduler}
 import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
-import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.data.domain.{Page, PageRequest}
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.collection.JavaConverters._
-import scala.util.Properties
 import scala.concurrent.duration._
+import scala.util.Properties
 
 /**
   * Created by wohlg on 3/15/2016.
@@ -37,6 +33,9 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
 
   @Autowired
   val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
+
+  @Autowired
+  val eventCounter: ReceivedEventCounter[Spectrum] = null
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
@@ -55,7 +54,7 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
       s"we run every test several times, since we have caching, this one is iteration ${iteration}" should {
 
         "have at least one listener assigned " in {
-          assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() == 3)
+          assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() > 1)
         }
 
         s"store ${exampleRecords.length} records" in {
@@ -65,6 +64,12 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
           eventually(timeout(10 seconds)) {
             assert(spectrumPersistenceService.count() == exampleRecords.length)
             assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
+          }
+        }
+
+        "there should have been some event's been send to the event bus " in {
+          eventually(timeout(10 seconds)) {
+            assert(eventCounter.getEventCount >= exampleRecords.length)
           }
         }
 
