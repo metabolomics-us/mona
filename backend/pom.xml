@@ -18,6 +18,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
+        <module>services</module>
         <module>app</module>
     </modules>
 
@@ -28,6 +29,11 @@
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
                 <artifactId>api-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>amqp</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

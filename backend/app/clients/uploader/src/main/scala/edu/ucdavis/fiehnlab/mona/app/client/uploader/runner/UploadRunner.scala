@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.app.client.uploader.runner
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.batch.core.{Job, JobParametersBuilder}
 import org.springframework.beans.factory.annotation.Autowired
