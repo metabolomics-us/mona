@@ -1,12 +1,11 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.service.listener
+package edu.ucdavis.fiehnlab.mona.backend.core.domain.event
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 
 /**
   * this listener is used to inform subscribers about changes to the mona database system. They should be annotated as @Component, which will automatically add them to the related classes
   */
-trait PersitenceEventListener[T] extends LazyLogging{
+trait PersistenceEventListener[T] extends LazyLogging{
 
   /**
     * an entry was added to the system

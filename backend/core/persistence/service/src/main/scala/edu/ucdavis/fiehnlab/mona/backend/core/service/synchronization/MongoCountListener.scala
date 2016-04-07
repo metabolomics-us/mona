@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.PersitenceEventListener
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Component
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component
   * Created by wohlgemuth on 3/17/16.
   */
 @Component
-class MongoCountListener extends PersitenceEventListener[Spectrum] with LazyLogging{
+class MongoCountListener extends PersistenceEventListener[Spectrum] with LazyLogging{
   @Autowired
   val spectrumMongoRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 

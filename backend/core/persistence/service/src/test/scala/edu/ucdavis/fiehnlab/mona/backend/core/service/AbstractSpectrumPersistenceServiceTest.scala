@@ -3,7 +3,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.service
 import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBusCounter, EventBusListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
@@ -31,6 +33,9 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
 
   @Autowired
   val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
+
+  @Autowired
+  val eventCounter: EventBusCounter[Spectrum] = null
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
@@ -63,8 +68,11 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
         }
 
         "there should have been some event's been send to the event bus " in {
-
+          eventually(timeout(10 seconds)) {
+            assert(eventCounter.getEventCount >= exampleRecords.length)
+          }
         }
+
         "query all data" in {
           val result = spectrumPersistenceService.findAll().iterator
 

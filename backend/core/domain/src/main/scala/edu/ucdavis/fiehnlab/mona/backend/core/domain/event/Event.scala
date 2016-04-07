@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events
+package edu.ucdavis.fiehnlab.mona.backend.core.domain.event
 
 import java.util.Date
 
