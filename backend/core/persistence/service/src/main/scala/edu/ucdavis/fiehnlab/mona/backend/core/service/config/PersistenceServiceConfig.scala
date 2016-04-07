@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, EventBusCounter}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, ReceivedEventCounter}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.EventScheduler
@@ -25,7 +25,7 @@ class PersistenceServiceConfig {
     * @return
     */
   @Bean
-  def eventBus: EventBus[Spectrum] = new EventBus[Spectrum]
+  def eventBus: EventBus[Spectrum] = new EventBus[Spectrum]("mona-persistence-events")
 
   /**
     * counts all the events send over the event bus
@@ -34,5 +34,5 @@ class PersistenceServiceConfig {
     * @return
     */
   @Bean
-  def eventCounter: EventBusCounter[Spectrum] = new EventBusCounter[Spectrum]
+  def eventCounter(eventBus: EventBus[Spectrum] ): ReceivedEventCounter[Spectrum] = new ReceivedEventCounter[Spectrum](eventBus)
 }

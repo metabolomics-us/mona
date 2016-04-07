@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config
 
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBusCounter
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
