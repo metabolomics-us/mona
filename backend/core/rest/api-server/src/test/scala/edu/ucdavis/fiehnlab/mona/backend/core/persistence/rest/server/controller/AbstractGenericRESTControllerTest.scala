@@ -16,7 +16,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
 import scala.collection.JavaConverters._
 
@@ -98,11 +98,11 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
       }
 
       "get" in {
-        given().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
+        given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
       }
 
       "put requires authorization" in {
-        given().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"${endpoint}/${getId}").then().statusCode(401)
+        given().log().all(true).contentType("application/json; charset=UTF-8").body(getValue).when().put(s"${endpoint}/${getId}").then().statusCode(401)
 
         authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"${endpoint}/${getId}").then().statusCode(200)
       }
