@@ -31,7 +31,7 @@ class EventBusListenerTest extends WordSpec with Eventually {
   val eventListener: List[EventBusTestListener] = null
 
   @Autowired
-  val eventCounter:EventBusCounter[String] = null
+  val eventCounter:ReceivedEventCounter[String] = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
@@ -66,37 +66,44 @@ class EventBusListenerTest extends WordSpec with Eventually {
 @EnableAutoConfiguration
 class TestConfig {
 
-  @Bean
-  def eventBus: EventBus[String] = new EventBus[String]
-
   /**
-    * define 10 different event listeners
+    * our bus for testing
     * @return
     */
   @Bean
-  def listenerA:EventBusTestListener =  new EventBusTestListener
-  @Bean
-  def listenerB:EventBusTestListener =  new EventBusTestListener
-  @Bean
-  def listenerC:EventBusTestListener =  new EventBusTestListener
-  @Bean
-  def listenerD:EventBusTestListener =  new EventBusTestListener
-  @Bean
-  def listenerE:EventBusTestListener =  new EventBusTestListener
+  def eventBus: EventBus[String] = new EventBus[String]("my-test-bus")
 
   @Bean
-  def listener:List[EventBusTestListener] = listenerA :: listenerB :: listenerC :: listenerD :: listenerE :: List()
+  def listenerA(eventBus: EventBus[String]) :EventBusTestListener =  new EventBusTestListener(eventBus)
+  @Bean
+  def listenerB(eventBus: EventBus[String]):EventBusTestListener =  new EventBusTestListener(eventBus)
+  @Bean
+  def listenerC(eventBus: EventBus[String]):EventBusTestListener =  new EventBusTestListener(eventBus)
+  @Bean
+  def listenerD(eventBus: EventBus[String]):EventBusTestListener =  new EventBusTestListener(eventBus)
+  @Bean
+  def listenerE(eventBus: EventBus[String]):EventBusTestListener =  new EventBusTestListener(eventBus)
+
+  /**
+    * just a collection of all our bus clients to simulate some behaviour
+    * @param eventBus
+    * @return
+    */
+  @Bean
+  def listener(eventBus: EventBus[String]) :List[EventBusTestListener] = listenerA(eventBus) :: listenerB(eventBus) :: listenerC(eventBus) :: listenerD(eventBus) :: listenerE(eventBus) :: List()
+
   /**
     * an event listener to just monitor send events over the bus
+ *
     * @return
     */
   @Bean
-  def eventCounter:EventBusCounter[String] = new EventBusCounter[String]
+  def eventCounter(eventBus: EventBus[String]): ReceivedEventCounter[String] = new ReceivedEventCounter[String](eventBus)
 
 
 }
 
-class EventBusTestListener extends EventBusListener[String] {
+class EventBusTestListener(override val eventBus: EventBus[String]) extends EventBusListener[String](eventBus) {
   val events = new CountDownLatch(2)
 
   /**

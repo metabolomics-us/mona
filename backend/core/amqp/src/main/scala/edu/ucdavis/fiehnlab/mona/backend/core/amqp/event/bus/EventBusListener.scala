@@ -13,10 +13,12 @@ import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
-  * any instance of this class automatically receive events and should ensure that
-  * they utilize is to react to them
+  * any instance of this class automatically receive events from the subscribed event bus. The eventbus needs to be provided
+  * as constructor argument and allows this client to send messages back to it as well. But please be aware that this can easily end in
+  * endless loops and should be carefully considered
   */
-abstract class EventBusListener[T] extends MessageListener with LazyLogging {
+abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageListener with LazyLogging {
+
 
   @Autowired
   private val connectionFactory: ConnectionFactory = null
@@ -33,7 +35,7 @@ abstract class EventBusListener[T] extends MessageListener with LazyLogging {
     logger.info("configuring queue connection")
     val rabbitAdmin = new RabbitAdmin(connectionFactory)
     val queue = new AnonymousQueue()
-    val exchange = new FanoutExchange("mona-event-bus", true, false)
+    val exchange = new FanoutExchange(eventBus.busName, true, false)
 
     rabbitAdmin.declareQueue(queue)
     rabbitAdmin.declareExchange(exchange)
@@ -79,9 +81,9 @@ abstract class EventBusListener[T] extends MessageListener with LazyLogging {
 
 
 /**
-  * little helper class to count send events over the bus
+  * This class counts all the received events on the subscribed event bus
   */
-class EventBusCounter[T] extends EventBusListener[T] with LazyLogging {
+class ReceivedEventCounter[T](override val eventBus: EventBus[T]) extends EventBusListener[T](eventBus) with LazyLogging {
 
   /**
     * atomic counter to keep track of all events
