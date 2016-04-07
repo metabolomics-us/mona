@@ -12,7 +12,7 @@
     <artifactId>amqp</artifactId>
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
 
-    <description>This module provides basic message handling and message based workflow processing for us</description>
+    <description>This module provides a shared event bus implementation, which clients can easily join and subscribe too</description>
     <dependencies>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>

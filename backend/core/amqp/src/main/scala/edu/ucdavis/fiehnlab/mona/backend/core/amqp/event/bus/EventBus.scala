@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 

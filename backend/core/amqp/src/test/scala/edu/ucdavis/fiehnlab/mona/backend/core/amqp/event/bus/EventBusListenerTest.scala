@@ -3,8 +3,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 import java.util.Date
 import java.util.concurrent.CountDownLatch
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.events.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
@@ -30,17 +30,20 @@ class EventBusListenerTest extends WordSpec with Eventually {
   @Autowired
   val eventListener: List[EventBusTestListener] = null
 
+  @Autowired
+  val eventCounter:EventBusCounter[String] = null
+
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "EventBusListenerTest" should {
 
-    "assure we have several evnet listeners" in {
-      assert(eventListener.size == 10)
+    "assure we have several event listeners" in {
+      assert(eventListener.size == 5)
     }
     "received event" in {
 
       //each listener should have initially 2 events
-      eventListener.foreach{ x=> x.events.getCount == 2}
+      eventListener.foreach{ x=> assert(x.events.getCount == 2)}
 
       //send 2 events to the bus
       eventBus.sendEvent(new Event[String]("test-add", new Date,"custom"))
@@ -48,8 +51,12 @@ class EventBusListenerTest extends WordSpec with Eventually {
 
       //after all events are processed we should have processed these 2 events by all listeners
       eventually(timeout(3 seconds)) {
-        eventListener.foreach{ x=> x.events.getCount == 0}
+        eventListener.foreach{ x=> assert(x.events.getCount == 0)}
       }
+    }
+
+    "ensure that the total send events match the internal counter" in {
+      assert(eventCounter.getEventCount == 2)
     }
 
   }
@@ -67,18 +74,25 @@ class TestConfig {
     * @return
     */
   @Bean
-  def listener: List[EventBusTestListener] = List[EventBusTestListener](
-    new EventBusTestListener,
-    new EventBusTestListener,
-    new EventBusTestListener,
-    new EventBusTestListener,
-    new EventBusTestListener,
-    new EventBusTestListener,
-    new EventBusTestListener,
-    new EventBusTestListener,
-    new EventBusTestListener,
-    new EventBusTestListener
-  )
+  def listenerA:EventBusTestListener =  new EventBusTestListener
+  @Bean
+  def listenerB:EventBusTestListener =  new EventBusTestListener
+  @Bean
+  def listenerC:EventBusTestListener =  new EventBusTestListener
+  @Bean
+  def listenerD:EventBusTestListener =  new EventBusTestListener
+  @Bean
+  def listenerE:EventBusTestListener =  new EventBusTestListener
+
+  @Bean
+  def listener:List[EventBusTestListener] = listenerA :: listenerB :: listenerC :: listenerD :: listenerE :: List()
+  /**
+    * an event listener to just monitor send events over the bus
+    * @return
+    */
+  @Bean
+  def eventCounter:EventBusCounter[String] = new EventBusCounter[String]
+
 
 }
 
