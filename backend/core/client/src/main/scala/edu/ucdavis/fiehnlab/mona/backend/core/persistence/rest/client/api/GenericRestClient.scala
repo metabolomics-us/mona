@@ -5,7 +5,7 @@ import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, WrappedString}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.servcie.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.{Page, PageImpl, Pageable}

@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, PersistenceEventListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.listener.{PersistenceEvent, PersitenceEventListener}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
   * Created by wohlgemuth on 3/17/16.
   */
 @Component
-class ElasticCountListener  extends PersitenceEventListener[Spectrum] with LazyLogging{
+class ElasticCountListener  extends PersistenceEventListener[Spectrum] with LazyLogging{
   @Autowired
   val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
 
@@ -20,7 +20,7 @@ class ElasticCountListener  extends PersitenceEventListener[Spectrum] with LazyL
     *
     * @param event
     */
-  override def added(event: PersistenceEvent[Spectrum]): Unit = {
+  override def added(event: Event[Spectrum]): Unit = {
     logger.debug(s"added spectrum count is now ${spectrumElasticRepository.count()}")
   }
 
@@ -29,7 +29,7 @@ class ElasticCountListener  extends PersitenceEventListener[Spectrum] with LazyL
     *
     * @param event
     */
-  override def updated(event: PersistenceEvent[Spectrum]): Unit = {
+  override def updated(event: Event[Spectrum]): Unit = {
     logger.debug(s"updated spectrum count is now ${spectrumElasticRepository.count()}")
   }
 
@@ -38,7 +38,7 @@ class ElasticCountListener  extends PersitenceEventListener[Spectrum] with LazyL
     *
     * @param event
     */
-  override def deleted(event: PersistenceEvent[Spectrum]): Unit = {
+  override def deleted(event: Event[Spectrum]): Unit = {
     logger.debug(s"deleted spectrum count is now ${spectrumElasticRepository.count()}")
   }
 
