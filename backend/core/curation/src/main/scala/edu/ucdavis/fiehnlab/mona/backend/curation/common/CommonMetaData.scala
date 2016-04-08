@@ -14,9 +14,13 @@ object CommonMetaData {
 
   val MOLECULAR_WEIGHT: String = "molecular weight"
 
-  val CALCULATED_INCHI_CODE: String = "calculated InChI Code"
+  val CHEMICAL_FORMULA: String = "chemical formula"
 
-  val CALCULATED_INCHI_KEY: String = "calculated InChI Key"
+  val INCHI_CODE: String = "InChI"
+
+  val INCHI_KEY: String = "InChIKey"
+
+  val SMILES: String = "SMILES"
 
   val COMPOUND_CLASS: String = "compound class"
 
