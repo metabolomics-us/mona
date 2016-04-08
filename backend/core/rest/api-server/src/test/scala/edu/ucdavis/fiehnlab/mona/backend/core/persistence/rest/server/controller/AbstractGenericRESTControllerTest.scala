@@ -98,11 +98,11 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
       }
 
       "get" in {
-        given().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
+        given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
       }
 
       "put requires authorization" in {
-        given().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"${endpoint}/${getId}").then().statusCode(401)
+        given().log().all(true).contentType("application/json; charset=UTF-8").body(getValue).when().put(s"${endpoint}/${getId}").then().statusCode(401)
 
         authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"${endpoint}/${getId}").then().statusCode(200)
       }
