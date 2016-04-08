@@ -47,6 +47,11 @@
         </dependency>
 
         <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>amqp</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
             <artifactId>api</artifactId>
         </dependency>

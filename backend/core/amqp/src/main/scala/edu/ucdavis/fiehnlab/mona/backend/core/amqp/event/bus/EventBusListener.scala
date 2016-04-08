@@ -26,6 +26,7 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
   @Autowired
   private val messageConverter: MessageConverter = null
 
+
   /**
     * he we define the anonymous temp queue and the fan exchange
     * system for all the applications to communicate with
@@ -50,6 +51,8 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
     container.setRabbitAdmin(rabbitAdmin)
     container.setMessageConverter(messageConverter)
 
+    logger.info(s"utilizing message converter: ${messageConverter}")
+
     logger.info("starting container")
     container.start()
 
@@ -69,13 +72,7 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
     */
   final override def onMessage(message: Message): Unit = {
     logger.debug(s"message received: ${new String(message.getBody)}")
-
-    try {
-      received(messageConverter.fromMessage(message).asInstanceOf[Event[T]])
-    } catch {
-      case x: ClassCastException =>
-        logger.warn(s"ignored message, due to a class cast exception ${x.getMessage}, messsage content was \n\n ${new String(message.getBody)}\n\n")
-    }
+    received(messageConverter.fromMessage(message).asInstanceOf[Event[T]])
   }
 }
 

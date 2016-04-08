@@ -10,12 +10,11 @@ import scala.beans.BeanProperty
   * @param content
   * @tparam T
   */
-case class Event[T](@BeanProperty content:T,@BeanProperty dateFired:Date,@BeanProperty eventType:String)
+case class Event[T](@BeanProperty content:T,@BeanProperty dateFired:Date = new Date(),@BeanProperty eventType:String = "None")
 
 
 object Event{
   val ADD:String = "add"
   val DELETE:String = "delete"
   val UPDATE:String = "update"
-
 }

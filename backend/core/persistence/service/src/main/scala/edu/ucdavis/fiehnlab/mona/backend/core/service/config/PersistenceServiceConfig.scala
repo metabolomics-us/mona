@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.service.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, ReceivedEventCounter}
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{BusConfig, MonaEventBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.EventScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
@@ -15,24 +15,6 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
   */
 @ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService], classOf[SpectrumElasticEventListener], classOf[EventScheduler[Spectrum]], classOf[BusConfig]))
 @Configuration
-@Import(Array(classOf[ElasticsearchConfig], classOf[MongoConfig], classOf[BusConfig]))
+@Import(Array(classOf[ElasticsearchConfig], classOf[MongoConfig], classOf[MonaEventBusConfiguration]))
 class PersistenceServiceConfig {
-
-  /**
-    * required to notify the main event bus about spectra being modified events
-    * and should ensure that all parts of the cluster stay synchronized
-    *
-    * @return
-    */
-  @Bean
-  def eventBus: EventBus[Spectrum] = new EventBus[Spectrum]("mona-persistence-events")
-
-  /**
-    * counts all the events send over the event bus
-    * which could be used later for metrics
-    *
-    * @return
-    */
-  @Bean
-  def eventCounter(eventBus: EventBus[Spectrum] ): ReceivedEventCounter[Spectrum] = new ReceivedEventCounter[Spectrum](eventBus)
 }
