@@ -20,18 +20,24 @@ import org.springframework.context.annotation.{Bean, Configuration, Import}
 class BusConfig extends LazyLogging{
 
   @Bean
-  def messageConverter:Jackson2JsonMessageConverter  = {
+  def messageConverter:MessageConverter  = {
     logger.info("creating message converter")
+/*
     val converter = new Jackson2JsonMessageConverter
     converter.setJsonObjectMapper(MonaMapper.create)
     converter
+*/
+
+    //right now the binaery converter is the only one which carries all the information for serializing, since the
+    //information get lost for the generics during sending right now
+    new SimpleMessageConverter
   }
 
   @Bean
-  def rabbitTemplate(messageConverter: MessageConverter,connectionFactory:ConnectionFactory):RabbitTemplate = {
+  def rabbitTemplate(jsonConverter: MessageConverter,connectionFactory:ConnectionFactory):RabbitTemplate = {
     logger.info("creating custom rabbit template")
     val template = new RabbitTemplate(connectionFactory)
-    template.setMessageConverter(messageConverter)
+    template.setMessageConverter(jsonConverter)
     template
   }
 
