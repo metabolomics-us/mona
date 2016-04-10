@@ -35,7 +35,7 @@ class WebHookSecurity extends WebSecurityConfigurerAdapter {
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
       .authorizeRequests()
-      //saves need to be authentifiated
+      //saves need to be authenticated
       .antMatchers(HttpMethod.POST, "/rest/webhooks/**").authenticated()
 
       //updates needs authentication

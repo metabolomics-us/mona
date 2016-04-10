@@ -18,7 +18,7 @@ class WebHookEventBusListener @Autowired()(val bus: EventBus[Spectrum]) extends 
   val webHookService: WebHookService = null
 
   def received(event: Event[Spectrum]): Unit = {
-    logger.debug(s"received event with id: ${event.content.id}")
+    logger.debug(s"event of class: ${event.content.getClass.getName}")
     webHookService.trigger(event.content.id)
   }
 
