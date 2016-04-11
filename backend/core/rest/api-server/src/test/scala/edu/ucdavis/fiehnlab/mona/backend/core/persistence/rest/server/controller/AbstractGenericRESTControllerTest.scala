@@ -46,10 +46,6 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
   @Autowired
   val loginService:LoginService = null
 
-  //required for spring and scala tes
-  testContextManager.prepareTestInstance(this)
-
-
   /**
     * token based authorization is our default approach
     *
@@ -124,9 +120,6 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
   * provides us with a simple, elegant way to refresh the application context between runs
   */
 abstract class AbstractSpringControllerTest extends WordSpec with BeforeAndAfterAll with LazyLogging{
-
-  val testContextManager = new TestContextManager(getClass)
-
 
   @Value( """${local.server.port}""")
   val port: Int = 0
