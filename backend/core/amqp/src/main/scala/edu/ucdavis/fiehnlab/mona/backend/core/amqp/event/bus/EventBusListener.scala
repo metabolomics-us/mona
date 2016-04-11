@@ -9,7 +9,7 @@ import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.amqp.support.converter.MessageConverter
+import org.springframework.amqp.support.converter.{Jackson2JsonMessageConverter, MessageConverter}
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -25,6 +25,7 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
 
   @Autowired
   private val messageConverter: MessageConverter = null
+
 
   /**
     * he we define the anonymous temp queue and the fan exchange
@@ -48,7 +49,9 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
     container.setQueues(queue)
     container.setMessageListener(this)
     container.setRabbitAdmin(rabbitAdmin)
-    container.setMessageConverter(messageConverter)
+    //container.setMessageConverter(messageConverter)
+
+ //   logger.info(s"utilizing message converter: ${messageConverter}")
 
     logger.info("starting container")
     container.start()
@@ -69,13 +72,7 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
     */
   final override def onMessage(message: Message): Unit = {
     logger.debug(s"message received: ${new String(message.getBody)}")
-
-    try {
-      received(messageConverter.fromMessage(message).asInstanceOf[Event[T]])
-    } catch {
-      case x: ClassCastException =>
-        logger.warn(s"ignored message, due to a class cast exception ${x.getMessage}, messsage content was \n\n ${new String(message.getBody)}\n\n")
-    }
+    received(messageConverter.fromMessage(message).asInstanceOf[Event[T]])
   }
 }
 
@@ -103,7 +100,7 @@ class ReceivedEventCounter[T](override val eventBus: EventBus[T]) extends EventB
     * @param event
     */
   override def received(event: Event[T]): Unit = {
-    logger.debug(s"found event on bus ${event}")
+    logger.debug(s"found event on bus of type ${event.content.getClass}")
     counter.incrementAndGet()
   }
 }
