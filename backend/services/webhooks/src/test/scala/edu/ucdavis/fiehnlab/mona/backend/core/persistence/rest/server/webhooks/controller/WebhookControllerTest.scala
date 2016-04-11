@@ -1,13 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller
 
 import com.jayway.restassured.RestAssured._
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{BusConfig, MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.config.WebHookSecurity
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
@@ -19,7 +20,7 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[WebHookSecurity], classOf[JWTAuthenticationConfig], classOf[TestConfig],classOf[BusConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[TestConfig]))
 @WebIntegrationTest(Array("server.port=0"))
 class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("/webhooks") {
 
@@ -94,25 +95,4 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 }
 
 
-@Configuration
-@Import(Array(classOf[EmbeddedMongoDBConfiguration]))
-class TestConfig {
 
-  /**
-    * the service which actually does the login for us
-    *
-    * @return
-    */
-  @Bean
-  def loginServiceDelegate: LoginService = new MongoLoginService
-
-
-  /**
-    * the token secret used during the testing phase
-    *
-    * @return
-    */
-  @Bean
-  def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
-
-}

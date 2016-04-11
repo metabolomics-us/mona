@@ -15,6 +15,11 @@
 
     <description>This module provides us with webhooks to notify external resources</description>
 
+
+    <properties>
+        <docker.expose>4444</docker.expose>
+    </properties>
+
     <dependencies>
 
         <!-- eureka client -->
