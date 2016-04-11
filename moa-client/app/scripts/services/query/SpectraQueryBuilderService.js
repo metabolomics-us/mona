@@ -19,7 +19,6 @@
         this.getQuery = function() {
             var query = QueryCache.getSpectraQuery();
 
-            //TODO: remove statement: cache.js - getSpectraQuery handles null queries
             if (query === null) {
                 query = this.prepareQuery();
             }
