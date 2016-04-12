@@ -17,11 +17,6 @@
     <description>This project provides the REST persistence interface</description>
     <dependencies>
 
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
-        </dependency>
-
         <!-- redis based cache implementation
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -44,11 +39,6 @@
         </dependency>
 
         <!-- test dependencies -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.jayway.restassured</groupId>
