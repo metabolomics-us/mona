@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.r
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 
 import scala.collection.JavaConverters._
@@ -31,6 +32,7 @@ class WebHookService extends LazyLogging {
     *
     * @param id
     */
+  @Transactional
   def trigger(id: String): Array[WebHookResult] = {
 
     logger.info(s"triggering all event hooks for id: ${id}")
@@ -48,7 +50,6 @@ class WebHookService extends LazyLogging {
           val result = WebHookResult(hook.name, url)
 
           notifications.sendEvent(Event(Notification(result, getClass.getName)))
-          logger.info(s"success")
           result
         }
         catch {
@@ -56,7 +57,6 @@ class WebHookService extends LazyLogging {
             logger.debug(x.getMessage, x)
             val result = WebHookResult(hook.name, url, false, x.getMessage)
             notifications.sendEvent(Event(Notification(result, getClass.getName)))
-            logger.info(s"fail")
             result
         }
 

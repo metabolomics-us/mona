@@ -66,7 +66,7 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.UPDATE))
 
       //we should get an information that the notification counter received an event
-      eventually(timeout(50 seconds)) {
+      eventually(timeout(10 seconds)) {
         assert(notificationCounter.getEventCount == notificationCount +  1)
       }
 
@@ -78,7 +78,7 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.DELETE))
 
       //we should get an information that the notification counter received an event
-      eventually(timeout(50 seconds)) {
+      eventually(timeout(10 seconds)) {
         assert(notificationCounter.getEventCount == notificationCount +  1)
       }
 
@@ -90,7 +90,7 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.ADD))
 
       //we should get an information that the notification counter received an event
-      eventually(timeout(50 seconds)) {
+      eventually(timeout(10 seconds)) {
         assert(notificationCounter.getEventCount == notificationCount +  1)
       }
 
