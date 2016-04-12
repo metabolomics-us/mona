@@ -18,11 +18,6 @@ import scala.util.Properties
   */
 abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with LazyLogging {
 
-
-  //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
-
-
   val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
 
 
@@ -46,7 +41,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             for (spectrum <- exampleRecords) {
               val size = getRepository.count()
 
-              val result = getRepository.saveOrUpdate(spectrum)
+              val result = getRepository.save(spectrum) //saveOrUpdate
               assert(result.isInstanceOf[T])
 
               val newSize = getRepository.count()
@@ -121,7 +116,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             val it = getRepository.findAll().iterator()
 
             while (it.hasNext) {
-              getRepository.saveOrUpdate(it.next())
+              getRepository.save(it.next()) //saveOrUpdate
             }
 
             assert(getRepository.count() == exampleRecords.length)

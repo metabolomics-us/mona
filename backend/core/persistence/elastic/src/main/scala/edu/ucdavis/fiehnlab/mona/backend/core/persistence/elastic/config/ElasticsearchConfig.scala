@@ -20,11 +20,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @ComponentScan(basePackageClasses = Array(classOf[ISpectrumElasticRepositoryCustom]))
 class ElasticsearchConfig extends LazyLogging {
 
-  // @Value("${mona.persistence.elastic.port}")
-  val port: Int = 9300
-  // @Value("${mona.persistence.elastic.host}")
-  val hostname: String = "127.0.0.1"
-
   /**
     * this defines our custom wired elastic search template
     *
@@ -53,23 +48,6 @@ class ElasticsearchConfig extends LazyLogging {
     )
   }
 
-  /**
-    * this defines the elastic client and where we want to connect from
-    *
-    * @return
-    */
-  /*
-  @Bean
-  def elasticClient: Client = {
-    logger.info(s"connecting to ${hostname}:${port}")
-    val client = new TransportClient()
-    val address = new InetSocketTransportAddress(hostname, port)
-    client.addTransportAddress(address)
-
-    client
-  }
-
-*/
   @Bean
   def mappingUpdater: MappingUpdater = new MappingUpdater
 

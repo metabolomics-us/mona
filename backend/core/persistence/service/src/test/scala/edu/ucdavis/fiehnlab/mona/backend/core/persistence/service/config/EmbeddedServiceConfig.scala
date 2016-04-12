@@ -14,8 +14,4 @@ import org.springframework.context.annotation.{Bean, Configuration, Import}
 @Import(Array(classOf[EmbeddedElasticSearchConfiguration],classOf[PersistenceServiceConfig]))
 class EmbeddedServiceConfig {
 
-  @Bean
-  def eventScheduler:AkkaEventScheduler[Spectrum] = {
-    new AkkaEventScheduler[Spectrum]
-  }
 }
