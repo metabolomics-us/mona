@@ -121,7 +121,7 @@ services:
 
   #webhook support to notify external apis
   webhooks:
-    image: eros.fiehnlab.ucdavis.edu/mona-webhooks
+    image: eros.fiehnlab.ucdavis.edu/mona-webhooks-server
 
     depends_on:
       - proxy

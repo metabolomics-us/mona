@@ -42,7 +42,7 @@ zuul:
       serviceId: auth-service
 
     #access for webhooks
-    users :
+    webhooks :
       path: /rest/webhooks/**
       stripPrefix: false
       serviceId: webhook-service

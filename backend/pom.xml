@@ -243,7 +243,7 @@
                 <plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
-                    <version>0.4.0</version>
+                    <version>0.4.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -339,6 +339,9 @@
                                 <imageTag>latest</imageTag>
                             </imageTags>
 
+                            <runs>
+                                <run>chmod 777 /wait-for-it.sh</run>
+                            </runs>
                         </configuration>
 
                         <executions>
