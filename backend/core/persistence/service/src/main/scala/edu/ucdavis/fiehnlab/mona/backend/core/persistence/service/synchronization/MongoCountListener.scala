@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.synchronization
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum

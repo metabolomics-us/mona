@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.service.listener
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.listener
 
 import akka.actor.{Actor, ActorSystem, Props}
 import com.typesafe.scalalogging.LazyLogging

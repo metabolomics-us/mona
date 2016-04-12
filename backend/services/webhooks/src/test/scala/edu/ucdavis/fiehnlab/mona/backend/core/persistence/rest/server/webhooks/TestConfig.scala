@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationC
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.config.WebHookSecurity
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.{Bean, Configuration, Import}
   * Created by wohlg on 4/11/2016.
   */
 @Configuration
-@Import(Array(classOf[EmbeddedMongoDBConfiguration],classOf[WebHookSecurity], classOf[JWTAuthenticationConfig]))
+@Import(Array(classOf[MongoConfig],classOf[WebHookSecurity], classOf[JWTAuthenticationConfig]))
 class TestConfig {
 
   /**

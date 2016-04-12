@@ -167,13 +167,6 @@
             </dependency>
 
             <dependency>
-                <groupId>de.flapdoodle.embed</groupId>
-                <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                <version>1.50.2</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>com.github.rutledgepaulv</groupId>
                 <artifactId>q-builders</artifactId>
                 <version>1.4-SNAPSHOT</version>
@@ -283,25 +276,6 @@
                 <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
                 <docker.expose>8080</docker.expose>
             </properties>
-
-            <!-- in case of a docker image we always want to utilize jetty instead of tomcat -->
-            <dependencies>
-
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-starter-tomcat</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-jetty</artifactId>
-                </dependency>
-            </dependencies>
 
             <build>
                 <plugins>

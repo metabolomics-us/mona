@@ -4,7 +4,7 @@ import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.{ MongoConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.repository.aggregation.IStatisticsMongoRepository
@@ -24,7 +24,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   *
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration], classOf[TestConfig]))
+@ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 class StatisticsMongoRepositoryTest extends WordSpec {
 
   @Autowired

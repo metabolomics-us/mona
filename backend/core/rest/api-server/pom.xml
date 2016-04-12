@@ -23,6 +23,7 @@
             <artifactId>api</artifactId>
         </dependency>
 
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -33,20 +34,36 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!-- we always want jetty, cause jetty is cool -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
         </dependency>
 
 
-        <!-- configuration bus to refresh config files from git -->
+        <!-- eureka client -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
 
+        <!-- monitoring tool -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- config server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
+
+        <!-- rest security -->
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>jwt</artifactId>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
@@ -75,11 +92,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -114,14 +126,5 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-
-        <!-- rest security -->
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
-            <artifactId>jwt</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 </project>

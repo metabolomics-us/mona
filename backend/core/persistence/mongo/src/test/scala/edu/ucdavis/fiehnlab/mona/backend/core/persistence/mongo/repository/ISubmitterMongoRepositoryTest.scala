@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.{ MongoConfig}
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +13,7 @@ import scala.collection.JavaConverters._
   * Created by wohlgemuth on 3/23/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration]))
+@ContextConfiguration(classes = Array(classOf[MongoConfig]))
 class ISubmitterMongoRepositoryTest extends WordSpec {
 
   @Autowired

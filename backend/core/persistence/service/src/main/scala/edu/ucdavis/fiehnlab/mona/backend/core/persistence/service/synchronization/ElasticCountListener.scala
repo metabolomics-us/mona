@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.service.synchronization
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.synchronization
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -8,11 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 /**
-  * Created by wohlg on 3/15/2016.
+  * Created by wohlgemuth on 3/17/16.
   */
 @Component
-class SpectrumElasticEventListener extends PersistenceEventListener[Spectrum] with LazyLogging {
-
+class ElasticCountListener  extends PersistenceEventListener[Spectrum] with LazyLogging{
   @Autowired
   val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
 
@@ -22,8 +21,7 @@ class SpectrumElasticEventListener extends PersistenceEventListener[Spectrum] wi
     * @param event
     */
   override def added(event: Event[Spectrum]): Unit = {
-    logger.debug(s"\t=>\tindexing spectra in elastic search ${event.content.id}")
-    spectrumElasticRepository.saveOrUpdate(event.content)
+    logger.debug(s"added spectrum count is now ${spectrumElasticRepository.count()}")
   }
 
   /**
@@ -32,8 +30,7 @@ class SpectrumElasticEventListener extends PersistenceEventListener[Spectrum] wi
     * @param event
     */
   override def updated(event: Event[Spectrum]): Unit = {
-    logger.debug(s"\t=>\treindexing spectra in elastic search ${event.content.id}")
-    spectrumElasticRepository.saveOrUpdate(event.content)
+    logger.debug(s"updated spectrum count is now ${spectrumElasticRepository.count()}")
   }
 
   /**
@@ -42,8 +39,7 @@ class SpectrumElasticEventListener extends PersistenceEventListener[Spectrum] wi
     * @param event
     */
   override def deleted(event: Event[Spectrum]): Unit = {
-    logger.debug(s"\t=>\tremoving spectra from elastic search ${event.content.id}")
-    spectrumElasticRepository.delete(event.content)
+    logger.debug(s"deleted spectrum count is now ${spectrumElasticRepository.count()}")
   }
 
   /**
@@ -51,5 +47,5 @@ class SpectrumElasticEventListener extends PersistenceEventListener[Spectrum] wi
     *
     * @return
     */
-  override def priority: Int = 10
+  override def priority: Int = -10
 }

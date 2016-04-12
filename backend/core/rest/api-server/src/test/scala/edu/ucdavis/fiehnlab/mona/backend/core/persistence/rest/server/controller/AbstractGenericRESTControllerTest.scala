@@ -18,6 +18,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.WebIntegrationTest
+
 import scala.collection.JavaConverters._
 
 /**
@@ -119,10 +121,10 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
 /**
   * provides us with a simple, elegant way to refresh the application context between runs
   */
+@WebIntegrationTest(Array("server.port=9999"))
 abstract class AbstractSpringControllerTest extends WordSpec with BeforeAndAfterAll with LazyLogging{
 
-  @Value( """${local.server.port}""")
-  val port: Int = 0
+  val port: Int = 9999
 
   //configure the mapper for rest assured
   RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
