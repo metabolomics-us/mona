@@ -67,14 +67,14 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
 
   "after initializing the environment" when {
 
-
+/*
     RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
       override def create(aClass: Class[_], s: String): ObjectMapper = {
         logger.info("registering rest assured mapper")
         MonaMapper.create
       }
     }))
-
+*/
     RestAssured.baseURI = s"http://localhost:${port}/rest"
 
     "reset the user base" in {
@@ -122,7 +122,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint:String) extends 
   * provides us with a simple, elegant way to refresh the application context between runs
   */
 @WebIntegrationTest(Array("server.port=9999"))
-abstract class AbstractSpringControllerTest extends WordSpec with BeforeAndAfterAll with LazyLogging{
+abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging{
 
   val port: Int = 9999
 

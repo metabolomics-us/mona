@@ -7,7 +7,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.config.WebHookSecurity
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
@@ -20,7 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[TestConfig]))
-@WebIntegrationTest(Array("server.port=0"))
 class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("/webhooks") {
 
   @Autowired
@@ -46,6 +44,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
   "a webhook controller" must {
 
     "be able to trigger the registered external urls" in {
+      webHookRepository.deleteAll()
       authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/webhooks").then().statusCode(200)
 
       val result:Array[WebHookResult] = given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"/webhooks/trigger/${getId}").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[WebHookResult]])

@@ -4,8 +4,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounte
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.config.WebHookSecurity
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.WebHook
 import org.junit.runner.RunWith
@@ -23,7 +23,6 @@ import scala.concurrent.duration._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[TestConfig]))
-@WebIntegrationTest(Array("server.port=0"))
 class WebHookServiceTest extends AbstractSpringControllerTest with Eventually{
 
 
@@ -43,6 +42,7 @@ class WebHookServiceTest extends AbstractSpringControllerTest with Eventually{
 
     "trigger" in {
 
+      webHookRepository.deleteAll()
       val count = notificationCounter.getEventCount
 
       webHookRepository.save(WebHook("test",s"http://localhost:${port}/info?id="))

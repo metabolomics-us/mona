@@ -41,6 +41,12 @@ zuul:
       stripPrefix: false
       serviceId: auth-service
 
+    #access for webhooks
+    users :
+      path: /rest/webhooks/**
+      stripPrefix: false
+      serviceId: webhook-service
+
   #connection settings to avoid to many timeouts
   host:
     socket-timeout-millis: 60000
