@@ -25,15 +25,6 @@ class RestPersistenceServer {
   @Bean
   def tokenSecret: TokenSecret = TokenSecret(secret)
 
-
-  /**
-    * we should always use an async event scheduler for the processing of data, if possible
-    * @return
-    */
-  @Bean
-  def eventScheduler:AkkaEventScheduler[Spectrum] = {
-    new AkkaEventScheduler[Spectrum]
-  }
 }
 
 object RestPersistenceServer extends App{
