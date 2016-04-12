@@ -9,3 +9,4 @@ mona-client.zip
 client.zip
 *.war
 *.log
+backend/load_test/*.hprof
