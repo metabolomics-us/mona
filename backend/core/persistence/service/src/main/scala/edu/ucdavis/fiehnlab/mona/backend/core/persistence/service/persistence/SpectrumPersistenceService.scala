@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.service.persistence
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence
 
 import java.lang
 import java.util.Date
@@ -8,7 +8,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.listener._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.data.domain.{Page, Pageable, Sort}

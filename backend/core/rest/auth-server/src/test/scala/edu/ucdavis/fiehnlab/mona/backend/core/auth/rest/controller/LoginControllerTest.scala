@@ -11,10 +11,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfi
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.test.context.TestContextManager
@@ -27,11 +30,7 @@ import scala.collection.JavaConverters._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig],classOf[AuthSecurityConfig]))
-@WebIntegrationTest(Array("server.port=0"))
-class LoginControllerTest extends WordSpec {
-
-  @Value( """${local.server.port}""")
-  val port: Int = 0
+class LoginControllerTest extends AbstractSpringControllerTest {
 
   @Autowired
   val userRepository: UserRepository = null
@@ -79,8 +78,8 @@ class LoginControllerTest extends WordSpec {
   }
 }
 
-@Configuration
-@Import(Array(classOf[EmbeddedMongoDBConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[MongoAutoConfiguration]))
+@Import(Array(classOf[MongoConfig]))
 class TestConfig {
 
   /**

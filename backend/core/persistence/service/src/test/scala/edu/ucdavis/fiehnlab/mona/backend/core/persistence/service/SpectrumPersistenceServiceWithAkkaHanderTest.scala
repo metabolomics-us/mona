@@ -1,28 +1,38 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.service
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service
 
 import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{ReceivedEventCounter, EventBusListener}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBusListener, ReceivedEventCounter}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.EmbeddedServiceConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.listener.AkkaEventScheduler
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
+import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.data.domain.{Page, PageRequest}
+import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.util.Properties
 
+@SpringBootApplication
+class TestConfig
 /**
   * Created by wohlg on 3/15/2016.
   */
-abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with LazyLogging with Eventually {
+@RunWith(classOf[SpringJUnit4ClassRunner])
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig],classOf[TestConfig]))
+class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLogging with Eventually {
   val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
 
   @Autowired
@@ -37,13 +47,20 @@ abstract class AbstractSpectrumPersistenceServiceTest extends WordSpec with Lazy
   @Autowired
   val eventCounter: ReceivedEventCounter[Spectrum] = null
 
+  new TestContextManager(this.getClass()).prepareTestInstance(this)
+
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+
 
   "a spectrum persistence service " must {
 
     "delete everything" in {
       spectrumElasticRepository.deleteAll()
       spectrumMongoRepository.deleteAll()
+    }
+
+    "shceduler must be of type AkkaEventScheduler" in {
+      assert(spectrumPersistenceService.eventScheduler.isInstanceOf[AkkaEventScheduler[Spectrum]])
     }
 
     "ensure we start with an empty repository" in {

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.{ MongoConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.junit.runner.RunWith
@@ -18,7 +18,7 @@ import scala.collection.JavaConverters._
   * Created by wohlg_000 on 3/9/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration]))
+@ContextConfiguration(classes = Array(classOf[MongoConfig]))
 class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,Query] {
 
   @Autowired
