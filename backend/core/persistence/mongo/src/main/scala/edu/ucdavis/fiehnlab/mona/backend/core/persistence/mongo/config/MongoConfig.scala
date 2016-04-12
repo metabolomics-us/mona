@@ -18,7 +18,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
   classOf[ISpectrumMongoRepositoryCustom]
 ), excludeFilters = Array())
 @ComponentScan(basePackageClasses = Array(classOf[ISubmitterMongoRepository]))
-//@EnableAutoConfiguration
 class MongoConfig extends LazyLogging{
 
   val host:String = "192.168.99.100"

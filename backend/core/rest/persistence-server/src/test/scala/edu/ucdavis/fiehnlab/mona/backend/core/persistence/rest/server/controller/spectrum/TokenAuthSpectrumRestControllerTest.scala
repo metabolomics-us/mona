@@ -22,19 +22,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra"){
 
 
-  /**
-    * object to use for gets
-    *
-    * @return
-    */
-  override def getValue: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
-
-  /**
-    * returns an id for us for testing
-    *
-    * @return
-    */
-  override def getId: String = getValue.id
 
   @Autowired
   val spectrumRepository: SpectrumPersistenceService = null
@@ -190,5 +177,18 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
     }
   }
 
+  /**
+    * object to use for gets
+    *
+    * @return
+    */
+  override def getValue: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
+
+  /**
+    * returns an id for us for testing
+    *
+    * @return
+    */
+  override def getId: String = getValue.id
 }
 

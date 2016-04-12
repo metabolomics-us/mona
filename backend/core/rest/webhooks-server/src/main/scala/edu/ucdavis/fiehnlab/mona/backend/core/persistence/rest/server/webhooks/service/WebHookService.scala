@@ -33,24 +33,30 @@ class WebHookService extends LazyLogging {
     */
   def trigger(id: String): Array[WebHookResult] = {
 
-    logger.debug(s"triggering all event hooks for id: ${id}")
+    logger.info(s"triggering all event hooks for id: ${id}")
+
     webhookRepository.findAll().asScala.collect {
 
       case hook: WebHook =>
         val url = s"${hook.url}${id}"
 
+        logger.info(s"triggering event: ${url}")
+
         try {
           restTemplate.getForObject(url, classOf[String])
 
           val result = WebHookResult(hook.name, url)
+
           notifications.sendEvent(Event(Notification(result, getClass.getName)))
+          logger.info(s"success")
           result
         }
         catch {
-          case x: Exception =>
+          case x: Throwable =>
             logger.debug(x.getMessage, x)
             val result = WebHookResult(hook.name, url, false, x.getMessage)
             notifications.sendEvent(Event(Notification(result, getClass.getName)))
+            logger.info(s"fail")
             result
         }
 

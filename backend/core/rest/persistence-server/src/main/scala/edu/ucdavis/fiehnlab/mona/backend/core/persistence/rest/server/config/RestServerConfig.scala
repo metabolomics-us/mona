@@ -42,8 +42,6 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.PUT).authenticated()
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
-      //nothing goes
-      .anyRequest().denyAll()
 
   }
 
@@ -60,6 +58,6 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")
       //no authentication for metadata
       .antMatchers(HttpMethod.POST, "/rest/metaData/**")
-
+      .antMatchers(HttpMethod.GET, "/*")
   }
 }
