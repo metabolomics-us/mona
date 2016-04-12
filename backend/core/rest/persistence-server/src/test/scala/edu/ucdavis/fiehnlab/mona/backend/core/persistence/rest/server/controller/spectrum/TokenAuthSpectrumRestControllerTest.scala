@@ -17,8 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 /**
   * Created by wohlgemuth on 3/1/16.
   */
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig],classOf[TestConfig]))
 @RunWith(classOf[SpringJUnit4ClassRunner])
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig],classOf[TestConfig]))
 class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra"){
 
 

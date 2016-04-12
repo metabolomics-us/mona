@@ -3,14 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>services</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona</groupId>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        <artifactId>rest</artifactId>
         <version>1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
-    <artifactId>webhooks</artifactId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+    <artifactId>webhooks-server</artifactId>
+    <name>webhooks-server</name>
 
 
     <description>This module provides us with webhooks to notify external resources</description>
