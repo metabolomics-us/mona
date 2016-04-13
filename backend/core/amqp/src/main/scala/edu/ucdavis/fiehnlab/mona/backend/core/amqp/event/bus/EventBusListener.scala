@@ -26,6 +26,8 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
   @Autowired
   private val messageConverter: MessageConverter = null
 
+  @Autowired
+  private val rabbitAdmin:RabbitAdmin = null
 
   /**
     * he we define the anonymous temp queue and the fan exchange
@@ -34,7 +36,7 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
   @PostConstruct
   def init = {
     logger.info("configuring queue connection")
-    val rabbitAdmin = new RabbitAdmin(connectionFactory)
+
     val queue = new AnonymousQueue()
     val exchange = new FanoutExchange(eventBus.busName, true, false)
 
