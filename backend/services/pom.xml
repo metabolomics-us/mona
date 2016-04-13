@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>repository</module>
-        <module>curration-scheduler</module>
+        <module>curation-scheduler</module>
     </modules>
 
 </project>
