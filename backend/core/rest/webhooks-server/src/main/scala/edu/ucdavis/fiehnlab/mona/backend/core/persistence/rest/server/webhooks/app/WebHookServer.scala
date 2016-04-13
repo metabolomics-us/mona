@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.{Bean, Import}
+import org.springframework.scheduling.annotation.EnableAsync
 
 /**
   * Created by wohlgemuth on 4/7/16.
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.{Bean, Import}
 @SpringBootApplication
 @EnableDiscoveryClient
 @Import(Array(classOf[WebHookSecurity],classOf[JWTAuthenticationConfig]))
+@EnableAsync
 class WebHookServer {
 
   @Value("${mona.security.secret}")

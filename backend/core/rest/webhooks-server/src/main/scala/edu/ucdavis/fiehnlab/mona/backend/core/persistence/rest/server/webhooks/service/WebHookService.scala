@@ -32,7 +32,6 @@ class WebHookService extends LazyLogging {
     *
     * @param id
     */
-  @Transactional
   def trigger(id: String): Array[WebHookResult] = {
 
     logger.info(s"triggering all event hooks for id: ${id}")
@@ -67,6 +66,8 @@ class WebHookService extends LazyLogging {
               result
           }
 
+        case x:Any =>
+          throw new RuntimeException(s"sorry element ${x} was not valid!")
       }.toArray
     }
   }
