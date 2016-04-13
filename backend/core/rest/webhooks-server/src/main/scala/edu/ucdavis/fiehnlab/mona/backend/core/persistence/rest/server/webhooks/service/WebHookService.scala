@@ -37,29 +37,37 @@ class WebHookService extends LazyLogging {
 
     logger.info(s"triggering all event hooks for id: ${id}")
 
-    webhookRepository.findAll().asScala.collect {
+    val hooks = webhookRepository.findAll().asScala
 
-      case hook: WebHook =>
-        val url = s"${hook.url}${id}"
+    if(hooks.isEmpty){
+      logger.info("no event hooks provided in the system!")
+      Array[WebHookResult]()
+    }
+    else {
+      hooks.collect {
 
-        logger.info(s"triggering event: ${url}")
+        case hook: WebHook =>
+          val url = s"${hook.url}${id}"
 
-        try {
-          restTemplate.getForObject(url, classOf[String])
+          logger.info(s"triggering event: ${url}")
 
-          val result = WebHookResult(hook.name, url)
+          try {
+            restTemplate.getForObject(url, classOf[String])
 
-          notifications.sendEvent(Event(Notification(result, getClass.getName)))
-          result
-        }
-        catch {
-          case x: Throwable =>
-            logger.debug(x.getMessage, x)
-            val result = WebHookResult(hook.name, url, false, x.getMessage)
+            val result = WebHookResult(hook.name, url)
+
             notifications.sendEvent(Event(Notification(result, getClass.getName)))
             result
-        }
+          }
+          catch {
+            case x: Throwable =>
+              logger.debug(x.getMessage, x)
+              val result = WebHookResult(hook.name, url, false, x.getMessage)
+              notifications.sendEvent(Event(Notification(result, getClass.getName)))
+              result
+          }
 
-    }.toArray
+      }.toArray
+    }
   }
 }
