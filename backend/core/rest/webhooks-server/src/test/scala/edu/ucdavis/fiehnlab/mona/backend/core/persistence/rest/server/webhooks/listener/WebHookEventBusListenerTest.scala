@@ -82,7 +82,7 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
 
     }
 
-    "and trigger it on sending an insert event" in {
+    "and trigger it on sending an insert  event" in {
 
       val notificationCount = notificationCounter.getEventCount
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.ADD))

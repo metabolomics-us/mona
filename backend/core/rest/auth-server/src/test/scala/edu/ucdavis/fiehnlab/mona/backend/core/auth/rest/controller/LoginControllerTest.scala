@@ -78,7 +78,7 @@ class LoginControllerTest extends AbstractSpringControllerTest {
   }
 }
 
-@SpringBootApplication(exclude = Array(classOf[MongoAutoConfiguration]))
+@SpringBootApplication
 @Import(Array(classOf[MongoConfig]))
 class TestConfig {
 

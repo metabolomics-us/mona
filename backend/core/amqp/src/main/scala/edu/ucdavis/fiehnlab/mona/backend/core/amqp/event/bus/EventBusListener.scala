@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 
+import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicLong
 import javax.annotation.PostConstruct
 
@@ -87,14 +88,15 @@ class ReceivedEventCounter[T](override val eventBus: EventBus[T]) extends EventB
   /**
     * atomic counter to keep track of all events
     */
-  private val counter: AtomicLong = new AtomicLong()
+  private var counter: Long = 0
 
+  private val lock:Semaphore = new Semaphore(1)
   /**
     * reports how many events the bus has seen
     *
     * @return
     */
-  def getEventCount: Long = counter.get()
+  def getEventCount: Long = counter
 
   /**
     * just counts internally
@@ -103,6 +105,8 @@ class ReceivedEventCounter[T](override val eventBus: EventBus[T]) extends EventB
     */
   override def received(event: Event[T]): Unit = {
     logger.debug(s"found event on bus of type ${event.content.getClass}")
-    counter.incrementAndGet()
+    lock.acquire(1)
+    counter = counter + 1
+    lock.release(1)
   }
 }

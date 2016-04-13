@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 
 import java.util.concurrent.Future
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service.WebHookService
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.{PathVariable, RequestMapping, Re
   */
 @RestController
 @RequestMapping(Array("/rest/webhooks"))
-class WebhookController extends GenericRESTController[WebHook] {
+class WebhookController extends GenericRESTController[WebHook] with LazyLogging{
 
   @Autowired
   val webhookRepository: WebHookRepository = null
@@ -41,6 +42,7 @@ class WebhookController extends GenericRESTController[WebHook] {
   @Async
   def triggerHooksForSpectrumId(@PathVariable("id") id: String): Future[Array[WebHookResult]] = {
 
+    logger.info(s"triggering event hooks for spectra: ${id}")
     //trigger all our webhooks
     new AsyncResult[Array[WebHookResult]](
       webHookService.trigger(id)
