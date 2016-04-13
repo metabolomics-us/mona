@@ -11,8 +11,8 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>fiehnlab-pom</artifactId>
-        <version>1.0.8-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>1.0.7-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
     <packaging>pom</packaging>
