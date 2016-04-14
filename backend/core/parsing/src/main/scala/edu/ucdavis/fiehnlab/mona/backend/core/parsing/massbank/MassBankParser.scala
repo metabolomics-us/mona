@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.parsing.massbank
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import jp.riken.massbank.reader.scala.MassBankRecordReader
-import jp.riken.massbank.reader.scala.groups.{MassBankGroup, RecordSpecificGroup}
+import jp.riken.massbank.reader.scala.TagNames._
 import jp.riken.massbank.reader.scala.types.{MassBankRecord, PeakData}
 
 import scala.io.Source
@@ -12,17 +12,18 @@ trait MassBankParser {
 
   def parse(str: String) = MassBankRecordReader.read(str).map(record => recordToSpectrum(record))
 
-  def recordToSpectrum(rec: MassBankRecord): Spectrum = {
+  /** */
+  def recordToSpectrum(record: MassBankRecord): Spectrum = {
     Spectrum(
       id = null,
       lastUpdated = null,
       score = null,
 
-      metaData = extractMetadata(rec),
-      biologicalCompound = extractBiologicalCompound(rec),
-      chemicalCompound = extractChemicalCompound(rec),
+      metaData = extractMetadata(record),
+      biologicalCompound = Compound(null, null, Array.empty, null, Array.empty, Array.empty),
+      chemicalCompound = Compound(null, null, Array.empty, null, Array.empty, Array.empty),
 
-      spectrum = formatPeaks(rec.massSpectraPeakDataGroup.peak),
+      spectrum = formatPeaks(record.massSpectraPeakDataGroup.peak),
       splash = null,
 
       submitter = Submitter("", "", "", "", ""),
@@ -32,97 +33,88 @@ trait MassBankParser {
     )
   }
 
+  /** Helper function to decrease verbosity of creating metadata */
+  private def meta[T](
+    name: String,
+    value: T,
+    category: String = "none",
+    computed: Boolean = false,
+    hidden: Boolean = false,
+    score: Score = null,
+    unit: String = null,
+    url: String = null
+  ): MetaData = MetaData(category, computed, hidden, name, score, unit, url, value)
+
   /** Helper function to extract optional metadata fields from MassBankRecord parse tree */
-  private def ifExists(field: Option[String])
-    (name: String,
-      category: String = "none",
-      computed: Boolean = false,
-      hidden: Boolean = false,
-      score: Score = null,
-      unit: String = null,
-      url: String = null
-    ): Option[MetaData] =
-    field.map { value =>
-      MetaData(category, computed, hidden, name, score, unit, url, value)
-    }
+  private def ifExists(name: String, field: Option[String]): Option[MetaData] = field.map { value => meta(name, value) }
 
-  def extractMetadata(r: MassBankRecord): Array[MetaData] = {
-    val dataProcessing = r.massSpectralDataGroup.dataProcessing.map({
-      case (key, value) =>
-        ifExists(Some(key))(name = "data processing action", category = "data transformation") // MS:1000543
-    }).flatten
+  /** Helper function to convert parse tree `Map[String, String]` to metadata */
+  private def mapToMetaList(map: Map[String, String], prefix: Option[String] = None): List[MetaData] =
+    map.map({ case (key, value) => meta(prefix.getOrElse("") + key, value) }).toList
 
-    Array(
-      ifExists(r.recordSpecificGroup.accession)(name = "external reference identifier"), // MS:1000878
+  /** Helper function to convert parse tree `List[String]` to metadata */
+  private def listToMetaList(name: String, list: List[String], prefix: Option[String] = None): List[MetaData] =
+    if (list.isEmpty) List.empty else list.map(value => meta(prefix.getOrElse("") + name, value))
 
-      ifExists(r.recordSpecificGroup.recordTitle)(name = "spectrum title", category = "spectrum attribute"), // MS:1000796
-      ifExists(r.recordSpecificGroup.date)(name = "date"),
-      ifExists(r.recordSpecificGroup.authors)(name = "co-author", category = "contact role"), // MS:1002036
-      ifExists(r.recordSpecificGroup.license)(name = "license"),
-      ifExists(r.recordSpecificGroup.copyright)(name = "copyright"),
-      ifExists(r.recordSpecificGroup.publication)(name = "publication"),
-      ifExists({
-        if (r.recordSpecificGroup.comment.isEmpty) None
-        else Some(r.recordSpecificGroup.comment.mkString("\n"))
-      })(name = "comment"),
+  /** Helper function to convert parse tree `Map[String, List[String]]` to metadata */
+  private def mapListToMetaList(mapList: Map[String, List[String]], prefix: Option[String] = None): List[MetaData] =
+    mapList.map({ case (key, list) => listToMetaList(key, list, prefix) }).flatten.toList
 
+  /** Simple conversion of MassBank record fields into metadata */
+  private def extractMetadata(r: MassBankRecord): Array[MetaData] = {
+    val base: Iterable[MetaData] = List(
+      ifExists(ACCESSION, r.recordSpecificGroup.accession),
+      ifExists(RECORD_TITLE, r.recordSpecificGroup.recordTitle),
+      ifExists(DATE, r.recordSpecificGroup.date),
+      ifExists(AUTHORS, r.recordSpecificGroup.authors),
+      ifExists(LICENSE, r.recordSpecificGroup.license),
+      ifExists(COPYRIGHT, r.recordSpecificGroup.copyright),
+      ifExists(PUBLICATION, r.recordSpecificGroup.publication)
+    ).flatten ++
+      listToMetaList(COMMENT, r.recordSpecificGroup.comment) ++
+      mapListToMetaList(r.recordSpecificGroup.other)
 
-      // Mass spectra group
-      ifExists(r.massSpectralDataGroup.focusedIon.get("PRECURSOR_M/Z"))
-        (name = "base peak m/z", category = "spectrum attribute"), // MS:1000504
-      ifExists(r.massSpectralDataGroup.focusedIon.get("PRECURSOR_TYPE"))
-        (name = "isolation window attribute", category = "object attribute"), // MS:1000792
+    val CH: Iterable[MetaData] =
+      listToMetaList(`CH:NAME`, r.chemicalGroup.name) ++
+        List(
+          ifExists(`CH:COMPOUND_CLASS`, r.chemicalGroup.compoundClass),
+          ifExists(`CH:FORMULA`, r.chemicalGroup.formula),
+          ifExists(`CH:EXACT_MASS`, r.chemicalGroup.exactMass),
+          ifExists(`CH:SMILES`, r.chemicalGroup.smiles),
+          ifExists(`CH:IUPAC`, r.chemicalGroup.iupac)
+        ).flatten ++
+        mapToMetaList(prefix = Some(`CH:LINK` + ": "), map = r.chemicalGroup.link) ++
+        mapListToMetaList(r.chemicalGroup.other)
 
-    ).flatten ++ dataProcessing
+    val SP: List[MetaData] = List(
+      ifExists(`SP:SCIENTIFIC_NAME`, r.sampleGroup.scientificName),
+      ifExists(`SP:LINEAGE`, r.sampleGroup.lineage),
+      ifExists(`SP:SAMPLE`, r.sampleGroup.sample)
+    ).flatten ++
+      mapToMetaList(prefix = Some(`SP:LINK` + ": "), map = r.chemicalGroup.link) ++
+      mapListToMetaList(r.sampleGroup.other)
+
+    val AC: List[MetaData] = List(
+      ifExists(`AC:INSTRUMENT`, r.analyticalChemistryGroup.instrument),
+      ifExists(`AC:INSTRUMENT_TYPE`, r.analyticalChemistryGroup.instrumentType)
+    ).flatten ++
+      mapToMetaList(prefix = Some(`AC:MASS_SPECTROMETRY` + ": "), map = r.analyticalChemistryGroup.massSpectrometry) ++
+      mapListToMetaList(prefix = Some(`AC:CHROMATOGRAPHY` + ": "), mapList = r.analyticalChemistryGroup.chromatography) ++
+      mapListToMetaList(r.analyticalChemistryGroup.other)
+
+    val MS: List[MetaData] =
+      mapToMetaList(prefix = Some(`MS:FOCUSED_ION` + ": "), map = r.massSpectralDataGroup.focusedIon) ++
+        mapToMetaList(prefix = Some(`MS:DATA_PROCESSING` + ": "), map = r.massSpectralDataGroup.dataProcessing) ++
+        mapListToMetaList(r.massSpectralDataGroup.other)
+
+    (base ++ CH ++ SP ++ AC ++ MS).toArray
   }
 
-  private def emptyCompound = Compound(
-    inchi = "",
-    inchiKey = "",
-    metaData = Array.empty,
-    molFile = "",
-    names = Array.empty,
-    tags = Array.empty)
-
-  def extractBiologicalCompound(r: MassBankRecord): Compound = {
-    emptyCompound
-  }
-
-  // TODO CH group, double-check AC group
-  def extractChemicalCompound(r: MassBankRecord): Compound = {
-    val base = List(
-      ifExists(r.analyticalChemistryGroup.instrument)(name = "instrument model", category = "instrument"), // MS:1000031
-      ifExists(r.analyticalChemistryGroup.instrumentType)(name = "ionization type", category = "source"), // MS:1000008
-      ifExists(r.analyticalChemistryGroup.ionMode)(name = "scan polarity", category = "scan"), // MS:1000465
-      ifExists(r.analyticalChemistryGroup.msType)(name = "", category = "scan"), // MS:1000465
-    ).flatten
-
-    val massSpec = List(
-      // Additional ontology terms from MassBank record specification
-      ifExists(r.analyticalChemistryGroup.massSpectrometry.get("COLLISION_GAS"))
-        (name = "collision gas", category = "precursor activation attribute"),  // MS:1000419
-      ifExists(r.analyticalChemistryGroup.massSpectrometry.get("RETENTION_TIME"))
-        (name = "scan start time", category = "scan attribute") // MS:1000016
-      ) ++
-        (r.analyticalChemistryGroup.massSpectrometry -- List("COLLISION_GAS", "RETENTION_TIME"))
-          .map({ case (key, value) => ifExists(Some(key))(name = key) })
-
-    // For each key -> val1 :: val2 :: ..., produce metadata for (key -> val1) :: (key -> val2) :: ...
-    val chromatography = r.analyticalChemistryGroup.chromatography.flatMap({
-      case (key, value) =>
-        value.map(v => MetaData("none", false, false, null, null, null, key, v))
-    })
-
-    val others = r.analyticalChemistryGroup.other.map({ case (key, value) => ifExists(Some(key))(name = key) })
-
-    emptyCompound.copy(
-      metaData = (base ++ massSpec.flatten ++ chromatography ++ others.flatten).toArray
-    )
-  }
-
-  def formatPeaks(ps: PeakData): String = {
+  /** Convert peaks into space-delimited "m/z:absolute intensity" pairs */
+  private def formatPeaks(ps: PeakData): String = {
     if (ps.peaks.isEmpty) null
     else ps.peaks.map(triple => s"${triple.mz}:${triple.absInt}").mkString(" ")
   }
 }
+
 object MassBankParser extends MassBankParser
