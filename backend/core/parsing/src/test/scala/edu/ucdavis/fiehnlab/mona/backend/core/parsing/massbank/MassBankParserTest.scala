@@ -2,8 +2,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.parsing.massbank
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import org.scalatest._
+
 import scala.io.Source
-import scala.util.{Try, Success}
+import scala.util.{Success, Try}
 
 class MassBankParserTest extends WordSpec with Matchers {
   protected val rootPath = "/testRecords"
@@ -16,21 +17,28 @@ class MassBankParserTest extends WordSpec with Matchers {
       "successfully parse the file" in {
         result shouldBe a[Success[_]]
 
-        println(result.get)
+        import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+        println(MonaMapper.create.writeValueAsString(result.get))
+        fail("TODO Print out the Spectrum bean to check")
+      }
+
+      "format spectrum into string correctly" in {
+        result.get.spectrum shouldBe "84.0444:772.6 102.0552:188.1 130.0502:187.7 148.061:86.1"
       }
     }
 
-//    "given a batch of valid record files" should {
-//      val root: Source = Source.fromURL(getClass.getResource(s"${rootPath}/batch"))
-//      val results: Iterator[Try[Spectrum]] = root.getLines.map { file =>
-//        println(file)
-//        val src = Source.fromURL(getClass.getResource(s"${rootPath}/batch/${file}"))
-//        MassBankParser.parse(src)
-//      }
-//
-//      "successfully parse all files" in {
-//        results.foreach { _ shouldBe a[Success[_]]}
-//      }
-//    }
+
+        "given a batch of valid record files" should {
+          val root: Source = Source.fromURL(getClass.getResource(s"${rootPath}/batch"))
+          val results: Iterator[Try[Spectrum]] = root.getLines.map { file =>
+            val src = Source.fromURL(getClass.getResource(s"${rootPath}/batch/${file}"))
+            MassBankParser.parse(src)
+          }
+
+          "successfully parse all files" in {
+            results.foreach { result =>
+              result shouldBe a[Success[_]]}
+          }
+        }
   }
 }
