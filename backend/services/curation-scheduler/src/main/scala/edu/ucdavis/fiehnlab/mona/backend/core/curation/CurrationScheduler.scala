@@ -1,19 +1,31 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import org.springframework.amqp.core.{Binding, BindingBuilder, Queue, TopicExchange}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.{Bean, Import}
+import org.springframework.http.HttpMethod
+import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.http.SessionCreationPolicy
 
 /**
-  * Created by wohlg on 4/12/2016.
+  * This class starts the curation service and let's it listen in the background for messages
+  * it also exposes a couple of rest points, which allow simple scheduling of messages
   */
 @SpringBootApplication
 @EnableDiscoveryClient
-@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration]))
-class CurrationScheduler {
+/***
+  * the server depends on these configurations to wire all it's internal components together
+  */
+@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[MongoConfig],classOf[JWTAuthenticationConfig]))
+class CurrationScheduler  extends WebSecurityConfigurerAdapter {
 
   @Bean(name = Array("spectra-curration-queue"))
   def queueName:String = "curration-queue"
@@ -32,6 +44,33 @@ class CurrationScheduler {
   def binding(queue:Queue, exchange:TopicExchange):Binding = {
     BindingBuilder.bind(queue).to(exchange).`with`(queueName);
   }
+
+  @Autowired
+  val restSecurityService:RestSecurityService = null
+
+  /**
+    * only admins can schedule curations in the system
+    * @param http
+    */
+  override final def configure(http: HttpSecurity): Unit = {
+    restSecurityService.prepare(http)
+      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      .and()
+      .authorizeRequests()
+      //saves need to be authenticated
+      .antMatchers(HttpMethod.GET, "/rest/curation/**").hasAuthority("ADMIN")
+
+  }
+  /**
+    * any other get request is ignored by default
+    * since we have /info etc exposed
+    * @param web
+    */
+  override def configure(web: WebSecurity): Unit = {
+    web.ignoring()
+      .antMatchers(HttpMethod.GET, "/*")
+  }
+
 }
 
 /**

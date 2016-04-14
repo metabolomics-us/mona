@@ -16,20 +16,7 @@ import org.springframework.scheduling.annotation.EnableAsync
 @SpringBootApplication
 @EnableDiscoveryClient
 @Import(Array(classOf[WebHookSecurity],classOf[JWTAuthenticationConfig]))
-@EnableAsync
-class WebHookServer {
-
-  @Value("${mona.security.secret}")
-  val secret:String = null
-
-  /**
-    * need a central server for getting this value otherwise all hell breaks loos
-    *
-    * @return
-    */
-  @Bean
-  def tokenSecret: TokenSecret = TokenSecret(secret)
-}
+class WebHookServer
 
 object WebHookServer extends App{
   new SpringApplication(classOf[WebHookServer]).run()

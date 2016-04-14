@@ -17,15 +17,7 @@ import org.springframework.context.annotation.{Bean, Import}
 @SpringBootApplication
 @EnableDiscoveryClient
 @Import(Array(classOf[RestServerConfig],classOf[JWTAuthenticationConfig]))
-class RestPersistenceServer {
-
-  @Value("${mona.security.secret}")
-  val secret:String = null
-
-  @Bean
-  def tokenSecret: TokenSecret = TokenSecret(secret)
-
-}
+class RestPersistenceServer
 
 object RestPersistenceServer extends App{
   System.setProperty("spring.config.name", "persistence-service");

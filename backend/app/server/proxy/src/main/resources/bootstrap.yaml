@@ -47,6 +47,12 @@ zuul:
       stripPrefix: false
       serviceId: webhook-service
 
+    #access to the curation controller
+    curation :
+      path: /rest/curation/**
+      stripPrefix: false
+      serviceId: curation-service
+
   #connection settings to avoid to many timeouts
   host:
     socket-timeout-millis: 60000

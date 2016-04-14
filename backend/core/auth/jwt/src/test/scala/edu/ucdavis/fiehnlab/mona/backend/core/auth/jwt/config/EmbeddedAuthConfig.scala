@@ -21,13 +21,4 @@ class EmbeddedAuthConfig {
   @Bean
   def loginService:LoginService = new MongoLoginService
 
-
-  /**
-    * the token secret used during the testing phase
-    *
-    * @return
-    */
-  @Bean
-  def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
-
 }

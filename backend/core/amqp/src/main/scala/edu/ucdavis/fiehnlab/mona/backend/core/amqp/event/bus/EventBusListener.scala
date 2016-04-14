@@ -39,7 +39,8 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
     logger.info("configuring queue connection")
 
     val queue = new AnonymousQueue()
-    val exchange = new FanoutExchange(eventBus.busName, true, false)
+
+    val exchange = new FanoutExchange(eventBus.busName, true, true)
 
     rabbitAdmin.declareQueue(queue)
     rabbitAdmin.declareExchange(exchange)
