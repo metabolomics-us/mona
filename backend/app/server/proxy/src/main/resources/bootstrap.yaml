@@ -8,7 +8,7 @@ spring:
 
 #basic information who we are
 info:
-  component: Zuul Edge Server
+  component: MoNA Edge Server
 
 #defines all the routes based on it's provided services
 zuul:

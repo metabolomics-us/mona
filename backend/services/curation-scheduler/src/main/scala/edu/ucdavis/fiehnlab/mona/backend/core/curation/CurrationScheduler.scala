@@ -4,6 +4,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCon
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import org.springframework.amqp.core.{Binding, BindingBuilder, Queue, TopicExchange}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
@@ -25,26 +26,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 /***
   * the server depends on these configurations to wire all it's internal components together
   */
-@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[MongoConfig],classOf[JWTAuthenticationConfig]))
+@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[MongoConfig],classOf[JWTAuthenticationConfig],classOf[CurationConfig]))
 class CurrationScheduler  extends WebSecurityConfigurerAdapter {
-
-  @Bean(name = Array("spectra-curration-queue"))
-  def queueName:String = "curration-queue"
-
-  @Bean
-  def queue:Queue = {
-    new Queue(queueName, false);
-  }
-
-  @Bean
-  def exchange:TopicExchange = {
-    new TopicExchange("spectra-curration");
-  }
-
-  @Bean
-  def binding(queue:Queue, exchange:TopicExchange):Binding = {
-    BindingBuilder.bind(queue).to(exchange).`with`(queueName);
-  }
 
   @Autowired
   val restSecurityService:RestSecurityService = null

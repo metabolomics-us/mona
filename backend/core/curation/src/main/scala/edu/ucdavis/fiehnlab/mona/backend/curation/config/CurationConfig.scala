@@ -5,19 +5,61 @@ import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundExceptio
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.LinearWorkflow
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.JSONFileSpectraReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
+import org.springframework.amqp.core.{Binding, BindingBuilder, Queue, TopicExchange}
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.{ItemProcessor, ItemReader, ItemWriter}
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 
 /**
   * defines a handful of different beans to simplify work with curation tasks
   * and assorted issues
   */
 @Configuration
+/**
+  * presassemble workflows based of this package for simplicity of use
+  */
+@ComponentScan(value = Array("edu.ucdavis.fiehnlab.mona.backend.curation.processor"))
 class CurationConfig extends LazyLogging {
+
+  /**
+    * in which queue will all curration tasks be stored
+    * @return
+    */
+  @Bean(name = Array("spectra-curration-queue"))
+  def queueName:String = "curration-queue"
+
+  /**
+    * the actual queue
+    * @return
+    */
+  @Bean
+  def queue:Queue = {
+    new Queue(queueName, false);
+  }
+
+  /**
+    * which exchange will be used for the curation
+    * @return
+    */
+  @Bean
+  def exchange:TopicExchange = {
+    new TopicExchange("spectra-curration");
+  }
+
+  /**
+    * just binding the different queues together
+    * @param queue
+    * @param exchange
+    * @return
+    */
+  @Bean
+  def binding(queue:Queue, exchange:TopicExchange):Binding = {
+    BindingBuilder.bind(queue).to(exchange).`with`(queueName);
+  }
 
 
   /**
