@@ -27,7 +27,6 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
       }
     }
 
-
     "given a batch of valid record files" should {
       val root: Source = Source.fromURL(getClass.getResource(s"${rootPath}/batch"))
       val results: Iterator[Try[Spectrum]] = root.getLines.map { file =>
