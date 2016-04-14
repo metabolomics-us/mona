@@ -8,14 +8,16 @@ import scala.io.Source
 import scala.util.Try
 
 class MassBankRecordParserTest extends WordSpec with Matchers with MassBankRecordParser with Inside {
+  protected val rootPath = "/testdata"
+
   "A `MassBankRecordParser`" should {
 
     "correctly parse sample data" in {
-      val sources = Source.fromURL(getClass.getResource("/testdata/batch"))
+      val sources = Source.fromURL(getClass.getResource(s"${rootPath}/batch"))
       sources should not be null
 
       def parseFiles(filename: String): Try[MassBankRecord] = {
-        val source = Source.fromURL(getClass.getResource("/testdata/batch/" + filename))
+        val source = Source.fromURL(getClass.getResource(s"${rootPath}/batch/" + filename))
         source should not be null
         MassBankRecordReader.read(source)
       }
