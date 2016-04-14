@@ -32,9 +32,6 @@ import scala.collection.JavaConverters._
 @SpringApplicationConfiguration(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig],classOf[AuthSecurityConfig]))
 class LoginControllerTest extends AbstractSpringControllerTest {
 
-  @Autowired
-  val userRepository: UserRepository = null
-
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "LoginControllerTest" when {
@@ -45,14 +42,9 @@ class LoginControllerTest extends AbstractSpringControllerTest {
 
       "login" should {
 
-        "ensure we have a valid user" in {
-          userRepository.deleteAll()
-          userRepository.save(new User("admin", "password", List(Role("admin")).asJava))
-        }
-
         "create a token" in {
 
-          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "password")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
 
           assert(response.token != null)
 
@@ -64,14 +56,14 @@ class LoginControllerTest extends AbstractSpringControllerTest {
         }
 
         "provide us with info for a token" in {
-          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "password")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
 
           val info  = given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info/").then().statusCode(200).extract().body().as(classOf[LoginInfo])
 
 
           assert(info.username == "admin")
           assert(info.roles.size() == 1)
-          assert(info.roles.get(0) == "admin")
+          assert(info.roles.get(0) == "ADMIN")
         }
       }
     }
