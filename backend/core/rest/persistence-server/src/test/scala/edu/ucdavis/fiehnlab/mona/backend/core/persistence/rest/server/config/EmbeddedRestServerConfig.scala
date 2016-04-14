@@ -26,15 +26,6 @@ class EmbeddedRestServerConfig extends LazyLogging {
   @Bean
   def loginService:LoginService = new MongoLoginService
 
-
-  /**
-    * the token secret used during the testing phase
-    *
-    * @return
-    */
-  @Bean
-  def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
-
 }
 @SpringBootApplication(exclude = Array(classOf[MongoAutoConfiguration]))
 @Import(Array(classOf[MongoConfig]))
