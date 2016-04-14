@@ -31,32 +31,36 @@ trait MassBankToSpectrumMapper {
     )
   }
 
+  /** Remove the tag name's parent (e.g., AC$TAG -> TAG) */
+  private def simplifyTag(tag: String): String = tag.drop(tag.indexOf('$') + 1)
+
   /** Helper function to decrease verbosity of creating metadata */
   private def meta[T](
     name: String,
     value: T,
-    category: String = "none",
+    category: Option[String] = None,
     computed: Boolean = false,
     hidden: Boolean = false,
     score: Score = null,
     unit: String = null,
     url: String = null
-  ): MetaData = MetaData(category, computed, hidden, name, score, unit, url, value)
+  ): MetaData =
+    MetaData(category.map(simplifyTag) getOrElse "none", computed, hidden, simplifyTag(name), score, unit, url, value)
 
   /** Helper function to extract optional metadata fields from MassBankRecord parse tree */
   private def ifExists(name: String, field: Option[String]): Option[MetaData] = field.map { value => meta(name, value) }
 
   /** Helper function to convert parse tree `Map[String, String]` to metadata */
-  private def mapToMetaList(map: Map[String, String], prefix: Option[String] = None): List[MetaData] =
-    map.map({ case (key, value) => meta(prefix.getOrElse("") + key, value) }).toList
+  private def mapToMetaList(map: Map[String, String], category: Option[String] = None): List[MetaData] =
+    map.map({ case (key, value) => meta(key, value , category) }).toList
 
   /** Helper function to convert parse tree `List[String]` to metadata */
-  private def listToMetaList(name: String, list: List[String], prefix: Option[String] = None): List[MetaData] =
-    if (list.isEmpty) List.empty else list.map(value => meta(prefix.getOrElse("") + name, value))
+  private def listToMetaList(name: String, list: List[String], category: Option[String] = None): List[MetaData] =
+    if (list.isEmpty) List.empty else list.map(value => meta(name, value, category))
 
   /** Helper function to convert parse tree `Map[String, List[String]]` to metadata */
-  private def mapListToMetaList(mapList: Map[String, List[String]], prefix: Option[String] = None): List[MetaData] =
-    mapList.map({ case (key, list) => listToMetaList(key, list, prefix) }).flatten.toList
+  private def mapListToMetaList(mapList: Map[String, List[String]], category: Option[String] = None): List[MetaData] =
+    mapList.flatMap({ case (key, list) => listToMetaList(key, list, category) }).toList
 
   /** Simple conversion of MassBank record fields into metadata */
   private def extractMetadata(r: MassBankRecord): Array[MetaData] = {
@@ -81,7 +85,7 @@ trait MassBankToSpectrumMapper {
           ifExists(`CH:SMILES`, r.chemicalGroup.smiles),
           ifExists(`CH:IUPAC`, r.chemicalGroup.iupac)
         ).flatten ++
-        mapToMetaList(prefix = Some(`CH:LINK` + ": "), map = r.chemicalGroup.link) ++
+        mapToMetaList(map = r.chemicalGroup.link, Some(`CH:LINK`)) ++
         mapListToMetaList(r.chemicalGroup.other)
 
     val SP: List[MetaData] = List(
@@ -89,20 +93,20 @@ trait MassBankToSpectrumMapper {
       ifExists(`SP:LINEAGE`, r.sampleGroup.lineage),
       ifExists(`SP:SAMPLE`, r.sampleGroup.sample)
     ).flatten ++
-      mapToMetaList(prefix = Some(`SP:LINK` + ": "), map = r.chemicalGroup.link) ++
+      mapToMetaList(r.chemicalGroup.link, Some(`SP:LINK`)) ++
       mapListToMetaList(r.sampleGroup.other)
 
     val AC: List[MetaData] = List(
       ifExists(`AC:INSTRUMENT`, r.analyticalChemistryGroup.instrument),
       ifExists(`AC:INSTRUMENT_TYPE`, r.analyticalChemistryGroup.instrumentType)
     ).flatten ++
-      mapToMetaList(prefix = Some(`AC:MASS_SPECTROMETRY` + ": "), map = r.analyticalChemistryGroup.massSpectrometry) ++
-      mapListToMetaList(prefix = Some(`AC:CHROMATOGRAPHY` + ": "), mapList = r.analyticalChemistryGroup.chromatography) ++
+      mapToMetaList(r.analyticalChemistryGroup.massSpectrometry, Some(`AC:MASS_SPECTROMETRY`)) ++
+      mapListToMetaList(r.analyticalChemistryGroup.chromatography, Some(`AC:CHROMATOGRAPHY`)) ++
       mapListToMetaList(r.analyticalChemistryGroup.other)
 
     val MS: List[MetaData] =
-      mapToMetaList(prefix = Some(`MS:FOCUSED_ION` + ": "), map = r.massSpectralDataGroup.focusedIon) ++
-        mapToMetaList(prefix = Some(`MS:DATA_PROCESSING` + ": "), map = r.massSpectralDataGroup.dataProcessing) ++
+      mapToMetaList(r.massSpectralDataGroup.focusedIon, Some(`MS:FOCUSED_ION`)) ++
+        mapToMetaList(r.massSpectralDataGroup.dataProcessing, Some(`MS:DATA_PROCESSING`)) ++
         mapListToMetaList(r.massSpectralDataGroup.other)
 
     (base ++ CH ++ SP ++ AC ++ MS).toArray
