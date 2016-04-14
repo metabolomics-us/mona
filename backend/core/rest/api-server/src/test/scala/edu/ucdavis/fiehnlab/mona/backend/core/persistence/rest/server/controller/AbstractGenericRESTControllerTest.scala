@@ -43,38 +43,10 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
     */
   def getId: String
 
-  @Autowired
-  val userRepository: UserRepository = null
-
-  @Autowired
-  val loginService: LoginService = null
-
-  /**
-    * token based authorization is our default approach
-    *
-    * @param user
-    * @param password
-    * @return
-    */
-  def authenticate(user: String = "admin", password: String = "secret"): RequestSpecification = {
-    val response = loginService.login(new LoginRequest(user, password))
-
-
-    assert(response.token != null)
-    logger.debug(s"generated token is ${response.token}")
-    given().header("Authorization", s"Bearer ${response.token}")
-  }
-
-
   "after initializing the environment" when {
 
     RestAssured.baseURI = s"http://localhost:${port}/rest"
 
-    "reset the user base" in {
-      userRepository.deleteAll()
-      userRepository.save(User("admin", "secret", Array(Role("ADMIN")).toList.asJava))
-      userRepository.save(User("test", "test-secret"))
-    }
 
     "A Rest Controller" should {
 
@@ -119,6 +91,30 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
 
   val port: Int = 9999
 
+
+  @Autowired
+  val userRepository: UserRepository = null
+
+  @Autowired
+  val loginService: LoginService = null
+
+  /**
+    * token based authorization is our default approach
+    *
+    * @param user
+    * @param password
+    * @return
+    */
+  def authenticate(user: String = "admin", password: String = "secret"): RequestSpecification = {
+    val response = loginService.login(new LoginRequest(user, password))
+
+
+    assert(response.token != null)
+    logger.debug(s"generated token is ${response.token}")
+    given().header("Authorization", s"Bearer ${response.token}")
+  }
+
+
   "our first test set" must {
 
     "prepare the object mapper for rest assured" in {
@@ -127,6 +123,12 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
         override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
       }))
 
+    }
+
+    "reset the user base" in {
+      userRepository.deleteAll()
+      userRepository.save(User("admin", "secret", Array(Role("ADMIN")).toList.asJava))
+      userRepository.save(User("test", "test-secret"))
     }
   }
 }

@@ -1,5 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 
+import java.util.concurrent.Future
+import javax.servlet.http.HttpServletRequest
+
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurrationService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
@@ -7,8 +10,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{PathVariable, RequestMapping, RequestParam, RestController}
+import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
+
+import scala.collection.JavaConverters._
+
 
 /**
   * This controller permits us to easily schedule the curation of spectra in the system
@@ -33,15 +40,16 @@ class CurationController {
     */
   @RequestMapping(path = Array("/{id}"))
   @Async
-  def curateById(@PathVariable("id") id: String) = {
+  def curateById(@PathVariable("id") id: String,request:HttpServletRequest) :Future[CurationJobScheduled]= {
 
     val spectrum = repository.findOne(id)
 
     if (spectrum == null) {
-      new ResponseEntity[Spectrum](HttpStatus.NOT_FOUND)
+      throw new NoSuchRequestHandlingMethodException(request)
     }
     else {
       curationService.scheduleSpectra(spectrum)
+      new AsyncResult[CurationJobScheduled](CurationJobScheduled(1))
     }
   }
 
@@ -50,16 +58,17 @@ class CurationController {
     *
     * @param query
     */
-  @RequestMapping(path = Array("/"))
+  @RequestMapping(path = Array(""))
   @Async
-  def curateByQuery(@RequestParam(required = false, name = "query") query: String) = {
+  def curateByQuery(@RequestParam(required = false, name = "query") query: String) :Future[CurationJobScheduled]= {
     if (query == null) {
-      val iterator = repository.findAll().iterator()
 
-      while (iterator.hasNext) {
-        val spectrum = iterator.next()
+      val count:Int = repository.findAll().asScala.foldLeft(0){(sum,spectrum:Spectrum) =>
         curationService.scheduleSpectra(spectrum)
+        sum + 1
       }
+
+      new AsyncResult[CurationJobScheduled](CurationJobScheduled(count))
     }
     else {
       val iterable = new DynamicIterable[Spectrum, String](query, 10) {
@@ -71,13 +80,16 @@ class CurationController {
         }
       }
 
-      val iterator = iterable.iterator
-
-      while (iterator.hasNext) {
-        val spectrum = iterator.next()
+      val count:Int = iterable.asScala.foldLeft(0){(sum,spectrum:Spectrum) =>
         curationService.scheduleSpectra(spectrum)
+        sum + 1
       }
+
+      new AsyncResult[CurationJobScheduled](CurationJobScheduled(count))
     }
   }
 
 }
+
+
+case class CurationJobScheduled(count:Int)

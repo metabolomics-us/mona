@@ -86,10 +86,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
       }
     }
-
-
   }
-
 }
 
 

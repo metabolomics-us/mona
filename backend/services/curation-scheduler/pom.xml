@@ -52,7 +52,11 @@
         </dependency>
 
         <!-- test dependencies -->
-
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>

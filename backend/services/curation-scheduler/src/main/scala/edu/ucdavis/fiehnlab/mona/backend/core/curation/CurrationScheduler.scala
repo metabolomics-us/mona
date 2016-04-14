@@ -12,7 +12,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
 
 /**
@@ -21,6 +21,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
   */
 @SpringBootApplication
 @EnableDiscoveryClient
+@EnableWebSecurity
 /***
   * the server depends on these configurations to wire all it's internal components together
   */
