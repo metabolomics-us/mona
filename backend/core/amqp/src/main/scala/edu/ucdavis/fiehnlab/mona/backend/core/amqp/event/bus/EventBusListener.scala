@@ -6,12 +6,13 @@ import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
+import org.springframework.amqp.core.AnonymousQueue.{Base64UrlNamingStrategy, NamingStrategy}
 import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.{Jackson2JsonMessageConverter, MessageConverter}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 /**
   * any instance of this class automatically receive events from the subscribed event bus. The eventbus needs to be provided
@@ -30,6 +31,9 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
   @Autowired
   private val rabbitAdmin:RabbitAdmin = null
 
+  @Value("${spring.application.name:unknown}")
+  private val queueName = "unknown"
+
   /**
     * he we define the anonymous temp queue and the fan exchange
     * system for all the applications to communicate with
@@ -38,7 +42,7 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
   def init = {
     logger.info("configuring queue connection")
 
-    val queue = new AnonymousQueue()
+    val queue = new AnonymousQueue(new Base64UrlNamingStrategy(s"${queueName}-"))
 
     val exchange = new FanoutExchange(eventBus.busName, true, true)
 
