@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.{RabbitAdmin, RabbitTemplate}
 import org.springframework.amqp.support.converter._
-import org.springframework.context.annotation.{Bean, Configuration, Import}
+import org.springframework.context.annotation.{Bean, Configuration, Import, Primary}
 
 /**
   * This class configures our communication BUS and the queue names should not be modified
@@ -23,18 +23,20 @@ class BusConfig extends LazyLogging{
   def rabbitAdmin(connectionFactory:ConnectionFactory) = {
     new RabbitAdmin(connectionFactory)
   }
+
   @Bean
+  @Primary
   def messageConverter:MessageConverter  = {
     logger.info("creating message converter")
-/*
+
     val converter = new Jackson2JsonMessageConverter
     converter.setJsonObjectMapper(MonaMapper.create)
     converter
-*/
+
 
     //right now the binaery converter is the only one which carries all the information for serializing, since the
     //information get lost for the generics during sending right now
-    new SimpleMessageConverter
+    //new SimpleMessageConverter
   }
 
   @Bean
