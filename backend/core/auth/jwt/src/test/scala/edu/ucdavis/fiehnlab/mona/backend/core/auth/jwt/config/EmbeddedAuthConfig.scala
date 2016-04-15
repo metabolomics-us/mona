@@ -3,14 +3,14 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.{ MongoConfig}
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 
 /**
   * Created by wohlg on 3/25/2016.
   */
 @Configuration
-@Import(Array(classOf[EmbeddedMongoDBConfiguration]))
+@Import(Array(classOf[MongoConfig]))
 class EmbeddedAuthConfig {
 
   /**
@@ -20,14 +20,5 @@ class EmbeddedAuthConfig {
     */
   @Bean
   def loginService:LoginService = new MongoLoginService
-
-
-  /**
-    * the token secret used during the testing phase
-    *
-    * @return
-    */
-  @Bean
-  def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
 
 }

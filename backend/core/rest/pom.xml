@@ -11,7 +11,7 @@
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
     <artifactId>rest</artifactId>
     <version>1.1-SNAPSHOT</version>
-    <name>rest-persistence-server</name>
+    <name>rest-server</name>
     <url>http://maven.apache.org</url>
 
     <packaging>pom</packaging>
@@ -21,5 +21,6 @@
         <module>api-server</module>
         <module>auth-server</module>
         <module>persistence-server</module>
+        <module>webhooks-server</module>
     </modules>
 </project>

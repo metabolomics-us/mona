@@ -11,10 +11,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfi
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.test.context.TestContextManager
@@ -27,14 +30,7 @@ import scala.collection.JavaConverters._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig],classOf[AuthSecurityConfig]))
-@WebIntegrationTest(Array("server.port=0"))
-class LoginControllerTest extends WordSpec {
-
-  @Value( """${local.server.port}""")
-  val port: Int = 0
-
-  @Autowired
-  val userRepository: UserRepository = null
+class LoginControllerTest extends AbstractSpringControllerTest {
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
@@ -46,14 +42,9 @@ class LoginControllerTest extends WordSpec {
 
       "login" should {
 
-        "ensure we have a valid user" in {
-          userRepository.deleteAll()
-          userRepository.save(new User("admin", "password", List(Role("admin")).asJava))
-        }
-
         "create a token" in {
 
-          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "password")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
 
           assert(response.token != null)
 
@@ -65,22 +56,22 @@ class LoginControllerTest extends WordSpec {
         }
 
         "provide us with info for a token" in {
-          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "password")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
 
           val info  = given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info/").then().statusCode(200).extract().body().as(classOf[LoginInfo])
 
 
           assert(info.username == "admin")
           assert(info.roles.size() == 1)
-          assert(info.roles.get(0) == "admin")
+          assert(info.roles.get(0) == "ADMIN")
         }
       }
     }
   }
 }
 
-@Configuration
-@Import(Array(classOf[EmbeddedMongoDBConfiguration]))
+@SpringBootApplication
+@Import(Array(classOf[MongoConfig]))
 class TestConfig {
 
   /**

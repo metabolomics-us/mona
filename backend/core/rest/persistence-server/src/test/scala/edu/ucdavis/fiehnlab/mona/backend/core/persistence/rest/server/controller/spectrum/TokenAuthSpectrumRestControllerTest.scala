@@ -6,9 +6,9 @@ import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.core.service.persistence.SpectrumPersistenceService
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
@@ -17,25 +17,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 /**
   * Created by wohlgemuth on 3/1/16.
   */
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig]))
-@WebIntegrationTest(Array("server.port=0"))
 @RunWith(classOf[SpringJUnit4ClassRunner])
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig],classOf[TestConfig]))
 class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra"){
 
 
-  /**
-    * object to use for gets
-    *
-    * @return
-    */
-  override def getValue: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
-
-  /**
-    * returns an id for us for testing
-    *
-    * @return
-    */
-  override def getId: String = getValue.id
 
   @Autowired
   val spectrumRepository: SpectrumPersistenceService = null
@@ -191,5 +177,18 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
     }
   }
 
+  /**
+    * object to use for gets
+    *
+    * @return
+    */
+  override def getValue: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
+
+  /**
+    * returns an id for us for testing
+    *
+    * @return
+    */
+  override def getId: String = getValue.id
 }
 

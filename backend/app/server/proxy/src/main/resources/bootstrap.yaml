@@ -8,7 +8,7 @@ spring:
 
 #basic information who we are
 info:
-  component: Zuul Edge Server
+  component: MoNA Edge Server
 
 #defines all the routes based on it's provided services
 zuul:
@@ -40,6 +40,18 @@ zuul:
       path: /rest/users/**
       stripPrefix: false
       serviceId: auth-service
+
+    #access for webhooks
+    webhooks :
+      path: /rest/webhooks/**
+      stripPrefix: false
+      serviceId: webhook-service
+
+    #access to the curation controller
+    curation :
+      path: /rest/curation/**
+      stripPrefix: false
+      serviceId: curation-service
 
   #connection settings to avoid to many timeouts
   host:

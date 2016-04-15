@@ -1,19 +1,23 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchAutoConfiguration, ElasticsearchDataAutoConfiguration}
+import org.springframework.context.annotation.{Configuration, Import, Profile}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager, TestPropertySource}
 
 import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/23/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration]))
+@ContextConfiguration(classes = Array(classOf[Config]))
+@TestPropertySource(locations=Array("classpath:application.properties"))
 class ISubmitterMongoRepositoryTest extends WordSpec {
 
   @Autowired
@@ -42,3 +46,6 @@ class ISubmitterMongoRepositoryTest extends WordSpec {
 
   }
 }
+@SpringBootApplication(exclude = Array(classOf[ElasticsearchAutoConfiguration],classOf[ElasticsearchDataAutoConfiguration]))
+@Import(Array(classOf[MongoConfig]))
+class Config

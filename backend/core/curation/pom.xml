@@ -36,6 +36,10 @@
             <version>1.4</version>
         </dependency>
 
+        <dependency>
+            <artifactId>amqp</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        </dependency>
         <!-- cdk dependencies -->
         <dependency>
             <groupId>org.openscience.cdk</groupId>

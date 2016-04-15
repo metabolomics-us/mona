@@ -50,6 +50,7 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/auth/**")
       .antMatchers(HttpMethod.GET, "/rest/auth/info")
       .antMatchers(HttpMethod.GET, "/rest/users/**")
+      .antMatchers(HttpMethod.GET, "/*")
 
   }
 

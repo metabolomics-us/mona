@@ -25,7 +25,6 @@ import scala.collection.JavaConverters._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig],classOf[AuthSecurityConfig]))
-@WebIntegrationTest(Array("server.port=0"))
 class UserControllerTest extends AbstractGenericRESTControllerTest[User]("/users") {
 
   //required for spring and scala tes

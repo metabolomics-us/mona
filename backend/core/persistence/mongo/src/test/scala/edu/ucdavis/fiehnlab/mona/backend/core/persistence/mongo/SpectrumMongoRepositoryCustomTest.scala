@@ -1,16 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.EmbeddedMongoDBConfiguration
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{Config, ISpectrumMongoRepositoryCustom}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.mongodb.core.query.{BasicQuery, Query}
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager, TestPropertySource}
 
 import scala.collection.JavaConverters._
 
@@ -18,7 +19,8 @@ import scala.collection.JavaConverters._
   * Created by wohlg_000 on 3/9/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedMongoDBConfiguration]))
+@ContextConfiguration(classes = Array(classOf[MongoConfig],classOf[Config]))
+@TestPropertySource(locations=Array("classpath:application.properties"))
 class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,Query] {
 
   @Autowired

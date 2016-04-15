@@ -5,3 +5,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://discovery:8761/eureka/
+spring:
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
