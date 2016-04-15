@@ -1,16 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 
+import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicLong
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
+import org.springframework.amqp.core.AnonymousQueue.{Base64UrlNamingStrategy, NamingStrategy}
 import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.{Jackson2JsonMessageConverter, MessageConverter}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 /**
   * any instance of this class automatically receive events from the subscribed event bus. The eventbus needs to be provided
@@ -26,6 +28,11 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
   @Autowired
   private val messageConverter: MessageConverter = null
 
+  @Autowired
+  private val rabbitAdmin:RabbitAdmin = null
+
+  @Value("${spring.application.name:unknown}")
+  private val queueName = "unknown"
 
   /**
     * he we define the anonymous temp queue and the fan exchange
@@ -34,9 +41,10 @@ abstract class EventBusListener[T](val eventBus: EventBus[T]) extends MessageLis
   @PostConstruct
   def init = {
     logger.info("configuring queue connection")
-    val rabbitAdmin = new RabbitAdmin(connectionFactory)
-    val queue = new AnonymousQueue()
-    val exchange = new FanoutExchange(eventBus.busName, true, false)
+
+    val queue = new AnonymousQueue(new Base64UrlNamingStrategy(s"${queueName}-"))
+
+    val exchange = new FanoutExchange(eventBus.busName, true, true)
 
     rabbitAdmin.declareQueue(queue)
     rabbitAdmin.declareExchange(exchange)
@@ -85,14 +93,15 @@ class ReceivedEventCounter[T](override val eventBus: EventBus[T]) extends EventB
   /**
     * atomic counter to keep track of all events
     */
-  private val counter: AtomicLong = new AtomicLong()
+  private var counter: Long = 0
 
+  private val lock:Semaphore = new Semaphore(1)
   /**
     * reports how many events the bus has seen
     *
     * @return
     */
-  def getEventCount: Long = counter.get()
+  def getEventCount: Long = counter
 
   /**
     * just counts internally
@@ -101,6 +110,8 @@ class ReceivedEventCounter[T](override val eventBus: EventBus[T]) extends EventB
     */
   override def received(event: Event[T]): Unit = {
     logger.debug(s"found event on bus of type ${event.content.getClass}")
-    counter.incrementAndGet()
+    lock.acquire(1)
+    counter = counter + 1
+    lock.release(1)
   }
 }

@@ -34,9 +34,8 @@ services:
   rabbitmq:
     image:  rabbitmq:3-management
     hostname: rabbitmq
-#    ports:
-#      - "5672:5672"
-#      - "15672:15672"
+    ports:
+      - "15673:15672"
 
 
 ################################################################################################################
@@ -100,20 +99,48 @@ services:
 # to each other
 ################################################################################################################
 
+  #webhook support to notify external apis
+  webhooks:
+    image: eros.fiehnlab.ucdavis.edu/mona-webhooks-server
+
+    depends_on:
+      - proxy
+      - mongodb
+      - elasticsearch
+    entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    ports:
+    - "4444:4444"
+
+  #curration scheduler to notify rabbit queue, if any messages are send down the bus
+  #it also exposes a couple of rest enpoints to manually schedule curration tasks
+  #to the system
+  curationScheduler:
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler
+
+    depends_on:
+      - proxy
+      - mongodb
+      - elasticsearch
+    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    ports:
+    - "5555:5555"
+
+################################################################################################################
+# This section defines services, which can be scaled from 1-n times and should be started last
+# just to keep the logfile nice and tidy
+################################################################################################################
+
   #this is our main authenticaiton service for the use in mona
   auth:
     image: eros.fiehnlab.ucdavis.edu/mona-auth-server
     depends_on:
-      - proxy
-      - mongodb
-      - elasticsearch
-    entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+      - curationScheduler
+    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
 
+  #persistences and query interface
   persistence:
     image: eros.fiehnlab.ucdavis.edu/mona-persistence-server
 
     depends_on:
-      - proxy
-      - mongodb
-      - elasticsearch
-    entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+      - curationScheduler
+    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar

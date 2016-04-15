@@ -25,9 +25,6 @@ import scala.collection.JavaConverters._
 @Import(Array(classOf[AuthSecurityConfig],classOf[JWTAuthenticationConfig]))
 class AuthServer {
 
-  @Value("${mona.security.secret}")
-  val secret:String = null
-
   /**
     * the service which actually does the login for us
     *
@@ -35,15 +32,6 @@ class AuthServer {
     */
   @Bean
   def loginServiceDelegate:LoginService = new MongoLoginService
-
-
-  /**00
-    * need a central server for getting this value otherwise all hell breaks loos
-    *
-    * @return
-    */
-  @Bean
-  def tokenSecret: TokenSecret = TokenSecret(secret)
 
 }
 

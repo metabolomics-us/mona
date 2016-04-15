@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+
+################################################################################################################
+# provides a test enveriorment, basically all required database servers
+################################################################################################################
+
+
+################################################################################################################
+#This section provides us with the required databases and should be changed later
+#to define a cluster setup for production user as well as referencing shared storage
+################################################################################################################
+
+  #just fixing the version to avoid surprises
+  mongodb:
+    image: mongo:3.2.4
+    ports:
+      - "27017:27017"
+
+  #mona only supports 1.7.5 at this point in time
+  elasticsearch:
+     image: elasticsearch:1.7.5
+     ports:
+       - "9200:9200"
+       - "9300:9300"
+
+  #rabbitmq
+  rabbitmq:
+    image:  rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"

@@ -15,7 +15,6 @@
     <artifactId>util</artifactId>
 
     <modules>
-        <module>memory-node</module>
     </modules>
 
 </project>

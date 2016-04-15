@@ -32,6 +32,7 @@ class JWTTokenServiceTest extends WordSpec {
   "JWTTokenServiceTest" should {
 
 
+    userRepository.deleteAll()
     userRepository.save(User("test", "test"))
 
     assert(userRepository.count() == 1)

@@ -14,9 +14,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>repository</module>
-        <module>webhooks</module>
+        <module>curation-scheduler</module>
+        <module>curation-runner</module>
     </modules>
 
-
-    <description>This module will contain serveral service modules, required by mona to provide you with advanced configruations and should be mapped over the main proxy server</description>
 </project>

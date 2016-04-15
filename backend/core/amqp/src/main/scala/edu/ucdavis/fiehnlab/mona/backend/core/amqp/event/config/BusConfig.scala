@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
-import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.amqp.rabbit.core.{RabbitAdmin, RabbitTemplate}
 import org.springframework.amqp.support.converter._
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 
@@ -19,6 +19,10 @@ import org.springframework.context.annotation.{Bean, Configuration, Import}
 @Import(Array(classOf[DomainConfig]))
 class BusConfig extends LazyLogging{
 
+  @Bean
+  def rabbitAdmin(connectionFactory:ConnectionFactory) = {
+    new RabbitAdmin(connectionFactory)
+  }
   @Bean
   def messageConverter:MessageConverter  = {
     logger.info("creating message converter")
