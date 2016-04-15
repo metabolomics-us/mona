@@ -19,6 +19,7 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.concurrent.duration._
+import scala.reflect.ClassTag
 
 /**
   * Created by wohlg on 4/6/2016.
@@ -118,7 +119,7 @@ class StringTestConfig {
 
 }
 
-class EventBusTestListener[T](override val eventBus: EventBus[T]) extends EventBusListener[T](eventBus) {
+class EventBusTestListener[T : ClassTag](override val eventBus: EventBus[T]) extends EventBusListener[T](eventBus) {
   val events = new CountDownLatch(2)
 
   /**

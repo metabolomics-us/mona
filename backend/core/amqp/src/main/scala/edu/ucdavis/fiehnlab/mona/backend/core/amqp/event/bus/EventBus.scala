@@ -1,10 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 
 
+import java.io.ByteArrayOutputStream
+
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import org.springframework.amqp.core.{Message, MessageProperties}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
+
+import scala.reflect.ClassTag
 
 /**
   * This defines our general event bus and is utilized to provides us with application wide event handling
@@ -31,10 +38,12 @@ import org.springframework.beans.factory.annotation.Autowired
   *   The default implementation, will than utilize json to send this over rabbitmq.
   */
 
-class EventBus[T](val busName:String = "mona-event-bus") extends LazyLogging{
+class EventBus[T : ClassTag](val busName:String = "mona-event-bus") extends LazyLogging{
 
   @Autowired
   val rabbitTemplate:RabbitTemplate = null
+
+  val objectMapper:ObjectMapper = MonaMapper.create
 
   /**
     * sned the event along the bus, the retrievers should do something with it or plainly ignore it
@@ -42,8 +51,15 @@ class EventBus[T](val busName:String = "mona-event-bus") extends LazyLogging{
     * @param event
     */
   def sendEvent(event:Event[T]) : Unit = {
-    logger.trace(s"sending event to bus ${event}")
-    rabbitTemplate.convertAndSend(busName,"",event)
+    logger.info(s"sending event to bus ${event}")
+    //rabbitTemplate.convertAndSend(busName,"",event)
+
+    val stream = new ByteArrayOutputStream()
+    objectMapper.writeValue(stream,event)
+
+    val message = new Message(stream.toByteArray, new MessageProperties)
+
+    rabbitTemplate.send(busName,"",message)
   }
 }
 
