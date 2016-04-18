@@ -70,11 +70,20 @@
          * @return query
          */
         function parseRSQL(query) {
-            var queryString = '';
+            var queryString = "";
 
-            for (var x in query.compound) {
-                $log.info(query.compound[x]);
+            //build compound query
+            if (Object.keys(query.compound).length !== 0 && JSON.stringify(query.compound) !== JSON.stringify({})) {
+                queryString += buildCompoundQueryString(query.compound);
             }
+
+            // build metadata query
+            if (Object.keys(query.metadata.length !== 0)) {
+
+            }
+            $log.info(query);
+            $log.info(queryString);
+
             // for each keys in
             // compound
             // metadata
@@ -83,6 +92,26 @@
             // concat key value to query string
 
 
+        }
+
+        function buildCompoundQueryString(compoundQuery) {
+            var bio = "";
+            var chem = "";
+
+            // handle compound name
+            if(typeof(compoundQuery.name) !== 'undefined') {
+                bio += "biologicalCompound.names=q='name==" + '\"' + compoundQuery.name + '\"\'';
+                chem += "chemicalCompound.names=q='name==" + '\"' + compoundQuery.name + '\"\'';
+
+            }
+
+            // handle compound inchiKey
+            if(typeof(compoundQuery.inchiKey) !== 'undefined') {
+                bio += " or biologicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
+                chem += " or chemicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
+            }
+            console.log( bio + ' or ' + chem);
+            return bio + ' or ' + chem;
         }
 
     }

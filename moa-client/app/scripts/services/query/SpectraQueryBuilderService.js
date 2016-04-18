@@ -96,14 +96,14 @@
                 }
 
                 else if (element === "nameFilter" && query[element]) {
-                    compiled.compound.name = {like: '%' + query[element] + '%'};
+                    compiled.compound.name = query[element];
                 }
 
                 else if (element === "inchiFilter" && query[element]) {
                     if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(query[element])) {
-                        compiled.compound.inchiKey = {eq: query[element]};
+                        compiled.compound.inchiKey = query[element];
                     } else {
-                        compiled.compound.inchiKey = {like: query[element]};
+                        compiled.compound.inchiKey = query[element];
                     }
                 }
 
