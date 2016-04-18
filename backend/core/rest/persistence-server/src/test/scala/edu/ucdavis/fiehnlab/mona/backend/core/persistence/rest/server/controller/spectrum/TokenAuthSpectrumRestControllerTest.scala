@@ -1,4 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
+import scala.concurrent.duration._
 
 import java.io.InputStreamReader
 
@@ -10,6 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{Em
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
+import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
@@ -19,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig],classOf[TestConfig]))
-class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra"){
+class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra") with Eventually{
 
 
 
@@ -53,9 +55,12 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           authenticate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
         }
 
-        val countAfter = spectrumRepository.count()
+        eventually(timeout(10 seconds)) {
 
-        assert(countAfter - exampleRecords.length == countBefore)
+          val countAfter = spectrumRepository.count()
+
+          assert(countAfter - exampleRecords.length == countBefore)
+        }
       }
 
       "we should be able to query all the spectra using GET at /rest/spectra" in {
@@ -100,10 +105,12 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         for (spec <- firstRecords) {
           authenticate().when().delete(s"/spectra/${spec.id}").then().statusCode(200)
         }
+        eventually(timeout(10 seconds)) {
 
-        val countAfter = spectrumRepository.count()
+          val countAfter = spectrumRepository.count()
 
-        assert(countBefore - countAfter == 10)
+          assert(countBefore - countAfter == 10)
+        }
       }
 
       "we should be able to execute custom queries at /rest/spectra/search using GET" in {
@@ -121,11 +128,15 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
         authenticate().contentType("application/json; charset=UTF-8").body(modifiedSpectrum).when().post("/spectra").then().statusCode(200)
 
-        val countAfter = spectrumRepository.count()
+        eventually(timeout(10 seconds)) {
+
+          val countAfter = spectrumRepository.count()
         val spectrumAfterUpdate = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${modifiedSpectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
-        assert(spectrumAfterUpdate.splash.splash == modifiedSpectrum.splash.splash)
-        assert(countBefore == countAfter)
+
+          assert(spectrumAfterUpdate.splash.splash == modifiedSpectrum.splash.splash)
+          assert(countBefore == countAfter)
+        }
       }
 
       "we should be able to receive a spectra by it's ID using GET at /rest/spectra/{id}" in {
@@ -150,8 +161,11 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
         val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
-        given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200)
+        eventually(timeout(10 seconds)) {
 
+          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200)
+
+        }
       }
 
       "we need to be authenticated for PUTrequestss" in {
@@ -168,11 +182,14 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
         val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
-
-        //should not exist anymore
-        given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(404)
+        eventually(timeout(10 seconds)) {
 
 
+          //should not exist anymore
+          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(404)
+
+
+        }
       }
     }
   }

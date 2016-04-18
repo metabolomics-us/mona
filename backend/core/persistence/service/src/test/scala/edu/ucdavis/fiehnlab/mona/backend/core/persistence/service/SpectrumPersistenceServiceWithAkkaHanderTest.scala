@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service
 
 import java.io.InputStreamReader
 
+import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBusListener, ReceivedEventCounter}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -176,6 +177,12 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
 
         "present us with a count for specific queries" in {
           assert(spectrumPersistenceService.count("metaData=q='name==\"ion mode\" and value==negative'") == 25)
+        }
+
+        "we should be able to execute custom queries like biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'" in {
+
+          val exampleRecords = spectrumPersistenceService.findAll("biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'")
+          assert(exampleRecords.asScala.toList.size == 1)
         }
 
         "delete 1 spectra in the repository" in {

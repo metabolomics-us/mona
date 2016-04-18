@@ -126,6 +126,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[Spectrum] = {
+    logger.info(s"executing query: \n${rsqlQuery}\n")
     //no need to hit elastic here, since no qury is executed
     if (rsqlQuery == "") {
       spectrumMongoRepository.findAll(request)
@@ -179,7 +180,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def count(): Long = spectrumMongoRepository.count()
+  def count(): Long = spectrumElasticRepository.count()
 
   /**
     * returns the count matching the given RSQL query
