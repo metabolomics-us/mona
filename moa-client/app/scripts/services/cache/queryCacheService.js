@@ -78,9 +78,10 @@
             }
 
             // build metadata query
-            if (Object.keys(query.metadata.length !== 0)) {
-
+            if (query.metadata.length !== 0) {
+                queryString += buildMetaDataQueryString(query.metadata);
             }
+
             $log.info(query);
             $log.info(queryString);
 
@@ -92,6 +93,14 @@
             // concat key value to query string
 
 
+        }
+
+
+        function buildMetaDataQueryString(metaDataQuery) {
+            var queryString = "";
+            for (var i = 0, l = metaDataQuery.length; i < l; i++) {
+                var object = metaDataQuery[i];
+            }
         }
 
         function buildCompoundQueryString(compoundQuery) {
