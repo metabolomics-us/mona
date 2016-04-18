@@ -96,7 +96,7 @@
                 }
 
                 else if (element === "nameFilter" && query[element]) {
-                    compiled.compound.name = {ilike: '%' + query[element] + '%'};
+                    compiled.compound.name = {like: '%' + query[element] + '%'};
                 }
 
                 else if (element === "inchiFilter" && query[element]) {

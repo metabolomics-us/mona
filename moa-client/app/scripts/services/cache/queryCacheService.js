@@ -39,6 +39,7 @@
         this.getSpectraQuery = function() {
             // Create default query if none exists
             // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
+
             if (this.query === null) {
                 return $injector.get('SpectraQueryBuilderService').prepareQuery();
             } else {
@@ -52,6 +53,7 @@
          */
         this.setSpectraQuery = function(query) {
             $rootScope.$broadcast('spectra:query', query);
+            parseRSQL(query);
             this.query = query;
         };
 
@@ -60,6 +62,28 @@
          */
         this.resetSpectraQuery = function() {
             this.clear();
+        };
+
+        /**
+         * parses a query object and returns a RSQL Query String
+         * @param query
+         * @return query
+         */
+        function parseRSQL(query) {
+            var queryString = '';
+
+            for (var x in query.compound) {
+                $log.info(query.compound[x]);
+            }
+            // for each keys in
+            // compound
+            // metadata
+            // tags
+
+            // concat key value to query string
+
+
         }
+
     }
 })();
