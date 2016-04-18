@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.TestCurrationRunn
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+
 import scala.concurrent.duration._
 
 /**
@@ -23,7 +25,7 @@ import scala.concurrent.duration._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[CurrationScheduler]))
-class CurrationEventBusListenerTest extends WordSpec with Eventually {
+class CurrationEventBusListenerTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
   val eventBus: EventBus[Spectrum] = null
@@ -71,7 +73,7 @@ class CurrationEventBusListenerTest extends WordSpec with Eventually {
       testCurrationRunner.messageReceived = false
       eventBus.sendEvent(Event(spectrum, new Date(), Event.ADD))
 
-      eventually(timeout(10 seconds)) {
+      eventually(timeout(100 seconds)) {
         assert(testCurrationRunner.messageReceived)
       }
 

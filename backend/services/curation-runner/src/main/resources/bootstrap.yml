@@ -13,3 +13,6 @@ server:
 #basic information who we are
 info:
   component: MoNA Curation Runner
+logging:
+  level:
+    com.netflix.discovery.DiscoveryClient:  error

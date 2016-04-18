@@ -10,12 +10,14 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.Res
 import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
+import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.collection.JavaConverters._
+import scala.concurrent.duration._
 
 /**
   * Created by wohlg on 3/11/2016.
@@ -23,7 +25,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
-class RestRepositoryWriterTest extends WordSpec {
+class RestRepositoryWriterTest extends WordSpec  with Eventually{
 
   @Value( """${local.server.port}""")
   val port: Int = 0
@@ -44,8 +46,9 @@ class RestRepositoryWriterTest extends WordSpec {
 
       "upload them to the server" in {
         writer.write(exampleRecords.toList.asJava)
-
-        assert(monaSpectrumRestClient.count() == exampleRecords.length)
+        eventually(timeout(10 seconds)) {
+          assert(monaSpectrumRestClient.count() == exampleRecords.length)
+        }
       }
     }
   }
