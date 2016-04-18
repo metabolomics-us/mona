@@ -11,7 +11,7 @@ import scala.reflect.ClassTag
   * @param content
   * @tparam T
   */
-case class Event[T : ClassTag](@BeanProperty content:T, @BeanProperty dateFired:Date = new Date(), @BeanProperty eventType:String = "None") extends Serializable
+case class Event[T : ClassTag](content:T, dateFired:Date = new Date(), eventType:String = "None") extends Serializable
 
 
 object Event{
