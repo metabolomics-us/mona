@@ -36,7 +36,7 @@ services:
     hostname: rabbitmq
     ports:
       - "15673:15672"
-
+      - "5672:5672"
 
 ################################################################################################################
 # This section defines our required services, need to connect mona apps

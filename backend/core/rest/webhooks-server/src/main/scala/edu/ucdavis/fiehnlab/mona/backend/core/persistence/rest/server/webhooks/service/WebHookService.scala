@@ -32,7 +32,7 @@ class WebHookService extends LazyLogging {
     *
     * @param id
     */
-  def trigger(id: String): Array[WebHookResult] = {
+  def trigger(id: String, eventType:String): Array[WebHookResult] = {
 
     logger.info(s"triggering all event hooks for id: ${id}")
 
@@ -46,7 +46,7 @@ class WebHookService extends LazyLogging {
       hooks.collect {
 
         case hook: WebHook =>
-          val url = s"${hook.url}${id}"
+          val url = s"${hook.url}${id}-${eventType}"
 
           logger.info(s"triggering event: ${url}")
 
@@ -64,6 +64,7 @@ class WebHookService extends LazyLogging {
               val result = WebHookResult(hook.name, url, false, x.getMessage)
               notifications.sendEvent(Event(Notification(result, getClass.getName)))
               result
+            case _ => throw new RuntimeException("this should never have happened, something is odd in the webhook service!")
           }
 
         case x:Any =>

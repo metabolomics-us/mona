@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service
   * Created by wohlg on 4/12/2016.
   */
 @Service
-class CurrationService {
+class CurationService {
 
   @Autowired
-  @Qualifier("spectra-curration-queue")
+  @Qualifier("spectra-curation-queue")
   val queueName:String = null
 
   @Autowired
@@ -30,18 +30,20 @@ class CurrationService {
   /**
     * sends this spectrum to our dedicated queue. This queue can have many consumers to than
     * asynchrly process and curret the object
+ *
     * @param spectrum
     */
   def scheduleSpectra(spectrum:Spectrum) = {
     rabbitTemplate.convertAndSend(queueName,spectrum)
-    notifications.sendEvent(Event(Notification(CurrationScheduled(spectrum), getClass.getName)))
+    notifications.sendEvent(Event(Notification(CurationScheduled(spectrum), getClass.getName)))
   }
 
 }
 
 /**
   * simple event to let people who are interrested in notifications know that we scheduled one
+ *
   * @param spectrum
   * @param time
   */
-case class CurrationScheduled(spectrum: Spectrum, time:Date = new Date())
+case class CurationScheduled(spectrum: Spectrum, time:Date = new Date())
