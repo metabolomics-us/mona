@@ -69,6 +69,7 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
     println("Optional: ")
     println("")
     println("\t --curate\t\t jobs are not only uploaded, but also curated at the same time")
+    println("\t --mona.rest.server.host=127.0.0.1\t\t to specify which server to user")
 
 
     System.exit(-1)

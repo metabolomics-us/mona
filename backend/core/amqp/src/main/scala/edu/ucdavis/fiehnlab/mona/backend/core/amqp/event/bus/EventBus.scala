@@ -51,8 +51,8 @@ class EventBus[T : ClassTag](val busName:String = "mona-event-bus") extends Lazy
     * @param event
     */
   def sendEvent(event:Event[T]) : Unit = {
+    /*
     logger.trace(s"sending event to bus ${event}")
-    //rabbitTemplate.convertAndSend(busName,"",event)
 
     val stream = new ByteArrayOutputStream()
     objectMapper.writeValue(stream,event)
@@ -60,6 +60,8 @@ class EventBus[T : ClassTag](val busName:String = "mona-event-bus") extends Lazy
     val message = new Message(stream.toByteArray, new MessageProperties)
 
     rabbitTemplate.send(busName,"",message)
+    */
+    rabbitTemplate.convertAndSend(busName,"",event)
   }
 }
 

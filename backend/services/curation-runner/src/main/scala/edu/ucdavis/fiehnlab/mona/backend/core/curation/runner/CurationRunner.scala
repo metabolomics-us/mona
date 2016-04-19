@@ -1,16 +1,22 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.runner
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.SpringApplication
+import org.springframework.amqp.core.Queue
+import org.springframework.amqp.rabbit.connection.ConnectionFactory
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
+import org.springframework.amqp.support.converter.MessageConverter
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.{CommandLineRunner, SpringApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import org.springframework.context.annotation.Import
-import org.springframework.http.HttpMethod
-import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
+import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
-import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.stereotype.Component
 
 /**
   * This class starts the curation service and let's it listen in the background for messages
@@ -19,18 +25,48 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableWebSecurity
-/***
-  * the server depends on these configurations to wire all it's internal components together
-  */
-@Import(Array(classOf[CurationConfig]))
-class CurationRunner  extends WebSecurityConfigurerAdapter {
+@Import(Array(classOf[CurationConfig],classOf[BusConfig]))
+class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
+
+  @Autowired
+  @Qualifier("spectra-curation-queue")
+  val queueName:String = null
+
+  @Bean
+  def curationListener: CurationListener = new CurationListener
+
+  @Bean
+  def container(connectionFactory: ConnectionFactory, listener: CurationListener,messageConverter:MessageConverter): SimpleMessageListenerContainer = {
+    logger.info(s"connecting to queue: ${queueName}")
+    val container = new SimpleMessageListenerContainer()
+    container.setConnectionFactory(connectionFactory)
+    container.setMessageListener(curationListener)
+    container.setMessageConverter(messageConverter)
+    container.setQueueNames(queueName)
+
+    container
+  }
 
 }
 
 /**
   * our local server, which should be connecting to eureka, etc
   */
-object CurationRunner extends App{
+object CurationRunner extends App {
   new SpringApplication(classOf[CurationRunner]).run()
+}
 
+/**
+  * listens to our queue and does our processing
+  */
+class CurationListener extends GenericMessageListener[Spectrum] with LazyLogging {
+
+  @Autowired
+  val workflow: Workflow[Spectrum] = null
+
+  override def handleMessage(spectra: Spectrum) = {
+    logger.info(s"received spectra: ${spectra.id}")
+    workflow.process(spectra)
+    logger.info(s"curated spectra: ${spectra.id}")
+  }
 }
