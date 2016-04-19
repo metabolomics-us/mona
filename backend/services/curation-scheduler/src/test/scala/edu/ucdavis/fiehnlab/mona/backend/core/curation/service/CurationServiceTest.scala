@@ -30,7 +30,7 @@ import scala.concurrent.duration._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[CurrationScheduler]))
-class CurrationServiceTest extends AbstractSpringControllerTest with Eventually {
+class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
   val testCurrationRunner: TestCurrationRunner = null
@@ -39,7 +39,7 @@ class CurrationServiceTest extends AbstractSpringControllerTest with Eventually 
   val notificationCounter: ReceivedEventCounter[Notification] = null
 
   @Autowired
-  val currationService: CurrationService = null
+  val currationService: CurationService = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 

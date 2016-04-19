@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, ReceivedEventCounter}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.converter.MonaMessageConverter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
@@ -28,15 +29,7 @@ class BusConfig extends LazyLogging{
   @Primary
   def messageConverter:MessageConverter  = {
     logger.info("creating message converter")
-
-    val converter = new Jackson2JsonMessageConverter
-    converter.setJsonObjectMapper(MonaMapper.create)
-    converter
-
-
-    //right now the binaery converter is the only one which carries all the information for serializing, since the
-    //information get lost for the generics during sending right now
-    //new SimpleMessageConverter
+    new MonaMessageConverter
   }
 
   @Bean
