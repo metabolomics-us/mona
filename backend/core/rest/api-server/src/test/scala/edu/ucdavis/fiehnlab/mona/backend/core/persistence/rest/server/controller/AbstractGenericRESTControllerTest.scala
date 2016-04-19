@@ -86,7 +86,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 /**
   * provides us with a simple, elegant way to refresh the application context between runs
   */
-@WebIntegrationTest(Array("server.port=9999"))
+@WebIntegrationTest(Array("server.port=9999","eureka.client.enabled:false"))
 abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
 
   val port: Int = 9999

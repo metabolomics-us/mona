@@ -59,7 +59,6 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
       assert(eventBus.isInstanceOf[EventBus[Spectrum]])
     }
     "and trigger it on sending an update event" in {
-
       val notificationCount = notificationCounter.getEventCount
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.UPDATE))
 
@@ -76,14 +75,13 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.DELETE))
 
       //we should get an information that the notification counter received an event
-      eventually(timeout(10 seconds)) {
+      eventually(timeout(100 seconds)) {
         assert(notificationCounter.getEventCount == notificationCount +  1)
       }
 
     }
 
     "and trigger it on sending an insert  event" in {
-
       val notificationCount = notificationCounter.getEventCount
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.ADD))
 

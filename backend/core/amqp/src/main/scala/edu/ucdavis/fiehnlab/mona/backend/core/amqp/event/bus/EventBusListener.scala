@@ -54,7 +54,7 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
       queueName = s"${eventBus.busName}-${queueName}"
     }
 
-    val queue = new Queue(queueName,false,false,true)
+    val queue = new Queue(queueName,false,true,true)
 
     val exchange = new FanoutExchange(eventBus.busName, false, true)
 
@@ -70,8 +70,7 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
     container.setMessageListener(this)
     container.setRabbitAdmin(rabbitAdmin)
     container.setMessageConverter(messageConverter)
-
- //   logger.info(s"utilizing message converter: ${messageConverter}")
+    container.setExclusive(true)
 
     logger.info("starting container")
     container.start()
@@ -91,15 +90,15 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
     * @param message
     */
   final override def onMessage(message: Message): Unit = {
-    logger.info(s"message received: ${new String(message.getBody)}")
-    //received(messageConverter.fromMessage(message).asInstanceOf[Event[T]])
-    logger.info(s"type of class: ${classTag[T].runtimeClass}")
+    logger.info(s"received event at ${getClass.getSimpleName}")
+    logger.debug(s"message received: ${new String(message.getBody)}")
+    logger.debug(s"type of class: ${classTag[T].runtimeClass}")
     val content:Event[Any] = objectMapper.readValue(message.getBody,classTag[Event[T]].runtimeClass).asInstanceOf[Event[Any]]
-    logger.info(s"type of event is ${content.getClass.getSimpleName}")
-    logger.info(s"type of event content is ${content.content.getClass.getSimpleName}")
+    logger.debug(s"type of event is ${content.getClass.getSimpleName}")
+    logger.debug(s"type of event content is ${content.content.getClass.getSimpleName}")
 
     val newContent:T = objectMapper.convertValue(content.content,classTag[T].runtimeClass).asInstanceOf[T]
-    logger.info(s"type of new event content is ${newContent.getClass.getSimpleName}")
+    logger.debug(s"type of converted event content is ${newContent.getClass.getSimpleName}")
 
     received(Event[T](newContent,content.dateFired,content.eventType))
   }
@@ -114,15 +113,13 @@ class ReceivedEventCounter[T : ClassTag](override val eventBus: EventBus[T]) ext
   /**
     * atomic counter to keep track of all events
     */
-  private var counter: Long = 0
-
-  private val lock:Semaphore = new Semaphore(1)
+  private val counter: AtomicLong = new AtomicLong()
   /**
     * reports how many events the bus has seen
     *
     * @return
     */
-  def getEventCount: Long = counter
+  def getEventCount: Long = counter.get()
 
   /**
     * just counts internally
@@ -130,8 +127,6 @@ class ReceivedEventCounter[T : ClassTag](override val eventBus: EventBus[T]) ext
     * @param event
     */
   override def received(event: Event[T]): Unit = {
-    lock.acquire(1)
-    counter = counter + 1
-    lock.release(1)
+    counter.incrementAndGet()
   }
 }

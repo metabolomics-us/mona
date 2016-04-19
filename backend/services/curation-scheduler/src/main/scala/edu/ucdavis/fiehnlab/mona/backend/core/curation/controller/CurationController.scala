@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 
-import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurrationService
+import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
@@ -30,7 +30,7 @@ class CurationController {
   val repository: ISpectrumMongoRepositoryCustom = null
 
   @Autowired
-  val curationService: CurrationService = null
+  val curationService: CurationService = null
 
   /**
     * schedules the spectra with the specified id for curation

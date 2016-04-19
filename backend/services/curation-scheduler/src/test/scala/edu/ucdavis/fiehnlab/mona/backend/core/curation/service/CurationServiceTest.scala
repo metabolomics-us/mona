@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCon
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurrationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
@@ -29,7 +30,7 @@ import scala.concurrent.duration._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[CurrationScheduler]))
-class CurrationServiceTest extends WordSpec with Eventually {
+class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
   val testCurrationRunner: TestCurrationRunner = null
@@ -38,7 +39,7 @@ class CurrationServiceTest extends WordSpec with Eventually {
   val notificationCounter: ReceivedEventCounter[Notification] = null
 
   @Autowired
-  val currationService: CurrationService = null
+  val currationService: CurationService = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
