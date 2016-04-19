@@ -45,6 +45,12 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
     * @return
     */
   def nodes:Iterable[Vertex] = nodeIndex.values
+
+  /**
+    * access to all our edges
+    * @return
+    */
+  def getEdges:List[AbstractEdge[ID]] = edges.toList
   /**
     * size of our graph
     * @return
