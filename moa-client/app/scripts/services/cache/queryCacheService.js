@@ -100,7 +100,15 @@
             var queryString = "";
             for (var i = 0, l = metaDataQuery.length; i < l; i++) {
                 var object = metaDataQuery[i];
+                var operator = object.value.eq ? "==" : "!=" ;
+
+                if (i > 0) {
+                    queryString += ' and ';
+                }
+
+                queryString += "metaData=q='name" + operator + '\"' + object.value.eq || object.value.ne + '\"\'';
             }
+            return queryString;
         }
 
         function buildCompoundQueryString(compoundQuery) {
