@@ -47,7 +47,7 @@ class WebHookServiceTest extends AbstractSpringControllerTest with Eventually{
 
       val count = notificationCounter.getEventCount
 
-      val result = webHookService.trigger("12345")
+      val result = webHookService.trigger("12345","test")
 
       assert(result.size == 1)
 

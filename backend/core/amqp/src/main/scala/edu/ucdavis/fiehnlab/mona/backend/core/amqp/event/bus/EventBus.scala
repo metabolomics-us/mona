@@ -61,7 +61,9 @@ class EventBus[T : ClassTag](val busName:String = "mona-event-bus") extends Lazy
 
     rabbitTemplate.send(busName,"",message)
     */
+    logger.info(s"sending event to bus: ${event.content.getClass.getSimpleName}")
     rabbitTemplate.convertAndSend(busName,"",event)
+    logger.info("even send!")
   }
 }
 

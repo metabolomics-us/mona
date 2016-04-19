@@ -47,7 +47,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       webHookRepository.deleteAll()
       authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/webhooks").then().statusCode(200)
 
-      val result:Array[WebHookResult] = given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"/webhooks/trigger/${getId}").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[WebHookResult]])
+      val result:Array[WebHookResult] = given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"/webhooks/trigger/${getId}/add").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[WebHookResult]])
 
       assert(result.size == 1)
 
@@ -60,7 +60,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       webHookRepository.deleteAll()
       authenticate().contentType("application/json; charset=UTF-8").body(WebHook("i can't be reached","http://localhost:21234/rest","none provided")).when().post(s"/webhooks").then().statusCode(200)
 
-      val result:Array[WebHookResult] = given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"/webhooks/trigger/${getId}").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[WebHookResult]])
+      val result:Array[WebHookResult] = given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"/webhooks/trigger/${getId}/add").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[WebHookResult]])
 
       assert(result.size == 1)
 
@@ -76,7 +76,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       webHookRepository.deleteAll()
       authenticate().contentType("application/json; charset=UTF-8").body(WebHook("i dont exist",s"http://localhost:${port}/info/id/","this tosses a 401")).when().post(s"/webhooks").then().statusCode(200)
 
-      val result:Array[WebHookResult] = given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"/webhooks/trigger/${getId}").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[WebHookResult]])
+      val result:Array[WebHookResult] = given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"/webhooks/trigger/${getId}/add").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[WebHookResult]])
 
       assert(result.size == 1)
 
