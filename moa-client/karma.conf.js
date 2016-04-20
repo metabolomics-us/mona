@@ -13,7 +13,7 @@ module.exports = function(config) {
             'app/bower_components/angular-jquery/dist/angular-jquery.js',
             'app/bower_components/jquery/dist/jquery.js',
 
-            // moaClientApp dependencies
+            // moaClientApp vendor dependencies
             'app/bower_components/angular-mocks/angular-mocks.js',
             'app/bower_components/angular-route/angular-route.js',
             'app/bower_components/angular-resource/angular-resource.js',
@@ -34,6 +34,7 @@ module.exports = function(config) {
             'app/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
             'app/bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
             'app/bower_components/angular-translate/angular-translate.js',
+            'app/bower_components/angularjs-viewhead/angularjs-viewhead.js',
 
             // load html templates into $templateCache for testing
             //'app/*.html',
@@ -43,9 +44,10 @@ module.exports = function(config) {
             'app/scripts/**/*.js',
 
             // test scripts
-            'test/spec/controllers/**/*.js',
-            'test/spec/services/**/*.js',
-            'test/spec/directives/**/*.js'
+            //'test/spec/controllers/**/*.js',
+            //'test/spec/services/**/*.js',
+            //'test/spec/directives/**/*.js'
+            'test/spec/services/query/rsqlParser-spec.js'
 
 
         ],

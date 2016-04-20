@@ -169,7 +169,6 @@
                 $scope.spectraLoadLength = $scope.spectra.length;
 
 
-                // use RSQ
                 var payload = {
                     query: SpectraQueryBuilderService.getQuery(),
                     offset: $scope.spectra.length

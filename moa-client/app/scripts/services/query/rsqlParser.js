@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     angular.module('moaClientApp')
-        .factory(rsqlParser, rsqlParser);
+        .factory("rsqlParser", rsqlParser);
 
     /* @ngInject */
     function rsqlParser($log) {

@@ -26,8 +26,7 @@
         'infinite-scroll',
         'mgcrea.bootstrap.affix',
         'pascalprecht.translate',
-        'viewhead',
-        'ngFlash'
+        'viewhead'
     ])
 
     /**
