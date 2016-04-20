@@ -82,7 +82,7 @@ class TestWorkflowConfig {
     * @return
     */
   @Bean
-  def linearTestWorkflow = new LinearWorkflow[LinearTest]("test-linear")
+  def linearTestWorkflow = new AnnotationWorkflow[LinearTest]("test-linear")
 
 }
 

@@ -4,7 +4,7 @@ import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.{NameAlreadyRegisteredException, ParentAndParentClassSpecifiedException, RefrenceBeanHasNotBeenAnnotatedException, WorkflowException}
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception._
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph._
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
 import org.springframework.batch.item.ItemProcessor
@@ -17,23 +17,39 @@ import scala.reflect._
 
 
 /**
-  * defines a standard processing workflow
+  * defines an workflow
+  *
+  * @param graph
+  * @tparam TYPE
   */
-abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationListener[ContextRefreshedEvent] with LazyLogging {
-
-  @Autowired
-  val applicationContext: ApplicationContext = null
+class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] = new Graph[String, Node[TYPE, TYPE], Edge], val permitsTree: Boolean = false) extends ItemProcessor[TYPE, List[TYPE]] with LazyLogging {
 
   /**
-    * internal graph for our workflow
+    * mow many steps do we need to execute
+    *
+    * @return
     */
-  val graph = new Graph[String, Node[TYPE, TYPE], Edge]
+  def stepSize = graph.size
 
   /**
     * associated listener
     */
   @Autowired(required = false)
-  val listeners: java.util.List[WorkflowListener[TYPE]] = null
+  val listeners: java.util.List[WorkflowListener[TYPE]] = new java.util.ArrayList[WorkflowListener[TYPE]]
+
+  /**
+    * registers an additional listener
+    * @param listener
+    * @return
+    */
+  def addListener(listener:WorkflowListener[TYPE]) = listeners.add(listener)
+  /**
+    * processes the given item for us
+    *
+    * @param item
+    * @return
+    */
+  def process(item: TYPE): List[TYPE] = process(item, graph.heads.head)
 
   /**
     * iterative approach to process all defined annotation data
@@ -41,19 +57,43 @@ abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationLis
     * @param toProcess
     * @param node by default it's the head node
     */
-  def process(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): Any
+  protected final def process(toProcess: TYPE, node: Node[TYPE, TYPE]): List[TYPE] = {
 
-  /**
-    * should not longer be utilized, instead the 'process' method should be used
-    * @param toProcess
-    * @param node
-    * @return
-    */
-  @Deprecated
-  final def run(toProcess: TYPE, node: Node[TYPE, TYPE] = graph.heads.head): Any = {
-    logger.warn("using deprecated method, this will go away soon...")
-    process(toProcess,node)
+    val step = node.step
+
+    fireStartingEvent(toProcess, step)
+
+    logger.debug(s"executing workflow step ${step.name}, ${step.description}")
+    val result: TYPE = step.processor.process(toProcess)
+
+    fireFinishingEvent(result, step)
+
+    val children = graph.getChildren(node)
+
+    //if we got no relements, we just return a list with our data
+    if (children.isEmpty) {
+      result :: List.empty
+    }
+    else if (children.size == 1) {
+      //if we got 1 element, we return the processed result
+
+      process(result, children.head)
+    }
+    //we got a graph structure
+    else {
+      //we allow trees
+      if (permitsTree) {
+        //process every chield in the tree
+        children.collect {
+          case child: Node[TYPE, TYPE] => process(result, child)
+        }.flatten.toList
+      }
+      else {
+        throw new WorkflowDoesntSupportMoreThanOneChieldExcpetion(s"defined workflow had several children: ${children}")
+      }
+    }
   }
+
 
   /**
     * fires a finishing event
@@ -79,12 +119,17 @@ abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationLis
     }
   }
 
-  /**
-    * mow many steps do we need to execute
-    *
-    * @return
-    */
-  def stepSize = graph.size
+}
+
+/**
+  * defines a standard processing workflow
+  */
+class AnnotationWorkflow[TYPE: ClassTag](val name: String, permitsTree:Boolean = false) extends Workflow(new Graph[String, Node[TYPE, TYPE], Edge],permitsTree) with ApplicationListener[ContextRefreshedEvent] {
+
+  @Autowired
+  val applicationContext: ApplicationContext = null
+
+  val helper:AnnotationHelper[TYPE] = new AnnotationHelper[TYPE]()
 
   /**
     * attempts to find our required annotations
@@ -105,25 +150,15 @@ abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationLis
         if (step.workflow() == this.name) {
           logger.info("\t => with the correct annotation")
 
-          val name = generateNodeIdentifier(step, processor)
+          val connectivity = helper.buildNodeAndEdge(processor,step,graph)
 
-          //build the new processing step
-          val proccessingStep = ProcessingStep(name, processor, step.description())
-
-          //create a new node
-          val node = Node[TYPE, TYPE](name, proccessingStep, step.description())
-          graph.addNode(node)
-
-          val parent = getPreviousStepId(step)
-
-          logger.info(s"previous step name: ${parent}")
-
-          if (parent == "None") {
-            logger.info("this is the root node")
-          }
-          else {
-            logger.info(s"step is mapped from ${parent} to ${name}")
-            graph.addEdge(new Edge(parent, name))
+          connectivity._2 match {
+            case Some(x) =>
+              graph.addNode(connectivity._1)
+              graph.addEdge(x)
+            case None =>
+              graph.addNode(connectivity._1)
+              logger.info("this is the root node")
           }
         }
         else {
@@ -134,66 +169,6 @@ abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationLis
     }
   }
 
-  /**
-    * attempts to find the id for the previous step defined, depending if it's done as class or as parameter
-    *
-    * @param step
-    * @return
-    */
-  def getPreviousStepId(step: Step): String = {
-    //the parent class is not void
-    if (step.previousClass().getName != classOf[Void].getName) {
-      logger.info(s"custom class name specified for previous step: ${step.previousClass()}")
-      if (step.previous() != "None") {
-        throw new ParentAndParentClassSpecifiedException
-      }
-      else {
-        logger.info(s"looking up referenced bean: ${step.previousClass()}")
-        val parentBean = applicationContext.getBean(step.previousClass())
-
-        logger.info(s"found: ${parentBean}")
-
-        val referenceId = parentBean.getClass.getAnnotation(classOf[Step])
-
-        if (referenceId == null) {
-          throw new RefrenceBeanHasNotBeenAnnotatedException(s"need @Step annotation ${parentBean}")
-        }
-        else {
-          logger.info("generating identifier information for the previous step")
-          generateNodeIdentifier(referenceId, parentBean, true)
-        }
-      }
-    }
-    else {
-      logger.info(s"using defined name for the previous step of: ${step.previous()}")
-      step.previous()
-    }
-  }
-
-  /**
-    * attemps to generate the name for the node processor
-    *
-    * @param step
-    * @param processor
-    * @return
-    */
-  def generateNodeIdentifier(step: Step, processor: Any, parentScan: Boolean = false): String = {
-    var name = step.name()
-    //assigning class name as default
-    if (name == "None") name = processor.getClass.getName
-
-    //check if this id was already registered
-    graph.getNode(name) match {
-      case None =>
-        logger.debug(s"node name is unique ${name}")
-        name
-      case _ =>
-        if (!parentScan)
-          throw new NameAlreadyRegisteredException(s"a node with the name '${name}' was already registered, please use unique names")
-        else
-          name
-    }
-  }
 
   /**
     * searches for all our annoations
@@ -222,14 +197,16 @@ abstract class Workflow[TYPE: ClassTag](val name: String) extends ApplicationLis
 
 /**
   * a conditional action, which can return true or false. Implmented classes need to be annotated with the Condition annotation to define the behavior
+  *
   * @tparam T
   */
 trait Conditional[T] {
 
   /**
     * evaluate the object value and return a value depending on the evaluation
+    *
     * @param value
     * @return
     */
-  def evaluate(value:T) : Boolean
+  def evaluate(value: T): Boolean
 }

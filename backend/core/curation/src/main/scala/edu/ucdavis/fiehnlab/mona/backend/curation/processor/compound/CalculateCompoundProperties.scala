@@ -2,17 +2,18 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import java.io.StringReader
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Compound, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.common.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.FetchCompoundData
 import org.openscience.cdk.inchi.{InChIGenerator, InChIGeneratorFactory}
 import org.openscience.cdk.smiles.SmilesGenerator
 import org.openscience.cdk.{AtomContainer, DefaultChemObjectBuilder}
 import org.openscience.cdk.interfaces.{IAtomContainer, IChemObject, IMolecularFormula}
 import org.openscience.cdk.io.MDLV2000Reader
 import org.openscience.cdk.tools.CDKHydrogenAdder
-import org.openscience.cdk.tools.manipulator.{MolecularFormulaManipulator, AtomContainerManipulator}
+import org.openscience.cdk.tools.manipulator.{AtomContainerManipulator, MolecularFormulaManipulator}
 import org.springframework.batch.item.ItemProcessor
 
 import scala.collection.mutable.ArrayBuffer
@@ -20,7 +21,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by sajjan on 4/4/16.
   */
-@Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[RemoveComputedData], workflow = "spectra-curation")
+@Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCompoundData], workflow = "spectra-curation")
 class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] {
   override def process(spectrum: Spectrum): Spectrum = {
     val updatedBiologicalCompound =

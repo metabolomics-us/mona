@@ -3,10 +3,9 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.config
 import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundException}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{BusConfig, MonaEventBusConfiguration, MonaNotificationBusConfiguration}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.LinearWorkflow
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.AnnotationWorkflow
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.JSONFileSpectraReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.amqp.core._
@@ -20,46 +19,47 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
   * and assorted issues
   */
 @Configuration
-/**
-  * presassemble workflows based of this package for simplicity of use
-  */
 @ComponentScan(value = Array("edu.ucdavis.fiehnlab.mona.backend.curation.processor"))
 @Import(Array(classOf[BusConfig]))
 class CurationConfig extends LazyLogging {
 
   /**
     * in which queue will all curation tasks be stored. DO NOT RENAME!!!
+    *
     * @return
     */
   @Bean(name = Array("spectra-curation-queue"))
-  def queueName:String = "curation-queue"
+  def queueName: String = "curation-queue"
 
   /**
     * the actual queue
+    *
     * @return
     */
   @Bean(name = Array("spectra-curation-queue-instance"))
-  def queue:Queue = {
+  def queue: Queue = {
     new Queue(queueName, false)
   }
 
   /**
     * which exchange will be used for the curation
+    *
     * @return
     */
   @Bean
-  def exchange:DirectExchange = {
+  def exchange: DirectExchange = {
     new DirectExchange("spectra-curation")
   }
 
   /**
     * just binding the different queues together
+    *
     * @param queue
     * @param exchange
     * @return
     */
   @Bean
-  def binding(queue:Queue, exchange:DirectExchange):Binding = {
+  def binding(queue: Queue, exchange: DirectExchange): Binding = {
     BindingBuilder.bind(queue).to(exchange).`with`(queueName)
   }
 
@@ -72,7 +72,14 @@ class CurationConfig extends LazyLogging {
     */
   @Bean
   def curationWorkflow: ItemProcessor[Spectrum, Spectrum] = {
-    new LinearWorkflow[Spectrum](name = "spectra-curation")
+    val flow = new AnnotationWorkflow[Spectrum](name = "spectra-curation",permitsTree = false)
+
+    /**
+      * uggly wrapper, but have no better alternative right now
+      */
+    new ItemProcessor[Spectrum, Spectrum] {
+      override def process(item: Spectrum): Spectrum = flow.process(item).head
+    }
   }
 
   /**
@@ -99,7 +106,7 @@ class CurationConfig extends LazyLogging {
   def jsonFileReader(@Value("#{jobParameters[pathToFile]}")
                      file: String): ItemReader[Spectrum] = {
 
-    if(file == null){
+    if (file == null) {
       throw new FileNotFoundException("you need to provide a file name, but instead the parameter was null!")
     }
     val reader = new JSONFileSpectraReader()
