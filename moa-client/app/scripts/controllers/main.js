@@ -4,7 +4,7 @@
       .controller('MainController', MainController);
 
     /* @ngInject */
-    function MainController($scope, $rootScope, Flash) {
+    function MainController($scope, $rootScope) {
 
         $scope.slides = [
             {image: 'images/spectrum-1.png', id: '252', name: 'Cyclopamine'},

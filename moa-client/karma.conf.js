@@ -47,6 +47,8 @@ module.exports = function(config) {
             //'test/spec/controllers/**/*.js',
             //'test/spec/services/**/*.js',
             //'test/spec/directives/**/*.js'
+            //'test/spec/controllers/authentication/authenticationController-spec.js',
+            //'test/spec/services/query/SpectraQueryBuilderService-spec.js',
             'test/spec/services/query/rsqlParser-spec.js'
 
 
