@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph
 
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.NameAlreadyRegisteredException
 import org.springframework.batch.item.ItemProcessor
 
 import scala.collection.concurrent.TrieMap
@@ -28,7 +29,7 @@ trait AbstractEdge[ID] {
   * @tparam Vertex
   * @tparam Edge
   */
-class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]] {
+class Graph[ID, Vertex <: AbstractVertex[ID] : ClassTag, Edge <: AbstractEdge[ID]] {
 
   /**
     * utilized index
@@ -42,20 +43,25 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
 
   /**
     * returns all the nodes of the graph
+    *
     * @return
     */
-  def nodes:Iterable[Vertex] = nodeIndex.values
+  def nodes: Iterable[Vertex] = nodeIndex.values
 
   /**
     * access to all our edges
+    *
     * @return
     */
-  def getEdges:List[AbstractEdge[ID]] = edges.toList
+  def getEdges: List[AbstractEdge[ID]] = edges.toList
+
   /**
     * size of our graph
+    *
     * @return
     */
-  def size:Int = nodeIndex.size
+  def size: Int = nodeIndex.size
+
   /**
     * adding a node at the given vertex
     *
@@ -63,8 +69,13 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
     * @return
     */
   def addNode(vertex: Vertex): Graph[ID, Vertex, Edge] = {
-    nodeIndex += ((vertex.id, vertex))
-    this
+    getNode(vertex.id) match {
+      case None =>
+        nodeIndex += ((vertex.id, vertex))
+        this
+      case _ =>
+        throw new NameAlreadyRegisteredException(s"a node with the id '${vertex.id}' was already registered, please use unique names")
+    }
   }
 
   def addEdge(edge: AbstractEdge[ID]): Graph[ID, Vertex, Edge] = {
@@ -104,9 +115,10 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
 
   /**
     * returns the heads of the graph, obviously
+    *
     * @return
     */
-  def heads : Set[Vertex] = {
+  def heads: Set[Vertex] = {
     nodeIndex.keys.filter(getParents(_).isEmpty).collect {
       case x: ID => getNode(x).get
     }.toArray[Vertex].toSet[Vertex]
@@ -114,9 +126,10 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
 
   /**
     * returns all the tails of the graph
+    *
     * @return
     */
-  def tails : Set[Vertex] = {
+  def tails: Set[Vertex] = {
 
     nodeIndex.keys.filter(getChildren(_).isEmpty).collect {
       case x: ID => getNode(x).get
@@ -126,20 +139,23 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
 
   /**
     * returns all the children for this id
+    *
     * @param id
     * @return
     */
-  def getChildren(id:ID) : Set[Vertex] = getChildren(getNode(id).get)
+  def getChildren(id: ID): Set[Vertex] = getChildren(getNode(id).get)
 
   /**
     * return all the parents for this id
+    *
     * @param id
     * @return
     */
-  def getParents(id:ID) : Set[Vertex] = getParents(getNode(id).get)
+  def getParents(id: ID): Set[Vertex] = getParents(getNode(id).get)
 
   /**
     * returns all this parents for this vertex
+    *
     * @param vertex
     * @return
     */
@@ -154,9 +170,9 @@ class Graph[ID, Vertex <: AbstractVertex[ID]:ClassTag, Edge <: AbstractEdge[ID]]
 /**
   * helper class
   *
-  * @param name
+  * @param name the name must be unique across all steps!
   */
-case class ProcessingStep[INPUT,OUTPUT](val name: String, val processor: ItemProcessor[INPUT, OUTPUT], val description:String)
+case class ProcessingStep[INPUT, OUTPUT](name: String, processor: ItemProcessor[INPUT, OUTPUT], description: String)
 
 
 /**
@@ -166,7 +182,7 @@ case class ProcessingStep[INPUT,OUTPUT](val name: String, val processor: ItemPro
   * @param step
   * @param description
   */
-case class Node[INPUT,OUTPUT](id: String, step: ProcessingStep[INPUT,OUTPUT], description: String) extends AbstractVertex[String]
+case class Node[INPUT, OUTPUT](id: String, step: ProcessingStep[INPUT, OUTPUT], description: String) extends AbstractVertex[String]
 
 /**
   * relation between nodes
