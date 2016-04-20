@@ -6,14 +6,11 @@
 (function () {
     'use strict';
     angular.module('moaClientApp')
-        factory(rsqlParser, rsqlParser);
+        .factory(rsqlParser, rsqlParser);
 
     /* @ngInject */
     function rsqlParser($log) {
-        var service = {
-            parseRSQL: parseRSQL
-        };
-        return service;
+        return {parseRSQL: parseRSQL};
 
         /**
          * parses a query object and returns a RSQL Query String
@@ -21,22 +18,23 @@
          * @return query
          */
         function parseRSQL(query) {
-            var queryString = "";
+            var compoundQuery = "";
+            var metaDataQuery = "";
+            var tagsQuery = "";
 
             if (Object.keys(query.compound).length !== 0 && JSON.stringify(query.compound) !== JSON.stringify({})) {
-                queryString += buildCompoundQueryString(query.compound);
+                compoundQuery = buildCompoundQueryString(query.compound);
             }
 
             if (query.metadata.length !== 0) {
-                queryString += buildMetaDataQueryString(query.metadata);
+                metaDataQuery = buildMetaDataQueryString(query.metadata);
             }
 
             if (query.tags.length !== 0) {
-                queryString += buildTagsQueryString(query.tags);
+                tagsQuery = buildTagsQueryString(query.tags);
             }
 
-            $log.info(query);
-            $log.info(queryString);
+            return compoundQuery + ' and ' + metaDataQuery + ' and ' + tagsQuery;
 
         }
 
@@ -56,7 +54,7 @@
             var queryString = "";
             for (var i = 0, l = metaDataQuery.length; i < l; i++) {
                 var object = metaDataQuery[i];
-                var operator = object.value.eq ? "==" : "!=" ;
+                var operator = object.value.eq ? "==" : "!=";
 
                 if (i > 0) {
                     queryString += ' and ';
@@ -72,18 +70,18 @@
             var chem = "";
 
             // handle compound name
-            if(typeof(compoundQuery.name) !== 'undefined') {
+            if (typeof(compoundQuery.name) !== 'undefined') {
                 bio += "biologicalCompound.names=q='name==" + '\"' + compoundQuery.name + '\"\'';
                 chem += "chemicalCompound.names=q='name==" + '\"' + compoundQuery.name + '\"\'';
 
             }
 
             // handle compound inchiKey
-            if(typeof(compoundQuery.inchiKey) !== 'undefined') {
+            if (typeof(compoundQuery.inchiKey) !== 'undefined') {
                 bio += " or biologicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
                 chem += " or chemicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
             }
-            console.log( bio + ' or ' + chem);
+            console.log(bio + ' or ' + chem);
             return bio + ' or ' + chem;
         }
 
