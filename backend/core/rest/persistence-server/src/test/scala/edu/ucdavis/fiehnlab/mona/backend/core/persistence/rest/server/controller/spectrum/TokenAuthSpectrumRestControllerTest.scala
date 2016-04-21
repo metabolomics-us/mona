@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
-import scala.concurrent.duration._
 
+import scala.concurrent.duration._
 import java.io.InputStreamReader
 
 import com.jayway.restassured.RestAssured._
@@ -9,25 +9,32 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+
 /**
   * Created by wohlgemuth on 3/1/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig],classOf[TestConfig]))
-class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra") with Eventually{
-
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]))
+class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra") with Eventually {
 
 
   @Autowired
   val spectrumRepository: SpectrumPersistenceService = null
 
+  @Autowired
+  val spectrumMongoRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
+
+  @Autowired
+  val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
   //required for spring and scala tes
   new TestContextManager(this.getClass()).prepareTestInstance(this)
@@ -37,11 +44,20 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
     "while working in it" should {
 
-      "we should be able to add spectra using POST at /rest/spectra with authentication" in {
+      "we should be able to reset the repository" in {
 
         spectrumRepository.deleteAll()
+        spectrumMongoRepository.deleteAll()
+        spectrumElasticRepository.deleteAll()
 
-        assert(spectrumRepository.count() == 0)
+
+        eventually(timeout(10 seconds)) {
+
+          assert(spectrumRepository.count() == 0)
+
+        }
+      }
+      "we should be able to add spectra using POST at /rest/spectra with authentication" in {
 
         val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
@@ -131,7 +147,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         eventually(timeout(10 seconds)) {
 
           val countAfter = spectrumRepository.count()
-        val spectrumAfterUpdate = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${modifiedSpectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+          val spectrumAfterUpdate = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${modifiedSpectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
 
           assert(spectrumAfterUpdate.splash.splash == modifiedSpectrum.splash.splash)
