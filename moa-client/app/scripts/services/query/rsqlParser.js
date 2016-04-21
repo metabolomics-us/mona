@@ -93,7 +93,14 @@
             if (typeof(compoundQuery.inchiKey) !== 'undefined') {
                 bio += " or biologicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
                 chem += " or chemicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
+
+                // strip leading or if there's no compound name
+                if (typeof(compoundQuery.name) === 'undefined') {
+                    bio = bio.slice(3).trim();
+                    chem = chem.slice(3).trim();
+                }
             }
+
 
             return bio + ' or ' + chem;
         }
