@@ -50,5 +50,10 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.cwbase</groupId>
+            <artifactId>logback-redis-appender</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 </project>
