@@ -7,10 +7,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .service('QueryCache', QueryCache);
+      .service('QueryCache', queryCache);
 
     /* @ngInject */
-    function QueryCache($injector, $log, $rootScope) {
+    function queryCache($injector, $log, $rootScope, rsqlParser) {
         /**
          * Stored query
          */
@@ -39,6 +39,7 @@
         this.getSpectraQuery = function() {
             // Create default query if none exists
             // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
+
             if (this.query === null) {
                 return $injector.get('SpectraQueryBuilderService').prepareQuery();
             } else {
@@ -52,6 +53,11 @@
          */
         this.setSpectraQuery = function(query) {
             $rootScope.$broadcast('spectra:query', query);
+
+            // stubbing query for later test
+            var stubQuery = rsqlParser.parseRSQL(query);
+            $log.info(stubQuery);
+            
             this.query = query;
         };
 
@@ -60,6 +66,7 @@
          */
         this.resetSpectraQuery = function() {
             this.clear();
-        }
+        };
+
     }
 })();

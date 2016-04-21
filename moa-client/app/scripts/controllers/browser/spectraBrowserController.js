@@ -18,7 +18,7 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-        .controller('SpectraBrowserController', SpectraBrowserController);
+      .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
     function SpectraBrowserController($scope, Spectrum, $uibModal, SpectraQueryBuilderService, $location,
@@ -167,6 +167,7 @@
                 //search utilizing our compiled query so that it can be easily refined over time
                 $scope.loadingMore = true;
                 $scope.spectraLoadLength = $scope.spectra.length;
+
 
                 var payload = {
                     query: SpectraQueryBuilderService.getQuery(),

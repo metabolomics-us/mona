@@ -6,6 +6,7 @@
     angular.module('moaClientApp')
         .controller('SpectraSimilarityQueryController', SpectraSimilarityQueryController);
 
+
     /* @ngInject */
     function SpectraSimilarityQueryController($scope, $location, UploadLibraryService, SplashService, SpectraQueryBuilderService) {
         $scope.queryState = 0;

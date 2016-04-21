@@ -7,10 +7,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .service('AsyncService', AsyncService);
+      .service('AsyncService', asyncService);
 
     /* @ngInject */
-    function AsyncService(ApplicationError, $log, $q, $interval) {
+    function asyncService(ApplicationError, $log, $q, $interval) {
 
         var runningTasks = 0;
 

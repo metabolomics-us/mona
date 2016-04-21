@@ -9,10 +9,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('MetadataService', MetadataService);
+      .factory('MetadataService', metadataService);
 
     /* @ngInject */
-    function MetadataService($resource, REST_BACKEND_SERVER, $http) {
+    function metadataService($resource, REST_BACKEND_SERVER, $http) {
         $http.defaults.useXDomain = true;
 
         return $resource(

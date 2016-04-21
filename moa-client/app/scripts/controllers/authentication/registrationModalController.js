@@ -1,7 +1,8 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-        .controller('RegistrationModalController', RegistrationModalController);
+      .controller('RegistrationModalController', RegistrationModalController);
+
 
     /* @ngInject */
     function RegistrationModalController($scope, $rootScope, $uibModalInstance, Submitter) {

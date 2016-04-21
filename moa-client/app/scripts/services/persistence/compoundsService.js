@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('Compound', Compound)
+      .factory('Compound', compound);
 
     /* @ngInject */
-    function Compound($resource, REST_BACKEND_SERVER, MAX_COMPOUNDS) {
+    function compound($resource, REST_BACKEND_SERVER, MAX_COMPOUNDS) {
         return $resource(REST_BACKEND_SERVER + '/rest/compounds/:id?max=' + MAX_COMPOUNDS,
             {id: "@id", offset: "@offset"},
             {
