@@ -29,6 +29,16 @@ describe('factory: RSQL Parser Factory', function() {
         expect(result).toBe('biologicalCompound.names=q=\'name=="testCompoundName"\' or chemicalCompound.names=q=\'name=="testCompoundName"\'');
     });
 
+    it('returns a query string for an inchiKey', function() {
+        var result = rsqlParser.parseRSQL({compound: {inchiKey: 1234567}});
+        expect(result).toBe('biologicalCompound=q=inchiKey=="1234567"\' or chemicalCompound=q=inchiKey=="1234567"\'');
+    });
+
+    it('returns a query string for compound AND inchiKey', function() {
+        var result = rsqlParser.parseRSQL({compound: {name: 'testCompoundName', inchiKey: 1234567}});
+        expect(result).toBe('biologicalCompound.names=q=\'name=="testCompoundName"\' or biologicalCompound=q=inchiKey=="1234567"\' or chemicalCompound.names=q=\'name=="testCompoundName"\' or chemicalCompound=q=inchiKey=="1234567"\'');
+    });
+
     it('returns a query string for metadata object', function() {
         var result =  rsqlParser.parseRSQL({metadata: query.metadata});
         expect(result).toBe('metaData=q=\'name=="meta-1-value and metaData=q=\'name!="undefined and metaData=q=\'name=="meta-3-value');
