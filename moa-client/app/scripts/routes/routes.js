@@ -10,7 +10,11 @@
         .config(configure);
 
     /* @ngInject */
-    function configure($routeProvider) {
+    function configure($routeProvider,$locationProvider) {
+
+        // use HTML5 Mode
+        $locationProvider.html5Mode(true);
+
         $routeProvider
             //defining the root url
             .when('/', {
@@ -155,7 +159,6 @@
                 templateUrl: 'views/submitters/list.html',
                 controller: 'SubmitterController'
             })
-
 
             .when('/documentation/license', {
                 templateUrl: 'views/documentation/license.html'

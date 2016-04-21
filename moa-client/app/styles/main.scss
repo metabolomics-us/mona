@@ -1,3 +1,4 @@
+@import "querytree";
 
 $icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
 
@@ -353,7 +354,6 @@ input[readonly] {
 .panel-collapse.collapse.in {
   overflow: visible;
 }
-
 
 /* Query tree children style */
 .panel-query-tree { padding: 0; margin: 20px; }

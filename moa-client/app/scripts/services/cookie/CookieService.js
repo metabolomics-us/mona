@@ -6,10 +6,10 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .factory('CookieService', CookieService);
+      .factory('CookieService', cookieService);
 
     /* @ngInject */
-    function CookieService(ApplicationError, $cookieStore, $log) {
+    function cookieService(ApplicationError, $cookieStore, $log) {
 
         var service = {
             stringToBoolean: stringToBoolean,

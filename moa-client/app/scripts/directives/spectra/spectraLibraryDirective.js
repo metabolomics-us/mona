@@ -30,12 +30,11 @@
             return;
         }
 
-
-        console.log($scope.spectrum.libraryIdentifier)
-        console.log(angular.isDefined($scope.spectrum.libraryIdentifier))
-
-        console.log($scope.spectrum.libraryIdentifier === null)
-
+        /**** debug
+        console.log($scope.spectrum.libraryIdentifier);
+        console.log(angular.isDefined($scope.spectrum.libraryIdentifier));
+        console.log($scope.spectrum.libraryIdentifier === null);
+        ****/
 
         // Base library string
         $scope.libraryString = 'Originally submitted to the ';

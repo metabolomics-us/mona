@@ -7,18 +7,24 @@
     display: none !important;
 }
 
+// view spectra table
+.table {
+    word-break: break-all;
+}
+
+
 body {
     background-color: #f8f8f8;
     font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
 }
 
-@media(min-width: 768px) and (max-width: 1107px) {
+@media (min-width: 768px) and (max-width: 1107px) {
     body {
         padding-top: 80px;
     }
 }
 
-@media(min-width: 1108px) {
+@media (min-width: 1108px) {
     body {
         padding-top: 50px;
     }
@@ -60,11 +66,11 @@ body {
     }
 }
 
-@media(min-width: 768px) and (max-width: 1535px) {
+@media (min-width: 768px) and (max-width: 1535px) {
     #page-wrapper {
         position: inherit;
         margin: 0 auto;
-        padding: 0 30px;
+        padding: 20px 30px;
         min-height: 1300px;
         border-left: 1px solid #e7e7e7;
         width: 80%;
@@ -77,7 +83,7 @@ body {
     height: 360px;
 }
 
-@media(min-width: 768px) {
+@media (min-width: 768px) {
     .carousel .carousel-control {
         visibility: hidden;
     }

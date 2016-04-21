@@ -1,10 +1,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('News', News);
+      .factory('News', news);
 
     /* @ngInject */
-    function News($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
+    function news($resource, REST_BACKEND_SERVER, MAX_OBJECTS) {
 
         /**
          * creates a new resources, we can work with

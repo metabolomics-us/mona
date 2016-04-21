@@ -8,10 +8,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .service('SpectrumCache', SpectrumCache);
+      .service('SpectrumCache', spectrumCache);
 
     /* @ngInject */
-    function SpectrumCache($log, $window) {
+    function spectrumCache($log, $window) {
         /**
          * Stored browser spectra
          */
