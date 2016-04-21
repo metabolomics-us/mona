@@ -22,19 +22,32 @@
             var metaDataQuery = "";
             var tagsQuery = "";
 
-            if (Object.keys(query.compound).length !== 0 && JSON.stringify(query.compound) !== JSON.stringify({})) {
+            if (typeof(query.compound) === 'object' && Object.keys(query.compound).length !== 0 && JSON.stringify(query.compound) !== JSON.stringify({})) {
                 compoundQuery = buildCompoundQueryString(query.compound);
             }
 
-            if (query.metadata.length !== 0) {
+            if (typeof(query.metadata) !== 'undefined' && query.metadata.length !== 0) {
                 metaDataQuery = buildMetaDataQueryString(query.metadata);
+
             }
 
-            if (query.tags.length !== 0) {
+            if (typeof(query.tags) !== 'undefined' && query.tags.length !== 0) {
                 tagsQuery = buildTagsQueryString(query.tags);
             }
 
-            return compoundQuery + ' and ' + metaDataQuery + ' and ' + tagsQuery;
+            var compiledQuery = "";
+
+            if(compoundQuery !== '') {
+                compiledQuery += compoundQuery;
+            }
+
+            (metaDataQuery !== '') ? compiledQuery !== '' ? compiledQuery += ' and ' + metaDataQuery : compiledQuery = metaDataQuery
+                                   : compiledQuery;
+
+            (tagsQuery !== '') ? compiledQuery !== '' ? compiledQuery += ' and ' + tagsQuery : compiledQuery = tagsQuery
+                               : compiledQuery;
+
+            return compiledQuery;
 
         }
 
@@ -44,7 +57,7 @@
                 if (i > 0) {
                     queryString += ' and ';
                 }
-                queryString += "tags=q='name.eq==" + tagQuery.name.eq + '\"\'';
+                queryString += "tags=q='name.eq==" + tagQuery[i].name.eq + '\"\'';
 
             }
             return queryString;
@@ -81,7 +94,7 @@
                 bio += " or biologicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
                 chem += " or chemicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
             }
-            console.log(bio + ' or ' + chem);
+
             return bio + ' or ' + chem;
         }
 
