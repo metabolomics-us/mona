@@ -3,12 +3,13 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import org.springframework.batch.item.ItemProcessor
 
 /**
   * Created by sajjan on 4/4/16.
   */
-@Step(description = "this step will convert the spectrum to a relative spectrum")
+@Step(description = "this step will convert the spectrum to a relative spectrum", previousClass = classOf[RemoveComputedData], workflow = "spectra-curation")
 class NormalizeSpectrum extends ItemProcessor[Spectrum,Spectrum] with LazyLogging {
 
   /**
