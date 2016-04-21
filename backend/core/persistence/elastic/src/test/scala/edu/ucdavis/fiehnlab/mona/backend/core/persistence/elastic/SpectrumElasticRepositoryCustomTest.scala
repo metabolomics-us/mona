@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.EmbeddedElasticSearchConfiguration
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.{TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.elasticsearch.index.query.QueryBuilder
@@ -11,13 +11,14 @@ import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.repository.CrudRepository
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 /**
   * Created by wohlg_000 on 3/9/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedElasticSearchConfiguration]))
+@ContextConfiguration(classes = Array(classOf[TestConfig]))
+@TestPropertySource(locations=Array("classpath:application.properties"))
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,QueryBuilder] with BeforeAndAfterEach  {
   @Autowired
   val elasticsearchTemplate: ElasticsearchTemplate = null

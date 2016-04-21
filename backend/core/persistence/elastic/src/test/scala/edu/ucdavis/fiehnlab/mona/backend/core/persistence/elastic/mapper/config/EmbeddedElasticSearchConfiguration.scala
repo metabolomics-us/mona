@@ -5,22 +5,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.Elastic
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.util.EmbeddedNodeBuilder
 import org.elasticsearch.client.Client
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.{Bean, Configuration, Import, Primary}
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
 
-/**
-  * Created by wohlg on 3/11/2016.
-  */
-@Configuration
-@EnableElasticsearchRepositories(basePackageClasses = Array(
-  classOf[ISpectrumElasticRepositoryCustom]
-))
+@SpringBootApplication
 @Import(Array(classOf[ElasticsearchConfig]))
-class EmbeddedElasticSearchConfiguration extends LazyLogging{
-
-  @Primary
-  @Bean
-  def elasticClient:Client = {
-    EmbeddedNodeBuilder.createClient(deleteOnExit = true,httpServer = true)
-  }
-}
+class TestConfig

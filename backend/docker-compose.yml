@@ -7,6 +7,11 @@ services:
 # images we consider for persistent storage
 ################################################################################################################
 
+  data:
+    image: cogniteev/echo
+    command: echo 'Data Container for our images'
+    volumes:
+     - /data/db
 
 ################################################################################################################
 #This section provides us with the required databases and should be changed later
@@ -16,6 +21,8 @@ services:
   #just fixing the version to avoid surprises
   mongodb:
     image: mongo:3.2.4
+    volumes_from:
+      - data
     ports:
       - "27017:27017"
 
@@ -31,12 +38,20 @@ services:
 # this would be mainly rabbitmq at this stage and redis.
 ################################################################################################################
 
+  #used for message and event handling accress mona
   rabbitmq:
     image:  rabbitmq:3-management
     hostname: rabbitmq
     ports:
       - "15673:15672"
-      - "5672:5672"
+#      - "5672:5672"
+
+  #used for caching and as a log buffer internally
+  redis:
+    image:  redis
+    hostname: redis
+    ports:
+      - "6379:6379"
 
 ################################################################################################################
 # This section defines our required services, need to connect mona apps
@@ -53,6 +68,7 @@ services:
       - mongodb
       - elasticsearch
       - rabbitmq
+      - redis
     entrypoint: ./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
 
 # The configuration service, provides to every client his required configuration
