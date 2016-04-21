@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty name="application-name" source="spring.application.name"/>
+
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <appender name="LOGSTASH" class="com.cwbase.logback.RedisAppender">
+        <host>redis</host>
+        <port>6379</port>
+        <key>my-spring-boot-app</key>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="LOGSTASH" />
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
