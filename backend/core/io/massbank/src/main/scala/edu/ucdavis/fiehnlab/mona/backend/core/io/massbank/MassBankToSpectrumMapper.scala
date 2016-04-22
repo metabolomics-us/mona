@@ -13,21 +13,21 @@ trait MassBankToSpectrumMapper {
   /** One-to-one mapping of MassBank record fields to base metadata fields */
   def recordToSpectrum(record: MassBankRecord): Spectrum = {
     Spectrum(
-      id = null,
+      id = record.recordSpecificGroup.accession getOrElse null,
       lastUpdated = null,
       score = null,
 
       metaData = extractMetadata(record),
-      biologicalCompound = Compound(null, null, Array.empty, null, Array.empty, Array.empty),
-      chemicalCompound = Compound(null, null, Array.empty, null, Array.empty, Array.empty),
+      biologicalCompound = extractBiologicalCompound(record),
+      chemicalCompound = null,
 
       spectrum = formatPeaks(record.massSpectraPeakDataGroup.peak),
       splash = null,
 
-      submitter = Submitter("", "", "", "", ""),
-      authors = Array.empty,
-      tags = Array.empty,
-      library = Library("", "", "")
+      submitter = null,
+      authors = null,
+      tags = null,
+      library = null
     )
   }
 
@@ -77,13 +77,11 @@ trait MassBankToSpectrumMapper {
       mapListToMetaList(r.recordSpecificGroup.other)
 
     val CH: Iterable[MetaData] =
-      listToMetaList(`CH:NAME`, r.chemicalGroup.name) ++
         List(
           ifExists(`CH:COMPOUND_CLASS`, r.chemicalGroup.compoundClass),
           ifExists(`CH:FORMULA`, r.chemicalGroup.formula),
           ifExists(`CH:EXACT_MASS`, r.chemicalGroup.exactMass),
-          ifExists(`CH:SMILES`, r.chemicalGroup.smiles),
-          ifExists(`CH:IUPAC`, r.chemicalGroup.iupac)
+          ifExists(`CH:SMILES`, r.chemicalGroup.smiles)
         ).flatten ++
         mapToMetaList(map = r.chemicalGroup.link, Some(`CH:LINK`)) ++
         mapListToMetaList(r.chemicalGroup.other)
@@ -116,6 +114,16 @@ trait MassBankToSpectrumMapper {
   private def formatPeaks(ps: PeakData): String = {
     if (ps.peaks.isEmpty) null
     else ps.peaks.map(triple => s"${triple.mz}:${triple.absInt}").mkString(" ")
+  }
+
+  /** Generate biological compound information */
+  private def extractBiologicalCompound(r: MassBankRecord): Compound = {
+    def asName(n: String) = Names(false, n, 0.0, "user-provided")
+
+    val names = r.chemicalGroup.name.map(asName).toArray
+    val inchi = r.chemicalGroup.iupac getOrElse null
+
+    Compound(inchi, null, null, null, names, null)
   }
 }
 
