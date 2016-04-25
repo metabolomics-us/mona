@@ -33,7 +33,7 @@ class JSONDomainReaderTest extends WordSpec {
       }
 
       "its compounds inchi key should be also equal the exspectations" in {
-        assert(spectrum.chemicalCompound.inchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
+        assert(spectrum.compound(1).inchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
       }
 
       "it should be possible to access it's metatadata" in {
@@ -42,11 +42,11 @@ class JSONDomainReaderTest extends WordSpec {
       }
 
       "we should be able to access it's compounds metadata" in {
-        assert(spectrum.biologicalCompound.metaData != null)
-        assert(spectrum.biologicalCompound.metaData.size > 0)
+        assert(spectrum.compound(0).metaData != null)
+        assert(spectrum.compound(0).metaData.size > 0)
       }
 
-        val metaDatas = spectrum.biologicalCompound.metaData
+        val metaDatas = spectrum.compound(0).metaData
 
         metaDatas.foreach { metaData =>
 
