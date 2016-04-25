@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -36,6 +37,9 @@ class RestRepositoryWriterTest extends WordSpec  with Eventually{
   @Autowired
   val writer: RestRepositoryWriter = null
 
+  @Autowired
+  val spectrumPersistenceService: SpectrumPersistenceService = null
+
   //required for spring and scala test
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
@@ -44,6 +48,13 @@ class RestRepositoryWriterTest extends WordSpec  with Eventually{
 
     "given a list of spectra" should {
 
+      "clear data first" in {
+        spectrumPersistenceService.deleteAll()
+
+        eventually(timeout(100 seconds)) {
+          assert(spectrumPersistenceService.count() == 0)
+        }
+      }
       "upload them to the server" in {
         writer.write(exampleRecords.toList.asJava)
         eventually(timeout(10 seconds)) {
