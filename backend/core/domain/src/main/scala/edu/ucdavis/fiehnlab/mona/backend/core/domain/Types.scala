@@ -248,7 +248,7 @@ case class Spectrum(
                      @(Field@field)(`type` = FieldType.Object)
                      splash: Splash,
 
-                     @(Field@field)(`type` = FieldType.Object)
+                     @(Field@field)(`type` = FieldType.Nested)
                      submitter: Submitter,
 
                      @(Field@field)(`type` = FieldType.Nested)
