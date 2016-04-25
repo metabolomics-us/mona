@@ -222,7 +222,7 @@ case class Author(
   * @param authors
   */
 @Document(collection = "SPECTRUM")
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 1, replicas = 0, refreshInterval = "-1")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum")
 case class Spectrum(
 
                      @(Field@field)(`type` = FieldType.Object)
