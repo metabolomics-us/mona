@@ -1,10 +1,11 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-        .controller('AuthenticationModalController', AuthenticationModalController);
+      .controller('AuthenticationModalController', AuthenticationModalController);
 
     /* @ngInject */
     function AuthenticationModalController($scope, $uibModalInstance, $timeout, AuthenticationService) {
+
         $scope.errors = [];
         $scope.state = 'login';
 

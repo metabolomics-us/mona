@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .controller('SearchBoxController', SearchBoxController);
+      .controller('SearchBoxController', searchBoxController);
 
     /* @ngInject */
-    function SearchBoxController($scope, $uibModal, $location, $route, SpectraQueryBuilderService) {
+    function searchBoxController($scope, $uibModal, $location, $route, SpectraQueryBuilderService) {
         $scope.inputError = false;
 
 

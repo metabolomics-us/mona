@@ -54,7 +54,7 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
       queueName = s"${eventBus.busName}-${queueName}"
     }
 
-    val queue = new Queue(queueName,false,true,true)
+    val queue = new Queue(queueName,false,false,true)
 
     val exchange = new FanoutExchange(eventBus.busName, false, true)
 
@@ -90,7 +90,7 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
     * @param message
     */
   final override def onMessage(message: Message): Unit = {
-    logger.info(s"received event at ${getClass.getSimpleName}")
+    logger.debug(s"received event at ${getClass.getSimpleName}")
     logger.debug(s"message received: ${new String(message.getBody)}")
     logger.debug(s"type of class: ${classTag[T].runtimeClass}")
     val content:Event[Any] = objectMapper.readValue(message.getBody,classTag[Event[T]].runtimeClass).asInstanceOf[Event[Any]]

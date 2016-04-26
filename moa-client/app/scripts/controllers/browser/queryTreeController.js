@@ -5,10 +5,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-        .controller('QueryTreeController', QueryTreeController);
+        .controller('QueryTreeController', queryTreeController);
 
     /* @ngInject */
-    function QueryTreeController($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
+    function queryTreeController($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
         $scope.executeQuery = function(node) {
             SpectraQueryBuilderService.setQuery(JSON.parse(node.query));
             $location.path('/spectra/browse');
