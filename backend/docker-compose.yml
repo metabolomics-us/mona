@@ -7,6 +7,19 @@ services:
 # images we consider for persistent storage
 ################################################################################################################
 
+  #contains all the data for mongo between restarts
+  data_container:
+    build: ./docker
+    command: echo 'Data Container for our images'
+    volumes:
+     - /data/db
+
+  #contains all the different configuration files for the services
+  config_container:
+    build: ./docker
+    command: echo 'Data Container for our images'
+    volumes:
+     - /usr/share/elasticsearch/config
 
 ################################################################################################################
 #This section provides us with the required databases and should be changed later
@@ -16,27 +29,57 @@ services:
   #just fixing the version to avoid surprises
   mongodb:
     image: mongo:3.2.4
+    volumes_from:
+      - data_container
     ports:
       - "27017:27017"
 
-  #mona only supports 1.7.5 at this point in time
-  elasticsearch:
+
+
+################################################################################################################
+# This section defines our elastic search cluster and one master node, which is publically exposed
+# clients need to register against each
+################################################################################################################
+
+  #defines a node, which can be scaled on the fly
+  elasticsearch_node:
      image: elasticsearch:1.7.5
-     ports:
+     volumes_from:
+       - config_container:ro
+     environment:
+      - "ES_HEAP_SIZE:8g"
+
+  #defines the master node and should not be scaled
+  elasticsearch_master:
+    build:
+      context: ./docker
+      dockerfile: DockerfileElasticMaster
+    volumes_from:
+       - config_container:ro
+    ports:
        - "9200:9200"
        - "9300:9300"
+    environment:
+      - "ES_HEAP_SIZE:8g"
 
 ################################################################################################################
 # This section provides us with access to the required messaging queues and services for caching application
 # this would be mainly rabbitmq at this stage and redis.
 ################################################################################################################
 
+  #used for message and event handling accress mona
   rabbitmq:
     image:  rabbitmq:3-management
     hostname: rabbitmq
     ports:
       - "15673:15672"
-      - "5672:5672"
+
+  #used for caching and as a log buffer internally
+  redis:
+    image:  redis
+    hostname: redis
+    ports:
+      - "6379:6379"
 
 ################################################################################################################
 # This section defines our required services, need to connect mona apps
@@ -51,8 +94,8 @@ services:
       - "8761:8761"
     depends_on:
       - mongodb
-      - elasticsearch
       - rabbitmq
+      - redis
     entrypoint: ./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
 
 # The configuration service, provides to every client his required configuration
@@ -106,7 +149,6 @@ services:
     depends_on:
       - proxy
       - mongodb
-      - elasticsearch
     entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "4444:4444"
@@ -120,7 +162,6 @@ services:
     depends_on:
       - proxy
       - mongodb
-      - elasticsearch
     entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "5555:5555"

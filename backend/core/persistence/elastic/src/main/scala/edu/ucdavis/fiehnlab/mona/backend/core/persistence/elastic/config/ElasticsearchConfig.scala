@@ -6,8 +6,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{ElasticMedaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
-import org.elasticsearch.client.Client
+import org.elasticsearch.client.{Client, ElasticsearchClient}
+import org.elasticsearch.node.NodeBuilder
 import org.springframework.context.annotation._
+import org.springframework.data.elasticsearch.client.NodeClientFactoryBean
 import org.springframework.data.elasticsearch.core.{ElasticsearchTemplate, EntityMapper}
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
 /**

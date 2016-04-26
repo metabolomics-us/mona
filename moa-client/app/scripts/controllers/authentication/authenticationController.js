@@ -2,10 +2,13 @@
  * Created by wohlgemuth on 7/11/14.
  */
 
+// TODO: waiting for implementation of return user data for admin from authentication Service
+
 (function() {
     'use strict';
     angular.module('moaClientApp')
-        .controller('AuthenticationController', AuthenticationController);
+      .controller('AuthenticationController', AuthenticationController);
+
 
     /* @ngInject */
     function AuthenticationController($scope, $rootScope, $uibModal, AuthenticationService) {
@@ -76,8 +79,10 @@
          * Create a welcome message on login
          */
         $scope.$on('auth:login-success', function(event, data, status, headers, config) {
+
             AuthenticationService.getCurrentUser().then(function(data) {
-                self.welcomeMessage = 'Welcome, ' + data.firstName + '!';
+                console.log(JSON.stringify(data));
+                self.welcomeMessage = 'Welcome, ' + data.username + '!';
             });
         });
 

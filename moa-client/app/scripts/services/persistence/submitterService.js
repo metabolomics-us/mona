@@ -4,10 +4,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('Submitter', Submitter);
+      .factory('Submitter', submitter);
 
     /* @ngInject */
-    function Submitter($resource, REST_BACKEND_SERVER, $http) {
+    function submitter($resource, REST_BACKEND_SERVER, $http) {
 
         $http.defaults.useXDomain = true;
 

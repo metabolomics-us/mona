@@ -6,10 +6,10 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-      .factory('TaggingService', TaggingService);
+      .factory('TaggingService', taggingService);
 
     /* @ngInject */
-    function TaggingService($resource, REST_BACKEND_SERVER, $http) {
+    function taggingService($resource, REST_BACKEND_SERVER, $http) {
 
         $http.defaults.useXDomain = true;
 

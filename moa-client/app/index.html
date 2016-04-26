@@ -12,31 +12,37 @@
     <title ng-bind="APP_NAME"></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <!-- AngularJS SEO -->
+    <base href="/">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
+
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/angular-dialog-service/dist/dialogs.min.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
-    <!-- endbower -->
+
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.bootstrap.min.css"/>
     <!-- endbuild -->
+
 
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="lib/chemdoodle/ChemDoodleWeb.css">
 
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/autocomplete.css">
+
     <!-- endbuild -->
+
+
 </head>
 <body class="dashboard">
 <!--[if lt IE 7]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please
     <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
+
 
 <div id="wrapper" ng-controller="AuthenticationController as auth">
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -53,9 +59,13 @@
                 <stat-drop-down></stat-drop-down>
                 <res-drop-down></res-drop-down>
                 <admin-drop-down></admin-drop-down>
+                <download-button></download-button>
+                <upload-button></upload-button>
             </ul>
         </div>
     </nav>
+
+
 
     <div id="page-wrapper">
         <div class="row">
@@ -104,6 +114,7 @@
 <script src="bower_components/metisMenu/jquery.metisMenu.js"></script>
 <script src="bower_components/paralleljs/lib/parallel.js"></script>
 <script src="bower_components/angular-filter/dist/angular-filter.min.js"></script>
+<script src="bower_components/angularjs-viewhead/angularjs-viewhead.js"></script>
 <!-- endbower -->
 
 <script src="bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js"></script>
@@ -152,6 +163,7 @@
 <script src="scripts/services/persistence/newsService.js"></script>
 <script src="scripts/services/persistence/statisticsService.js"></script>
 <script src="scripts/services/httpResponseInterceptor.js"></script>
+<script src="scripts/services/query/rsqlParser.js"></script>
 
 <!-- filters -->
 <script src="scripts/filters/curlFilter.js"></script>
@@ -193,6 +205,8 @@
 <script src="scripts/directives/navbar/adminDropDownDirective.js"></script>
 <script src="scripts/directives/navbar/resourceDropDownDirective.js"></script>
 <script src="scripts/directives/navbar/statisticsDropDownDirective.js"></script>
+<script src="scripts/directives/navbar/downloadDirective.js"></script>
+<script src="scripts/directives/navbar/uploadDirective.js"></script>
 <script src="scripts/directives/multiselectDropdown.js"></script>
 
 <script src="scripts/directives/metadata/gwMetaEditDirective.js"></script>

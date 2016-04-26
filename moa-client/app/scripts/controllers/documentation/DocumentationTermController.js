@@ -6,6 +6,7 @@
     angular.module('moaClientApp')
         .controller('DocumentationTermController', DocumentationTermController);
 
+
     /* @ngInject */
     function DocumentationTermController($scope) {
         $scope.terms = [
