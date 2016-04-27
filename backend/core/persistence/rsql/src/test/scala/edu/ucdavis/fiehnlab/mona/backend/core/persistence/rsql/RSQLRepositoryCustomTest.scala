@@ -56,15 +56,15 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
           }
 
 
-          "we should be able to execute RSQL queries like biologicalCompound.inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N" in {
+          "we should be able to execute RSQL queries like compound=q='inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N'" in {
 
-            val result = getRepository.rsqlQuery(s"biologicalCompound.inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N")
+            val result = getRepository.rsqlQuery(s"compound=q='inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N and kind==biological'")
 
             assert(result.size() == 1)
           }
 
-          "we should be able to execute RSQL queries like biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'" in {
-            val result = getRepository.rsqlQuery(s"biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'")
+          "we should be able to execute RSQL queries like compound.names.name=='META-HYDROXYBENZOIC ACID'" in {
+            val result = getRepository.rsqlQuery(s""" compound=q='names.name=="META-HYDROXYBENZOIC ACID" ' """)
             assert(result.size() == 1)
           }
 
@@ -91,13 +91,13 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size() == 58)
           }
 
-          "we should be able to execute RSQL queries like chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'" in {
-            val result = getRepository.rsqlQuery("chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'")
+          "we should be able to execute RSQL queries like compound=q=\'metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'\'" in {
+            val result = getRepository.rsqlQuery("compound.metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'")
             assert(result.size == 2)
           }
 
-          "we should be able to execute RSQL queries like chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'" in {
-            val result = getRepository.rsqlQuery("chemicalCompound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'")
+          "we should be able to execute RSQL queries like compound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'" in {
+            val result = getRepository.rsqlQuery("compound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'")
             assert(result.size == 2)
           }
 
@@ -134,6 +134,15 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
           }
 
 
+          "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
+            if (keepRunning) {
+              while (keepRunning) {
+                logger.warn("waiting forever till you kill me!")
+                Thread.sleep(300000); // Every 5 minutes
+              }
+            }
+          }
+
           "possible to delete one object" in {
             assert(getRepository.count() == exampleRecords.length)
             val one = getRepository.findAll().iterator().next()
@@ -151,15 +160,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
         }
       }
     }
-    //MUST BE LAST
-    "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
-      if (keepRunning) {
-        while (keepRunning) {
-          logger.warn("waiting forever till you kill me!")
-          Thread.sleep(300000); // Every 5 minutes
-        }
-      }
-    }
+
 
 
   }
