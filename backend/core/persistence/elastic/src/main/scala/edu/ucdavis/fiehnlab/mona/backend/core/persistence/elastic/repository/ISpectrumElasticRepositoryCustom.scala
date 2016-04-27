@@ -9,6 +9,4 @@ import org.springframework.stereotype.Repository
   */
 @Repository("spectrumElasticRepository")
 trait ISpectrumElasticRepositoryCustom  extends ElasticsearchRepository[Spectrum, String]  with SpectrumElasticRepositoryCustom{
-
-  def findByBiologicalCompoundInchiKey(inchiKey: String) : java.util.List[Spectrum]
 }

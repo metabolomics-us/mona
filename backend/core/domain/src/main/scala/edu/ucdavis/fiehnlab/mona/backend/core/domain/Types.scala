@@ -96,14 +96,16 @@ case class Tags(
   * @param computed
   */
 case class Compound(
-
+                     @Deprecated //might be better to be removed
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchi: String,
+
+                     @Deprecated //might be better to be removed
                      @(Indexed@field)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchiKey: String,
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
 
                      molFile: String,
@@ -111,13 +113,18 @@ case class Compound(
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      names: Array[Names],
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      tags: Array[Tags],
 
                      @(Indexed@field)
-                     computed: Boolean = false
-                   )
+                     computed: Boolean = false,
 
+                     @(Field@field)(`type` = FieldType.Object)
+                     score: Score,
+
+                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     kind: String = "biological"
+                   )
 
 case class Impacts(
 
@@ -209,8 +216,6 @@ case class Author(
 /**
   * this is the actual definition of a persistent spectrum in the MoNA database system
   *
-  * @param biologicalCompound The compound how it was observed in nature
-  * @param chemicalCompound   The compound how it was observed in the instrument
   * @param id
   * @param lastUpdated
   * @param metaData
@@ -224,11 +229,8 @@ case class Author(
 @Document(collection = "SPECTRUM")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum")
 case class Spectrum(
-
-                     @(Field@field)(`type` = FieldType.Object)
-                     biologicalCompound: Compound,
-                     @(Field@field)(`type` = FieldType.Object)
-                     chemicalCompound: Compound,
+                     @(Field@field)(`type` = FieldType.Nested)
+                     compound: Array[Compound],
 
                      @(Id@field)
                      @BeanProperty
@@ -236,7 +238,7 @@ case class Spectrum(
 
                      lastUpdated: String,
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
 
                      @(Field@field)(`type` = FieldType.Object)
@@ -248,18 +250,91 @@ case class Spectrum(
                      @(Field@field)(`type` = FieldType.Object)
                      splash: Splash,
 
-                     @(Field@field)(`type` = FieldType.Object)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      submitter: Submitter,
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      tags: Array[Tags],
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      authors: Array[Author],
 
                      @(Field@field)(`type` = FieldType.Object)
                      library: Library
                    )
+
+object Spectrum {
+
+  /**
+    * a simple way to generate a spectrum from a MoNA legacy spectrum
+    *
+    * @param spectrum
+    * @return
+    */
+  def apply(spectrum: LegacySpectrum): Spectrum = {
+
+    var compounds = List[Compound]()
+
+    if (spectrum.biologicalCompound != null) {
+      compounds = spectrum.biologicalCompound.copy(kind = "biological") :: compounds
+    }
+
+    if (spectrum.chemicalCompound != null) {
+      compounds = spectrum.chemicalCompound.copy(kind = "observed") :: compounds
+    }
+
+    new Spectrum(
+      spectrum = spectrum.spectrum,
+      score = spectrum.score,
+      id = spectrum.id,
+      lastUpdated = spectrum.lastUpdated,
+      metaData = spectrum.metaData,
+      submitter = spectrum.submitter,
+      tags = spectrum.tags,
+      library = spectrum.library,
+      authors = spectrum.authors,
+      compound = compounds.toArray,
+      splash = spectrum.splash
+    )
+  }
+}
+
+/**
+  * old style mona spectra
+  *
+  * @param biologicalCompound
+  * @param chemicalCompound
+  * @param id
+  * @param lastUpdated
+  * @param metaData
+  * @param score
+  * @param spectrum
+  * @param splash
+  * @param submitter
+  * @param tags
+  * @param authors
+  */
+case class LegacySpectrum(
+                           biologicalCompound: Compound,
+                           chemicalCompound: Compound,
+                           id: String,
+                           lastUpdated: String,
+                           metaData: Array[MetaData],
+                           score: Score,
+                           spectrum: String,
+                           splash: Splash,
+                           submitter: Submitter,
+                           tags: Array[Tags],
+                           authors: Array[Author],
+                           library: Library
+                         ) {
+  /**
+    * converts this LegacyFormat into the new internal MonaFormat
+    *
+    * @return
+    */
+  def asSpectrum: Spectrum = Spectrum(this)
+}
 
 /**
   * this is anm optional defined library, which declares from which source the spectrum is coming
@@ -291,21 +366,24 @@ object HelperTypes {
   /**
     * a login token
     */
-  case class LoginResponse(token:String)
+  case class LoginResponse(token: String)
 
   /**
     * a login request
+    *
     * @param username
     * @param password
     */
-  case class LoginRequest(username:String, password:String)
+  case class LoginRequest(username: String, password: String)
 
   /**
     * general information about a token to be retrieved from the server and can be useful for client side applications
+    *
     * @param username
     * @param validFrom
     * @param validTo
     * @param roles
     */
-  case class LoginInfo(username:String, validFrom:Date, validTo: Date, roles:java.util.List[String])
+  case class LoginInfo(username: String, validFrom: Date, validTo: Date, roles: java.util.List[String])
+
 }

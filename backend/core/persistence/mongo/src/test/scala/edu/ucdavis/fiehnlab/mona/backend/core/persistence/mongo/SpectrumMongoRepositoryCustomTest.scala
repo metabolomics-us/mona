@@ -49,13 +49,13 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
 
     "provide us with the possibility to query data, by providing a string and query in a range of double values" in {
 
-      val result: java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }"""))
+      val result: java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"compound.metaData" : {$elemMatch : { name : "total exact mass", value : { $gt:164.047, $lt:164.048} } } }"""))
       assert(result.size == 1)
     }
 
     "provide us with the possibility to query data, for a specific metadata filed" in {
 
-      val result: java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"biologicalCompound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }"""))
+      val result: java.util.List[Spectrum] = spectrumMongoRepository.nativeQuery(new BasicQuery("""{"compound.metaData" : {$elemMatch : { name : "BioCyc", value : "CYTIDINE" } } }"""))
 
       assert(result.size == 2)
     }

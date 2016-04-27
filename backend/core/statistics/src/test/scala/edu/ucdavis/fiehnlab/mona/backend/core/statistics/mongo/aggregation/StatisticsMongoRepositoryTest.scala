@@ -38,7 +38,7 @@ class StatisticsMongoRepositoryTest extends WordSpec {
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  "Metadata aggregation queries" when {
+  "Metadata aggregation queries" ignore  {
 
     spectrumMongoRepository.deleteAll()
     exampleRecords.foreach(spectrumMongoRepository.save(_))
@@ -72,7 +72,7 @@ class StatisticsMongoRepositoryTest extends WordSpec {
           ("URIDINE",1),
           ("VANILLIN",1))
 
-        val result = statisticsMongoRepository.aggregateByName("BioCyc", metaDataGroup = Some("biologicalCompound"))
+        val result = statisticsMongoRepository.aggregateByName("BioCyc", metaDataGroup = Some("compound"))
         assert(result == expected)
       }
 
@@ -85,7 +85,7 @@ class StatisticsMongoRepositoryTest extends WordSpec {
 
     "given a specific metadata field and metadata group" must {
       "return the top records for the metadata field/group" in {
-        val result = statisticsMongoRepository.aggregateByName("total exact mass", metaDataGroup = Some("biologicalCompound"))
+        val result = statisticsMongoRepository.aggregateByName("total exact mass", metaDataGroup = Some("compound"))
         assert(result.nonEmpty)
       }
     }
