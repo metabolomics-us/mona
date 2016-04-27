@@ -57,7 +57,7 @@ class ElasticMetaDataSerializer extends JsonSerializer[MetaData] with LazyLoggin
 }
 
 /**
-  * builds a meta data object based on it's given properties and tries to evalualte the value correctly for the
+  * builds a meta data object based on it's given properties and tries to evaluate the value correctly for the
   * different representations
   */
 class ElasticMedaDataDeserializer extends JsonDeserializer[MetaData] with LazyLogging {
