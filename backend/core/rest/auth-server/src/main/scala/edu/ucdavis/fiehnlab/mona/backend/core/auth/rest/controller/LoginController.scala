@@ -40,7 +40,7 @@ class LoginController extends LazyLogging {
     * provides us with public info about this token
     * @param request
     */
-  @RequestMapping(path = Array("/info/"), method = Array(RequestMethod.POST))
+  @RequestMapping(path = Array("/info"), method = Array(RequestMethod.POST))
   def tokenInfo(@RequestBody request:LoginResponse) = {
     loginService.info(request.token)
   }

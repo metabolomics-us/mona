@@ -103,7 +103,7 @@ case class Compound(
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchiKey: String,
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
 
                      molFile: String,
@@ -111,7 +111,7 @@ case class Compound(
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      names: Array[Names],
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      tags: Array[Tags],
 
                      @(Indexed@field)
@@ -236,7 +236,7 @@ case class Spectrum(
 
                      lastUpdated: String,
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
 
                      @(Field@field)(`type` = FieldType.Object)
@@ -248,13 +248,13 @@ case class Spectrum(
                      @(Field@field)(`type` = FieldType.Object)
                      splash: Splash,
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      submitter: Submitter,
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      tags: Array[Tags],
 
-                     @(Field@field)(`type` = FieldType.Nested)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      authors: Array[Author],
 
                      @(Field@field)(`type` = FieldType.Object)
