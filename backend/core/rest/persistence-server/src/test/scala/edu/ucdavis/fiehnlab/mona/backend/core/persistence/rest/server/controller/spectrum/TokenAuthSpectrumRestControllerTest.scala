@@ -130,7 +130,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to execute custom queries at /rest/spectra/search using GET" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=biologicalCompound.names.name=='META-HYDROXYBENZOIC ACID'").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
         assert(exampleRecords.length == 1)
       }

@@ -32,6 +32,7 @@ class MappingUpdater extends LazyLogging {
   def updateMappings = {
 
     logger.debug("creating index")
+    //elasticsearchTemplate.deleteIndex(classOf[Spectrum])
     elasticsearchTemplate.createIndex(classOf[Spectrum])
 
     logger.debug("refreshing index")
@@ -68,13 +69,13 @@ class MappingUpdater extends LazyLogging {
     build = buildMetaData(build)
 
     //build the compound properties
-    List("biologicalCompound", "chemicalCompound", "predictedCompound").foreach { compound =>
-      build = build.startObject(compound)
+      build = build.startObject("compound").field("type", "nested")
+
       build = build.startObject("properties")
       build = buildMetaData(build)
       build = build.endObject()
       build = build.endObject()
-    }
+
     build = build.endObject()
     build = build.endObject()
     build = build.endObject()
