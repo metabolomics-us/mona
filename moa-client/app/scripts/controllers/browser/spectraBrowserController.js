@@ -107,7 +107,7 @@
         /**
          * opens our modal dialog to query spectra against the system
          */
-        $scope.querySpectraDialog = function() {
+        /*$scope.querySpectraDialog = function() {
             var modalInstance = $uibModal.open({
                 templateUrl: '/views/spectra/query/query.html',
                 controller: 'QuerySpectrumModalController',
@@ -118,7 +118,7 @@
             modalInstance.result.then(function(query) {
                 $scope.submitQuery();
             });
-        };
+        };*/
 
         /**
          * @Deprecated
