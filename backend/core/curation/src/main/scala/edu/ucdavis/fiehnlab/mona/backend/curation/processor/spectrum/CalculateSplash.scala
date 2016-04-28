@@ -23,6 +23,8 @@ class CalculateSplash extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
       val splash = SplashUtil.splash(spectrum.spectrum, SpectraType.MS)
       val blocks = splash.split('-')
 
+      logger.info(s"Calculated splash ${splash} for spectrum ${spectrum.id}")
+
       // Assembled spectrum with a new SPLASH
       spectrum.copy(
         splash = Splash(blocks(0), blocks(1), blocks(2), splash)

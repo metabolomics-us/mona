@@ -24,7 +24,7 @@ class JSONFileSpectraReaderTest extends WordSpec with LazyLogging{
         counter = counter + 1
         assert(spectra.id != null)
         assert(spectra.spectrum != null)
-        assert(spectra.biologicalCompound != null)
+        assert(spectra.compound != null)
         spectra = reader.read()
 
       }

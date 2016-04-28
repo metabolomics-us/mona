@@ -1,0 +1,61 @@
+ADC Sampling Frequency	sampling frequency
+mass difference	delta M
+pi	senior author
+column name	column
+precursortype	precursor type
+mslevel	ms level
+authors	author
+spectrumid	accession
+adductionname	adduct
+mw	molecular weight
+Tandem Scanning Method	scanning method
+mass-to-charge ratio	m/z
+dataformat	data format
+flowrate	flow rate
+weight	molecular weight
+transfarline temperature	transfer line temperature
+ionizationmode	ionization type
+precursormz	precursor m/z
+precursor ion	precursor type
+m/z difference	delta m/z
+source instrument	instrument
+z	charge state
+ionization	ionization type
+principal investigator	senior author
+instrument configuration	instrument
+submituser	submitter
+parent ion	precursor type
+Th	m/z
+datacollector	data collector
+Activation Method	dissociation method
+chemical formula	molecular formula
+retentiontime	retention time
+BP	base peak
+charge	charge state
+B	magnetic field strength
+ion mode	ionization type
+scan polarity	ionization type
+data processing	data transformation
+selected ion m/z	precursor m/z
+molecule formula	molecular formula
+flow	flow rate
+polarity	ionization type
+retentionindex	retention index
+ri	retention index
+ionization mode	ionization type
+AC$MASS_SPECTROMETRY: ION_MODE	ionization type
+compoundclass	compound class
+mz exact	exact mass
+Magnetic Field	magnetic field strength
+precursor mz	precursor m/z
+adduct ion name	adduct
+IE	ionization energy
+thomson	m/z
+activation	precursor activation
+mstype	ms level
+ms type	ms level
+ionmode	ionization type
+Scan Duration	dwell time
+scan function	scan law
+rt	retention time
+analyzer	mass analyzer
