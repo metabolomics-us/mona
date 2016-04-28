@@ -120,6 +120,10 @@
             });
         };*/
 
+        $scope.initSearch = function() {
+            $location.path('spectra/search');
+        };
+
         /**
          * @Deprecated
          * displays the spectrum for the given index
