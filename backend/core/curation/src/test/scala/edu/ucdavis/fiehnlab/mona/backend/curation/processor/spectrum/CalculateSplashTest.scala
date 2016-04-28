@@ -26,7 +26,7 @@ class CalculateSplashTest extends WordSpec {
       val processedSpectrum = processor.process(spectrumGiven)
 
       "correctly calculate the SPLASH" in {
-        assert(processedSpectrum.splash.splash == "splash10-zmd4000000-b6fd7d038634694f0873")
+        assert(processedSpectrum.splash.splash == "splash10-0z50000000-9c8c58860a0fadd33800")
       }
     }
   }
