@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Names, Spectrum, Tags}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
 
@@ -17,32 +17,18 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val filteredBiologicalCompound =
-      if (spectrum.biologicalCompound != null) {
-        spectrum.biologicalCompound.copy(
-          metaData = filterMetaData(spectrum.biologicalCompound.metaData),
-          names = filterNames(spectrum.biologicalCompound.names),
-          tags = filterTags(spectrum.biologicalCompound.tags)
-        )
-      } else {
-        null
-      }
+    val filteredCompound: Array[Compound] = spectrum.compound.map(compound =>
+      compound.copy(
+        metaData = filterMetaData(compound.metaData),
+        names = filterNames(compound.names),
+        tags = filterTags(compound.tags)
+      )
+    )
 
-    val filteredChemicalCompound =
-      if (spectrum.biologicalCompound != null) {
-        spectrum.chemicalCompound.copy(
-          metaData = filterMetaData(spectrum.chemicalCompound.metaData),
-          names = filterNames(spectrum.chemicalCompound.names),
-          tags = filterTags(spectrum.chemicalCompound.tags)
-        )
-      } else {
-        null
-      }
 
     // Assembled filtered spectrum
     spectrum.copy(
-      biologicalCompound = filteredBiologicalCompound,
-      chemicalCompound = filteredChemicalCompound,
+      compound = filteredCompound,
       metaData = filterMetaData(spectrum.metaData),
       tags = filterTags(spectrum.tags)
     )

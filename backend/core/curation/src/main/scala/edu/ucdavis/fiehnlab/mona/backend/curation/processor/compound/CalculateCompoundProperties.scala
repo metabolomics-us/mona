@@ -24,17 +24,10 @@ import scala.collection.mutable.ArrayBuffer
 @Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCompoundData], workflow = "spectra-curation")
 class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] {
   override def process(spectrum: Spectrum): Spectrum = {
-    val updatedBiologicalCompound =
-      if (spectrum.biologicalCompound != null) calculateCompoundProperties(spectrum.biologicalCompound) else null
-
-    val updatedChemicalCompound =
-      if (spectrum.biologicalCompound != null) calculateCompoundProperties(spectrum.chemicalCompound) else null
+    val updatedCompound: Array[Compound] = spectrum.compound.map(calculateCompoundProperties)
 
     // Assembled spectrum with updated compounds
-    spectrum.copy(
-      biologicalCompound = updatedBiologicalCompound,
-      chemicalCompound = updatedChemicalCompound
-    )
+    spectrum.copy(compound = updatedCompound)
   }
 
   def calculateCompoundProperties(compound: Compound): Compound = {
@@ -58,7 +51,7 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] {
     // Get molecular properties
     val molecularFormula: IMolecularFormula = MolecularFormulaManipulator.getMolecularFormula(molecule)
 
-    metaData.append(new MetaData("computed", true, false, CommonMetaData.CHEMICAL_FORMULA,
+    metaData.append(new MetaData("computed", true, false, CommonMetaData.MOLECULAR_FORMULA,
       null, null, null, MolecularFormulaManipulator.getString(molecularFormula)))
 
     metaData.append(new MetaData("computed", true, false, CommonMetaData.TOTAL_EXACT_MASS,
