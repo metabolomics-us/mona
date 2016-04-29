@@ -27,6 +27,9 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
   val uploadAndCurationSpectraJob: Job = null
 
   @Autowired
+  val uploadLegacySpectraJob:Job = null
+
+  @Autowired
   val loginService: LoginService = null
 
   /**
@@ -70,6 +73,8 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
     println("")
     println("\t --curate\t\t jobs are not only uploaded, but also curated at the same time")
     println("\t --mona.rest.server.host=127.0.0.1\t\t to specify which server to user")
+    println("\t --legacy\t\t utilize the old MoNA format for input")
+
 
 
     System.exit(-1)
@@ -93,7 +98,13 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
           jobLauncher.run(uploadAndCurationSpectraJob, parameters)
         }
         else {
-          jobLauncher.run(uploadSpectraJob, parameters)
+          if (applicationArguments.containsOption("legacy")) {
+            logger.debug("running legacy import mode")
+            jobLauncher.run(uploadLegacySpectraJob, parameters)
+          }
+          else {
+            jobLauncher.run(uploadSpectraJob, parameters)
+          }
         }
       }
     }

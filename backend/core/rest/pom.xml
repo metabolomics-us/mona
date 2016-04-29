@@ -6,11 +6,11 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>core</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
     <artifactId>rest</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <name>rest-server</name>
     <url>http://maven.apache.org</url>
 
