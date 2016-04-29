@@ -8,3 +8,8 @@ spring:
   rabbitmq:
     host: "${DOCKER_MACHINE_IP}"
     port: 5673
+
+mona:
+  rest:
+    server:
+      token:  

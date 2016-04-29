@@ -64,7 +64,9 @@ class CurationListener(workflow: ItemProcessor[Spectrum,Spectrum]) extends Gener
 
   override def handleMessage(spectra: Spectrum) = {
     logger.info(s"received spectra: ${spectra.id}")
-    workflow.process(spectra)
+    val result:Spectrum = workflow.process(spectra)
     logger.info(s"curated spectra: ${spectra.id}")
+
+    logger.info("saved spectra to system")
   }
 }

@@ -5,8 +5,12 @@ import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundExceptio
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{LegacySpectrum, Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.AnnotationWorkflow
-import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONLegacyFileSpectraReader, JSONFileSpectraReader}
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{AnnotationWorkflow, Workflow, WorkflowBuilder}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateSplash, NormalizeSpectrum}
+import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONFileSpectraReader, JSONLegacyFileSpectraReader}
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.amqp.core._
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -72,7 +76,19 @@ class CurationConfig extends LazyLogging {
     */
   @Bean
   def curationWorkflow: ItemProcessor[Spectrum, Spectrum] = {
-    val flow = new AnnotationWorkflow[Spectrum](name = "spectra-curation",permitsTree = false)
+    val flow:Workflow[Spectrum] = WorkflowBuilder.
+      create[Spectrum].
+      enableAnnotationLinking(false).
+      forceLinear(true).
+      add(
+        Array(
+          new RemoveComputedData,
+          new CalculateCompoundProperties,
+          new NormalizeSpectrum,
+          new CalculateSplash,
+          new IdentifyChromatography
+        )
+      ).build()
 
     /**
       * uggly wrapper, but have no better alternative right now
