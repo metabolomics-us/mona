@@ -58,19 +58,25 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
       if (isGCMS && isLCMS) {
         logger.warn(s"Spectrum ${spectrum.id} was identified as both GC/MS and LC/MS!")
         spectrum
-      } else if (isGCMS) {
+      }
+
+      else if (isGCMS) {
         logger.info(s"Identified spectrum ${spectrum.id} as GC/MS")
 
         // Add GCMS tag
-        val updatedTags = spectrum.tags :+ new Tags(true, CommonTags.GCMS_SPECTRUM)
+        val updatedTags: Array[Tags] = spectrum.tags :+ new Tags(true, CommonTags.GCMS_SPECTRUM)
         spectrum.copy(tags = updatedTags)
-      } else if (isLCMS) {
+      }
+
+      else if (isLCMS) {
         logger.info(s"Identified spectrum ${spectrum.id} as LC/MS")
 
         // Add LCMS tag
-        val updatedTags = spectrum.tags :+ new Tags(true, CommonTags.LCMS_SPECTRUM)
+        val updatedTags: Array[Tags] = spectrum.tags :+ new Tags(true, CommonTags.LCMS_SPECTRUM)
         spectrum.copy(tags = updatedTags)
-      } else {
+      }
+
+      else {
         logger.warn(s"Spectrum ${spectrum.id} has unidentifiable chromotography")
         spectrum
       }
@@ -115,17 +121,25 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
           if (metaData.value.toString.toLowerCase == y.toLowerCase) {
             logger.trace(s"MetaData value ${metaData.value} matches value criterion ${y}")
             true
-          } else if (metaData.unit != null && metaData.unit.toLowerCase == y.toLowerCase) {
+          }
+
+          else if (metaData.unit != null && metaData.unit.toLowerCase == y.toLowerCase) {
             logger.trace(s"MetaData value ${metaData.value} matches unit criterion ${y}")
             true
-          } else if (metaData.value.toString.matches("(?i)"+ y)) {
+          }
+
+          else if (metaData.value.toString.matches("(?i)"+ y)) {
             logger.trace(s"MetaData value ${metaData.value} matches regex criterion ${y}")
             true
-          } else {
+          }
+
+          else {
             false
           }
         )
-      } else {
+      }
+
+      else {
         false
       }
     )

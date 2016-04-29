@@ -29,32 +29,26 @@ class RemoveComputedDataTest extends WordSpec {
         assert(processedSpectrum.metaData.forall(!_.computed))
       }
 
-      "remove the computed metadata for the biological compound" in {
-        assert(processedSpectrum.biologicalCompound.metaData.forall(!_.computed))
+      "remove the computed metadata for each compound" in {
+        processedSpectrum.compound.foreach { compound =>
+          assert(compound.metaData.forall(!_.computed))
+        }
       }
 
-      "remove the computed metadata for the chemical compound" in {
-        assert(processedSpectrum.chemicalCompound.metaData.forall(!_.computed))
-      }
-
-      "remove the computed names for the biological compound" in {
-        assert(processedSpectrum.biologicalCompound.names.forall(!_.computed))
-      }
-
-      "remove the computed names for the chemical compound" in {
-        assert(processedSpectrum.chemicalCompound.names.forall(!_.computed))
+      "remove the computed names for each compound" in {
+        processedSpectrum.compound.foreach { compound =>
+          assert(compound.names.forall(!_.computed))
+        }
       }
 
       "remove the computed tags for the spectrum" in {
         assert(processedSpectrum.tags.forall(!_.ruleBased))
       }
 
-      "remove the computed tags for the biological compound" in {
-        assert(processedSpectrum.biologicalCompound.tags.forall(!_.ruleBased))
-      }
-
-      "remove the computed tags for the chemical compound" in {
-        assert(processedSpectrum.chemicalCompound.tags.forall(!_.ruleBased))
+      "remove the computed tags for each compound" in {
+        processedSpectrum.compound.foreach { compound =>
+          assert(compound.tags.forall(!_.ruleBased))
+        }
       }
     }
   }

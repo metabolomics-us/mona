@@ -11,6 +11,8 @@ import org.springframework.batch.item.ItemProcessor
   */
 @Step(description = "this step will convert the spectrum to a relative spectrum", previousClass = classOf[RemoveComputedData], workflow = "spectra-curation")
 class NormalizeSpectrum extends ItemProcessor[Spectrum,Spectrum] with LazyLogging {
+  final val INTENSITY_SCALE: Double = 100.0
+  final val INTENSITY_EPS: Double = 1.0e-6
 
   /**
     * processes the given spectrum
@@ -26,11 +28,17 @@ class NormalizeSpectrum extends ItemProcessor[Spectrum,Spectrum] with LazyLoggin
     val maxIntensity: Double = ions.map(_(1).toDouble).max
 
     // Compute the relative spectrum
-    val relativeSpectrum: String = ions.map(x => "%s:%0.6f".format(x(0), x(1).toDouble / maxIntensity * 100)).mkString(" ")
+    if ((maxIntensity - INTENSITY_SCALE) > INTENSITY_EPS) {
+      val relativeSpectrum: String = ions.map(x => "%s:%0.6f".format(x(0), x(1).toDouble / maxIntensity * INTENSITY_SCALE)).mkString(" ")
 
-    // Replace the spectrum with the relative spectrum
-    spectrum.copy(
-      spectrum = relativeSpectrum
-    )
+      // Replace the spectrum with the relative spectrum
+      spectrum.copy(
+        spectrum = relativeSpectrum
+      )
+    }
+
+    else {
+      spectrum
+    }
   }
 }
