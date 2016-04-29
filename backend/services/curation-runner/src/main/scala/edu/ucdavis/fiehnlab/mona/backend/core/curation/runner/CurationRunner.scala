@@ -10,6 +10,7 @@ import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.MessageConverter
+import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.{CommandLineRunner, SpringApplication}
@@ -33,14 +34,14 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
   val queueName:String = null
 
   @Bean
-  def curationListener: CurationListener = new CurationListener
+  def curationListener(curationWorkflow: ItemProcessor[Spectrum,Spectrum]): CurationListener = new CurationListener(curationWorkflow)
 
   @Bean
   def container(connectionFactory: ConnectionFactory, listener: CurationListener,messageConverter:MessageConverter): SimpleMessageListenerContainer = {
     logger.info(s"connecting to queue: ${queueName}")
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
-    container.setMessageListener(curationListener)
+    container.setMessageListener(listener)
     container.setMessageConverter(messageConverter)
     container.setQueueNames(queueName)
 
@@ -59,14 +60,13 @@ object CurationRunner extends App {
 /**
   * listens to our queue and does our processing
   */
-class CurationListener extends GenericMessageListener[Spectrum] with LazyLogging {
-
-  @Autowired
-  val workflow: Workflow[Spectrum] = null
+class CurationListener(workflow: ItemProcessor[Spectrum,Spectrum]) extends GenericMessageListener[Spectrum] with LazyLogging {
 
   override def handleMessage(spectra: Spectrum) = {
     logger.info(s"received spectra: ${spectra.id}")
-    workflow.process(spectra)
+    val result:Spectrum = workflow.process(spectra)
     logger.info(s"curated spectra: ${spectra.id}")
+
+    logger.info("saved spectra to system")
   }
 }

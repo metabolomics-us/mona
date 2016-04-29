@@ -96,6 +96,10 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 2)
           }
 
+          "we should be able to support subqueries in sub queries for compound" in {
+            val result = getRepository.rsqlQuery("""compound=q='names.name=="META-HYDROXYBENZOIC ACID" and kind==biological and metaData=q="(name==\'total exact mass\')" '""")
+          }
+
           "we should be able to execute RSQL queries like compound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'" in {
             val result = getRepository.rsqlQuery("compound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'")
             assert(result.size == 2)
