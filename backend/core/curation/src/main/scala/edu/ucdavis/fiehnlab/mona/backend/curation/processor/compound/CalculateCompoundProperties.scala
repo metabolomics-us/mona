@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import java.io.StringReader
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.common.CommonMetaData
@@ -22,7 +23,7 @@ import scala.collection.mutable.ArrayBuffer
   * Created by sajjan on 4/4/16.
   */
 @Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCompoundData], workflow = "spectra-curation")
-class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] {
+class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
   override def process(spectrum: Spectrum): Spectrum = {
     val updatedCompound: Array[Compound] = spectrum.compound.map(calculateCompoundProperties)
 
@@ -41,6 +42,7 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] {
     val reader = new MDLV2000Reader(new StringReader(compound.molFile))
     val molecule: IAtomContainer = reader.read(new AtomContainer())
 
+    logger.info(s"received mol: \n ${compound.molFile}")
 
     // Update molecule
     AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
@@ -51,25 +53,26 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] {
     // Get molecular properties
     val molecularFormula: IMolecularFormula = MolecularFormulaManipulator.getMolecularFormula(molecule)
 
-    metaData.append(new MetaData("computed", true, false, CommonMetaData.MOLECULAR_FORMULA,
+    metaData.append( MetaData("computed", true, false, CommonMetaData.MOLECULAR_FORMULA,
       null, null, null, MolecularFormulaManipulator.getString(molecularFormula)))
 
-    metaData.append(new MetaData("computed", true, false, CommonMetaData.TOTAL_EXACT_MASS,
+    metaData.append( MetaData("computed", true, false, CommonMetaData.TOTAL_EXACT_MASS,
       null, null, null, MolecularFormulaManipulator.getTotalExactMass(molecularFormula)))
 
 
     // Calculate InChI
     val inchiGenerator: InChIGenerator = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule)
 
-    metaData.append(new MetaData("computed", true, false, CommonMetaData.INCHI_CODE,
+    metaData.append( MetaData("computed", true, false, CommonMetaData.INCHI_CODE,
       null, null, null, inchiGenerator.getInchi))
 
-    metaData.append(new MetaData("computed", true, false, CommonMetaData.INCHI_KEY,
+    logger.debug(s"return status is: ${inchiGenerator.getReturnStatus}")
+    metaData.append( MetaData("computed", true, false, CommonMetaData.INCHI_KEY,
       null, null, null, inchiGenerator.getInchiKey))
 
 
     // Calculate SMILES
-    metaData.append(new MetaData("computed", true, false, CommonMetaData.SMILES,
+    metaData.append( MetaData("computed", true, false, CommonMetaData.SMILES,
       null, null, null, SmilesGenerator.generic().create(molecule)))
 
 

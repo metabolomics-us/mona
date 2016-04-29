@@ -39,6 +39,7 @@ class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] 
 
   /**
     * registers an additional listener
+    *
     * @param listener
     * @return
     */
@@ -49,7 +50,14 @@ class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] 
     * @param item
     * @return
     */
-  def process(item: TYPE): List[TYPE] = process(item, graph.heads.head)
+  def process(item: TYPE): List[TYPE] = {
+    if(graph.size > 0) {
+      process(item, graph.heads.head)
+    }
+    else{
+      throw new RuntimeException("please provide at least 1 task to be executed!")
+    }
+  }
 
   /**
     * iterative approach to process all defined annotation data
