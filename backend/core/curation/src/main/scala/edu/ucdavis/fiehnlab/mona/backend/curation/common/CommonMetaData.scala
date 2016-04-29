@@ -14,7 +14,7 @@ object CommonMetaData {
 
   val MOLECULAR_WEIGHT: String = "molecular weight"
 
-  val CHEMICAL_FORMULA: String = "chemical formula"
+  val MOLECULAR_FORMULA: String = "molecular formula"
 
   val INCHI_CODE: String = "InChI"
 
@@ -29,7 +29,9 @@ object CommonMetaData {
 
   val PRECURSOR_MASS: String = "precursor m/z"
 
-  val ION_MODE: String = "ion mode"
+  val MS_LEVEL: String = "ms level"
+
+  val IONIZATION_TYPE: String = "ionization type"
 
   val DERIVATIZATION_TYPE: String = "derivatization type"
 
@@ -41,35 +43,15 @@ object CommonMetaData {
 
   val SOLVENT: String = "solvent"
 
-  val MOBILE_PHASE_A: String = "mobile phase a"
-
-  val MOBILE_PHASE_B: String = "mobile phase b"
-
-  val COLUMN_NAME: String = "column name"
-
-  val PARENT_SCAN: String = "parentScan"
+  val COLUMN_NAME: String = "column"
 
   val ACCESSION: String = "accession"
 
   val ORIGIN: String = "origin"
 
-  val TMS_TYPE: String = "tms type"
-
   val COMMENT: String = "comment"
 
   val RETENTION_TIME: String = "retention time"
-
-  val TRANSFER_LINE_TEMPERATURE: String = "transfer line temperature"
-
-  val MS_TYPE: String = "ms type"
-
-  val AUTHORS: String = "authors"
-
-  val ADDUCT: String = "adduct"
-
-  val DERIVATIVE_SUM_FORMULA: String = "derivative sum formula"
-
-  val MOLECULAR_SUM_FORMULA: String = "sum formula"
 
   val RETENTION_INDEX: String = "retention index"
 

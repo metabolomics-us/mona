@@ -22,7 +22,7 @@ class JSONFileSpectraReader extends ItemReader[Spectrum] with LazyLogging{
 
   /**
     * reads all the data and also takes care of closing/opening the streams
- *
+    *
     * @return
     */
   override def read(): Spectrum = {

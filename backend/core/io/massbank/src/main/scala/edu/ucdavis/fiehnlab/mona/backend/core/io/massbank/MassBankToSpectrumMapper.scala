@@ -13,13 +13,12 @@ trait MassBankToSpectrumMapper {
   /** One-to-one mapping of MassBank record fields to base metadata fields */
   def recordToSpectrum(record: MassBankRecord): Spectrum = {
     Spectrum(
-      id = record.recordSpecificGroup.accession getOrElse null,
+      id = record.recordSpecificGroup.accession orNull,
       lastUpdated = null,
       score = null,
 
       metaData = extractMetadata(record),
-      biologicalCompound = extractBiologicalCompound(record),
-      chemicalCompound = null,
+      compound = Array(extractBiologicalCompound(record)),
 
       spectrum = formatPeaks(record.massSpectraPeakDataGroup.peak),
       splash = null,
@@ -121,9 +120,9 @@ trait MassBankToSpectrumMapper {
     def asName(n: String) = Names(false, n, 0.0, "user-provided")
 
     val names = r.chemicalGroup.name.map(asName).toArray
-    val inchi = r.chemicalGroup.iupac getOrElse null
+    val inchi = r.chemicalGroup.iupac orNull
 
-    Compound(inchi, null, null, null, names, null)
+    Compound(inchi, null, null, null, names, null, false, null, "biological")
   }
 }
 

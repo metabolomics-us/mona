@@ -26,12 +26,12 @@ class IdentifyChromotographyTest extends WordSpec {
 
       val processedSpectrum = processor.process(spectrumGiven)
 
-      "identify spectrum as GC/MS" in {
-        assert(processedSpectrum.tags.exists(_.text == CommonTags.GCMS_SPECTRUM))
+      "identify spectrum as LC/MS" in {
+        assert(processedSpectrum.tags.exists(_.text == CommonTags.LCMS_SPECTRUM))
       }
 
-      "not identify spectrum as LC/MS" in {
-        assert(processedSpectrum.tags.forall(_.text != CommonTags.LCMS_SPECTRUM))
+      "not identify spectrum as GC/MS" in {
+        assert(processedSpectrum.tags.forall(_.text != CommonTags.GCMS_SPECTRUM))
       }
     }
   }

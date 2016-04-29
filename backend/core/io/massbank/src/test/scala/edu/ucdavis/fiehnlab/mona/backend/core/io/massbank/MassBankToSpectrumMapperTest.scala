@@ -28,7 +28,7 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
       }
 
       "extract CH$INCHI information into the biological compound metadata group" in {
-        result.get.biologicalCompound.inchi shouldBe "InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1"
+        result.get.compound.head.inchi shouldBe "InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1"
       }
 
       "extract CH$NAME information into the biological compound metadata group" in {
@@ -46,7 +46,7 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
             |Glutacid
             |Glutaminol
             |Glutaton""".stripMargin
-        val names = result.get.biologicalCompound.names.map(_.name).mkString("\n")
+        val names = result.get.compound.head.names.map(_.name).mkString("\n")
         names shouldBe expected
       }
     }

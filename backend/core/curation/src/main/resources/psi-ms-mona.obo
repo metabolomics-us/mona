@@ -1,0 +1,958 @@
+format-version: 1.2
+data-version: 3.83.0
+date: 22:03:2016 11:06
+saved-by: Gerhard Mayer
+auto-generated-by: OBO-Edit 2.3
+import: http://pato.googlecode.com/svn/trunk/quality.obo
+import: http://unit-ontology.googlecode.com/svn/trunk/unit.obo
+default-namespace: MS
+namespace-id-rule: * MS:$sequence(7,0,9999999)$
+remark: namespace: MS
+remark: version: 3.83.0
+remark: release date: 2016-03-22
+remark: coverage: Mass spectrometer output files and spectra interpretation
+remark: creator: Matt Chambers <matt.chambers <-at-> vanderbilt.edu>
+remark: creator: Andreas Bertsch <bertsch <-at-> informatik.uni-tuebingen.de>
+remark: creator: Marius Kallhardt <Marius.Kallhardt <-at-> bdal.de>
+remark: creator: Eric Deutsch <edeutsch <-at-> systemsbiology.org>
+remark: creator: Fredrik Levander <fredrik.levander <-at-> immun.lth.se>
+remark: creator: Pierre-Alain Binz <pierre-alain.binz <-at-> chuv.ch>
+remark: creator: Gerhard Mayer <mayerg97 <-at-> rub.de>
+remark: publisher: HUPO Proteomics Standards Initiative Mass Spectrometry Standards Working Group and HUPO Proteomics Standards Initiative Proteomics Informatics Working Group
+remark: When appropriate the definition and synonyms of a term are reported exactly as in the chapter 12 of IUPAC orange book. See http://www.iupac.org/projects/2003/2003-056-2-500.html and http://mass-spec.lsu.edu/msterms/index.php/Main_Page
+remark: For any queries contact psidev-ms-vocab@lists.sourceforge.net
+remark: URL: http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo
+remark: This work is licensed under the Creative Commons Attribution 3.0 Unported License.
+remark: To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+ontology: ms
+
+[Term]
+id: MS:1000001
+name: sample number
+def: "A reference number relevant to the sample under study." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000548 ! sample attribute
+
+[Term]
+id: MS:1000002
+name: sample name
+def: "A reference string relevant to the sample under study." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000548 ! sample attribute
+
+[Term]
+id: MS:1000003
+name: sample state
+def: "The chemical phase of a pure sample, or the state of a mixed sample." [PSI:MS]
+is_a: MS:1000548 ! sample attribute
+
+[Term]
+id: MS:1000004
+name: sample mass
+def: "Total mass of sample used." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000548 ! sample attribute
+relationship: has_units UO:0000021 ! gram
+
+[Term]
+id: MS:1000005
+name: sample volume
+def: "Total volume of solution used." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000548 ! sample attribute
+relationship: has_units UO:0000098 ! milliliter
+
+[Term]
+id: MS:1000006
+name: sample concentration
+def: "Concentration of sample in picomol/ul, femtomol/ul or attomol/ul solution used." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000548 ! sample attribute
+relationship: has_units UO:0000175 ! gram per liter
+
+[Term]
+id: MS:1000007
+name: inlet type
+def: "The nature of the sample inlet." [PSI:MS]
+relationship: part_of MS:1000458 ! source
+
+[Term]
+id: MS:1000008
+name: ionization type
+def: "The method by which gas phase ions are generated from the sample." [PSI:MS]
+relationship: part_of MS:1000458 ! source
+synonym: "ionization" EXACT []
+synonym: "ionization mode" EXACT []
+synonym: "ionizationmode" EXACT []
+synonym: "ion mode" EXACT []
+synonym: "ionmode" EXACT []
+synonym: "AC$MASS_SPECTROMETRY: ION_MODE" EXACT []
+synonym: "scan polarity" EXACT []
+synonym: "polarity" EXACT []
+
+[Term]
+id: MS:1000011
+name: mass resolution
+def: "Smallest mass difference between two equal magnitude peaks so that the valley between them is a specified fraction of the peak height." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000503 ! scan attribute
+
+[Term]
+id: MS:1000012
+name: resolution measurement method
+def: "Which of the available standard measures is used to define whether two peaks are separate." [PSI:MS]
+is_a: MS:1000596 ! measurement method
+
+[Term]
+id: MS:1000014
+name: mass accuracy
+def: "Accuracy is the degree of conformity of a measured mass to its actual value." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000480 ! mass analyzer attribute
+relationship: has_units MS:1000040 ! m/z
+relationship: has_units UO:0000169 ! parts per million
+
+[Term]
+id: MS:1000015
+name: scan rate
+def: "Rate in Th/sec for scanning analyzers." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000503 ! scan attribute
+relationship: has_units MS:1000807 ! Th/s
+
+[Term]
+id: MS:1000016
+name: scan start time
+def: "The time that an analyzer started a scan, relative to the start of the MS run." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000503 ! scan attribute
+is_a: MS:1001105 ! peptide result details
+is_a: MS:1001405 ! spectrum identification result details
+relationship: has_units UO:0000010 ! second
+relationship: has_units UO:0000031 ! minute
+
+[Term]
+id: MS:1000018
+name: scan direction
+def: "Direction in terms of m/z of the scan for scanning analyzers (low to high, or high to low)." [PSI:MS]
+relationship: part_of MS:1000441 ! scan
+
+[Term]
+id: MS:1000019
+name: scan law
+def: "Describes the function in control of the m/z scan (for scanning instruments). Commonly the scan function is linear, but in principle any function can be used." [PSI:MS]
+relationship: part_of MS:1000441 ! scan
+synonym: "scan function" EXACT []
+
+[Term]
+id: MS:1000020
+name: scanning method
+def: "Describes the acquisition data type produced by a tandem mass spectrometry experiment." [PSI:MS]
+comment: OBSOLETE This former purgatory term was made obsolete.
+synonym: "Tandem Scanning Method" RELATED []
+is_obsolete: true
+
+[Term]
+id: MS:1000021
+name: reflectron state
+def: "Status of the reflectron, turned on or off." [PSI:MS]
+is_a: MS:1000480 ! mass analyzer attribute
+
+[Term]
+id: MS:1000022
+name: TOF Total Path Length
+def: "The length of the field free drift space in a time of flight mass spectrometer." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000480 ! mass analyzer attribute
+relationship: has_units UO:0000008 ! meter
+
+[Term]
+id: MS:1000023
+name: isolation width
+def: "OBSOLETE The total width (i.e. not half for plus-or-minus) of the gate applied around a selected precursor ion." [PSI:MS]
+comment: This former purgatory term was made obsolete.
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+relationship: has_units MS:1000040 ! m/z
+is_obsolete: true
+
+[Term]
+id: MS:1000025
+name: magnetic field strength
+def: "A property of space that produces a force on a charged particle equal to qv x B where q is the particle charge and v its velocity." [PSI:MS]
+synonym: "B" EXACT []
+synonym: "Magnetic Field" RELATED []
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000480 ! mass analyzer attribute
+relationship: has_units UO:0000228 ! tesla
+
+[Term]
+id: MS:1000026
+name: detector type
+def: "Type of detector used in the mass spectrometer." [PSI:MS]
+relationship: part_of MS:1000453 ! detector
+
+[Term]
+id: MS:1000027
+name: detector acquisition mode
+def: "Method by which detector signal is acquired by the data system." [PSI:MS]
+relationship: part_of MS:1000453 ! detector
+
+[Term]
+id: MS:1000028
+name: detector resolution
+def: "The resolving power of the detector to detect the smallest difference between two ions so that the valley between them is a specified fraction of the peak height." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000481 ! detector attribute
+
+[Term]
+id: MS:1000029
+name: sampling frequency
+def: "The rate of signal sampling (measurement) with respect to time." [PSI:MS]
+synonym: "ADC Sampling Frequency" NARROW []
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000481 ! detector attribute
+relationship: has_units UO:0000106 ! hertz
+
+[Term]
+id: MS:1000030
+name: vendor
+def: "OBSOLETE Name of instrument vendor." [PSI:MS]
+comment: This term was made obsolete because it was replaced by instrument model (MS:1000031).
+is_obsolete: true
+
+[Term]
+id: MS:1000031
+name: instrument model
+def: "Instrument model name not including the vendor's name." [PSI:MS]
+relationship: part_of MS:1000463 ! instrument
+
+[Term]
+id: MS:1000033
+name: deisotoping
+def: "The removal of isotope peaks to represent the fragment ion as one data point and is commonly done to reduce complexity. It is done in conjunction with the charge state deconvolution." [PSI:MS]
+is_a: MS:1000543 ! data processing action
+
+[Term]
+id: MS:1000034
+name: charge deconvolution
+def: "The determination of the mass of an ion based on the mass spectral peaks that represent multiple-charge ions." [PSI:MS]
+is_a: MS:1000543 ! data processing action
+
+[Term]
+id: MS:1000035
+name: peak picking
+def: "Spectral peak processing conducted on the acquired data to convert profile data to centroided data." [PSI:MS]
+is_a: MS:1000543 ! data processing action
+
+[Term]
+id: MS:1000040
+name: m/z
+def: "Three-character symbol m/z is used to denote the quantity formed by dividing the mass of an ion in unified atomic mass units by its charge number (regardless of sign). The symbol is written in italicized lower case letters with no spaces. Note 1: The term mass-to-charge-ratio is deprecated. Mass-to-charge ratio has been used for the abscissa of a mass spectrum, although the quantity measured is not the quotient of the ion's mass to its electric charge. The three-character symbol m/z is recommended for the quantity that is the independent variable in a mass spectrum Note 2: The proposed unit thomson (Th) is deprecated." [PSI:MS]
+synonym: "mass-to-charge ratio" EXACT []
+synonym: "Th" EXACT []
+synonym: "thomson" EXACT []
+is_a: UO:0000000 ! unit
+
+[Term]
+id: MS:1000041
+name: charge state
+def: "The charge state of the ion, single or multiple and positive or negatively charged." [PSI:MS]
+synonym: "z" EXACT []
+synonym: "charge" EXACT []
+xref: value-type:xsd\:int "The allowed value-type for this CV term."
+is_a: MS:1000455 ! ion selection attribute
+
+[Term]
+id: MS:1000044
+name: dissociation method
+def: "Fragmentation method used for dissociation or fragmentation." [PSI:MS]
+synonym: "Activation Method" RELATED []
+relationship: part_of MS:1000456 ! precursor activation
+
+[Term]
+id: MS:1000045
+name: collision energy
+def: "Energy for an ion experiencing collision with a stationary gas particle resulting in dissociation of the ion." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000510 ! precursor activation attribute
+relationship: has_units UO:0000266 ! electronvolt
+
+[Term]
+id: MS:1000054
+name: chromatography
+def: "OBSOLETE Chromatographic conditions used to obtain the sample." [PSI:MS]
+comment: This former purgatory term was made obsolete.
+is_obsolete: true
+
+[Term]
+id: MS:1000138
+name: normalized collision energy
+def: "Instrument setting, expressed in percent, for adjusting collisional energies of ions in an effort to provide equivalent excitation of all ions." [PSI:PI]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000510 ! precursor activation attribute
+relationship: has_units UO:0000187 ! percent
+
+[Term]
+id: MS:1000208
+name: average mass
+def: "OBSOLETE The mass of an ion or molecule calculated using the average mass of each element weighted for its natural isotopic abundance." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+comment: This child of the former purgatory term ion attribute was made obsolete.
+relationship: has_units UO:0000002 ! mass unit
+is_obsolete: true
+
+[Term]
+id: MS:1000210
+name: base peak
+def: "The peak in a mass spectrum that has the greatest intensity. This term may be applied to the spectra of pure substances or mixtures." [PSI:MS]
+synonym: "BP" EXACT []
+is_a: MS:1000231 ! peak
+
+[Term]
+id: MS:1000215
+name: exact mass
+def: "OBSOLETE The calculated mass of an ion or molecule containing a single isotope of each atom." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+comment: This child of the former purgatory term ion attribute was made obsolete.
+relationship: has_units UO:0000002 ! mass unit
+is_obsolete: true
+synonym: "mz exact" EXACT []
+
+[Term]
+id: MS:1000219
+name: ionization energy
+def: "OBSOLETE The minimum energy required to remove an electron from an atom or molecule to produce a positive ion." [PSI:MS]
+synonym: "IE" EXACT []
+comment: This child of the former purgatory term ion attribute was made obsolete.
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+relationship: has_units UO:0000266 ! electronvolt
+is_obsolete: true
+
+[Term]
+id: MS:1000223
+name: mass number
+def: "OBSOLETE The sum of the protons and neutrons in an atom, molecule or ion." [PSI:MS]
+xref: value-type:xsd\:int "The allowed value-type for this CV term."
+comment: This child of the former purgatory term ion attribute was made obsolete.
+is_obsolete: true
+
+[Term]
+id: MS:1000224
+name: molecular mass
+def: "OBSOLETE The mass of one mole of a molecular substance (6.022 1415(10) x 10^23 molecules)." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+comment: This child of the former purgatory term ion attribute was made obsolete.
+relationship: has_units UO:0000002 ! mass unit
+is_obsolete: true
+
+[Term]
+id: MS:1000336
+name: neutral loss
+def: "The loss of an uncharged species during a rearrangement process." [PSI:MS]
+is_a: MS:1001055 ! modification parameters
+
+[Term]
+id: MS:1000340
+name: precursor type
+def: "OBSOLETE An ion that reacts to form particular product ions. The reaction can be unimolecular dissociation, ion/molecule reaction, isomerization, or change in charge state. The term parent ion is deprecated." [PSI:MS]
+comment: This child of the former purgatory term ion role was made obsolete.
+synonym: "parent ion" RELATED []
+is_obsolete: true
+synonym: "precursor ion" EXACT []
+synonym: "precursortype" EXACT []
+
+[Term]
+id: MS:1000341
+name: precursor ion spectrum
+def: "Spectrum generated by scanning precursor m/z while monitoring a fixed product m/z." [PSI:MS]
+is_a: MS:1000294 ! mass spectrum
+is_a: MS:1000524 ! data file content
+
+[Term]
+id: MS:1000343
+name: product ion spectrum
+def: "OBSOLETE A mass spectrum recorded from any spectrometer in which the appropriate m/z separation scan function is set to record the product ion or ions of selected precursor ions." [PSI:MS]
+comment: This term was made obsolete because it was merged with MSn spectrum (MS:1000580).
+is_a: MS:1000294 ! mass spectrum
+is_a: MS:1000524 ! data file content
+is_obsolete: true
+
+[Term]
+id: MS:1000412
+name: buffer gas
+def: "An inert gas used for collisional deactivation of internally excited ions." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000510 ! precursor activation attribute
+
+[Term]
+id: MS:1000451
+name: mass analyzer
+def: "Terms used to describe the Analyzer." [PSI:MS]
+synonym: "analyzer" EXACT []
+relationship: part_of MS:1000463 ! instrument
+
+[Term]
+id: MS:1000452
+name: data transformation
+def: "Terms used to describe types of data processing." [PSI:MS]
+synonym: "data processing" EXACT []
+relationship: part_of MS:1001458 ! spectrum generation information
+
+[Term]
+id: MS:1000453
+name: detector
+def: "The device that detects ions." [PSI:MS]
+relationship: part_of MS:1000463 ! instrument
+
+[Term]
+id: MS:1000456
+name: precursor activation
+def: "Terms to describe the precursor activation." [PSI:MS]
+synonym: "activation" EXACT []
+relationship: part_of MS:1000442 ! spectrum
+
+[Term]
+id: MS:1000457
+name: sample
+def: "Terms to describe the sample." [PSI:MS]
+relationship: part_of MS:1001458 ! spectrum generation information
+
+[Term]
+id: MS:1000458
+name: source
+def: "Terms to describe the source." [PSI:MS]
+relationship: part_of MS:1000463 ! instrument
+
+[Term]
+id: MS:1000463
+name: instrument
+def: "Description of the instrument or the mass spectrometer." [PSI:MS]
+synonym: "instrument configuration" EXACT []
+relationship: part_of MS:1001458 ! spectrum generation information
+synonym: "source instrument" EXACT []
+
+[Term]
+id: MS:1000486
+name: source potential
+def: "Potential difference at the MS source in volts." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000482 ! source attribute
+relationship: has_units UO:0000218 ! volt
+
+[Term]
+id: MS:1000502
+name: dwell time
+def: "The time spent gathering data across a peak." [PSI:MS]
+synonym: "Scan Duration" RELATED []
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000503 ! scan attribute
+relationship: has_units UO:0000010 ! second
+relationship: has_units UO:0000031 ! minute
+
+[Term]
+id: MS:1000504
+name: base peak m/z
+def: "M/z value of the signal of highest intensity in the mass spectrum." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000499 ! spectrum attribute
+relationship: has_units MS:1000040 ! m/z
+
+[Term]
+id: MS:1000505
+name: base peak intensity
+def: "The intensity of the greatest peak in the mass spectrum." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000499 ! spectrum attribute
+relationship: has_units MS:1000131 ! number of detector counts
+relationship: has_units MS:1000132 ! percent of base peak
+relationship: has_units MS:1000814 ! counts per second
+relationship: has_units MS:1000905 ! percent of base peak times 100
+relationship: has_units UO:0000269 ! absorbance unit
+
+[Term]
+id: MS:1000509
+name: activation energy
+def: "Activation Energy." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000510 ! precursor activation attribute
+relationship: has_units UO:0000266 ! electronvolt
+
+[Term]
+id: MS:1000511
+name: ms level
+def: "Stages of ms achieved in a multi stage mass spectrometry experiment." [PSI:MS]
+xref: value-type:xsd\:int "The allowed value-type for this CV term."
+is_a: MS:1000499 ! spectrum attribute
+synonym: "ms type" EXACT []
+synonym: "mstype" EXACT []
+synonym: "mslevel" EXACT []
+
+[Term]
+id: MS:1000559
+name: spectrum type
+def: "Spectrum type." [PSI:MS]
+relationship: part_of MS:1000442 ! spectrum
+
+[Term]
+id: MS:1000597
+name: ion optics type
+def: "The electrical potential used to impart kinetic energy to ions in a mass spectrometer." [PSI:MS]
+is_a: MS:1000462 ! ion optics
+
+[Term]
+id: MS:1000745
+name: retention time alignment
+def: "The correction of the spectrum scan times, as used e.g. in label-free proteomics." [PSI:MS]
+is_a: MS:1000543 ! data processing action
+
+[Term]
+id: MS:1000831
+name: sample preparation
+def: "Properties of the preparation steps which took place before the measurement was performed." [PSI:MS]
+is_a: MS:1000547 ! object attribute
+relationship: part_of MS:1000548 ! sample attribute
+
+[Term]
+id: MS:1000834
+name: matrix solution
+def: "Describes the chemical solution used as matrix." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000832 ! MALDI matrix application
+
+[Term]
+id: MS:1000858
+name: fraction identifier
+def: "Identier string that describes the sample fraction. This identifier should contain the fraction number(s) or similar information." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000857 ! run attribute
+
+[Term]
+id: MS:1000859
+name: molecule
+def: "A molecules is a fundamental component of a chemical compound that is the smallest part of the compound that can participate in a chemical reaction." [PSI:MS]
+relationship: part_of MS:1000881 ! chemical compound
+
+[Term]
+id: MS:1000865
+name: empirical formula
+def: "A chemical formula which expresses the proportions of the elements present in a substance." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000864 ! chemical compound formula
+
+[Term]
+id: MS:1000866
+name: molecular formula
+def: "A chemical compound formula expressing the number of atoms of each element present in a compound, without indicating how they are linked." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000864 ! chemical compound formula
+synonym: "molecule formula" EXACT []
+synonym: "chemical formula" EXACT []
+
+[Term]
+id: MS:1000867
+name: structural formula
+def: "A chemical formula showing the number of atoms of each element in a molecule, their spatial arrangement, and their linkage to each other." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000864 ! chemical compound formula
+
+[Term]
+id: MS:1000868
+name: SMILES
+def: "The simplified molecular input line entry specification or SMILES is a specification for unambiguously describing the structure of a chemical compound using a short ASCII string." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000864 ! chemical compound formula
+
+[Term]
+id: MS:1002599
+name: SPLASH
+def: "The Splash, is an unique identifier for Spectra, as the InChI Key is an unique identifier for chemical compounds." [http://splash.fiehnlab.ucdavis.edu/]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1001405 ! spectrum identification result details
+
+[Term]
+id: MS:1000881
+name: chemical compound
+def: "A substance formed by chemical union of two or more elements or ingredients in definite proportion by weight." [PSI:MS]
+relationship: part_of MS:0000000 ! Proteomics Standards Initiative Mass Spectrometry Vocabularies
+
+[Term]
+id: MS:1000894
+name: retention time
+def: "A time interval from the start of chromatography when an analyte exits a chromatographic column." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000887 ! peptide attribute
+relationship: has_units UO:0000010 ! second
+relationship: has_units UO:0000031 ! minute
+synonym: "rt" EXACT []
+synonym: "retentiontime" EXACT []
+
+[Term]
+id: MS:1000896
+name: normalized retention time
+def: "A time interval from the start of chromatography when an analyte exits a standardized reference chromatographic column and instrumental setup." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000894 ! retention time
+relationship: has_units UO:0000010 ! second
+relationship: has_units UO:0000031 ! minute
+
+[Term]
+id: MS:1001117
+name: theoretical mass
+def: "The theoretical mass of the molecule (e.g. the peptide sequence and its modifications)." [PSI:PI]
+xref: value-type:xsd\:double "The allowed value-type for this CV term."
+is_a: MS:1001105 ! peptide result details
+relationship: has_units UO:0000221 ! dalton
+
+[Term]
+id: MS:1001137
+name: absolute quantity
+def: "Absolute quantity in terms of real concentration or molecule copy number in sample." [PSI:PI]
+xref: value-type:xsd\:double "The allowed value-type for this CV term."
+is_a: MS:1001805 ! quantification datatype
+
+[Term]
+id: MS:1001138
+name: error on absolute quantity
+def: "Error on absolute quantity." [PSI:PI]
+xref: value-type:xsd\:double "The allowed value-type for this CV term."
+is_a: MS:1001805 ! quantification datatype
+
+[Term]
+id: MS:1001139
+name: quantitation software name
+def: "Quantitation software name." [PSI:PI]
+is_a: MS:1000531 ! software
+is_a: MS:1001129 ! quantification information
+
+[Term]
+id: MS:1001141
+name: precursor intensity
+def: "The intensity of the precursor ion." [PSI:PI]
+xref: value-type:xsd\:double "The allowed value-type for this CV term."
+is_a: MS:1001805 ! quantification datatype
+
+[Term]
+id: MS:1001455
+name: acquisition software
+def: "Acquisition software." [PSI:MS]
+is_a: MS:1000531 ! software
+
+[Term]
+id: MS:1001456
+name: analysis software
+def: "Analysis software." [PSI:MS]
+is_a: MS:1000531 ! software
+
+[Term]
+id: MS:1001457
+name: data processing software
+def: "Data processing software." [PSI:MS]
+is_a: MS:1000531 ! software
+
+[Term]
+id: MS:1001524
+name: fragment neutral loss
+def: "This term can describe a neutral loss m/z value that is lost from an ion." [PSI:PI]
+xref: value-type:xsd\:double "The allowed value-type for this CV term."
+is_a: MS:1001471 ! peptide modification details
+relationship: has_units UO:0000221 ! dalton
+
+[Term]
+id: MS:1001525
+name: precursor neutral loss
+def: "This term can describe a neutral loss m/z value that is lost from an ion." [PSI:PI]
+xref: value-type:xsd\:double "The allowed value-type for this CV term."
+is_a: MS:1001471 ! peptide modification details
+relationship: has_units UO:0000221 ! dalton
+
+[Term]
+id: MS:1001879
+name: offset voltage
+def: "The potential difference between two adjacent interface voltages affecting in-source collision induced dissociation." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000482 ! source attribute
+relationship: has_units UO:0000218 ! volt
+
+[Term]
+id: MS:1001883
+name: coefficient of variation
+def: "Variation of a set of signal measurements calculated as the standard deviation relative to the mean." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1001882 ! transition validation attribute
+
+[Term]
+id: MS:1001884
+name: signal-to-noise ratio
+def: "Unitless number providing the ratio of the total measured intensity of a signal relative to the estimated noise level for that signal." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1001882 ! transition validation attribute
+
+[Term]
+id: MS:1001923
+name: external reference keyword
+def: "Free text attribute that can enrich the information about an entity." [PSI:PI]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000878 ! external reference identifier
+
+[Term]
+id: MS:1001924
+name: journal article keyword
+def: "Keyword present in a scientific publication." [PSI:PI]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1001923 ! external reference keyword
+
+[Term]
+id: MS:1001925
+name: submitter keyword
+def: "Keyword assigned by the data submitter." [PSI:PI]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1001923 ! external reference keyword
+
+[Term]
+id: MS:1001931
+name: source interface
+def: "The source interface." [PSI:MS]
+relationship: part_of MS:1000458 ! source
+
+[Term]
+id: MS:1001933
+name: source sprayer
+def: "The source sprayer." [PSI:MS]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+relationship: part_of MS:1000458 ! source
+
+[Term]
+id: MS:1001966
+name: product ion mobility
+def: "The mobility of an MS2 product ion, as measured by ion mobility mass spectrometry." [PSI:MS]
+is_a: MS:1001221 ! fragmentation information
+
+[Term]
+id: MS:1001975
+name: delta m/z
+def: "The difference between a theoretically calculated m/z and the corresponding experimentally measured m/z. It can be expressed as absolute or relative value." [PSI:MS]
+synonym: "m/z difference" EXACT []
+is_a: MS:1001405 ! spectrum identification result details
+relationship: has_units UO:0000166 ! parts per notation unit
+relationship: has_units UO:0000187 ! percent
+relationship: has_units UO:0000221 ! dalton
+
+[Term]
+id: MS:1001976
+name: delta M
+def: "The difference between a theoretically calculated molecular mass M and the corresponding experimentally measured M. It can be expressed as absolute or relative value." [PSI:MS]
+synonym: "mass difference" EXACT []
+is_a: MS:1001405 ! spectrum identification result details
+relationship: has_units UO:0000166 ! parts per notation unit
+relationship: has_units UO:0000187 ! percent
+relationship: has_units UO:0000221 ! dalton
+
+[Term]
+id: MS:1002013
+name: collision energy ramp start
+def: "Collision energy at the start of the collision energy ramp." [PSI:PI]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000045 ! collision energy
+relationship: has_units UO:0000266 ! electronvolt
+
+[Term]
+id: MS:1002014
+name: collision energy ramp end
+def: "Collision energy at the end of the collision energy ramp." [PSI:PI]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000045 ! collision energy
+relationship: has_units UO:0000266 ! electronvolt
+
+[Term]
+id: MS:1002033
+name: contact role
+def: "Role of the contact person." [PSI:PI]
+is_a: MS:1000585 ! contact attribute
+
+[Term]
+id: MS:1002034
+name: author
+def: "The first of a set of authors associated with a publication or release. There may be more than one first author in cases where several authors share primary attribution." [PSI:MS]
+is_a: MS:1002033 ! contact role
+synonym: "authors" EXACT []
+
+[Term]
+id: MS:1002035
+name: senior author
+def: "The last of a set of authors associated with a publication or release. There may be more than one senior author in cases where several authors share senior attribution." [PSI:MS]
+is_a: MS:1002033 ! contact role
+synonym: "pi" EXACT []
+synonym: "principal investigator" EXACT []
+
+[Term]
+id: MS:1002036
+name: co-author
+def: "One of a set of authors associated with a publication or release." [PSI:MS]
+is_a: MS:1002033 ! contact role
+
+[Term]
+id: MS:1002037
+name: submitter
+def: "A person who submits a dataset to a repository." [PSI:MS]
+is_a: MS:1002033 ! contact role
+synonym: "submituser" EXACT []
+
+[Term]
+id: MS:1002040
+name: inlet temperature
+def: "The temperature of the inlet of a mass spectrometer." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000482 ! source attribute
+is_a: MS:1002039 ! inlet attribute
+relationship: has_units UO:0000012 ! kelvin
+relationship: has_units UO:0000027 ! degree Celsius
+
+[Term]
+id: MS:1002041
+name: source temperature
+def: "The temperature of the source of a mass spectrometer." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000482 ! source attribute
+relationship: has_units UO:0000012 ! kelvin
+relationship: has_units UO:0000027 ! degree Celsius
+
+[Term]
+id: MS:1002042
+name: modulation time
+def: "The duration of a complete cycle of modulation in a comprehensive two-dimensional separation system, equals the length of a second dimension chromatogram, i.e., the time between two successive injections into the second column." [http://chromatographyonline.findanalytichem.com/lcgc/Column:+Coupling+Matters/Nomenclature-and-Conventions-in-Comprehensive-Mult/ArticleStandard/Article/detail/58429]
+xref: value-type:xsd\:string "The allowed value-type for this CV term."
+is_a: MS:1000857 ! run attribute
+relationship: has_units UO:0000010 ! second
+relationship: has_units UO:0000031 ! minute
+
+[Term]
+id: MS:1002082
+name: first column elution time
+def: "The time of elution from the first chromatographic column in the chromatographic separation step, relative to the start of chromatography on the first column." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000503 ! scan attribute
+relationship: has_units UO:0000010 ! second
+relationship: has_units UO:0000031 ! minute
+
+[Term]
+id: MS:1002083
+name: second column elution time
+def: "The time of elution from the second chromatographic column in the chromatographic separation step, relative to the start of the chromatography on the second column." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000503 ! scan attribute
+relationship: has_units UO:0000010 ! second
+relationship: has_units UO:0000031 ! minute
+
+[Term]
+id: MS:1002120
+name: experiment name
+def: "The name for identifying an experiment." [PSI:PI]
+is_a: MS:1001806 ! quantification object attribute
+
+[Term]
+id: MS:1002234
+name: precursor m/z
+def: "Mass-to-charge ratio of a precursor ion selected for fragmentation." [PSI:PI]
+synonym: "selected ion m/z" RELATED []
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000455 ! ion selection attribute
+relationship: has_units MS:1000040 ! m/z
+synonym: "precursor mz" EXACT []
+synonym: "precursormz" EXACT []
+
+[Term]
+id: MS:1002270
+name: chromatography separation
+def: "A technique by which molecules are separated by chemical and physical properties such as hydrophobicity or vapour pressure." [PSI:MS]
+is_a: MS:1000857 ! run attribute
+
+[Term]
+id: MS:1002386
+name: preprocessing software
+def: "Preprocessing software." [PSI:PI]
+is_a: MS:1001457 ! data processing software
+
+[Term]
+id: MS:1002414
+name: postprocessing software
+def: "Postprocessing software." [PSI:PI]
+is_a: MS:1001457 ! data processing software
+
+[Term]
+id: MS:1002476
+name: ion mobility drift time
+def: "Drift time of an ion or spectrum of ions as measured in an ion mobility mass spectrometer. This time might refer to the central value of a bin into which all ions within a narrow range of drift time have been aggregated." [PSI:MS]
+xref: value-type:xsd\:float "The allowed value-type for this CV term."
+is_a: MS:1000455 ! ion selection attribute
+relationship: has_units UO:0000028 ! millisecond
+
+[Term]
+id: MS:1002482
+name: statistical threshold
+def: "Estimated statistical threshold." [PSI:MS]
+is_a: MS:1001060 ! quality estimation method details
+
+[Term]
+id: MS:1002489
+name: special processing
+def: "Details describing a special processing." [PSI:PI]
+is_a: MS:1001080 ! search type
+relationship: part_of MS:1001000 ! spectrum interpretation
+
+
+[Term]
+id: MS:1000353
+name: adduct
+def: "OBSOLETE Ion formed by the interaction of an ion with one or more atoms or molecules to form an ion containing all the constituent atoms of the precursor ion as well as the additional atoms from the associated atoms or molecules." [PSI:MS]
+comment: This child of the former purgatory term ion chemical type was made obsolete.
+is_obsolete: true
+synonym: "adductionname" EXACT []
+synonym: "adduct ion name" EXACT []
+
+[Term]
+id: MS:9000001
+name: retention index
+synonym: "ri" EXACT []
+synonym: "retentionindex" EXACT []
+
+[Term]
+id: MS:9000002
+name: compound class
+synonym: "compoundclass" EXACT []
+
+[Term]
+id: MS:9000003
+name: column
+synonym: "column name" EXACT []
+
+[Term]
+id: MS:9000004
+name: flow rate
+synonym: "flowrate" EXACT []
+synonym: "flow" EXACT []
+
+[Term]
+id: MS:9000005
+name: accession
+synonym: "spectrumid" EXACT []
+
+[Term]
+id: MS:9000006
+name: transfer line temperature
+synonym: "transfarline temperature" EXACT []
+
+[Term]
+id: MS:9000007
+name: data collector
+synonym: "datacollector" EXACT []
+
+[Term]
+id: MS:9000008
+name: data format
+synonym: "dataformat" EXACT []
+
+[Term]
+id: MS:9000009
+name: molecular weight
+synonym: "weight" EXACT []
+synonym: "mw" EXACT []
