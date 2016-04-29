@@ -12,7 +12,7 @@ import org.springframework.batch.item.ItemReader
 /**
   * this reader is utilized to efficiently read a large amount of legacy spectra into the system
   */
-class JSONLegacyFileSpectraReader extends ItemReader[LegacySpectrum] with LazyLogging{
+class JSONLegacyFileSpectraReader extends ItemReader[Spectrum] with LazyLogging{
 
   var stream:InputStream = null
 
@@ -25,7 +25,7 @@ class JSONLegacyFileSpectraReader extends ItemReader[LegacySpectrum] with LazyLo
     *
     * @return
     */
-  override def read(): LegacySpectrum = {
+  override def read(): Spectrum = {
 
     if(parser == null){
       logger.debug("opening stream and creating new parser")
@@ -51,7 +51,7 @@ class JSONLegacyFileSpectraReader extends ItemReader[LegacySpectrum] with LazyLo
     }
     else{
       val jsonNode: JsonNode = mapper.readTree(parser)
-      val spectrum = mapper.treeToValue(jsonNode,classOf[LegacySpectrum])
+      val spectrum = mapper.treeToValue(jsonNode,classOf[LegacySpectrum]).asSpectrum
       logger.trace(s"read: ${spectrum}")
       spectrum
     }
