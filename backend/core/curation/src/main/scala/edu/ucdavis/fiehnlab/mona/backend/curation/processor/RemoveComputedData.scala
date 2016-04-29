@@ -76,3 +76,8 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     }
   }
 }
+
+object RemoveComputedData {
+
+  def apply: RemoveComputedData = new RemoveComputedData()
+}
