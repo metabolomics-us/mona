@@ -4,9 +4,9 @@ import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundExceptio
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{LegacySpectrum, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.AnnotationWorkflow
-import edu.ucdavis.fiehnlab.mona.backend.curation.reader.JSONFileSpectraReader
+import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONLegacyFileSpectraReader, JSONFileSpectraReader}
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.amqp.core._
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -122,4 +122,27 @@ class CurationConfig extends LazyLogging {
 
     reader
   }
+
+  @Bean
+  @StepScope
+  def jsonLegacyFileReader(@Value("#{jobParameters[pathToFile]}")
+                     file: String): ItemReader[Spectrum] = {
+
+    if (file == null) {
+      throw new FileNotFoundException("you need to provide a file name, but instead the parameter was null!")
+    }
+    val reader = new JSONLegacyFileSpectraReader()
+
+    if (new File(file).exists()) {
+      logger.debug("a file was provided")
+      reader.stream = new BufferedInputStream(new FileInputStream(file))
+    }
+    else {
+      logger.warn(s"provided file ${file} did not exist, trying to load from classpath")
+      reader.stream = getClass.getResourceAsStream(file)
+    }
+
+    reader
+  }
+
 }
