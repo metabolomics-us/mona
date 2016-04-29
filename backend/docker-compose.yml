@@ -73,6 +73,7 @@ services:
     hostname: rabbitmq
     ports:
       - "15673:15672"
+      - "5673:5672"
 
   #used for caching and as a log buffer internally
   redis:
@@ -185,3 +186,4 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+

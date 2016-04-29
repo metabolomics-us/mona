@@ -6,5 +6,5 @@ eureka:
       defaultZone: "http://${DOCKER_MACHINE_IP}:8761/eureka/"
 spring:
   rabbitmq:
-    host: ${DOCKER_MACHINE_IP}
-    port: 5672
+    host: "${DOCKER_MACHINE_IP}"
+    port: 5673
