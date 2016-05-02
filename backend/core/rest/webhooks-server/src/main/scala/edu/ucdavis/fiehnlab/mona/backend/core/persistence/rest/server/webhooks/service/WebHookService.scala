@@ -39,7 +39,7 @@ class WebHookService extends LazyLogging {
     val hooks = webhookRepository.findAll().asScala
 
     if(hooks.isEmpty){
-      logger.info("no event hooks provided in the system!")
+      logger.debug("no event hooks provided in the system!")
       Array[WebHookResult]()
     }
     else {
@@ -48,7 +48,7 @@ class WebHookService extends LazyLogging {
         case hook: WebHook =>
           val url = s"${hook.url}${id}-${eventType}"
 
-          logger.info(s"triggering event: ${url}")
+          logger.debug(s"triggering event: ${url}")
 
           try {
             restTemplate.getForObject(url, classOf[String])
