@@ -227,7 +227,7 @@ case class Author(
   * @param authors
   */
 @Document(collection = "SPECTRUM")
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 15,replicas = 2)
 case class Spectrum(
                      @(Field@field)(`type` = FieldType.Nested)
                      compound: Array[Compound],
