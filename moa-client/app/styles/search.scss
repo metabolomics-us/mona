@@ -3,23 +3,27 @@
 }
 
 .search-heading {
-    font-size: large;
+    font-size: larger;
+    font-style: italic;
+
 }
 
 .search-form {
     padding: 20px;
     margin: 20px 0;
-    border-left: 1px solid #DEB31A;
-    border-left-width: 5px;
     width: 50%;
 }
 
 .tab-pane.ng-scope.active {
-    border: none;
-
+    background-color: #f8f8f8;
 }
 
+.nav-tabs > li.active > a {
+    background-color: #f8f8f8 !important;
+}
 .form-control-label {
     font-size: larger;
     font-weight: bold;
 }
+
+
