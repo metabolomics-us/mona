@@ -91,8 +91,14 @@ class StatisticsMongoRepositoryTest extends WordSpec {
 
         checkSorting(totalExactMass)
         checkSorting(bioCyc)
+
       }
 
+      "produce empty results if given non-existent metadata groups or name" in {
+        assert(statisticsMongoRepository.aggregateByName("non-existent").isEmpty)
+
+        assert(statisticsMongoRepository.aggregateByName("non-existent", metaDataGroup = Some("non-existent")).isEmpty)
+      }
     }
   }
 }
