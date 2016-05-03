@@ -47,7 +47,9 @@ services:
      volumes_from:
        - config_container:ro
      environment:
-      - "ES_HEAP_SIZE:8g"
+      - "JAVA_OPTS:-xMx8196m"
+     entrypoint: ./bin/elasticsearch -Xmx4g -Xms4g
+
 
   #defines the master node and should not be scaled
   elasticsearch_master:
@@ -59,8 +61,7 @@ services:
     ports:
        - "9200:9200"
        - "9300:9300"
-    environment:
-      - "ES_HEAP_SIZE:8g"
+    entrypoint: ./bin/elasticsearch -Xmx4g -Xms4g
 
 ################################################################################################################
 # This section provides us with access to the required messaging queues and services for caching application
@@ -99,6 +100,9 @@ services:
       - redis
     entrypoint: ./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
 
+    environment:
+      - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
+
 # The configuration service, provides to every client his required configuration
 # the client needs to have a bootstrap.yml to register against it
 
@@ -122,6 +126,9 @@ services:
     #the configuration points the task as the right ip address for the discovery server
     entrypoint: ./wait-for-it.sh discovery:8761 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
 
+    environment:
+      - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
+
 # this proxy server is the main entry point for mona and should be preferable always be used
 
   proxy:
@@ -137,6 +144,8 @@ services:
     #we also define the url for our configuration server here
     entrypoint: ./wait-for-it.sh config:1111 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
 
+    environment:
+    - JAVA_OPTS='-Xmx2048m -XX:+UseParallelGC -XX:+UseCompressedOops -XX:+PrintFlagsFinal'
 
 ################################################################################################################
 # This section defines our required services, need to connect mona apps
@@ -154,6 +163,9 @@ services:
     ports:
     - "4444:4444"
 
+    environment:
+    - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
+
   #curration scheduler to notify rabbit queue, if any messages are send down the bus
   #it also exposes a couple of rest enpoints to manually schedule curration tasks
   #to the system
@@ -166,6 +178,8 @@ services:
     entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "5555:5555"
+    environment:
+    - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
 
 ################################################################################################################
 # This section defines services, which can be scaled from 1-n times and should be started last
@@ -178,6 +192,8 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    environment:
+    - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
 
   #persistences and query interface
   persistence:
@@ -186,4 +202,5 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
-
+    environment:
+    - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
