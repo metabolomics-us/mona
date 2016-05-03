@@ -38,42 +38,21 @@ class StatisticsMongoRepositoryTest extends WordSpec {
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  "Metadata aggregation queries" ignore  {
+  "Metadata aggregation queries" should  {
 
     spectrumMongoRepository.deleteAll()
     exampleRecords.foreach(spectrumMongoRepository.save(_))
 
     "given a specific metadata field" must {
+      val msLevel = statisticsMongoRepository.aggregateByName("ms level")
+      val ionMode = statisticsMongoRepository.aggregateByName("ion mode")
+
       "return the top records in the base metadata group" in {
-        val msLevel = statisticsMongoRepository.aggregateByName("ms level")
         assert(msLevel.nonEmpty)
         assert(msLevel == ("MS2",58) :: Nil)
 
-        val ionMode = statisticsMongoRepository.aggregateByName("ion mode")
         assert(ionMode.nonEmpty)
         assert(ionMode == ("positive",33) :: ("negative",25) :: Nil)
-      }
-
-      "return the records sorted by total count, then by name" in {
-        val expected = Seq(
-          ("CPD-10411",2),
-          ("CPD-592",2),
-          ("CPD-8097",2),
-          ("CYTIDINE",2),
-          ("ECTOINE",2),
-          ("GUANINE",2),
-          ("4-HYDROXYBENZALDEHYDE",1),
-          ("5-METHYLTHIOADENOSINE",1),
-          ("8-HYDROXYQUINOLINE",1),
-          ("BETAINE",1),
-          ("CYTOSINE",1),
-          ("METHYLNICOTINATE",1),
-          ("NIACINAMIDE",1),
-          ("URIDINE",1),
-          ("VANILLIN",1))
-
-        val result = statisticsMongoRepository.aggregateByName("BioCyc", metaDataGroup = Some("compound"))
-        assert(result == expected)
       }
 
       "throw an exception when given a null metadata field name" in {
@@ -84,10 +63,36 @@ class StatisticsMongoRepositoryTest extends WordSpec {
     }
 
     "given a specific metadata field and metadata group" must {
+      val totalExactMass = statisticsMongoRepository.aggregateByName("total exact mass", metaDataGroup = Some("biological"))
+      val bioCyc = statisticsMongoRepository.aggregateByName("BioCyc", metaDataGroup = Some("biological"))
+
       "return the top records for the metadata field/group" in {
-        val result = statisticsMongoRepository.aggregateByName("total exact mass", metaDataGroup = Some("compound"))
-        assert(result.nonEmpty)
+        assert(totalExactMass.nonEmpty)
+        assert(bioCyc.nonEmpty)
       }
+
+      "return the records sorted by total count, then by name" in {
+        def testPairs[T](xs: Iterable[T])(f: (T, T) => Boolean): Boolean =
+          (xs.init zip xs.tail).map(x => f(x._1, x._2)).foldLeft(true)(_ && _)
+
+        def checkSorting(result: Iterable[(AnyVal, Int)]) = {
+          // Check that results are sorted by count
+          val counts: Iterable[Int] = result.map(_._2)
+          assert(testPairs(counts)((a, b) => a >= b))
+
+          // Group results by value, and check if groups are sorted by name
+          val groups = result.groupBy(_._2).map(_._2)
+          groups.foreach {
+            group =>
+              val names: Iterable[String] = group.map(_._1.toString)
+              assert(testPairs(names)((a, b) => a <= b))
+          }
+        }
+
+        checkSorting(totalExactMass)
+        checkSorting(bioCyc)
+      }
+
     }
   }
 }
