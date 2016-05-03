@@ -10,5 +10,5 @@
 (function() {
     'use strict';
     angular.module('moaClientApp')
-        .constant('REST_BACKEND_SERVER', 'http://mona.fiehnlab.ucdavis.edu');
+        .constant('REST_BACKEND_SERVER', 'http://0.0.0.0:9292/mona.fiehnlab.ucdavis.edu');
 })();
