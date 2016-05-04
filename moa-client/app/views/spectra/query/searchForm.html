@@ -7,8 +7,14 @@
                     <th>Instrument Type</th>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="(key,value) in instrumentType">
-                            <td>{{key}}</td>
+                        <tr>
+                            <td>
+                             <strong>EI:</strong><br/>
+                             <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">{{n}}
+                                 <input type="checkbox">
+                                 <br/>
+                             </span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
