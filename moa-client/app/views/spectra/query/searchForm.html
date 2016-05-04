@@ -1,6 +1,6 @@
 <div class="col-md-6">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -9,9 +9,9 @@
                     <tbody>
                         <tr>
                             <td>
-                             <strong>EI:</strong><br/>
-                             <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">{{n}}
-                                 <input type="checkbox">
+                                <input type="checkbox" ng-model="selectEi"> <strong>EI:</strong><br/>
+                             <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">
+                                 <input type="checkbox" ng-checked="selectEi"> {{n}}
                                  <br/>
                              </span>
                             </td>
