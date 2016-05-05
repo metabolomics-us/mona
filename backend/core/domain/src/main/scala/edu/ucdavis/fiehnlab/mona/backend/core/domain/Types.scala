@@ -108,6 +108,8 @@ case class Compound(
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
 
+
+
                      molFile: String,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
@@ -125,8 +127,9 @@ case class Compound(
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      kind: String = "biological",
 
-                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                      classification: List[Classifier]
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
+                     classification: Array[MetaData] = Array()
+
                    )
 
 case class Impacts(
