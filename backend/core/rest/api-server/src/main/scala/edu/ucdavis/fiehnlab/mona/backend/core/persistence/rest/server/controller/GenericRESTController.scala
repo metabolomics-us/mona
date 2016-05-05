@@ -5,11 +5,13 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
   */
 
 import java.util.concurrent.Future
+import javax.validation.Valid
 
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation._
 
 import scala.collection.JavaConverters._
@@ -74,7 +76,7 @@ abstract class GenericRESTController[T] {
     */
   @Async
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
-  def save(@RequestBody spectrum: T) = new AsyncResult[T](
+  def save(@RequestBody @Validated spectrum: T) = new AsyncResult[T](
     getRepository.save(spectrum)
   )
 
@@ -121,7 +123,7 @@ abstract class GenericRESTController[T] {
     */
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
-  def put(@PathVariable("id") id: String, @RequestBody spectrum: T): Future[T] = {
+  def put(@PathVariable("id") id: String, @Validated @RequestBody spectrum: T): Future[T] = {
     new AsyncResult[T](
       getRepository.save(spectrum)
     )
