@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="table-responsive">
-                <table class="table">
+                <table class="table header-fixed">
                     <thead>
                     <th>Instrument Type</th>
                     </thead>
@@ -12,6 +12,24 @@
                                 <input type="checkbox" ng-model="selectEi"> <strong>EI:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">
                                  <input type="checkbox" ng-checked="selectEi"> {{n}}
+                                 <br/>
+                             </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" ng-model="selectEsi"> <strong>ESI:</strong><br/>
+                             <span class="insSpan" ng-repeat="n in instrumentType[1].ESI track by $index">
+                                 <input type="checkbox" ng-checked="selectEsi"> {{n}}
+                                 <br/>
+                             </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" ng-model="selectOthers"> <strong>Others:</strong><br/>
+                             <span class="insSpan" ng-repeat="n in instrumentType[2].Others track by $index">
+                                 <input type="checkbox" ng-checked="selectOthers"> {{n}}
                                  <br/>
                              </span>
                             </td>
