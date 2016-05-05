@@ -109,7 +109,7 @@
                                 <td>
                                     <input type="checkbox" ng-model="selectAll.EI"> <strong>EI:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">
-                                 <input type="checkbox" ng-checked="selectAll.EI" ng-init="instrumentType[0].EI.selected.indexOf(n) > -1"
+                                 <input type="checkbox" ng-checked="selectAll.EI"
                                         ng-click="selectInstrumentType(0,n)" value="{{n}}"> {{n}}
                                  <br/>
                              </span>

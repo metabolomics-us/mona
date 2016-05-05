@@ -36,7 +36,7 @@
 
             $scope.selectInstrumentType = function(index, instrument) {
 
-                if ($scope.selectAll.EI) {
+                if ($scope.selectAll.EI === true) {
                     $scope.instrumentType[0].selected = $scope.instrumentType[0].EI;
                 }
 
@@ -52,8 +52,10 @@
                     }
                 }
 
-                console.log($scope.selectAll.EI);
+                //console.log($scope.selectAll.EI);
                 console.log($scope.instrumentType[index].selected);
+                //console.log($scope.instrumentType[index].EI);
+                //{{instrumentType[0].EI.selected.indexOf(n) > -1}}
             }
         }
 
