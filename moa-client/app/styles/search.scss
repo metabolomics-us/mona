@@ -31,3 +31,22 @@
 .insSpan {
     padding-left: 40px;
 }
+
+.header-fixed > tr {
+    width: 100%;
+    display: inline-table;
+    height:60px;
+    table-layout: fixed;
+}
+
+.header-fixed > table{
+    height: 100px;
+    display: -moz-groupbox;
+}
+
+.header-fixed > tbody{
+    overflow-y: scroll;
+    height: 150px;
+    width: 100%;
+    position: absolute;
+}
