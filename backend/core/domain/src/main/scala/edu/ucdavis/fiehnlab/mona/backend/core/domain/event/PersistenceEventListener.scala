@@ -12,22 +12,35 @@ trait PersistenceEventListener[T] extends LazyLogging{
     *
     * @param event
     */
-  def added(event: Event[T])
+  def added(event: Event[T]) = {
+
+  }
 
   /**
     * the event was updated in the system
     *
     * @param event
     */
-  def updated(event: Event[T])
+  def updated(event: Event[T]) = {
+
+  }
 
   /**
     * an entry was deleted from the system
     *
     * @param event
     */
-  def deleted(event: Event[T])
+  def deleted(event: Event[T]) = {
 
+  }
+
+  /**
+    * requesting a synchronization
+    * @param event
+    */
+  def sync(event: Event[T]) = {
+
+  }
   /**
     * reacts to an event
     *
@@ -37,6 +50,8 @@ trait PersistenceEventListener[T] extends LazyLogging{
     case Event.UPDATE => updated(event)
     case Event.DELETE => deleted(event)
     case Event.ADD => added(event)
+    case Event.SYNC => sync(event)
+
     case _ =>
       logger.warn(s"invalid event processed: ${event.eventType}")
   }

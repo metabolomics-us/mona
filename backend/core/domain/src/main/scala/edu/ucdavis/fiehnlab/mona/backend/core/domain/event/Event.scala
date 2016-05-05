@@ -18,4 +18,6 @@ object Event{
   val ADD:String = "add"
   val DELETE:String = "delete"
   val UPDATE:String = "update"
+  val SYNC:String = "synchronize"
+
 }
