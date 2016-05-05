@@ -32,26 +32,6 @@
     padding-left: 40px;
 }
 
-// Scrolling table
-
-.header-fixed > tr {
-    width: 100%;
-    display: inline-table;
-    height:60px;
-    table-layout: fixed;
-}
-
-table.table.header-fixed{
-    height: 500px;
-    display: -moz-groupbox;
-}
-
-.header-fixed > tbody{
-    overflow-y: scroll;
-    height: 400px;
-    width: 100%;
-    position: absolute;
-}
 
 .table th {
     border-bottom: none !important;

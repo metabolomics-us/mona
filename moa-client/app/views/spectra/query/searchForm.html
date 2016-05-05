@@ -40,30 +40,30 @@
                     <div class="table-responsive">
                         <table class="table table-condensed">
                             <thead>
-                                <tr>
-                                    <th>MS Type</th>
-                                </tr>
+                            <tr>
+                                <th>MS Type</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><input type="checkbox" ng-model="selectMS"> All</td>
-                                    <td ng-repeat="ms in msType track by $index">
-                                        <input type="checkbox" ng-checked="selectMS"> {{ms}}
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td><input type="checkbox" ng-model="selectMS"> All</td>
+                                <td ng-repeat="ms in msType track by $index">
+                                    <input type="checkbox" ng-checked="selectMS"> {{ms}}
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
             <div class="form-group row">
-                <div class="col-sm-6">
+                <div class="col-sm-7">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
-                                <tr>
-                                    <th>Ion Mode</th>
-                                </tr>
+                            <tr>
+                                <th>Ion Mode</th>
+                            </tr>
                             </thead>
                             <tbody>
                             <tr>
@@ -77,14 +77,6 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group row">
-                <div class="col-sm-2">
-                    <button type="submit" class="btn btn-primary">Search</button>
-                </div>
-                <div class="col-sm-2">
-                    <button type="submit" class="btn btn-secondary">Reset</button>
-                </div>
-            </div>
         </div>
         <div class="col-md-6">
             <div class="row">
@@ -92,9 +84,9 @@
                     <div class="table-responsive">
                         <table class="table header-fixed">
                             <thead>
-                                <tr>
-                                    <th>Instrument Type</th>
-                                </tr>
+                            <tr>
+                                <th>Instrument Type</th>
+                            </tr>
                             </thead>
                             <tbody>
                             <tr>
@@ -115,17 +107,29 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <input type="checkbox" ng-model="selectEi"> <strong>EI:</strong><br/>
+                                    <input type="checkbox" ng-model="selectAll.EI"> <strong>EI:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">
-                                 <input type="checkbox" ng-checked="selectEi"> {{n}}
+                                 <input type="checkbox" ng-checked="selectAll.EI" ng-init="instrumentType[0].EI.selected.indexOf(n) > -1"
+                                        ng-click="selectInstrumentType(0,n)" value="{{n}}"> {{n}}
                                  <br/>
                              </span>
                                 </td>
-                                <td></td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-secondary">Reset</button>
                 </div>
             </div>
         </div>
