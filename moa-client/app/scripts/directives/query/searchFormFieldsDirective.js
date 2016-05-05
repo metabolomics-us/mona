@@ -23,8 +23,11 @@
                           'LC-APPI-QQ', 'MALDI-QIT', 'MALDI-TOF', 'MALDI-TOFTOF']}
             ];
 
-            $scope.msType = ['All', 'MS', 'MS1', 'MS2', 'MS3', 'MS4'];
-            $scope.ionMode = ['Positive','Negative', 'Both'];
+            $scope.msType = ['MS', 'MS1', 'MS2', 'MS3', 'MS4'];
+            $scope.selectMS = true;
+
+            $scope.ionMode = ['Positive','Negative'];
+            $scope.selectIon = true;
         }
 
     }
