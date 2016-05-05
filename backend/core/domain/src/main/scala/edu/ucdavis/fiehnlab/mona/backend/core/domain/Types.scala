@@ -123,7 +123,10 @@ case class Compound(
                      score: Score,
 
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     kind: String = "biological"
+                     kind: String = "biological",
+
+                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
+                      classification: List[Classifier]
                    )
 
 case class Impacts(
