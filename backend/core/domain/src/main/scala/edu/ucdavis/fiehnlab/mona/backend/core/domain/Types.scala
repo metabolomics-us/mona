@@ -19,7 +19,6 @@ import scala.beans.BeanProperty
   */
 
 case class MetaData(
-
                      @(Indexed@field)
                      category: String,
 
@@ -123,10 +122,7 @@ case class Compound(
                      score: Score,
 
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     kind: String = "biological",
-
-                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                      classification: List[Classifier]
+                     kind: String = "biological"
                    )
 
 case class Impacts(
