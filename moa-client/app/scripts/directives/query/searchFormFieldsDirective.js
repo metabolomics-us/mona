@@ -11,52 +11,54 @@
         };
         return directive;
 
-        function fieldsController($scope) {
-            $scope.selectAll ={
-                EI: false
-            };
+        function fieldsController($scope, $log) {
+
+            $scope.selectedInstruments = [];
 
             $scope.instrumentType = [
-                {EI: ['EI-B', 'EI-EBEB', 'GC-EI-QQ', 'GC-EI-TOF'], selected: []},
-                {ESI: ['CE-ESI-TOF', 'ESI-FTICR', 'ESI-ITFT', 'ESI-ITTOF',
-                       'ESI-QTOF', 'HPLC-ESI-TOF', 'LC-ESI-IT', 'LC-ESI-ITFT',
-                       'LC-ESI-ITTOF', 'LC-ESI-Q', 'LC-ESI-QFT', 'LC-ESI-QIT',
-                       'LC-ESI-QQ', 'LC-ESI-QTOF', 'LC-ESI-TOF', 'UPLC-ESI-QTOF']},
-                {Others: ['APCI-ITFT', 'APCI-ITTOF', 'CI-B', 'FAB-B', 'FAB-EB',
-                          'FAB-EBEB', 'FD-B', 'FI-B', 'LC-APCI-Q', 'LC-APCI-QTOF',
-                          'LC-APPI-QQ', 'MALDI-QIT', 'MALDI-TOF', 'MALDI-TOFTOF']}
+                {
+                    EI: [{name: 'EI-B'}, {name: 'EI-EBEB'}, {name: 'GC-EI-QQ'}, {name: 'GC-EI-TOF'}]
+                },
+                {
+                    ESI: [{name: 'CE-ESI-TOF'}, {name: 'ESI-FTICR'}, {name: 'ESI-ITFT'}, {name: 'ESI-ITTOF'},
+                        {name: 'ESI-QTOF'}, {name: 'HPLC-ESI-TOF'}, {name: 'LC-ESI-IT'}, {name: 'LC-ESI-ITFT'},
+                        {name: 'LC-ESI-ITTOF'}, {name: 'LC-ESI-Q'}, {name: 'LC-ESI-QFT'}, {name: 'LC-ESI-QIT'},
+                        {name: 'LC-ESI-QQ'}, {name: 'LC-ESI-QTOF'}, {name: 'LC-ESI-TOF'}, {name: 'UPLC-ESI-QTOF'}]
+                },
+                {
+                    Others: [{name: 'APCI-ITFT'}, {name: 'APCI-ITTOF'}, {name: 'CI-B'}, {name: 'FAB-B'},
+                        {name: 'FAB-EB'}, {name: 'FAB-EBEB'}, {name: 'FD-B'}, {name: 'FI-B'},
+                        {name: 'LC-APCI-Q'}, {name: 'LC-APCI-QTOF'}, {name: 'LC-APPI-QQ'},
+                        {name: 'MALDI-QIT'}, {name: 'MALDI-TOF'}, {name: 'MALDI-TOFTOF'}]
+                }
             ];
 
-
             $scope.msType = ['MS', 'MS1', 'MS2', 'MS3', 'MS4'];
-            $scope.selectMS = true;
-
-            $scope.ionMode = ['Positive','Negative'];
-            $scope.selectIon = true;
-
-            $scope.selectInstrumentType = function(index, instrument) {
-
-                if ($scope.selectAll.EI === true) {
-                    $scope.instrumentType[0].selected = $scope.instrumentType[0].EI;
-                }
+            $scope.ionMode = ['Positive', 'Negative'];
 
 
-                else {
-                    var idx = $scope.instrumentType[index].selected.indexOf(instrument);
+            /**
+             * handles when user check select all in UI. Our implementation in searchForm.html
+             * uses ng-model and ng-change. Since ng-change will updates the 'selected' property
+             * of the instrument name, we do not need to update on single selection. When user
+             * clicks submit, we will loop through instrument type, and add selected==true to query
+             */
+            $scope.isSelectAll = function (index, insCategory) {
+                var curIns = $scope.instrumentType[index];
 
-                    if (idx > -1) {
-                        $scope.instrumentType[index].selected.splice(idx, 1);
-                    }
-                    else {
-                        $scope.instrumentType[index].selected.push(instrument);
-                    }
-                }
+                angular.forEach(curIns[insCategory], function (value, key) {
+                    $log.info(curIns.selectAll);
+                    value.selected = curIns.selectAll;
+                });
+            };
 
-                //console.log($scope.selectAll.EI);
-                console.log($scope.instrumentType[index].selected);
-                //console.log($scope.instrumentType[index].EI);
-                //{{instrumentType[0].EI.selected.indexOf(n) > -1}}
-            }
+            //TODO on Submit, loop through instrumentType aggregate SelectALl && name if selected !== undefined && true
+            // implement single check
+            $scope.toggleSelection = function (insName, index, insCategory) {
+                $log.info($scope.instrumentType[index][insCategory]);
+
+            };
+
         }
 
     }
