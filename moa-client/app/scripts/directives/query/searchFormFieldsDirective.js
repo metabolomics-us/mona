@@ -13,6 +13,8 @@
 
         function fieldsController($scope, $log) {
 
+            //TODO on Submit, loop through instrumentType aggregate SelectALl && name if selected !== undefined && true
+
             $scope.selectedInstruments = [];
 
             $scope.instrumentType = [
@@ -33,8 +35,11 @@
                 }
             ];
 
-            $scope.msType = ['MS', 'MS1', 'MS2', 'MS3', 'MS4'];
-            $scope.ionMode = ['Positive', 'Negative'];
+            $scope.msType = [{name: 'MS', selected: true}, {name: 'MS1', selected: true}, {name: 'MS2', selected: true},
+                {name: 'MS3', selected: true}, {name: 'MS4', selected: true}];
+            $scope.msType.selectAll = true;
+
+            $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
 
 
             /**
@@ -43,7 +48,7 @@
              * of the instrument name, we do not need to update on single selection. When user
              * clicks submit, we will loop through instrument type, and add selected==true to query
              */
-            $scope.isSelectAll = function (index, insCategory) {
+            $scope.insTypeSelectAll = function (index, insCategory) {
                 var curIns = $scope.instrumentType[index];
 
                 angular.forEach(curIns[insCategory], function (value, key) {
@@ -52,12 +57,14 @@
                 });
             };
 
-            //TODO on Submit, loop through instrumentType aggregate SelectALl && name if selected !== undefined && true
-            // implement single check
-            $scope.toggleSelection = function (insName, index, insCategory) {
-                $log.info($scope.instrumentType[index][insCategory]);
 
+            $scope.msIonSelectAll = function(selection) {
+              angular.forEach(selection, function(value, key) {
+                 value.selected = selection.selectAll;
+              });
+              $log.info($scope.ionMode);
             };
+
 
         }
 
