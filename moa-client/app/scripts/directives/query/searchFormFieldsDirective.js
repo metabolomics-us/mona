@@ -16,7 +16,12 @@
             //TODO on Submit, loop through instrumentType aggregate SelectALl && name if selected !== undefined && true
 
             $scope.selectedInstruments = [];
-
+            $scope.query = {
+                compound: {},
+                insType: {},
+                msType: {},
+                ionMode: {}
+            };
             $scope.instrumentType = [
                 {
                     EI: [{name: 'EI-B'}, {name: 'EI-EBEB'}, {name: 'GC-EI-QQ'}, {name: 'GC-EI-TOF'}]
@@ -58,11 +63,11 @@
             };
 
 
-            $scope.msIonSelectAll = function(selection) {
-              angular.forEach(selection, function(value, key) {
-                 value.selected = selection.selectAll;
-              });
-              $log.info($scope.ionMode);
+            $scope.msIonSelectAll = function (selection) {
+                angular.forEach(selection, function (value, key) {
+                    value.selected = selection.selectAll;
+                });
+                $log.info($scope.ionMode);
             };
 
 
