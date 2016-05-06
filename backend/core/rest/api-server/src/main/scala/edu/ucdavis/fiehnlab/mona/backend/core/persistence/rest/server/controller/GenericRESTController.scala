@@ -76,7 +76,7 @@ abstract class GenericRESTController[T] {
     */
   @Async
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
-  def save(@RequestBody @Validated spectrum: T) = new AsyncResult[T](
+  def save(@RequestBody spectrum: T) = new AsyncResult[T](
     getRepository.save(spectrum)
   )
 

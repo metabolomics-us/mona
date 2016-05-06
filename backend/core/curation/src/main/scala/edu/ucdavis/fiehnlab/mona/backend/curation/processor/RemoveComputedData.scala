@@ -19,6 +19,7 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
   override def process(spectrum: Spectrum): Spectrum = {
     val filteredCompound: Array[Compound] = spectrum.compound.map(compound =>
       compound.copy(
+        classification =filterMetaData(compound.classification),
         metaData = filterMetaData(compound.metaData),
         names = filterNames(compound.names),
         tags = filterTags(compound.tags)
