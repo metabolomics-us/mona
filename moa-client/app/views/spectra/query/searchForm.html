@@ -46,9 +46,9 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td><input type="checkbox" ng-model="selectMS"> All</td>
+                                <td><input type="checkbox" ng-model="msType.selectAll" ng-change="msIonSelectAll(msType)"> All</td>
                                 <td ng-repeat="ms in msType track by $index">
-                                    <input type="checkbox" ng-checked="selectMS"> {{ms}}
+                                    <input type="checkbox" ng-model="ms.selected"> {{ms.name}}
                                 </td>
                             </tr>
                             </tbody>
@@ -67,9 +67,9 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td><input type="checkbox" ng-model="selectIon"> Both</td>
+                                <td><input type="checkbox" ng-model="ionMode.selectAll" ng-change="msIonSelectAll(ionMode)"> Both</td>
                                 <td ng-repeat="ion in ionMode track by $index">
-                                    <input type="checkbox" ng-checked="selectIon"> {{ion}}
+                                    <input type="checkbox" ng-model="ion.selected"> {{ion.name}}
                                 </td>
                             </tr>
                             </tbody>
@@ -92,7 +92,7 @@
                             <tr>
                                 <td>
                                     <input type="checkbox" ng-model="instrumentType[1].selectAll"
-                                           ng-change="isSelectAll(1,'ESI')"> <strong>ESI:</strong><br/>
+                                           ng-change="insTypeSelectAll(1,'ESI')"> <strong>ESI:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[1].ESI track by $index">
                                  <input type="checkbox" ng-model="n.selected"> {{n.name}}
                                  <br/>
@@ -100,7 +100,7 @@
                                 </td>
                                 <td>
                                     <input type="checkbox" ng-model="instrumentType[2].selectAll"
-                                           ng-change="isSelectAll(2, 'Others')"> <strong>Others:</strong><br/>
+                                           ng-change="insTypeSelectAll(2, 'Others')"> <strong>Others:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[2].Others track by $index">
                                  <input type="checkbox" ng-model="n.selected"> {{n.name}}
                                  <br/>
@@ -110,7 +110,7 @@
                             <tr>
                                 <td>
                                     <input type="checkbox" ng-model="instrumentType[0].selectAll"
-                                           ng-change="isSelectAll(0,'EI')"> <strong>EI:</strong><br/>
+                                           ng-change="insTypeSelectAll(0,'EI')"> <strong>EI:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">
                                  <input type="checkbox" ng-model="n.selected"> {{n.name}}
                                  <br/>
