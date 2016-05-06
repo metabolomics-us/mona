@@ -91,26 +91,28 @@
                             <tbody>
                             <tr>
                                 <td>
-                                    <input type="checkbox" ng-model="selectEsi"> <strong>ESI:</strong><br/>
+                                    <input type="checkbox" ng-model="instrumentType[1].selectAll"
+                                           ng-change="isSelectAll(1,'ESI')"> <strong>ESI:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[1].ESI track by $index">
-                                 <input type="checkbox" ng-checked="selectEsi"> {{n}}
+                                 <input type="checkbox" ng-model="n.selected"> {{n.name}}
                                  <br/>
                              </span>
                                 </td>
                                 <td>
-                                    <input type="checkbox" ng-model="selectOthers"> <strong>Others:</strong><br/>
+                                    <input type="checkbox" ng-model="instrumentType[2].selectAll"
+                                           ng-change="isSelectAll(2, 'Others')"> <strong>Others:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[2].Others track by $index">
-                                 <input type="checkbox" ng-checked="selectOthers"> {{n}}
+                                 <input type="checkbox" ng-model="n.selected"> {{n.name}}
                                  <br/>
                              </span>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <input type="checkbox" ng-model="selectAll.EI"> <strong>EI:</strong><br/>
+                                    <input type="checkbox" ng-model="instrumentType[0].selectAll"
+                                           ng-change="isSelectAll(0,'EI')"> <strong>EI:</strong><br/>
                              <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">
-                                 <input type="checkbox" ng-checked="selectAll.EI"
-                                        ng-click="selectInstrumentType(0,n)" value="{{n}}"> {{n}}
+                                 <input type="checkbox" ng-model="n.selected"> {{n.name}}
                                  <br/>
                              </span>
                                 </td>
