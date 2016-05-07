@@ -52,4 +52,14 @@ class SpectrumElasticEventListener extends PersistenceEventListener[Spectrum] wi
     * @return
     */
   override def priority: Int = 10
+
+  /**
+    * requesting a synchronization
+    *
+    * @param event
+    */
+  override def sync(event: Event[Spectrum]): Unit = {
+    logger.debug(s"\t=>\treindexing spectra in elastic search ${event.content.id}")
+    spectrumElasticRepository.saveOrUpdate(event.content)
+  }
 }

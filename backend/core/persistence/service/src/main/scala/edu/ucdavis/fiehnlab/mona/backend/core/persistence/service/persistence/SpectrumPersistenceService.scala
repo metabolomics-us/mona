@@ -76,6 +76,13 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     }
   }
 
+  final def fireSyncEvent(spectrum: Spectrum) = {
+    logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been scheduled for synchronization")
+    if (eventScheduler != null) {
+      eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.SYNC))
+    }
+  }
+
   /**
     * updates the provided spectrum
     *
@@ -126,7 +133,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[Spectrum] = {
-    logger.info(s"executing query: \n${rsqlQuery}\n")
+    logger.debug(s"executing query: \n${rsqlQuery}\n")
     //no need to hit elastic here, since no qury is executed
     if (rsqlQuery == "") {
       spectrumMongoRepository.findAll(request)
@@ -144,6 +151,14 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     */
   def findAll(): lang.Iterable[Spectrum] = findAll("")
 
+  /**
+    * fires a synchronization event, so that system updates all it's clients. Be aware that this is very expensive!
+    */
+  def forceSynchronization() = {
+    findAll().asScala.foreach{ spectra =>
+      fireSyncEvent(spectra)
+    }
+  }
   /**
     * queries for all the spectra matching this RSQL query
     *
