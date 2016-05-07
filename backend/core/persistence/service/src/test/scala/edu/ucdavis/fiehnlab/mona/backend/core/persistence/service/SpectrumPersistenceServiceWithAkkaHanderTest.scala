@@ -5,7 +5,7 @@ import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBusListener, ReceivedEventCounter}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Compound, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
@@ -67,6 +67,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
     "ensure we start with an empty repository" in {
       assert(spectrumPersistenceService.count() == 0)
     }
+
 
     List(1, 2, 3).foreach { iteration =>
       s"we run every test several times, since we have caching, this one is iteration ${iteration}" should {

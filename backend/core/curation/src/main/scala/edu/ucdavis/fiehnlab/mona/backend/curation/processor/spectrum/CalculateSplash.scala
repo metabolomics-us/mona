@@ -27,7 +27,7 @@ class CalculateSplash extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
 
       // Assembled spectrum with a new SPLASH
       spectrum.copy(
-        splash = Splash(blocks(0), blocks(1), blocks(2), splash)
+        splash = Splash(blocks(0), blocks(1), blocks(2),blocks(3), splash)
       )
     } else {
       spectrum
