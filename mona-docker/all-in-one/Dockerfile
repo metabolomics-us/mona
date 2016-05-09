@@ -15,7 +15,7 @@ RUN echo 'deb http://www.rabbitmq.com/debian testing main' > /etc/apt/sources.li
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y build-essential python-software-properties software-properties-common && \
-    apt-get install -y openjdk-7-jdk awstats libnet-ip-perl libgeo-ipfree-perl nginx && \
+    apt-get install -y openjdk-8-jdk awstats libnet-ip-perl libgeo-ipfree-perl nginx && \
     apt-get install -y byobu bash curl git htop man unzip vim wget && \
     apt-get install -y rabbitmq-server pwgen && \
     apt-get install -y -q postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 && \

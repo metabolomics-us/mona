@@ -65,6 +65,8 @@ create index index_meta_data_values_deleted on meta_data_value(deleted,string_va
 
 create index splash_block2_index on splash using gist (block2 gist_trgm_ops);
 
+create index splash_block3_index on splash using gist (block3 gist_trgm_ops);
+
 CREATE INDEX "index-spectrum-deleted"
         ON "public"."spectrum"("deleted");
 

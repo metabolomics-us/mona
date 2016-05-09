@@ -1,6 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
 
 
+import java.util.Date
+
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
@@ -64,6 +66,25 @@ class LoginControllerTest extends AbstractSpringControllerTest {
           assert(info.username == "admin")
           assert(info.roles.size() == 1)
           assert(info.roles.get(0) == "ADMIN")
+        }
+
+        "extend a token" in {
+          //the new expiration must be atlest 8 year from now
+          val expirationDate = new Date(System.currentTimeMillis() + (31556952000L * 8) )
+
+          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+
+          val tenYearToken = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/extend").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+
+          val info  = given().contentType("application/json; charset=UTF-8").body(tenYearToken).when().post("/auth/info").then().statusCode(200).extract().body().as(classOf[LoginInfo])
+
+
+          assert(info.username == "admin")
+          assert(info.roles.size() == 1)
+          assert(info.roles.get(0) == "ADMIN")
+
+          logger.info(s"comparing ${info.validTo} vs ${expirationDate}")
+          assert(expirationDate.before(info.validTo))
         }
       }
     }

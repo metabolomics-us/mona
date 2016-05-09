@@ -29,5 +29,12 @@ trait LoginService {
     * @return
     */
   def info(token:String) : LoginInfo
+
+  /**
+    * etends the given token, to create a token which doesn't expire
+    * @param token
+    * @return
+    */
+  def extend(token:String) : LoginResponse
 }
 

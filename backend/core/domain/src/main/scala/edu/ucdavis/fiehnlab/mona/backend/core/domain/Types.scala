@@ -1,16 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
 import java.util.Date
-import javax.validation.constraints.{Size, NotNull}
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.TupleSerialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
-import org.hibernate.validator.constraints.Email
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
+import javax.validation.constraints._
+
+import org.hibernate.validator.constraints.NotEmpty
 
 import scala.annotation.meta.field
 import scala.beans.BeanProperty
@@ -21,19 +22,16 @@ import scala.beans.BeanProperty
   */
 
 case class MetaData(
-                     @(Field@NotNull)
+
                      @(Indexed@field)
                      category: String,
 
-                     @(Field@NotNull)
                      @(Indexed@field)
                      computed: Boolean,
 
-                     @(Field@NotNull)
                      @(Indexed@field)
                      hidden: Boolean,
 
-                     @(Field@NotNull)
                      @(Indexed@field)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      name: String,
@@ -56,7 +54,6 @@ case class MetaData(
                        * Boolean
                        *
                        */
-                     @(Field@NotNull)
                      @(TupleSerialize@field)
                      @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
                      value: Any
@@ -65,12 +62,10 @@ case class MetaData(
 
 case class Names(
 
-                  @(Field@NotNull)
                   @(Indexed@field)
                   @(Field@field)(`type` = FieldType.Boolean, index = FieldIndex.not_analyzed)
                   computed: Boolean,
 
-                  @(Field@NotNull)
                   @(Indexed@field)
                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                   name: String,
@@ -83,11 +78,9 @@ case class Names(
 
 
 case class Tags(
-                 @(Field@NotNull)
                  @(Indexed@field)
                  ruleBased: Boolean,
 
-                 @(Field@NotNull)
                  @(Indexed@field)
                  @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                  text: String
@@ -106,11 +99,11 @@ case class Tags(
   * @param computed
   */
 case class Compound(
-                     @(Field@NotNull)
+                     @Deprecated //might be better to be removed
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchi: String,
 
-                     @(Field@NotNull)
+                     @Deprecated //might be better to be removed
                      @(Indexed@field)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchiKey: String,
@@ -118,14 +111,10 @@ case class Compound(
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
 
-
-                     @(Field@NotNull)
                      molFile: String,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      names: Array[Names],
-
-                     @(Field@NotNull)
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      tags: Array[Tags],
@@ -136,12 +125,11 @@ case class Compound(
                      @(Field@field)(`type` = FieldType.Object)
                      score: Score,
 
-                     @(Field@NotNull)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      kind: String = "biological",
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     classification: Array[MetaData] = Array()
+                     classification:Array[MetaData] = Array()
                    )
 
 case class Impacts(
@@ -155,37 +143,32 @@ case class Impacts(
 case class Score(
 
                   impacts: Array[Impacts],
-                  @(Field@NotNull)
+
                   relativeScore: Double, //ns
-                  @(Field@NotNull)
+
                   scaledScore: Double, //ns
-                  @(Field@NotNull)
+
                   score: Double
                 )
 
 
 case class Splash(
-                   @(Field@NotNull)
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   splash: String,
-                   @(Field@NotNull)
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   block1: String,
-                   @(Field@NotNull)
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   block2: String,
-                   @(Field@NotNull)
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   block3: String,
-                   @(Field@NotNull)
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   block4: String
 
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block1: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block2: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block3: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block4: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   @(Indexed@field)
+                   splash: String
                  )
 
 
@@ -207,16 +190,13 @@ case class Submitter(
                         */
                       @(Id@field)
                       id: String,
-                      @(Field@Email)
+
                       emailAddress: String,
 
-                      @(Field@NotNull)
                       firstName: String,
 
-                      @(Field@NotNull)
                       institution: String,
 
-                      @(Field@NotNull)
                       lastName: String
                     )
 
@@ -229,20 +209,16 @@ case class Submitter(
   * @param lastName
   */
 case class Author(
-                   @(Field@Email)
                    @(Indexed@field)
                    emailAddress: String,
-
-                   @(Field@NotNull)
                    @(Indexed@field)
+
                    firstName: String,
-
-                   @(Field@NotNull)
                    @(Indexed@field)
+
                    institution: String,
-
-                   @(Field@NotNull)
                    @(Indexed@field)
+
                    lastName: String
                  )
 
@@ -262,12 +238,13 @@ case class Author(
 @Document(collection = "SPECTRUM")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 15)
 case class Spectrum(
-                     @(Field@Size(min=1))
+                     @(Size@field)(min = 1)
                      @(Field@field)(`type` = FieldType.Nested)
                      compound: Array[Compound],
 
-                     @(Field@NotNull)
                      @(Id@field)
+                     @(NotNull@field)
+                     @(NotEmpty@field)
                      @BeanProperty
                      id: String,
 
@@ -279,14 +256,15 @@ case class Spectrum(
                      @(Field@field)(`type` = FieldType.Object)
                      score: Score,
 
-                     @(Field@NotNull)
+                     @(NotNull@field)
+                     @(NotEmpty@field)
                      @(Field@field)(`type` = FieldType.String)
                      spectrum: String,
 
                      @(Field@field)(`type` = FieldType.Object)
                      splash: Splash,
 
-                     @(Field@NotNull)
+                     @(NotNull@field)
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      submitter: Submitter,
 
