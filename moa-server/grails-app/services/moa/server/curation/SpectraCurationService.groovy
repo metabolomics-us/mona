@@ -62,13 +62,13 @@ class SpectraCurationService {
 
                 result = spectraCurationWorkflow.runWorkflow(new CurationObject(spectrum))
             } else {
-                CurationRule rule = Holders.getApplicationContext().getBean(data.arguments.bean as String)
+                CurationRule rule = Holders.getApplicationContext().getBean(bean)
 
                 log.info("running rule: ${rule.description}")
 
                 CurationWorkflow workflow = new CurationWorkflow();
                 workflow.getRules().add(rule)
-                result = workflow.runWorkflow(new CurationObject(Spectrum.get(data.spectraId as long)))
+                result = workflow.runWorkflow(new CurationObject(Spectrum.get(id)))
             }
 
             long end = System.currentTimeMillis()

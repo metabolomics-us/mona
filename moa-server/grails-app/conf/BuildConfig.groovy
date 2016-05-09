@@ -111,8 +111,7 @@ grails.project.dependency.resolution = {
             excludes "javax.mail:mailapi","mailapi"
         }
 
-        //compile("edu.ucdavis.fiehnlab.splash:java:1.4")
-        compile("edu.ucdavis.fiehnlab.splash:core:1.4")
+        compile("edu.ucdavis.fiehnlab.splash:core:1.6")
 
         //compile("javax.mail:mail:1.4")
         compile 'javax.mail:javax.mail-api:1.5.4'

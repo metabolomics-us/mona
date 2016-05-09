@@ -10,7 +10,7 @@ RUN apt-get update -y
 # Install Java
 RUN apt-get -qq update
 RUN apt-get -qq upgrade
-RUN apt-get -qq install openjdk-7-jdk
+RUN apt-get -qq install openjdk-8-jdk
 RUN apt-get -qq install bash
 
 #install unzip
