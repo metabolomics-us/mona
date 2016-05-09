@@ -52,4 +52,18 @@ class MongoLoginService extends LoginService with LazyLogging{
     * @return
     */
   override def info(token: String): LoginInfo = tokenService.info(token)
+
+  /**
+    * extends the given token, to create a token which doesn't expire for ten years
+    *
+    * @param token
+    * @return
+    */
+  override def extend(token: String): LoginResponse = {
+
+    val info = tokenService.info(token)
+
+    new LoginResponse(tokenService.generateToken(userRepository.findByUsername(info.username),24*365*10))
+
+  }
 }

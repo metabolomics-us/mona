@@ -126,7 +126,10 @@ case class Compound(
                      score: Score,
 
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     kind: String = "biological"
+                     kind: String = "biological",
+
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
+                     classification:Array[MetaData] = Array()
                    )
 
 case class Impacts(
@@ -159,6 +162,9 @@ case class Splash(
 
                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                    block3: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block4: String, //ns
 
                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                    @(Indexed@field)
