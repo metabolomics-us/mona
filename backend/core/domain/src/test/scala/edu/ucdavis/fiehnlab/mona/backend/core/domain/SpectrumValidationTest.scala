@@ -28,7 +28,7 @@ class SpectrumValidationTest extends WordSpec with LazyLogging{
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  "SpectrumValidationTest" ignore {
+  "SpectrumValidationTest" should {
 
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
 
@@ -98,7 +98,7 @@ class SpectrumValidationTest extends WordSpec with LazyLogging{
     }
 
 
-    "id" ignore {
+    "id is not null" in {
 
       val failing = spectrum.copy(id = null)
 
@@ -107,10 +107,25 @@ class SpectrumValidationTest extends WordSpec with LazyLogging{
 
       logger.info(s"${constraints}")
 
-      assert(constraints.size == 1)
+      assert(constraints.size >= 1)
 
 
     }
+
+    "id is not empty" in {
+
+      val failing = spectrum.copy(id = null)
+
+      assert(failing.id == null)
+      val constraints = validator.validate[Spectrum](failing).asScala
+
+      logger.info(s"${constraints}")
+
+      assert(constraints.size >= 1)
+
+
+    }
+
 
     "authors" in {
 
