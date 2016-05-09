@@ -45,4 +45,8 @@ class LoginController extends LazyLogging {
     loginService.info(request.token)
   }
 
+  @RequestMapping(path=Array("/extend"), method = Array(RequestMethod.POST))
+  def extendToken(@RequestBody request:LoginResponse) : LoginResponse = {
+    loginService.extend(request.token)
+  }
 }

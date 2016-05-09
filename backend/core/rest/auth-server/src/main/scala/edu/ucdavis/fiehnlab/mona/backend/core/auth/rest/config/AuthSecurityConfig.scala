@@ -35,6 +35,9 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
       //saves need to be authenticated
       .antMatchers(HttpMethod.POST, "/rest/users/**").authenticated()
 
+      //only admins can extend tokens
+      .antMatchers(HttpMethod.POST, "/rest/auth/extend").hasAuthority("ADMIN")
+
       //updates needs authentication
       .antMatchers(HttpMethod.PUT).authenticated()
       //deletes need authentication

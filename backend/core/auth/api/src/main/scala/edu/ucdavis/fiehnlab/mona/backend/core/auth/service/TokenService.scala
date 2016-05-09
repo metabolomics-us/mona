@@ -25,5 +25,5 @@ trait TokenService {
     * @param user
     * @return
     */
-  def generateToken(user:User) : String
+  def generateToken(user:User,timeOfLife:Int = 24*7) : String
 }

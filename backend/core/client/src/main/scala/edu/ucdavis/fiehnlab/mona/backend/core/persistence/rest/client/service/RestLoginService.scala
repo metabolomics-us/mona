@@ -1,9 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service
 
+import java.util
+
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
 import org.springframework.web.client.RestOperations
+
+import scala.reflect._
 
 /**
   * this is a simple rest based implementation of our login service
@@ -28,4 +33,19 @@ class RestLoginService(val remoteServer:String, val remotePort:Int, val protocol
     * @return
     */
   override def info(token: String): LoginInfo = restOperations.getForEntity(s"${protocol}://${remoteServer}:${remotePort}/rest/auth/info/${token}",classOf[LoginInfo]).getBody
+
+  /**
+    * etends the given token, to create a token which doesn't expire
+    *
+    * @param token
+    * @return
+    */
+  override def extend(token: String): LoginResponse = {
+    val header = new HttpHeaders()
+    header.set("Authorization", s"Bearer $token")
+    header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON));
+
+    restOperations.exchange(s"${protocol}://${remoteServer}:${remotePort}/rest/auth/extends/", HttpMethod.POST, new HttpEntity[LoginResponse](new LoginResponse(token),header), classTag[LoginResponse].runtimeClass).getBody.asInstanceOf[LoginResponse]
+
+  }
 }
