@@ -1,18 +1,20 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
 import java.util.Date
-import javax.validation.constraints.{NotNull, Size}
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.TupleSerialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
-import org.hibernate.validator.constraints.NotEmpty
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
+import javax.validation.constraints._
+
+import org.hibernate.validator.constraints.NotEmpty
 
 import scala.annotation.meta.field
+import scala.beans.BeanProperty
 
 /**
   * definition of the MoNA domain classes and accepts arbitrary values, which needs to be supported by different
@@ -20,6 +22,7 @@ import scala.annotation.meta.field
   */
 
 case class MetaData(
+
                      @(Indexed@field)
                      category: String,
 
@@ -96,9 +99,11 @@ case class Tags(
   * @param computed
   */
 case class Compound(
+                     @Deprecated //might be better to be removed
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchi: String,
 
+                     @Deprecated //might be better to be removed
                      @(Indexed@field)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchiKey: String,
@@ -121,10 +126,7 @@ case class Compound(
                      score: Score,
 
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     kind: String = "biological",
-
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     classification: Array[MetaData] = Array()
+                     kind: String = "biological"
                    )
 
 case class Impacts(
@@ -138,32 +140,29 @@ case class Impacts(
 case class Score(
 
                   impacts: Array[Impacts],
-                  @(Field@NotNull)
+
                   relativeScore: Double, //ns
-                  @(Field@NotNull)
+
                   scaledScore: Double, //ns
-                  @(Field@NotNull)
+
                   score: Double
                 )
 
 
 case class Splash(
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   splash: String,
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   block1: String,
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   block2: String,
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   block3: String,
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                   @(Indexed@field)
-                   block4: String
 
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block1: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block2: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block3: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   @(Indexed@field)
+                   splash: String
                  )
 
 
@@ -206,14 +205,14 @@ case class Submitter(
 case class Author(
                    @(Indexed@field)
                    emailAddress: String,
-
                    @(Indexed@field)
+
                    firstName: String,
-
                    @(Indexed@field)
+
                    institution: String,
-
                    @(Indexed@field)
+
                    lastName: String
                  )
 
@@ -233,12 +232,14 @@ case class Author(
 @Document(collection = "SPECTRUM")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 15)
 case class Spectrum(
-                     @(Size@field)(min=1)
+                     @(Size@field)(min = 1)
                      @(Field@field)(`type` = FieldType.Nested)
                      compound: Array[Compound],
 
                      @(Id@field)
                      @(NotNull@field)
+                     @(NotEmpty@field)
+                     @BeanProperty
                      id: String,
 
                      lastUpdated: String,
