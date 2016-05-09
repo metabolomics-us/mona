@@ -34,6 +34,18 @@ class SpectrumValidationTest extends WordSpec with LazyLogging{
 
     val spectrum: Spectrum = reader.read(input)
 
+    logger.info(s"validator is ${validator}")
+
+
+    "read spectrum is valid" in {
+
+      val constraints = validator.validate[Spectrum](spectrum).asScala
+
+      logger.info(s"${constraints}")
+
+      assert(constraints.size == 0)
+
+    }
 
     "submitter" in {
 
@@ -44,38 +56,79 @@ class SpectrumValidationTest extends WordSpec with LazyLogging{
 
       logger.info(s"${constraints}")
 
+      assert(constraints.size == 1)
 
     }
 
-    "spectrum" in {
+    "spectrum is not null" in {
 
       val failing = spectrum.copy(spectrum = null)
+      assert(failing.spectrum == null)
 
       val constraints = validator.validate[Spectrum](failing).asScala
 
       logger.info(s"${constraints}")
 
+      assert(constraints.size >= 1)
     }
 
-    "compound" in {
+    "spectrum is not empty" in {
+
+      val failing = spectrum.copy(spectrum = "")
+      assert(failing.spectrum == "")
+
+      val constraints = validator.validate[Spectrum](failing).asScala
+
+      logger.info(s"${constraints}")
+
+      assert(constraints.size >= 1)
+    }
+
+    "compound must be specified" in {
 
       val failing = spectrum.copy(compound = Array())
+      assert(failing.compound.length == 0)
 
       val constraints = validator.validate[Spectrum](failing).asScala
 
       logger.info(s"${constraints}")
 
+      assert(constraints.size == 1)
+
     }
 
-    "getId" in {
+
+    "id" in {
+
+      val failing = spectrum.copy(id = null)
+
+      assert(failing.id == null)
+      val constraints = validator.validate[Spectrum](failing).asScala
+
+      logger.info(s"${constraints}")
+
+      assert(constraints.size == 1)
+
 
     }
 
     "authors" in {
 
+      val failing = spectrum.copy(authors = null)
+
+      val constraints = validator.validate[Spectrum](failing).asScala
+
+      assert(constraints.size == 0)
+
     }
 
     "metaData" in {
+
+      val failing = spectrum.copy(metaData = null)
+
+      val constraints = validator.validate[Spectrum](failing).asScala
+
+      assert(constraints.size == 0)
 
     }
 
@@ -93,9 +146,11 @@ class SpectrumValidationTest extends WordSpec with LazyLogging{
 
     "splash" in {
 
-    }
+      val failing = spectrum.copy(splash = null)
 
-    "id" in {
+      val constraints = validator.validate[Spectrum](failing).asScala
+
+      assert(constraints.size == 0)
 
     }
 
