@@ -10,8 +10,6 @@
 
     /* @ngInject */
     function SearchFormController($scope) {
-        $scope.query = {};
-
 
     }
 

@@ -13,19 +13,27 @@
 
         function fieldsController($scope, $log, $http) {
 
-            //TODO on Submit, loop through instrumentType aggregate SelectALl && name if selected !== undefined && true
+            //TODO: query object needs to be initialized in a QueryBuilderService
+            prepareQuery();
+            function prepareQuery() {
+                $scope.query = {
+                    compound: {
+                        name: '',
+                        inChiKey: null,
+                        firstOperator: 'AND',
+                        exactMass: null,
+                        tolerance: 0.5,
+                        secondOperator: 'AND',
+                        formula: ''
+                    },
+                    insType: [],
+                    msType: [],
+                    ionMode: []
+                };
+            }
 
-            $scope.query = {
-                compound: {
-                    tolerance: 0.5,
-                    firstOperator: 'AND',
-                    secondOperator: 'AND'
-                },
-                insType: [],
-                msType: [],
-                ionMode: []
-            };
 
+            //TODO: create CONSTANT
             $scope.instrumentType = [
                 {
                     EI: [{name: 'EI-B'}, {name: 'EI-EBEB'}, {name: 'GC-EI-QQ'}, {name: 'GC-EI-TOF'}]
@@ -61,15 +69,18 @@
                 });
             };
 
+            $scope.resetForm = function() {
+              prepareQuery();
+            };
 
-            $scope.submitQuery = function() {
+            $scope.submitQuery = function () {
                 // add instrument types to query
-                for(var i = 0; i < $scope.instrumentType.length; i++) {
+                for (var i = 0; i < $scope.instrumentType.length; i++) {
                     var curInstrument = $scope.instrumentType[i];
-                    for(var j in curInstrument) {
-                        if(j !== 'selectAll') {
-                            angular.forEach(curInstrument[j], function(value, key) {
-                                if(value.selected === true)
+                    for (var j in curInstrument) {
+                        if (j !== 'selectAll') {
+                            angular.forEach(curInstrument[j], function (value, key) {
+                                if (value.selected === true)
                                     $scope.query.insType.push(value.name);
                             });
                         }
@@ -77,21 +88,48 @@
                 }
 
                 // add ms type to query
-                angular.forEach($scope.msType, function(value,key) {
-                    if(value.selected === true) {
+                angular.forEach($scope.msType, function (value, key) {
+                    if (value.selected === true) {
                         $scope.query.msType.push(value.name);
                     }
                 });
 
                 // add ion mode to query
-                angular.forEach($scope.ionMode, function(value, key) {
-                   if(value.selected === true) {
-                       $scope.query.ionMode.push(value.name);
-                   }
+                angular.forEach($scope.ionMode, function (value, key) {
+                    if (value.selected === true) {
+                        $scope.query.ionMode.push(value.name);
+                    }
                 });
 
 
-                // testing REST API
+                // filter inChiKey or compound name
+                if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test($scope.query.compound.name)) {
+                    $scope.query.compound.inChiKey = $scope.query.compound.name;
+                    delete $scope.query.compound.name;
+                }
+                else {
+                    delete $scope.query.compound.inChiKey;
+                }
+
+                // remove empty query fields
+                for(var i in $scope.query) {
+                    if($scope.query[i].length === 0) {
+                        delete $scope.query[i];
+                    }
+                }
+
+                $log.info($scope.query);
+
+
+
+                /** RESET FORM AFTER WE SUBMIT QUERY*/
+                //TODO: store query in Cache, unless user click submit again, clear query
+                prepareQuery();
+
+                // send query object to rsql parser
+                // call rest enpoint
+                    // on success
+                        // change location to browse and display result
 
 
 

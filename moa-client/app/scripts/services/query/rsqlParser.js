@@ -15,7 +15,7 @@
         /**
          * parses a query object and returns a RSQL Query String
          * @param query
-         * @return query
+         * @return rsql query string
          */
         function parseRSQL(query) {
             var compoundQuery = "";
