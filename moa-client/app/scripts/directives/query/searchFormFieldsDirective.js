@@ -15,13 +15,16 @@
 
             //TODO on Submit, loop through instrumentType aggregate SelectALl && name if selected !== undefined && true
 
-            $scope.selectedInstruments = [];
             $scope.query = {
-                compound: {},
+                compound: {
+                    firstOperator: 'AND',
+                    secondOperator: 'AND'
+                },
                 insType: {},
                 msType: {},
                 ionMode: {}
             };
+
             $scope.instrumentType = [
                 {
                     EI: [{name: 'EI-B'}, {name: 'EI-EBEB'}, {name: 'GC-EI-QQ'}, {name: 'GC-EI-TOF'}]
@@ -68,6 +71,12 @@
                     value.selected = selection.selectAll;
                 });
                 $log.info($scope.ionMode);
+            };
+
+            $scope.submitQuery = function() {
+                // get query options
+                // get instrument types
+                // get ms & ion
             };
 
 
