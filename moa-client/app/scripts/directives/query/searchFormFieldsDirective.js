@@ -87,8 +87,20 @@
                     }
                 }
 
-                $log.info($scope.query.insType);
+                // add ms type to query
+                angular.forEach($scope.msType, function(value,key) {
+                    if(value.selected === true) {
+                        $scope.query.msType.push(value.name);
+                    }
+                });
 
+                // add ion mode to query
+                angular.forEach($scope.ionMode, function(value, key) {
+                   if(value.selected === true) {
+                       $scope.query.ionMode.push(value.name);
+                   }
+                });
+                
             };
 
 
