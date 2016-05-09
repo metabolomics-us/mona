@@ -11,31 +11,31 @@
             </div>
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <select class="form-control" ng-model="query.compound.firstOperator">
+                    <select class="form-control" ng-model="query.firstOperand">
                         <option>AND</option>
                         <option>OR</option>
                     </select>
                 </div>
                 <div class="col-sm-5">
-                    <input type="number" ng-model="query.compound.exactMass" class="form-control" id="inputExactMass"
+                    <input type="number" ng-model="query.metaData.exactMass" class="form-control" id="inputExactMass"
                            placeholder="exact mass">
                 </div>
                 <label for="inputTolerance" class="col-sm-2 form-control-label">Tolerance (Da)</label>
 
                 <div class="col-sm-3">
-                    <input type="number" ng-model="query.compound.tolerance" class="form-control" id="inputTolerance"
+                    <input type="number" ng-model="query.metaData.tolerance" class="form-control" id="inputTolerance"
                     value="0.5">
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <select class="form-control" ng-model="query.compound.secondOperator">
+                    <select class="form-control" ng-model="query.secondOperand">
                         <option>AND</option>
                         <option>OR</option>
                     </select>
                 </div>
                 <div class="col-sm-5">
-                    <input type="text" ng-model="query.compound.formula" class="form-control" id="inputFormula"
+                    <input type="text" ng-model="query.metaData.formula" class="form-control" id="inputFormula"
                            placeholder="formula">
                 </div>
             </div>

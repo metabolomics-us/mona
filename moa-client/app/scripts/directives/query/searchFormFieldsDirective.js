@@ -11,24 +11,27 @@
         };
         return directive;
 
-        function fieldsController($scope, $log, $http) {
+        /* @ngInject */
+        function fieldsController($scope, $log, $http, rsqlParser) {
 
             //TODO: query object needs to be initialized in a QueryBuilderService
             prepareQuery();
             function prepareQuery() {
                 $scope.query = {
+                    firstOperand: 'AND',
+                    secondOperand: 'AND',
                     compound: {
                         name: '',
-                        inChiKey: null,
-                        firstOperator: 'AND',
+                        inChiKey: null
+                    },
+                    metaData: {
+                        insType: [],
+                        msType: [],
+                        ionMode: [],
                         exactMass: null,
                         tolerance: 0.5,
-                        secondOperator: 'AND',
                         formula: ''
-                    },
-                    insType: [],
-                    msType: [],
-                    ionMode: []
+                    }
                 };
             }
 
@@ -104,21 +107,18 @@
 
                 // filter inChiKey or compound name
                 if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test($scope.query.compound.name)) {
-                    $scope.query.compound.inChiKey = $scope.query.compound.name;
+                    $scope.query.compound.inchiKey = $scope.query.compound.name;
                     delete $scope.query.compound.name;
                 }
                 else {
-                    delete $scope.query.compound.inChiKey;
+                    delete $scope.query.compound.inchiKey;
                 }
 
-                // remove empty query fields
-                for(var i in $scope.query) {
-                    if($scope.query[i].length === 0) {
-                        delete $scope.query[i];
-                    }
-                }
+                // normalize metaData fields
 
-                $log.info($scope.query);
+                //$log.info($scope.query);
+                var compiled = rsqlParser.parseRSQL($scope.query);
+
 
 
 
