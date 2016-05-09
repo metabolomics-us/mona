@@ -11,7 +11,7 @@
         };
         return directive;
 
-        function fieldsController($scope, $log) {
+        function fieldsController($scope, $log, $http) {
 
             //TODO on Submit, loop through instrumentType aggregate SelectALl && name if selected !== undefined && true
 
@@ -44,12 +44,8 @@
                 }
             ];
 
-            $scope.msType = [{name: 'MS', selected: true}, {name: 'MS1', selected: true}, {name: 'MS2', selected: true},
-                {name: 'MS3', selected: true}, {name: 'MS4', selected: true}];
-            $scope.msType.selectAll = true;
-
+            $scope.msType = [{name: 'MS'}, {name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
-
 
             /**
              * handles when user check select all in UI. Our implementation in searchForm.html
@@ -65,13 +61,6 @@
                 });
             };
 
-
-            $scope.msIonSelectAll = function (selection) {
-                angular.forEach(selection, function (value, key) {
-                    value.selected = selection.selectAll;
-                });
-
-            };
 
             $scope.submitQuery = function() {
                 // add instrument types to query
@@ -100,7 +89,12 @@
                        $scope.query.ionMode.push(value.name);
                    }
                 });
-                
+
+
+                // testing REST API
+
+
+
             };
 
 
