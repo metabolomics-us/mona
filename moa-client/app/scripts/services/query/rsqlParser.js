@@ -18,16 +18,18 @@
          * @return rsql query string
          */
         function parseRSQL(query) {
+
             var compoundQuery = "";
             var metaDataQuery = "";
             var tagsQuery = "";
 
-            if (typeof(query.compound) === 'object' && Object.keys(query.compound).length !== 0 && JSON.stringify(query.compound) !== JSON.stringify({})) {
+
+            if (typeof(query.compound) === 'object' && (JSON.stringify(query.compound) !== JSON.stringify({}))) {
                 compoundQuery = buildCompoundQueryString(query.compound);
             }
 
-            if (typeof(query.metadata) !== 'undefined' && query.metadata.length !== 0) {
-                metaDataQuery = buildMetaDataQueryString(query.metadata);
+            if (typeof(query.metaData) === 'object' && (JSON.stringify(query.metaData) !== JSON.stringify({}))) {
+                metaDataQuery = buildMetaDataQueryString(query.metaData);
 
             }
 
@@ -65,6 +67,17 @@
 
         function buildMetaDataQueryString(metaDataQuery) {
             var queryString = "";
+
+            for(var i in metaDataQuery) {
+                $log.info(i);
+            }
+
+
+
+            /** TODO: this section was built on legacy metadata array. Keeping for reference
+             * The searchform is using a metadata object.
+             *
+             *
             for (var i = 0, l = metaDataQuery.length; i < l; i++) {
                 var object = metaDataQuery[i];
                 var operator = object.value.eq ? "==" : "!=";
@@ -75,34 +88,27 @@
 
                 queryString += "metaData=q='name" + operator + '\"' + object.value.eq || object.value.ne + '\"\'';
             }
+             */
             return queryString;
         }
 
         function buildCompoundQueryString(compoundQuery) {
-            var bio = "";
-            var chem = "";
+            var compound = '';
 
             // handle compound name
             if (typeof(compoundQuery.name) !== 'undefined') {
-                bio += "biologicalCompound.names=q='name==" + '\"' + compoundQuery.name + '\"\'';
-                chem += "chemicalCompound.names=q='name==" + '\"' + compoundQuery.name + '\"\'';
+                compound += "compound.names=q='name==" + '\"' + compoundQuery.name + '\"\'';
 
             }
 
             // handle compound inchiKey
-            if (typeof(compoundQuery.inchiKey) !== 'undefined') {
-                bio += " or biologicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
-                chem += " or chemicalCompound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
+            else if (typeof(compoundQuery.inchiKey) !== 'undefined') {
+                compound += "compound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
 
-                // strip leading or if there's no compound name
-                if (typeof(compoundQuery.name) === 'undefined') {
-                    bio = bio.slice(3).trim();
-                    chem = chem.slice(3).trim();
-                }
             }
 
-
-            return bio + ' or ' + chem;
+            $log.info(compound);
+            return compound;
         }
 
     }
