@@ -17,12 +17,13 @@
 
             $scope.query = {
                 compound: {
+                    tolerance: 0.5,
                     firstOperator: 'AND',
                     secondOperator: 'AND'
                 },
-                insType: {},
-                msType: {},
-                ionMode: {}
+                insType: [],
+                msType: [],
+                ionMode: []
             };
 
             $scope.instrumentType = [
@@ -60,7 +61,6 @@
                 var curIns = $scope.instrumentType[index];
 
                 angular.forEach(curIns[insCategory], function (value, key) {
-                    $log.info(curIns.selectAll);
                     value.selected = curIns.selectAll;
                 });
             };
@@ -70,13 +70,25 @@
                 angular.forEach(selection, function (value, key) {
                     value.selected = selection.selectAll;
                 });
-                $log.info($scope.ionMode);
+
             };
 
             $scope.submitQuery = function() {
-                // get query options
-                // get instrument types
-                // get ms & ion
+                // add instrument types to query
+                for(var i = 0; i < $scope.instrumentType.length; i++) {
+                    var curInstrument = $scope.instrumentType[i];
+                    for(var j in curInstrument) {
+                        if(j !== 'selectAll') {
+                            angular.forEach(curInstrument[j], function(value, key) {
+                                if(value.selected === true)
+                                    $scope.query.insType.push(value.name);
+                            });
+                        }
+                    }
+                }
+
+                $log.info($scope.query.insType);
+
             };
 
 
