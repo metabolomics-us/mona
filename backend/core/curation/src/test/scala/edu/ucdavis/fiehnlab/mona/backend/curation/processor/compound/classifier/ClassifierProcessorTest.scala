@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate
   * Created by wohlgemuth on 5/5/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig],classOf[Config]))
+@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class ClassifierProcessorTest extends WordSpec {
 
@@ -48,14 +48,5 @@ class ClassifierProcessorTest extends WordSpec {
 
       }
     }
-  }
-}
-
-@Configuration
-class Config{
-
-  @Bean
-  def processor:ClassifierProcessor = {
-    new ClassifierProcessor
   }
 }
