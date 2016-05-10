@@ -11,11 +11,34 @@
     /* @ngInject */
     function rsqlService($log, QueryCache) {
         var service = {
-            addCompoundToQuery: addCompoundToQuery
+            prepareQuery: prepareQuery,
+            getQuery: getQuery
+
 
         };
         return service;
 
+        function prepareQuery() {
+            return {
+                firstOperand: 'AND',
+                secondOperand: 'AND',
+                compound: {
+                    name: '',
+                    inchiKey: null
+                },
+                metaData: {
+                    insType: [],
+                    msType: [],
+                    ionMode: [],
+                    exactMass: null,
+                    tolerance: 0.5
+                }
+            };
+        }
+
+        function getQuery() {
+            return QueryCache.getRsqlQuery;
+        }
         /**
          * parses a query object and returns a RSQL Query String
          * @param query
