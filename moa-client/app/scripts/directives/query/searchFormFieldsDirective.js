@@ -30,7 +30,6 @@
                         ionMode: [],
                         exactMass: null,
                         tolerance: 0.5,
-                        formula: ''
                     }
                 };
             }
@@ -89,6 +88,8 @@
                         }
                     }
                 }
+
+                // remove instrument type
 
                 // add ms type to query
                 angular.forEach($scope.msType, function (value, key) {
