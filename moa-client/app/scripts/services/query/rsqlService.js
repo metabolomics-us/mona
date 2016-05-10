@@ -6,11 +6,15 @@
 (function () {
     'use strict';
     angular.module('moaClientApp')
-        .factory("rsqlParser", rsqlParser);
+        .factory("rsqlService", rsqlService);
 
     /* @ngInject */
-    function rsqlParser($log) {
-        return {parseRSQL: parseRSQL};
+    function rsqlService($log, QueryCache) {
+        var service = {
+            addCompoundToQuery: addCompoundToQuery
+
+        };
+        return service;
 
         /**
          * parses a query object and returns a RSQL Query String
@@ -75,7 +79,7 @@
             }
 
             angular.forEach(metaDataQuery, function(value, key) {
-               
+
                 $log.info(value);
             });
 
