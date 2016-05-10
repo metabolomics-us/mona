@@ -10,13 +10,13 @@
 
     /* @ngInject */
     function rsqlService($log, QueryCache) {
+        var filtered = {};
+
         var service = {
             prepareQuery: prepareQuery,
             getQuery: getQuery,
             setRsqlQuery: setRsqlQuery,
-            addCompound: addCompound,
-            addInstrumentTypes: addInstrumentTypes
-
+            filterKeywordSearchOptions: filterKeywordSearchOptions
 
         };
         return service;
@@ -29,7 +29,7 @@
                     name: '',
                     inchiKey: null
                 },
-                metaData: {
+                metadata: {
                     insType: [],
                     msType: [],
                     ionMode: [],
@@ -39,15 +39,16 @@
             };
         }
 
-
-        function addInstrumentTypes(instruments) {
-            //get query
-            var query = getQuery();
-
-            // init instrument [] if there's none
-            if(typeof(query.metadata.insType) === 'undefined') {
-                query.metadata.insType = [];
+        function filterKeywordSearchOptions(options, instruments, ms, ionMode) {
+            // filter compound
+            if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(options.compound.name)) {
+                options.compound.inchiKey = options.compound.name;
+                delete options.compound.name;
             }
+            else {
+                delete options.compound.inchiKey;
+            }
+
             // loop through and add selected instruments
             for (var i = 0; i < instruments.length; i++) {
                 var curInstrument = instruments[i];
@@ -55,33 +56,48 @@
                     if (j !== 'selectAll') {
                         angular.forEach(curInstrument[j], function (value, key) {
                             if (value.selected === true)
-                                query.metadata.insType.push(value.name);
+                                options.metadata.insType.push(value.name);
                         });
                     }
                 }
             }
 
-            // if there's no selected instruments, remove instruments from metadata
-            if (query.metadata.insType.length === 0) {
-                delete query.metadata.insType;
-            }
+            angular.forEach(ionMode, function (value, key) {
+                if (value.selected === true) {
+                    options.metadata.ionMode.push(value.name);
+                }
+            });
 
-            setRsqlQuery(query);
+            // add ms type to query
+            angular.forEach(ms, function (value, key) {
+                if (value.selected === true) {
+                    options.metadata.msType.push(value.name);
+                }
+            });
+
+            removeEmptyFields(options);
+            setRsqlQuery(filtered);
+            $log.log('filtered object below');
+            $log.info(filtered);
+
         }
 
-        function addCompound(compoundOptions) {
-            var query = getQuery();
+        function removeEmptyFields(options) {
+            if (options.metadata.insType.length === 0) {
+                delete options.metadata.insType;
+            }
 
-            // filter inChiKey or compound name
-            if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(compoundOptions.name)) {
-                query.compound.inchiKey = compoundOptions.name;
-                delete query.compound.name;
+            if (options.metadata.msType.length === 0) {
+                delete options.metadata.msType;
             }
-            else {
-                delete query.compound.inchiKey;
+
+            if (options.metadata.ionMode.length === 0) {
+                delete options.metadata.ionMode;
             }
-            setRsqlQuery(query);
+
+            filtered = options;
         }
+
 
         function getQuery() {
             return QueryCache.getRsqlQuery();
@@ -90,6 +106,7 @@
         function setRsqlQuery(query) {
             QueryCache.setRsqlQuery(query);
         }
+
         /**
          * parses a query object and returns a RSQL Query String
          * @param query
@@ -117,15 +134,15 @@
 
             var compiledQuery = "";
 
-            if(compoundQuery !== '') {
+            if (compoundQuery !== '') {
                 compiledQuery += compoundQuery;
             }
 
             (metaDataQuery !== '') ? compiledQuery !== '' ? compiledQuery += ' and ' + metaDataQuery : compiledQuery = metaDataQuery
-                                   : compiledQuery;
+                : compiledQuery;
 
             (tagsQuery !== '') ? compiledQuery !== '' ? compiledQuery += ' and ' + tagsQuery : compiledQuery = tagsQuery
-                               : compiledQuery;
+                : compiledQuery;
 
             return compiledQuery;
 
@@ -152,9 +169,9 @@
                 delete metaDataQuery.exactMass;
             }
 
-            angular.forEach(metaDataQuery, function(value, key) {
+            angular.forEach(metaDataQuery, function (value, key) {
 
-                $log.info(value);
+
             });
 
             // for(var i in metaDataQuery) {
@@ -167,12 +184,11 @@
             // }
 
 
-
             /** TODO: this section was built on legacy metadata array. Keeping for reference
              * The searchform is using a metadata object.
              *
              *
-            for (var i = 0, l = metaDataQuery.length; i < l; i++) {
+             for (var i = 0, l = metaDataQuery.length; i < l; i++) {
                 var object = metaDataQuery[i];
                 var operator = object.value.eq ? "==" : "!=";
 
@@ -201,7 +217,6 @@
 
             }
 
-            $log.info(compound);
             return compound;
         }
 
