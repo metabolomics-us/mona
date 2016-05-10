@@ -16,11 +16,9 @@
 
             //TODO: query object needs to be initialized in a QueryBuilderService
             $scope.queryOptions = rsqlService.prepareQuery();
-            $log.info($scope.queryOptions);
-
-
 
             //TODO: create CONSTANT
+            
             $scope.instrumentType = [
                 {
                     EI: [{name: 'EI-B'}, {name: 'EI-EBEB'}, {name: 'GC-EI-QQ'}, {name: 'GC-EI-TOF'}]
@@ -58,41 +56,21 @@
 
 
             $scope.resetForm = function() {
-                rsqlService.prepareQuery();
+                $scope.queryOptions = rsqlService.prepareQuery();
             };
 
             $scope.submitQuery = function () {
-                
-                // add ms type to query
-                angular.forEach($scope.msType, function (value, key) {
-                    if (value.selected === true) {
-                        $scope.queryOptions.msType.push(value.name);
-                    }
-                });
-
-                // add ion mode to query
-                angular.forEach($scope.ionMode, function (value, key) {
-                    if (value.selected === true) {
-                        $scope.queryOptions.ionMode.push(value.name);
-                    }
-                });
-
-                rsqlService.addCompound($scope.queryOptions.compound);
-                rsqlService.addInstrumentTypes($scope.instrumentType);
 
 
-                // normalize metaData fields
+                // add and filter query options, and update query cache
+                rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
 
+                // build our query from query cache
+                // submit query and redirect users to browse page
 
                 /** RESET FORM AFTER WE SUBMIT QUERY*/
                 //TODO: store query in Cache, unless user click submit again, clear query
-                rsqlService.prepareQuery();
-
-                // send query object to rsql parser
-                // call rest enpoint
-                    // on success
-                        // change location to browse and display result
-
+                $scope.resetForm();
 
 
             };
