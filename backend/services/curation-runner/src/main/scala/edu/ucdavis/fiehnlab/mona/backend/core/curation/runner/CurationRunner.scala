@@ -6,12 +6,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessage
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
+import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.batch.item.ItemProcessor
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.{CommandLineRunner, SpringApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
@@ -33,8 +34,14 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
   @Qualifier("spectra-curation-queue")
   val queueName:String = null
 
+  @Value("${mona.security.curation.token}")
+  val token:String = null
+
   @Bean
-  def curationListener(curationWorkflow: ItemProcessor[Spectrum,Spectrum]): CurationListener = new CurationListener(curationWorkflow)
+  def curationListener(curationWorkflow: ItemProcessor[Spectrum,Spectrum]): CurationListener = {
+    val writer = new RestRepositoryWriter(token)
+    new CurationListener(curationWorkflow,writer)
+  }
 
   @Bean
   def container(connectionFactory: ConnectionFactory, listener: CurationListener,messageConverter:MessageConverter): SimpleMessageListenerContainer = {
@@ -60,13 +67,13 @@ object CurationRunner extends App {
 /**
   * listens to our queue and does our processing
   */
-class CurationListener(workflow: ItemProcessor[Spectrum,Spectrum]) extends GenericMessageListener[Spectrum] with LazyLogging {
+class CurationListener(workflow: ItemProcessor[Spectrum,Spectrum],writer:RestRepositoryWriter) extends GenericMessageListener[Spectrum] with LazyLogging {
 
   override def handleMessage(spectra: Spectrum) = {
     logger.info(s"received spectra: ${spectra.id}")
     val result:Spectrum = workflow.process(spectra)
     logger.info(s"curated spectra: ${spectra.id}")
-
+    writer.write(spectra)
     logger.info("saved spectra to system")
   }
 }

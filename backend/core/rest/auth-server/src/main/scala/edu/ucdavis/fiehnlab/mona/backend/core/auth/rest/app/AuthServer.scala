@@ -22,7 +22,7 @@ import scala.collection.JavaConverters._
   */
 @SpringBootApplication
 @EnableDiscoveryClient
-@Import(Array(classOf[AuthSecurityConfig],classOf[JWTAuthenticationConfig]))
+@Import(Array(classOf[AuthSecurityConfig], classOf[JWTAuthenticationConfig]))
 class AuthServer {
 
   /**
@@ -31,30 +31,35 @@ class AuthServer {
     * @return
     */
   @Bean
-  def loginServiceDelegate:LoginService = new MongoLoginService
+  def loginServiceDelegate: LoginService = new MongoLoginService
 
 }
 
 @Component
-class AuthCommandRunner extends CommandLineRunner with LazyLogging{
+class AuthCommandRunner extends CommandLineRunner with LazyLogging {
 
   @Value("${mona.security.auth.admin.username}")
-  val adminUser:String = null
+  val adminUser: String = null
 
   @Value("${mona.security.auth.admin.password}")
-  val adminPassword:String = null
+  val adminPassword: String = null
 
   @Autowired
-  val userRepository:UserRepository = null
+  val userRepository: UserRepository = null
 
   override def run(strings: String*): Unit = {
-    val user = userRepository.save(User(adminUser,adminPassword, List(Role("admin")).asJava))
-    logger.info(s"created default user: ${user}")
+    if (userRepository.findByUsername(adminUser) == null) {
+      val user = userRepository.save(User(adminUser, adminPassword, List(Role("ADMIN")).asJava))
+      logger.info(s"created default user: ${user} as admin, based on central credentials")
+    }
+    else {
+      logger.info("utilizing existing user account")
+    }
   }
 
 }
 
 
-object AuthServer extends App{
+object AuthServer extends App {
   new SpringApplication(classOf[AuthServer]).run()
 }
