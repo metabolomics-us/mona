@@ -15,30 +15,46 @@
         function fieldsController($scope, $log, $http, rsqlService) {
 
             //TODO: query object needs to be initialized in a QueryBuilderService
-            $scope.queryOptions = rsqlService.prepareQuery();
+            initForm();
 
-            //TODO: create CONSTANT
-            
-            $scope.instrumentType = [
-                {
-                    EI: [{name: 'EI-B'}, {name: 'EI-EBEB'}, {name: 'GC-EI-QQ'}, {name: 'GC-EI-TOF'}]
-                },
-                {
-                    ESI: [{name: 'CE-ESI-TOF'}, {name: 'ESI-FTICR'}, {name: 'ESI-ITFT'}, {name: 'ESI-ITTOF'},
-                        {name: 'ESI-QTOF'}, {name: 'HPLC-ESI-TOF'}, {name: 'LC-ESI-IT'}, {name: 'LC-ESI-ITFT'},
-                        {name: 'LC-ESI-ITTOF'}, {name: 'LC-ESI-Q'}, {name: 'LC-ESI-QFT'}, {name: 'LC-ESI-QIT'},
-                        {name: 'LC-ESI-QQ'}, {name: 'LC-ESI-QTOF'}, {name: 'LC-ESI-TOF'}, {name: 'UPLC-ESI-QTOF'}]
-                },
-                {
-                    Others: [{name: 'APCI-ITFT'}, {name: 'APCI-ITTOF'}, {name: 'CI-B'}, {name: 'FAB-B'},
-                        {name: 'FAB-EB'}, {name: 'FAB-EBEB'}, {name: 'FD-B'}, {name: 'FI-B'},
-                        {name: 'LC-APCI-Q'}, {name: 'LC-APCI-QTOF'}, {name: 'LC-APPI-QQ'},
-                        {name: 'MALDI-QIT'}, {name: 'MALDI-TOF'}, {name: 'MALDI-TOFTOF'}]
-                }
-            ];
+            function initForm() {
+                $scope.queryOptions = {
+                    firstOperand: 'AND',
+                    secondOperand: 'AND',
+                    compound: {
+                        name: '',
+                        inchiKey: null
+                    },
+                    metadata: {
+                        insType: [],
+                        msType: [],
+                        ionMode: [],
+                        exactMass: null,
+                        tolerance: 0.5
+                    }
+                };
 
-            $scope.msType = [{name: 'MS'}, {name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
-            $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
+                $scope.instrumentType = [
+                    {
+                        EI: [{name: 'EI-B'}, {name: 'EI-EBEB'}, {name: 'GC-EI-QQ'}, {name: 'GC-EI-TOF'}]
+                    },
+                    {
+                        ESI: [{name: 'CE-ESI-TOF'}, {name: 'ESI-FTICR'}, {name: 'ESI-ITFT'}, {name: 'ESI-ITTOF'},
+                            {name: 'ESI-QTOF'}, {name: 'HPLC-ESI-TOF'}, {name: 'LC-ESI-IT'}, {name: 'LC-ESI-ITFT'},
+                            {name: 'LC-ESI-ITTOF'}, {name: 'LC-ESI-Q'}, {name: 'LC-ESI-QFT'}, {name: 'LC-ESI-QIT'},
+                            {name: 'LC-ESI-QQ'}, {name: 'LC-ESI-QTOF'}, {name: 'LC-ESI-TOF'}, {name: 'UPLC-ESI-QTOF'}]
+                    },
+                    {
+                        Others: [{name: 'APCI-ITFT'}, {name: 'APCI-ITTOF'}, {name: 'CI-B'}, {name: 'FAB-B'},
+                            {name: 'FAB-EB'}, {name: 'FAB-EBEB'}, {name: 'FD-B'}, {name: 'FI-B'},
+                            {name: 'LC-APCI-Q'}, {name: 'LC-APCI-QTOF'}, {name: 'LC-APPI-QQ'},
+                            {name: 'MALDI-QIT'}, {name: 'MALDI-TOF'}, {name: 'MALDI-TOFTOF'}]
+                    }
+                ];
+
+                $scope.msType = [{name: 'MS'}, {name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
+                $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
+            }
 
             /**
              * handles when user check select all in UI. Our implementation in searchForm.html
@@ -56,17 +72,18 @@
 
 
             $scope.resetForm = function() {
-                $scope.queryOptions = rsqlService.prepareQuery();
+                initForm();
             };
 
             $scope.submitQuery = function () {
-
-
                 // add and filter query options, and update query cache
                 rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
 
-                // build our query from query cache
-                // submit query and redirect users to browse page
+                
+                // filter query
+                // service will build query,
+                // directive submits rsql query string
+                // on success change location
 
                 /** RESET FORM AFTER WE SUBMIT QUERY*/
                 //TODO: store query in Cache, unless user click submit again, clear query
@@ -74,7 +91,6 @@
 
 
             };
-
 
         }
 

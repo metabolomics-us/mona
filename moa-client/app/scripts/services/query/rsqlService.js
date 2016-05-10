@@ -10,10 +10,8 @@
 
     /* @ngInject */
     function rsqlService($log, QueryCache) {
-        var filtered = {};
 
         var service = {
-            prepareQuery: prepareQuery,
             getQuery: getQuery,
             setRsqlQuery: setRsqlQuery,
             filterKeywordSearchOptions: filterKeywordSearchOptions
@@ -21,23 +19,6 @@
         };
         return service;
 
-        function prepareQuery() {
-            return {
-                firstOperand: 'AND',
-                secondOperand: 'AND',
-                compound: {
-                    name: '',
-                    inchiKey: null
-                },
-                metadata: {
-                    insType: [],
-                    msType: [],
-                    ionMode: [],
-                    exactMass: null,
-                    tolerance: 0.5
-                }
-            };
-        }
 
         function filterKeywordSearchOptions(options, instruments, ms, ionMode) {
             // filter compound
@@ -49,7 +30,13 @@
                 delete options.compound.inchiKey;
             }
 
-            // loop through and add selected instruments
+            // filter exact mass
+            if (options.metadata.exactMass === null) {
+                delete options.metadata.tolerance;
+                delete options.metadata.exactMass;
+            }
+
+            // filter instruments
             for (var i = 0; i < instruments.length; i++) {
                 var curInstrument = instruments[i];
                 for (var j in curInstrument) {
@@ -75,11 +62,11 @@
                 }
             });
 
-            removeEmptyFields(options);
-            setRsqlQuery(filtered);
+            options = removeEmptyFields(options);
+            setRsqlQuery(options);
+            buildRsqlQuery();
             $log.log('filtered object below');
-            $log.info(filtered);
-
+            $log.info(options);
         }
 
         function removeEmptyFields(options) {
@@ -95,10 +82,18 @@
                 delete options.metadata.ionMode;
             }
 
-            filtered = options;
+            return options;
         }
 
+        function buildRsqlQuery() {
+            var filtered = getQuery();
+            var query = '';
 
+            // build compound string
+            // build metadata string
+            // build tag string
+
+        }
         function getQuery() {
             return QueryCache.getRsqlQuery();
         }
