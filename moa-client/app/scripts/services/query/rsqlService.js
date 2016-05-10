@@ -12,7 +12,10 @@
     function rsqlService($log, QueryCache) {
         var service = {
             prepareQuery: prepareQuery,
-            getQuery: getQuery
+            getQuery: getQuery,
+            setRsqlQuery: setRsqlQuery,
+            addCompound: addCompound,
+            addInstrumentTypes: addInstrumentTypes
 
 
         };
@@ -36,8 +39,56 @@
             };
         }
 
+
+        function addInstrumentTypes(instruments) {
+            //get query
+            var query = getQuery();
+
+            // init instrument [] if there's none
+            if(typeof(query.metadata.insType) === 'undefined') {
+                query.metadata.insType = [];
+            }
+            // loop through and add selected instruments
+            for (var i = 0; i < instruments.length; i++) {
+                var curInstrument = instruments[i];
+                for (var j in curInstrument) {
+                    if (j !== 'selectAll') {
+                        angular.forEach(curInstrument[j], function (value, key) {
+                            if (value.selected === true)
+                                query.metadata.insType.push(value.name);
+                        });
+                    }
+                }
+            }
+
+            // if there's no selected instruments, remove instruments from metadata
+            if (query.metadata.insType.length === 0) {
+                delete query.metadata.insType;
+            }
+
+            setRsqlQuery(query);
+        }
+
+        function addCompound(compoundOptions) {
+            var query = getQuery();
+
+            // filter inChiKey or compound name
+            if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(compoundOptions.name)) {
+                query.compound.inchiKey = compoundOptions.name;
+                delete query.compound.name;
+            }
+            else {
+                delete query.compound.inchiKey;
+            }
+            setRsqlQuery(query);
+        }
+
         function getQuery() {
-            return QueryCache.getRsqlQuery;
+            return QueryCache.getRsqlQuery();
+        }
+
+        function setRsqlQuery(query) {
+            QueryCache.setRsqlQuery(query);
         }
         /**
          * parses a query object and returns a RSQL Query String

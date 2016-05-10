@@ -56,26 +56,13 @@
                 });
             };
 
+
             $scope.resetForm = function() {
-              prepareQuery();
+                rsqlService.prepareQuery();
             };
 
             $scope.submitQuery = function () {
-                // add instrument types to query
-                for (var i = 0; i < $scope.instrumentType.length; i++) {
-                    var curInstrument = $scope.instrumentType[i];
-                    for (var j in curInstrument) {
-                        if (j !== 'selectAll') {
-                            angular.forEach(curInstrument[j], function (value, key) {
-                                if (value.selected === true)
-                                    $scope.queryOptions.insType.push(value.name);
-                            });
-                        }
-                    }
-                }
-
-                // remove instrument type
-
+                
                 // add ms type to query
                 angular.forEach($scope.msType, function (value, key) {
                     if (value.selected === true) {
@@ -90,15 +77,9 @@
                     }
                 });
 
+                rsqlService.addCompound($scope.queryOptions.compound);
+                rsqlService.addInstrumentTypes($scope.instrumentType);
 
-                // filter inChiKey or compound name
-                if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test($scope.queryOptions.compound.name)) {
-                    $scope.queryOptions.compound.inchiKey = $scope.queryOptions.compound.name;
-                    delete $scope.queryOptions.compound.name;
-                }
-                else {
-                    delete $scope.queryOptions.compound.inchiKey;
-                }
 
                 // normalize metaData fields
 
