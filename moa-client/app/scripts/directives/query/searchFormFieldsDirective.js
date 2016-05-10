@@ -15,24 +15,9 @@
         function fieldsController($scope, $log, $http, rsqlService) {
 
             //TODO: query object needs to be initialized in a QueryBuilderService
-            prepareQuery();
-            function prepareQuery() {
-                $scope.queryOptions = {
-                    firstOperand: 'AND',
-                    secondOperand: 'AND',
-                    compound: {
-                        name: '',
-                        inChiKey: null
-                    },
-                    metaData: {
-                        insType: [],
-                        msType: [],
-                        ionMode: [],
-                        exactMass: null,
-                        tolerance: 0.5
-                    }
-                };
-            }
+            $scope.queryOptions = rsqlService.prepareQuery();
+            $log.info($scope.queryOptions);
+
 
 
             //TODO: create CONSTANT
@@ -107,8 +92,8 @@
 
 
                 // filter inChiKey or compound name
-                if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test($scope.query.compound.name)) {
-                    $scope.queryOptions.compound.inchiKey = $scope.query.compound.name;
+                if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test($scope.queryOptions.compound.name)) {
+                    $scope.queryOptions.compound.inchiKey = $scope.queryOptions.compound.name;
                     delete $scope.queryOptions.compound.name;
                 }
                 else {
@@ -117,15 +102,10 @@
 
                 // normalize metaData fields
 
-                //$log.info($scope.query);
-                var compiled = rsqlService.parseRSQL($scope.queryOptions);
-
-
-
 
                 /** RESET FORM AFTER WE SUBMIT QUERY*/
                 //TODO: store query in Cache, unless user click submit again, clear query
-                prepareQuery();
+                rsqlService.prepareQuery();
 
                 // send query object to rsql parser
                 // call rest enpoint
