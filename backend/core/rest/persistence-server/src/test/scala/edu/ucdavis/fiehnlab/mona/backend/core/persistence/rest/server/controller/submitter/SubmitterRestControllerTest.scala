@@ -41,4 +41,5 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
     */
   override def getId: String = getValue.id
 
+  override val requiresAuthForAllRequestes: Boolean = false
 }
