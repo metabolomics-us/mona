@@ -19,6 +19,13 @@
         };
         return service;
 
+        function getQuery() {
+            return QueryCache.getRsqlQuery();
+        }
+
+        function setRsqlQuery(query) {
+            QueryCache.setRsqlQuery(query);
+        }
 
         function filterKeywordSearchOptions(options, instruments, ms, ionMode) {
             // filter compound
@@ -65,8 +72,6 @@
             options = removeEmptyFields(options);
             setRsqlQuery(options);
             buildRsqlQuery();
-            $log.log('filtered object below');
-            $log.info(options);
         }
 
         function removeEmptyFields(options) {
@@ -87,20 +92,23 @@
 
         function buildRsqlQuery() {
             var filtered = getQuery();
-            var query = '';
+            var compoundQuery = '';
+            var metadataQuery = '';
+
 
             // build compound string
+            if (typeof(filtered.compound) === 'object' && (JSON.stringify(filtered.compound) !== JSON.stringify({}))) {
+                compoundQuery = compoundQuery.concat(buildCompoundQueryString(filtered.compound));
+            }
+
             // build metadata string
+            if (typeof(filtered.metadata) === 'object' && JSON.stringify(filtered.metadata) !== JSON.stringify({})) {
+                metadataQuery = buildMetaDataQueryString(filtered.metadata);
+            }
             // build tag string
 
         }
-        function getQuery() {
-            return QueryCache.getRsqlQuery();
-        }
 
-        function setRsqlQuery(query) {
-            QueryCache.setRsqlQuery(query);
-        }
 
         /**
          * parses a query object and returns a RSQL Query String
@@ -155,64 +163,54 @@
             return queryString;
         }
 
-        function buildMetaDataQueryString(metaDataQuery) {
-            var queryString = "";
+        function buildMetaDataQueryString(metadata) {
+            var query = '';
 
-            // remove empty fields
-            if (metaDataQuery.exactMass === null) {
-                delete metaDataQuery.tolerance;
-                delete metaDataQuery.exactMass;
+            // handle exact mass & tolerance
+            if (typeof(metadata.exactMass) !== 'undefined') {
+                // concat first operand
+                query = query.concat(' ', filtered.firstOperand.toLowerCase());
+                var leftOffset = metadata.exactMass - metadata.tolerance;
+                var rightOffset = metadata.exactMass + metadata.tolerance;
+                query += " metaData=q='name==exact mass and " + "(value>=" + leftOffset + "or value<=" + rightOffset + ")'";
             }
 
-            angular.forEach(metaDataQuery, function (value, key) {
-
-
-            });
-
-            // for(var i in metaDataQuery) {
-            //     $log.info(typeof(metaDataQuery[i]));
-            //     $log.log(metaDataQuery[i]);
-            // }
-
-            // for(var i in metaDataQuery) {
-            //     $log.info();
-            // }
-
-
-            /** TODO: this section was built on legacy metadata array. Keeping for reference
-             * The searchform is using a metadata object.
-             *
-             *
-             for (var i = 0, l = metaDataQuery.length; i < l; i++) {
-                var object = metaDataQuery[i];
-                var operator = object.value.eq ? "==" : "!=";
-
-                if (i > 0) {
-                    queryString += ' and ';
-                }
-
-                queryString += "metaData=q='name" + operator + '\"' + object.value.eq || object.value.ne + '\"\'';
+            // handle formula
+            if (typeof(metadata.formula) !== 'undefined' && metadata.formula !== '') {
+                // get 2nd operand
             }
-             */
-            return queryString;
+
+
+            //  for (var i = 0, l = metaDataQuery.length; i < l; i++) {
+            //     var object = metaDataQuery[i];
+            //     var operator = object.value.eq ? "==" : "!=";
+            //
+            //     if (i > 0) {
+            //         queryString += ' and ';
+            //     }
+            //
+            //     queryString += "metaData=q='name" + operator + '\"' + object.value.eq || object.value.ne + '\"\'';
+            // }
+            //
+            // return queryString;
         }
 
-        function buildCompoundQueryString(compoundQuery) {
-            var compound = '';
+        function buildCompoundQueryString(compound) {
+            var query = '';
 
             // handle compound name
-            if (typeof(compoundQuery.name) !== 'undefined') {
-                compound += "compound.names=q='name==" + '\"' + compoundQuery.name + '\"\'';
+            if (typeof(compound.name) !== 'undefined') {
+                query += "compound.names=q='name==" + '\"' + compound.name + '\"\'';
 
             }
 
             // handle compound inchiKey
-            else if (typeof(compoundQuery.inchiKey) !== 'undefined') {
-                compound += "compound=q=inchiKey==" + '\"' + compoundQuery.inchiKey + '\"\'';
+            else if (typeof(compound.inchiKey) !== 'undefined') {
+                query += "compound=q=inchiKey==" + '\"' + compound.inchiKey + '\"\'';
 
             }
 
-            return compound;
+            return query;
         }
 
     }
