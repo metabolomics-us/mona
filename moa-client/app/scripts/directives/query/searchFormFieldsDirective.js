@@ -12,12 +12,12 @@
         return directive;
 
         /* @ngInject */
-        function fieldsController($scope, $log, $http, rsqlParser) {
+        function fieldsController($scope, $log, $http, rsqlService) {
 
             //TODO: query object needs to be initialized in a QueryBuilderService
             prepareQuery();
             function prepareQuery() {
-                $scope.query = {
+                $scope.queryOptions = {
                     firstOperand: 'AND',
                     secondOperand: 'AND',
                     compound: {
@@ -29,7 +29,7 @@
                         msType: [],
                         ionMode: [],
                         exactMass: null,
-                        tolerance: 0.5,
+                        tolerance: 0.5
                     }
                 };
             }
@@ -83,7 +83,7 @@
                         if (j !== 'selectAll') {
                             angular.forEach(curInstrument[j], function (value, key) {
                                 if (value.selected === true)
-                                    $scope.query.insType.push(value.name);
+                                    $scope.queryOptions.insType.push(value.name);
                             });
                         }
                     }
@@ -94,31 +94,31 @@
                 // add ms type to query
                 angular.forEach($scope.msType, function (value, key) {
                     if (value.selected === true) {
-                        $scope.query.msType.push(value.name);
+                        $scope.queryOptions.msType.push(value.name);
                     }
                 });
 
                 // add ion mode to query
                 angular.forEach($scope.ionMode, function (value, key) {
                     if (value.selected === true) {
-                        $scope.query.ionMode.push(value.name);
+                        $scope.queryOptions.ionMode.push(value.name);
                     }
                 });
 
 
                 // filter inChiKey or compound name
                 if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test($scope.query.compound.name)) {
-                    $scope.query.compound.inchiKey = $scope.query.compound.name;
-                    delete $scope.query.compound.name;
+                    $scope.queryOptions.compound.inchiKey = $scope.query.compound.name;
+                    delete $scope.queryOptions.compound.name;
                 }
                 else {
-                    delete $scope.query.compound.inchiKey;
+                    delete $scope.queryOptions.compound.inchiKey;
                 }
 
                 // normalize metaData fields
 
                 //$log.info($scope.query);
-                var compiled = rsqlParser.parseRSQL($scope.query);
+                var compiled = rsqlService.parseRSQL($scope.queryOptions);
 
 
 

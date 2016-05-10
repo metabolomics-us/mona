@@ -10,7 +10,7 @@
       .service('QueryCache', queryCache);
 
     /* @ngInject */
-    function queryCache($injector, $log, $rootScope, rsqlParser) {
+    function queryCache($injector, $log, $rootScope) {
         /**
          * Stored query
          */
@@ -54,10 +54,6 @@
         this.setSpectraQuery = function(query) {
             $rootScope.$broadcast('spectra:query', query);
 
-            // stubbing query for later test
-            var stubQuery = rsqlParser.parseRSQL(query);
-            $log.info(stubQuery);
-            
             this.query = query;
         };
 
