@@ -68,9 +68,25 @@
         function buildMetaDataQueryString(metaDataQuery) {
             var queryString = "";
 
-            for(var i in metaDataQuery) {
-                $log.info(i);
+            // remove empty fields
+            if (metaDataQuery.exactMass === null) {
+                delete metaDataQuery.tolerance;
+                delete metaDataQuery.exactMass;
             }
+
+            angular.forEach(metaDataQuery, function(value, key) {
+               
+                $log.info(value);
+            });
+
+            // for(var i in metaDataQuery) {
+            //     $log.info(typeof(metaDataQuery[i]));
+            //     $log.log(metaDataQuery[i]);
+            // }
+
+            // for(var i in metaDataQuery) {
+            //     $log.info();
+            // }
 
 
 
