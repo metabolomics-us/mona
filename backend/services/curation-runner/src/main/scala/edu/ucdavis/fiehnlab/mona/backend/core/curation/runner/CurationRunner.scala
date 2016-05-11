@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Component
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableWebSecurity
-@Import(Array(classOf[CurationConfig],classOf[BusConfig]))
+@Import(Array(classOf[CurationConfig],classOf[BusConfig],classOf[RestClientConfig]))
 class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
 
   @Autowired
@@ -38,9 +39,13 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
   val token:String = null
 
   @Bean
+  def restWriter : RestRepositoryWriter = {
+    new RestRepositoryWriter(token)
+  }
+
+  @Bean
   def curationListener(curationWorkflow: ItemProcessor[Spectrum,Spectrum]): CurationListener = {
-    val writer = new RestRepositoryWriter(token)
-    new CurationListener(curationWorkflow,writer)
+    new CurationListener(curationWorkflow,restWriter)
   }
 
   @Bean
@@ -73,7 +78,7 @@ class CurationListener(workflow: ItemProcessor[Spectrum,Spectrum],writer:RestRep
     logger.info(s"received spectra: ${spectra.id}")
     val result:Spectrum = workflow.process(spectra)
     logger.info(s"curated spectra: ${spectra.id}")
-    writer.write(spectra)
+    writer.write(result)
     logger.info("saved spectra to system")
   }
 }

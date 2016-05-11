@@ -248,7 +248,7 @@ case class Spectrum(
                      @BeanProperty
                      id: String,
 
-                     lastUpdated: String,
+                     lastUpdated: Date,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
@@ -333,7 +333,7 @@ case class LegacySpectrum(
                            biologicalCompound: Compound,
                            chemicalCompound: Compound,
                            id: String,
-                           lastUpdated: String,
+                           lastUpdated: Date,
                            metaData: Array[MetaData],
                            score: Score,
                            spectrum: String,

@@ -91,11 +91,24 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     */
   @CacheEvict(value = Array("spectra"))
   final def update(spectrum: Spectrum): Spectrum = {
-    val result = spectrumMongoRepository.save(spectrum)
+
+    val result = spectrumMongoRepository.save(spectrum.copy(lastUpdated = new Date()))
     fireUpdateEvent(result)
     result
   }
 
+  /**
+    *
+    * @param entity
+    * @tparam S
+    * @return
+    */
+  @CacheEvict(value = Array("spectra"))
+  final override def save[S <: Spectrum](entity: S): S = {
+    val result = spectrumMongoRepository.save(entity.copy(lastUpdated = new Date)).asInstanceOf[S]
+    fireAddEvent(result)
+    result
+  }
   /**
     * updates the given spectra
     *
@@ -244,18 +257,6 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     }
   }
 
-  /**
-    *
-    * @param entity
-    * @tparam S
-    * @return
-    */
-  @CacheEvict(value = Array("spectra"))
-  final override def save[S <: Spectrum](entity: S): S = {
-    val result = spectrumMongoRepository.save(entity)
-    fireAddEvent(result)
-    result
-  }
 
   override def save[S <: Spectrum](entities: lang.Iterable[S]): lang.Iterable[S] = {
     entities.asScala.collect {

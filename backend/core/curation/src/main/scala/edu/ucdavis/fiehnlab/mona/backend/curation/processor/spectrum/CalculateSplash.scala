@@ -19,18 +19,14 @@ class CalculateSplash extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    if (spectrum.splash == null) {
-      val splash = SplashUtil.splash(spectrum.spectrum, SpectraType.MS)
-      val blocks = splash.split('-')
+    val splash = SplashUtil.splash(spectrum.spectrum, SpectraType.MS)
+    val blocks = splash.split('-')
 
-      logger.info(s"Calculated splash ${splash} for spectrum ${spectrum.id}")
+    logger.info(s"Calculated splash ${splash} for spectrum ${spectrum.id}")
 
-      // Assembled spectrum with a new SPLASH
-      spectrum.copy(
-        splash = Splash(blocks(0), blocks(1), blocks(2),blocks(3), splash)
-      )
-    } else {
-      spectrum
-    }
+    // Assembled spectrum with a new SPLASH
+    spectrum.copy(
+      splash = Splash(blocks(0), blocks(1), blocks(2), blocks(3), splash)
+    )
   }
 }

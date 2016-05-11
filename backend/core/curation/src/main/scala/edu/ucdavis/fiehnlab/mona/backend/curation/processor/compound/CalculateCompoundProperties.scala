@@ -42,7 +42,7 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
     val reader = new MDLV2000Reader(new StringReader(compound.molFile))
     val molecule: IAtomContainer = reader.read(new AtomContainer())
 
-    logger.info(s"received mol: \n ${compound.molFile}")
+    logger.debug(s"received mol: \n ${compound.molFile}")
 
     // Update molecule
     AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
