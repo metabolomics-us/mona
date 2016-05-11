@@ -169,30 +169,40 @@
             // handle exact mass & tolerance
             if (typeof(metadata.exactMass) !== 'undefined') {
                 // concat first operand
-                query = query.concat(' ', filtered.firstOperand.toLowerCase());
+                query = query.concat(' ', getQuery().firstOperand.toLowerCase());
                 var leftOffset = metadata.exactMass - metadata.tolerance;
                 var rightOffset = metadata.exactMass + metadata.tolerance;
-                query += " metaData=q='name==exact mass and " + "(value>=" + leftOffset + "or value<=" + rightOffset + ")'";
+                query += " metaData=q='name==\"exact mass\" and " + "(value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\")'";
             }
 
             // handle formula
             if (typeof(metadata.formula) !== 'undefined' && metadata.formula !== '') {
-                // get 2nd operand
+                var secondOperand = getQuery().secondOperand.toLowerCase();
+                query += ' ' + secondOperand + ' ' + "metaData=q='name==\"formula\" and value==\"" + formula + "\"'";
             }
 
 
-            //  for (var i = 0, l = metaDataQuery.length; i < l; i++) {
-            //     var object = metaDataQuery[i];
-            //     var operator = object.value.eq ? "==" : "!=";
-            //
-            //     if (i > 0) {
-            //         queryString += ' and ';
-            //     }
-            //
-            //     queryString += "metaData=q='name" + operator + '\"' + object.value.eq || object.value.ne + '\"\'';
-            // }
-            //
-            // return queryString;
+            // handle instrument Type
+            if (typeof(metadata.insType) !== 'undefined' && metadata.insType.length !== 0) {
+                for (var i = 0, l = metadata.insType.length; i < l; i++) {
+                    query += " and metaData=q='name==\"instrument type\" and value==\"" + metadata.insType[i] + "\"'";
+                }
+            }
+
+            // handle msType
+            if (typeof(metadata.msType) !== 'undefined' && metadata.msType.length !== 0) {
+                for(var i = 0, l = metadata.msType.length; i < l; i++) {
+                    query += " and metaData=q='name==\"ms type\" and value==\"" + metadata.msType[i] + "\"'";
+                }
+            }
+
+            // handle ionMode
+            if (typeof(metadata.ionMode) !== 'undefined' && metadata.ionMode.length !== 0) {
+                for (var i = 0; i < metadata.ionMode.length; i++) {
+                    query += " metaData=q='name==\"ion mode\" and value==\"" + metadata.ionMode[i] + "\"'";
+                }
+            }
+            return query;
         }
 
         function buildCompoundQueryString(compound) {
