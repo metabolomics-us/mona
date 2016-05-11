@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.curation
+package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts
 
 /**
   * Created by sajjan on 3/21/16.
@@ -11,18 +11,18 @@ case class ExternalId(
 
 case class Synonym(
                     name: String,
-                    nameType: String,
+                    `type`: String,
                     score: Double
                   )
 
 
 case class CTSResponse(
-                        inchiKey: String,
+                        inchikey: String,
                         inchicode: String,
 
-                        formula: String,
                         molweight: Double,
                         exactmass: Double,
+                        formula: String,
 
                         synonyms: Array[Synonym],
                         externalIds: Array[ExternalId]

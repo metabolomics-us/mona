@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectr
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.common.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.FetchCompoundData
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.{FetchCTSCompoundData}
 import org.openscience.cdk.inchi.{InChIGenerator, InChIGeneratorFactory}
 import org.openscience.cdk.smiles.SmilesGenerator
 import org.openscience.cdk.{AtomContainer, DefaultChemObjectBuilder}
@@ -22,7 +22,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by sajjan on 4/4/16.
   */
-@Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCompoundData], workflow = "spectra-curation")
+@Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCTSCompoundData], workflow = "spectra-curation")
 class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
   override def process(spectrum: Spectrum): Spectrum = {
     val updatedCompound: Array[Compound] = spectrum.compound.map(calculateCompoundProperties)
