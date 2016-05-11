@@ -62,8 +62,8 @@ class CalculateMassAccuracy extends ItemProcessor[Spectrum,Spectrum] with LazyLo
 
       else {
         val computedMass: Double = AdductBuilder.LCMS_POSITIVE_ADDUCTS.contains(precursorType) match {
-          case true => AdductBuilder.LCMS_POSITIVE_ADDUCTS(precursorType)(precursorMass.asInstanceOf[Double])
-          case false => AdductBuilder.LCMS_NEGATIVE_ADDUCTS(precursorType)(precursorMass.asInstanceOf[Double])
+          case true => AdductBuilder.LCMS_POSITIVE_ADDUCTS(precursorType)(theoreticalMass.asInstanceOf[Double])
+          case false => AdductBuilder.LCMS_NEGATIVE_ADDUCTS(precursorType)(theoreticalMass.asInstanceOf[Double])
         }
 
         val massError: Double = precursorMass.asInstanceOf[Double] - computedMass
