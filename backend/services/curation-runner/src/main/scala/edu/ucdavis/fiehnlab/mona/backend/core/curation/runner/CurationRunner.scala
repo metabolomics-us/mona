@@ -26,9 +26,9 @@ import org.springframework.stereotype.Component
   * it also exposes a couple of rest points, which allow simple scheduling of messages
   */
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableWebSecurity
-@Import(Array(classOf[CurationConfig],classOf[BusConfig],classOf[RestClientConfig]))
+@EnableDiscoveryClient
+@Import(Array(classOf[RestClientConfig],classOf[CurationConfig]))
 class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
 
   @Autowired
@@ -50,7 +50,6 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
 
   @Bean
   def container(connectionFactory: ConnectionFactory, listener: CurationListener,messageConverter:MessageConverter): SimpleMessageListenerContainer = {
-    logger.info(s"connecting to queue: ${queueName}")
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
     container.setMessageListener(listener)
