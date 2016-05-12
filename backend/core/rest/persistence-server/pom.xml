@@ -39,6 +39,11 @@
             <artifactId>api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.io</groupId>
+            <artifactId>massbank</artifactId>
+        </dependency>
+
         <!-- test dependencies -->
 
         <dependency>
