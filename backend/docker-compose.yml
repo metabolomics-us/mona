@@ -46,8 +46,6 @@ services:
      image: elasticsearch:1.7.5
      volumes_from:
        - config_container:ro
-     environment:
-      - "JAVA_OPTS:-xMx8196m"
      entrypoint: ./bin/elasticsearch -Xmx4g -Xms4g
 
 
@@ -142,10 +140,8 @@ services:
     #java opts can be overriden in the container
     #the configuration points the task as the right ip address for the discovery server
     #we also define the url for our configuration server here
-    entrypoint: ./wait-for-it.sh config:1111 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: ./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmn1g -Xss4m -Xmx1g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
 
-    environment:
-    - JAVA_OPTS='-Xmx2048m -XX:+UseParallelGC -XX:+UseCompressedOops -XX:+PrintFlagsFinal'
 
 ################################################################################################################
 # This section defines our required services, need to connect mona apps
@@ -159,7 +155,7 @@ services:
     depends_on:
       - proxy
       - mongodb
-    entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "4444:4444"
 
@@ -175,11 +171,9 @@ services:
     depends_on:
       - proxy
       - mongodb
-    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "5555:5555"
-    environment:
-    - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
 
 ################################################################################################################
 # This section defines services, which can be scaled from 1-n times and should be started last
@@ -191,9 +185,7 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-auth-server
     depends_on:
       - curationScheduler
-    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
-    environment:
-    - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
+    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
 
   #persistences and query interface
   persistence:
@@ -201,6 +193,12 @@ services:
 
     depends_on:
       - curationScheduler
-    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
-    environment:
-    - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
+    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmn2g -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+
+  #curation runner is utilized to actually curate spectra
+  curationRunner:
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-runner
+
+    depends_on:
+      - curationScheduler
+    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmn2g -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar

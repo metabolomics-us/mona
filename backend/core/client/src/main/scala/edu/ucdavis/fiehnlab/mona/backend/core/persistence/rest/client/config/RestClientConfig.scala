@@ -22,13 +22,6 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
 @Import(Array(classOf[DomainConfig]))
 class RestClientConfig extends LazyLogging {
 
-  @Value("${mona.rest.server.host:localhost}")
-  val monaServerHost: String = null
-
-
-  @Value("${mona.rest.server.port:8080}")
-  val monaServerPort: Int = 0
-
   @Value("${mona.rest.client.connections.total:4}")
   val monaMaxConnections: Int = 0
 
@@ -36,7 +29,9 @@ class RestClientConfig extends LazyLogging {
   val monaMaxRouteConnections: Int = 0
 
   @Bean(name = Array[String]("monaRestServer"))
-  def monaRestServer: String = s"http://${monaServerHost}:${monaServerPort}"
+  def monaRestServer(@Value("${mona.rest.server.host}")monaServerHost: String, @Value("${mona.rest.server.port:8080}") monaServerPort:Int ): String = {
+    s"http://${monaServerHost}:${monaServerPort}"
+  }
 
   @Bean
   def connectionManager(): HttpClientConnectionManager = {
@@ -74,7 +69,7 @@ class RestClientConfig extends LazyLogging {
     */
   @Bean
   @Primary
-  def loginService: LoginService = new RestLoginService(monaServerHost, monaServerPort)
+  def loginService(@Value("${mona.rest.server.host}")monaServerHost: String, @Value("${mona.rest.server.port:8080}") monaServerPort:Int ): LoginService = new RestLoginService(monaServerHost, monaServerPort)
 
   /**
     * generates our mapping converter

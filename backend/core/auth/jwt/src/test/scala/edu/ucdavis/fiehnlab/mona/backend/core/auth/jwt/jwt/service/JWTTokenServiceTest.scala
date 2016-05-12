@@ -58,5 +58,6 @@ class JWTTokenServiceTest extends WordSpec {
       assert(info.validFrom != null)
       assert(info.validTo != null)
     }
+
   }
 }

@@ -32,6 +32,5 @@ class MassBankRecordParserTest extends WordSpec with Matchers with MassBankRecor
       result shouldBe a[util.Failure[_]]
       intercept[MassBankRecordParsingException] { result.get }
     }
-
   }
 }

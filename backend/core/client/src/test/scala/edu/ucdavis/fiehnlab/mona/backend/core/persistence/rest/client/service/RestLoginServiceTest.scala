@@ -53,6 +53,15 @@ class RestLoginServiceTest extends WordSpec with LazyLogging{
       logger.info(s"my token is ${token.token}")
 
     }
+    "extend" in {
+      val token = loginService.login(LoginRequest("admin","secret"))
+      val response = loginService.extend(token.token)
+
+      assert(response.token != null)
+      val info = loginService.info(token.token)
+
+      assert(info.username == "admin")
+    }
 
     //MUST BE LAST
     "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {

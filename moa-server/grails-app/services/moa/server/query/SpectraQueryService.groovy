@@ -47,7 +47,7 @@ class SpectraQueryService {
      * @param maxResults how many results do we maximal want to have
      */
     def findSimilarSpectraIds(String massSpectra, double minSimilarity = 500, int maxResults = 10) {
-        String histogram = SplashUtil.splash(massSpectra, SpectraType.MS).split("-")[3]
+        String histogram = SplashUtil.splash(massSpectra, SpectraType.MS).split("-")[2]
 
         log.info("start searching...")
         Sql sql = new Sql(dataSource)
@@ -55,7 +55,7 @@ class SpectraQueryService {
         long begin = System.currentTimeMillis()
         def resultList = new LinkedHashSet()
 
-        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block2,:?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
+        sql.eachRow(" select  spectrum_id as id, calculatesimilarity(?,spectrum_id) as similarity from splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block3,:?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ? limit ?", [massSpectra, histogram, massSpectra, minSimilarity, maxResults]) { row ->
             def hit = [:]
             hit.id = row.id
             hit.similarity = row.similarity
@@ -80,7 +80,7 @@ class SpectraQueryService {
      */
     def findSimilarSpectraIds(long id, double minSimilarity = 500, int maxResults = 10) {
         Spectrum spectrum = Spectrum.get(id)
-        String histogram = spectrum.splash.block2
+        String histogram = spectrum.splash.block3
 
         log.info("start searching...")
         Sql sql = new Sql(dataSource)
@@ -88,7 +88,7 @@ class SpectraQueryService {
         long begin = System.currentTimeMillis()
         def resultList = []
 
-        sql.eachRow("SELECT spectrum_id AS id, calculatesimilarity(?,spectrum_id) AS similarity FROM splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block2,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ?  limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
+        sql.eachRow("SELECT spectrum_id AS id, calculatesimilarity(?,spectrum_id) AS similarity FROM splash a, spectrum b where a.spectrum_id = b.id and b.deleted = false and (10-levenshtein(block3,?))/10 > 0.9 and calculatesimilarity(?,spectrum_id) > ?  limit ?", [id, histogram, id, minSimilarity, maxResults]) { row ->
             def hit = [:]
             hit.id = row.id
             hit.similarity = row.similarity
@@ -432,13 +432,13 @@ class SpectraQueryService {
                 //build the histgram query
                 //queryOfDoomWhere = handleWhereAndAnd(queryOfDoomWhere)
 
-                queryOfDoomWhere += " (10-levenstein(s.splash.block2,:histogramBlock))/10 >= ${histogramScore}"
+                queryOfDoomWhere += " (10-levenstein(s.splash.block3,:histogramBlock))/10 >= ${histogramScore}"
                 executionParams."histogramBlock" = json.match.histogram
 
 
-                fields = "$fields, (10-levenstein(s.splash.block2,:histogramBlock))/10 as histogramSimilarity"
+                fields = "$fields, (10-levenstein(s.splash.block3:histogramBlock))/10 as histogramSimilarity"
                 orderBy = "$orderBy,histogramSimilarity DESC"
-                group = "$group, s.splash.block2"
+                group = "$group, s.splash.block3"
 
             } else {
                 throw new RuntimeException("none supported arguments...")

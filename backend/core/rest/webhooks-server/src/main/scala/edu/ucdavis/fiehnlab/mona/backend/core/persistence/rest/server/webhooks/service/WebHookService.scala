@@ -67,8 +67,6 @@ class WebHookService extends LazyLogging {
             case _ => throw new RuntimeException("this should never have happened, something is odd in the webhook service!")
           }
 
-        case x:Any =>
-          throw new RuntimeException(s"sorry element ${x} was not valid!")
       }.toArray
     }
   }

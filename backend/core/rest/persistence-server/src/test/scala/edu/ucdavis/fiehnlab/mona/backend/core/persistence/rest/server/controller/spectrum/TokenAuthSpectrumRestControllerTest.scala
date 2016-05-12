@@ -6,7 +6,7 @@ import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Compound, Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
@@ -223,5 +223,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
     * @return
     */
   override def getId: String = getValue.id
+
+  override val requiresAuthForAllRequestes: Boolean = false
 }
 

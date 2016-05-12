@@ -15,31 +15,36 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
   /**
     * criteria for GC/MS identification
     */
-  val GCMS_CRITERIA: Map[String, Array[String]] = Map(
+  val GCMS_METADATA_CRITERIA: Map[String, Array[String]] = Map(
     (CommonMetaData.INSTRUMENT, Array(".*gcms.*", ".*gc-ms.*", ".*gc/ms.*")),
     (CommonMetaData.INSTRUMENT_TYPE, Array(".*gc.*", "ei-b")),
-    (CommonMetaData.IONIZATION_ENERGY, Array("ev"))
+    (CommonMetaData.IONIZATION_ENERGY, Array("ev")),
+    (CommonMetaData.SAMPLE_INTRODUCTION, Array(".*gc.*", ".*gas.*"))
   )
 
   /**
     * criteria for LC/MS identification
     */
-  val LCMS_CRITERIA: Map[String, Array[String]] = Map(
+  val LCMS_METADATA_CRITERIA: Map[String, Array[String]] = Map(
     (CommonMetaData.INSTRUMENT, Array(".*lcms.*", ".*lc-ms.*", ".*lc/ms.*", ".*ltq.*")),
     (CommonMetaData.INSTRUMENT_TYPE, Array(".*lc.*")),
     (CommonMetaData.SOLVENT, Array(".*")),
+    (CommonMetaData.SAMPLE_INTRODUCTION, Array(".*lc.*", ".*liquid.*")),
     ("*", Array(".*direct infusion.*"))
   )
 
 
+
+
   /**
-    * processes the given spectrum and
+    * processes the given spectrum
     *
     * @param spectrum to be processed
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val tags = spectrum.tags.filter(x => x.text == CommonTags.GCMS_SPECTRUM || x.text == CommonTags.LCMS_SPECTRUM)
+    val tags: Array[Tags] = spectrum.tags.filter(x => x.text == CommonTags.GCMS_SPECTRUM || x.text == CommonTags.LCMS_SPECTRUM)
+    val metaData: Array[MetaData] = spectrum.metaData.filter(x => x.name == CommonMetaData.SAMPLE_INTRODUCTION)
 
     if (tags.length == 1) {
       logger.info(s"Spectrum ${spectrum.id} already has identified chromotography: ${tags(0).text}")
@@ -48,6 +53,16 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
 
     else if (tags.length > 1) {
       logger.warn(s"Spectrum ${spectrum.id} has multiple chromotography tags!")
+      spectrum
+    }
+
+    if (metaData.length == 1) {
+      logger.info(s"Spectrum ${spectrum.id} already has identified source introduction: ${tags(0).text}")
+      spectrum
+    }
+
+    else if (metaData.length > 1) {
+      logger.warn(s"Spectrum ${spectrum.id} has multiple source introduction metadata!")
       spectrum
     }
 
@@ -63,16 +78,26 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
       else if (isGCMS) {
         logger.info(s"Identified spectrum ${spectrum.id} as GC/MS")
 
-        // Add GCMS tag
-        val updatedTags: Array[Tags] = spectrum.tags :+ new Tags(true, CommonTags.GCMS_SPECTRUM)
-        spectrum.copy(tags = updatedTags)
+        // Add GCMS tag and metadata
+        val updatedTags: Array[Tags] =
+          if (spectrum.tags.exists(_.text == CommonTags.GCMS_SPECTRUM))
+            spectrum.tags
+          else
+            spectrum.tags :+ new Tags(true, CommonTags.GCMS_SPECTRUM)
+
+         spectrum.copy(tags = updatedTags)
       }
 
       else if (isLCMS) {
         logger.info(s"Identified spectrum ${spectrum.id} as LC/MS")
 
         // Add LCMS tag
-        val updatedTags: Array[Tags] = spectrum.tags :+ new Tags(true, CommonTags.LCMS_SPECTRUM)
+        val updatedTags: Array[Tags] =
+          if (spectrum.tags.exists(_.text == CommonTags.LCMS_SPECTRUM))
+            spectrum.tags
+          else
+            spectrum.tags :+ new Tags(true, CommonTags.LCMS_SPECTRUM)
+
         spectrum.copy(tags = updatedTags)
       }
 
@@ -91,7 +116,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return
     */
   def isGCMSSpectrum(spectrum: Spectrum): Boolean = {
-    spectrum.metaData.exists(validateMetaData(_, GCMS_CRITERIA))
+    spectrum.metaData.exists(validateMetaData(_, GCMS_METADATA_CRITERIA))
   }
 
   /**
@@ -101,7 +126,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return
     */
   def isLCMSSpectrum(spectrum: Spectrum): Boolean = {
-    spectrum.metaData.exists(validateMetaData(_, LCMS_CRITERIA))
+    spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA))
   }
 
 
