@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginResponse
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier.ClassifierProcessor
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.FetchCTSCompoundData
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.RestRepositoryReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,9 +42,10 @@ class TestConfig {
   }
 
   @Bean
-  def processor:ClassifierProcessor = {
-    new ClassifierProcessor
-  }
+  def classyfireProcessor: ClassifierProcessor = new ClassifierProcessor
+
+  @Bean
+  def ctsProcessor: FetchCTSCompoundData = new FetchCTSCompoundData
 
   @Autowired
   val userRepository: UserRepository = null

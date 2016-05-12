@@ -20,6 +20,6 @@ import org.springframework.context.annotation.{Bean, Import}
 class RestPersistenceServer
 
 object RestPersistenceServer extends App{
-  System.setProperty("spring.config.name", "persistence-service");
+  System.setProperty("spring.config.name", "persistence-service")
   new SpringApplication(classOf[RestPersistenceServer]).run()
 }

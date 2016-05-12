@@ -41,7 +41,7 @@ class ClassifierProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     */
   def classify(compound: Compound): Compound = {
     val url = s"http://classyfire.wishartlab.com/entities/${compound.inchiKey}.json"
-    logger.info(s"invoking url ${url}")
+    logger.info(s"invoking url $url")
     try {
       val result: ResponseEntity[Classifier] = restOperations.getForEntity(url, classOf[Classifier])
 
@@ -72,7 +72,7 @@ class ClassifierProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         if (classifier.intermediate_nodes != null) {
           var level = 0
           classifier.intermediate_nodes.foreach { parent =>
-            buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level ${level}", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", parent.name)
+            buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level $level", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", parent.name)
             level = level + 1
           }
         }
