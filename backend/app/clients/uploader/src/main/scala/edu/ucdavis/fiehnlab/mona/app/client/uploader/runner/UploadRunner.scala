@@ -24,10 +24,7 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
   val uploadSpectraJob: Job = null
 
   @Autowired
-  val uploadAndCurationSpectraJob: Job = null
-
-  @Autowired
-  val uploadLegacySpectraJob:Job = null
+  val uploadLegacySpectraJob: Job = null
 
   @Autowired
   val loginService: LoginService = null
@@ -71,7 +68,6 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
     println("")
     println("Optional: ")
     println("")
-    println("\t --curate\t\t jobs are not only uploaded, but also curated at the same time")
     println("\t --mona.rest.server.host=127.0.0.1\t\t to specify which server to use")
     println("\t --mona.rest.server.port=8080\t\t to specify which port to use")
     println("\t --legacy\t\t utilize the old MoNA format for input")
@@ -83,7 +79,7 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
 
   /**
     * reads the file and does the actual authorization
- *
+    *
     * @param token
     * @param applicationArguments
     */
@@ -93,23 +89,18 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
       applicationArguments.getOptionValues("file").asScala.foreach { file =>
         logger.info(s"reading file: ${file}")
 
-        val parameters = new JobParametersBuilder().addString("pathToFile", file).addString("loginToken",token).toJobParameters
+        val parameters = new JobParametersBuilder().addString("pathToFile", file).addString("loginToken", token).toJobParameters
 
-        if (applicationArguments.containsOption("curate")) {
-          jobLauncher.run(uploadAndCurationSpectraJob, parameters)
+        if (applicationArguments.containsOption("legacy")) {
+          logger.debug("running legacy import mode")
+          jobLauncher.run(uploadLegacySpectraJob, parameters)
         }
         else {
-          if (applicationArguments.containsOption("legacy")) {
-            logger.debug("running legacy import mode")
-            jobLauncher.run(uploadLegacySpectraJob, parameters)
-          }
-          else {
-            jobLauncher.run(uploadSpectraJob, parameters)
-          }
+          jobLauncher.run(uploadSpectraJob, parameters)
         }
       }
     }
-    else{
+    else {
       usage
     }
   }

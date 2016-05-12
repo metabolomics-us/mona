@@ -1,15 +1,13 @@
-eureka:
-  instance:
-    preferIpAddress: true
-  client:
-    serviceUrl:
-      defaultZone: "http://${DOCKER_MACHINE_IP}:8761/eureka/"
 spring:
   rabbitmq:
     host: "${DOCKER_MACHINE_IP}"
     port: 5673
+  cloud:
+    config:
+      uri:  http://${DOCKER_MACHINE_IP}:1111
 
 mona:
   rest:
     server:
-      token:
+      host: "${DOCKER_MACHINE_IP}"
+      port: 8080

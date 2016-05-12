@@ -10,7 +10,6 @@ import org.scalatest.WordSpec
   * Created by wohlgemuth on 3/11/16.
   */
 class RemoveComputedDataTest extends WordSpec {
-
   val reader = JSONDomainReader.create[Spectrum]
 
   "this processor" when {

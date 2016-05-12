@@ -29,6 +29,8 @@ import scala.collection.JavaConverters._
   */
 abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends AbstractSpringControllerTest {
 
+  val requiresAuthForAllRequestes:Boolean
+
   /**
     * object to use for gets
     *
@@ -56,12 +58,24 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
       }
 
       "searchCount" in {
-        given().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/count").then().statusCode(200)
+        if(requiresAuthForAllRequestes){
+          given().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/count").then().statusCode(401)
+          authenticate().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/count").then().statusCode(200)
+        }
+        else {
+          given().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/count").then().statusCode(200)
+        }
 
       }
 
       "get" in {
-        given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
+        if(requiresAuthForAllRequestes) {
+          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(401)
+          authenticate().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
+        }
+        else{
+          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
+        }
       }
 
       "put requires authorization" in {

@@ -9,6 +9,9 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
+import javax.validation.constraints._
+
+import org.hibernate.validator.constraints.NotEmpty
 
 import scala.annotation.meta.field
 import scala.beans.BeanProperty
@@ -123,7 +126,10 @@ case class Compound(
                      score: Score,
 
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                     kind: String = "biological"
+                     kind: String = "biological",
+
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
+                     classification:Array[MetaData] = Array()
                    )
 
 case class Impacts(
@@ -156,6 +162,9 @@ case class Splash(
 
                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                    block3: String, //ns
+
+                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   block4: String, //ns
 
                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                    @(Indexed@field)
@@ -227,16 +236,19 @@ case class Author(
   * @param authors
   */
 @Document(collection = "SPECTRUM")
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 15,replicas = 2)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 15)
 case class Spectrum(
+                     @(Size@field)(min = 1)
                      @(Field@field)(`type` = FieldType.Nested)
                      compound: Array[Compound],
 
                      @(Id@field)
+                     @(NotNull@field)
+                     @(NotEmpty@field)
                      @BeanProperty
                      id: String,
 
-                     lastUpdated: String,
+                     lastUpdated: Date,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
@@ -244,12 +256,15 @@ case class Spectrum(
                      @(Field@field)(`type` = FieldType.Object)
                      score: Score,
 
+                     @(NotNull@field)
+                     @(NotEmpty@field)
                      @(Field@field)(`type` = FieldType.String)
                      spectrum: String,
 
                      @(Field@field)(`type` = FieldType.Object)
                      splash: Splash,
 
+                     @(NotNull@field)
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      submitter: Submitter,
 
@@ -318,7 +333,7 @@ case class LegacySpectrum(
                            biologicalCompound: Compound,
                            chemicalCompound: Compound,
                            id: String,
-                           lastUpdated: String,
+                           lastUpdated: Date,
                            metaData: Array[MetaData],
                            score: Score,
                            spectrum: String,

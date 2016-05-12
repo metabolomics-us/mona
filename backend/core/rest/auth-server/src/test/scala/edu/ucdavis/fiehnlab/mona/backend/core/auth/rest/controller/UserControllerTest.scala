@@ -35,7 +35,7 @@ class UserControllerTest extends AbstractGenericRESTControllerTest[User]("/users
     *
     * @return
     */
-  override def getValue: User = User("admi312312n", "a13123dmin", List[Role](Role("admin")).asJava)
+  override def getValue: User = User("admi312312n", "a13123dmin", List[Role](Role("ADMIN")).asJava)
 
   /**
     * returns an id for us for testing
@@ -44,4 +44,5 @@ class UserControllerTest extends AbstractGenericRESTControllerTest[User]("/users
     */
   override def getId: String = getValue.username
 
+  override val requiresAuthForAllRequestes: Boolean = true
 }

@@ -22,18 +22,13 @@ class JWTTokenService extends TokenService {
   val tokenSecret: TokenSecret = null
 
   /**
-    * time how long a token is valid for in hours
-    */
-  val timeOfLife = 24*7
-
-  /**
     * generates a token for us
     * based on the given user
     *
     * @param user
     * @return
     */
-  override def generateToken(user: User): String = {
+  override def generateToken(user: User,timeOfLife:Int = 24*7): String = {
 
     val issueDate = new Date()
     val experiationDate = DateUtils.addHours(issueDate, timeOfLife)
