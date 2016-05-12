@@ -24,11 +24,10 @@ import org.springframework.web.client.RestTemplate
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class ClassifierProcessorTest extends WordSpec {
-
   val reader = JSONDomainReader.create[Spectrum]
 
   @Autowired
-  val processor:ClassifierProcessor = null
+  val classyfireProcessor:ClassifierProcessor = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
@@ -40,12 +39,11 @@ class ClassifierProcessorTest extends WordSpec {
 
     "process" in {
 
-      assert(processor != null)
-      val output = processor.process(spectrumGiven)
+      assert(classyfireProcessor != null)
+      val output = classyfireProcessor.process(spectrumGiven)
 
       output.compound.foreach{ compound =>
         assert(compound.classification.length > 0)
-
       }
     }
   }
