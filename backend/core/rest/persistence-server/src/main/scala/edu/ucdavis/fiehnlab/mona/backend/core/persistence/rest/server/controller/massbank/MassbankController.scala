@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.massbank
 
+import java.util.concurrent.Future
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.MassBankToSpectrumMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubmitterMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 
 import scala.io.Source
@@ -28,16 +30,21 @@ class MassbankController extends LazyLogging{
 
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   @Async
-  def submit(@RequestHeader("Authorization") token:String, @RequestBody content:String  ) = {
+  def submit(@RequestHeader("Authorization") token:String, @RequestBody content:String  ) : Future[Spectrum]= {
     val src: Source = Source.fromString(content)
 
     val result: Try[Spectrum] = MassBankToSpectrumMapper.parse(src)
 
     result match {
       case Success(spectrum) =>
-        spectrumPersistenceService.save(spectrum)
+        val spectra = spectrumPersistenceService.save(spectrum)
+
+        new AsyncResult[Spectrum](
+          spectra
+        )
       case Failure(e) =>
-        logger.info(s"error parsing content: ${e.getMessage}",e)
+        //logger.info(s"error parsing content: ${e.getMessage}",e)
+        throw e
     }
 
   }
