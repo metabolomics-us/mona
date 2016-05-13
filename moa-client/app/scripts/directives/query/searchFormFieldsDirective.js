@@ -9,6 +9,7 @@
             templateUrl: 'views/spectra/query/searchForm.html',
             controller: fieldsController
         };
+
         return directive;
 
         /* @ngInject */
@@ -22,7 +23,6 @@
                     firstOperand: 'AND',
                     secondOperand: 'AND',
                     compound: {
-                        name: '',
                         inchiKey: null
                     },
                     metadata: {
@@ -78,12 +78,17 @@
             $scope.submitQuery = function () {
                 // add and filter query options, and update query cache
                 rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
+                $scope.query = rsqlService.getQuery();
 
-                
+                $log.info($scope.query);
+
                 // filter query
                 // service will build query,
                 // directive submits rsql query string
-                // on success change location
+                // on success change location to browse, with results
+                    // how to get data to browse controller?
+                        // use rsqlService to store the data?
+                        // then on browse resolve data?
 
                 /** RESET FORM AFTER WE SUBMIT QUERY*/
                 //TODO: store query in Cache, unless user click submit again, clear query

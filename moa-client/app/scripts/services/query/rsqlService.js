@@ -13,7 +13,6 @@
 
         var service = {
             getQuery: getQuery,
-            setRsqlQuery: setRsqlQuery,
             filterKeywordSearchOptions: filterKeywordSearchOptions
 
         };
@@ -90,6 +89,12 @@
             return options;
         }
 
+        /**
+         * parses a query object and returns a RSQL Query String
+         * @param query
+         * @return rsql query string
+         */
+
         function buildRsqlQuery() {
             var filtered = getQuery();
             var compoundQuery = '';
@@ -105,50 +110,17 @@
             if (typeof(filtered.metadata) === 'object' && JSON.stringify(filtered.metadata) !== JSON.stringify({})) {
                 metadataQuery = buildMetaDataQueryString(filtered.metadata);
             }
-            // build tag string
 
-        }
+            //TODO build tag string
 
+            var compiledQuery = '';
 
-        /**
-         * parses a query object and returns a RSQL Query String
-         * @param query
-         * @return rsql query string
-         */
-        function parseRSQL(query) {
+            // strip leading 'and' if compoundQuery is empty
+            compoundQuery === '' ? compiledQuery = metadataQuery.slice(5) :
+                compiledQuery = compiledQuery.concat(compoundQuery, metadataQuery);
 
-            var compoundQuery = "";
-            var metaDataQuery = "";
-            var tagsQuery = "";
-
-
-            if (typeof(query.compound) === 'object' && (JSON.stringify(query.compound) !== JSON.stringify({}))) {
-                compoundQuery = buildCompoundQueryString(query.compound);
-            }
-
-            if (typeof(query.metaData) === 'object' && (JSON.stringify(query.metaData) !== JSON.stringify({}))) {
-                metaDataQuery = buildMetaDataQueryString(query.metaData);
-
-            }
-
-            if (typeof(query.tags) !== 'undefined' && query.tags.length !== 0) {
-                tagsQuery = buildTagsQueryString(query.tags);
-            }
-
-            var compiledQuery = "";
-
-            if (compoundQuery !== '') {
-                compiledQuery += compoundQuery;
-            }
-
-            (metaDataQuery !== '') ? compiledQuery !== '' ? compiledQuery += ' and ' + metaDataQuery : compiledQuery = metaDataQuery
-                : compiledQuery;
-
-            (tagsQuery !== '') ? compiledQuery !== '' ? compiledQuery += ' and ' + tagsQuery : compiledQuery = tagsQuery
-                : compiledQuery;
-
-            return compiledQuery;
-
+            // set query in cache
+            setRsqlQuery(compiledQuery);
         }
 
         function buildTagsQueryString(tagQuery) {
@@ -178,7 +150,7 @@
             // handle formula
             if (typeof(metadata.formula) !== 'undefined' && metadata.formula !== '') {
                 var secondOperand = getQuery().secondOperand.toLowerCase();
-                query += ' ' + secondOperand + ' ' + "metaData=q='name==\"formula\" and value==\"" + formula + "\"'";
+                query += ' ' + secondOperand + ' ' + "metaData=q='name==\"formula\" and value==\"" + metadata.formula + "\"'";
             }
 
 
@@ -191,7 +163,7 @@
 
             // handle msType
             if (typeof(metadata.msType) !== 'undefined' && metadata.msType.length !== 0) {
-                for(var i = 0, l = metadata.msType.length; i < l; i++) {
+                for (var i = 0, l = metadata.msType.length; i < l; i++) {
                     query += " and metaData=q='name==\"ms type\" and value==\"" + metadata.msType[i] + "\"'";
                 }
             }
@@ -199,7 +171,7 @@
             // handle ionMode
             if (typeof(metadata.ionMode) !== 'undefined' && metadata.ionMode.length !== 0) {
                 for (var i = 0; i < metadata.ionMode.length; i++) {
-                    query += " metaData=q='name==\"ion mode\" and value==\"" + metadata.ionMode[i] + "\"'";
+                    query += " and metaData=q='name==\"ion mode\" and value==\"" + metadata.ionMode[i] + "\"'";
                 }
             }
             return query;
