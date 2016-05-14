@@ -60,7 +60,7 @@ class LoginControllerTest extends AbstractSpringControllerTest {
         "provide us with info for a token" in {
           val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
 
-          val info  = given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info").then().statusCode(200).extract().body().as(classOf[LoginInfo])
+          val info  = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info").then().statusCode(200).extract().body().as(classOf[LoginInfo])
 
 
           assert(info.username == "admin")
@@ -76,7 +76,7 @@ class LoginControllerTest extends AbstractSpringControllerTest {
 
           val tenYearToken = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/extend").then().statusCode(200).extract().body().as(classOf[LoginResponse])
 
-          val info  = given().contentType("application/json; charset=UTF-8").body(tenYearToken).when().post("/auth/info").then().statusCode(200).extract().body().as(classOf[LoginInfo])
+          val info  = authenticate().contentType("application/json; charset=UTF-8").body(tenYearToken).when().post("/auth/info").then().statusCode(200).extract().body().as(classOf[LoginInfo])
 
 
           assert(info.username == "admin")

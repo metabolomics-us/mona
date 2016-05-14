@@ -34,7 +34,7 @@ object FunctionalGroupBuilder {
     *
     * @return
     */
-  def makeHydroxylGroup(): IAtomContainer = {
+  def makeHydroxyGroup(): IAtomContainer = {
     val molecule: IAtomContainer = new AtomContainer()
 
     val oxygen: Atom = new Atom("O")
@@ -108,8 +108,8 @@ object FunctionalGroupBuilder {
     val oxygen1: Atom = new Atom("O")
     val oxygen2: Atom = new Atom("O")
 
-    val hydroxyl1: IAtomContainer = makeHydroxylGroup()
-    val hydroxyl2: IAtomContainer = makeHydroxylGroup()
+    val hydroxyl1: IAtomContainer = makeHydroxyGroup()
+    val hydroxyl2: IAtomContainer = makeHydroxyGroup()
 
     molecule.addAtom(phosphorus)
     molecule.addAtom(oxygen1)

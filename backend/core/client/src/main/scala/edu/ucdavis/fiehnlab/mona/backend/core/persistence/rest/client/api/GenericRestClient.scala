@@ -43,7 +43,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
 
   @PostConstruct
   def init = {
-    logger.info(s"utilizing base path for queries: ${requestPath}")
+    logger.info(s"utilizing base path for queries: ${requestPath}, host is ${monaRestServer}" )
 
   }
 

@@ -76,7 +76,7 @@ final class JWTAuthentication(claims: Claims) extends Authentication {
     *
     * @return
     */
-  override def getAuthorities: util.Collection[_ <: GrantedAuthority] = claims.get("roles").asInstanceOf[java.util.List[String]].asScala.collect { case x: String => new SimpleGrantedAuthority(x) }.asJava
+  override def getAuthorities: util.Collection[_ <: GrantedAuthority] = claims.get("roles").asInstanceOf[java.util.List[String]].asScala.collect { case x: String => new SimpleGrantedAuthority(x.toUpperCase()) }.asJava
 
   override def getCredentials: AnyRef = ""
 

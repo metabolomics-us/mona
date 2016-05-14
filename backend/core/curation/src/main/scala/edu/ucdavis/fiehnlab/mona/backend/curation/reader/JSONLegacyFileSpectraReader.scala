@@ -12,7 +12,7 @@ import org.springframework.batch.item.ItemReader
 /**
   * this reader is utilized to efficiently read a large amount of legacy spectra into the system
   */
-class JSONLegacyFileSpectraReader extends ItemReader[Spectrum] with LazyLogging{
+class JSONLegacyFileSpectraReader extends ItemReader[Spectrum] with LazyLogging {
 
   var stream:InputStream = null
 

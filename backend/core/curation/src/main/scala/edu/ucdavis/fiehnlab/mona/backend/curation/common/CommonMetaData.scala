@@ -31,6 +31,8 @@ object CommonMetaData {
 
   val MS_LEVEL: String = "ms level"
 
+  val SAMPLE_INTRODUCTION: String = "sample introduction"
+
   val IONIZATION_TYPE: String = "ionization type"
 
   val DERIVATIZATION_TYPE: String = "derivatization type"
@@ -43,7 +45,7 @@ object CommonMetaData {
 
   val SOLVENT: String = "solvent"
 
-  val COLUMN_NAME: String = "column"
+  val COLUMN: String = "column"
 
   val ACCESSION: String = "accession"
 
