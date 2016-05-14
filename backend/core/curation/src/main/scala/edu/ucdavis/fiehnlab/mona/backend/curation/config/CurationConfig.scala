@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.{LegacySpectrum, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{AnnotationWorkflow, Workflow, WorkflowBuilder}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier.ClassifierProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateSplash, NormalizeSpectrum}
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONFileSpectraReader, JSONLegacyFileSpectraReader}
@@ -68,6 +69,9 @@ class CurationConfig extends LazyLogging {
   }
 
 
+  @Bean
+  def classifierProcessor = new ClassifierProcessor
+
   /**
     * This defines the spectra curration workflow processor bean
     * and configures it for our use
@@ -75,7 +79,7 @@ class CurationConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def curationWorkflow: ItemProcessor[Spectrum, Spectrum] = {
+  def curationWorkflow(classifierProcessor: ClassifierProcessor): ItemProcessor[Spectrum, Spectrum] = {
     val flow:Workflow[Spectrum] = WorkflowBuilder.
       create[Spectrum].
       enableAnnotationLinking(false).
@@ -86,6 +90,7 @@ class CurationConfig extends LazyLogging {
           new CalculateCompoundProperties,
           new NormalizeSpectrum,
           new CalculateSplash,
+          classifierProcessor,
           new IdentifyChromatography
         )
       ).build()

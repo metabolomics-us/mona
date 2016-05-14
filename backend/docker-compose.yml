@@ -194,3 +194,11 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmn2g -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+
+  #curation runner is utilized to actually curate spectra
+  curationRunner:
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-runner
+
+    depends_on:
+      - curationScheduler
+    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmn2g -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar

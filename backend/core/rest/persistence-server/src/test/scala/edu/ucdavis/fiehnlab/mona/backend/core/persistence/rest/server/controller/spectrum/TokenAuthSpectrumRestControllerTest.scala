@@ -223,5 +223,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
     * @return
     */
   override def getId: String = getValue.id
+
+  override val requiresAuthForAllRequestes: Boolean = false
 }
 

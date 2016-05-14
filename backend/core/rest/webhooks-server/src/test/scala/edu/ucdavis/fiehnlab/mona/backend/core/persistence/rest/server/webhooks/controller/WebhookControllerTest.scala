@@ -87,6 +87,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       }
     }
   }
+  override val requiresAuthForAllRequestes: Boolean = false
 }
 
 

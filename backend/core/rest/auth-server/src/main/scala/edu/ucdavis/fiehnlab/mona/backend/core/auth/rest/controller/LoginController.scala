@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation._
   *
   * please make sure that your local security config allows POST access to this service at any given time without authentication or it will fail
   */
+@CrossOrigin
 @RestController
 @RequestMapping(value = Array("/rest/auth"))
 class LoginController extends LazyLogging {
