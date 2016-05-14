@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.r
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service.WebHookService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
+import org.springframework.core.annotation.Order
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
@@ -19,6 +20,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @EnableMongoRepositories(basePackageClasses = Array(classOf[WebHookRepository]))
 @ComponentScan(basePackageClasses = Array(classOf[WebhookController],classOf[WebHookRepository],classOf[WebHookService],classOf[WebHookEventBusListener]))
 @Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration]))
+@Order(1)
 class WebHookSecurity extends WebSecurityConfigurerAdapter {
 
   @Autowired

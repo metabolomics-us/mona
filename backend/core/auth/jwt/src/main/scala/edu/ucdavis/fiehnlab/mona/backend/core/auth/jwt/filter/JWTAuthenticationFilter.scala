@@ -37,7 +37,7 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
       val authHeader = request.getHeaderNames.asScala.filter( _.toLowerCase() == "authorization").toList
 
       if(authHeader.isEmpty){
-        throw new AuthenticationServiceException("no authorization header provided!")
+        throw new AuthenticationServiceException(s"no authorization header provided! Request was ${request.getRequestURL} and method was ${request.getMethod}")
       }
 
       val headerValue = request.getHeader(authHeader.head)

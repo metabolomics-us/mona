@@ -57,8 +57,14 @@ class LoginControllerTest extends AbstractSpringControllerTest {
 
         }
 
+        "you need to be authenticated for getting token infos" in {
+          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+          given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info").then().statusCode(401)
+
+        }
         "provide us with info for a token" in {
           val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+
 
           val info  = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info").then().statusCode(200).extract().body().as(classOf[LoginInfo])
 
@@ -66,6 +72,13 @@ class LoginControllerTest extends AbstractSpringControllerTest {
           assert(info.username == "admin")
           assert(info.roles.size() == 1)
           assert(info.roles.get(0) == "ADMIN")
+        }
+
+        "you need to be authenticated for extending tokens" in {
+
+
+          val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").then().statusCode(200).extract().body().as(classOf[LoginResponse])
+          given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/extend").then().statusCode(401).extract().body().as(classOf[LoginResponse])
         }
 
         "extend a token" in {
