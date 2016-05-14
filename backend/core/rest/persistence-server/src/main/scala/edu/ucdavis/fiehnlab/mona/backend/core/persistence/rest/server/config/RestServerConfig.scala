@@ -2,10 +2,12 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.PersistenceServiceConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
+import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -17,8 +19,9 @@ import org.springframework.security.config.http.SessionCreationPolicy
   * this class configures all our controller and also prepares security measures for these mentioned controllers
   */
 @Configuration
-@Import(Array(classOf[PersistenceServiceConfig]))
+@Import(Array(classOf[PersistenceServiceConfig],classOf[SwaggerConfig]))
 @ComponentScan(basePackageClasses = Array(classOf[GenericRESTController[Spectrum]]))
+@Order(1)
 class RestServerConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired

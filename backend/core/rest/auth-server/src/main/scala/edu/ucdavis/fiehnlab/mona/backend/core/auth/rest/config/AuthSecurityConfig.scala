@@ -55,11 +55,6 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
     web.ignoring()
       .antMatchers(HttpMethod.POST, "/rest/auth/login")
       .antMatchers(HttpMethod.GET, "/*")
-
-      //swagger endpoint for rest documentation
-      .antMatchers(HttpMethod.GET, "/v2/api-docs")
-
-
   }
 
 }

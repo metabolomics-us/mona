@@ -41,10 +41,10 @@ class MassbankControllerTest extends AbstractSpringControllerTest with Eventuall
   "MassbankControllerTest" must {
 
     val src: Source = Source.fromURL(getClass.getResource(s"/massbank/singleRecord.txt"))
-    RestAssured.baseURI = s"http://localhost:${port}/rest/upload"
 
     "submit" should {
 
+      RestAssured.baseURI = s"http://localhost:${port}/rest/upload"
 
       val strings = src.mkString
 
