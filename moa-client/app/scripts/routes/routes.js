@@ -93,7 +93,8 @@
             })
 
             .when('/spectra/search', {
-                templateUrl: 'views/spectra/query/search.html'
+                templateUrl: 'views/spectra/query/search.html',
+                controller: 'KeywordSearchController'
             })
 
             //query by similarity
