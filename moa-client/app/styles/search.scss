@@ -113,10 +113,12 @@
 /*#endregion */
 
 
+/* Search Pulse */
 #loadpulse {
     width: 48px;
     padding: 8px 5px;
-    margin: 30px auto;
+    margin: 50px -5px;
+    position: absolute;
     overflow: hidden;
 }
 #loadpulse .segment {
@@ -314,3 +316,4 @@
         opacity: 0;
     }
 }
+/**endregion**/
