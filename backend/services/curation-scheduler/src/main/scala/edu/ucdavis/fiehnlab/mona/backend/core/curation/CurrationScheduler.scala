@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.{Bean, Import}
+import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
@@ -23,6 +25,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableWebSecurity
+@RefreshScope
+@Order(5)
 /***
   * the server depends on these configurations to wire all it's internal components together
   */

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.{CommandLineRunner, SpringApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.stereotype.Component
 import springfox.documentation.swagger2.annotations.EnableSwagger2
@@ -25,6 +26,7 @@ import scala.collection.JavaConverters._
 @EnableDiscoveryClient
 @Import(Array(classOf[AuthSecurityConfig], classOf[JWTAuthenticationConfig],classOf[SwaggerConfig]))
 @EnableSwagger2
+@RefreshScope
 class AuthServer {
 
   /**
