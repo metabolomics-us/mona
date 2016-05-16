@@ -52,9 +52,10 @@ class LoginControllerTest extends AbstractSpringControllerTest {
 
         }
         "fail with an invalid user" in {
-
-          given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin2312", "password")).when().post("/auth/login").then().statusCode(500)
-
+          given().contentType("application/json; charset=UTF-8").body(LoginRequest("hacker", "password")).when().post("/auth/login").then().statusCode(401).extract().statusLine().equals("Invalid username or password")
+        }
+        "fail with an invalid passwd" in {
+          given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "hacked")).when().post("/auth/login").then().statusCode(401).extract().statusLine().equals("Invalid username or password")
         }
 
         "you need to be authenticated for getting token infos" in {

@@ -32,21 +32,20 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
       }
 
       "extract CH$NAME information into the biological compound metadata group" in {
-        val expected =
-          """L-Glutamic acid
-            |Glu
-            |L-Glutamate
-            |alpha-Glutamic acid
-            |L-alpha-Aminoglutaric Acid
-            |(S)-2-Aminopentanedioic acid
-            |L-1-Aminopropane-1,3-dicarboxylic Acid
-            |1-Aminopropane-1,3-dicarboxylic acid
-            |Aciglut
-            |Glusate
-            |Glutacid
-            |Glutaminol
-            |Glutaton""".stripMargin
-        val names = result.get.compound.head.names.map(_.name).mkString("\n")
+        val expected = List("L-Glutamic acid",
+                            "Glu",
+                            "L-Glutamate",
+                            "alpha-Glutamic acid",
+                            "L-alpha-Aminoglutaric Acid",
+                            "(S)-2-Aminopentanedioic acid",
+                            "L-1-Aminopropane-1,3-dicarboxylic Acid",
+                            "1-Aminopropane-1,3-dicarboxylic acid",
+                            "Aciglut",
+                            "Glusate",
+                            "Glutacid",
+                            "Glutaminol",
+                            "Glutaton")
+        val names = result.get.compound.head.names.map(_.name)
         names shouldBe expected
       }
     }
