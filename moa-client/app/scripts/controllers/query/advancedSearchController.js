@@ -9,6 +9,7 @@
 
         initForm();
         function initForm() {
+            $scope.query ={};
             $scope.selectedTags = {};
             $scope.metadataQuery = [];
         }
