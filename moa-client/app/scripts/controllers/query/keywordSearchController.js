@@ -9,9 +9,12 @@
     function KeywordSearchController($scope, $log, $http, rsqlService) {
 
         //TODO: query object needs to be initialized in a QueryBuilderService
-        initForm();
 
+        $scope.showForm = false;
+        
+        initForm();
         function initForm() {
+            $scope.showForm = !$scope.showForm;
             $scope.queryOptions = {
                 firstOperand: 'AND',
                 secondOperand: 'AND',
@@ -48,7 +51,7 @@
             $scope.msType = [{name: 'MS'}, {name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
         }
-
+        
         /**
          * handles when user check select all in UI. Our implementation in searchForm.html
          * uses ng-model and ng-change. Since ng-change will updates the 'selected' property
@@ -70,6 +73,7 @@
 
         $scope.submitQuery = function () {
             // add and filter query options, and update query cache
+            $log.info($scope.queryOptions);
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             $scope.query = rsqlService.getQuery();
 

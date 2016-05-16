@@ -11,7 +11,7 @@
             link: linkFunc
         };
         function linkFunc(scope,elem,attrs) {
-            console.log(elem);
+            //TODO: update DOM on search result data
         }
         return directive;
     }

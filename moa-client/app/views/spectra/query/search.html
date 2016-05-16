@@ -1,4 +1,4 @@
-<div id="search-box">
+<div id="search-box" ng-show="showForm">
     <uib-tabset active="activeJustified">
         <uib-tab index="0">
             <uib-tab-heading class="search-heading">Search by Keyword</uib-tab-heading>
@@ -11,3 +11,4 @@
         </uib-tab>
     </uib-tabset>
 </div>
+<button type="submit" ng-click="resetForm()">Open Form</button>
