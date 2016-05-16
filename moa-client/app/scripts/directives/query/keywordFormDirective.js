@@ -2,9 +2,9 @@
     'use strict';
 
     angular.module('moaClientApp')
-        .directive('searchFormFields', searchFormFields);
+        .directive('keywordForm', keywordForm);
 
-    function searchFormFields() {
+    function keywordForm() {
         var directive = {
             restrict: 'E',
             templateUrl: 'views/spectra/query/searchForm.html',

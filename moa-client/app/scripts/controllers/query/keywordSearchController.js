@@ -8,11 +8,11 @@
     function KeywordSearchController($scope, $log, $http, $timeout, rsqlService) {
 
         $scope.showForm = false;
-        $scope.showSplash = false;
+        $scope.searchSplash = false;
 
         initForm();
         function initForm() {
-            $scope.showForm = !$scope.showForm;
+            $scope.showForm = true;
             $scope.queryOptions = {
                 firstOperand: 'AND',
                 secondOperand: 'AND',
@@ -50,15 +50,15 @@
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
         }
 
-        function hideSplash() {
+        $scope.hideSplash = function() {
             $timeout(function () {
-                $scope.showSplash = false;
-            }, 1000)
-        }
+                $scope.searchSplash = false;
+            }, 4000)
+        };
 
-        function showSplash() {
-            $scope.showSplash = true;
-        }
+        $scope.showSplash = function() {
+            $scope.searchSplash = true;
+        };
 
         /**
          * handles when user check select all in UI. Our implementation in searchForm.html
@@ -81,7 +81,7 @@
 
         $scope.submitQuery = function () {
             // add and filter query options, and update query cache
-            showSplash();
+            $scope.showSplash();
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             $scope.query = rsqlService.getQuery();
 
@@ -95,6 +95,7 @@
 
             /** RESET FORM AFTER WE SUBMIT QUERY*/
             //TODO: store query in Cache, unless user click submit again, clear query
+            $scope.hideSplash();
             $scope.resetForm();
 
 
