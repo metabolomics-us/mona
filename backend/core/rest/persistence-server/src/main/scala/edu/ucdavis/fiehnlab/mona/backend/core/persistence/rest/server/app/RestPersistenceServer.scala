@@ -21,7 +21,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableDiscoveryClient
 @Import(Array(classOf[RestServerConfig],classOf[JWTAuthenticationConfig],classOf[SwaggerConfig]))
 @EnableSwagger2
-@RefreshScope
 class RestPersistenceServer
 
 object RestPersistenceServer extends App{

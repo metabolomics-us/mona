@@ -26,7 +26,6 @@ import scala.collection.JavaConverters._
 @EnableDiscoveryClient
 @Import(Array(classOf[AuthSecurityConfig], classOf[JWTAuthenticationConfig],classOf[SwaggerConfig]))
 @EnableSwagger2
-@RefreshScope
 class AuthServer {
 
   /**
