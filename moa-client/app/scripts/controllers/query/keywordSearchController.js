@@ -92,8 +92,6 @@
             /** RESET FORM AFTER WE SUBMIT QUERY*/
             //TODO: store query in Cache, unless user click submit again, clear query
             $scope.hideSplash();
-            $scope.resetForm();
-
 
         };
 
