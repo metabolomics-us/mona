@@ -1,1 +1,32 @@
-<h1>testset</h1>
+<form>
+    <uib-accordion close-others="false">
+        <uib-accordion-group is-open="true">
+            <uib-accordion-heading>
+                <div>Metadata</div>
+            </uib-accordion-heading>
+            <label>Select an existing metadata type and then input a value</label>
+
+            <div gw-meta-query-input query="metadataQuery" editable="false"></div>
+        </uib-accordion-group>
+
+        <!--<uib-accordion-group is-open="true">
+            <uib-accordion-heading>
+                <div>Tags</div>
+            </uib-accordion-heading>
+
+            <div gw-tag-display selection="selectedTags"></div>
+        </uib-accordion-group>-->
+    </uib-accordion>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <button type="submit" ng-click="submitAdvancedQuery()" class="btn btn-primary">Search</button>
+                </div>
+                <div class="col-sm-2">
+                    <button type="submit" ng-click="resetForm()" class="btn btn-secondary">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

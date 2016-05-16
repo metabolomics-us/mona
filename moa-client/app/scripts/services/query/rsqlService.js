@@ -55,6 +55,7 @@
                 }
             }
 
+            // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
                     options.metadata.ionMode.push(value.name);
@@ -68,12 +69,7 @@
                 }
             });
 
-            options = removeEmptyFields(options);
-            setRsqlQuery(options);
-            buildRsqlQuery();
-        }
-
-        function removeEmptyFields(options) {
+            // remove empty fields
             if (options.metadata.insType.length === 0) {
                 delete options.metadata.insType;
             }
@@ -86,8 +82,10 @@
                 delete options.metadata.ionMode;
             }
 
-            return options;
+            setRsqlQuery(options);
+            buildRsqlQuery();
         }
+
 
         /**
          * parses a query object and returns a RSQL Query String
