@@ -19,6 +19,7 @@ import org.springframework.boot.{CommandLineRunner, SpringApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.{Bean, Import}
+import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.stereotype.Component
 
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Component
 @EnableWebSecurity
 @EnableDiscoveryClient
 @Import(Array(classOf[RestClientConfig],classOf[CurationConfig]))
-@RefreshScope
+@Order(1)
 class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
 
   @Autowired

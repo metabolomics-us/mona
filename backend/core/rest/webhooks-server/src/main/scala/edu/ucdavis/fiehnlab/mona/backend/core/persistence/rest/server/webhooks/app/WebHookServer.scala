@@ -20,7 +20,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableDiscoveryClient
 @Import(Array(classOf[WebHookSecurity],classOf[JWTAuthenticationConfig],classOf[SwaggerConfig]))
 @EnableSwagger2
-@RefreshScope
 class WebHookServer
 
 object WebHookServer extends App{

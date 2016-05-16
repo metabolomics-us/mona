@@ -4,6 +4,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCon
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import org.springframework.amqp.core.{Binding, BindingBuilder, Queue, TopicExchange}
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,12 +26,11 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableWebSecurity
-@RefreshScope
 @Order(5)
 /***
   * the server depends on these configurations to wire all it's internal components together
   */
-@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[MongoConfig],classOf[JWTAuthenticationConfig],classOf[CurationConfig]))
+@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[MongoConfig],classOf[JWTAuthenticationConfig],classOf[CurationConfig],classOf[SwaggerConfig]))
 class CurrationScheduler  extends WebSecurityConfigurerAdapter {
 
   @Autowired
