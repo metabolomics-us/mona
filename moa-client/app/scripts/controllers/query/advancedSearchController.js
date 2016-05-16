@@ -12,9 +12,10 @@
             $scope.selectedTags = {};
             $scope.metadataQuery = [];
         }
-        $scope.submitAdvancedQuery = function() {
-            $log.info($scope.metadataQuery);
-        }
+
+        $scope.submitTest = function () {
+            console.log(typeof($scope.metadataQuery));
+        };
 
     }
 })();

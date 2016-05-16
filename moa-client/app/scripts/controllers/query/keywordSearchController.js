@@ -75,10 +75,6 @@
         };
 
 
-        $scope.resetForm = function () {
-            initForm();
-        };
-
         $scope.submitQuery = function () {
             // add and filter query options, and update query cache
             $scope.showSplash();
