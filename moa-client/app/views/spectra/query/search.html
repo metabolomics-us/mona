@@ -1,5 +1,5 @@
-<!--Testing Splash for search-->
-<div id="splash-page" data-ng-show="showSplash" class="dissolve-animation">
+<!--Splash for search-->
+<div id="splash-page" ng-show="searchSplash" class="dissolve-animation">
     <div class="page-splash">
         <div class="page-splash-message">
             Searching
@@ -21,16 +21,16 @@
                     <div id="layer10" class="pulse"></div>
                 </div>
             </span>
-            </div>
         </div>
     </div>
 </div>
-</div>
+
+
 <div id="search-box" ng-show="showForm">
     <uib-tabset active="activeJustified">
         <uib-tab index="0">
             <uib-tab-heading class="search-heading">Search by Keyword</uib-tab-heading>
-            <search-form-fields></search-form-fields>
+            <keyword-form></keyword-form>
         </uib-tab>
         <uib-tab index="1">
             <uib-tab-heading class="search-heading">Advanced Query Search</uib-tab-heading>
