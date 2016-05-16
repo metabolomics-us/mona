@@ -20,6 +20,7 @@
         <module>core</module>
         <module>services</module>
         <module>app</module>
+        <module>documentation</module>
     </modules>
 
 
