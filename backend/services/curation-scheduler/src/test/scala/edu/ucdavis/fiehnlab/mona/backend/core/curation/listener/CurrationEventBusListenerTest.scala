@@ -50,10 +50,10 @@ class CurrationEventBusListenerTest extends AbstractSpringControllerTest with Ev
 
       eventBus.sendEvent(Event(spectrum, new Date(), Event.UPDATE))
 
-      Thread.sleep(1000)
-
+      eventually(timeout(100 seconds)) {
       //it should never receive an event, since we don't listen for updates
-      assert(!testCurrationRunner.messageReceived)
+        assert(!testCurrationRunner.messageReceived)
+      }
 
     }
 
@@ -62,10 +62,10 @@ class CurrationEventBusListenerTest extends AbstractSpringControllerTest with Ev
       eventBus.sendEvent(Event(spectrum, new Date(), Event.DELETE))
       testCurrationRunner.messageReceived = false
 
-      Thread.sleep(1000)
-
-      //it should never receive an event, since we don't listen for deletes
-      assert(!testCurrationRunner.messageReceived)
+      eventually(timeout(100 seconds)) {
+        //it should never receive an event, since we don't listen for deletes
+        assert(!testCurrationRunner.messageReceived)
+      }
 
     }
 
