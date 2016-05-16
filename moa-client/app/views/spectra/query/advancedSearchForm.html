@@ -1,22 +1,80 @@
 <form>
-    <uib-accordion close-others="false">
-        <uib-accordion-group is-open="true">
-            <uib-accordion-heading>
-                <div>Metadata</div>
-            </uib-accordion-heading>
-            <label>Select an existing metadata type and then input a value</label>
+    <div class="row">
+        <div class="col-md-6">
+            <uib-accordion close-others="false">
+                <uib-accordion-group>
+                    <uib-accordion-heading>Compound</uib-accordion-heading>
+                    <div class="form-group">
+                        <input id="nameFilter"
+                               name="nameFilter"
+                               ng-model="query.nameFilter"
+                               placeholder="filter by compound names"
+                               class="form-control"/>
+                    </div>
+                </uib-accordion-group>
+                <uib-accordion-group>
+                    <uib-accordion-heading>InChiKey</uib-accordion-heading>
+                    <div class="form-group">
+                        <input id="inchiFilter"
+                               name="inchiFilter"
+                               ng-model="query.inchiFilter"
+                               placeholder="filter by InChIKey"
+                               ng-pattern="/^([A-Z,0-9,\-]+)+$/"
+                               class="form-control"/>
+                    </div>
+                </uib-accordion-group>
+                <uib-accordion-group>
+                    <uib-accordion-heading>Accurate Mass</uib-accordion-heading>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <input id="accurateMass"
+                                       name="accurateMass"
+                                       ng-model="query['Mz_exact']"
+                                       placeholder="Accurate Mass"
+                                       class="form-control"/>
+                            </div>
 
-            <div gw-meta-query-input query="metadataQuery" editable="false"></div>
-        </uib-accordion-group>
 
-        <!--<uib-accordion-group is-open="true">
-            <uib-accordion-heading>
-                <div>Tags</div>
-            </uib-accordion-heading>
+                            <div class="col-sm-6">
+                                <input id="accurateMassTolerance"
+                                       name="accurateMassTolerance"
+                                       ng-model="query['Mz_exact_tolerance']"
+                                       placeholder="Accurate Mass Tolerance"
+                                       class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                </uib-accordion-group>
+                <uib-accordion-group>
+                    <uib-accordion-heading>Metadata</uib-accordion-heading>
+                    <div gw-meta-query-input query="metadataQuery" editable="false"></div>
+                </uib-accordion-group>
+                <uib-accordion-group>
+                    <uib-accordion-heading>Classification</uib-accordion-heading>
+                    <div class="form-group">
+                        <input id="classificationFilter"
+                               name="classificationFilter"
+                               ng-model="query.classificationFilter"
+                               placeholder="Future Feature"
+                               class="form-control"/>
+                    </div>
+                </uib-accordion-group>
 
-            <div gw-tag-display selection="selectedTags"></div>
-        </uib-accordion-group>-->
-    </uib-accordion>
+                <!-- COMMENTED OUT UNTIL WE HAVE FEATURE -->
+                <!--<uib-accordion-group is-open="true">
+                    <uib-accordion-heading>
+                        <div>Tags</div>
+                    </uib-accordion-heading>
+
+                    <div gw-tag-display selection="selectedTags"></div>
+                </uib-accordion-group>-->
+            </uib-accordion>
+        </div>
+        <div class="col-md-2">
+            <p>Use the advance query options to build customize queries. Click on a field to get started.</p>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
