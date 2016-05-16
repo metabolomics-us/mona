@@ -70,15 +70,15 @@
             });
 
             // remove empty fields
-            if (options.metadata.insType.length === 0) {
+            if (typeof(options.metadata.insType) !== 'undefined' && options.metadata.insType.length === 0) {
                 delete options.metadata.insType;
             }
 
-            if (options.metadata.msType.length === 0) {
+            if (typeof(options.metadata.msType) !== 'undefined' && options.metadata.msType.length === 0) {
                 delete options.metadata.msType;
             }
 
-            if (options.metadata.ionMode.length === 0) {
+            if (typeof(options.metadata.ionMode) !== 'undefined' && options.metadata.ionMode.length === 0) {
                 delete options.metadata.ionMode;
             }
 
