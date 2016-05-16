@@ -6,12 +6,13 @@
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, $log, $http, rsqlService) {
+    function KeywordSearchController($scope, $log, $http, $timeout, rsqlService) {
 
         //TODO: query object needs to be initialized in a QueryBuilderService
 
         $scope.showForm = false;
-        
+        $scope.showSplash = false;
+
         initForm();
         function initForm() {
             $scope.showForm = !$scope.showForm;
@@ -51,7 +52,16 @@
             $scope.msType = [{name: 'MS'}, {name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
         }
-        
+
+        function hideSplash() {
+            $timeout(function() {
+                $scope.showSplash = false;
+            }, 1000)
+        }
+
+        function showSplash() {
+            $scope.showSplash = true;
+        }
         /**
          * handles when user check select all in UI. Our implementation in searchForm.html
          * uses ng-model and ng-change. Since ng-change will updates the 'selected' property
@@ -73,11 +83,9 @@
 
         $scope.submitQuery = function () {
             // add and filter query options, and update query cache
-            $log.info($scope.queryOptions);
+            showSplash();
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             $scope.query = rsqlService.getQuery();
-
-            $log.info($scope.query);
 
             // filter query
             // service will build query,
