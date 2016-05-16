@@ -1,5 +1,4 @@
-
-(function() {
+(function () {
     'use strict';
 
     angular.module('moaClientApp')
@@ -7,8 +6,6 @@
 
     /* @ngInject */
     function KeywordSearchController($scope, $log, $http, $timeout, rsqlService) {
-
-        //TODO: query object needs to be initialized in a QueryBuilderService
 
         $scope.showForm = false;
         $scope.showSplash = false;
@@ -54,7 +51,7 @@
         }
 
         function hideSplash() {
-            $timeout(function() {
+            $timeout(function () {
                 $scope.showSplash = false;
             }, 1000)
         }
@@ -62,6 +59,7 @@
         function showSplash() {
             $scope.showSplash = true;
         }
+
         /**
          * handles when user check select all in UI. Our implementation in searchForm.html
          * uses ng-model and ng-change. Since ng-change will updates the 'selected' property
@@ -77,7 +75,7 @@
         };
 
 
-        $scope.resetForm = function() {
+        $scope.resetForm = function () {
             initForm();
         };
 
