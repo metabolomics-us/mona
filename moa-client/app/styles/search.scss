@@ -38,6 +38,10 @@
 }
 /*#end region */
 
+.panel-default > .panel-heading {
+    background-color: #f8f8f8 !important;
+}
+
 
 .panel.panel-default.panel-open {
     border: none;
