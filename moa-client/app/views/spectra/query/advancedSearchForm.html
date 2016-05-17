@@ -73,19 +73,36 @@
                     <div gw-tag-display selection="selectedTags"></div>
                 </uib-accordion-group>-->
             </uib-accordion>
-        </div>
-        <div class="col-md-2">
-            <p>Use the advance query options to build customize queries. Click on a field to get started.</p>
+            <div class="form-group row">
+                <div class="col-sm-7">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Search In</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td ng-repeat="v in searchIn track by $index">
+                                    <input type="checkbox" ng-model="v.selected"> {{v.name}}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <button type="submit" class="btn btn-primary" ng-click="submitTest()">Submit</button>
+                    <button type="submit" class="btn btn-primary" ng-click="submitAdvQuery()">Submit</button>
                 </div>
                 <div class="col-sm-2">
-                    <button type="reset" class="btn btn-secondary" ng-click="test1()">Reset</button>
+                    <button type="reset" class="btn btn-secondary">Reset</button>
                 </div>
             </div>
         </div>
