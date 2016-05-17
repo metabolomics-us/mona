@@ -40,21 +40,21 @@ class MassbankControllerTest extends AbstractSpringControllerTest with Eventuall
 
   "MassbankControllerTest" must {
 
+    RestAssured.baseURI = s"http://localhost:${port}/rest"
+
     val src: Source = Source.fromURL(getClass.getResource(s"/massbank/singleRecord.txt"))
-    RestAssured.baseURI = s"http://localhost:${port}/rest/upload"
 
     "submit" should {
-
 
       val strings = src.mkString
 
       "require authorization" in {
-        given().contentType("application/json; charset=UTF-8").body(strings).log().all(true).when().post("/massbank").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").body(strings).log().all(true).when().post("/upload/massbank").then().statusCode(401)
 
       }
 
       "upload a spectra, with authorization" in {
-        val result:Spectrum = authenticate().contentType("application/json; charset=UTF-8").body(strings).log().all(true).when().post("/massbank").then().log().all(true).statusCode(200).extract().as(classOf[Spectrum])
+        val result:Spectrum = authenticate().contentType("application/json; charset=UTF-8").body(strings).log().all(true).when().post("/upload/massbank").then().log().all(true).statusCode(200).extract().as(classOf[Spectrum])
 
 
         assert(result.id == "PR100162")

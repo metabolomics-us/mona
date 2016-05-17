@@ -3,12 +3,14 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller.WebhookController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.listener.WebHookEventBusListener
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service.WebHookService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
+import org.springframework.core.annotation.Order
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
@@ -18,7 +20,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @Configuration
 @EnableMongoRepositories(basePackageClasses = Array(classOf[WebHookRepository]))
 @ComponentScan(basePackageClasses = Array(classOf[WebhookController],classOf[WebHookRepository],classOf[WebHookService],classOf[WebHookEventBusListener]))
-@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration]))
+@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[SwaggerConfig]))
+@Order(1)
 class WebHookSecurity extends WebSecurityConfigurerAdapter {
 
   @Autowired

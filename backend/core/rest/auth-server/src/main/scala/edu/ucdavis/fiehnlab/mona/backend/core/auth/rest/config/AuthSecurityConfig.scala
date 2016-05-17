@@ -14,7 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 /**
   * Created by wohlg on 3/27/2016.
   */
-@Order(1)
+@Order(2)
 @Configuration
 @ComponentScan(basePackageClasses = Array(classOf[LoginController],classOf[DomainConfig]))
 class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -55,11 +55,6 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
     web.ignoring()
       .antMatchers(HttpMethod.POST, "/rest/auth/login")
       .antMatchers(HttpMethod.GET, "/*")
-
-      //swagger endpoint for rest documentation
-      .antMatchers(HttpMethod.GET, "/v2/api-docs")
-
-
   }
 
 }
