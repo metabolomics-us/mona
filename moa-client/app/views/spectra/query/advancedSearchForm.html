@@ -12,6 +12,7 @@
                                class="form-control"/>
                     </div>
                 </uib-accordion-group>
+
                 <uib-accordion-group>
                     <uib-accordion-heading>InChiKey</uib-accordion-heading>
                     <div class="form-group">
@@ -23,6 +24,7 @@
                                class="form-control"/>
                     </div>
                 </uib-accordion-group>
+
                 <uib-accordion-group>
                     <uib-accordion-heading>Accurate Mass</uib-accordion-heading>
                     <div class="row">
@@ -31,7 +33,7 @@
                                 <input id="accurateMass"
                                        name="accurateMass"
                                        ng-model="query['Mz_exact']"
-                                       placeholder="Accurate Mass"
+                                       placeholder="accurate mass"
                                        class="form-control"/>
                             </div>
 
@@ -40,25 +42,21 @@
                                 <input id="accurateMassTolerance"
                                        name="accurateMassTolerance"
                                        ng-model="query['Mz_exact_tolerance']"
-                                       placeholder="Accurate Mass Tolerance"
+                                       placeholder="accurate mass tolerance"
                                        class="form-control"/>
                             </div>
                         </div>
                     </div>
                 </uib-accordion-group>
+
                 <uib-accordion-group>
                     <uib-accordion-heading>Metadata</uib-accordion-heading>
-                    <div gw-meta-query-input query="metadataQuery" editable="false"></div>
+                    <gw-meta-query-input query="metadataQuery" editable="false"></gw-meta-query-input>
                 </uib-accordion-group>
+
                 <uib-accordion-group>
                     <uib-accordion-heading>Classification</uib-accordion-heading>
-                    <div class="form-group">
-                        <input id="classificationFilter"
-                               name="classificationFilter"
-                               ng-model="query.classificationFilter"
-                               placeholder="Future Feature"
-                               class="form-control"/>
-                    </div>
+                    <gw-class-query-input query="classQuery"></gw-class-query-input>
                 </uib-accordion-group>
 
                 <!-- COMMENTED OUT UNTIL WE HAVE FEATURE -->

@@ -9,14 +9,17 @@
 
         initForm();
         function initForm() {
-            $scope.query ={};
+            $scope.query = {};
             $scope.selectedTags = {};
             $scope.metadataQuery = [];
+            $scope.classQuery = [];
         }
 
         $scope.submitTest = function () {
-            console.log(typeof($scope.metadataQuery));
+            console.log($scope.classQuery);
+            $log.info($scope.metadataQuery);
         };
+
 
     }
 })();
