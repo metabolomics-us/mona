@@ -1,3 +1,8 @@
+/**
+ * Built this for multiple choice search on query input. Not using it now, saving until we deprecate
+ *
+ */
+
 (function() {
     'use strict';
 
