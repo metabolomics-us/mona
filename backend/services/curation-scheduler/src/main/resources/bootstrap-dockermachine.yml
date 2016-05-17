@@ -1,0 +1,4 @@
+spring:
+  cloud:
+    config:
+      uri:  http://${DOCKER_MACHINE_IP}:1111
