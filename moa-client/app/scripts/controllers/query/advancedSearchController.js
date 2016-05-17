@@ -5,19 +5,20 @@
         .controller('AdvancedSearchController', AdvancedSearchController);
 
     /* @ngInject */
-    function AdvancedSearchController($scope, $log) {
+    function AdvancedSearchController($scope, $log, rsqlService, $http) {
 
         initForm();
         function initForm() {
             $scope.query = {};
             $scope.selectedTags = {};
             $scope.metadataQuery = [];
-            $scope.classQuery = [];
         }
 
-        $scope.submitTest = function () {
-            console.log($scope.classQuery);
+        $scope.searchIn = [{name: 'compound'}, {name: 'spectra'}];
+
+        $scope.submitAdvQuery = function () {
             $log.info($scope.metadataQuery);
+            $log.info($scope.searchIn);
         };
 
 
