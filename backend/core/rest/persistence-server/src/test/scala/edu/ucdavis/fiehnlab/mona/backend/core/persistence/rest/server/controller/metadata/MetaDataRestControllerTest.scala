@@ -58,7 +58,7 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
 
       "we should be able to query all meta data names from the service" in {
         val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names").then().statusCode(200).extract().body().as(classOf[Array[String]])
-        assert(result.length == 44)
+        assert(result.length > 44)
       }
 
       "we should be able to query all the meta data values for a specific name" in {

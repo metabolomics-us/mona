@@ -39,6 +39,9 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
   @Value("${spring.application.name:unknown}")
   private var queueName = "unknown"
 
+
+  @Value("${mona.bus.exclusive:false}")
+  private val exclusive:Boolean = false
   /**
     * he we define the anonymous temp queue and the fan exchange
     * system for all the applications to communicate with
@@ -70,7 +73,7 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
     container.setMessageListener(this)
     container.setRabbitAdmin(rabbitAdmin)
     container.setMessageConverter(messageConverter)
-    container.setExclusive(true)
+    container.setExclusive(exclusive)
 
     logger.info("starting container")
     container.start()

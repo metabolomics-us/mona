@@ -10,53 +10,9 @@ spring:
 info:
   component: MoNA Edge Server
 
-#defines all the routes based on it's provided services
-zuul:
-  ignoredServices: "*"
-
-  #defines all our available routes
-  routes:
-
-    #access to all our spectra
-    spectra:
-      path: /rest/spectra/**
-      stripPrefix: false
-      serviceId: persistence-service
-
-    #access to all our spectra
-    metadata:
-      path: /rest/metaData/**
-      stripPrefix: false
-      serviceId: persistence-service
-
-    #access for authentication
-    authentication :
-      path: /rest/auth/**
-      stripPrefix: false
-      serviceId: auth-service
-
-    #access for usermanagement
-    users :
-      path: /rest/users/**
-      stripPrefix: false
-      serviceId: auth-service
-
-    #access for webhooks
-    webhooks :
-      path: /rest/webhooks/**
-      stripPrefix: false
-      serviceId: webhook-service
-
-    #access to the curation controller
-    curation :
-      path: /rest/curation/**
-      stripPrefix: false
-      serviceId: curation-service
-
-  #connection settings to avoid to many timeouts
-  host:
-    socket-timeout-millis: 60000
-    connect-timeout-millis: 60000
+logging:
+  level:
+    ROOT: INFO
 
 #on which port do we run
 server:

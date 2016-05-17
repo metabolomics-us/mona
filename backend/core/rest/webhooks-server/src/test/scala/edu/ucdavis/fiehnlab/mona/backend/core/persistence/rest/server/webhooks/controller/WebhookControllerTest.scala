@@ -43,6 +43,9 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
   "a webhook controller" must {
 
+    "triggering requires authentication" in {
+      given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/webhooks").then().statusCode(401)
+    }
     "be able to trigger the registered external urls" in {
       webHookRepository.deleteAll()
       authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/webhooks").then().statusCode(200)
