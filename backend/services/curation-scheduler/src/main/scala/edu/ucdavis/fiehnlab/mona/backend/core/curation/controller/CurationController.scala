@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import io.swagger.annotations.ApiModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.http.{HttpStatus, ResponseEntity}
@@ -91,5 +92,5 @@ class CurationController {
 
 }
 
-
+@ApiModel
 case class CurationJobScheduled(count:Int)
