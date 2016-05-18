@@ -9,16 +9,23 @@
 
         initForm();
         function initForm() {
-            $scope.query = {};
-            $scope.selectedTags = {};
-            $scope.metadataQuery = [];
+            $scope.compoundQuery = {
+                metadata: [],
+                operator: ['AND', 'AND', 'AND', 'AND']
+            };
+
+            $scope.metadataQuery = {
+                metadata: [],
+                operator: 'AND'
+            }
         }
 
-        $scope.searchIn = [{name: 'compound'}, {name: 'spectra'}];
+        $scope.isMetaQuery = function () {
+            return $scope.metadataQuery.metadata.length > 1;
+        };
 
         $scope.submitAdvQuery = function () {
-            $log.info($scope.metadataQuery);
-            $log.info($scope.searchIn);
+           $log.info($scope.queryOptions);
         };
 
 
