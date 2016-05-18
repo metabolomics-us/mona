@@ -1,102 +1,106 @@
 <form>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-sm-6">
             <uib-accordion close-others="false">
                 <uib-accordion-group>
                     <uib-accordion-heading>Compound</uib-accordion-heading>
-                    <div class="form-group">
-                        <input id="nameFilter"
-                               name="nameFilter"
-                               ng-model="query.nameFilter"
-                               placeholder="filter by compound names"
-                               class="form-control"/>
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <input id="nameFilter"
+                                   name="nameFilter"
+                                   ng-model="compoundQuery.name"
+                                   placeholder="name or inChiKey"
+                                   class="form-control"/>
+
+                        </div>
                     </div>
-                </uib-accordion-group>
-
-                <uib-accordion-group>
-                    <uib-accordion-heading>InChiKey</uib-accordion-heading>
-                    <div class="form-group">
-                        <input id="inchiFilter"
-                               name="inchiFilter"
-                               ng-model="query.inchiFilter"
-                               placeholder="filter by InChIKey"
-                               ng-pattern="/^([A-Z,0-9,\-]+)+$/"
-                               class="form-control"/>
+                    <div class="form-group row">
+                        <div class="col-sm-2">
+                            <select class="form-control" ng-model="compoundQuery.operator[0]">
+                                <option>AND</option>
+                                <option>OR</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-10">
+                            <gw-meta-query-input query="compoundQuery.metadata" editable="false"></gw-meta-query-input>
+                        </div>
                     </div>
-                </uib-accordion-group>
-
-                <uib-accordion-group>
-                    <uib-accordion-heading>Accurate Mass</uib-accordion-heading>
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <input id="accurateMass"
-                                       name="accurateMass"
-                                       ng-model="query['Mz_exact']"
-                                       placeholder="accurate mass"
-                                       class="form-control"/>
-                            </div>
-
-
-                            <div class="col-sm-6">
-                                <input id="accurateMassTolerance"
-                                       name="accurateMassTolerance"
-                                       ng-model="query['Mz_exact_tolerance']"
-                                       placeholder="accurate mass tolerance"
-                                       class="form-control"/>
-                            </div>
+                    <div class="form-group row">
+                        <div class="col-sm-2">
+                            <select class="form-control" ng-model="compoundQuery.operator[1]">
+                                <option>AND</option>
+                                <option>OR</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="number"
+                                   id="accurateMass"
+                                   name="accurateMass"
+                                   ng-model="compoundQuery['Mz_exact']"
+                                   placeholder="accurate mass"
+                                   class="form-control"/>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="number"
+                                   id="accurateMassTolerance"
+                                   name="accurateMassTolerance"
+                                   ng-model="compoundQuery['Mz_exact_tolerance']"
+                                   placeholder="tolerance"
+                                   class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-2">
+                            <select class="form-control" ng-model="compoundQuery.operator[2]">
+                                <option>AND</option>
+                                <option>OR</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-10">
+                            <input id="classValueFilter"
+                                   name="classValueFilter"
+                                   ng-model="compoundQuery.className"
+                                   placeholder="classification name"
+                                   class="form-control"/>
                         </div>
                     </div>
                 </uib-accordion-group>
 
                 <uib-accordion-group>
                     <uib-accordion-heading>Metadata</uib-accordion-heading>
-                    <gw-meta-query-input query="metadataQuery" editable="false"></gw-meta-query-input>
-                </uib-accordion-group>
-
-                <uib-accordion-group>
-                    <uib-accordion-heading>Classification</uib-accordion-heading>
-                    <div class="form-group">
-                        <input id="classValueFilter"
-                               name="classValueFilter"
-                               placeholder="filter by classfication value"
-                               class="form-control" />
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <gw-meta-query-input query="metadataQuery.metadata" editable="false"></gw-meta-query-input>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-2">
+                            <select class="form-control" ng-model="metadataQuery.operator" ng-disabled="!isMetaQuery()">
+                                <option>AND</option>
+                                <option>OR</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="number"
+                                   ng-disabled="!isMetaQuery()"
+                                   ng-model="metadataQuery['Mz_exact']"
+                                   placeholder="accurate mass"
+                                   class="form-control"/>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="number"
+                                   ng-disabled="!isMetaQuery()"
+                                   ng-model="metadataQuery['Mz_exact_tolerance']"
+                                   placeholder="tolerance"
+                                   class="form-control"/>
+                        </div>
                     </div>
                 </uib-accordion-group>
-
-                <!-- COMMENTED OUT UNTIL WE HAVE FEATURE -->
-                <!--<uib-accordion-group is-open="true">
-                    <uib-accordion-heading>
-                        <div>Tags</div>
-                    </uib-accordion-heading>
-
-                    <div gw-tag-display selection="selectedTags"></div>
-                </uib-accordion-group>-->
             </uib-accordion>
-            <div class="form-group row">
-                <div class="col-sm-7">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Search In</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td ng-repeat="v in searchIn track by $index">
-                                    <input type="checkbox" ng-model="v.selected"> {{v.name}}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-sm-6">
             <div class="form-group row">
                 <div class="col-sm-2">
                     <button type="submit" class="btn btn-primary" ng-click="submitAdvQuery()">Submit</button>
