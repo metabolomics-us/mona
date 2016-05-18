@@ -3,6 +3,19 @@ version: '2'
 services:
 
 ################################################################################################################
+# This section provides us with a complete ELK stack for logging purposes
+################################################################################################################
+
+  #contains all the data for mongo between restarts
+  logging:
+    image: leorowe/redis-elk
+    ports:
+      - "80:80"
+      - "3335:3333"
+      - "3336:3334"
+      - "9200:9200"
+
+################################################################################################################
 # This section provides us with our persistent data layer. And should define all the different
 # images we consider for persistent storage
 ################################################################################################################
@@ -57,7 +70,7 @@ services:
     volumes_from:
        - config_container:ro
     ports:
-       - "9200:9200"
+       - "9500:9200"
        - "9300:9300"
     entrypoint: ./bin/elasticsearch -Xmx4g
 
