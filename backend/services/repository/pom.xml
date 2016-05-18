@@ -12,6 +12,13 @@
     <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
     <artifactId>repository</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>domain</artifactId>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <description>This module is the main REPOSITORY and should is utilized to keep track of spectra uploaded and modified by the system</description>
 </project>

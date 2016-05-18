@@ -5,7 +5,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
   */
 
 import java.util.concurrent.Future
-import javax.validation.Valid
 
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.PagingAndSortingRepository
