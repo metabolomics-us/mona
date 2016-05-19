@@ -27,12 +27,12 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
 
     val file = new File(layout.layout(event.content), s"${event.content.id}.json")
 
+    logger.info(s"file is: ${file}")
     event.eventType match {
       //we only care about ADDs at this point in time
       case (Event.ADD | Event.UPDATE) =>
         //writes the spectra to the while
         logger.info(s"writing spectrum with id ${event.content.id}")
-  //        file.createNewFile()
         objectMapper.writeValue(file, event.content)
       case Event.DELETE =>
         if (file.exists()) {

@@ -11,16 +11,29 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
     <artifactId>repository</artifactId>
+    <properties>
+        <docker.expose>8888</docker.expose>
+    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+        </dependency>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>curation</artifactId>
         </dependency>
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-            <artifactId>domain</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>api</artifactId>
         </dependency>
+        <dependency>
+            <artifactId>amqp</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        </dependency>
+
+        <!-- test dependencies -->
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
@@ -28,14 +41,22 @@
             <type>test-jar</type>
         </dependency>
         <dependency>
-            <artifactId>amqp</artifactId>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <description>This module is the main REPOSITORY and should is utilized to keep track of spectra uploaded and modified by the system</description>
