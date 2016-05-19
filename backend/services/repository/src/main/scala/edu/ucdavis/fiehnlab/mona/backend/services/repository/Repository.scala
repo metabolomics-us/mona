@@ -19,7 +19,12 @@ import java.io.File
 class Repository {
 
   @Bean
-  def fileLayout:FileLayout = new InchiKeyLayout(new File("target/testRepo"))
+  def fileLayout:FileLayout = {
+    val temp =File.createTempFile("random","none")
+    val dir =new File(temp.getParentFile,"mona")
+    dir.mkdirs()
+    new InchiKeyLayout(dir)
+  }
 
   @Bean
   def repositoryListener(eventBus:EventBus[Spectrum], layout:FileLayout) : RepositoryListener = new RepositoryListener(eventBus,layout)
