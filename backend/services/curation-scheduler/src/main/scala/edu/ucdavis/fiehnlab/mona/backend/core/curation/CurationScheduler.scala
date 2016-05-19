@@ -31,13 +31,14 @@ import org.springframework.security.config.http.SessionCreationPolicy
   * the server depends on these configurations to wire all it's internal components together
   */
 @Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[MongoConfig],classOf[JWTAuthenticationConfig],classOf[CurationConfig],classOf[SwaggerConfig]))
-class CurrationScheduler  extends WebSecurityConfigurerAdapter {
+class CurationScheduler extends WebSecurityConfigurerAdapter {
 
   @Autowired
   val restSecurityService:RestSecurityService = null
 
   /**
     * only admins can schedule curations in the system
+ *
     * @param http
     */
   override final def configure(http: HttpSecurity): Unit = {
@@ -52,6 +53,7 @@ class CurrationScheduler  extends WebSecurityConfigurerAdapter {
   /**
     * any other get request is ignored by default
     * since we have /info etc exposed
+ *
     * @param web
     */
   override def configure(web: WebSecurity): Unit = {
@@ -64,7 +66,7 @@ class CurrationScheduler  extends WebSecurityConfigurerAdapter {
 /**
   * our local server, which should be connecting to eureka, etc
   */
-object CurrationScheduler extends App{
-  new SpringApplication(classOf[CurrationScheduler]).run()
+object CurationScheduler extends App{
+  new SpringApplication(classOf[CurationScheduler]).run()
 
 }

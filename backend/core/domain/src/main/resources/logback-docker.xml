@@ -6,9 +6,18 @@
     <appender name="LOGSTASH" class="com.cwbase.logback.RedisAppender">
         <host>redis</host>
         <port>6379</port>
-        <key>my-spring-boot-app</key>
+        <key>${application-name}</key>
     </appender>
+
+    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>logging:3333</destination>
+
+        <!-- encoder is required -->
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+
     <root level="INFO">
+        <appender-ref ref="STASH" />
         <appender-ref ref="LOGSTASH" />
         <appender-ref ref="CONSOLE" />
     </root>

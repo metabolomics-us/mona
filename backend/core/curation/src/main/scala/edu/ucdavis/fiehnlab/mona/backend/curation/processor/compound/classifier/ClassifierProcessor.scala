@@ -91,7 +91,9 @@ class ClassifierProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         }
 
 
-        buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", classifier.direct_parent.name)
+        if(classifier.direct_parent != null && classifier.direct_parent.name != null) {
+          buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", classifier.direct_parent.name)
+        }
 
 
         if (compound.classification != null) {

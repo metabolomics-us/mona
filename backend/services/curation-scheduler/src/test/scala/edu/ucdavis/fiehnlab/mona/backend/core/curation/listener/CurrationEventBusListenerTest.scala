@@ -4,7 +4,7 @@ import java.io.InputStreamReader
 import java.util.Date
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
-import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurrationScheduler
+import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.TestCurrationRunner
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
@@ -24,7 +24,7 @@ import scala.concurrent.duration._
   * Created by wohlg on 4/12/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[CurrationScheduler]))
+@SpringApplicationConfiguration(classes = Array(classOf[CurationScheduler]))
 class CurrationEventBusListenerTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
