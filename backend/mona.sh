@@ -1,4 +1,5 @@
 #!/bin/bash
+exec 3>&1
 
 function show_help() {
 	echo "Invalid option."
@@ -62,8 +63,10 @@ if [[ $# -gt 0 ]]; then
 
 	COMMAND="docker-compose -f $DOCKER_FILE $action"
 	
-	echo $COMMAND
-	$($COMMAND)
+	echo ""
+	echo Running: $COMMAND
+	echo ""
+	exec $COMMAND 1>&3
 else
 	show_help
 	exit 1
