@@ -5,7 +5,7 @@ import java.io.InputStreamReader
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurrationScheduler
+import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlg on 4/13/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[CurrationScheduler]))
+@SpringApplicationConfiguration(classes = Array(classOf[CurationScheduler]))
 class CurationControllerTest extends AbstractSpringControllerTest {
 
   @Autowired
