@@ -5,7 +5,7 @@ import javax.annotation.PostConstruct
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, ReceivedEventCounter}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration, Notification}
-import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurrationScheduler
+import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
@@ -29,7 +29,7 @@ import scala.concurrent.duration._
   * Created by wohlg on 4/12/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[CurrationScheduler]))
+@SpringApplicationConfiguration(classes = Array(classOf[CurationScheduler]))
 class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
