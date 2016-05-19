@@ -41,10 +41,13 @@
                            id="inputFormula"
                            placeholder="formula">
                 </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2"></div>
                 <div class="col-sm-5">
                     <input type="text" ng-model="queryOptions.compound.className"
                            class="form-control"
-                           placeholder="classification"/>
+                           placeholder="compound class"/>
                 </div>
             </div>
             <div class="form-group row">
@@ -95,33 +98,36 @@
                         <table class="table header-fixed">
                             <thead>
                             <tr>
-                                <th>Instrument Type</th>
+                                <th>Source Introduction</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
                                 <td>
-                                    <input type="checkbox" ng-model="instrumentType[1].selectAll"
-                                           ng-change="insTypeSelectAll(1,'ESI')"> <strong>ESI:</strong><br/>
-                             <span class="insSpan" ng-repeat="n in instrumentType[1].ESI track by $index">
-                                 <input type="checkbox" ng-model="n.selected"> {{n.name}}
-                                 <br/>
-                             </span>
-                                </td>
-                                <td>
-                                    <input type="checkbox" ng-model="instrumentType[2].selectAll"
-                                           ng-change="insTypeSelectAll(2, 'Others')"> <strong>Others:</strong><br/>
-                             <span class="insSpan" ng-repeat="n in instrumentType[2].Others track by $index">
+                             <span class="insSpan" ng-repeat="n in instrumentType[0].SI track by $index">
                                  <input type="checkbox" ng-model="n.selected"> {{n.name}}
                                  <br/>
                              </span>
                                 </td>
                             </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table header-fixed">
+                            <thead>
+                            <tr>
+                                <th>Ionization Method</th>
+                            </tr>
+                            </thead>
+                            <tbody>
                             <tr>
                                 <td>
-                                    <input type="checkbox" ng-model="instrumentType[0].selectAll"
-                                           ng-change="insTypeSelectAll(0,'EI')"> <strong>EI:</strong><br/>
-                             <span class="insSpan" ng-repeat="n in instrumentType[0].EI track by $index">
+                             <span class="insSpan" ng-repeat="n in instrumentType[1].IM track by $index">
                                  <input type="checkbox" ng-model="n.selected"> {{n.name}}
                                  <br/>
                              </span>
