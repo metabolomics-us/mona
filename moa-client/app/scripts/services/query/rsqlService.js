@@ -46,12 +46,11 @@
             for (var i = 0; i < instruments.length; i++) {
                 var curInstrument = instruments[i];
                 for (var j in curInstrument) {
-                    if (j !== 'selectAll') {
-                        angular.forEach(curInstrument[j], function (value, key) {
-                            if (value.selected === true)
-                                options.metadata.insType.push(value.name);
-                        });
-                    }
+                    angular.forEach(curInstrument[j], function (value, key) {
+                        if (value.selected === true)
+                            options.metadata.insType.push(value.name);
+                    });
+
                 }
             }
 
