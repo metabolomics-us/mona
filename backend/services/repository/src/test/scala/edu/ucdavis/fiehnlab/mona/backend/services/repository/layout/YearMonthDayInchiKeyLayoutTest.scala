@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository.layout
 
 import java.io.{File, InputStreamReader}
+import java.nio.file.Paths
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -32,7 +33,7 @@ class YearMonthDayInchiKeyLayoutTest extends WordSpec with LazyLogging{
       logger.info(spectrum.compound(0).inchiKey)
       logger.info(s"result: ${result}")
 
-      assert(result.getPath.equalsIgnoreCase(s"""\\2015\\8\\11\\${spectrum.compound(0).inchiKey}"""))
+      assert(result.getPath.equalsIgnoreCase(Paths.get(s"/2015/8/11/${spectrum.compound(0).inchiKey}").toFile.getPath))
     }
   }
 }
