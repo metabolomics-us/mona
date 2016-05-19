@@ -5,28 +5,28 @@ import java.io.File
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
+import edu.ucdavis.fiehnlab.mona.backend.services.repository.content.ContentCustomizer
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.{FileLayout, InchiKeyLayout}
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.listener.RepositoryListener
-import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.server.handler.{ResourceHandler, ContextHandler}
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.embedded.jetty.{JettyEmbeddedServletContainerFactory, JettyEmbeddedServletContainer}
 import org.springframework.boot.context.embedded.{ConfigurableEmbeddedServletContainer, EmbeddedServletContainerCustomizer}
-import org.springframework.boot.context.embedded.jetty.{JettyServerCustomizer, JettyEmbeddedServletContainerFactory}
-import org.springframework.context.annotation.{Bean, Import}
+import org.springframework.context.annotation.{ComponentScan, Bean, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
-import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 
 /**
   * Created by wohlg_000 on 5/18/2016.
   */
+@ComponentScan(basePackageClasses = Array(classOf[ContentCustomizer]))
 @Order(1)
-@EnableWebSecurity
 @SpringBootApplication
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[SwaggerConfig]))
 class Repository extends WebSecurityConfigurerAdapter with LazyLogging {
@@ -44,32 +44,6 @@ class Repository extends WebSecurityConfigurerAdapter with LazyLogging {
     new InchiKeyLayout(dir)
   }
 
-  @Bean
-  def jettyCustomizer(jetty: JettyEmbeddedServletContainerFactory): EmbeddedServletContainerCustomizer = {
-    logger.info("configured jetty")
-    new EmbeddedServletContainerCustomizer() {
-
-      override def customize(configurableEmbeddedServletContainer: ConfigurableEmbeddedServletContainer): Unit = {
-        val container = configurableEmbeddedServletContainer.asInstanceOf[JettyEmbeddedServletContainerFactory]
-
-        container.addServerCustomizers(new JettyServerCustomizer {
-          override def customize(server: Server): Unit = {
-
-            val contextHandler = new ContextHandler("/repository")
-
-            val handler = new ResourceHandler()
-            handler.setDirectoriesListed(true)
-            handler.setResourceBase(dir)
-            contextHandler.setHandler(handler)
-
-            server.setHandler(contextHandler)
-            logger.info("configured embedded servlet container")
-          }
-        })
-      }
-    }
-  }
-
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
       //get is always available
@@ -81,6 +55,6 @@ class Repository extends WebSecurityConfigurerAdapter with LazyLogging {
 }
 
 
-object Repository {
-
+object Repository extends App {
+  new SpringApplication(classOf[Repository]).run()
 }
