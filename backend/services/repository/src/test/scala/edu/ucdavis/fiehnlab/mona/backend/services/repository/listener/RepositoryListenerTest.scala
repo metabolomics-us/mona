@@ -69,7 +69,7 @@ class RepositoryListenerTest extends WordSpec with LazyLogging {
 
     "be able to expose data as endpoint" should {
 
-      "be able to access /repository " in {
+      "be able to access /repository and browse it " in {
         given().contentType("application/json; charset=UTF-8").when().log.all(true).get("/repository").then().statusCode(200)
       }
 
