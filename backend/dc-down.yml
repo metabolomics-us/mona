@@ -3,23 +3,36 @@ version: '2'
 services:
 
 ################################################################################################################
-# This section provides us with our persistent data layer. And should define all the different
-# images we consider for persistent storage
+# This section provides us with a complete ELK stack for logging purposes
 ################################################################################################################
 
   #contains all the data for mongo between restarts
-  data_container:
-    build: ./docker
-    command: echo 'Data Container for our images'
-    volumes:
-     - /data/db
+  logging:
+    image: leorowe/redis-elk
+    ports:
+      - "80:80"
+      - "3335:3333"
+      - "3336:3334"
+      - "9200:9200"
 
-  #contains all the different configuration files for the services
-  config_container:
-    build: ./docker
-    command: echo 'Data Container for our images'
-    volumes:
-     - /usr/share/elasticsearch/config
+################################################################################################################
+# This section provides us with our persistent data layer. And should define all the different
+# images we consider for persistent storage
+################################################################################################################
+#
+#  #contains all the data for mongo between restarts
+#  data_container:
+#    build: ./docker
+#    command: echo 'Data Container for our images'
+#    volumes:
+#     - /data/db
+#
+#  #contains all the different configuration files for the services
+#  config_container:
+#    build: ./docker
+#    command: echo 'Data Container for our images'
+#    volumes:
+#     - /usr/share/elasticsearch/config
 
 ################################################################################################################
 #This section provides us with the required databases and should be changed later
@@ -29,8 +42,8 @@ services:
   #just fixing the version to avoid surprises
   mongodb:
     image: mongo:3.2.4
-    volumes_from:
-      - data_container
+#    volumes_from:
+#      - data_container
     ports:
       - "27017:27017"
 
@@ -44,8 +57,8 @@ services:
   #defines a node, which can be scaled on the fly
   elasticsearch_node:
      image: elasticsearch:1.7.5
-     volumes_from:
-       - config_container:ro
+#     volumes_from:
+#       - config_container:ro
      entrypoint: ./bin/elasticsearch -Xmx4g
 
 
@@ -54,10 +67,10 @@ services:
     build:
       context: ./docker
       dockerfile: DockerfileElasticMaster
-    volumes_from:
-       - config_container:ro
+#    volumes_from:
+#       - config_container:ro
     ports:
-       - "9200:9200"
+       - "9500:9200"
        - "9300:9300"
     entrypoint: ./bin/elasticsearch -Xmx4g
 
@@ -89,7 +102,7 @@ services:
 # The discovery service provided us with a local overview of our services
 # and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
-    image: eros.fiehnlab.ucdavis.edu/mona-discovery
+    image: eros.fiehnlab.ucdavis.edu/mona-discovery:working
     ports:
       - "8761:8761"
     depends_on:
@@ -105,7 +118,7 @@ services:
 # the client needs to have a bootstrap.yml to register against it
 
   config:
-    image: eros.fiehnlab.ucdavis.edu/mona-configuration
+    image: eros.fiehnlab.ucdavis.edu/mona-configuration:working
     ports:
       - "1111:1111"
 
@@ -130,7 +143,7 @@ services:
 # this proxy server is the main entry point for mona and should be preferable always be used
 
   proxy:
-    image: eros.fiehnlab.ucdavis.edu/mona-proxy
+    image: eros.fiehnlab.ucdavis.edu/mona-proxy:working
     ports:
       - "8080:8080"
     depends_on:
@@ -150,7 +163,7 @@ services:
 
   #webhook support to notify external apis
   webhooks:
-    image: eros.fiehnlab.ucdavis.edu/mona-webhooks-server
+    image: eros.fiehnlab.ucdavis.edu/mona-webhooks-server:working
 
     depends_on:
       - proxy
@@ -163,7 +176,7 @@ services:
   #it also exposes a couple of rest enpoints to manually schedule curration tasks
   #to the system
   curationScheduler:
-    image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler:working
 
     depends_on:
       - proxy
@@ -179,14 +192,14 @@ services:
 
   #this is our main authenticaiton service for the use in mona
   auth:
-    image: eros.fiehnlab.ucdavis.edu/mona-auth-server
+    image: eros.fiehnlab.ucdavis.edu/mona-auth-server:working
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
 
   #persistences and query interface
   persistence:
-    image: eros.fiehnlab.ucdavis.edu/mona-persistence-server
+    image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:working
 
     depends_on:
       - curationScheduler
@@ -194,8 +207,9 @@ services:
 
   #curation runner is utilized to actually curate spectra
   curationRunner:
-    image: eros.fiehnlab.ucdavis.edu/mona-curation-runner
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-runner:working
 
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+
