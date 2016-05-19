@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 /**
   * Created by wohlg_000 on 5/18/2016.
   */
-class RepositoryListener  @Autowired()(val bus:EventBus[Spectrum], val layout:FileLayout) extends EventBusListener[Spectrum](bus) {
+class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: FileLayout) extends EventBusListener[Spectrum](bus) {
 
   /**
     * an element has been received from the bus and should be now processed
@@ -19,18 +19,21 @@ class RepositoryListener  @Autowired()(val bus:EventBus[Spectrum], val layout:Fi
     * @param event
     */
   override def received(event: Event[Spectrum]): Unit = {
-    val file = new File(layout.layout(event.content),s"${event.content.splash.splash}")
+    val dir = layout.layout(event.content)
+    dir.mkdirs()
+
+    val file = new File(layout.layout(event.content), s"${event.content.id}.json")
 
     event.eventType match {
       //we only care about ADDs at this point in time
-      case (Event.ADD | Event.UPDATE )=>
+      case (Event.ADD | Event.UPDATE) =>
         //writes the spectra to the while
-        logger.debug(s"writing spectrum with id ${event.content.id}")
+        logger.info(s"writing spectrum with id ${event.content.id}")
         file.mkdirs()
-        objectMapper.writeValue(file,event.content)
-      case  Event.DELETE =>
-        if(file.exists()){
-          logger.debug(s"deleted spectrum with id ${event.content.id}")
+        objectMapper.writeValue(file, event.content)
+      case Event.DELETE =>
+        if (file.exists()) {
+          logger.info(s"deleted spectrum with id ${event.content.id}")
           file.delete()
         }
       case _ => //ignore not of interest
