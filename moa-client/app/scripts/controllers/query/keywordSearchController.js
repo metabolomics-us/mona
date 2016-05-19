@@ -10,6 +10,8 @@
         $scope.showForm = false;
         $scope.searchSplash = false;
 
+        $scope.query = {};
+
         initForm();
         function initForm() {
             $scope.showForm = true;
@@ -36,7 +38,7 @@
                         {name: 'Capillary Electrophoresis (CE)'}]
                 },
                 {
-                    IM: [{name: 'Atmospheric Pressure Chemical Ionization (APCI'},
+                    IM: [{name: 'Atmospheric Pressure Chemical Ionization (APCI)'},
                         {name: 'Chemical Ionization (CI)'},
                         {name: 'Electron Impact (EI)'},
                         {name: 'Electrospray Ionization (ESI)'},
@@ -49,13 +51,13 @@
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
         }
 
-        $scope.hideSplash = function() {
+        $scope.hideSplash = function () {
             $timeout(function () {
                 $scope.searchSplash = false;
-            }, 4000)
+            }, 1000)
         };
 
-        $scope.showSplash = function() {
+        $scope.showSplash = function () {
             $scope.searchSplash = true;
         };
 
@@ -65,6 +67,27 @@
             $scope.showSplash();
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             $scope.query = rsqlService.getQuery();
+            var res = encodeURIComponent('metaData=q=\'name=="ion mode" and value=="negative"\'');
+            $log.info(res);
+
+            var start = new Date().getTime();
+            $http({
+                method: 'GET',
+                url: 'http://0.0.0.0:9292/cream.fiehnlab.ucdavis.edu:8080/rest/spectra/search?query=' + res
+            }).then(function(response) {
+                $log.log('success');
+                $log.info(response);
+                $scope.hideSplash();
+                var end = new Date().getTime();
+                $log.warn(end - start);
+            }, function(response) {
+                $log.log('fail');
+                $log.info(response);
+
+                var end = new Date().getTime();
+                $log.warn(end - start);
+            });
+
 
             // filter query
             // service will build query,
@@ -75,8 +98,8 @@
             // then on browse resolve data?
 
             /** RESET FORM AFTER WE SUBMIT QUERY*/
-            //TODO: store query in Cache, unless user click submit again, clear query
-            $scope.hideSplash();
+                //TODO: store query in Cache, unless user click submit again, clear query
+            //$scope.hideSplash();
 
         };
 
