@@ -21,7 +21,7 @@
                     method: 'PUT'
                 },
                 'searchSpectra': {
-                    url: REST_BACKEND_SERVER + '/rest/spectra/search?',
+                    url: REST_BACKEND_SERVER + '/rest/spectra/search?query=:query&size=' + MAX_SPECTRA,
                     method: 'GET',
                     // headers: {
                     //     'Content-Type': 'application/json'

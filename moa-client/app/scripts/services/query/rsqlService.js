@@ -13,6 +13,7 @@
 
         var service = {
             getQuery: getQuery,
+            setQuery: setRsqlQuery,
             filterKeywordSearchOptions: filterKeywordSearchOptions
 
         };

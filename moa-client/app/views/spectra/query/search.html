@@ -1,32 +1,4 @@
-<!--Splash for search-->
-<div id="splash-page" ng-show="searchSplash" class="dissolve-animation">
-    <div class="page-splash">
-        <div class="page-splash-message">
-            Searching
-            <span id="loadpulse">
-                <div class="segment">
-                    <div id="layer1" class="ball"></div>
-                    <div id="layer7" class="pulse"></div>
-                </div>
-                <div class="segment">
-                    <div id="layer2" class="ball"></div>
-                    <div id="layer8" class="pulse"></div>
-                </div>
-                <div class="segment">
-                    <div id="layer3" class="ball"></div>
-                    <div id="layer9" class="pulse"></div>
-                </div>
-                <div class="segment">
-                    <div id="layer4" class="ball"></div>
-                    <div id="layer10" class="pulse"></div>
-                </div>
-            </span>
-        </div>
-    </div>
-</div>
-
-
-<div id="search-box" ng-show="showForm">
+<div id="search-box">
     <uib-tabset active="activeJustified">
         <uib-tab index="0">
             <uib-tab-heading class="search-heading">Search by Keyword</uib-tab-heading>
@@ -38,4 +10,3 @@
         </uib-tab>
     </uib-tabset>
 </div>
-<button type="submit" ng-click="resetForm()">Open Form</button>

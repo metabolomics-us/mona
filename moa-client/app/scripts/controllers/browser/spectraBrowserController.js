@@ -21,8 +21,8 @@
       .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, $uibModal, SpectraQueryBuilderService, $location,
-                                      SpectrumCache, $rootScope, $timeout) {
+    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location,
+                                      SpectrumCache, $rootScope, $timeout, $log) {
 
         $scope.table = false;
         /**
@@ -51,6 +51,23 @@
          * @type {number}
          */
         $scope.queryResultCount = 0;
+
+
+
+
+        $scope.searchSplash = false;
+
+        function hideSplash() {
+            $timeout(function () {
+                $scope.searchSplash = false;
+            }, 1000)
+        }
+
+        function showSplash() {
+            $scope.searchSplash = true;
+        }
+
+
 
         /**
          * reset the current query
@@ -104,21 +121,6 @@
             });
         };
 
-        /**
-         * opens our modal dialog to query spectra against the system
-         */
-        /*$scope.querySpectraDialog = function() {
-            var modalInstance = $uibModal.open({
-                templateUrl: '/views/spectra/query/query.html',
-                controller: 'QuerySpectrumModalController',
-                size: 'lg',
-                backdrop: 'true'
-            });
-
-            modalInstance.result.then(function(query) {
-                $scope.submitQuery();
-            });
-        };*/
 
         $scope.initSearch = function() {
             $location.path('spectra/search');
@@ -173,25 +175,23 @@
                 $scope.spectraLoadLength = $scope.spectra.length;
 
 
-                var payload = {
-                    query: SpectraQueryBuilderService.getQuery(),
-                    offset: $scope.spectra.length
-                };
+                var payload = SpectraQueryBuilderService.getQuery();
 
 
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
 
-                Spectrum.searchSpectra(payload, function(data) {
+                Spectrum.searchSpectra({query: payload}, function(data) {
                     $scope.duration = (Date.now() - startTime) / 1000;
 
                     if (data.length === 0) {
                         $scope.dataAvailable = false;
                     } else {
                         // Add data to spectra object
+                        $log.info(data);
                         $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
                     }
-
+                    hideSplash();
                     $scope.loadingMore = false;
                 });
             }
@@ -215,7 +215,7 @@
         (function list() {
             $scope.spectraScrollStartLocation = 0;
             $scope.spectra = [];
-
+            showSplash();
             // Submit our initial query
             $scope.submitQuery();
         })();
