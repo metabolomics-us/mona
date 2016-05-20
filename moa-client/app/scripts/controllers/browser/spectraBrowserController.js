@@ -116,7 +116,7 @@
 
             $scope.queryResultCount = "Loading...";
 
-            Spectrum.searchSpectraCount(SpectraQueryBuilderService.getQuery(), function(data) {
+            Spectrum.searchSpectraCount({query: '&query=' + SpectraQueryBuilderService.getQuery()}, function(data) {
                 $scope.queryResultCount = data.count;
             });
         };
@@ -180,20 +180,25 @@
 
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
-
-                Spectrum.searchSpectra({query: payload}, function(data) {
-                    $scope.duration = (Date.now() - startTime) / 1000;
-
-                    if (data.length === 0) {
-                        $scope.dataAvailable = false;
-                    } else {
-                        // Add data to spectra object
-                        $log.info(data);
-                        $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
-                    }
+                $log.info(payload);
+                Spectrum.query(function(data) {
+                    $log.info(data.length);
                     hideSplash();
-                    $scope.loadingMore = false;
                 });
+
+                //Spectrum.searchSpectra({query: payload}, function(data) {
+                //    $scope.duration = (Date.now() - startTime) / 1000;
+                //
+                //    if (data.length === 0) {
+                //        $scope.dataAvailable = false;
+                //    } else {
+                //        // Add data to spectra object
+                //        $log.info(data);
+                //        $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+                //    }
+                //    hideSplash();
+                //    $scope.loadingMore = false;
+                //});
             }
 
             //inform other controllers that we finished loading spectra

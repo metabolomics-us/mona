@@ -10,7 +10,7 @@
       .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
     /* @ngInject */
-    function SpectraQueryBuilderService(QueryCache, MetadataService, $log) {
+    function SpectraQueryBuilderService(QueryCache, Spectrum, MetadataService, $log) {
 
         /**
          * provides us with the current query
@@ -26,28 +26,9 @@
             return query;
         };
 
-        /** TODO: remove function: cache.js - getSpectraQuery handles null queries
-         * prepares an empty query to avoid null pointer exceptions****
-         */
         this.prepareQuery = function() {
-
-            // Remove temporarily until issues are resolved on the server side
-            //var defaultTags = {};
-            //
-            //defaultTags.name = {};
-            //defaultTags.name.ne = "deleted";
-
-            var query = {
-                compound: {},
-                metadata: [],
-                tags: [
-                    //defaultTags
-                ]
-            };
-
-            QueryCache.setSpectraQuery(query);
-
-            return query;
+            QueryCache.setSpectraQuery('/rest/spectra/?size=10');
+            return 'rest/spectra?size=10';
         };
 
         this.setQuery = function(query) {
