@@ -47,23 +47,6 @@
             }
         };
         
-        
-        /** for use with RSQL Queries
-         *
-         */
-        this.getRsqlQuery = function() {
-          if (this.query === null) {
-              return $injector.get('rsqlService').prepareQuery();
-          } else {
-              return this.query;
-          }
-        };
-        
-        this.setRsqlQuery = function(query) {
-            $rootScope.$broadcast('spectra:rsqlQuery', query);
-            this.query = query;
-        };
-        
         /**
          * sets a new spectra query
          * @param query
