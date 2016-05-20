@@ -5,7 +5,7 @@
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, $log, $http, $timeout, rsqlService) {
+    function KeywordSearchController($scope, $log, $http, $timeout, rsqlService, Spectrum) {
 
         $scope.showForm = false;
         $scope.searchSplash = false;
@@ -65,14 +65,17 @@
         $scope.submitQuery = function () {
             // add and filter query options, and update query cache
             //$scope.showSplash();
-            
+
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             $scope.query = rsqlService.getQuery();
             $log.info($scope.query);
 
-            // var res = encodeURIComponent('metaData=q=\'name=="ion mode" and value=="negative"\'');
-            // $log.info(res);
-            //
+            var res = encodeURIComponent('metaData=q=\'name=="ion mode" and value=="negative"\'');
+            $log.info(res);
+
+            var response = Spectrum.searchSpectra(res);
+            $log.info(response);
+
             // var start = new Date().getTime();
             // $http({
             //     method: 'GET',
