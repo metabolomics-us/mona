@@ -19,11 +19,11 @@
         return service;
 
         function getQuery() {
-            return QueryCache.getRsqlQuery();
+            return QueryCache.getSpectraQuery();
         }
 
         function setRsqlQuery(query) {
-            QueryCache.setRsqlQuery(query);
+            QueryCache.setSpectraQuery(query);
         }
 
         function filterKeywordSearchOptions(options, instruments, ms, ionMode) {

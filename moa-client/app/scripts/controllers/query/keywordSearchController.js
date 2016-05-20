@@ -64,29 +64,32 @@
 
         $scope.submitQuery = function () {
             // add and filter query options, and update query cache
-            $scope.showSplash();
+            //$scope.showSplash();
+            
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             $scope.query = rsqlService.getQuery();
-            var res = encodeURIComponent('metaData=q=\'name=="ion mode" and value=="negative"\'');
-            $log.info(res);
+            $log.info($scope.query);
 
-            var start = new Date().getTime();
-            $http({
-                method: 'GET',
-                url: 'http://0.0.0.0:9292/cream.fiehnlab.ucdavis.edu:8080/rest/spectra/search?query=' + res
-            }).then(function(response) {
-                $log.log('success');
-                $log.info(response);
-                $scope.hideSplash();
-                var end = new Date().getTime();
-                $log.warn(end - start);
-            }, function(response) {
-                $log.log('fail');
-                $log.info(response);
-
-                var end = new Date().getTime();
-                $log.warn(end - start);
-            });
+            // var res = encodeURIComponent('metaData=q=\'name=="ion mode" and value=="negative"\'');
+            // $log.info(res);
+            //
+            // var start = new Date().getTime();
+            // $http({
+            //     method: 'GET',
+            //     url: 'http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/search?query=' + res + '&size=10'
+            // }).then(function(response) {
+            //     $log.log('success');
+            //     $log.info(response);
+            //     $scope.hideSplash();
+            //     var end = new Date().getTime();
+            //     $log.warn(end - start);
+            // }, function(response) {
+            //     $log.log('fail');
+            //     $log.info(response);
+            //
+            //     var end = new Date().getTime();
+            //     $log.warn(end - start);
+            // });
 
 
             // filter query
