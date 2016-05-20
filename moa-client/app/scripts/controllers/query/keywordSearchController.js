@@ -5,16 +5,9 @@
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, $log, $http, $timeout, rsqlService, Spectrum) {
+    function KeywordSearchController($scope, $log, rsqlService, $location, Spectrum) {
 
-        $scope.showForm = false;
-        $scope.searchSplash = false;
-
-        $scope.query = {};
-
-        initForm();
-        function initForm() {
-            $scope.showForm = true;
+        (function initForm() {
             $scope.queryOptions = {
                 firstOperand: 'AND',
                 secondOperand: 'AND',
@@ -35,10 +28,10 @@
                     SI: [{name: 'Liquid Chromatography (LC)'},
                         {name: 'Gas Chromatography (GC)'},
                         {name: 'Direct Injection/Infusion (DI)'},
-                        {name: 'Capillary Electrophoresis (CE)'}]
+                        {name: 'Capillary ElectrophotetQueryis (CE)'}]
                 },
                 {
-                    IM: [{name: 'Atmospheric Pressure Chemical Ionization (APCI)'},
+                    IM: [{name: 'Atmospheric PtetQuerysure Chemical Ionization (APCI)'},
                         {name: 'Chemical Ionization (CI)'},
                         {name: 'Electron Impact (EI)'},
                         {name: 'Electrospray Ionization (ESI)'},
@@ -49,17 +42,8 @@
 
             $scope.msType = [{name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
-        }
+        })();
 
-        $scope.hideSplash = function () {
-            $timeout(function () {
-                $scope.searchSplash = false;
-            }, 1000)
-        };
-
-        $scope.showSplash = function () {
-            $scope.searchSplash = true;
-        };
 
 
         $scope.submitQuery = function () {
@@ -67,45 +51,28 @@
             //$scope.showSplash();
 
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
-            $scope.query = rsqlService.getQuery();
-            $log.info($scope.query);
 
-            var res = encodeURIComponent('metaData=q=\'name=="ion mode" and value=="negative"\'');
-            $log.info(res);
+            var testQuery = encodeURIComponent('metaData=q=\'name=="ion mode" and value=="negative"\'');
+            rsqlService.setQuery(testQuery);
 
-            var response = Spectrum.searchSpectra(res);
-            $log.info(response);
+            var query = rsqlService.getQuery();
+            $log.info(query);
+            if (query !== '') {
+                $location.path('/spectra/browse');
+            }
 
-            // var start = new Date().getTime();
-            // $http({
-            //     method: 'GET',
-            //     url: 'http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/search?query=' + res + '&size=10'
-            // }).then(function(response) {
-            //     $log.log('success');
-            //     $log.info(response);
-            //     $scope.hideSplash();
-            //     var end = new Date().getTime();
-            //     $log.warn(end - start);
-            // }, function(response) {
-            //     $log.log('fail');
-            //     $log.info(response);
-            //
-            //     var end = new Date().getTime();
-            //     $log.warn(end - start);
-            // });
+            //var response = Spectrum.searchSpectra({query: testQuery}, function(data) {
+            //    $log.info(data);
+            //});
+            //$log.info(response);
 
-
-            // filter query
-            // service will build query,
-            // directive submits rsql query string
-            // on success change location to browse, with results
-            // how to get data to browse controller?
-            // use rsqlService to store the data?
-            // then on browse resolve data?
-
-            /** RESET FORM AFTER WE SUBMIT QUERY*/
-                //TODO: store query in Cache, unless user click submit again, clear query
-            //$scope.hideSplash();
+            // show splash on submit
+            // submit rest request
+                // on success, route to spectra controller
+                // how to pass data to SpectraController? that controller grabs query already,
+                    // on submit, just save to queryCache
+                        // display splash on browse route
+                        // show splash on browser
 
         };
 
