@@ -14,8 +14,8 @@
          * creates a new resources, we can work with
          */
         return $resource(
-            REST_BACKEND_SERVER + '/rest/spectra/:id?max=' + MAX_SPECTRA + ':offset',
-            {id: "@id", offset: "@offset"},
+            REST_BACKEND_SERVER + '/rest/spectra/?size=' + MAX_SPECTRA + ':offset',
+            {offset: "@offset"},
             {
                 'update': {
                     method: 'PUT'
@@ -23,17 +23,11 @@
                 'searchSpectra': {
                     url: REST_BACKEND_SERVER + '/rest/spectra/search?query=:query&size=' + MAX_SPECTRA,
                     method: 'GET',
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     isArray: true
                 },
                 'searchSpectraCount': {
-                    url: REST_BACKEND_SERVER + '/rest/spectra/searchCount',
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    url: REST_BACKEND_SERVER + '/rest/spectra/count:query',
+                    method: 'GET',
                     isArray: false
                 },
                 'searchSimilarSpectra': {
