@@ -1,7 +1,7 @@
 <div class="panel panel-default">
     <div class="panel-heading" ng-click="viewSpectrum()">
         <div class="panel-title">
-            <span><a style="cursor: pointer">{{spectrum.biologicalCompound.names[0].name}}</a></span>
+            <span><a style="cursor: pointer">{{spectrum.compound[0].names[0].name}}</a></span>
             <span class="pull-right">Score: <span score-spectra ng-model="spectrum"></span></span>
         </div>
     </div>
@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col-lg-6 col-md-5 col-sm-3">
                 <div class="row">
-                    <div class="col-lg-6 col-md-12">
+                    <div class="col-lg-6 col- md-12">
                         <div class="masspec-medium">
                             <mass-spec id="massSpec_{{spectrum.id}}"
                                        ng-model="spectrum.spectrum"></mass-spec>
