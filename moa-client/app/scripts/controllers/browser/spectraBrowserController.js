@@ -187,7 +187,6 @@
                             $scope.dataAvailable = false;
                         } else {
                             // Add data to spectra object
-                            $log.info(data);
                             $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
                         }
                         hideSplash();
@@ -202,7 +201,6 @@
                             $scope.dataAvailable = false;
                         } else {
                             // Add data to spectra object
-                            $log.info(data);
                             $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
                         }
                         hideSplash();
