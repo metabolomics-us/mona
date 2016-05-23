@@ -180,26 +180,36 @@
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
                 $log.info(payload);
-                Spectrum.query(function(data) {
-                    $log.info(data.length);
-                    hideSplash();
-                });
+                $log.warn(Spectrum.query);
+                if (payload === '') {
+                    Spectrum.getAllSpectra(function (data) {
+                        if (data.length === 0) {
+                            $scope.dataAvailable = false;
+                        } else {
+                            // Add data to spectra object
+                            $log.info(data);
+                            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+                        }
+                        hideSplash();
+                        $scope.loadingMore = false;
+                    });
+                }
+                else {
+                    Spectrum.searchSpectra({query: payload}, function (data) {
+                        $scope.duration = (Date.now() - startTime) / 1000;
 
-                Spectrum.searchSpectra({query: payload}, function(data) {
-                   $scope.duration = (Date.now() - startTime) / 1000;
-
-                   if (data.length === 0) {
-                       $scope.dataAvailable = false;
-                   } else {
-                       // Add data to spectra object
-                       $log.info(data);
-                       $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
-                   }
-                   hideSplash();
-                   $scope.loadingMore = false;
-                });
+                        if (data.length === 0) {
+                            $scope.dataAvailable = false;
+                        } else {
+                            // Add data to spectra object
+                            $log.info(data);
+                            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+                        }
+                        hideSplash();
+                        $scope.loadingMore = false;
+                    });
+                }
             }
-
             //inform other controllers that we finished loading spectra
             if ($scope.spectra) {
                 $rootScope.$broadcast('spectra:loaded', $scope.spectra);

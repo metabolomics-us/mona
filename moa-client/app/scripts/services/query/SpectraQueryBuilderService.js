@@ -27,8 +27,8 @@
         };
 
         this.prepareQuery = function() {
-            QueryCache.setSpectraQuery('/rest/spectra/?size=10');
-            return 'rest/spectra?size=10';
+            QueryCache.setSpectraQuery('');
+            return '';
         };
 
         this.setQuery = function(query) {

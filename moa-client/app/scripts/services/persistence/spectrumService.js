@@ -13,12 +13,17 @@
         /**
          * creates a new resources, we can work with
          */
+
         return $resource(
-            REST_BACKEND_SERVER + '/rest/spectra/?size=' + MAX_SPECTRA + ':offset',
+            REST_BACKEND_SERVER + '/rest/spectra?size=' + MAX_SPECTRA + ':offset',
             {offset: "@offset"},
             {
                 'update': {
                     method: 'PUT'
+                },
+                'getAllSpectra': {
+                  url: REST_BACKEND_SERVER + '/rest/spectra?size=' + MAX_SPECTRA + ':offset',
+                    isArray: true
                 },
                 'searchSpectra': {
                     url: REST_BACKEND_SERVER + '/rest/spectra/search?query=:query&size=' + MAX_SPECTRA,
