@@ -26,10 +26,7 @@
     function displaySpectraPanelController($scope, $location, SpectrumCache, $log) {
 
         var truncateDecimal = function(s, length) {
-
-        if(typeof(s) === 'number') {
-            return s.toFixed(4);
-        }
+            return (typeof(s) === 'number') ?  s.toFixed(4) :  s;
             //TODO: using toFixed() for truncate of number, depreciate once verified
             /*var regex = new RegExp("\\s*(\\d+\\.\\d{" + length + "})\\d*\\s*");
             var m = s.match(regex);
