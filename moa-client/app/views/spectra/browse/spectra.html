@@ -103,17 +103,17 @@
             </tr>
             <tr ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
                 <td>
-                    {{spectrum.id}}
+                    <a href="">{{spectrum.id}}</a>
                 </td>
                 <td>
                     <ul class="list-unstyled">
-                        <li ng-repeat="name in spectrum.compound.names | limitTo:3">{{name.name}}</li>
+                        <li ng-repeat="name in spectrum.compound[0].names | limitTo:3">{{name.name}}</li>
                     </ul>
                 </td>
                 <td class="text-center">
                     <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
                          id="bioSketch_{{spectrum.id}}_true"
-                         ng-model="spectrum.biologicalCompound"></div>
+                         ng-model="spectrum.compound"></div>
                 </td>
                 <td class="text-center">
                     <div class="masspec-mini">

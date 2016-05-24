@@ -78,6 +78,9 @@
                      */
                     var getMoleculeForModel = function(model) {
 
+                        // model is array of object, we need to get the first one only
+                        model = model[0];
+
                         if (angular.isDefined(model)) {
                             if (angular.isDefined(model.molFile)) {
                                 try {
