@@ -82,7 +82,7 @@ class StatisticsMongoRepositoryTest extends WordSpec {
           assert(testPairs(counts)((a, b) => a >= b))
 
           // Group results by value, and check if groups are sorted by name
-          val groups = result.groupBy(_._2).map(_._2)
+          val groups = result.groupBy(_._2).values
           groups.foreach {
             group =>
               val names: Iterable[String] = group.map(_._1.toString)
