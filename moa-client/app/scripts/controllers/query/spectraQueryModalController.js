@@ -1,12 +1,13 @@
 /**
  * Created by wohlgemuth on 7/11/14.
  */
+
 (function() {
     'use strict';
     angular.module('moaClientApp')
         .controller('QuerySpectrumModalController', QuerySpectrumModalController);
 
-    /* @ngInject */
+    /!* @ngInject *!/
     function QuerySpectrumModalController($scope, $uibModalInstance, SpectraQueryBuilderService) {
         /**
          * Store accordion status
@@ -62,3 +63,4 @@
         };
     }
 })();
+

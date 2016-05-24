@@ -1,9 +1,9 @@
-<div>
+<div class="row">
     <div ng-repeat="meta in query">
         <div class="col-sm-4 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
             <input type="text"
                    ng-model="meta.name"
-                   placeholder="Metadata Name"
+                   placeholder="metadata name"
                    uib-typeahead="x.name for x in queryMetadataNames($viewValue)"
                    uib-typeahead-editable="editable"
                    class="form-control"
@@ -24,7 +24,7 @@
             <input type="text"
                    ng-model="meta.value"
                    ng-disabled="!meta.name || meta.name == ''"
-                   placeholder="Metadata Value"
+                   placeholder="value"
                    uib-typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
                    class="form-control"
 
