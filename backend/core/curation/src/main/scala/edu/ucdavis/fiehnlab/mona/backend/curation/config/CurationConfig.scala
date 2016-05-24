@@ -73,7 +73,7 @@ class CurationConfig extends LazyLogging {
   def classifierProcessor = new ClassifierProcessor
 
   /**
-    * This defines the spectra curration workflow processor bean
+    * This defines the spectra curation workflow processor bean
     * and configures it for our use
     *
     * @return
@@ -112,6 +112,7 @@ class CurationConfig extends LazyLogging {
   @StepScope
   def restRepositoryWriter(@Value("#{jobParameters[loginToken]}")
                            loginToken: String): ItemWriter[Spectrum] = {
+
     new RestRepositoryWriter(loginToken)
   }
 
@@ -130,13 +131,13 @@ class CurationConfig extends LazyLogging {
     if (file == null) {
       throw new FileNotFoundException("you need to provide a file name, but instead the parameter was null!")
     }
+
     val reader = new JSONFileSpectraReader()
 
     if (new File(file).exists()) {
       logger.debug("a file was provided")
       reader.stream = new BufferedInputStream(new FileInputStream(file))
-    }
-    else {
+    } else {
       logger.warn(s"provided file ${file} did not exist, trying to load from classpath")
       reader.stream = getClass.getResourceAsStream(file)
     }
@@ -152,18 +153,17 @@ class CurationConfig extends LazyLogging {
     if (file == null) {
       throw new FileNotFoundException("you need to provide a file name, but instead the parameter was null!")
     }
+
     val reader = new JSONLegacyFileSpectraReader()
 
     if (new File(file).exists()) {
       logger.debug("a file was provided")
       reader.stream = new BufferedInputStream(new FileInputStream(file))
-    }
-    else {
+    } else {
       logger.warn(s"provided file ${file} did not exist, trying to load from classpath")
       reader.stream = getClass.getResourceAsStream(file)
     }
 
     reader
   }
-
 }
