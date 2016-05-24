@@ -9,7 +9,7 @@
     <!--
      here we import our define writers, readers and processors
     -->
-    <bean name="/CurrationConfig" class="edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig" />
+    <bean name="/CurationConfig" class="edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig" />
 
 
     <!--
@@ -63,5 +63,4 @@
             </batch:tasklet>
         </batch:step>
     </batch:job>
-
 </beans>

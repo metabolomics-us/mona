@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.common.{CurationUtilities, CommonMetaData, CommonTags}
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CurationUtilities, CommonMetaData}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical.AdductBuilder
 import org.springframework.batch.item.ItemProcessor
 
