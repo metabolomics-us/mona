@@ -136,10 +136,7 @@
              * Decimal truncation routines
              */
             var truncateDecimal = function(s, length) {
-                var regex = new RegExp("\\s*(\\d+\\.\\d{" + length + "})\\d*\\s*");
-                var m = s.match(regex);
-
-                return (m !== null) ? s.replace(m[0].trim(), m[1]) : s;
+                return (typeof(s) === 'number') ? s.toFixed(length) : s;
             };
 
             /**
@@ -157,6 +154,8 @@
             //
             // Truncate metadata mass values
             //
+
+
 
             for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
                 var name = delayedSpectrum.metaData[i].name.toLowerCase();
