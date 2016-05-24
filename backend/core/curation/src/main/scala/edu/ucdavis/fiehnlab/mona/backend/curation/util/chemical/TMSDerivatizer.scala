@@ -16,7 +16,7 @@ import scala.collection.mutable.ListBuffer
 /**
   * Created by sajjan on 4/25/16
   */
-class TMSDerivatizer {
+class TMSDerivatizer extends Derivatizer {
   val MAX_DERIVITIZATION_ATTEMPTS: Int = 100
 
 
