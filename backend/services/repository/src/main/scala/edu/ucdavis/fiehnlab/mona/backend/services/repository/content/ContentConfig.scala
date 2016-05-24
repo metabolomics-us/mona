@@ -5,24 +5,27 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.web.{DispatcherServletAutoConfiguration, WebMvcAutoConfiguration}
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
+import org.springframework.web.servlet.config.annotation.{EnableWebMvc, ResourceHandlerRegistry, WebMvcConfigurerAdapter}
+import org.springframework.web.servlet.resource.{GzipResourceResolver, PathResourceResolver}
 
 /**
   * Created by wohlgemuth on 5/24/16.
   */
 
 @Configuration
+@EnableWebMvc
 @AutoConfigureAfter(Array(classOf[DispatcherServletAutoConfiguration]))
-class ContentConfig extends WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter with LazyLogging {
+class ContentConfig extends WebMvcConfigurerAdapter with LazyLogging {
 
   @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}mona")
-  val baseDir: String = ""
+  val dir: String = ""
 
+  override def addResourceHandlers(registry: ResourceHandlerRegistry) = {
 
-  override def addResourceHandlers(registry: ResourceHandlerRegistry): Unit = {
-    super.addResourceHandlers(registry)
-    logger.info(s"hosting files at: ${baseDir}")
-    registry.addResourceHandler("/repository/**").addResourceLocations(s"file:///${baseDir}")
+    logger.info(s"configured directory ${dir} for storage of spectra objects")
+    registry.addResourceHandler("/repository/**").addResourceLocations(s"file:/${dir}") .setCachePeriod(0)
+      .resourceChain(true)
+      .addResolver(new GzipResourceResolver())
+      .addResolver(new PathResourceResolver())
   }
-
 }

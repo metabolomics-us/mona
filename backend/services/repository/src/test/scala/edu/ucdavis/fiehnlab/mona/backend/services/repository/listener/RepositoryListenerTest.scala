@@ -77,13 +77,14 @@ class RepositoryListenerTest extends WordSpec with LazyLogging {
         given().contentType("application/json; charset=UTF-8").when().log.all(true).get("/repository").then().statusCode(200)
       }
 
-      "be able to access /repository/index.html and browse it " in {
-        given().contentType("application/json; charset=UTF-8").when().log.all(true).get("/repository/index.html").then().statusCode(200)
-      }
-
       "be able to access our spectra file" in {
         repositoryListener.received(Event(spectrum, eventType = Event.ADD))
         given().contentType("application/json; charset=UTF-8").when().log().all(true).get(s"/repository/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(200)
+      }
+
+      "be able to delete our spectra file" in {
+        repositoryListener.received(Event(spectrum, eventType = Event.DELETE))
+        given().contentType("application/json; charset=UTF-8").when().log().all(true).get(s"/repository/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(404)
       }
 
 

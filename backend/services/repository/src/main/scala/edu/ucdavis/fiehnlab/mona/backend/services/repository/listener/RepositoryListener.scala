@@ -19,6 +19,7 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
     * @param event
     */
   override def received(event: Event[Spectrum]): Unit = {
+
     val dir = layout.layout(event.content)
 
     if(!dir.exists()){
@@ -32,11 +33,11 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
       //we only care about ADDs at this point in time
       case (Event.ADD | Event.UPDATE) =>
         //writes the spectra to the while
-        logger.info(s"writing spectrum with id ${event.content.id}")
+        logger.info(s"\twriting spectrum with id ${event.content.id}")
         objectMapper.writeValue(file, event.content)
       case Event.DELETE =>
         if (file.exists()) {
-          logger.info(s"deleted spectrum with id ${event.content.id}")
+          logger.info(s"\tdeleted spectrum with id ${event.content.id}")
           file.delete()
         }
       case _ => //ignore not of interest
