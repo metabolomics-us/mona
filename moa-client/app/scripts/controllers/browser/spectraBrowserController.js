@@ -53,7 +53,7 @@
         $scope.queryResultCount = 0;
 
 
-
+        $scope.page = 0;
 
         $scope.searchSplash = false;
 
@@ -160,7 +160,7 @@
                                 break;
                             }
                         }
-                        $log.info(compound.kind);
+
                         if(compound.kind === 'biological') {
                             break;
                         }
@@ -187,13 +187,15 @@
 
                 var payload = SpectraQueryBuilderService.getQuery();
 
+                $log.debug($scope.page);
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
 
-                $log.info(payload);
+                $log.debug(payload);
+
 
                 if (payload === '') {
-                    Spectrum.getAllSpectra(function (data) {
+                    Spectrum.getAllSpectra({page: $scope.page}, function (data) {
                         if (data.length === 0) {
                             $scope.dataAvailable = false;
                         } else {
@@ -202,10 +204,11 @@
                         }
                         hideSplash();
                         $scope.loadingMore = false;
+                        $scope.page += 1;
                     });
                 }
                 else {
-                    Spectrum.searchSpectra({query: payload}, function (data) {
+                    Spectrum.searchSpectra({query: payload, offset: offset}, function (data) {
                         $scope.duration = (Date.now() - startTime) / 1000;
 
                         if (data.length === 0) {
@@ -216,6 +219,7 @@
                         }
                         hideSplash();
                         $scope.loadingMore = false;
+                        $scope.page += 1;
                     });
                 }
             }
