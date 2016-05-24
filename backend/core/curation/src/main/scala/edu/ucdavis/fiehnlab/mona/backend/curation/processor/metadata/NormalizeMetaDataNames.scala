@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.common.MetaDataSynonyms
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.MetaDataSynonyms
 import org.springframework.batch.item.ItemProcessor
 
 /**

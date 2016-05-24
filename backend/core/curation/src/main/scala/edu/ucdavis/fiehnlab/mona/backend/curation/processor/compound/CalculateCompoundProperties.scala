@@ -5,9 +5,9 @@ import java.io.StringReader
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.common.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.{FetchCTSCompoundData}
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.inchi.{InChIGenerator, InChIGeneratorFactory}
 import org.openscience.cdk.smiles.SmilesGenerator
 import org.openscience.cdk.{AtomContainer, DefaultChemObjectBuilder}

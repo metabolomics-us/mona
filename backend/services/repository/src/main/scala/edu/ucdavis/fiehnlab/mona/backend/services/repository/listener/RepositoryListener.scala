@@ -42,5 +42,4 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
       case _ => //ignore not of interest
     }
   }
-
 }

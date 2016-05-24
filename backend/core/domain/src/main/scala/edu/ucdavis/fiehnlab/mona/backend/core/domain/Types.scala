@@ -354,15 +354,16 @@ case class LegacySpectrum(
 /**
   * this is anm optional defined library, which declares from which source the spectrum is coming
   *
-  * @param name
+  * @param id
   * @param description
-  * @param url
+  * @param link
+  * @param tag
   */
 case class Library(
-                    name: String,
+                    id: String,
                     description: String,
-                    url: String
-
+                    link: String,
+                    tag: Tags
                   )
 
 /**

@@ -9,9 +9,5 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
   */
 @ComponentScan
 @Configuration
-@EnableMongoRepositories(basePackageClasses = Array(
-  classOf[IStatisticsMongoRepository]
-), excludeFilters = Array())
-class StatisticsRepositoryConfig {
-
-}
+@EnableMongoRepositories(basePackageClasses = Array(classOf[IStatisticsMongoRepository]), excludeFilters = Array())
+class StatisticsRepositoryConfig

@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.curation.common
+package edu.ucdavis.fiehnlab.mona.backend.curation.util
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
 
