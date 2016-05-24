@@ -5,13 +5,12 @@ import java.util.Date
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
-import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.TestCurrationRunner
+import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.TestCurationRunner
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
@@ -31,13 +30,11 @@ class CurationEventBusListenerTest extends AbstractSpringControllerTest with Eve
   val eventBus: EventBus[Spectrum] = null
 
   @Autowired
-  val testCurrationRunner: TestCurrationRunner = null
+  val testCurationRunner: TestCurationRunner = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "CurrationEventBusListenerTest" should {
-
-
     val reader = JSONDomainReader.create[Spectrum]
 
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
@@ -46,13 +43,13 @@ class CurationEventBusListenerTest extends AbstractSpringControllerTest with Eve
 
 
     "received an update event" in {
-      testCurrationRunner.messageReceived = false
+      testCurationRunner.messageReceived = false
 
       eventBus.sendEvent(Event(spectrum, new Date(), Event.UPDATE))
 
       eventually(timeout(100 seconds)) {
       //it should never receive an event, since we don't listen for updates
-        assert(!testCurrationRunner.messageReceived)
+        assert(!testCurationRunner.messageReceived)
       }
 
     }
@@ -60,21 +57,21 @@ class CurationEventBusListenerTest extends AbstractSpringControllerTest with Eve
 
     "received an delete event" in {
       eventBus.sendEvent(Event(spectrum, new Date(), Event.DELETE))
-      testCurrationRunner.messageReceived = false
+      testCurationRunner.messageReceived = false
 
       eventually(timeout(100 seconds)) {
         //it should never receive an event, since we don't listen for deletes
-        assert(!testCurrationRunner.messageReceived)
+        assert(!testCurationRunner.messageReceived)
       }
 
     }
 
     "received an add event" in {
-      testCurrationRunner.messageReceived = false
+      testCurationRunner.messageReceived = false
       eventBus.sendEvent(Event(spectrum, new Date(), Event.ADD))
 
       eventually(timeout(100 seconds)) {
-        assert(testCurrationRunner.messageReceived)
+        assert(testCurationRunner.messageReceived)
       }
 
 

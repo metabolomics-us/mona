@@ -30,7 +30,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 /***
   * the server depends on these configurations to wire all it's internal components together
   */
-@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[MongoConfig],classOf[JWTAuthenticationConfig],classOf[CurationConfig],classOf[SwaggerConfig]))
+@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
+  classOf[JWTAuthenticationConfig], classOf[CurationConfig], classOf[SwaggerConfig]))
 class CurationScheduler extends WebSecurityConfigurerAdapter {
 
   @Autowired
@@ -38,7 +39,7 @@ class CurationScheduler extends WebSecurityConfigurerAdapter {
 
   /**
     * only admins can schedule curations in the system
- *
+    *
     * @param http
     */
   override final def configure(http: HttpSecurity): Unit = {
@@ -48,25 +49,22 @@ class CurationScheduler extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
       //saves need to be authenticated
       .antMatchers(HttpMethod.GET, "/rest/curation/**").hasAuthority("ADMIN")
-
   }
   /**
     * any other get request is ignored by default
     * since we have /info etc exposed
- *
+    *
     * @param web
     */
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
       .antMatchers(HttpMethod.GET, "/*")
   }
-
 }
 
 /**
   * our local server, which should be connecting to eureka, etc
   */
-object CurationScheduler extends App{
+object CurationScheduler extends App {
   new SpringApplication(classOf[CurationScheduler]).run()
-
 }

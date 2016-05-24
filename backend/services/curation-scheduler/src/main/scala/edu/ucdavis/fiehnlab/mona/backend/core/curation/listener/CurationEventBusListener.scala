@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component
 
 /**
   * listens to the event bus and everytime it finds a matching message it will forward it to the
-  * dedicated queue for curration tasks
+  * dedicated queue for curation tasks
   */
 @Component
 class CurationEventBusListener @Autowired()(val bus:EventBus[Spectrum]) extends EventBusListener[Spectrum](bus) {
 
   @Autowired
-  val currationService:CurationService = null
+  val curationService: CurationService = null
 
   /**
     * an element has been received from the bus and should be now processed
@@ -26,7 +26,7 @@ class CurationEventBusListener @Autowired()(val bus:EventBus[Spectrum]) extends 
     event.eventType match {
         //we only care about ADDs at this point in time
       case Event.ADD =>
-        currationService.scheduleSpectra(event.content)
+        curationService.scheduleSpectra(event.content)
 
       case _ => //ignore not of interest
     }
