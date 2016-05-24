@@ -24,6 +24,7 @@
 
     /* @ngInject */
     function displayLibraryReferenceController($scope) {
+
         // Empty string if no library object exists
         if ($scope.spectrum.library === null) {
             $scope.libraryString = '';
@@ -40,6 +41,7 @@
         $scope.libraryString = 'Originally submitted to the ';
 
         // Handle a provided library link
+
         if (angular.isDefined($scope.spectrum.library.link)) {
             // Link to library but no identifier
             if ($scope.spectrum.libraryIdentifier === null) {

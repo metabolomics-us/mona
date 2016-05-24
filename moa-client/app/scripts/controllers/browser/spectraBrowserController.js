@@ -53,8 +53,6 @@
         $scope.queryResultCount = 0;
 
 
-        $scope.page = 0;
-
         $scope.searchSplash = false;
 
         function hideSplash() {
@@ -175,6 +173,9 @@
         /**
          * loads more spectra into the given view
          */
+
+        var page = 0;
+
         $scope.loadMoreSpectra = function() {
             //inform other controllers that we are starting to load spectra
             $rootScope.$broadcast('spectra:starting:query');
@@ -187,15 +188,13 @@
 
                 var payload = SpectraQueryBuilderService.getQuery();
 
-                $log.debug($scope.page);
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
 
-                $log.debug(payload);
-
+                //$log.debug(payload);
 
                 if (payload === '') {
-                    Spectrum.getAllSpectra({page: $scope.page}, function (data) {
+                    Spectrum.getAllSpectra({page: page}, function (data) {
                         if (data.length === 0) {
                             $scope.dataAvailable = false;
                         } else {
@@ -204,7 +203,7 @@
                         }
                         hideSplash();
                         $scope.loadingMore = false;
-                        $scope.page += 1;
+                        page += 1;
                     });
                 }
                 else {
@@ -219,7 +218,7 @@
                         }
                         hideSplash();
                         $scope.loadingMore = false;
-                        $scope.page += 1;
+                        page += 1;
                     });
                 }
             }
