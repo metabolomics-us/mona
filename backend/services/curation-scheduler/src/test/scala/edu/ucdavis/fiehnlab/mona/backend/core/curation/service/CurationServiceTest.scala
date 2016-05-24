@@ -33,17 +33,17 @@ import scala.concurrent.duration._
 class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
-  val testCurrationRunner: TestCurrationRunner = null
+  val testCurationRunner: TestCurationRunner = null
 
   @Autowired
   val notificationCounter: ReceivedEventCounter[Notification] = null
 
   @Autowired
-  val currationService: CurationService = null
+  val curationService: CurationService = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
-  "CurrationServiceTest" should {
+  "CurationServiceTest" should {
 
     val reader = JSONDomainReader.create[Spectrum]
 
@@ -52,14 +52,13 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
     val spectrum: Spectrum = reader.read(input)
 
     "scheduleSpectra" in {
-
       val count = notificationCounter.getEventCount
 
-      testCurrationRunner.messageReceived = false
-      currationService.scheduleSpectra(spectrum)
+      testCurationRunner.messageReceived = false
+      curationService.scheduleSpectra(spectrum)
 
       eventually(timeout(10 seconds)) {
-        assert(testCurrationRunner.messageReceived)
+        assert(testCurationRunner.messageReceived)
       }
 
       eventually(timeout(10 seconds)) {
@@ -73,16 +72,16 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
   * simple test class to ensure the message was processed
   */
 @Component
-class TestCurrationRunner extends MessageListener {
+class TestCurationRunner extends MessageListener {
 
   @Autowired
   private val connectionFactory: ConnectionFactory = null
 
   @Autowired
-  val rabbitAdmin:RabbitAdmin = null
+  val rabbitAdmin: RabbitAdmin = null
 
   @Autowired
-  val queue:Queue = null
+  val queue: Queue = null
 
   @PostConstruct
   def init = {
