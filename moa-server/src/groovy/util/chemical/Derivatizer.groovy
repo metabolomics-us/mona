@@ -61,6 +61,7 @@ class Derivatizer {
                 tries++
 
                 logger.debug("searching for all sub graphs attempt $tries for sub group: $index")
+
                 //find the first connectors for this sub graph
                 UniversalIsomorphismTester.getSubgraphMap(structure, subGroup).each { RMap map ->
 

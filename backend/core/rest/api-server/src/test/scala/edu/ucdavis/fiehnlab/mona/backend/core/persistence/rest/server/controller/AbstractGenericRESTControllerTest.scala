@@ -65,7 +65,6 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
         else {
           given().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/count").then().statusCode(200)
         }
-
       }
 
       "get" in {
@@ -121,7 +120,6 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
     */
   def authenticate(user: String = "admin", password: String = "secret"): RequestSpecification = {
     val response = loginService.login(new LoginRequest(user, password))
-
 
     assert(response.token != null)
     logger.debug(s"generated token is ${response.token}")
