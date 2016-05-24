@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
+
 import scala.concurrent.duration._
 import java.io.InputStreamReader
 
@@ -77,6 +79,12 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
           assert(countAfter - exampleRecords.length == countBefore)
         }
+      }
+
+      "we should get back a count of the query result" in {
+        val query = WrappedString("metaData=q='name==\"ion mode\" and value==\"negative\"'")
+        val count = authenticate().contentType("application/json: charset=UTF-8").body(query).when().post("/count").then().statusCode(200).extract().as(classOf[Int])
+         assert(count == 11406)
       }
 
       "we should be able to query all the spectra using GET at /rest/spectra" in {
