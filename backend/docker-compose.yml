@@ -172,8 +172,8 @@ services:
     ports:
     - "4444:4444"
 
-  #curration scheduler to notify rabbit queue, if any messages are send down the bus
-  #it also exposes a couple of rest enpoints to manually schedule curration tasks
+  #curation scheduler to notify rabbit queue, if any messages are send down the bus
+  #it also exposes a couple of rest enpoints to manually schedule curation tasks
   #to the system
   curationScheduler:
     image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler

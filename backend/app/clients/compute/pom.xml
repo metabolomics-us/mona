@@ -12,6 +12,6 @@
     <groupId>edu.ucdavis.fiehnlab.mona.app.client</groupId>
     <artifactId>compute</artifactId>
 
-    <description>This defines a mona compute node and it's main purpose is to async run batch jobs and curration jobs</description>
+    <description>This defines a mona compute node and it's main purpose is to async run batch jobs and curation jobs</description>
 
 </project>

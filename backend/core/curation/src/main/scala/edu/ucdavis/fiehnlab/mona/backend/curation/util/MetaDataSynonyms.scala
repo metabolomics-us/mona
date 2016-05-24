@@ -1,6 +1,5 @@
-package edu.ucdavis.fiehnlab.mona.backend.curation.common
+package edu.ucdavis.fiehnlab.mona.backend.curation.util
 
-import java.io.{InputStreamReader, FileInputStream}
 import scala.io.Source
 
 /**

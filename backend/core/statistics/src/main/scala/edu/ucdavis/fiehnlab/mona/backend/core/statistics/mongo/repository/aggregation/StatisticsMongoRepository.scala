@@ -11,5 +11,4 @@ trait StatisticsMongoRepository {
     * @return
     */
   def aggregateByName(name: String, metaDataGroup: Option[String] = None): Seq[(AnyVal, Int)]
-
 }

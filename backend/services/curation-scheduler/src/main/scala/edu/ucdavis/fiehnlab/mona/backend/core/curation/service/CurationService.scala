@@ -18,32 +18,31 @@ class CurationService {
 
   @Autowired
   @Qualifier("spectra-curation-queue")
-  val queueName:String = null
+  val queueName: String = null
 
   @Autowired
-  val rabbitTemplate:RabbitTemplate = null
+  val rabbitTemplate: RabbitTemplate = null
 
 
   @Autowired
   val notifications: EventBus[Notification] = null
 
   /**
-    * sends this spectrum to our dedicated queue. This queue can have many consumers to than
-    * asynchrly process and curret the object
- *
+    * sends this spectrum to our dedicated queue. This queue can have many consumers to then
+    * asynchronously process and curate the object
+    *
     * @param spectrum
     */
   def scheduleSpectra(spectrum:Spectrum) = {
-    rabbitTemplate.convertAndSend(queueName,spectrum)
+    rabbitTemplate.convertAndSend(queueName, spectrum)
     notifications.sendEvent(Event(Notification(CurationScheduled(spectrum), getClass.getName)))
   }
-
 }
 
 /**
-  * simple event to let people who are interrested in notifications know that we scheduled one
+  * simple event to let people who are interested in notifications know that we scheduled one
  *
   * @param spectrum
   * @param time
   */
-case class CurationScheduled(spectrum: Spectrum, time:Date = new Date())
+case class CurationScheduled(spectrum: Spectrum, time: Date = new Date())

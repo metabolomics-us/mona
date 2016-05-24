@@ -13,7 +13,7 @@
     <artifactId>curation-scheduler</artifactId>
 
     <description>
-        This project provides a simple scheduler for curration tasks and there should be only 1 instance running of it at any given time. The reason being for this is, since it would otherwise cause multiplexing of messages
+        This project provides a simple scheduler for curation tasks and there should be only 1 instance running of it at any given time. The reason being for this is, since it would otherwise cause multiplexing of messages
     </description>
 
 
@@ -72,12 +72,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
     </dependencies>
 </project>

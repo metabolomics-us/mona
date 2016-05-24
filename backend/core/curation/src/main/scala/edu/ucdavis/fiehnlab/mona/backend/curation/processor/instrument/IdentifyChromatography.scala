@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum, Tags}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.common.{CommonMetaData, CommonTags}
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonTags, CommonMetaData}
 import org.springframework.batch.item.ItemProcessor
 
 /**
