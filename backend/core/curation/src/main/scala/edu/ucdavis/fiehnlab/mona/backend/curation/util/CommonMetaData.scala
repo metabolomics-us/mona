@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.curation.common
+package edu.ucdavis.fiehnlab.mona.backend.curation.util
 
 /**
   * Created by sajjan on 3/23/16.

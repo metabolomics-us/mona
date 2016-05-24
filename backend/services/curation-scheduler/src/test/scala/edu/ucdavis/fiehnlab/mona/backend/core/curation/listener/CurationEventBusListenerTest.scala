@@ -25,7 +25,7 @@ import scala.concurrent.duration._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[CurationScheduler]))
-class CurrationEventBusListenerTest extends AbstractSpringControllerTest with Eventually {
+class CurationEventBusListenerTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
   val eventBus: EventBus[Spectrum] = null
