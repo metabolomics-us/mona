@@ -14,7 +14,7 @@ class PredefinedQueryService {
         def queries = Query.findAll()
 
         queries.each {
-            it.count = spectraQueryService.getCountForQuery(JSON.parse(it.query))
+            it.queryCount = spectraQueryService.getCountForQuery(JSON.parse(it.query))
             it.save(flush: true)
         }
     }
