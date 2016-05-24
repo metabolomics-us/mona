@@ -179,8 +179,9 @@
 
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
+                
                 $log.info(payload);
-                $log.warn(Spectrum.query);
+                
                 if (payload === '') {
                     Spectrum.getAllSpectra(function (data) {
                         if (data.length === 0) {

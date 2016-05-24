@@ -25,18 +25,18 @@
 
             $scope.instrumentType = [
                 {
-                    SI: [{name: 'Liquid Chromatography (LC)'},
-                        {name: 'Gas Chromatography (GC)'},
-                        {name: 'Direct Injection/Infusion (DI)'},
-                        {name: 'Capillary ElectrophotetQueryis (CE)'}]
+                    SI: [{name: 'Liquid Chromatography', abv: '(LC)'},
+                        {name: 'Gas Chromatography', abv: '(GC)'},
+                        {name: 'Direct Injection/Infusion', abv: '(DI)'},
+                        {name: 'Capillary ElectrophotetQueryis', abv: '(CE)'}]
                 },
                 {
-                    IM: [{name: 'Atmospheric PtetQuerysure Chemical Ionization (APCI)'},
-                        {name: 'Chemical Ionization (CI)'},
-                        {name: 'Electron Impact (EI)'},
-                        {name: 'Electrospray Ionization (ESI)'},
-                        {name: 'Fast Atom Bombardment (FAB)'},
-                        {name: 'Matrix Assisted Laser Desorption Ionization (MALDI)'}]
+                    IM: [{name: 'Atmospheric PtetQuerysure Chemical Ionization', abv: '(APCI)'},
+                        {name: 'Chemical Ionization', abv: '(CI)'},
+                        {name: 'Electron Impact', abv: '(EI)'},
+                        {name: 'Electrospray Ionization', abv: '(ESI)'},
+                        {name: 'Fast Atom Bombardment', abv: '(FAB)'},
+                        {name: 'Matrix Assisted Laser Desorption Ionization', abv: '(MALDI)'}]
                 }
             ];
 
@@ -44,36 +44,11 @@
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
         })();
 
-
-
+        
         $scope.submitQuery = function () {
-            // add and filter query options, and update query cache
-            //$scope.showSplash();
-
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
-
-            var testQuery = encodeURIComponent('metaData=q=\'name=="ion mode" and value=="negative"\'');
-            rsqlService.setQuery(testQuery);
-
             var query = rsqlService.getQuery();
-            $log.info(query);
-            if (query !== '') {
-                $location.path('/spectra/browse');
-            }
-
-            //var response = Spectrum.searchSpectra({query: testQuery}, function(data) {
-            //    $log.info(data);
-            //});
-            //$log.info(response);
-
-            // show splash on submit
-            // submit rest request
-                // on success, route to spectra controller
-                // how to pass data to SpectraController? that controller grabs query already,
-                    // on submit, just save to queryCache
-                        // display splash on browse route
-                        // show splash on browser
-
+            $location.path('/spectra/browse');
         };
 
     }
