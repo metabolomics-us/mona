@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
   * dedicated queue for curration tasks
   */
 @Component
-class CurrationEventBusListener @Autowired()(val bus:EventBus[Spectrum]) extends EventBusListener[Spectrum](bus) {
+class CurationEventBusListener @Autowired()(val bus:EventBus[Spectrum]) extends EventBusListener[Spectrum](bus) {
 
   @Autowired
   val currationService:CurationService = null
