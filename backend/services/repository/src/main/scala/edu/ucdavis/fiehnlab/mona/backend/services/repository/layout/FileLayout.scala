@@ -4,7 +4,7 @@ import java.io.File
 import java.util.Calendar
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.curation.common.CurationUtilities
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.CurationUtilities
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 
@@ -80,7 +80,14 @@ class SubmitterInchiKeySplashId(val baseDir: File) extends FileLayout {
     * @return
     */
   override def layout(spectrum: Spectrum): File = {
-    val submitterDir = new File(baseDir, spectrum.submitter.institution)
+
+    var institution = spectrum.submitter.institution
+
+    if(institution == null){
+      institution = "None"
+    }
+    val submitterDir = new File(baseDir, institution)
+
 
     var compound: Compound = CurationUtilities.getFirstBiologicalCompound(spectrum)
 
