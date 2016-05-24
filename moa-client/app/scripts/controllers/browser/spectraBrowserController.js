@@ -144,19 +144,29 @@
          * Get natural mass as accurate mass of spectrum
          */
         $scope.addAccurateMass = function(spectra) {
+
             for (var i = 0, l = spectra.length; i < l; i++) {
                 var mass = '';
+                var spectrum = spectra[i];
 
-                if (angular.isDefined(spectra[i].biologicalCompound)) {
-                    for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
-                        if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
-                            mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
+                if (angular.isDefined(spectrum.compound)) {
+                    for (var j = 0, m = spectrum.compound.length; j < m; j++) {
+                        var compound = spectrum.compound[j];
+
+                        for(var k = 0, n = compound.metaData.length; k < n; k++) {
+                            var meta = compound.metaData[k];
+                            if(meta.name === 'total exact mass') {
+                                mass = parseFloat(meta.value).toFixed(3);
+                                break;
+                            }
+                        }
+                        $log.info(compound.kind);
+                        if(compound.kind === 'biological') {
                             break;
                         }
                     }
                 }
-
-                spectra[i].accurateMass = mass;
+                spectrum.accurateMass = mass;
             }
 
             return spectra;
@@ -179,9 +189,9 @@
 
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
-                
+
                 $log.info(payload);
-                
+
                 if (payload === '') {
                     Spectrum.getAllSpectra(function (data) {
                         if (data.length === 0) {
