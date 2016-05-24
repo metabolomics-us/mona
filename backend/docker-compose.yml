@@ -102,7 +102,7 @@ services:
 # The discovery service provided us with a local overview of our services
 # and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
-    image: eros.fiehnlab.ucdavis.edu/mona-discovery:working
+    image: eros.fiehnlab.ucdavis.edu/mona-discovery
     ports:
       - "8761:8761"
     depends_on:
@@ -118,7 +118,7 @@ services:
 # the client needs to have a bootstrap.yml to register against it
 
   config:
-    image: eros.fiehnlab.ucdavis.edu/mona-configuration:working
+    image: eros.fiehnlab.ucdavis.edu/mona-configuration
     ports:
       - "1111:1111"
 
@@ -143,7 +143,7 @@ services:
 # this proxy server is the main entry point for mona and should be preferable always be used
 
   proxy:
-    image: eros.fiehnlab.ucdavis.edu/mona-proxy:working
+    image: eros.fiehnlab.ucdavis.edu/mona-proxy
     ports:
       - "8080:8080"
     depends_on:
@@ -163,7 +163,7 @@ services:
 
   #webhook support to notify external apis
   webhooks:
-    image: eros.fiehnlab.ucdavis.edu/mona-webhooks-server:working
+    image: eros.fiehnlab.ucdavis.edu/mona-webhooks-server
 
     depends_on:
       - proxy
@@ -176,14 +176,24 @@ services:
   #it also exposes a couple of rest enpoints to manually schedule curration tasks
   #to the system
   curationScheduler:
-    image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler:working
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler
 
     depends_on:
-      - proxy
-      - mongodb
+      - webhooks
     entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "5555:5555"
+
+  #provides us with a presentation of the content of mona as form of repository
+  repository:
+    image: eros.fiehnlab.ucdavis.edu/mona-repository
+
+    depends_on:
+      - webhooks
+    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    ports:
+    - "8888:8888"
+
 
 ################################################################################################################
 # This section defines services, which can be scaled from 1-n times and should be started last
@@ -192,14 +202,14 @@ services:
 
   #this is our main authenticaiton service for the use in mona
   auth:
-    image: eros.fiehnlab.ucdavis.edu/mona-auth-server:working
+    image: eros.fiehnlab.ucdavis.edu/mona-auth-server
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
 
   #persistences and query interface
   persistence:
-    image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:working
+    image: eros.fiehnlab.ucdavis.edu/mona-persistence-server
 
     depends_on:
       - curationScheduler
@@ -207,7 +217,7 @@ services:
 
   #curation runner is utilized to actually curate spectra
   curationRunner:
-    image: eros.fiehnlab.ucdavis.edu/mona-curation-runner:working
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-runner
 
     depends_on:
       - curationScheduler
