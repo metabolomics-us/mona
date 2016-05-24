@@ -54,9 +54,9 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     *
     * @return
     */
-  @RequestMapping(path = Array("/count"), method = Array(RequestMethod.POST))
+  @RequestMapping(path = Array("/search/count"), method = Array(RequestMethod.GET))
   @Async
-  def searchCount(@RequestBody query: WrappedString): Future[Long] = {
+  def searchCount(@RequestParam(value = "query", required = false) query: WrappedString): Future[Long] = {
     new AsyncResult[Long](spectrumPersistenceService.count(query.string))
   }
 

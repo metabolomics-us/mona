@@ -1,14 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
-
 import scala.concurrent.duration._
 import java.io.InputStreamReader
 
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Compound, Spectrum, Splash}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
@@ -16,7 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.Sp
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -81,18 +79,9 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         }
       }
 
-      "we should get back a count of the query result" in {
-        val query = WrappedString("metaData=q='name==\"ion mode\" and value==\"negative\"'")
-        val count = authenticate().contentType("application/json: charset=UTF-8").body(query).when().post("/count").then().statusCode(200).extract().as(classOf[Int])
-         assert(count == 11406)
-      }
-
       "we should be able to query all the spectra using GET at /rest/spectra" in {
-
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-
         assert(spectrumRepository.count() == exampleRecords.length)
-
       }
 
       "we should be able to test our pagination, while using GET at /rest/spectra?size=10 to 10 records" in {
@@ -137,10 +126,31 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         }
       }
 
-      "we should be able to execute custom queries at /rest/spectra/search using GET" in {
+      "we should be able to execute custom name subqueries and counts at /rest/spectra/search using GET" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-
         assert(exampleRecords.length == 1)
+
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().statusCode(200).extract().as(classOf[Int])
+        assert(count == 1)
+      }
+
+      "we should be able to execute custom name queries at /rest/spectra/search using GET" in {
+        // TODO: this query should be equivalent to the previous test
+        /*
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        assert(exampleRecords.length == 1)
+
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().statusCode(200).extract().as(classOf[Int])
+        assert(count == 1)
+        */
+      }
+
+      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" in {
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        assert(exampleRecords.length == 21)
+
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().statusCode(200).extract().as(classOf[Int])
+        assert(count == 21)
       }
 
       "we should be able to update a spectra with new properties" in {
