@@ -1,0 +1,338 @@
+
+/** Search tabs **/
+#search-box {
+    margin-top: 40px;
+}
+
+.search-heading {
+    font-size: larger;
+    font-style: italic;
+
+}
+
+.search-form {
+    padding: 20px;
+    margin: 20px 0;
+    width: 50%;
+}
+
+.tab-pane.ng-scope.active {
+    background-color: #f8f8f8;
+}
+
+.nav-tabs > li.active > a {
+    background-color: #f8f8f8 !important;
+}
+
+.form-control-label {
+    font-size: larger;
+    font-weight: bold;
+}
+
+
+.insSpan {
+    padding-left: 40px;
+}
+
+
+.table th {
+    border-bottom: none !important;
+}
+/*#end region */
+
+
+
+.panel-default > .panel-heading {
+    background-color: #f8f8f8 !important;
+}
+
+.panel-collapse {
+    background-color: #f8f8f8;
+}
+
+.panel.panel-default.panel-open {
+    border: none;
+    background-color: #f8f8f8;
+    box-shadow: none;
+}
+
+
+
+/*#region Splash */
+#splash-page {
+    z-index: 99999 !important;
+}
+
+#splash-page .bar {
+    width: 100%;
+}
+
+.page-splash {
+    z-index: 99999 !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #333;
+    opacity: .9;
+    pointer-events: auto;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    -o-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transition: opacity 0.3s linear;
+    -moz-transition: opacity 0.3s linear;
+    -o-transition: opacity 0.3s linear;
+    transition: opacity 0.3s linear;
+}
+
+.page-splash-message {
+    text-align: center;
+    margin: 20% auto 0 auto;
+    font-size: 400%;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    -webkit-text-shadow: 2px 2px #000000;
+    text-shadow: 2px 2px #000000;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.15);
+
+    text-decoration: none;
+    color: #F58A00;
+    padding: 0;
+}
+
+.page-splash-message.page-splash-message-subtle {
+    margin: 30% auto 0 auto;
+    font-size: 200%;
+}
+
+
+/*#region Angular ng-show dissolve animation */
+.dissolve-animation.ng-hide-remove,
+.dissolve-animation.ng-hide-add {
+    position: fixed !important;
+    display: inline !important;
+    -webkit-transition: 0.5s linear all;
+    -moz-transition: 0.5s linear all;
+    -o-transition: 0.5s linear all;
+    transition: 0.5s linear all;
+}
+
+.dissolve-animation.ng-hide-remove.ng-hide-remove-active,
+.dissolve-animation.ng-hide-add {
+    opacity: 1;
+}
+
+.dissolve-animation.ng-hide-add.ng-hide-add-active,
+.dissolve-animation.ng-hide-remove {
+    opacity: 0;
+}
+/*#endregion */
+
+
+/* Search Pulse */
+#loadpulse {
+    width: 48px;
+    padding: 8px 5px;
+    margin: 50px -5px;
+    position: absolute;
+    overflow: hidden;
+}
+#loadpulse .segment {
+    float: left;
+    position: relative;
+    width: 6px;
+    height: 6px;
+    border: 1px solid #fff;
+    border-radius: 50px;
+    margin-left: 2px;
+    border: 1px solid #111;
+    border-right-color: #333;
+    border-bottom-color: #333;
+    background: #000;
+}
+#loadpulse .segment:first-child {
+    margin-left: 0;
+}
+#loadpulse .ball {
+    background-color: #F58A00;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@color1', endColorstr='@color2');
+    background-image: -webkit-linear-gradient(90deg, #F58A00 25%, #F58A00);
+    background-image: -moz-linear-gradient(90deg, #F58A00 25%, #F58A00);
+    width: 6px;
+    height: 6px;
+    border-radius: 50px;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -webkit-animation: loadpulse-ball 1s linear forwards normal;
+    -moz-animation: loadpulse-ball 1s linear forwards normal;
+    -ms-animation: loadpulse-ball 1s linear forwards normal;
+    animation: loadpulse-ball 1s linear forwards normal;
+    -webkit-animation-delay: 0;
+    -moz-animation-delay: 0;
+    -o-animation-delay: 0;
+    animation-delay: 0;
+}
+#loadpulse .pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 30px;
+    border: 1px solid #00c6ff;
+    -webkit-box-shadow: 0 0 5px #00c6ff;
+    -moz-box-shadow: 0 0 5px #00c6ff;
+    box-shadow: 0 0 5px #00c6ff;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -webkit-animation: loadpulse-glow 3s infinite ease-out normal;
+    -moz-animation: loadpulse-glow 3s infinite ease-out normal;
+    -ms-animation: loadpulse-glow 3s infinite ease-out normal;
+    animation: loadpulse-glow 3s infinite ease-out normal;
+    -webkit-animation-delay: 0;
+    -moz-animation-delay: 0;
+    -o-animation-delay: 0;
+    animation-delay: 0;
+}
+#loadpulse #layer1 {
+    -webkit-animation-delay: 0.5s;
+    -moz-animation-delay: 0.5s;
+    -o-animation-delay: 0.5s;
+    animation-delay: 0.5s;
+}
+#loadpulse #layer2 {
+    -webkit-animation-delay: 1s;
+    -moz-animation-delay: 1s;
+    -o-animation-delay: 1s;
+    animation-delay: 1s;
+}
+#loadpulse #layer3 {
+    -webkit-animation-delay: 1.5s;
+    -moz-animation-delay: 1.5s;
+    -o-animation-delay: 1.5s;
+    animation-delay: 1.5s;
+}
+#loadpulse #layer4 {
+    -webkit-animation-delay: 2s;
+    -moz-animation-delay: 2s;
+    -o-animation-delay: 2s;
+    animation-delay: 2s;
+}
+#loadpulse #layer5 {
+    -webkit-animation-delay: 2.5s;
+    -moz-animation-delay: 2.5s;
+    -o-animation-delay: 2.5s;
+    animation-delay: 2.5s;
+}
+#loadpulse #layer7 {
+    -webkit-animation-delay: 1.5s;
+    -moz-animation-delay: 1.5s;
+    -o-animation-delay: 1.5s;
+    animation-delay: 1.5s;
+}
+#loadpulse #layer8 {
+    -webkit-animation-delay: 2s;
+    -moz-animation-delay: 2s;
+    -o-animation-delay: 2s;
+    animation-delay: 2s;
+}
+#loadpulse #layer9 {
+    -webkit-animation-delay: 2.5s;
+    -moz-animation-delay: 2.5s;
+    -o-animation-delay: 2.5s;
+    animation-delay: 2.5s;
+}
+#loadpulse #layer10 {
+    -webkit-animation-delay: 3s;
+    -moz-animation-delay: 3s;
+    -o-animation-delay: 3s;
+    animation-delay: 3s;
+}
+#loadpulse #layer11 {
+    -webkit-animation-delay: 3.5s;
+    -moz-animation-delay: 3.5s;
+    -o-animation-delay: 3.5s;
+    animation-delay: 3.5s;
+}
+@keyframes loadpulse-ball {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+@-moz-keyframes loadpulse-ball {
+    from {
+        -moz-transform: scale(0);
+    }
+    to {
+        -moz-transform: scale(1);
+    }
+}
+@-webkit-keyframes loadpulse-ball {
+    from {
+        -webkit-transform: scale(0);
+    }
+    to {
+        -webkit-transform: scale(1);
+    }
+}
+@keyframes loadpulse-glow {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    10% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.75);
+        opacity: 0;
+    }
+    to {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+@-moz-keyframes loadpulse-glow {
+    from {
+        -moz-transform: scale(0);
+        opacity: 0;
+    }
+    10% {
+        -moz-transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        -moz-transform: scale(1.75);
+        opacity: 0;
+    }
+    to {
+        -moz-transform: scale(0);
+        opacity: 0;
+    }
+}
+@-webkit-keyframes loadpulse-glow {
+    from {
+        -webkit-transform: scale(0);
+        opacity: 0;
+    }
+    10% {
+        -webkit-transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        -webkit-transform: scale(1.75);
+        opacity: 0;
+    }
+    to {
+        -webkit-transform: scale(0);
+        opacity: 0;
+    }
+}
+/**endregion**/

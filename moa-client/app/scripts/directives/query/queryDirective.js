@@ -36,7 +36,10 @@
     function showQueryController($scope, $log, $rootScope, SpectraQueryBuilderService, Spectrum) {
         $scope.result = [];
         $scope.status = {isOpen: false};
-        $scope.query = SpectraQueryBuilderService.getQuery();
+
+        var curQuery = SpectraQueryBuilderService.getQuery();
+
+        $scope.query = curQuery === '' ? '/rest/spectra' : curQuery;
 
         $scope.$on('spectra:query', function(event, data) {
             $scope.query = data;
