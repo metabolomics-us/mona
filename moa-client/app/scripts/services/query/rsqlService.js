@@ -113,11 +113,11 @@
             var compiledQuery = '';
 
             // strip leading 'and' if compoundQuery is empty
-            compoundQuery === '' ? compiledQuery = metadataQuery.slice(5) :
-                compiledQuery = compiledQuery.concat(compoundQuery, metadataQuery);
+            compiledQuery = compoundQuery === '' ? metadataQuery.slice(5) :
+                compiledQuery.concat(compoundQuery, metadataQuery);
 
             // set query in cache
-            compiledQuery = compiledQuery === '' ? '/rest/spectra' : compiledQuery
+            compiledQuery = compiledQuery === '' ? '/rest/spectra' : compiledQuery;
             setRsqlQuery(compiledQuery);
         }
 
