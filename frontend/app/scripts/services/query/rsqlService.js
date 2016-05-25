@@ -82,8 +82,7 @@
                 delete options.metadata.ionMode;
             }
 
-            setRsqlQuery(options);
-            buildRsqlQuery();
+            buildRsqlQuery(options);
         }
 
 
@@ -93,8 +92,8 @@
          * @return rsql query string
          */
 
-        function buildRsqlQuery() {
-            var filtered = getQuery();
+        function buildRsqlQuery(options) {
+            var filtered = options;
             var compoundQuery = '';
             var metadataQuery = '';
 
@@ -114,10 +113,11 @@
             var compiledQuery = '';
 
             // strip leading 'and' if compoundQuery is empty
-            compoundQuery === '' ? compiledQuery = metadataQuery.slice(5) :
-                compiledQuery = compiledQuery.concat(compoundQuery, metadataQuery);
+            compiledQuery = compoundQuery === '' ? metadataQuery.slice(5) :
+                compiledQuery.concat(compoundQuery, metadataQuery);
 
             // set query in cache
+            compiledQuery = compiledQuery === '' ? '/rest/spectra' : compiledQuery;
             setRsqlQuery(compiledQuery);
         }
 

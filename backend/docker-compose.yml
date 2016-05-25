@@ -179,11 +179,21 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler:latest
 
     depends_on:
-      - proxy
-      - mongodb
+      - webhooks
     entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "5555:5555"
+
+  #provides us with a presentation of the content of mona as form of repository
+  repository:
+    image: eros.fiehnlab.ucdavis.edu/mona-repository
+
+    depends_on:
+      - webhooks
+    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    ports:
+    - "8888:8888"
+
 
 ################################################################################################################
 # This section defines services, which can be scaled from 1-n times and should be started last
