@@ -37,9 +37,7 @@
         $scope.result = [];
         $scope.status = {isOpen: false};
 
-        var curQuery = SpectraQueryBuilderService.getQuery();
-
-        $scope.query = curQuery === '' ? '/rest/spectra' : curQuery;
+        $scope.query = SpectraQueryBuilderService.getQuery();
 
         $scope.$on('spectra:query', function(event, data) {
             $scope.query = data;
