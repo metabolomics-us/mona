@@ -1,12 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository.listener
 
-import java.io.File
+import java.io.{File, FileNotFoundException}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, EventBusListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.FileLayout
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.{ControllerAdvice, ExceptionHandler, ResponseStatus}
 
 /**
   * Created by wohlg_000 on 5/18/2016.
