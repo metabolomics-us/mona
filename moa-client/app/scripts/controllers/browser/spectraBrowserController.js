@@ -114,7 +114,7 @@
 
             $scope.queryResultCount = "Loading...";
 
-            Spectrum.searchSpectraCount({query: '&query=' + SpectraQueryBuilderService.getQuery()}, function(data) {
+            Spectrum.searchSpectraCount({query: '?query=' + SpectraQueryBuilderService.getQuery()}, function(data) {
                 $scope.queryResultCount = data.count;
             });
         };
@@ -191,9 +191,9 @@
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
 
-                //$log.debug(payload);
+                $log.debug(payload);
 
-                if (payload === '') {
+                if (payload === '/rest/spectra') {
                     Spectrum.getAllSpectra({page: page}, function (data) {
                         if (data.length === 0) {
                             $scope.dataAvailable = false;
