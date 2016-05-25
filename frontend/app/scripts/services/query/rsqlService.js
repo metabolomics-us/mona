@@ -13,8 +13,7 @@
 
         var service = {
             getQuery: getQuery,
-            setQuery: setRsqlQuery,
-            filterKeywordSearchOptions: filterKeywordSearchOptions
+            setQuery: setRsqlQuery
 
         };
         return service;
@@ -27,63 +26,7 @@
             QueryCache.setSpectraQuery(query);
         }
 
-        function filterKeywordSearchOptions(options, instruments, ms, ionMode) {
-            // filter compound
-            if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(options.compound.name)) {
-                options.compound.inchiKey = options.compound.name;
-                delete options.compound.name;
-            }
-            else {
-                delete options.compound.inchiKey;
-            }
 
-            // filter exact mass
-            if (options.metadata.exactMass === null) {
-                delete options.metadata.tolerance;
-                delete options.metadata.exactMass;
-            }
-
-            // filter instruments
-            for (var i = 0; i < instruments.length; i++) {
-                var curInstrument = instruments[i];
-                for (var j in curInstrument) {
-                    angular.forEach(curInstrument[j], function (value, key) {
-                        if (value.selected === true)
-                            options.metadata.insType.push(value.name);
-                    });
-
-                }
-            }
-
-            // add ion mode
-            angular.forEach(ionMode, function (value, key) {
-                if (value.selected === true) {
-                    options.metadata.ionMode.push(value.name);
-                }
-            });
-
-            // add ms type to query
-            angular.forEach(ms, function (value, key) {
-                if (value.selected === true) {
-                    options.metadata.msType.push(value.name);
-                }
-            });
-
-            // remove empty fields
-            if (typeof(options.metadata.insType) !== 'undefined' && options.metadata.insType.length === 0) {
-                delete options.metadata.insType;
-            }
-
-            if (typeof(options.metadata.msType) !== 'undefined' && options.metadata.msType.length === 0) {
-                delete options.metadata.msType;
-            }
-
-            if (typeof(options.metadata.ionMode) !== 'undefined' && options.metadata.ionMode.length === 0) {
-                delete options.metadata.ionMode;
-            }
-
-            buildRsqlQuery(options);
-        }
 
 
         /**
