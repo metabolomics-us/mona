@@ -5,7 +5,7 @@
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, $log, rsqlService, $location, Spectrum) {
+    function KeywordSearchController($scope, $log, rsqlService, $location) {
 
         (function initForm() {
             $scope.queryOptions = {
@@ -44,7 +44,7 @@
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
         })();
 
-        
+
         $scope.submitQuery = function () {
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             var query = rsqlService.getQuery();

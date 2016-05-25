@@ -25,7 +25,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]))
-class MassbankControllerTest extends AbstractSpringControllerTest with Eventually with LazyLogging{
+class MassbankControllerTest extends AbstractSpringControllerTest with Eventually with LazyLogging {
 
   @Autowired
   val spectrumRepository: SpectrumPersistenceService = null
@@ -50,20 +50,14 @@ class MassbankControllerTest extends AbstractSpringControllerTest with Eventuall
 
       "require authorization" in {
         given().contentType("application/json; charset=UTF-8").body(strings).log().all(true).when().post("/upload/massbank").then().statusCode(401)
-
       }
 
       "upload a spectra, with authorization" in {
         val result:Spectrum = authenticate().contentType("application/json; charset=UTF-8").body(strings).log().all(true).when().post("/upload/massbank").then().log().all(true).statusCode(200).extract().as(classOf[Spectrum])
 
-
         assert(result.id == "PR100162")
-
         assert(result.compound.length == 1)
       }
-
-
     }
-
   }
 }
