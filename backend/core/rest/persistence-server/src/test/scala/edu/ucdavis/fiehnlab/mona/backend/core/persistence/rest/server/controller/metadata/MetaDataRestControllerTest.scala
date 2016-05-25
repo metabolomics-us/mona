@@ -30,7 +30,7 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
   @Autowired
   val spectrumRepository: ISpectrumMongoRepositoryCustom = null
 
-  //required for spring and scala tes
+  // required for spring and scala tests
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
 
@@ -46,7 +46,6 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
     "when connected we should be able to" should {
 
       spectrumRepository.deleteAll()
-
 
       //58 spectra for us to work with
       val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
@@ -65,7 +64,6 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
         val result = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("authors")).post("/metaData/values").then().statusCode(200).extract().body().as(classOf[Array[String]])
 
         assert(result.length == 1)
-
         assert(result.head.equals("Mark Earll, Stephan Beisken, EMBL-EBI"))
       }
     }

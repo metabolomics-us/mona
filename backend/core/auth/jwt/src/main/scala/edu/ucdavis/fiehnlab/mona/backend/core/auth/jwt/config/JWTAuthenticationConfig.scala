@@ -16,9 +16,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration
 class JWTAuthenticationConfig {
 
-
   @Value("${mona.security.secret:234234324234ewrdsfdsgfsdfw4er32}")
-  val secret:String = null
+  val secret: String = null
 
   /**
     * need a central server for getting this value otherwise all hell breaks loos

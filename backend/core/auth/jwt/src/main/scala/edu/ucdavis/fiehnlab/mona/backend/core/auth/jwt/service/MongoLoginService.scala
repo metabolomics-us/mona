@@ -13,13 +13,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 /**
   * simple login implementation utilizing mongo as a service
   */
-class MongoLoginService extends LoginService with LazyLogging{
+class MongoLoginService extends LoginService with LazyLogging {
 
   @Autowired
   val userRepository: UserRepository = null
 
   @Autowired
-  val tokenService:TokenService = null
+  val tokenService: TokenService = null
 
   /**
     * does a login and returns a token for us, which can be used internally
@@ -60,10 +60,8 @@ class MongoLoginService extends LoginService with LazyLogging{
     * @return
     */
   override def extend(token: String): LoginResponse = {
-
     val info = tokenService.info(token)
 
-    new LoginResponse(tokenService.generateToken(userRepository.findByUsername(info.username),24*365*10))
-
+    new LoginResponse(tokenService.generateToken(userRepository.findByUsername(info.username), 24*365*10))
   }
 }
