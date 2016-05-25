@@ -74,18 +74,19 @@ class RepositoryListenerTest extends WordSpec with LazyLogging {
     "be able to expose data as endpoint" should {
 
       "be able to access /repository and browse it " in {
-        given().contentType("application/json; charset=UTF-8").when().log.all(true).get("/repository/").then().statusCode(200)
+        given().contentType("application/json; charset=UTF-8").when().log.all(true).get("/repository").then().statusCode(200)
       }
 
       "be able to access our spectra file" in {
         repositoryListener.received(Event(spectrum, eventType = Event.ADD))
-        given().contentType("application/json; charset=UTF-8").when().log().all(true).get(s"/repository/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(200)
+        val spectra = given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(200).extract().as(classOf[Spectrum])
+
+        assert(spectra.id == "252")
       }
 
       "be able to delete our spectra file" in {
         repositoryListener.received(Event(spectrum, eventType = Event.DELETE))
-        //404 would be better
-        given().contentType("application/json; charset=UTF-8").when().log().all(true).get(s"/repository/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(500)
+        given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(404)
       }
 
 
