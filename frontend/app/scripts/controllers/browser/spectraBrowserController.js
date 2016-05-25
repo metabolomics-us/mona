@@ -114,7 +114,9 @@
 
             $scope.queryResultCount = "Loading...";
 
-            Spectrum.searchSpectraCount({query: '?query=' + SpectraQueryBuilderService.getQuery()}, function(data) {
+            var queryString = SpectraQueryBuilderService.getRsqlQuery();
+            
+            Spectrum.searchSpectraCount({query: queryString }, function(data) {
                 $scope.queryResultCount = data.count;
             });
         };
