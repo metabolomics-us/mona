@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository
 
 import java.io.File
+import javax.servlet.ServletContext
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
@@ -11,6 +12,7 @@ import edu.ucdavis.fiehnlab.mona.backend.services.repository.listener.Repository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.embedded.ServletContextInitializer
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
@@ -47,9 +49,18 @@ class Repository extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Bean
   def repositoryListener(eventBus: EventBus[Spectrum], layout: FileLayout): RepositoryListener = new RepositoryListener(eventBus, layout)
+
+  @Bean
+  def initializer:ServletContextInitializer = new ServletContextInitializer {
+    override def onStartup(servletContext: ServletContext): Unit = {
+      servletContext.setInitParameter("dirAllowed","true")
+      servletContext.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed","true")
+    }
+  }
 }
 
 
 object Repository extends App {
   new SpringApplication(classOf[Repository]).run()
 }
+
