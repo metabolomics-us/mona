@@ -82,8 +82,7 @@
                 delete options.metadata.ionMode;
             }
 
-            setRsqlQuery(options);
-            buildRsqlQuery();
+            buildRsqlQuery(options);
         }
 
 
@@ -93,8 +92,8 @@
          * @return rsql query string
          */
 
-        function buildRsqlQuery() {
-            var filtered = getQuery();
+        function buildRsqlQuery(options) {
+            var filtered = options;
             var compoundQuery = '';
             var metadataQuery = '';
 
@@ -118,6 +117,7 @@
                 compiledQuery = compiledQuery.concat(compoundQuery, metadataQuery);
 
             // set query in cache
+            compiledQuery = compiledQuery === '' ? '/rest/spectra' : compiledQuery
             setRsqlQuery(compiledQuery);
         }
 

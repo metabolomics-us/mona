@@ -191,7 +191,7 @@
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
 
-                $log.debug(payload);
+                $log.debug('load query' + payload);
 
                 if (payload === '/rest/spectra') {
                     Spectrum.getAllSpectra({page: page}, function (data) {
@@ -207,7 +207,7 @@
                     });
                 }
                 else {
-                    Spectrum.searchSpectra({query: payload, offset: offset}, function (data) {
+                    Spectrum.searchSpectra({query: payload, page: page}, function (data) {
                         $scope.duration = (Date.now() - startTime) / 1000;
 
                         if (data.length === 0) {
