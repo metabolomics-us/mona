@@ -74,15 +74,18 @@ module.exports = function(config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'coverage'],
-
+        reporters: ['dots', 'junit', 'coverage'],
+	junitReporter: {
+		outputFile: 'test-results.xml',
+		suite: ''
+	},
 
         // web server port
         port: 9876,
 
 
         // enable / disable colors in the output (reporters and logs)
-        colors: true,
+        colors: false,
 
 
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
@@ -90,9 +93,9 @@ module.exports = function(config) {
 
 
         // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: true,
+        autoWatch: false,
         browsers: ['PhantomJS'],
-        singleRun: false,
+        singleRun: true,
 
         // Concurrency level
         // how many browser should be started simultanous

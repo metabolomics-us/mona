@@ -21,8 +21,8 @@
       .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, $uibModal, SpectraQueryBuilderService, $location,
-                                      SpectrumCache, $rootScope, $timeout) {
+    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location,
+                                      SpectrumCache, $rootScope, $timeout, $log) {
 
         $scope.table = false;
         /**
@@ -51,6 +51,21 @@
          * @type {number}
          */
         $scope.queryResultCount = 0;
+
+
+        $scope.searchSplash = false;
+
+        function hideSplash() {
+            $timeout(function () {
+                $scope.searchSplash = false;
+            }, 1000)
+        }
+
+        function showSplash() {
+            $scope.searchSplash = true;
+        }
+
+
 
         /**
          * reset the current query
@@ -99,25 +114,14 @@
 
             $scope.queryResultCount = "Loading...";
 
-            Spectrum.searchSpectraCount(SpectraQueryBuilderService.getQuery(), function(data) {
+            Spectrum.searchSpectraCount({query: '&query=' + SpectraQueryBuilderService.getQuery()}, function(data) {
                 $scope.queryResultCount = data.count;
             });
         };
 
-        /**
-         * opens our modal dialog to query spectra against the system
-         */
-        $scope.querySpectraDialog = function() {
-            var modalInstance = $uibModal.open({
-                templateUrl: '/views/spectra/query/query.html',
-                controller: 'QuerySpectrumModalController',
-                size: 'lg',
-                backdrop: 'true'
-            });
 
-            modalInstance.result.then(function(query) {
-                $scope.submitQuery();
-            });
+        $scope.initSearch = function() {
+            $location.path('spectra/search');
         };
 
         /**
@@ -138,19 +142,29 @@
          * Get natural mass as accurate mass of spectrum
          */
         $scope.addAccurateMass = function(spectra) {
+
             for (var i = 0, l = spectra.length; i < l; i++) {
                 var mass = '';
+                var spectrum = spectra[i];
 
-                if (angular.isDefined(spectra[i].biologicalCompound)) {
-                    for (var j = 0; j < spectra[i].biologicalCompound.metaData.length; j++) {
-                        if (spectra[i].biologicalCompound.metaData[j].name === 'total exact mass') {
-                            mass = parseFloat(spectra[i].biologicalCompound.metaData[j].value).toFixed(3);
+                if (angular.isDefined(spectrum.compound)) {
+                    for (var j = 0, m = spectrum.compound.length; j < m; j++) {
+                        var compound = spectrum.compound[j];
+
+                        for(var k = 0, n = compound.metaData.length; k < n; k++) {
+                            var meta = compound.metaData[k];
+                            if(meta.name === 'total exact mass') {
+                                mass = parseFloat(meta.value).toFixed(3);
+                                break;
+                            }
+                        }
+
+                        if(compound.kind === 'biological') {
                             break;
                         }
                     }
                 }
-
-                spectra[i].accurateMass = mass;
+                spectrum.accurateMass = mass;
             }
 
             return spectra;
@@ -159,6 +173,9 @@
         /**
          * loads more spectra into the given view
          */
+
+        var page = 0;
+
         $scope.loadMoreSpectra = function() {
             //inform other controllers that we are starting to load spectra
             $rootScope.$broadcast('spectra:starting:query');
@@ -169,29 +186,42 @@
                 $scope.spectraLoadLength = $scope.spectra.length;
 
 
-                var payload = {
-                    query: SpectraQueryBuilderService.getQuery(),
-                    offset: $scope.spectra.length
-                };
-
+                var payload = SpectraQueryBuilderService.getQuery();
 
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
 
-                Spectrum.searchSpectra(payload, function(data) {
-                    $scope.duration = (Date.now() - startTime) / 1000;
+                //$log.debug(payload);
 
-                    if (data.length === 0) {
-                        $scope.dataAvailable = false;
-                    } else {
-                        // Add data to spectra object
-                        $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
-                    }
+                if (payload === '') {
+                    Spectrum.getAllSpectra({page: page}, function (data) {
+                        if (data.length === 0) {
+                            $scope.dataAvailable = false;
+                        } else {
+                            // Add data to spectra object
+                            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+                        }
+                        hideSplash();
+                        $scope.loadingMore = false;
+                        page += 1;
+                    });
+                }
+                else {
+                    Spectrum.searchSpectra({query: payload, offset: offset}, function (data) {
+                        $scope.duration = (Date.now() - startTime) / 1000;
 
-                    $scope.loadingMore = false;
-                });
+                        if (data.length === 0) {
+                            $scope.dataAvailable = false;
+                        } else {
+                            // Add data to spectra object
+                            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+                        }
+                        hideSplash();
+                        $scope.loadingMore = false;
+                        page += 1;
+                    });
+                }
             }
-
             //inform other controllers that we finished loading spectra
             if ($scope.spectra) {
                 $rootScope.$broadcast('spectra:loaded', $scope.spectra);
@@ -211,7 +241,7 @@
         (function list() {
             $scope.spectraScrollStartLocation = 0;
             $scope.spectra = [];
-
+            showSplash();
             // Submit our initial query
             $scope.submitQuery();
         })();

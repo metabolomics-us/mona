@@ -5,20 +5,20 @@
                          ng-click="status.isOpen != status.isOpen">
 
             <div>
-                Generated Query to use in third party software
+                Generated RsqlQuery to use in third party software
                 <pre>{{query | json}}</pre>
             </div>
 
             <div>
-                Generated Query to use directly from curl:
+                Generated RsqlQuery to use directly from curl:
                 <pre>{{query | curl}}</pre>
             </div>
 
 
-            <div>
+            <!-- <div>
                 Generated Query to use directly from curl as library file:
                 <pre>{{query | curlAsMsp}}</pre>
-            </div>
+            </div>-->
 
             <div class="row" ng-show="auth.isLoggedIn() && auth.isAdmin()">
                 <div class="col-md-12">
