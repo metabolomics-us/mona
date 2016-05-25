@@ -12,8 +12,6 @@
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
     <artifactId>jwt</artifactId>
 
-
-
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -30,6 +28,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -38,10 +37,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
@@ -60,7 +61,6 @@
 
 
         <!-- test dependencies -->
-
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>mongo</artifactId>
@@ -100,17 +100,9 @@
         </dependency>
 
         <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
-
 </project>

@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{TestPropertySource, ContextConfiguration, TestContextManager}
 
 /**
   * defines how to use a token service and ensure
@@ -16,6 +16,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig],classOf[JWTAuthenticationConfig]))
+@TestPropertySource(locations=Array("classpath:application.properties"))
 class JWTTokenServiceTest extends WordSpec {
 
   @Autowired
@@ -25,12 +26,11 @@ class JWTTokenServiceTest extends WordSpec {
   val userRepository: UserRepository = null
 
   @Autowired
-  val authenticationService:JWTAuthenticationService = null
+  val authenticationService: JWTAuthenticationService = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "JWTTokenServiceTest" should {
-
 
     userRepository.deleteAll()
     userRepository.save(User("test", "test"))
@@ -39,11 +39,9 @@ class JWTTokenServiceTest extends WordSpec {
     assert(userRepository.findByUsername("test") != null)
 
     "generateToken" in {
-
       val token = tokenService.generateToken(userRepository.findAll().iterator().next())
 
       assert(token != null)
-
       assert(authenticationService.authenticate(token).isAuthenticated)
     }
 
@@ -58,6 +56,5 @@ class JWTTokenServiceTest extends WordSpec {
       assert(info.validFrom != null)
       assert(info.validTo != null)
     }
-
   }
 }

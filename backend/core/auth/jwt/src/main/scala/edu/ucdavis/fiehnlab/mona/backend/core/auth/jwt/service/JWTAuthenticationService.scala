@@ -33,8 +33,8 @@ class JWTAuthenticationService extends AuthenticationService {
     if (token == null) {
       throw new AuthenticationServiceException("sorry no token was provided!")
     }
-    val claims: Claims = Jwts.parser().setSigningKey(tokenSecret.value).parseClaimsJws(token).getBody
 
+    val claims: Claims = Jwts.parser().setSigningKey(tokenSecret.value).parseClaimsJws(token).getBody
 
     try {
       val authentication = new JWTAuthentication(claims)
@@ -50,8 +50,7 @@ class JWTAuthenticationService extends AuthenticationService {
       }
       authentication.setAuthenticated(true)
       authentication
-    }
-    catch {
+    } catch {
       case e: MalformedJwtException => throw new AuthenticationServiceException(s"JWT token was malformed: ${token}", e)
     }
   }
@@ -94,8 +93,7 @@ final class JWTAuthentication(claims: Claims) extends Authentication {
   def isExpired: Boolean = {
     if (claims.getExpiration != null) {
       claims.getExpiration.before(new Date())
-    }
-    else {
+    } else {
       false
     }
   }
@@ -108,8 +106,7 @@ final class JWTAuthentication(claims: Claims) extends Authentication {
   def isNotYetActive: Boolean = {
     if (claims.getNotBefore != null) {
       claims.getNotBefore.after(new Date())
-    }
-    else {
+    } else {
       false
     }
   }

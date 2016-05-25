@@ -19,7 +19,6 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
 
   val entryPoint: AuthenticationEntryPoint = new Http401AuthenticationEntryPoint("authorization failed!")
 
-
   /**
     * ensures the user is authenticated and has the correct rights
     *
@@ -49,19 +48,16 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
       val token = headerValue.trim.substring(7); // The part after "Bearer "
 
       try {
-
         val auth = authenticationService.authenticate(token)
         SecurityContextHolder.getContext.setAuthentication(auth)
 
         logger.debug("continue down the chain...")
         filterChain.doFilter(servletRequest, servletResponse)
-      }
-      catch {
+      } catch {
         case e: AuthenticationException => throw e
         case e: Exception => throw new AuthenticationServiceException("sorry an unexpected error happened", e)
       }
-    }
-    catch {
+    } catch {
       case e: AuthenticationException =>
         logger.error(e.getMessage)
         logger.debug(e)
@@ -71,6 +67,5 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
           entryPoint.commence(request, response, e)
         }
     }
-
   }
 }
