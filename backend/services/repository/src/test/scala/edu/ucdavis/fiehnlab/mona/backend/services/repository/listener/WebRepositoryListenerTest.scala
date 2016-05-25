@@ -11,7 +11,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
-import edu.ucdavis.fiehnlab.mona.backend.services.repository.Repository
+import edu.ucdavis.fiehnlab.mona.backend.services.repository.WebRepository
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -26,9 +26,9 @@ import scala.util.Properties
   * Created by wohlg_000 on 5/18/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[Repository]))
+@SpringApplicationConfiguration(classes = Array(classOf[WebRepository]))
 @WebIntegrationTest(Array("server.port=8888", "eureka.client.enabled:false"))
-class RepositoryListenerTest extends WordSpec with LazyLogging {
+class WebRepositoryListenerTest extends WordSpec with LazyLogging {
 
   val port: Int = 8888
 

@@ -11,6 +11,9 @@ import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.{FileLayout,
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.listener.RepositoryListener
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.{DefaultServlet, ServletHolder}
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -31,7 +34,7 @@ import org.springframework.web.context.WebApplicationContext
   */
 @SpringBootApplication
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
-class Repository extends WebSecurityConfigurerAdapter with LazyLogging {
+class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
@@ -39,8 +42,39 @@ class Repository extends WebSecurityConfigurerAdapter with LazyLogging {
       .antMatchers(HttpMethod.GET, "/**")
   }
 
+  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}mona")
+  val dir: String = null
+
+  def localDirectory = new File(new File(this.dir),"repository")
+
   @Bean
-  def repositoryListener(eventBus: EventBus[Spectrum], layout: FileLayout): RepositoryListener = new RepositoryListener(eventBus, layout)
+  def fileLayout: FileLayout = {
+    new SubmitterInchiKeySplashId(localDirectory)
+  }
+
+  /**
+    * initializes a git repository for us
+    * @return
+    */
+  @Bean
+  def gitRepository : Repository = {
+
+    if(!localDirectory.exists()) localDirectory.mkdirs()
+
+    val gitRepo = new File(localDirectory,".git")
+
+    if(gitRepo.exists()){
+      new FileRepositoryBuilder().setGitDir(gitRepo).build()
+    }
+    else{
+      val repo = FileRepositoryBuilder.create(gitRepo)
+      repo.create()
+      repo
+    }
+  }
+
+  @Bean
+  def repositoryListener(eventBus: EventBus[Spectrum], layout: FileLayout): RepositoryListener = new RepositoryListener(eventBus, layout,new Git(gitRepository))
 
 }
 
@@ -50,20 +84,10 @@ class ConfigureJetty extends LazyLogging{
   @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}mona")
   val dir: String = null
 
-  @Bean
-  def fileLayout: FileLayout = {
-    val dir = new File(new File(this.dir),"repository")
-    if (!dir.exists()) {
-      logger.info(s"creating new mona repository ${dir} directory")
-      dir.mkdirs()
-    }
-    new SubmitterInchiKeySplashId(dir)
-  }
+  def localDirectory = new File(new File(this.dir),"repository")
 
   @Bean
   def jetty:EmbeddedServletContainerFactory = {
-    val root = new File(dir)
-    logger.info(s"configured ${root} as root")
     val factory = new JettyEmbeddedServletContainerFactory()
     factory.setRegisterDefaultServlet(false)
     factory
@@ -71,12 +95,12 @@ class ConfigureJetty extends LazyLogging{
 
   @Bean
   def servlet: ServletRegistrationBean = {
-    logger.info(s"registering our servlet and using dir: ${dir}")
+    logger.info(s"registering our servlet and using dir: ${localDirectory}")
     val servlet = new DefaultServlet
     val bean = new ServletRegistrationBean(servlet,"/repository/*")
 
     bean.addInitParameter("dirAllowed", "true")
-    bean.addInitParameter("resourceBase",s"${dir}/repository/")
+    bean.addInitParameter("resourceBase",localDirectory.getAbsolutePath)
     bean.addInitParameter("pathInfoOnly","true")
     bean.setLoadOnStartup(1)
     bean.setEnabled(true)
@@ -91,7 +115,7 @@ class ConfigureJetty extends LazyLogging{
 }
 
 
-object Repository extends App {
-  new SpringApplication(classOf[Repository]).run()
+object WebRepository extends App {
+  new SpringApplication(classOf[WebRepository]).run()
 }
 
