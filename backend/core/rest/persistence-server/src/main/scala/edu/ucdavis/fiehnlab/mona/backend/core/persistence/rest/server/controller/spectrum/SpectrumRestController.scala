@@ -57,7 +57,11 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @RequestMapping(path = Array("/search/count"), method = Array(RequestMethod.GET))
   @Async
   def searchCount(@RequestParam(value = "query", required = false) query: WrappedString): Future[Long] = {
-    new AsyncResult[Long](spectrumPersistenceService.count(query.string))
+    if(query == null || query.string.isEmpty) {
+      new AsyncResult[Long](spectrumPersistenceService.count())
+    } else {
+      new AsyncResult[Long](spectrumPersistenceService.count(query.string))
+    }
   }
 
 
@@ -71,14 +75,11 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
   override def put(@PathVariable("id") id: String, @RequestBody spectrum: Spectrum): Future[Spectrum] = {
-
     if (id == spectrum.id) {
       new AsyncResult[Spectrum](
         spectrumPersistenceService.update(spectrum.copy(id = id))
       )
-
-    }
-    else {
+    } else {
       getRepository.delete(spectrum.id)
 
       val newSpectrum = spectrum.copy(id = id)
