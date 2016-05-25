@@ -18,7 +18,7 @@
                 while ($rootScope.httpError.length !== 0) {
                     var curError = $rootScope.httpError.pop();
 
-                    if (typeof curError !== 'undefined') {
+                    if (angular.isDefined(curError)) {
                         var method = curError.config.method;
                         var url = curError.config.url;
                         var status = curError.status;

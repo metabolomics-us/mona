@@ -92,6 +92,11 @@
                 controller: 'QueryTreeController'
             })
 
+            .when('/spectra/search', {
+                templateUrl: 'views/spectra/query/search.html',
+                controller: 'KeywordSearchController'
+            })
+
             //query by similarity
             .when('/spectra/similarity', {
                 templateUrl: 'views/spectra/query/similarityQuery.html',

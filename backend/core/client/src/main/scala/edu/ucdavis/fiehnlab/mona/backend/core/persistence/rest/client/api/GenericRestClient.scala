@@ -55,8 +55,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     */
   def count(query: Option[String] = None): Long = query match {
     case Some(x) =>
-
-      restOperations.postForObject(s"$requestPath/count", WrappedString(x), classOf[Long])
+      restOperations.getForObject(s"$requestPath/search/count?query=$x", classOf[Long])
 
     case _ => restOperations.getForObject(s"$requestPath/count", classOf[Long])
   }

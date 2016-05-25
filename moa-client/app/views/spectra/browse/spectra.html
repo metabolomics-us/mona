@@ -1,3 +1,30 @@
+<!--Splash for search-->
+<div id="splash-page" ng-show="searchSplash" class="dissolve-animation">
+    <div class="page-splash">
+        <div class="page-splash-message">
+            Searching
+            <span id="loadpulse">
+                <div class="segment">
+                    <div id="layer1" class="ball"></div>
+                    <div id="layer7" class="pulse"></div>
+                </div>
+                <div class="segment">
+                    <div id="layer2" class="ball"></div>
+                    <div id="layer8" class="pulse"></div>
+                </div>
+                <div class="segment">
+                    <div id="layer3" class="ball"></div>
+                    <div id="layer9" class="pulse"></div>
+                </div>
+                <div class="segment">
+                    <div id="layer4" class="ball"></div>
+                    <div id="layer10" class="pulse"></div>
+                </div>
+            </span>
+        </div>
+    </div>
+</div>
+
 <div ng-value="error"></div>
 
 <div class="row">
@@ -21,7 +48,7 @@
                 <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="querySpectraDialog()" uib-tooltip-placement="right"
+            <button class="btn btn-primary" ng-click="initSearch()" uib-tooltip-placement="right"
                     uib-tooltip="click, to open the advanced query dialog"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-search fa-fw"></i>
@@ -76,17 +103,17 @@
             </tr>
             <tr ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
                 <td>
-                    {{spectrum.id}}
+                    <a href="">{{spectrum.id}}</a>
                 </td>
                 <td>
                     <ul class="list-unstyled">
-                        <li ng-repeat="name in spectrum.biologicalCompound.names | limitTo:3">{{name.name}}</li>
+                        <li ng-repeat="name in spectrum.compound[0].names | limitTo:3">{{name.name}}</li>
                     </ul>
                 </td>
                 <td class="text-center">
                     <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
                          id="bioSketch_{{spectrum.id}}_true"
-                         ng-model="spectrum.biologicalCompound"></div>
+                         ng-model="spectrum.compound"></div>
                 </td>
                 <td class="text-center">
                     <div class="masspec-mini">

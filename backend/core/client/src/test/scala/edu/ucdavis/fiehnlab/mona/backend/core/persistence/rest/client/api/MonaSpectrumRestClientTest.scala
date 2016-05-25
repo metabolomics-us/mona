@@ -31,7 +31,6 @@ class MonaSpectrumRestClientTest extends AbstractRestClientTest {
 
   "we must be able to" must {
     "get all available meta data names" in {
-
       val set = monaSpectrumRestClient.listMetaDataNames
 
       assert(set.size > 0)
@@ -47,5 +46,4 @@ class MonaSpectrumRestClientTest extends AbstractRestClientTest {
       }
     }
   }
-
 }
