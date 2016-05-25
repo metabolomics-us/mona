@@ -10,7 +10,7 @@ import org.springframework.data.repository.NoRepositoryBean
   */
 
 @NoRepositoryBean
-trait RSQLRepositoryCustom[T,Q] {
+trait RSQLRepositoryCustom[T, Q] {
 
   /**
     * @param query
