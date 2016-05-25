@@ -5,7 +5,7 @@
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, $log, rsqlService, $location, Spectrum) {
+    function KeywordSearchController($scope, $log, rsqlService, $location) {
 
         (function initForm() {
             $scope.queryOptions = {
