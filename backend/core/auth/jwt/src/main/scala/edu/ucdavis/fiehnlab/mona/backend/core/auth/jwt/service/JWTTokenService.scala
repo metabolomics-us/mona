@@ -51,6 +51,5 @@ class JWTTokenService extends TokenService {
     val claims: Claims = Jwts.parser().setSigningKey(tokenSecret.value).parseClaimsJws(token).getBody
 
     new LoginInfo(claims.getSubject,claims.getIssuedAt,claims.getExpiration,claims.get("roles").asInstanceOf[java.util.List[String]])
-
   }
 }
