@@ -181,7 +181,11 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "we should be able to execute custom queries like compound.names.name=='META-HYDROXYBENZOIC ACID'" in {
+          val exampleRecords = spectrumPersistenceService.findAll("""compound.names.name=='META-HYDROXYBENZOIC ACID'""")
+          assert(exampleRecords.asScala.toList.size == 1)
+        }
 
+        "we should be able to execute custom subqueries like compound names.name=='META-HYDROXYBENZOIC ACID'" in {
           val exampleRecords = spectrumPersistenceService.findAll("""compound=q="names.name=='META-HYDROXYBENZOIC ACID'"""")
           assert(exampleRecords.asScala.toList.size == 1)
         }
