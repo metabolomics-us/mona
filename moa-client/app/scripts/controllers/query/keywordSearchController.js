@@ -44,7 +44,7 @@
             $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
         })();
 
-        
+
         $scope.submitQuery = function () {
             rsqlService.filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             var query = rsqlService.getQuery();
