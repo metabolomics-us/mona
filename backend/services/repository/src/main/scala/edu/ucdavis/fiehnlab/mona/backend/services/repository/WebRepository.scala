@@ -42,7 +42,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
       .antMatchers(HttpMethod.GET, "/**")
   }
 
-  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}mona")
+  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}/mona")
   val dir: String = null
 
   def localDirectory = new File(new File(this.dir),"repository")
@@ -57,16 +57,16 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
     * @return
     */
   @Bean
-  def gitRepository : Repository = {
+  def gitRepository: Repository = {
 
-    if(!localDirectory.exists()) localDirectory.mkdirs()
+    if(!localDirectory.exists())
+      localDirectory.mkdirs()
 
-    val gitRepo = new File(localDirectory,".git")
+    val gitRepo = new File(localDirectory, ".git")
 
-    if(gitRepo.exists()){
+    if(gitRepo.exists()) {
       new FileRepositoryBuilder().setGitDir(gitRepo).build()
-    }
-    else{
+    } else {
       val repo = FileRepositoryBuilder.create(gitRepo)
       repo.create()
       repo
@@ -74,8 +74,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
   }
 
   @Bean
-  def repositoryListener(eventBus: EventBus[Spectrum], layout: FileLayout): RepositoryListener = new RepositoryListener(eventBus, layout,new Git(gitRepository))
-
+  def repositoryListener(eventBus: EventBus[Spectrum], layout: FileLayout): RepositoryListener = new RepositoryListener(eventBus, layout, new Git(gitRepository))
 }
 
 @Configuration
@@ -95,7 +94,7 @@ class ConfigureJetty extends LazyLogging{
 
   @Bean
   def servlet: ServletRegistrationBean = {
-    logger.info(s"registering our servlet and using dir: ${localDirectory}")
+    logger.info(s"registering our servlet and using dir: $localDirectory")
     val servlet = new DefaultServlet
     val bean = new ServletRegistrationBean(servlet,"/repository/*")
 
@@ -109,13 +108,9 @@ class ConfigureJetty extends LazyLogging{
     bean.setOrder(1)
 
     bean
-
   }
-
 }
-
 
 object WebRepository extends App {
   new SpringApplication(classOf[WebRepository]).run()
 }
-
