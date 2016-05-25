@@ -186,12 +186,12 @@
                 $scope.spectraLoadLength = $scope.spectra.length;
 
 
-                var payload = SpectraQueryBuilderService.getQuery();
+                var payload = SpectraQueryBuilderService.getRsqlQuery();
 
                 // Note the start time for timing the spectrum search
                 var startTime = Date.now();
 
-                $log.debug('load query: ' + payload);
+                $log.debug(payload);
 
                 if (payload === '/rest/spectra') {
                     Spectrum.getAllSpectra({page: page}, function (data) {
