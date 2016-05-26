@@ -48,7 +48,7 @@
         $scope.submitQuery = function () {
             filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
             queryStringBuilder.buildQueryString();
-            //$location.path('/spectra/browse');
+            $location.path('/spectra/browse');
         };
 
 
@@ -82,15 +82,16 @@
                 filtered.compound.push({classification: options.compound.className});
             }
 
+            filtered.advMeta = [];
             // filter exact mass
             if (options.metadata.exactMass !== null) {
-                filtered.metadata.push({'exact mass': options.metadata.exactMass});
-                filtered.metadata.push({tolerance: options.metadata.tolerance});
+                filtered.advMeta.push({'exact mass': options.metadata.exactMass});
+                filtered.advMeta.push({tolerance: options.metadata.tolerance});
             }
 
-            // filter formulaa
+            // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered.metadata.push({formula: options.metadata.formula});
+                filtered.advMeta.push({formula: options.metadata.formula});
             }
 
             // filter instruments
