@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.FileLayout
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.transport.RefSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
@@ -57,21 +58,48 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
     }
   }
 
+  /**
+    * adds a file to the git repository
+    * @param file
+    * @return
+    */
   def gitAdd(file:File) = {
+    val path:String = buildPath(file)
+    logger.info(s"adding to git ${path}")
     val spectrum:Spectrum = objectMapper.readValue(file,classOf[Spectrum])
-    git.add().addFilepattern(file.getAbsolutePath).call()
-    git.commit().setMessage(s"added spectra ${spectrum.id} to the repository").setAll(true).setCommitter(spectrum.submitter.emailAddress,spectrum.submitter.emailAddress).call()
+    val cache = git.add().addFilepattern(path).call()
+    git.commit().setMessage(s"added spectra ${spectrum.id} to the repository").call()
+    git.push().setRemote("origin/master").setRefSpecs(new RefSpec("master")).call()
   }
 
+  /**
+    * updates the file in the git repository
+    * @param file
+    * @return
+    */
   def gitUpdate(file:File) = {
+    val path:String = buildPath(file)
+
     val spectrum:Spectrum = objectMapper.readValue(file,classOf[Spectrum])
-    git.add().addFilepattern(file.getAbsolutePath).call()
-    git.commit().setMessage(s"updated spectra ${spectrum.id} to the repository").setAll(true).setCommitter(spectrum.submitter.emailAddress,spectrum.submitter.emailAddress).call()
+    git.add().setUpdate(true).addFilepattern(path).call()
+    git.commit().setMessage(s"updated spectra ${spectrum.id} to the repository").setCommitter(spectrum.submitter.emailAddress,spectrum.submitter.emailAddress).call()
+    git.push().setRemote("origin/master").setRefSpecs(new RefSpec("master")).call()
   }
 
+  /**
+    * removes a file from the git repository
+    * @param file
+    * @return
+    */
   def gitRemove(file:File) = {
+    val filePath = file.getAbsolutePath().substring(layout.baseDir.getAbsolutePath().length+1,file.getAbsolutePath.length)
+
+    logger.info(s"removing file: ${filePath}" )
     val spectrum:Spectrum = objectMapper.readValue(file,classOf[Spectrum])
-    git.rm().addFilepattern(file.getAbsolutePath).call()
-    git.commit().setMessage(s"removed spectra ${spectrum.id} from the repository").setAll(true).setCommitter(spectrum.submitter.emailAddress,spectrum.submitter.emailAddress).call()
+    git.rm().addFilepattern(filePath).call()
+    git.commit().setMessage(s"removed spectra ${spectrum.id} from the repository").setCommitter(spectrum.submitter.emailAddress,spectrum.submitter.emailAddress).call()
+    git.push().setRemote("origin/master").setRefSpecs(new RefSpec("master")).call()
   }
+
+  def buildPath(file:File) : String = "."
 }
