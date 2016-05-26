@@ -23,7 +23,7 @@
     }
 
     /* @ngInject */
-    function displayLibraryReferenceController($scope) {
+    function displayLibraryReferenceController($scope, $log) {
 
         // Empty string if no library object exists
         if ($scope.spectrum.library === null) {
@@ -40,33 +40,34 @@
         // Base library string
         $scope.libraryString = 'Originally submitted to the ';
 
-        // Handle a provided library link
+        var library = $scope.spectrum.library;
 
-        if (angular.isDefined($scope.spectrum.library.link)) {
+        // Handle a provided library link
+        if (angular.isDefined(library.link)) {
             // Link to library but no identifier
-            if ($scope.spectrum.libraryIdentifier === null) {
-                $scope.libraryString += '<a href="'+ $scope.spectrum.library.link +'" target="_blank">'+
-                    $scope.spectrum.library.description +'</a>';
+            if (!angular.isDefined(library.libraryIdentifier)) {
+                $scope.libraryString += '<a href="'+ library.link +'" target="_blank">'+
+                    library.description +'</a>';
             }
 
             // Link to library and identifier and link placeholder for identifier
-            else if (angular.isDefined($scope.spectrum.libraryIdentifier) && $scope.spectrum.library.link.indexOf('%s') > -1) {
-                var link = $scope.spectrum.library.link.replace('%s', $scope.spectrum.libraryIdentifier);
+            else if (angular.isDefined(library.libraryIdentifier) && library.link.indexOf('%s') > -1) {
+                var link = library.link.replace('%s', library.libraryIdentifier);
 
                 $scope.libraryString += $scope.spectrum.library.description + ' as <a href="'+ link +'" target="_blank">'+
-                    $scope.spectrum.libraryIdentifier +'</a>';
+                    library.libraryIdentifier +'</a>';
             }
 
             // Link to library and identifier but no link placeholder for identifier
             else {
-                $scope.libraryString += '<a href="'+ $scope.spectrum.library.link +'" target="_blank">'+ $scope.spectrum.library.description +
-                    '</a> as '+ $scope.spectrum.libraryIdentifier;
+                $scope.libraryString += '<a href="'+ library.link +'" target="_blank">'+ library.description +
+                    '</a> as '+ library.libraryIdentifier;
             }
         }
 
         // With no library link
         else {
-            $scope.libraryString += $scope.spectrum.library.description;
+            $scope.libraryString += library.description;
         }
     }
 })();
