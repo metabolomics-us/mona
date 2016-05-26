@@ -155,16 +155,22 @@
 
             $log.info(delayedSpectrum);
 
-            
+            // truncate metadata
             for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
-                var name = delayedSpectrum.metaData[i].name.toLowerCase();
+                var curMeta = delayedSpectrum.metaData[i];
+
+                var name = curMeta.name.toLowerCase();
 
                 if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                    delayedSpectrum.metaData[i].value = truncateMass(delayedSpectrum.metaData[i].value);
+                    curMeta.value = truncateMass(curMeta.value);
                 } else if (name.indexOf('retention') > -1) {
-                    delayedSpectrum.metaData[i].value = truncateRetentionTime(delayedSpectrum.metaData[i].value);
+                    curMeta.value = truncateRetentionTime(curMeta.value);
                 }
             }
+
+            // truncate compounds
+            
+
 
             for (var i = 0; i < delayedSpectrum.biologicalCompound.metaData.length; i++) {
                 var name = delayedSpectrum.biologicalCompound.metaData[i].name.toLowerCase();
