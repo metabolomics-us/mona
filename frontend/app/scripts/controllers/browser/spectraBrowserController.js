@@ -22,7 +22,7 @@
 
     /* @ngInject */
     function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location,
-                                      queryStringBuilder, SpectrumCache, $rootScope, $timeout, $log) {
+                                      queryStringBuilder, SpectrumCache, $rootScope, $timeout, $log, $http) {
 
         $scope.table = false;
         /**
@@ -115,10 +115,21 @@
             $scope.queryResultCount = "Loading...";
 
             var queryString = SpectraQueryBuilderService.getRsqlQuery();
-            
-            Spectrum.searchSpectraCount({query: queryString }, function(data) {
-                $scope.queryResultCount = data.count;
-            });
+
+            if(queryString === '/rest/spectra') {
+                Spectrum.searchSpectraCount({count: 'count'}, function(data) {
+                    $scope.queryResultCount = data.count;
+                });
+            }
+            else {
+                Spectrum.searchSpectraCount({
+                    count: 'count',
+                    query: queryString
+                }, function (data) {
+                    $scope.queryResultCount = data.count;
+                });
+            }
+
         };
 
 
