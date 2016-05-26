@@ -81,11 +81,12 @@ class SubmitterInchiKeySplashId(val baseDir: File) extends FileLayout {
     */
   override def layout(spectrum: Spectrum): File = {
 
-    var institution = spectrum.submitter.institution
+    var institution = spectrum.submitter.institution.replace(' ', '_')
 
     if(institution == null){
       institution = "None"
     }
+
     val submitterDir = new File(baseDir, institution)
 
 

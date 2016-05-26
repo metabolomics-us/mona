@@ -15,17 +15,12 @@ class InchiKeyLayoutTest extends WordSpec with LazyLogging{
   val reader = JSONDomainReader.create[Spectrum]
 
   "InchiKeyLayoutTest" should {
-
-
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
 
     val spectrum: Spectrum = reader.read(input)
 
-
     "layout" in {
-
       val layout = new InchiKeyLayout(new File("/"))
-
       val result = layout.layout(spectrum)
 
       logger.info(spectrum.compound(0).inchiKey)

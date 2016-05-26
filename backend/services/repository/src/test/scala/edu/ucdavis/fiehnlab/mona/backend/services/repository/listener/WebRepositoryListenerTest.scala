@@ -79,14 +79,14 @@ class WebRepositoryListenerTest extends WordSpec with LazyLogging {
 
       "be able to access our spectra file" in {
         repositoryListener.received(Event(spectrum, eventType = Event.ADD))
-        val spectra = given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(200).extract().as(classOf[Spectrum])
+        val spectra = given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(200).extract().as(classOf[Spectrum])
 
         assert(spectra.id == "252")
       }
 
       "be able to delete our spectra file" in {
         repositoryListener.received(Event(spectrum, eventType = Event.DELETE))
-        given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(404)
+        given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(404)
       }
 
 
