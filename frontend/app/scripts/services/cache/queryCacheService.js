@@ -44,6 +44,7 @@
         this.getSpectraQuery = function(queryType) {
             // Create default query if none exists
             // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
+            queryType = queryType || undefined;
 
             if (this.query === null) {
                 return $injector.get('SpectraQueryBuilderService').prepareQuery();

@@ -5,7 +5,7 @@
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, SpectraQueryBuilderService, $log, $location) {
+    function KeywordSearchController($scope, SpectraQueryBuilderService, queryStringBuilder, $log, $location) {
 
         (function initForm() {
             $scope.queryOptions = {
@@ -47,7 +47,8 @@
 
         $scope.submitQuery = function () {
             filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
-            $location.path('/spectra/browse');
+            queryStringBuilder.buildQueryString();
+            //$location.path('/spectra/browse');
         };
 
 
@@ -69,11 +70,11 @@
             // filter compound
             if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(options.compound.name)) {
                 filtered.compound.push({inchiKey: options.compound.name});
-                delete options.compound.name;
             }
             else {
-                filtered.compound.push({name: options.compound.name});
-                delete options.compound.inchiKey;
+                if(angular.isDefined(options.compound.name)) {
+                    filtered.compound.push({name: options.compound.name});
+                }
             }
 
             // filter class
@@ -85,6 +86,11 @@
             if (options.metadata.exactMass !== null) {
                 filtered.metadata.push({'exact mass': options.metadata.exactMass});
                 filtered.metadata.push({tolerance: options.metadata.tolerance});
+            }
+
+            // filter formulaa
+            if (angular.isDefined(options.metadata.formula)) {
+                filtered.metadata.push({formula: options.metadata.formula});
             }
 
             // filter instruments
