@@ -22,7 +22,7 @@
 
     /* @ngInject */
     function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location,
-                                      SpectrumCache, $rootScope, $timeout, $log) {
+                                      queryStringBuilder, SpectrumCache, $rootScope, $timeout, $log) {
 
         $scope.table = false;
         /**
@@ -90,8 +90,7 @@
             $scope.spectra = [];
 
             // Add query parameters to query refining
-            SpectraQueryBuilderService.buildQueryString();
-            var query = SpectraQueryBuilderService.getQuery();
+            queryStringBuilder.buildQueryString();
 
             $scope.calculateResultCount();
 

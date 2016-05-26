@@ -6,13 +6,13 @@
 (function () {
     'use strict';
     angular.module('moaClientApp')
-        .factory("rsqlService", rsqlService);
+        .factory("queryStringBuilder", queryStringBuilder);
 
     /* @ngInject */
-    function rsqlService($log, QueryCache) {
+    function queryStringBuilder($log, QueryCache) {
 
         var service = {
-
+            buildQueryString: buildQueryString
         };
         return service;
 
@@ -23,20 +23,21 @@
          * @return rsql query string
          */
 
-        function buildRsqlQuery(options) {
-            var filtered = options;
+        function buildQueryString() {
+            var query = QueryCache.getSpectraQuery();
+            $log.info(query);
             var compoundQuery = '';
             var metadataQuery = '';
 
 
             // build compound string
-            if (typeof(filtered.compound) === 'object' && (JSON.stringify(filtered.compound) !== JSON.stringify({}))) {
-                compoundQuery = compoundQuery.concat(buildCompoundQueryString(filtered.compound));
+            if (angular.isDefined(query.compound) && query.compound.length !== 0) {
+                compoundQuery = compoundQuery.concat(buildCompoundQueryString(query.compound));
             }
 
             // build metadata string
-            if (typeof(filtered.metadata) === 'object' && JSON.stringify(filtered.metadata) !== JSON.stringify({})) {
-                metadataQuery = buildMetaDataQueryString(filtered.metadata);
+            if (angular.isDefined(query.metadata) && query.metadata.length !== 0) {
+                metadataQuery = buildMetaDataQueryString(query.metadata, query.operand);
             }
 
             //TODO build tag string
@@ -49,7 +50,7 @@
 
             // set query in cache
             compiledQuery = compiledQuery === '' ? '/rest/spectra' : compiledQuery;
-            setRsqlQuery(compiledQuery);
+
         }
 
         function buildTagsQueryString(tagQuery) {
@@ -64,24 +65,27 @@
             return queryString;
         }
 
-        function buildMetaDataQueryString(metadata) {
+        function buildMetaDataQueryString(metadata, operand) {
             var query = '';
-
+            $log.debug(metadata);
             // handle exact mass & tolerance
-            if (typeof(metadata.exactMass) !== 'undefined') {
-                // concat first operand
-                query = query.concat(' ', getQuery().firstOperand.toLowerCase());
-                var leftOffset = metadata.exactMass - metadata.tolerance;
-                var rightOffset = metadata.exactMass + metadata.tolerance;
-                query += " metaData=q='name==\"exact mass\" and " + "(value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\")'";
-            }
+            for (var i = 0; i < 2; i ++) {
 
-            // handle formula
-            if (typeof(metadata.formula) !== 'undefined' && metadata.formula !== '') {
-                var secondOperand = getQuery().secondOperand.toLowerCase();
-                query += ' ' + secondOperand + ' ' + "metaData=q='name==\"formula\" and value==\"" + metadata.formula + "\"'";
-            }
+                if (metadata[i].hasOwnProperty('exact mass')) {
+                    // concat first operand
+                    query = query.concat(' ', operand.shift());
+                    var leftOffset = metadata[i]['exact mass'] - metadata[i+1].tolerance;
+                    var rightOffset = metadata[i]['exact mass'] + metadata[i+1].tolerance;
+                    query += " metaData=q='name==\"exact mass\" and " + "(value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\")'";
+                }
 
+                // handle formula
+                if (metadata[i].hasOwnProperty('formula')) {
+                    var secondOperand = operand.pop();
+                    query += ' ' + secondOperand + ' ' + "metaData=q='name==\"formula\" and value==\"" + metadata[i].formula + "\"'";
+                }
+            }
+            $log.info(query);
 
             // handle instrument Type
             if (typeof(metadata.insType) !== 'undefined' && metadata.insType.length !== 0) {
@@ -109,16 +113,21 @@
         function buildCompoundQueryString(compound) {
             var query = '';
 
-            // handle compound name
-            if (typeof(compound.name) !== 'undefined') {
-                query += "compound.names=q='name==" + '\"' + compound.name + '\"\'';
+            for (var i = 0; i < compound.length; i++) {
+                var curCompound = compound[i];
 
-            }
+                if (query !== '') {
+                    query += ' and ';
+                }
 
-            // handle compound inchiKey
-            else if (typeof(compound.inchiKey) !== 'undefined') {
-                query += "compound.inchiKey==" + '\"' + compound.inchiKey + '\"\'';
-
+                for (var key in curCompound) {
+                    if (key === 'name') {
+                        query += "compound.names=q='name==" + '\"' + curCompound[key] + '\"\'';
+                    }
+                    else {
+                        query += "compound." + key + "==\"" + curCompound[key] + "\"";
+                    }
+                }
             }
 
             return query;
