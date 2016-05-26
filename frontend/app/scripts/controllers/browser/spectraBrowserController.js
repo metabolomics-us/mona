@@ -90,6 +90,7 @@
             $scope.spectra = [];
 
             // Add query parameters to query refining
+            SpectraQueryBuilderService.buildQueryString();
             var query = SpectraQueryBuilderService.getQuery();
 
             $scope.calculateResultCount();

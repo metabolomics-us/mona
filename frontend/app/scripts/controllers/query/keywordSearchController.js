@@ -5,7 +5,7 @@
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, $log, rsqlService, $location, SpectraQueryBuilderService) {
+    function KeywordSearchController($scope, SpectraQueryBuilderService, $log, $location) {
 
         (function initForm() {
             $scope.queryOptions = {
@@ -46,35 +46,7 @@
 
 
         $scope.submitQuery = function () {
-            // build a query object
-            // save it to cache
-            // build query string
-                // save it to cache
-            // change location
-
-            /*** DATA MODEL & Work Flow
-             build a query schema
-             query = {
-                compound: [{name, value}, {inchikey: value}]
-                metadata: [{name,value}]
-                tags: []
-            }
-             addMetadata to query
-             get metadata array, append metadata, build string
-
-             removeMetadata
-             get metadata array, remove index of, build string
-
-             I need to keep the query array of object in a service, and build the rsqlQuery string from that object
-
-             filter out search form
-             create query object
-             save to cache
-             build string
-
-             */
             filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
-            var query = rsqlService.getQuery();
             $location.path('/spectra/browse');
         };
 
@@ -90,19 +62,29 @@
 
             var filtered = SpectraQueryBuilderService.prepareQuery();
 
+            filtered.operand = [];
+            filtered.operand.push(options.firstOperand.toLowerCase());
+            filtered.operand.push(options.secondOperand.toLowerCase());
+
             // filter compound
             if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(options.compound.name)) {
-                options.compound.inchiKey = options.compound.name;
+                filtered.compound.push({inchiKey: options.compound.name});
                 delete options.compound.name;
             }
             else {
+                filtered.compound.push({name: options.compound.name});
                 delete options.compound.inchiKey;
             }
 
+            // filter class
+            if (angular.isDefined(options.compound.className)) {
+                filtered.compound.push({classification: options.compound.className});
+            }
+
             // filter exact mass
-            if (options.metadata.exactMass === null) {
-                delete options.metadata.tolerance;
-                delete options.metadata.exactMass;
+            if (options.metadata.exactMass !== null) {
+                filtered.metadata.push({'exact mass': options.metadata.exactMass});
+                filtered.metadata.push({tolerance: options.metadata.tolerance});
             }
 
             // filter instruments
@@ -111,7 +93,7 @@
                 for (var j in curInstrument) {
                     angular.forEach(curInstrument[j], function (value, key) {
                         if (value.selected === true)
-                            options.metadata.insType.push(value.name);
+                            filtered.metadata.push({'instrument type': value.name});
                     });
 
                 }
@@ -120,31 +102,17 @@
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    options.metadata.ionMode.push(value.name);
+                    filtered.metadata.push({'ion mode': value.name});
                 }
             });
 
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    options.metadata.msType.push(value.name);
+                    filtered.metadata.push({'ms type': value.name});
                 }
             });
-
-            // remove empty fields
-            if (typeof(options.metadata.insType) !== 'undefined' && options.metadata.insType.length === 0) {
-                delete options.metadata.insType;
-            }
-
-            if (typeof(options.metadata.msType) !== 'undefined' && options.metadata.msType.length === 0) {
-                delete options.metadata.msType;
-            }
-
-            if (typeof(options.metadata.ionMode) !== 'undefined' && options.metadata.ionMode.length === 0) {
-                delete options.metadata.ionMode;
-            }
-            $log.info(options);
-            buildRsqlQuery(options);
+            SpectraQueryBuilderService.setQuery(filtered);
         }
 
     }
