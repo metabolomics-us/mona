@@ -45,7 +45,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
   @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
   val dir: String = null
 
-  def localDirectory = new File(new File(this.dir),"repository")
+  def localDirectory = new File(new File(this.dir), "repository")
 
   @Bean
   def fileLayout: FileLayout = {

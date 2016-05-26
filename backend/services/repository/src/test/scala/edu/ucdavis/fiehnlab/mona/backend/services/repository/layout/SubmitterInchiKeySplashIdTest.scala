@@ -35,7 +35,7 @@ class SubmitterInchiKeySplashIdTest extends WordSpec with LazyLogging{
 
       logger.info(s"result: ${result}")
 
-      assert(result.getPath.equalsIgnoreCase("/Boise State University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800"))
+      assert(result.getPath.equalsIgnoreCase("/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800"))
     }
   }
 }
