@@ -12,21 +12,9 @@
     function rsqlService($log, QueryCache) {
 
         var service = {
-            getQuery: getQuery,
-            setQuery: setRsqlQuery
 
         };
         return service;
-
-        function getQuery() {
-            return QueryCache.getSpectraQuery();
-        }
-
-        function setRsqlQuery(query) {
-            QueryCache.setSpectraQuery(query);
-        }
-
-
 
 
         /**
@@ -129,7 +117,7 @@
 
             // handle compound inchiKey
             else if (typeof(compound.inchiKey) !== 'undefined') {
-                query += "compound=q=inchiKey==" + '\"' + compound.inchiKey + '\"\'';
+                query += "compound.inchiKey==" + '\"' + compound.inchiKey + '\"\'';
 
             }
 
