@@ -42,7 +42,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
       .antMatchers(HttpMethod.GET, "/**")
   }
 
-  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}/mona")
+  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
   val dir: String = null
 
   def localDirectory = new File(new File(this.dir),"repository")
@@ -80,7 +80,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 @Configuration
 class ConfigureJetty extends LazyLogging{
 
-  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}mona")
+  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
   val dir: String = null
 
   def localDirectory = new File(new File(this.dir),"repository")
