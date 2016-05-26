@@ -15,8 +15,10 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12" ng-init="showScore = false">
-                            <span uib-tooltip-placement="right" uib-tooltip="Please click to view how the score was calculated"
-                                  uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='10' ng-click="showScore =! showScore">
+                            <span uib-tooltip-placement="right"
+                                  uib-tooltip="Please click to view how the score was calculated"
+                                  uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='10'
+                                  ng-click="showScore =! showScore">
                                 Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
                             </span>
                         </div>
@@ -59,7 +61,10 @@
                     <div class="row top5" ng-if="spectrum.library !== null">
                         <div class="col-md-12">
                             <ul class="list-unstyled">
-                                <li><div class="h5"><span data-display-library-reference spectrum="spectrum"></span></div></li>
+                                <li>
+                                    <div class="h5"><span data-display-library-reference spectrum="spectrum"></span>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -82,7 +87,8 @@
                         <div class="col-md-12">
                             <ul class="list-inline">
                                 <li>
-                                    <div class="h5">Splash: <span gw-spectra-id-query value="spectrum">{{spectrum.hash}}</span></div>
+                                    <div class="h5">Splash: <span gw-spectra-id-query
+                                                                  value="spectrum">{{spectrum.hash}}</span></div>
                                 </li>
                                 <li>
                                     <div class="h5">
@@ -183,7 +189,8 @@
                                             <tbody>
                                             <tr ng-show="spectra.length == 0">
                                             </tr>
-                                            <tr ng-repeat="s in similarSpectra | orderBy:'-similarity'" ng-click="viewSpectrum(s.id)">
+                                            <tr ng-repeat="s in similarSpectra | orderBy:'-similarity'"
+                                                ng-click="viewSpectrum(s.id)">
                                                 <td>{{s.id}}</td>
                                                 <td>
                                                     <ul class="list-unstyled">
@@ -220,23 +227,42 @@
 
                     <div class="row">
                         <div class="col-md-12">
+                            <h4>Compound Kind</h4>
+
+                            <uib-accordion close-others="false">
+                                <uib-accordion-group ng-repeat="compound in delayedSpectrum.compound track by $index">
+                                    <uib-accordion-heading>
+                                        <div> {{delayedSpectrum.kind}} <i class="pull-right glyphicon"
+                                                                          ng-class="{'glyphicon-chevron-down': accordionStatus.compound[$index],
+                                                                      'glyphicon-chevron-right': !accordionStatus.compound[$index]}"></i>
+                                        </div>
+                                        <div display-compound-info compound="compound"></div>
+                                    </uib-accordion-heading>
+                                </uib-accordion-group>
+                            </uib-accordion>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
                             <h4>Compound Properties</h4>
 
                             <uib-accordion close-others="false">
                                 <uib-accordion-group is-open="accordionStatus.isBiologicalCompoundOpen">
                                     <uib-accordion-heading>
                                         <div>Compound <i class="pull-right glyphicon"
-                                                          ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i>
+                                                         ng-class="{'glyphicon-chevron-down': accordionStatus.isBiologicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isBiologicalCompoundOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
 
                                     <div display-compound-info compound="spectrum.biologicalCompound"></div>
                                 </uib-accordion-group>
 
-                                <uib-accordion-group is-open="accordionStatus.isChemicalCompoundOpen" ng-if="spectrum.chemicalCompound !== null">
+                                <uib-accordion-group is-open="accordionStatus.isChemicalCompoundOpen"
+                                                     ng-if="spectrum.chemicalCompound !== null">
                                     <uib-accordion-heading>
                                         <div>Provided Derivatized Product<i class="pull-right glyphicon"
-                                                                              ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i>
+                                                                            ng-class="{'glyphicon-chevron-down': accordionStatus.isChemicalCompoundOpen, 'glyphicon-chevron-right': !accordionStatus.isChemicalCompoundOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
                                     <div display-compound-info compound="spectrum.chemicalCompound"></div>

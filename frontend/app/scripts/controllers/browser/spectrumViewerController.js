@@ -39,7 +39,8 @@
             isDerivatizedCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisDerivatizedCompoundOpen", false),
             isSpectraOpen: CookieService.getBooleanValue("DisplaySpectraisSpectraOpen", true),
             isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false),
-            isSimilarSpectraOpen: false
+            isSimilarSpectraOpen: false,
+            compound: []
         };
 
         /**
@@ -51,6 +52,8 @@
             });
         }, true);
 
+
+        $scope.$watch("accordionStatus.compound")
 
         /**
          * Sort order for the ion table - default m/z ascending
@@ -150,7 +153,9 @@
                 return truncateDecimal(mass, 1);
             };
 
-            $log.info(delayedSpectrum.compound);
+            $log.info(delayedSpectrum);
+
+            
             for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
                 var name = delayedSpectrum.metaData[i].name.toLowerCase();
 
