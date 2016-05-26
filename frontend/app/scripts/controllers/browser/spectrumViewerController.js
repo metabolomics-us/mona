@@ -150,13 +150,7 @@
                 return truncateDecimal(mass, 1);
             };
 
-
-            //
-            // Truncate metadata mass values
-            //
-
-
-
+            $log.info(delayedSpectrum.compound);
             for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
                 var name = delayedSpectrum.metaData[i].name.toLowerCase();
 
