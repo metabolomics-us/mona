@@ -31,9 +31,12 @@
                     isArray: true
                 },
                 'searchSpectraCount': {
-                    url: REST_BACKEND_SERVER + '/rest/spectra/count:query',
+                    url: REST_BACKEND_SERVER + '/rest/spectra/search/:count',
                     method: 'GET',
-                    isArray: false
+                    isArray: false,
+                    transformResponse: function(data) {
+                        return {count: data};
+                    }
                 },
                 'searchSimilarSpectra': {
                     url: REST_BACKEND_SERVER + '/rest/spectra/similarity?max=' + MAX_SPECTRA,
