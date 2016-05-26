@@ -25,7 +25,6 @@
 
         function buildQueryString() {
             var query = QueryCache.getSpectraQuery();
-            $log.info(query);
             var compoundQuery = '';
             var metadataQuery = '';
 
@@ -35,9 +34,13 @@
                 compoundQuery = compoundQuery.concat(buildCompoundQueryString(query.compound));
             }
 
+            // build advanced metadata string
+            if (angular.isDefined(query.advMeta) && query.advMeta.length !== 0) {
+                metadataQuery += buildAdvMetaQueryString(query.advMeta, query.operand);
+            }
             // build metadata string
             if (angular.isDefined(query.metadata) && query.metadata.length !== 0) {
-                metadataQuery = buildMetaDataQueryString(query.metadata, query.operand);
+                metadataQuery += buildMetaDataQueryString(query.metadata);
             }
 
             //TODO build tag string
@@ -50,7 +53,31 @@
 
             // set query in cache
             compiledQuery = compiledQuery === '' ? '/rest/spectra' : compiledQuery;
+            QueryCache.setSpectraQueryString(compiledQuery);
 
+        }
+
+        function buildAdvMetaQueryString(metadata, operand) {
+            var query = '';
+
+            // handle exact mass & tolerance
+            for (var i = 0; i < metadata.length; i ++) {
+
+                if (metadata[i].hasOwnProperty('exact mass')) {
+                    // concat first operand
+                    query = query.concat(' ', operand[0]);
+                    var leftOffset = metadata[i]['exact mass'] - metadata[i+1].tolerance;
+                    var rightOffset = metadata[i]['exact mass'] + metadata[i+1].tolerance;
+                    query += " metaData=q='name==\"exact mass\" and " + "(value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\")'";
+                }
+
+                // handle formula
+                if (metadata[i].hasOwnProperty('formula')) {
+                    var secondOperand = operand[1];
+                    query += ' ' + secondOperand + ' ' + "metaData=q='name==\"formula\" and value==\"" + metadata[i].formula + "\"'";
+                }
+            }
+            return query;
         }
 
         function buildTagsQueryString(tagQuery) {
@@ -65,48 +92,21 @@
             return queryString;
         }
 
-        function buildMetaDataQueryString(metadata, operand) {
+        function buildMetaDataQueryString(metadata) {
             var query = '';
-            $log.debug(metadata);
-            // handle exact mass & tolerance
-            for (var i = 0; i < 2; i ++) {
 
-                if (metadata[i].hasOwnProperty('exact mass')) {
-                    // concat first operand
-                    query = query.concat(' ', operand.shift());
-                    var leftOffset = metadata[i]['exact mass'] - metadata[i+1].tolerance;
-                    var rightOffset = metadata[i]['exact mass'] + metadata[i+1].tolerance;
-                    query += " metaData=q='name==\"exact mass\" and " + "(value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\")'";
+            for (var i = 0, l = metadata.length; i < l; i++) {
+                var meta = metadata[i];
+
+                if (query !== '') {
+                    query += ' and ';
                 }
 
-                // handle formula
-                if (metadata[i].hasOwnProperty('formula')) {
-                    var secondOperand = operand.pop();
-                    query += ' ' + secondOperand + ' ' + "metaData=q='name==\"formula\" and value==\"" + metadata[i].formula + "\"'";
-                }
-            }
-            $log.info(query);
-
-            // handle instrument Type
-            if (typeof(metadata.insType) !== 'undefined' && metadata.insType.length !== 0) {
-                for (var i = 0, l = metadata.insType.length; i < l; i++) {
-                    query += " and metaData=q='name==\"instrument type\" and value==\"" + metadata.insType[i] + "\"'";
+                for (var key in meta) {
+                    query +="metaData=q='name==\"" + key + "\" and value==\"" + meta[key] + "\"'";
                 }
             }
 
-            // handle msType
-            if (typeof(metadata.msType) !== 'undefined' && metadata.msType.length !== 0) {
-                for (var i = 0, l = metadata.msType.length; i < l; i++) {
-                    query += " and metaData=q='name==\"ms type\" and value==\"" + metadata.msType[i] + "\"'";
-                }
-            }
-
-            // handle ionMode
-            if (typeof(metadata.ionMode) !== 'undefined' && metadata.ionMode.length !== 0) {
-                for (var i = 0; i < metadata.ionMode.length; i++) {
-                    query += " and metaData=q='name==\"ion mode\" and value==\"" + metadata.ionMode[i] + "\"'";
-                }
-            }
             return query;
         }
 
