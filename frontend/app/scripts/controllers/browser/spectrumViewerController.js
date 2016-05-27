@@ -152,8 +152,7 @@
             var truncateRetentionTime = function(mass) {
                 return truncateDecimal(mass, 1);
             };
-
-            $log.info(delayedSpectrum);
+            
 
             // truncate metadata
             for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {

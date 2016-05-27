@@ -45,23 +45,23 @@
         // Handle a provided library link
         if (angular.isDefined(library.link)) {
             // Link to library but no identifier
-            if (!angular.isDefined(library.libraryIdentifier)) {
+            if (!angular.isDefined(library.id)) {
                 $scope.libraryString += '<a href="'+ library.link +'" target="_blank">'+
                     library.description +'</a>';
             }
 
             // Link to library and identifier and link placeholder for identifier
-            else if (angular.isDefined(library.libraryIdentifier) && library.link.indexOf('%s') > -1) {
-                var link = library.link.replace('%s', library.libraryIdentifier);
+            else if (angular.isDefined(library.id) && library.link.indexOf('%s') > -1) {
+                var link = library.link.replace('%s', library.id);
 
                 $scope.libraryString += $scope.spectrum.library.description + ' as <a href="'+ link +'" target="_blank">'+
-                    library.libraryIdentifier +'</a>';
+                    library.id +'</a>';
             }
 
             // Link to library and identifier but no link placeholder for identifier
             else {
                 $scope.libraryString += '<a href="'+ library.link +'" target="_blank">'+ library.description +
-                    '</a> as '+ library.libraryIdentifier;
+                    '</a> as '+ library.id;
             }
         }
 
