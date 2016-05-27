@@ -88,7 +88,7 @@
                             <ul class="list-inline">
                                 <li>
                                     <div class="h5">Splash: <span gw-spectra-id-query
-                                                                  value="spectrum">{{spectrum.hash}}</span></div>
+                                                                  value="spectrum">{{spectrum.splash.splash}}</span></div>
                                 </li>
                                 <li>
                                     <div class="h5">
@@ -232,7 +232,7 @@
                             <uib-accordion close-others="false">
                                 <uib-accordion-group ng-repeat="compound in spectrum.compound track by $index">
                                     <uib-accordion-heading>
-                                        <div> {{compound.kind}} <i class="pull-right glyphicon"
+                                        <div> {{compound.kind | ucfirst}} <i class="pull-right glyphicon"
                                                                           ng-class="{'glyphicon-chevron-down': accordionStatus.compound[$index],
                                                                       'glyphicon-chevron-right': !accordionStatus.compound[$index]}"></i>
                                         </div>
@@ -243,7 +243,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <!--<div class="row">
                         <div class="col-md-12">
                             <h4>Compound Properties</h4>
 
@@ -279,7 +279,7 @@
                                 </uib-accordion-group>
                             </uib-accordion>
                         </div>
-                    </div>
+                    </div>-->
                     <br/>
 
                     <div class="row">
