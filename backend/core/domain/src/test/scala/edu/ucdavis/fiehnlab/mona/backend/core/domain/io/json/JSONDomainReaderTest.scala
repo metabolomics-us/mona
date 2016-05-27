@@ -11,8 +11,8 @@ import org.scalatest.WordSpec
 class JSONDomainReaderTest extends WordSpec {
 
   "we should be able to create an instance of the reader" when {
-
     val reader = JSONDomainReader.create[Spectrum]
+
 
     "which should be of the tpye spectrum" should {
 

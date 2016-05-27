@@ -6,10 +6,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod
-import org.springframework.security.config.annotation.web.builders.{WebSecurity, HttpSecurity}
-import org.springframework.security.config.annotation.web.configuration.{WebSecurityConfigurerAdapter, EnableWebSecurity}
+import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
 
 
@@ -18,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
   */
 @SpringBootApplication
 @EnableWebSecurity
+@EnableDiscoveryClient
 @Import(Array(classOf[MonaEventBusConfiguration],classOf[JWTAuthenticationConfig]))
 class QueryDownloader extends WebSecurityConfigurerAdapter {
   @Autowired
