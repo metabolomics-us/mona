@@ -44,6 +44,8 @@ object MonaMapper {
     mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.setSerializationInclusion(Include.NON_NULL);
+    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS,true)
+
     mapper
   }
 }
