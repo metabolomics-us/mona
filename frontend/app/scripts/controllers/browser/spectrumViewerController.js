@@ -39,7 +39,8 @@
             isDerivatizedCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisDerivatizedCompoundOpen", false),
             isSpectraOpen: CookieService.getBooleanValue("DisplaySpectraisSpectraOpen", true),
             isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false),
-            isSimilarSpectraOpen: false
+            isSimilarSpectraOpen: false,
+            compound: []
         };
 
         /**
@@ -51,6 +52,8 @@
             });
         }, true);
 
+
+        $scope.$watch("accordionStatus.compound")
 
         /**
          * Sort order for the ion table - default m/z ascending
@@ -149,45 +152,37 @@
             var truncateRetentionTime = function(mass) {
                 return truncateDecimal(mass, 1);
             };
+            
 
+            // truncate metadata
+            for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
+                var curMeta = delayedSpectrum.metaData[i];
 
-            //
-            // Truncate metadata mass values
-            //
-
-
-
-            for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
-                var name = delayedSpectrum.metaData[i].name.toLowerCase();
+                var name = curMeta.name.toLowerCase();
 
                 if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                    delayedSpectrum.metaData[i].value = truncateMass(delayedSpectrum.metaData[i].value);
+                    curMeta.value = truncateMass(curMeta.value);
                 } else if (name.indexOf('retention') > -1) {
-                    delayedSpectrum.metaData[i].value = truncateRetentionTime(delayedSpectrum.metaData[i].value);
+                    curMeta.value = truncateRetentionTime(curMeta.value);
                 }
             }
 
-            for (var i = 0; i < delayedSpectrum.biologicalCompound.metaData.length; i++) {
-                var name = delayedSpectrum.biologicalCompound.metaData[i].name.toLowerCase();
+            // truncate compounds
+            for(var i = 0, l = delayedSpectrum.compound.length; i < l; i++) {
+                var compoundMeta = delayedSpectrum.compound[i].metaData;
+                    for (var j = 0, m = compoundMeta.length; j < m; j++) {
+                        var metadata = compoundMeta[j];
+                        var name = metadata.name.toLowerCase();
 
-                if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                    delayedSpectrum.biologicalCompound.metaData[i].value = truncateMass(delayedSpectrum.biologicalCompound.metaData[i].value);
+                        if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                            metadata.value = truncateMass(metadata.value);
+                        }
                 }
             }
 
-            if(delayedSpectrum.chemicalCompound !== null) {
-                for (var i = 0; i < delayedSpectrum.chemicalCompound.metaData.length; i++) {
-                    var name = delayedSpectrum.chemicalCompound.metaData[i].name.toLowerCase();
 
-                    if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                        delayedSpectrum.chemicalCompound.metaData[i].value = truncateMass(delayedSpectrum.chemicalCompound.metaData[i].value);
-                    }
-                }
-            }
-
-            //
             // Create mass spectrum table
-            //
+            
 
             // Regular expression to extract ions
             var ionRegex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;

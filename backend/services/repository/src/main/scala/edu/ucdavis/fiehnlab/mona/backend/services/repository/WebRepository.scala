@@ -1,7 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository
 
 import java.io.File
-import javax.servlet.ServletContext
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.{ServletContext, ServletRequest}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
@@ -11,15 +12,19 @@ import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.{FileLayout,
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.listener.RepositoryListener
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.{DefaultServlet, ServletHolder}
+import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.http.server.GitServlet
+import org.eclipse.jgit.lib.{Repository, StoredConfig}
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.transport.RemoteConfig
+import org.eclipse.jgit.transport.resolver.RepositoryResolver
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.embedded.jetty.{JettyEmbeddedServletContainerFactory, JettyServerCustomizer}
 import org.springframework.boot.context.embedded._
-import org.springframework.context.annotation.{Bean, Configuration, Import}
+import org.springframework.context.annotation.{Bean, Configuration, DependsOn, Import}
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -38,8 +43,9 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
-      //get is always available
-      .antMatchers(HttpMethod.GET, "/**")
+        .antMatchers(HttpMethod.GET,"/**")
+      .antMatchers("/repository/**")
+      .antMatchers("/git/*").anyRequest()
   }
 
   @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
@@ -54,53 +60,72 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
   /**
     * initializes a git repository for us
+    *
     * @return
     */
   @Bean
-  def gitRepository: Repository = {
+  def bareGitRepository: Git = {
+    val file = new File(new File(dir), "repository.git")
 
-    if(!localDirectory.exists())
+    var git:Git = null
+
+    if (!file.exists()) {
+      git = Git.init().setDirectory(file).setBare(true).call()
+    }
+    else {
+      git = Git.open(file)
+    }
+    git
+  }
+
+  @Bean
+  @DependsOn(Array("bareGitRepository"))
+  def gitRepository(bareGitRepository: Git): Git = {
+
+    if (localDirectory.exists()) {
+      Git.open(localDirectory)
+    }
+    else {
       localDirectory.mkdirs()
+      val uri = s"file://${dir}/repository.git"
+      val git = Git.cloneRepository().setDirectory(localDirectory).setURI(uri).setCloneAllBranches(true).setBare(false).setRemote("origin/master").setBranch("master").call()
 
-    val gitRepo = new File(localDirectory, ".git")
-
-    if(gitRepo.exists()) {
-      new FileRepositoryBuilder().setGitDir(gitRepo).build()
-    } else {
-      val repo = FileRepositoryBuilder.create(gitRepo)
-      repo.create()
-      repo
+      git
     }
   }
 
   @Bean
-  def repositoryListener(eventBus: EventBus[Spectrum], layout: FileLayout): RepositoryListener = new RepositoryListener(eventBus, layout, new Git(gitRepository))
+  def repositoryListener(eventBus: EventBus[Spectrum], layout: FileLayout, gitRepository: Git): RepositoryListener = new RepositoryListener(eventBus, layout, gitRepository)
 }
 
 @Configuration
-class ConfigureJetty extends LazyLogging{
+class ConfigureJetty extends LazyLogging {
 
   @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
   val dir: String = null
 
-  def localDirectory = new File(new File(this.dir),"repository")
+  def localDirectory = new File(new File(this.dir), "repository")
 
   @Bean
-  def jetty:EmbeddedServletContainerFactory = {
+  def jetty: EmbeddedServletContainerFactory = {
     val factory = new JettyEmbeddedServletContainerFactory()
     factory.setRegisterDefaultServlet(false)
     factory
   }
 
+  /**
+    * provides us with browsing access to the repository
+    * @return
+    */
   @Bean
   def servlet: ServletRegistrationBean = {
     logger.info(s"registering our servlet and using dir: $localDirectory")
     val servlet = new DefaultServlet
-    val bean = new ServletRegistrationBean(servlet,"/repository/*")
+    val bean = new ServletRegistrationBean(servlet, "/repository/*")
 
     bean.addInitParameter("dirAllowed", "true")
-    bean.addInitParameter("resourceBase",localDirectory.getAbsolutePath)
-    bean.addInitParameter("pathInfoOnly","true")
+    bean.addInitParameter("resourceBase", localDirectory.getAbsolutePath)
+    bean.addInitParameter("pathInfoOnly", "true")
     bean.setLoadOnStartup(1)
     bean.setEnabled(true)
     bean.setName("repository")
@@ -109,6 +134,39 @@ class ConfigureJetty extends LazyLogging{
 
     bean
   }
+
+  /**
+    * provides us with access to the git repository to easily check it out
+    * @param bareGitRepository
+    * @return
+    */
+  @Bean
+  def servletGit(bareGitRepository: Git): ServletRegistrationBean = {
+    logger.info(s"registering our servlet and using dir: $localDirectory")
+    val servlet = new GitServlet
+
+    servlet.setRepositoryResolver(new RepositoryResolver[HttpServletRequest] {
+
+      override def open(req: HttpServletRequest, name: String): Repository = {
+        val repo = bareGitRepository.getRepository
+        repo.incrementOpen()
+        repo
+      }
+    })
+
+    val bean = new ServletRegistrationBean(servlet, "/git/*")
+
+    bean.addInitParameter("base-path", new File(dir).getAbsolutePath)
+    bean.addInitParameter("export-all", "1")
+    bean.setLoadOnStartup(1)
+    bean.setEnabled(true)
+    bean.setName("repository.git")
+    bean.setAsyncSupported(false)
+    bean.setOrder(1)
+
+    bean
+  }
+
 }
 
 object WebRepository extends App {

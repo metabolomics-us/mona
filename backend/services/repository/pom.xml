@@ -38,6 +38,12 @@
             <artifactId>org.eclipse.jgit</artifactId>
             <version>4.3.1.201605051710-r</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit.http.server</artifactId>
+            <version>4.3.1.201605051710-r</version>
+        </dependency>
+
 
         <!-- test dependencies -->
         <dependency>
@@ -64,5 +70,5 @@
         </dependency>
     </dependencies>
 
-    <description>This module is the main REPOSITORY and should is utilized to keep track of spectra uploaded and modified by the system</description>
+    <description>This module is the main REPOSITORY and should is utilized to keep track of spectra uploaded and modified by the system. It also tracks all the changes in git, which should easily allow us to see modifications over time.</description>
 </project>
