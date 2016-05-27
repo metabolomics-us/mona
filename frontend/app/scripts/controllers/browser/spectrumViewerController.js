@@ -156,7 +156,7 @@
             $log.info(delayedSpectrum);
 
             // truncate metadata
-            for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
+            for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
                 var curMeta = delayedSpectrum.metaData[i];
 
                 var name = curMeta.name.toLowerCase();
@@ -169,30 +169,21 @@
             }
 
             // truncate compounds
-            
+            for(var i = 0, l = delayedSpectrum.compound.length; i < l; i++) {
+                var compoundMeta = delayedSpectrum.compound[i].metaData;
+                    for (var j = 0, m = compoundMeta.length; j < m; j++) {
+                        var metadata = compoundMeta[j];
+                        var name = metadata.name.toLowerCase();
 
-
-            for (var i = 0; i < delayedSpectrum.biologicalCompound.metaData.length; i++) {
-                var name = delayedSpectrum.biologicalCompound.metaData[i].name.toLowerCase();
-
-                if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                    delayedSpectrum.biologicalCompound.metaData[i].value = truncateMass(delayedSpectrum.biologicalCompound.metaData[i].value);
+                        if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                            metadata.value = truncateMass(metadata.value);
+                        }
                 }
             }
 
-            if(delayedSpectrum.chemicalCompound !== null) {
-                for (var i = 0; i < delayedSpectrum.chemicalCompound.metaData.length; i++) {
-                    var name = delayedSpectrum.chemicalCompound.metaData[i].name.toLowerCase();
 
-                    if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                        delayedSpectrum.chemicalCompound.metaData[i].value = truncateMass(delayedSpectrum.chemicalCompound.metaData[i].value);
-                    }
-                }
-            }
-
-            //
             // Create mass spectrum table
-            //
+            
 
             // Regular expression to extract ions
             var ionRegex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
