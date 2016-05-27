@@ -79,13 +79,16 @@ module.exports = function (grunt) {
                 // Change this to '0.0.0.0' to access the server from outside.
                 hostname: '0.0.0.0',
                 livereload: 35729,
-                middleware: function(connect,options) {
-                    return [
+                middleware: function(connect, options) {
+                    var resources = [
                        // modRewrite(['^(//bower_components+)$ /index.html [L]']),
-                        pushState(),
-                        serveStatic('.tmp'),
-                        //connect().use('/bower_components',serveStatic('/bower_components')),
-                        serveStatic(options.base[1])];
+                        pushState()
+                    ];
+
+                    for(var i = 0; i < options.base.length; i++)
+                        resources.push(serveStatic(options.base[i]));
+
+                    return resources;
                 }
 
             },
