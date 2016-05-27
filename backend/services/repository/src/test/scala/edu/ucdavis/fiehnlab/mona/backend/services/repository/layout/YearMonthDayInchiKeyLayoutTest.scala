@@ -13,12 +13,9 @@ import org.scalatest.WordSpec
   */
 class YearMonthDayInchiKeyLayoutTest extends WordSpec with LazyLogging{
 
-
   val reader = JSONDomainReader.create[Spectrum]
 
   "YearMonthDayInchiKeyLayoutTest" should {
-
-
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
 
     val spectrum: Spectrum = reader.read(input)

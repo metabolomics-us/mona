@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository.listener
 
-import java.io.InputStreamReader
+import java.io.{File, InputStreamReader}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
@@ -11,10 +11,10 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
-import edu.ucdavis.fiehnlab.mona.backend.services.repository.Repository
+import edu.ucdavis.fiehnlab.mona.backend.services.repository.WebRepository
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -26,14 +26,18 @@ import scala.util.Properties
   * Created by wohlg_000 on 5/18/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[Repository]))
-@WebIntegrationTest(Array("server.port=9999", "eureka.client.enabled:false"))
-class RepositoryListenerTest extends WordSpec with LazyLogging {
+@SpringApplicationConfiguration(classes = Array(classOf[WebRepository]))
+@WebIntegrationTest(Array("server.port=8888", "eureka.client.enabled:false"))
+class WebRepositoryListenerTest extends WordSpec with LazyLogging {
 
-  val port: Int = 9999
+  val port: Int = 8888
 
   @Autowired
   val repositoryListener: RepositoryListener = null
+
+
+  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
+  val dir: String = null
 
   val reader = JSONDomainReader.create[Spectrum]
   val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
@@ -69,13 +73,20 @@ class RepositoryListenerTest extends WordSpec with LazyLogging {
 
     "be able to expose data as endpoint" should {
 
-      "be able to access /repository and browse it " ignore {
+      "be able to access /repository and browse it " in {
         given().contentType("application/json; charset=UTF-8").when().log.all(true).get("/repository").then().statusCode(200)
       }
 
       "be able to access our spectra file" in {
         repositoryListener.received(Event(spectrum, eventType = Event.ADD))
-        given().contentType("application/json; charset=UTF-8").when().log().all(true).get(s"/repository/${spectrum.compound(0).inchiKey}/${spectrum.id}.json").then().statusCode(200)
+        val spectra = given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(200).extract().as(classOf[Spectrum])
+
+        assert(spectra.id == "252")
+      }
+
+      "be able to delete our spectra file" in {
+        repositoryListener.received(Event(spectrum, eventType = Event.DELETE))
+        given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(404)
       }
 
 
