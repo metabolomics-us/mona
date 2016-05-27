@@ -34,26 +34,34 @@
          * @type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
          */
         $scope.accordionStatus = {
-            isBiologicalCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisBiologicalCompoundOpen", true),
-            isChemicalCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisChemicalCompoundOpen", false),
-            isDerivatizedCompoundOpen: CookieService.getBooleanValue("DisplaySpectraisDerivatizedCompoundOpen", false),
             isSpectraOpen: CookieService.getBooleanValue("DisplaySpectraisSpectraOpen", true),
             isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false),
             isSimilarSpectraOpen: false,
-            compound: []
+            isCompoundOpen: []
         };
+
+        for (var i = 0; i < $scope.spectrum.compound.length; i ++) {
+            var name = 'DisplayCompound' + i;
+            $scope.accordionStatus.isCompoundOpen.push(CookieService.getBooleanValue(name, false));
+        }
 
         /**
          * watch the accordion status and updates related cookies
          */
         $scope.$watch("accordionStatus", function(newVal) {
             angular.forEach($scope.accordionStatus, function(value, key) {
-                CookieService.update("DisplaySpectra" + key, value);
+
+                if(key === 'isCompoundOpen') {
+                    for (var i = 0; i < $scope.spectrum.compound.length; i++) {
+                        CookieService.update('DisplayCompound' + i, value[i]);
+                    }
+                }
+                else {
+                    CookieService.update("DisplaySpectra" + key, value);
+                }
             });
         }, true);
 
-
-        $scope.$watch("accordionStatus.compound")
 
         /**
          * Sort order for the ion table - default m/z ascending
@@ -152,7 +160,7 @@
             var truncateRetentionTime = function(mass) {
                 return truncateDecimal(mass, 1);
             };
-            
+
 
             // truncate metadata
             for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
@@ -182,7 +190,7 @@
 
 
             // Create mass spectrum table
-            
+
 
             // Regular expression to extract ions
             var ionRegex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
