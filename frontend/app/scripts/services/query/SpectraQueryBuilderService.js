@@ -26,9 +26,20 @@
             return query;
         };
 
+        this.getRsqlQuery = function() {
+            return QueryCache.getSpectraQuery('string');
+        };
+
         this.prepareQuery = function() {
-            QueryCache.setSpectraQuery('/rest/spectra');
-            return '/rest/spectra';
+            var query = {
+                compound: [],
+                metadata: [],
+                tags: []
+            };
+            QueryCache.setSpectraQuery(query);
+            QueryCache.setSpectraQueryString('/rest/spectra');
+
+            return query;
         };
 
         this.setQuery = function(query) {

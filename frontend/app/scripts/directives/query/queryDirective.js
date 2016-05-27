@@ -37,7 +37,7 @@
         $scope.result = [];
         $scope.status = {isOpen: false};
 
-        $scope.query = SpectraQueryBuilderService.getQuery();
+        $scope.query = SpectraQueryBuilderService.getRsqlQuery();
 
         $scope.$on('spectra:query', function(event, data) {
             $scope.query = data;

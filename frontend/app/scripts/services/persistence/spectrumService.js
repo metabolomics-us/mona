@@ -15,25 +15,24 @@
          */
 
         return $resource(
-            REST_BACKEND_SERVER + '/rest/spectra/:id?size=' + MAX_SPECTRA + ':page',
+            REST_BACKEND_SERVER + '/rest/spectra/:id',
             {id: "@id", offset: "@offset"},
             {
                 'update': {
                     method: 'PUT'
                 },
-                'getAllSpectra': {
-                  url: REST_BACKEND_SERVER + '/rest/spectra?size=' + MAX_SPECTRA,
-                    isArray: true
-                },
                 'searchSpectra': {
-                    url: REST_BACKEND_SERVER + '/rest/spectra/search?query=:query&size=' + MAX_SPECTRA,
+                    url: REST_BACKEND_SERVER + '/rest/spectra/:endpoint',
                     method: 'GET',
                     isArray: true
                 },
                 'searchSpectraCount': {
-                    url: REST_BACKEND_SERVER + '/rest/spectra/count:query',
+                    url: REST_BACKEND_SERVER + '/rest/spectra/search/:endpoint',
                     method: 'GET',
-                    isArray: false
+                    isArray: false,
+                    transformResponse: function(data) {
+                        return {count: data};
+                    }
                 },
                 'searchSimilarSpectra': {
                     url: REST_BACKEND_SERVER + '/rest/spectra/similarity?max=' + MAX_SPECTRA,
