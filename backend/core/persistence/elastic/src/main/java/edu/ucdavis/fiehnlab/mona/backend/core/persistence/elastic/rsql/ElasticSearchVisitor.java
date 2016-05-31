@@ -5,8 +5,10 @@ import com.github.rutledgepaulv.qbuilders.nodes.ComparisonNode;
 import com.github.rutledgepaulv.qbuilders.nodes.OrNode;
 import com.github.rutledgepaulv.qbuilders.operators.ComparisonOperator;
 import com.github.rutledgepaulv.qbuilders.visitors.ContextualNodeVisitor;
+import edu.ucdavis.fiehnlab.rqe.regex.RegexStringFieldImpl;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.RegexpQueryBuilder;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -92,7 +94,9 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
             // that may get reused from "above"
             return nestedQuery(field, condition(node, context.createChieldContent(node.getField().asKey())));
         }
-
+        else if(RegexStringFieldImpl.REGEX.equals(node.getOperator())){
+            return new RegexpQueryBuilder(field,single(values).toString());
+        }
         throw new UnsupportedOperationException("This visitor does not support the operator " + operator + ".");
     }
 }
