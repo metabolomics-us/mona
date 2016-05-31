@@ -48,8 +48,22 @@
             var compiledQuery = '';
 
             // strip leading 'and' if compoundQuery is empty
-            compiledQuery = compoundQuery === '' ? metadataQuery.slice(5) :
-                compiledQuery.concat(compoundQuery, metadataQuery);
+            //compiledQuery = compoundQuery === '' ? metadataQuery.slice(5) :
+            //    compiledQuery.concat(compoundQuery, metadataQuery);
+
+            $log.debug('compound: ' + compoundQuery);
+            $log.debug('metadata: ' + metadataQuery);
+            $log.debug(metadataQuery.substring(1,4) === 'and');
+            $log.debug(metadataQuery.substring(1,3) === 'or');
+
+
+            compiledQuery = (metadataQuery.substring(1,4) === 'and' || metadataQuery.substring(1,3) === 'or') ?
+                compiledQuery.concat(compoundQuery, metadataQuery) :
+                    compoundQuery === '' ? metadataQuery :
+                        metadataQuery === '' ? compoundQuery :
+                            compiledQuery.concat(compoundQuery, ' and ', metadataQuery);
+
+            //$log.info(compiledQuery);
 
             // set query in cache
             compiledQuery = compiledQuery === '' ? '/rest/spectra' : compiledQuery;

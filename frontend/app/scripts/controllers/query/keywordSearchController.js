@@ -109,14 +109,14 @@
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metadata.push({'ion mode': value.name});
+                    filtered.metadata.push({'ion mode': value.name.toLowerCase()});
                 }
             });
 
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metadata.push({'ms type': value.name});
+                    filtered.metadata.push({'ms type': value.name.toLowerCase()});
                 }
             });
             SpectraQueryBuilderService.setQuery(filtered);
