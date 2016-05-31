@@ -30,23 +30,20 @@ class ElasticsearchConfig extends LazyLogging {
   @Bean
   def elasticsearchTemplate(elasticClient: Client): ElasticsearchTemplate = {
     new ElasticsearchTemplate(elasticClient, new EntityMapper with LazyLogging {
+        val mapper = MonaMapper.create
+        val module = new SimpleModule()
 
-      val mapper = MonaMapper.create
+        module.addSerializer(classOf[MetaData], new ElasticMetaDataSerializer)
+        module.addDeserializer(classOf[MetaData], new ElasticMedaDataDeserializer)
 
-      val module = new SimpleModule()
+        mapper.registerModule(module)
 
-      module.addSerializer(classOf[MetaData], new ElasticMetaDataSerializer)
-      module.addDeserializer(classOf[MetaData], new ElasticMedaDataDeserializer)
+        logger.debug("created new entity mapper for elastic specific operations")
 
+        override def mapToString(`object`: scala.Any): String = mapper.writeValueAsString(`object`)
 
-      mapper.registerModule(module)
-
-      logger.debug("created new entity mapper for elastic specific operations")
-
-      override def mapToString(`object`: scala.Any): String = mapper.writeValueAsString(`object`)
-
-      override def mapToObject[T](source: String, clazz: Class[T]): T = mapper.readValue(source, clazz)
-    }
+        override def mapToObject[T](source: String, clazz: Class[T]): T = mapper.readValue(source, clazz)
+      }
     )
   }
 
