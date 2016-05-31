@@ -127,7 +127,7 @@
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metaFilter['ms type'].push(value.name.toLowerCase());
+                    filtered.metaFilter['ms type'].push(value.name);
                 }
             });
             SpectraQueryBuilderService.setQuery(filtered);

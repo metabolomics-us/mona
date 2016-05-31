@@ -48,10 +48,10 @@
 
             if (this.query === null) {
                 return $injector.get('SpectraQueryBuilderService').prepareQuery();
-            } else {
-                return typeof(queryType) !== 'undefined' && queryType === 'string' ?
-                    this.queryString :  this.query;
             }
+
+            return typeof(queryType) !== 'undefined' && queryType === 'string' ?
+                this.queryString :  this.query;
         };
 
         /**
