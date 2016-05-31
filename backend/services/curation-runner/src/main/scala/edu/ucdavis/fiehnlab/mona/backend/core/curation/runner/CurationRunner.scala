@@ -32,14 +32,14 @@ import org.springframework.stereotype.Component
 @EnableDiscoveryClient
 @Import(Array(classOf[RestClientConfig],classOf[CurationConfig]))
 @Order(1)
-class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
+class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
   @Qualifier("spectra-curation-queue")
-  val queueName:String = null
+  val queueName: String = null
 
   @Value("${mona.security.curation.token}")
-  val token:String = null
+  val token: String = null
 
   @Bean
   def restWriter : RestRepositoryWriter = {
@@ -61,7 +61,6 @@ class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging{
 
     container
   }
-
 }
 
 /**
@@ -77,7 +76,6 @@ object CurationRunner extends App {
 class CurationListener(workflow: ItemProcessor[Spectrum,Spectrum],writer:RestRepositoryWriter) extends GenericMessageListener[Spectrum] with LazyLogging {
 
   override def handleMessage(spectra: Spectrum) = {
-
     try {
       logger.info(s"received spectra: ${spectra.id}")
       val result: Spectrum = workflow.process(spectra)
