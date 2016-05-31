@@ -115,7 +115,7 @@
             $scope.queryResultCount = "Loading...";
 
             var queryString = SpectraQueryBuilderService.getRsqlQuery();
-
+            $log.info('WARN ' + queryString);
             if(queryString === '/rest/spectra') {
                 Spectrum.searchSpectraCount({endpoint: 'count'}, function(data) {
                     $scope.queryResultCount = data.count;
