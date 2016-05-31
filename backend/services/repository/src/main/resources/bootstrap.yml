@@ -1,0 +1,15 @@
+#basic configuration how to connect to the configuration server
+spring:
+  application:
+    name: repository-service
+  cloud:
+    config:
+      uri:  ${SPRING_CONFIG_URI:http://localhost:1111}
+
+#our local server port
+server:
+  port: 8888
+
+#basic information who we are
+info:
+  component: MoNA Curation Runner
