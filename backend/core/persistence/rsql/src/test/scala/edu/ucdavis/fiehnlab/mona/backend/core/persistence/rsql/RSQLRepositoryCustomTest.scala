@@ -91,6 +91,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size() == 58)
           }
 
+
           "we should be able to execute RSQL queries like compound=q=\'metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'\'" in {
             val result = getRepository.rsqlQuery("compound.metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'")
             assert(result.size == 2)
@@ -110,13 +111,27 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 25)
           }
 
+
+          "we should be able to execute RSQL queries like metaData=q='name=match=\"ion.mode\" and value=negative' in " in {
+            val result = getRepository.rsqlQuery("metaData=q='name=match=\"ion.mode\" and value==negative'")
+            assert(result.size == 25)
+          }
+
+
+
           "we should be able to execute RSQL queries like metaData=q='name=\"ion mode\" and value=match=negativ[ewq]' in " in {
             val result = getRepository.rsqlQuery("metaData=q='name==\"ion mode\" and value=match=negativ[ewq]'")
             assert(result.size == 25)
           }
 
+
           "we should be able to execute RSQL queries like tags=q='text==LCMS' in " in {
             val result = getRepository.rsqlQuery("tags=q='text==LCMS'")
+            assert(result.size == 58)
+          }
+
+          "we should be able to execute RSQL queries like tags=q='text=match=\"[(LCMS)(lcms)]+\"' in " in {
+            val result = getRepository.rsqlQuery("tags=q='text=match=\"[(LCMS)(lcms)]+\"'")
             assert(result.size == 58)
           }
 

@@ -69,14 +69,16 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
         } else if (ComparisonOperator.NE.equals(operator)) {
             return boolQuery().mustNot(termQuery(field, single(values)));
         }
-        /*
+/*
         else if (ComparisonOperator.EX.equals(operator)) {
             if (single(values).equals(true)) {
                 return existsQuery(field);
             } else {
                 return boolQuery().mustNot(existsQuery(field));
             }
-        } */
+        }
+        */
+
         else if (ComparisonOperator.GT.equals(operator)) {
             return rangeQuery(field).gt(single(values));
         } else if (ComparisonOperator.LT.equals(operator)) {
