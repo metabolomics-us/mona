@@ -34,10 +34,18 @@
                 compoundQuery = compoundQuery.concat(buildCompoundQueryString(query.compound));
             }
 
-            // build advanced metadata string
-            if (angular.isDefined(query.advMeta) && query.advMeta.length !== 0) {
-                metadataQuery += buildAdvMetaQueryString(query.advMeta, query.operand);
+            // build compound metadata string
+            if (angular.isDefined(query.compoundMeta) && query.compoundMeta.length !== 0) {
+                var compoundMetaQuery = buildCompoundMetaQueryString(query.compoundMeta, query.operand);
+                compoundQuery = compoundQuery === '' ? compoundMetaQuery : compoundQuery.concat(compoundMetaQuery);
             }
+
+            //build metadata filter string from search page
+
+            if(angular.isDefined(query.metaFilter)) {
+                var metaFilterQuery = buildMetaFilterQueryString(query.metaFilter);
+            }
+
             // build metadata string
             if (angular.isDefined(query.metadata) && query.metadata.length !== 0) {
                 metadataQuery += buildMetaDataQueryString(query.metadata);
@@ -47,14 +55,10 @@
 
             var compiledQuery = '';
 
-            // strip leading 'and' if compoundQuery is empty
-            //compiledQuery = compoundQuery === '' ? metadataQuery.slice(5) :
-            //    compiledQuery.concat(compoundQuery, metadataQuery);
-
-            $log.debug('compound: ' + compoundQuery);
-            $log.debug('metadata: ' + metadataQuery);
-            $log.debug(metadataQuery.substring(1,4) === 'and');
-            $log.debug(metadataQuery.substring(1,3) === 'or');
+            //$log.debug('compound: ' + compoundQuery);
+            //$log.debug('metadata: ' + metadataQuery);
+            //$log.debug(metadataQuery.substring(1,4) === 'and');
+            //$log.debug(metadataQuery.substring(1,3) === 'or');
 
 
             compiledQuery = (metadataQuery.substring(1,4) === 'and' || metadataQuery.substring(1,3) === 'or') ?
@@ -71,7 +75,14 @@
 
         }
 
-        function buildAdvMetaQueryString(metadata, operand) {
+        function buildMetaFilterQueryString(filterOptions) {
+            var query = '';
+            
+
+            return query;
+        }
+
+        function buildCompoundMetaQueryString(metadata, operand) {
             var query = '';
 
             // handle exact mass & tolerance
@@ -82,13 +93,13 @@
                     query = query.concat(' ', operand[0]);
                     var leftOffset = metadata[i]['exact mass'] - metadata[i+1].tolerance;
                     var rightOffset = metadata[i]['exact mass'] + metadata[i+1].tolerance;
-                    query += " metaData=q='name==\"exact mass\" and " + "(value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\")'";
+                    query += " compound.metaData=q='name==\"exact mass\" and " + "value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\"'";
                 }
 
                 // handle formula
                 if (metadata[i].hasOwnProperty('formula')) {
                     var secondOperand = operand[1];
-                    query += ' ' + secondOperand + ' ' + "metaData=q='name==\"formula\" and value==\"" + metadata[i].formula + "\"'";
+                    query += ' ' + secondOperand + ' ' + "compound.metaData=q='name==\"formula\" and value==\"" + metadata[i].formula + "\"'";
                 }
             }
             return query;
@@ -113,7 +124,7 @@
                 var meta = metadata[i];
 
                 if (query !== '') {
-                    query += ' and ';
+                    query += ' or ';
                 }
 
                 for (var key in meta) {
@@ -131,15 +142,18 @@
                 var curCompound = compound[i];
 
                 if (query !== '') {
-                    query += ' and ';
+                    query += ' or ';
                 }
 
                 for (var key in curCompound) {
                     if (key === 'name') {
                         query += "compound.names=q='name==" + '\"' + curCompound[key] + '\"\'';
                     }
+                    else if (key === 'inchiKey') {
+                        query += "compound.inchiKey==" + curCompound[key] + "\"";
+                    }
                     else {
-                        query += "compound." + key + "==\"" + curCompound[key] + "\"";
+                        query += "compound.classification=q='value==" + '\"' + curCompound[key] + '\"\'';
                     }
                 }
             }
