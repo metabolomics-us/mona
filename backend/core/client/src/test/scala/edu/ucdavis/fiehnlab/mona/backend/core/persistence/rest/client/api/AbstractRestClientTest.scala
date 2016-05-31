@@ -121,9 +121,9 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually{
 
       }
 
-      "it should be possible to execute queries - Warning ELASTIST SEARCH WILL RETURN WRONG COUNT,HENCE >=" ignore {
+      "it should be possible to execute queries" in {
         val data = spectrumRestClient.list(Some(""" tags=q='text==LCMS' """))
-        assert(data.toList.length >= exampleRecords.length)
+        assert(data.toList.length == exampleRecords.length)
 
       }
 
