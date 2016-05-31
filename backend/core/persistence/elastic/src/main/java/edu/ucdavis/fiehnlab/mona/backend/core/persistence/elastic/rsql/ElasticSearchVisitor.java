@@ -27,9 +27,6 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
         this.normalizer = normalizer;
     }
 
-
-
-
     @Override
     protected QueryBuilder visit(AndNode node, Context context) {
         BoolQueryBuilder parent = boolQuery();
@@ -98,6 +95,4 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
 
         throw new UnsupportedOperationException("This visitor does not support the operator " + operator + ".");
     }
-
-
 }
