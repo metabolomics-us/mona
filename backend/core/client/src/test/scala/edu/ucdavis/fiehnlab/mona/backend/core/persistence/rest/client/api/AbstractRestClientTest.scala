@@ -127,6 +127,12 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually{
 
       }
 
+      "it should be possible to execute queries with regular expressions" in {
+        val data = spectrumRestClient.list(Some(""" tags=q='text=match="[(lcms)(LCMS)]+"' """))
+        assert(data.toList.length == exampleRecords.length)
+
+      }
+
 
       "it should be possible to delete values" in {
         val records = spectrumRestClient.list()
