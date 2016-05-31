@@ -11,11 +11,6 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td>Internal Id</td>
-                        <td>{{compound.id}}</td>
-                    </tr>
-
-                    <tr>
                         <td>InChIKey</td>
                         <td>{{compound.inchiKey}}</td>
                     </tr>
@@ -63,7 +58,7 @@
                     </span>
                 </div>
                 <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
-                     id="big-{{pictureId}}-CompoundViewer_{{compound.id}}" ng-model="compound"></div>
+                     id="big-{{pictureId}}-CompoundViewer_{{chemId}}" ng-model="compound"></div>
             </div>
         </div>
     </div>
