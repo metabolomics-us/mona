@@ -1,7 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql
 
+import java.util.stream.Collectors
+
 import com.github.rutledgepaulv.qbuilders.nodes.ComparisonNode
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.rqe.regex.RegexStringFieldImpl
+import org.elasticsearch.index.query.{QueryBuilder, RegexpQueryBuilder}
 
 /**
   * Created by wohlg on 3/13/2016.
@@ -10,6 +14,7 @@ class CustomElastic1SearchVisitor extends ElasticSearchVisitor with LazyLogging 
 
   /**
     * maps the field name from value to value_*
+    *
     * @param field
     * @param node
     * @param context

@@ -65,6 +65,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     //uggly but best solution I found so far. If we do it without pagination request, spring will always limit it to 10 results.
     //TODO obviously onces the delete bug doesnt happen anymore we should get rid of the aggregations
     val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0,1000000)).addAggregation(AggregationBuilders.terms("by_id").field("id")).build()
+    logger.info(s"query: ${query.getQuery}")
     query
   }
 
@@ -77,32 +78,6 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @return
     */
   override def saveOrUpdate(value: Spectrum): Unit = {
-/*
-    if(value.id != null) {
-      logger.info(s"updating index with existing id: ${value.id}")
-
-      val request = new IndexRequest()
-
-      request.source("spectra",value)
-      val query = new UpdateQueryBuilder().withDoUpsert(true).withId(value.id).withClass(classOf[Spectrum]).withIndexRequest(request).build()
-      elasticsearchTemplate.update(query)
-
-    }
-    else{
-      logger.info(s"inserting into index")
-
-      val query = new IndexQuery()
-      query.setType("spectrum")
-      query.setObject(value)
-      query.setIndexName("spectrum")
-      elasticsearchTemplate.index(query)
-
-    }
-
-    elasticsearchTemplate.refresh(classOf[Spectrum],true)
-
-    */
-
     assert(value.id != null)
     elasticsearchTemplate.index(new IndexQueryBuilder().withId(value.id).withObject(value).build())
     elasticsearchTemplate.refresh(classOf[Spectrum],true)
