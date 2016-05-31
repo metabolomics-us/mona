@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
-import com.github.rutledgepaulv.qbuilders.visitors.MongoVisitor
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -9,6 +8,7 @@ import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Repository
+import rsql.CustomMongoVisitor
 
 /**
   * Created by wohlgemuth on 2/26/16.
@@ -64,7 +64,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
 
     val pipeline = QueryConversionPipeline.defaultPipeline()
     val condition = pipeline.apply(query, classOf[Spectrum])
-    val criteria = condition.query(new MongoVisitor())
+    val criteria = condition.query(new CustomMongoVisitor())
 
     val toExecute = new Query()
     toExecute.addCriteria(criteria)

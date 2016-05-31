@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository.listener
 
 import java.io.{File, FileNotFoundException}
+import javax.annotation.{PostConstruct, PreDestroy}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, EventBusListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -99,6 +100,12 @@ class RepositoryListener @Autowired()(val bus: EventBus[Spectrum], val layout: F
     git.rm().addFilepattern(filePath).call()
     git.commit().setMessage(s"removed spectra ${spectrum.id} from the repository").setCommitter(spectrum.submitter.emailAddress,spectrum.submitter.emailAddress).call()
     git.push().setRemote("origin/master").setRefSpecs(new RefSpec("master")).call()
+  }
+
+  @PreDestroy
+  def cleanup = {
+    logger.info("closing repository")
+    git.close()
   }
 
   def buildPath(file:File) : String = "."
