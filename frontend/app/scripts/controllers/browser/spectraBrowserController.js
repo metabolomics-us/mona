@@ -200,37 +200,15 @@
                 var payload = SpectraQueryBuilderService.getRsqlQuery();
 
                 // Note the start time for timing the spectrum search
-                var startTime = Date.now();
+                $scope.startTime = Date.now();
 
                 $log.debug(payload);
 
                 if (payload === '/rest/spectra') {
-                    Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, function (data) {
-                        if (data.length === 0) {
-                            $scope.dataAvailable = false;
-                        } else {
-                            // Add data to spectra object
-                            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
-                        }
-                        hideSplash();
-                        $scope.loadingMore = false;
-                        page += 1;
-                    });
+                    Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);
                 }
                 else {
-                    Spectrum.searchSpectra({endpoint: 'search', query: payload, page: page, size: MAX_SPECTRA}, function (data) {
-                        $scope.duration = (Date.now() - startTime) / 1000;
-
-                        if (data.length === 0) {
-                            $scope.dataAvailable = false;
-                        } else {
-                            // Add data to spectra object
-                            $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
-                        }
-                        hideSplash();
-                        $scope.loadingMore = false;
-                        page += 1;
-                    });
+                    Spectrum.searchSpectra({endpoint: 'search', query: payload, page: page, size: MAX_SPECTRA}, searchSuccess, searchError);
                 }
             }
             //inform other controllers that we finished loading spectra
@@ -238,6 +216,24 @@
                 $rootScope.$broadcast('spectra:loaded', $scope.spectra);
             }
         };
+
+        function searchSuccess(data) {
+            $scope.duration = (Date.now() - $scope.startTime) / 1000;
+            if (data.length === 0) {
+                $scope.dataAvailable = false;
+            } else {
+                // Add data to spectra object
+                $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+            }
+            hideSplash();
+            $scope.loadingMore = false;
+            page += 1;
+        }
+
+        function searchError(err) {
+            $log.info(err);
+            hideSplash();
+        }
 
         $scope.$on('$viewContentLoaded', function() {
             $timeout(function() {
