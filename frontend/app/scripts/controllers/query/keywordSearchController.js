@@ -23,6 +23,7 @@
                 }
             };
 
+
             $scope.instrumentType = [
                 {
                     SI: [{name: 'Liquid Chromatography', abv: '(LC)'},
@@ -82,17 +83,27 @@
                 filtered.compound.push({classification: options.compound.className});
             }
 
-            filtered.advMeta = [];
+            filtered.compoundMeta = [];
             // filter exact mass
             if (options.metadata.exactMass !== null) {
-                filtered.advMeta.push({'exact mass': options.metadata.exactMass});
-                filtered.advMeta.push({tolerance: options.metadata.tolerance});
+                filtered.compoundMeta.push({'exact mass': options.metadata.exactMass});
+                filtered.compoundMeta.push({tolerance: options.metadata.tolerance});
             }
 
             // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered.advMeta.push({formula: options.metadata.formula});
+                filtered.compoundMeta.push({formula: options.metadata.formula});
             }
+
+            /**
+             * our model for metadata fields. Elements in each property will be
+             * created with 'or' operator and properties will be concat with 'and' operator
+             */
+            filtered.metaFilter = {
+                'instrument type': [],
+                'ion mode': [],
+                'ms type': []
+            };
 
             // filter instruments
             for (var i = 0; i < instruments.length; i++) {
@@ -100,7 +111,7 @@
                 for (var j in curInstrument) {
                     angular.forEach(curInstrument[j], function (value, key) {
                         if (value.selected === true)
-                            filtered.metadata.push({'instrument type': value.name});
+                            filtered.metaFilter['instrument type'].push(value.name);
                     });
 
                 }
@@ -109,14 +120,14 @@
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metadata.push({'ion mode': value.name.toLowerCase()});
+                    filtered.metaFilter['ion mode'].push(value.name.toLowerCase());
                 }
             });
 
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metadata.push({'ms type': value.name.toLowerCase()});
+                    filtered.metaFilter['ms type'].push(value.name.toLowerCase());
                 }
             });
             SpectraQueryBuilderService.setQuery(filtered);
