@@ -58,14 +58,12 @@
         function hideSplash() {
             $timeout(function () {
                 $scope.searchSplash = false;
-            }, 1000)
+            }, 100)
         }
 
         function showSplash() {
             $scope.searchSplash = true;
         }
-
-
 
         /**
          * reset the current query
