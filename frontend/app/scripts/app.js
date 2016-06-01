@@ -26,7 +26,8 @@
         'infinite-scroll',
         'mgcrea.bootstrap.affix',
         'pascalprecht.translate',
-        'viewhead'
+        'viewhead',
+        'toaster'
     ])
 
     /**
