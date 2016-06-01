@@ -5,7 +5,7 @@
         .controller('AdvancedSearchController', AdvancedSearchController);
 
     /* @ngInject */
-    function AdvancedSearchController($scope, $log, $http) {
+    function AdvancedSearchController($scope, SpectraQueryBuilderService, $log) {
 
         initForm();
         $scope.queryStrings = [];
@@ -13,60 +13,88 @@
         function initForm() {
             $scope.compoundQuery = {
                 metadata: [],
-                operator: ['AND', 'AND', 'AND']
+                operator: ['AND', 'AND', 'AND'],
+                exactMass: null,
+                tolerance: 0.5
             };
 
             $scope.metadataQuery = {
                 metadata: [],
-                operator: 'AND'
+                operator: 'AND',
+                exactMass: null,
+                tolerance: 0.5
             };
         }
 
 
-
         $scope.submitAdvQuery = function () {
 
-            // compile and submit if user search for both compound and metadata
-            if (isCompoundQuery() && isMetaQuery()) {
-                // filter compound
-                filterCompound();
-                filterMetadata();
-
-
-            }
-            else if (isCompoundQuery) {
-
-            }
-            else if (isMetaQuery) {
-
-            }
-            else {
-                // inform user query is empty
-            }
-
+            filterQueryOptions();
+            // save query
+            // change location
         };
 
-        function filterCompound() {
-            // filter compound
-            if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test($scope.compoundQuery.compound.name)) {
-                $scope.compoundQuery.compound.inchiKey = $scope.compoundQuery.compound.name;
-                delete $scope.compoundQuery.compound.name;
+        function filterQueryOptions() {
+
+            var compound = $scope.compoundQuery;
+            var metaData = $scope.metadataQuery;
+
+            var filtered = SpectraQueryBuilderService.prepareQuery();
+
+            // store operators
+            filtered.operand = {meta: metaData.operator.toLowerCase()};
+            filtered.operand.compound = [];
+
+            for (var i = 0; i < compound.operator.length; i++) {
+                filtered.operand.compound.push(compound.operator[i].toLowerCase());
             }
-            else {
-                delete $scope.compoundQuery.compound.inchiKey;
+
+            // filter class
+            if (angular.isDefined(compound.className)) {
+                filtered.compound.push({classification: compound.className});
             }
+
+            // filter compound name or inchikey
+            if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(compound.name)) {
+                filtered.compound.push({inchiKey: compound.name})
+            }
+
+            // filter compound metadata
+            filtered.compoundMetada = addMetaData(compound.metadata);
+
+
+            // filter compound measurement
+            if (compound.exactMass !== null) {
+                filtered.compoundDa = {exactMass: compound.exactMass, tolerance: compound.tolerance};
+            }
+
+
+            // filter metadata
+            if (metaData.metadata.length > 1) {
+                filtered.metadata = addMetaData(metaData.metadata);
+            }
+
+            //filter metadata measurement
+            filtered.metaDa = {exactMass: metaData.exactMass, tolerance: metaData.tolerance};
+
+            $log.info(filtered);
+            SpectraQueryBuilderService.setQuery(filtered);
         }
 
-        function filterMetadata() {
-            // it's already filtered
-        }
 
-        function isMetaQuery() {
-            return $scope.metadataQuery.metadata.length > 1;
-        }
-
-        function isCompoundQuery() {
-            return typeof($scope.compoundQuery.name) === 'string';
+        function addMetaData(metadata) {
+            var addedMeta = [];
+            for (var i = 0, l = metadata.length; i < l; i++) {
+                var curMeta = metadata[i];
+                if (curMeta.name !== '' && curMeta.value !== '' && angular.isDefined(curMeta.selected)) {
+                    addedMeta.push({
+                        name: curMeta.name,
+                        operator: curMeta.selected.value,
+                        value: curMeta.value
+                    });
+                }
+            }
+            return addedMeta;
         }
     }
 })();

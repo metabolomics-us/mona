@@ -32,8 +32,8 @@
             }
 
             // build compound metadata string
-            if (angular.isDefined(query.compoundMeta) && query.compoundMeta.length !== 0) {
-                var compoundMetaQuery = addCompoundMetaQueryString(query.compoundMeta, query.operand);
+            if (angular.isDefined(query.compoundDa) && query.compoundDa.length !== 0) {
+                var compoundMetaQuery = addMeasurementQueryString(query.compoundDa, query.operand);
 
                 // strip leading operators
                 compoundQuery = compoundQuery === '' && compoundMetaQuery.substring(1,4) === 'and' ? compoundMetaQuery.slice(5) :
@@ -113,25 +113,26 @@
 
             return query;
         }
-        // build metadata query for compound
-        function addCompoundMetaQueryString(metadata, operand) {
+
+        // build querystring for mass tolerance and formula
+        function addMeasurementQueryString(measurement, operand) {
             var query = '';
 
             // handle exact mass & tolerance
-            for (var i = 0; i < metadata.length; i ++) {
+            for (var i = 0; i < measurement.length; i ++) {
 
-                if (metadata[i].hasOwnProperty('exact mass')) {
+                if (measurement[i].hasOwnProperty('exact mass')) {
                     // concat first operand
                     query = query.concat(' ', operand[0]);
-                    var leftOffset = metadata[i]['exact mass'] - metadata[i+1].tolerance;
-                    var rightOffset = metadata[i]['exact mass'] + metadata[i+1].tolerance;
+                    var leftOffset = measurement[i]['exact mass'] - measurement[i+1].tolerance;
+                    var rightOffset = measurement[i]['exact mass'] + measurement[i+1].tolerance;
                     query += " compound.metaData=q='name==\"exact mass\" and " + "value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\"'";
                 }
 
                 // handle formula
-                if (metadata[i].hasOwnProperty('formula')) {
+                if (measurement[i].hasOwnProperty('formula')) {
                     var secondOperand = operand[1];
-                    query += ' ' + secondOperand + ' ' + "compound.metaData=q='name==\"formula\" and value==\"" + metadata[i].formula + "\"'";
+                    query += ' ' + secondOperand + ' ' + "compound.metaData=q='name==\"formula\" and value==\"" + measurement[i].formula + "\"'";
                 }
             }
             return query;
