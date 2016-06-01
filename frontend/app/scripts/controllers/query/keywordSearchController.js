@@ -29,10 +29,10 @@
                     SI: [{name: 'Liquid Chromatography', abv: '(LC)'},
                         {name: 'Gas Chromatography', abv: '(GC)'},
                         {name: 'Direct Injection/Infusion', abv: '(DI)'},
-                        {name: 'Capillary ElectrophotetQueryis', abv: '(CE)'}]
+                        {name: 'Capillary Electrophoresis', abv: '(CE)'}]
                 },
                 {
-                    IM: [{name: 'Atmospheric PtetQuerysure Chemical Ionization', abv: '(APCI)'},
+                    IM: [{name: 'Atmospheric Pressure Chemical Ionization', abv: '(APCI)'},
                         {name: 'Chemical Ionization', abv: '(CI)'},
                         {name: 'Electron Impact', abv: '(EI)'},
                         {name: 'Electrospray Ionization', abv: '(ESI)'},
