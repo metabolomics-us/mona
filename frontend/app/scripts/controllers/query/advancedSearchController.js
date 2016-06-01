@@ -5,7 +5,7 @@
         .controller('AdvancedSearchController', AdvancedSearchController);
 
     /* @ngInject */
-    function AdvancedSearchController($scope, SpectraQueryBuilderService, $log) {
+    function AdvancedSearchController($scope, SpectraQueryBuilderService, $location, $log) {
 
         initForm();
         $scope.queryStrings = [];
@@ -70,12 +70,13 @@
 
 
             // filter metadata
-            if (metaData.metadata.length > 1) {
-                filtered.metadata = addMetaData(metaData.metadata);
-            }
+            filtered.metadata = addMetaData(metaData.metadata);
+
 
             //filter metadata measurement
-            filtered.metaDa = {exactMass: metaData.exactMass, tolerance: metaData.tolerance};
+            if (metaData.exactMass !== null) {
+                filtered.metaDa = {exactMass: metaData.exactMass, tolerance: metaData.tolerance};
+            }
 
             $log.info(filtered);
             SpectraQueryBuilderService.setQuery(filtered);
