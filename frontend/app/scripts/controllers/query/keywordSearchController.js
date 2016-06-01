@@ -83,16 +83,16 @@
                 filtered.compound.push({classification: options.compound.className});
             }
 
-            filtered.compoundMeta = [];
+            filtered.compoundDa = [];
             // filter exact mass
             if (options.metadata.exactMass !== null) {
-                filtered.compoundMeta.push({'exact mass': options.metadata.exactMass});
-                filtered.compoundMeta.push({tolerance: options.metadata.tolerance});
+                filtered.compoundDa.push({'exact mass': options.metadata.exactMass});
+                filtered.compoundDa.push({tolerance: options.metadata.tolerance});
             }
 
             // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered.compoundMeta.push({formula: options.metadata.formula});
+                filtered.compoundDa.push({formula: options.metadata.formula});
             }
 
             /**
@@ -113,7 +113,6 @@
                         if (value.selected === true)
                             filtered.metaFilter['instrument type'].push(value.name);
                     });
-
                 }
             }
 
