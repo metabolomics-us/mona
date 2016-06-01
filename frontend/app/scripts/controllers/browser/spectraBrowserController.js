@@ -22,7 +22,7 @@
 
     /* @ngInject */
     function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location,
-                                      queryStringBuilder, SpectrumCache, $rootScope, $timeout, $log, MAX_SPECTRA) {
+                                      queryStringBuilder, SpectrumCache, $rootScope, $timeout, $log, MAX_SPECTRA, toaster) {
 
         $scope.table = false;
         /**
@@ -231,8 +231,13 @@
         }
 
         function searchError(err) {
-            $log.info(err);
             hideSplash();
+            $scope.loadingMore = false;
+            toaster.pop({
+                type: 'error',
+                title: 'Unable to complete request',
+                body: 'Please try again later.'
+            });
         }
 
         $scope.$on('$viewContentLoaded', function() {
