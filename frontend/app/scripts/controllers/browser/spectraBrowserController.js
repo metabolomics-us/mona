@@ -88,9 +88,6 @@
 
             // Add query parameters to query refining
 
-            // if we routed from navbar, prepare query, else get query from cache
-            queryStringBuilder.buildQueryString();
-
             $scope.calculateResultCount();
 
             //actually load our data
@@ -114,6 +111,7 @@
             $scope.queryResultCount = "Loading...";
 
             var queryString = SpectraQueryBuilderService.getRsqlQuery();
+            $log.debug('query for count ' + queryString);
             if(queryString === '/rest/spectra') {
                 Spectrum.searchSpectraCount({endpoint: 'count'}, function(data) {
                     $scope.queryResultCount = data.count;
