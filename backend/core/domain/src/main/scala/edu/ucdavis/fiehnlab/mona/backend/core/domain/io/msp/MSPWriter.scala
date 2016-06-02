@@ -74,7 +74,7 @@ class MSPWriter extends DomainWriter {
     * @param spectrum
     * @return
     */
-  def buildSpectraString(spectrum: Spectrum): Array[String] = spectrum.spectrum.split("\t").collect {
+  def buildSpectraString(spectrum: Spectrum): Array[String] = spectrum.spectrum.split(" ").collect {
     case ionIntensity: String =>
       val pair = ionIntensity.split(":")
       val ion = pair(0)
@@ -119,6 +119,7 @@ class MSPWriter extends DomainWriter {
       p.println(s"${value}")
     }
 
+    p.println()
     p.flush()
   }
 }
