@@ -9,7 +9,7 @@
         .factory("queryStringBuilder", queryStringBuilder);
 
     /* @ngInject */
-    function queryStringBuilder($log, QueryCache) {
+    function queryStringBuilder($log, QueryCache, qStrHelper) {
 
         var service = {
             buildQueryString: buildQueryString
@@ -26,9 +26,12 @@
             var compoundQuery = '';
             var metadataQuery = '';
 
+            qStrHelper.buildMetaString([{name: 'test1', value: 'test1_value'},
+                {name: 'test2', value: 'test2_value', operator: 'ne'},
+                {name: 'test3'}]);
             // build compound string
             if (angular.isDefined(query.compound) && query.compound.length !== 0) {
-                compoundQuery = compoundQuery.concat(addCompoundQueryString(query.compound));
+                compoundQuery = compoundQuery.concat(qStrHelper.buildCompoundString(query.compound));
             }
 
             // build compound metadata string
@@ -46,11 +49,6 @@
                 metadataQuery += addMetaFilterQueryString(query.metaFilter);
             }
 
-            // build metadata from on fly updates
-            if (angular.isDefined(query.metadata) && query.metadata.length !== 0) {
-                metadataQuery += addMetaDataQueryString(query.metadata);
-            }
-
             // compile compound & meta queries
             var compiledQuery = compoundQuery === '' && metadataQuery === '' ? '/rest/spectra' :
                 compoundQuery === '' ? metadataQuery :
@@ -62,7 +60,7 @@
 
         }
 
-        // handles each meta group for keyword filter
+        // handles custom metaFilter for Keyword filter
         function addMetaFilterQueryString(filterOptions) {
             var filtered = [];
             for (var key in filterOptions) {
@@ -74,7 +72,7 @@
             return filtered.length === 0 ? '' : filtered.length > 1 ? filtered.join(' and ') : filtered.join('');
         }
 
-        // builds and encapsulate each group with ()
+        // HELPER method that builds and encapsulate each meta group with ()
         function addGroupMetaQueryString(key, arr) {
             var query = '';
 
@@ -88,31 +86,6 @@
             return '('.concat(query,')');
         }
 
-        function addCompoundQueryString(compound) {
-            var query = '';
-
-            for (var i = 0; i < compound.length; i++) {
-                var curCompound = compound[i];
-
-                if (query !== '') {
-                    query += ' or ';
-                }
-
-                for (var key in curCompound) {
-                    if (key === 'name') {
-                        query += "compound.names=q='name==" + '\"' + curCompound[key] + '\"\'';
-                    }
-                    else if (key === 'inchiKey') {
-                        query += "compound.inchiKey==" + curCompound[key] + "\"";
-                    }
-                    else {
-                        query += "compound.classification=q='value==" + '\"' + curCompound[key] + '\"\'';
-                    }
-                }
-            }
-
-            return query;
-        }
 
         // build querystring for mass tolerance and formula
         function addMeasurementQueryString(measurement, operand) {
@@ -148,24 +121,6 @@
 
             }
             return queryString;
-        }
-
-        function addMetaDataQueryString(metadata) {
-            var query = '';
-
-            for (var i = 0, l = metadata.length; i < l; i++) {
-                var meta = metadata[i];
-
-                if (query !== '') {
-                    query += ' or ';
-                }
-
-                for (var key in meta) {
-                    query +="metaData=q='name==\"" + key + "\" and value==\"" + meta[key] + "\"'";
-                }
-            }
-
-            return query;
         }
 
 
