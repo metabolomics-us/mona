@@ -48,7 +48,7 @@
 
         $scope.submitQuery = function () {
             filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
-            queryStringBuilder.buildQueryString();
+            queryStringBuilder.buildQuery();
             $location.path('/spectra/browse');
         };
 

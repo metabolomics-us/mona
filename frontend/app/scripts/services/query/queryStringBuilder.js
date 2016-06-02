@@ -12,23 +12,22 @@
     function queryStringBuilder($log, QueryCache, qStrHelper) {
 
         var service = {
-            buildQueryString: buildQueryString
+            buildQuery: buildQuery,
+            buildAdvanceQuery: buildAdvanceQuery
+
         };
         return service;
 
         /**
-         * parses a query object and returns a RSQL Query String
-         * @param query
+         * builds a queryString when user submit keywordFilter form
          * @return rsql query string
          */
-        function buildQueryString() {
+        function buildQuery() {
             var query = QueryCache.getSpectraQuery();
             var compoundQuery = '';
             var metadataQuery = '';
 
-            qStrHelper.buildMetaString([{name: 'test1', value: 'test1_value'},
-                {name: 'test2', value: 'test2_value', operator: 'ne'},
-                {name: 'test3'}]);
+
             // build compound string
             if (angular.isDefined(query.compound) && query.compound.length !== 0) {
                 compoundQuery = compoundQuery.concat(qStrHelper.buildCompoundString(query.compound));
@@ -39,9 +38,10 @@
                 var compoundMetaQuery = addMeasurementQueryString(query.compoundDa, query.operand);
 
                 // strip leading operators
+                $log.info(compoundMetaQuery.substring(1,4));
                 compoundQuery = compoundQuery === '' && compoundMetaQuery.substring(1,4) === 'and' ? compoundMetaQuery.slice(5) :
                     compoundQuery === '' && compoundMetaQuery.substring(1,3) === 'or' ? compoundMetaQuery.slice(4) :
-                        compoundQuery.concat(compoundMetaQuery);
+                        compoundQuery.concat(' ',compoundMetaQuery);
             }
 
             //build metadata filter string from search page
@@ -96,7 +96,7 @@
 
                 if (measurement[i].hasOwnProperty('exact mass')) {
                     // concat first operand
-                    query = query.concat(' ', operand[0]);
+                    query += operand[0];
                     var leftOffset = measurement[i]['exact mass'] - measurement[i+1].tolerance;
                     var rightOffset = measurement[i]['exact mass'] + measurement[i+1].tolerance;
                     query += " compound.metaData=q='name==\"exact mass\" and " + "value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\"'";
@@ -110,6 +110,15 @@
             }
             return query;
         }
+
+        /**
+         * builds a queryString when user submit advancedSearch form
+         * @return rsql query string
+         */
+        function buildAdvanceQuery() {
+
+        }
+
 
         function addTagsQueryString(tagQuery) {
             var queryString = "";
