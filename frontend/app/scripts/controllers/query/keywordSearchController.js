@@ -29,10 +29,10 @@
                     SI: [{name: 'Liquid Chromatography', abv: '(LC)'},
                         {name: 'Gas Chromatography', abv: '(GC)'},
                         {name: 'Direct Injection/Infusion', abv: '(DI)'},
-                        {name: 'Capillary ElectrophotetQueryis', abv: '(CE)'}]
+                        {name: 'Capillary Electrophoresis', abv: '(CE)'}]
                 },
                 {
-                    IM: [{name: 'Atmospheric PtetQuerysure Chemical Ionization', abv: '(APCI)'},
+                    IM: [{name: 'Atmospheric Pressure Chemical Ionization', abv: '(APCI)'},
                         {name: 'Chemical Ionization', abv: '(CI)'},
                         {name: 'Electron Impact', abv: '(EI)'},
                         {name: 'Electrospray Ionization', abv: '(ESI)'},
@@ -48,7 +48,7 @@
 
         $scope.submitQuery = function () {
             filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
-            queryStringBuilder.buildQueryString();
+            queryStringBuilder.buildQuery();
             $location.path('/spectra/browse');
         };
 
@@ -83,16 +83,16 @@
                 filtered.compound.push({classification: options.compound.className});
             }
 
-            filtered.compoundMeta = [];
+            filtered.compoundDa = [];
             // filter exact mass
             if (options.metadata.exactMass !== null) {
-                filtered.compoundMeta.push({'exact mass': options.metadata.exactMass});
-                filtered.compoundMeta.push({tolerance: options.metadata.tolerance});
+                filtered.compoundDa.push({'exact mass': options.metadata.exactMass});
+                filtered.compoundDa.push({tolerance: options.metadata.tolerance});
             }
 
             // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered.compoundMeta.push({formula: options.metadata.formula});
+                filtered.compoundDa.push({formula: options.metadata.formula});
             }
 
             /**
@@ -113,7 +113,6 @@
                         if (value.selected === true)
                             filtered.metaFilter['instrument type'].push(value.name);
                     });
-
                 }
             }
 

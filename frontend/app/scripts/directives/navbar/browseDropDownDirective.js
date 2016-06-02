@@ -12,9 +12,19 @@
         var directive = {
             restrict: 'E',
             replace: true,
-            templateUrl: '/views/navbar/browseDropdown.html'
+            templateUrl: '/views/navbar/browseDropdown.html',
+            controller: browseController
         };
 
         return directive;
+        /* */
+        function browseController($scope, SpectraQueryBuilderService) {
+
+            // reset query when user click browse
+            $scope.resetQuery = function() {
+                console.log('test');
+                SpectraQueryBuilderService.prepareQuery();
+            }
+        }
     }
 })();

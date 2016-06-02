@@ -22,7 +22,11 @@
                             </select>
                         </div>
                         <div class="col-sm-10">
-                            <gw-meta-query-input query="compoundQuery.metadata" editable="false"></gw-meta-query-input>
+                            <input id="classValueFilter"
+                                   name="classValueFilter"
+                                   ng-model="compoundQuery.className"
+                                   placeholder="compound class"
+                                   class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -32,21 +36,8 @@
                                 <option>OR</option>
                             </select>
                         </div>
-                        <div class="col-sm-5">
-                            <input type="number"
-                                   id="accurateMass"
-                                   name="accurateMass"
-                                   ng-model="compoundQuery['Mz_exact']"
-                                   placeholder="accurate mass"
-                                   class="form-control"/>
-                        </div>
-                        <div class="col-sm-5">
-                            <input type="number"
-                                   id="accurateMassTolerance"
-                                   name="accurateMassTolerance"
-                                   ng-model="compoundQuery['Mz_exact_tolerance']"
-                                   placeholder="tolerance"
-                                   class="form-control"/>
+                        <div class="col-sm-10">
+                            <gw-meta-query-input query="compoundQuery.metadata" editable="false"></gw-meta-query-input>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -56,11 +47,21 @@
                                 <option>OR</option>
                             </select>
                         </div>
-                        <div class="col-sm-10">
-                            <input id="classValueFilter"
-                                   name="classValueFilter"
-                                   ng-model="compoundQuery.className"
-                                   placeholder="compound class"
+                        <div class="col-sm-5">
+                            <input type="number"
+                                   id="accurateMass"
+                                   name="accurateMass"
+                                   ng-model="compoundQuery.exactMass"
+                                   placeholder="accurate mass"
+                                   class="form-control"/>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="number"
+                                   id="accurateMassTolerance"
+                                   name="accurateMassTolerance"
+                                   value="0.5"
+                                   ng-model="compoundQuery.tolerance"
+                                   placeholder="tolerance"
                                    class="form-control"/>
                         </div>
                     </div>
@@ -82,14 +83,15 @@
                         </div>
                         <div class="col-sm-5">
                             <input type="number"
-                                   ng-model="metadataQuery['Mz_exact']"
+                                   ng-model="metadataQuery.exactMass"
                                    placeholder="accurate mass"
                                    class="form-control"/>
                         </div>
                         <div class="col-sm-5">
                             <input type="number"
-                                   ng-model="metadataQuery['Mz_exact_tolerance']"
+                                   ng-model="metadataQuery.tolerance"
                                    placeholder="tolerance"
+                                   value="0.5"
                                    class="form-control"/>
                         </div>
                     </div>
