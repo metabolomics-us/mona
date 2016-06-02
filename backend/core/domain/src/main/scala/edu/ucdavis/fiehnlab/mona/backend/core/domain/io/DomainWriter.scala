@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io
 
-import java.io.Writer
+import java.io.{OutputStream, OutputStreamWriter, Writer}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 
@@ -16,4 +16,5 @@ trait DomainWriter {
     */
   def write(spectrum:Spectrum, writer:Writer) : Unit
 
+  def write(spectrum: Spectrum, outputStream: OutputStream) : Unit = write(spectrum,new OutputStreamWriter(outputStream))
 }

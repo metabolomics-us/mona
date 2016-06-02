@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.data.domain.{Page, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Service
+import org.springframework.web.bind.annotation.ResponseBody
 
 import scala.collection.JavaConverters._
 

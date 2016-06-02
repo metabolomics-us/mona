@@ -19,6 +19,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.WebIntegrationTest
+import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 
 import scala.collection.JavaConverters._
@@ -123,7 +124,7 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
 
     assert(response.token != null)
     logger.debug(s"generated token is ${response.token}")
-    given().header("Authorization", s"Bearer ${response.token}")
+    given().contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", s"Bearer ${response.token}")
   }
 
 
