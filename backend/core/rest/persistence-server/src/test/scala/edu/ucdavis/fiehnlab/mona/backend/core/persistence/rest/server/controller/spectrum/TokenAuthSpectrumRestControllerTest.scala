@@ -16,8 +16,11 @@ import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.data.repository.PagingAndSortingRepository
+import org.springframework.http.MediaType
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+
+import scala.util.Properties
 
 /**
   * Created by wohlgemuth on 3/1/16.
@@ -25,6 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]))
 class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra") with Eventually {
+  val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
 
   @Autowired
   val spectrumRepository: SpectrumPersistenceService = null
@@ -115,51 +119,51 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to execute custom name subqueries and counts at /rest/spectra/search using GET" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 1)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 1)
       }
 
       "we should be able to execute custom name queries at /rest/spectra/search using GET" ignore {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 1)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 1)
       }
 
       "we should be able to execute custom metadata queries at /rest/spectra/search using GET" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 21)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 21)
       }
 
       "we should be able to get a query count without providing a query" in {
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count").then().statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 48)
       }
 
       "we should be able to get a query count with an empty query" in {
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=").then().statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 48)
       }
 
       "we should be able to update a spectra with new properties" in {
-        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
         val splash: Splash = spectrum.splash.copy(splash = "tada")
         val modifiedSpectrum: Spectrum = spectrum.copy(splash = splash)
         val countBefore = spectrumRepository.count()
 
-        authenticate().contentType("application/json; charset=UTF-8").body(modifiedSpectrum).when().post("/spectra").then().statusCode(200)
+        authenticate().body(modifiedSpectrum).when().contentType("application/json; charset=UTF-8").post("/spectra").then().log().all(true).contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
 
         eventually(timeout(10 seconds)) {
           val countAfter = spectrumRepository.count()
-          val spectrumAfterUpdate = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${modifiedSpectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+          val spectrumAfterUpdate = given().when().contentType("application/json; charset=UTF-8").get(s"/spectra/${modifiedSpectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
           assert(spectrumAfterUpdate.splash.splash == modifiedSpectrum.splash.splash)
           assert(countBefore == countAfter)
@@ -167,9 +171,9 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to receive a spectra by it's ID using GET at /rest/spectra/{id}" in {
-        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
-        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
         assert(spectrum.id.equals(spectrumByID.id))
       }
@@ -179,14 +183,14 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to move a spectrum from one id to another using PUT as /rest/spectra " in {
-        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
-        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
         eventually(timeout(10 seconds)) {
-          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200)
+          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
         }
       }
 
@@ -195,19 +199,70 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to update a spectrum at a given path using PUT as /rest/spectra " in {
-        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
-        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
         eventually(timeout(10 seconds)) {
           //should not exist anymore
           given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(404)
         }
       }
+    }
+
+    "we must be able to support different content types" must {
+
+      "/spectra" should {
+
+        "support application/json" in {
+          given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
+        }
+
+        "text/msp must produce a msp file" in {
+          given().header("accept","text/msp").when().log().all(true).get("/spectra").then().contentType("text/msp").statusCode(200).log().all(true)
+        }
+      }
+
+      "/spectra/id" should {
+
+        "application/json must produce a json file" in {
+          val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
+
+        }
+
+        "text/msp must produce a msp file" in {
+          val spec = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])(0)
+
+          given().header("accept","text/msp").when().log().all(true).get(s"/spectra/${spec.id}").then().log().all(true).contentType("text/msp").statusCode(200)
+        }
+      }
+
+      "/spectra/search" should {
+
+        "application/json must produce a json file" in {
+          val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
+
+        }
+
+        "text/msp must produce a msp file" in {
+          given().header("accept","text/msp").when().log().all(true).get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
+        }
+      }
+
+
+      "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
+        if (keepRunning) {
+          while (keepRunning) {
+            logger.warn("waiting forever till you kill me!")
+            Thread.sleep(300000); // Every 5 minutes
+          }
+        }
+      }
+
     }
   }
 
