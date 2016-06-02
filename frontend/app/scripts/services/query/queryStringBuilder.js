@@ -10,6 +10,7 @@
 
     /* @ngInject */
     function queryStringBuilder($log, QueryCache, qStrHelper) {
+        var defaultQuery = '/rest/spectra';
 
         var service = {
             buildQuery: buildQuery,
@@ -24,13 +25,11 @@
          */
         function buildQuery() {
             var query = QueryCache.getSpectraQuery();
-            var compoundQuery = '';
-            var metadataQuery = '';
-
+            var compiled = '';
 
             // build compound string
             if (angular.isDefined(query.compound) && query.compound.length !== 0) {
-                compoundQuery = compoundQuery.concat(qStrHelper.buildCompoundString(query.compound));
+                compiled = qStrHelper.buildCompoundString(query.compound);
             }
 
             // build compound metadata string
@@ -38,25 +37,22 @@
                 var compoundMetaQuery = addMeasurementQueryString(query.compoundDa, query.operand);
 
                 // strip leading operators
-                $log.info(compoundMetaQuery.substring(1,4));
-                compoundQuery = compoundQuery === '' && compoundMetaQuery.substring(1,4) === 'and' ? compoundMetaQuery.slice(5) :
-                    compoundQuery === '' && compoundMetaQuery.substring(1,3) === 'or' ? compoundMetaQuery.slice(4) :
-                        compoundQuery.concat(' ',compoundMetaQuery);
+                compiled = compiled === '' && compoundMetaQuery.substring(0,3) === 'and' ? compoundMetaQuery.slice(4) :
+                    compiled === '' && compoundMetaQuery.substring(0,2) === 'or' ? compoundMetaQuery.slice(3) :
+                        compiled.concat(' ',compoundMetaQuery);
             }
 
             //build metadata filter string from search page
             if(angular.isDefined(query.metaFilter)) {
-                metadataQuery += addMetaFilterQueryString(query.metaFilter);
+               var metadataQuery = addMetaFilterQueryString(query.metaFilter);
+
+                compiled = compiled === '' && metadataQuery !== '' ? metadataQuery :
+                    compiled !== '' && metadataQuery !== '' ? compiled.concat(' and ', metadataQuery) :
+                        compiled;
             }
 
-            // compile compound & meta queries
-            var compiledQuery = compoundQuery === '' && metadataQuery === '' ? '/rest/spectra' :
-                compoundQuery === '' ? metadataQuery :
-                    metadataQuery === '' ? compoundQuery :
-                        compoundQuery.concat(' and ',metadataQuery);
-
-            // set query in cache
-            QueryCache.setSpectraQueryString(compiledQuery);
+            compiled = compiled === '' ? defaultQuery : compiled;
+            QueryCache.setSpectraQueryString(compiled);
 
         }
 
@@ -87,7 +83,7 @@
         }
 
 
-        // build querystring for mass tolerance and formula
+        // build query string for mass tolerance and formula
         function addMeasurementQueryString(measurement, operand) {
             var query = '';
 
@@ -104,8 +100,8 @@
 
                 // handle formula
                 if (measurement[i].hasOwnProperty('formula')) {
-                    var secondOperand = operand[1];
-                    query += ' ' + secondOperand + ' ' + "compound.metaData=q='name==\"formula\" and value==\"" + measurement[i].formula + "\"'";
+                    query = query == '' ? query.concat(operand[1]) : query.concat(' ', operand[1]);
+                    query +=" compound.metaData=q='name==\"formula\" and value==\"" + measurement[i].formula + "\"'";
                 }
             }
             return query;
@@ -116,7 +112,11 @@
          * @return rsql query string
          */
         function buildAdvanceQuery() {
+            var query = QueryCache.getSpectraQuery();
+            var compoundQuery = '';
+            var metadataQuery = '';
 
+            $Log.info(query);
         }
 
 
