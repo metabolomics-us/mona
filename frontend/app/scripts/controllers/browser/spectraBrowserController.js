@@ -22,7 +22,7 @@
 
     /* @ngInject */
     function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location,
-                                      queryStringBuilder, SpectrumCache, $rootScope, $timeout, $log, MAX_SPECTRA, toaster) {
+                                      queryStringBuilder, SpectrumCache, $rootScope, $timeout, $log, MAX_SPECTRA, toaster, $routeParams) {
 
         $scope.table = false;
         /**
@@ -75,7 +75,6 @@
             $scope.submitQuery();
         };
 
-
         /**
          * submits our build query to the backend
          */
@@ -88,7 +87,6 @@
             $scope.spectra = [];
 
             // Add query parameters to query refining
-            queryStringBuilder.buildQueryString();
 
             $scope.calculateResultCount();
 
@@ -113,7 +111,7 @@
             $scope.queryResultCount = "Loading...";
 
             var queryString = SpectraQueryBuilderService.getRsqlQuery();
-            $log.info('WARN ' + queryString);
+            $log.debug('query for count ' + queryString);
             if(queryString === '/rest/spectra') {
                 Spectrum.searchSpectraCount({endpoint: 'count'}, function(data) {
                     $scope.queryResultCount = data.count;
@@ -196,13 +194,11 @@
                 $scope.loadingMore = true;
                 $scope.spectraLoadLength = $scope.spectra.length;
 
-
                 var payload = SpectraQueryBuilderService.getRsqlQuery();
-
                 // Note the start time for timing the spectrum search
                 $scope.startTime = Date.now();
 
-                $log.debug(payload);
+                $log.debug('SUBMITTED QUERY: ' + payload);
 
                 if (payload === '/rest/spectra') {
                     Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);

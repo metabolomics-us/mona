@@ -47,7 +47,7 @@
             queryType = queryType || undefined;
 
             if (this.query === null) {
-                return $injector.get('SpectraQueryBuilderService').prepareQuery();
+                $injector.get('SpectraQueryBuilderService').prepareQuery();
             }
 
             return typeof(queryType) !== 'undefined' && queryType === 'string' ?
