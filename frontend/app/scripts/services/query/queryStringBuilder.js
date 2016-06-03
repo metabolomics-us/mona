@@ -68,18 +68,15 @@
             return filtered.length === 0 ? '' : filtered.length > 1 ? filtered.join(' and ') : filtered.join('');
         }
 
-        // HELPER method that builds and encapsulate each meta group with ()
+        // helper method for addMetaFilterQueryString
         function addGroupMetaQueryString(key, arr) {
-            var query = '';
+            var query = [];
 
             for(var i = 0, l = arr.length; i < l; i++) {
-                if (query !== '') {
-                    query += ' or ';
-                }
-
-                query += "metaData=q='name==\"" + key + "\" and value==\"" + arr[i] + "\"'";
+                query.push("metaData=q='name==\"" + key + "\" and value==\"" + arr[i] + "\"'");
             }
-            return '('.concat(query,')');
+
+            return '('.concat(query.length > 1 ? query.join(' or ') : query.join(''),')');
         }
 
 
@@ -113,10 +110,19 @@
          */
         function buildAdvanceQuery() {
             var query = QueryCache.getSpectraQuery();
-            var compoundQuery = '';
-            var metadataQuery = '';
+            var compiled = '';
 
-            $Log.info(query);
+            // compound name, inchiKey and class
+            if(angular.isDefined(query.compound) && query.compound.length !== 0) {
+                compiled = qStrHelper.buildCompoundString(query.compound);
+            }
+
+            if(angular.isDefined(query.compoundMetada && query.compoundMetada.length > 0)) {
+                var test = qStrHelper.buildMetaString(query.compoundMetada, true);
+                $log.info(test);
+            }
+
+            $log.info(query);
         }
 
 
