@@ -22,7 +22,7 @@ class DownloadControllerTest extends AbstractSpringControllerTest {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   // Test query
-  val query: String = "metaData=q='name==\"ion mode\" and value==negative'"
+  val testQuery: String = "metaData=q='name==\"ion mode\" and value==negative'"
 
 
   "DownloadControllerTest" should {
@@ -31,18 +31,18 @@ class DownloadControllerTest extends AbstractSpringControllerTest {
 
     "these must all fail, since we require to be logged in " must {
       "schedule" in {
-        given().contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$query").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$testQuery").then().statusCode(401)
       }
 
       "these must all pass, since we are logged in " must {
         "schedule by user" in {
-          val result = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$query").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
-          assert(result.query == 35432454)
+          val result = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
+          assert(result.id == testQuery)
         }
 
         "scheduleByQuery by admin" in {
-          val result = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$query").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
-          assert(result.query == 35432454)
+          val result = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
+          assert(result.id == testQuery)
         }
       }
 
