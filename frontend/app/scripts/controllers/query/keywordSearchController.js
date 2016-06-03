@@ -92,7 +92,7 @@
 
             // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered.compoundDa.push({formula: options.metadata.formula});
+                filtered.formula = options.metadata.formula;
             }
 
             /**

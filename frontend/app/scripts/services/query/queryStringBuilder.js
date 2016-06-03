@@ -11,6 +11,9 @@
     /* @ngInject */
     function queryStringBuilder($log, QueryCache, qStrHelper) {
         var defaultQuery = '/rest/spectra';
+        var queryStr;
+        var operand;
+        var compiled;
 
         var service = {
             buildQuery: buildQuery,
@@ -25,56 +28,37 @@
          */
         function buildQuery() {
             var query = QueryCache.getSpectraQuery();
-            var compiled = '';
+            compiled = [];
 
             // build compound string
-            if (angular.isDefined(query.compound) && query.compound.length !== 0) {
-                compiled = qStrHelper.buildCompoundString(query.compound);
+            if (angular.isDefined(query.compound) && query.compound.length > 0) {
+                compiled.push(qStrHelper.buildCompoundString(query.compound));
             }
 
             // build compound metadata string
-            if (angular.isDefined(query.compoundDa) && query.compoundDa.length !== 0) {
-                compiled = qStrHelper.buildMeasurementString(query.compoundDa, query.operand, compiled);
+            operand = query.operand.shift();
+            if (angular.isDefined(query.compoundDa) && query.compoundDa.length > 0) {
+                queryStr = qStrHelper.buildMeasurementString(query.compoundDa);
+                compiled.push(operand, queryStr);
+            }
+
+            // add formula
+            operand = query.operand.shift();
+            if (angular.isDefined(query.formula)) {
+                queryStr = "compound.metaData=q='name==\"formula\" and value==\"" + query.formula + "\"'";
+                compiled.push(operand, queryStr);
             }
 
             //build metadata filter string from search page
             if (angular.isDefined(query.groupMeta)) {
-                var metadataQuery = addMetaFilterQueryString(query.groupMeta);
-
-                compiled = compiled === '' && metadataQuery !== '' ? metadataQuery :
-                    compiled !== '' && metadataQuery !== '' ? compiled.concat(' and ', metadataQuery) :
-                        compiled;
-            }
-
-            compiled = compiled === '' ? defaultQuery : compiled;
-            QueryCache.setSpectraQueryString(compiled);
-
-        }
-
-        // handles custom groupMeta for Keyword filter
-        function addMetaFilterQueryString(filterOptions) {
-            var filtered = [];
-            for (var key in filterOptions) {
-                if (filterOptions.hasOwnProperty(key) && filterOptions[key].length !== 0) {
-                    filtered.push(addGroupMetaQueryString(key, filterOptions[key]));
+                queryStr = qStrHelper.addMetaFilterQueryString(query.groupMeta);
+                if (queryStr !== '') {
+                    compiled.push('and', queryStr);
                 }
             }
 
-            return filtered.length === 0 ? '' : filtered.length > 1 ? filtered.join(' and ') : filtered.join('');
+            saveQuery();
         }
-
-        // helper method for addMetaFilterQueryString
-        function addGroupMetaQueryString(key, arr) {
-            var query = [];
-
-            for (var i = 0, l = arr.length; i < l; i++) {
-                query.push("metaData=q='name==\"" + key + "\" and value==\"" + arr[i] + "\"'");
-            }
-
-            return '('.concat(query.length > 1 ? query.join(' or ') : query.join(''), ')');
-        }
-
-
 
 
         /**
@@ -83,45 +67,48 @@
          */
         function buildAdvanceQuery() {
             var query = QueryCache.getSpectraQuery();
-            var compiled = '';
-            var operand = '';
+            compiled = [];
 
             // compound name, inchiKey and class
             operand = query.operand.compound.shift();
-            if (angular.isDefined(query.compound) && query.compound.length !== 0) {
-                compiled = qStrHelper.buildCompoundString(query.compound);
+            if (angular.isDefined(query.compound) && query.compound.length > 0) {
+                queryStr = qStrHelper.buildCompoundString(query.compound);
 
                 // add user's selected operand
                 var re = /or compound.classification/;
                 var newStr = operand.concat(' compound.classification');
-                compiled = compiled.replace(re, newStr);
+                queryStr = queryStr.replace(re, newStr);
+
+                compiled.push(queryStr);
             }
 
             // add compound metadata
             operand = query.operand.compound.shift();
-            if (angular.isDefined(query.compoundMetada && query.compoundMetada.length > 0)) {
-                var compoundMeta = qStrHelper.buildMetaString(query.compoundMetada, true);
-
-                compiled = compiled === '' && compoundMeta !== '' ? compoundMeta :
-                    compiled !== '' && compoundMeta !== '' ? compiled.concat(' ', operand, ' ', compoundMeta) :
-                        compiled;
-
+            if (angular.isDefined(query.compoundMetada) && query.compoundMetada.length > 0) {
+                queryStr = qStrHelper.buildMetaString(query.compoundMetada, true);
+                compiled.push(operand, queryStr);
             }
 
-            if(angular.isDefined(query.compoundDa) && query.compoundDa.length > 0) {
-                compiled = qStrHelper.buildMeasurementString(query.compoundDa, query.operand.compound, compiled);
-                // empty last operand
-                query.operand.compound.shift();
+            operand = query.operand.compound.shift();
+            if (angular.isDefined(query.compoundDa) && query.compoundDa.length > 0) {
+                queryStr = qStrHelper.buildMeasurementString(query.compoundDa);
+                compiled.push(operand, queryStr);
             }
 
+            saveQuery();
+        }
 
+        function saveQuery() {
+            // remove any leading operators
+            if (compiled[0] === 'and' || compiled[0] === 'or') {
+                compiled.shift();
+            }
 
-            compiled = compiled === '' ? defaultQuery : compiled;
+            compiled = compiled.length > 0 ? compiled.join(' ') : defaultQuery;
             QueryCache.setSpectraQueryString(compiled);
         }
 
-
-        function addTagsQueryString(tagQuery) {
+        function buildTagsQueryString(tagQuery) {
             var queryString = "";
             for (var i = 0, l = tagQuery.length; i < l; i++) {
                 if (i > 0) {

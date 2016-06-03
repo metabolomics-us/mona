@@ -80,7 +80,7 @@
 
             //filter metadata measurement
             if (metaData.exactMass !== null) {
-                filtered.metaDa = {'exact mass': metaData.exactMass, tolerance: metaData.tolerance};
+                filtered.metaDa = [{'exact mass': metaData.exactMass, tolerance: metaData.tolerance}];
             }
 
             SpectraQueryBuilderService.setQuery(filtered);

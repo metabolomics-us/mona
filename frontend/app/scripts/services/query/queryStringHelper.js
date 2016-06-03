@@ -14,7 +14,8 @@
         var service = {
             buildCompoundString: buildCompoundString,
             buildMetaString: buildMetaString,
-            buildMeasurementString: buildMeasurementString
+            buildMeasurementString: buildMeasurementString,
+            addMetaFilterQueryString: addMetaFilterQueryString
         };
         return service;
 
@@ -71,37 +72,44 @@
             return query.length === 0 ? '' : query.length > 1 ? query.join(' and ') : query.join('');
         }
 
-        function buildMeasurementString(measurement, operand, compiled) {
-            if(angular.isDefined(measurement) && angular.isDefined(operand) && angular.isDefined(compiled)) {
-                // build
+        function buildMeasurementString(measurement) {
+            if (angular.isDefined(measurement)) {
                 var query = '';
 
-                // handle exact mass & tolerance
                 for (var i = 0; i < measurement.length; i++) {
-
                     if (measurement[i].hasOwnProperty('exact mass')) {
-                        // concat first operand
-                        query += operand[0];
+
                         var leftOffset = measurement[i]['exact mass'] - measurement[i + 1].tolerance;
                         var rightOffset = measurement[i]['exact mass'] + measurement[i + 1].tolerance;
-                        query += " compound.metaData=q='name==\"exact mass\" and " + "value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\"'";
-                    }
-
-                    // handle formula
-                    if (measurement[i].hasOwnProperty('formula')) {
-                        query = query == '' ? query.concat(operand[1]) : query.concat(' ', operand[1]);
-                        query += " compound.metaData=q='name==\"formula\" and value==\"" + measurement[i].formula + "\"'";
+                        query += "compound.metaData=q='name==\"exact mass\" and " + "value>=\"" + leftOffset + "\" or value<=\"" + rightOffset + "\"'";
                     }
                 }
-                return compiled === '' && query.substring(0, 3) === 'and' ? query.slice(4) :
-                    compiled === '' && query.substring(0, 2) === 'or' ? query.slice(3) :
-                        compiled.concat(' ', query);
+            }
+            return query;
 
+        }
+
+        // handles custom groupMeta for Keyword filter
+        function addMetaFilterQueryString(filterOptions) {
+            var filtered = [];
+            for (var key in filterOptions) {
+                if (filterOptions.hasOwnProperty(key) && filterOptions[key].length > 0) {
+                    filtered.push(addGroupMetaQueryString(key, filterOptions[key]));
+                }
             }
 
-            else {
-                return 'invalid number of parameters';
+            return filtered.length === 0 ? '' : filtered.length > 1 ? filtered.join(' and ') : filtered.join('');
+        }
+
+        // helper method for addMetaFilterQueryString
+        function addGroupMetaQueryString(key, arr) {
+            var query = [];
+
+            for (var i = 0, l = arr.length; i < l; i++) {
+                query.push("metaData=q='name==\"" + key + "\" and value==\"" + arr[i] + "\"'");
             }
+
+            return '('.concat(query.length > 1 ? query.join(' or ') : query.join(''), ')');
         }
 
     }
