@@ -16,6 +16,6 @@
         <module>repository</module>
         <module>curation-scheduler</module>
         <module>curation-runner</module>
-        <module>query-downloader</module>
+        <module>downloader</module>
     </modules>
 </project>

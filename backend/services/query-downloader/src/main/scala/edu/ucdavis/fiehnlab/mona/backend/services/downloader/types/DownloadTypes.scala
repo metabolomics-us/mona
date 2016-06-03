@@ -12,27 +12,26 @@ import scala.annotation.meta.field
 case class QueryExport(
                         @(Id@field)
                         label: String,
-                        emailAddress: String,
-                        queryFile: String,
-                        queryCount: Integer,
-                        exportFile: String,
-                        exportSize: Long,
-                        query: String
+                        query: String,
+                        format: String,
+                        count: Integer,
+                        size: Long,
+                        emailAddress: String
                       )
 
-@Document(collection = "QUERY_DOWNLOADS")
-case class QueryDownload(
-                        date: Date,
-                        label: String
-                        )
+@Document(collection = "QUERY_DOWNLOAD_REQUESTS")
+case class QueryDownloadRequest(
+                                 date: Date,
+                                 label: String
+                               )
 
 @Document(collection = "PREDEFINED_QUERIES")
 case class PredefinedQuery(
-                          @(Id@field)
-                          label: String,
-                          query: String,
-                          description: String,
-                          queryCount: Integer,
-                          jsonExport: QueryExport,
-                          mspExport: QueryExport
+                            @(Id@field)
+                            label: String,
+                            query: String,
+                            description: String,
+                            queryCount: Integer,
+                            jsonExport: QueryExport,
+                            mspExport: QueryExport
                           )
