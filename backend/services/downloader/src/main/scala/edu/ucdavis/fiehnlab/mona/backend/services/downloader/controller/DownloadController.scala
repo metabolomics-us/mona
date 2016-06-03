@@ -25,12 +25,12 @@ class DownloadController extends LazyLogging {
     // Schedule download
 //    val download = queryDownloadSchedulerService.scheduleDownload(query)
 
-    new AsyncResult[DownloadJobScheduled](DownloadJobScheduled(35432454))
+    new AsyncResult[DownloadJobScheduled](DownloadJobScheduled(query))
   }
 }
 
 @ApiModel
-case class DownloadJobScheduled(query: Int)
+case class DownloadJobScheduled(id: String)
 
 @ApiModel
 case class DownloadJobError(error: String)
