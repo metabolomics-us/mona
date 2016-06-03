@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>services</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.mona</groupId>
+        <version>1.3-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+    <artifactId>downloader</artifactId>
+
+    <description>
+        This module handles query exporting for the pre-defined downloads and custom query download features
+    </description>
+
+    <properties>
+        <docker.expose>7777</docker.expose>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>mongo</artifactId>
+        </dependency>
+
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

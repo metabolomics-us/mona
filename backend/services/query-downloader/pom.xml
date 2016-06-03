@@ -2,7 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
         <artifactId>services</artifactId>
         <groupId>edu.ucdavis.fiehnlab.mona</groupId>
@@ -13,17 +12,18 @@
     <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
     <artifactId>query-downloader</artifactId>
 
+    <description>
+        This module handles query exporting for the pre-defined downloads and custom query download features
+    </description>
+
+    <properties>
+        <docker.expose>7777</docker.expose>
+    </properties>
+
     <dependencies>
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-            <artifactId>domain</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-            <artifactId>domain</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>service</artifactId>
         </dependency>
 
         <dependency>
@@ -37,8 +37,29 @@
         </dependency>
 
         <dependency>
-            <artifactId>amqp</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>mongo</artifactId>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>domain</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
 
         <dependency>
@@ -46,7 +67,35 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
 
-    <description>This module handles query exporting for the pre-defined downloads and custom query download features</description>
+        <!--
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>client</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>rsql</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>persistence-server</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>persistence-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>auth-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        -->
+    </dependencies>
 </project>
