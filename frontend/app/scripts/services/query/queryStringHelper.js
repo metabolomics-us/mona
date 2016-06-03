@@ -18,55 +18,57 @@
         return service;
 
         function buildCompoundString(compound) {
-            var query = '';
+            var query = [];
 
             if (angular.isDefined(compound)) {
                 for (var i = 0; i < compound.length; i++) {
                     var curCompound = compound[i];
 
-                    if (query !== '') {
-                        query += ' or ';
-                    }
-
                     for (var key in curCompound) {
                         if (key === 'name') {
-                            query += "compound.names=q='name==" + '\"' + curCompound[key] + '\"\'';
+                            query.push("compound.names=q='name==" + '\"' + curCompound[key] + '\"\'');
                         }
                         else if (key === 'inchiKey') {
-                            query += "compound.inchiKey==" + curCompound[key] + "\"";
+                            query.push("compound.inchiKey==" + curCompound[key] + "\"");
                         }
                         else {
-                            query += "compound.classification=q='value==" + '\"' + curCompound[key] + '\"\'';
+                            query.push("compound.classification=q='value==" + '\"' + curCompound[key] + '\"\'');
                         }
                     }
                 }
             }
-            return query;
+            return query.length === 0 ? '' : query.length > 1 ? query.join(' or ') : query.join('');
         }
 
-        function buildMetaString(metadata) {
-            var query = '';
+        function buildMetaString(metadata, isCompound) {
+            var query = [];
 
+            isCompound = isCompound || false;
             if (angular.isDefined(metadata)) {
                 for (var i = 0, l = metadata.length; i < l; i++) {
                     var meta = metadata[i];
 
                     if (angular.isDefined(meta.operator) && angular.isDefined(meta.name) && angular.isDefined(meta.value)) {
-                        query = query !== '' ? query += ' and ' : query;
                         var op = meta.operator === 'ne' ? '!=' : '==';
+                        query.push("metaData=q='name==\"" + meta.name + "\" and value" + op + "\"" + meta.value + "\"'");
 
-                        query += "metaData=q='name==\"" + meta.name + "\" and value" + op + "\"" + meta.value + "\"'";
                     }
                     else {
                         if (angular.isDefined(meta.name) && angular.isDefined(meta.value)) {
-                            query = query !== '' ? query += ' and ' : query;
-                            query += "metaData=q='name==\"" + meta.name + "\" and value==\"" + meta.value + "\"'";
+                            query.push("metaData=q='name==\"" + meta.name + "\" and value==\"" + meta.value + "\"'");
                         }
                     }
                 }
             }
 
-            return query;
+            // if it's compound metadata, concat each meta with compound
+            if(isCompound) {
+                angular.forEach(query, function(elem,index) {
+                   query[index] = 'compound.'.concat(elem);
+                });
+            }
+            
+            return query.length === 0 ? '' : query.length > 1 ? query.join(' and ') : query.join('');
         }
 
     }
