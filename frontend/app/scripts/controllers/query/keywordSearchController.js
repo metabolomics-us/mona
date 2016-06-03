@@ -99,7 +99,7 @@
              * our model for metadata fields. Elements in each property will be
              * created with 'or' operator and properties will be concat with 'and' operator
              */
-            filtered.metaFilter = {
+            filtered.groupMeta = {
                 'instrument type': [],
                 'ion mode': [],
                 'ms type': []
@@ -111,7 +111,7 @@
                 for (var j in curInstrument) {
                     angular.forEach(curInstrument[j], function (value, key) {
                         if (value.selected === true)
-                            filtered.metaFilter['instrument type'].push(value.name);
+                            filtered.groupMeta['instrument type'].push(value.name);
                     });
                 }
             }
@@ -119,14 +119,14 @@
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metaFilter['ion mode'].push(value.name.toLowerCase());
+                    filtered.groupMeta['ion mode'].push(value.name.toLowerCase());
                 }
             });
 
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metaFilter['ms type'].push(value.name);
+                    filtered.groupMeta['ms type'].push(value.name);
                 }
             });
             SpectraQueryBuilderService.setQuery(filtered);
