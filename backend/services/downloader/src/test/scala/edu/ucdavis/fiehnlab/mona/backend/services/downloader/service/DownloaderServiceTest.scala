@@ -28,8 +28,8 @@ class DownloaderServiceTest extends AbstractSpringControllerTest with Eventually
   @Autowired
   val downloaderService: DownloaderService = null
 
-//  @Autowired
-//  val restClient: MonaSpectrumRestClient = null
+  @Autowired
+  val restClient: MonaSpectrumRestClient = null
 
   @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
   val dir: String = null
@@ -38,7 +38,7 @@ class DownloaderServiceTest extends AbstractSpringControllerTest with Eventually
 
   "DownloaderServiceTest" should {
     // Populate the database
-//    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
 
 
