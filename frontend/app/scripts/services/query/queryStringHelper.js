@@ -21,20 +21,20 @@
 
         function buildCompoundString(compound) {
             var query = [];
-
+            http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/search?query=compound.names=q='name=match=".*methoxazole"'&size=10
             if (angular.isDefined(compound)) {
                 for (var i = 0; i < compound.length; i++) {
                     var curCompound = compound[i];
 
                     for (var key in curCompound) {
                         if (key === 'name') {
-                            query.push("compound.names=q='name==" + '\"' + curCompound[key] + '\"\'');
+                            query.push("compound.names=q='name=match=" + '\".*' + curCompound[key] + '.*\"\'');
                         }
                         else if (key === 'inchiKey') {
                             query.push("compound.inchiKey==" + curCompound[key] + "\"");
                         }
                         else {
-                            query.push("compound.classification=q='value==" + '\"' + curCompound[key] + '\"\'');
+                            query.push("compound.classification=q='value=match=" + '\".*' + curCompound[key] + '.*\"\'');
                         }
                     }
                 }

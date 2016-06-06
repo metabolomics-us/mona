@@ -95,6 +95,19 @@
                 compiled.push(operand, queryStr);
             }
 
+            // add metadata query
+            if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
+                queryStr = qStrHelper.buildMetaString(query.metadata);
+                compiled.push('and',queryStr);
+            }
+
+            // add metadata measurement
+            operand = query.operand.metadata.pop();
+            if (angular.isDefined(query.metadataDa) && query.metadataDa.length > 0) {
+
+            }
+
+
             saveQuery();
         }
 
