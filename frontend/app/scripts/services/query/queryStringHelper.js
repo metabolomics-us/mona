@@ -49,14 +49,17 @@
             if (angular.isDefined(metadata)) {
                 for (var i = 0, l = metadata.length; i < l; i++) {
                     var meta = metadata[i];
+                    var op = meta.operator;
 
                     if (angular.isDefined(meta.name) && angular.isDefined(meta.value)) {
-                        if (angular.isDefined(meta.operator)) {
-                            var op = meta.operator === 'ne' ? '!=' : '==';
+                        if (op === 'ne') {
                             query.push("metaData=q='name==\"" + meta.name + "\" and value" + op + "\"" + meta.value + "\"'");
                         }
-                        else {
+                        else if(op === 'eq') {
                             query.push("metaData=q='name==\"" + meta.name + "\" and value==\"" + meta.value + "\"'");
+                        }
+                        else {
+                            query.push("metaData=q='name==\"" + meta.name + "\" and value=match=\".*" + meta.value + ".*\"'");
                         }
                     }
                 }
