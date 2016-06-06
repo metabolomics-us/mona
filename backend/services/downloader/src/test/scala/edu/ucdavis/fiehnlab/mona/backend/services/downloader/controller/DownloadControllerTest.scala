@@ -26,30 +26,29 @@ class DownloadControllerTest extends AbstractSpringControllerTest {
 
 
   "DownloadControllerTest" should {
-
-    RestAssured.baseURI = s"http://localhost:$port/rest/downloads"
+    RestAssured.baseURI = s"http://localhost:$port/rest"
 
     "these must all fail, since we require to be logged in " must {
       "schedule" in {
-        given().contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$testQuery").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get(s"/downloads/schedule?query=$testQuery").then().statusCode(401)
       }
 
       "these must all pass, since we are logged in " must {
         "schedule by user" in {
-          val result = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
+          val result = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/downloads/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
           assert(result.id == testQuery)
         }
 
         "scheduleByQuery by admin" in {
-          val result = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
+          val result = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/downloads/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
           assert(result.id == testQuery)
         }
       }
 
       "these must all fail, since we require a query to be passed " must {
         "scheduleByQuery" in {
-          authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/schedule").then().statusCode(400)
-          authenticate().contentType("application/json; charset=UTF-8").when().get("/schedule").then().statusCode(400)
+          authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/downloads/schedule").then().statusCode(400)
+          authenticate().contentType("application/json; charset=UTF-8").when().get("/downloads/schedule").then().statusCode(400)
         }
       }
     }
