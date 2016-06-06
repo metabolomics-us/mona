@@ -28,7 +28,7 @@
 
 
     function linkFunc(scope, element, attrs, ngModel) {
-            console.log(ngModel);
+
     }
 
     //controller to handle building of the queries
@@ -36,20 +36,11 @@
     function gwMetaQueryInputController($scope, $element, SpectraQueryBuilderService, $location,
                                         REST_BACKEND_SERVER, $http, $filter, $log, limitToFilter) {
 
-
-        $scope.metadata = [];
-        //$scope.metadataNames = [];
-
-        //our select options, should be based on metadata value
-        //should be based on received data type for metadata fields
-
         $scope.select = [
             {name: "equal", value: "eq"},
             {name: "not equal", value: "ne"},
-            {name: "like", value: "like"}
+            {name: "like", value: "=match="}
         ];
-
-        $scope.metadata.selected = $scope.select[0];
 
         /**
          * tries to find meta data names for us
@@ -121,7 +112,7 @@
          * adds a metadata query
          */
         $scope.addMetadataQuery = function() {
-            $scope.query.push({name: '', value: '', selected: {name:"equal", value:"eq"}});
+            $scope.query.push({name: '', value: '', selected: $scope.select[0]});
         };
 
         /**
