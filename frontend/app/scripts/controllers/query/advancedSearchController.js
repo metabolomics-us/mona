@@ -42,8 +42,10 @@
             var filtered = SpectraQueryBuilderService.prepareQuery();
 
             // store operators
-            filtered.operand.metadata = [metaData.operator.toLowerCase()];
-            filtered.operand.compound = [];
+            filtered.operand = {
+                metadata: [metaData.operator.toLowerCase()],
+                compound: []
+            };
 
             for (var i = 0; i < compound.operator.length; i++) {
                 filtered.operand.compound.push(compound.operator[i].toLowerCase());

@@ -21,7 +21,7 @@
 
         function buildCompoundString(compound) {
             var query = [];
-            http://cream.fiehnlab.ucdavis.edu:8080/rest/spectra/search?query=compound.names=q='name=match=".*methoxazole"'&size=10
+
             if (angular.isDefined(compound)) {
                 for (var i = 0; i < compound.length; i++) {
                     var curCompound = compound[i];
