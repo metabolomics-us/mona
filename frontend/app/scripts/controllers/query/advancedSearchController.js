@@ -42,7 +42,7 @@
             var filtered = SpectraQueryBuilderService.prepareQuery();
 
             // store operators
-            filtered.operand = {meta: metaData.operator.toLowerCase()};
+            filtered.operand.metadata = [metaData.operator.toLowerCase()];
             filtered.operand.compound = [];
 
             for (var i = 0; i < compound.operator.length; i++) {
@@ -80,7 +80,7 @@
 
             //filter metadata measurement
             if (metaData.exactMass !== null) {
-                filtered.metaDa = [{'exact mass': metaData.exactMass, tolerance: metaData.tolerance}];
+                filtered.metadataDa = [{'exact mass': metaData.exactMass, tolerance: metaData.tolerance}];
             }
 
             SpectraQueryBuilderService.setQuery(filtered);
