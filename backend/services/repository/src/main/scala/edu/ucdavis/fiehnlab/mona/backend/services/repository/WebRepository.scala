@@ -31,9 +31,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.web.WebApplicationInitializer
 import org.springframework.web.context.WebApplicationContext
 
-/**
-  * Created by wohlg_000 on 5/18/2016.
-  */
+
 /**
   * Created by wohlg_000 on 5/18/2016.
   */
@@ -43,7 +41,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
-        .antMatchers(HttpMethod.GET,"/**")
+      .antMatchers(HttpMethod.GET,"/**")
       .antMatchers("/repository/**")
       .antMatchers("/git/*").anyRequest()
   }
