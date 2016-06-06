@@ -39,7 +39,7 @@
         $scope.select = [
             {name: "equal", value: "eq"},
             {name: "not equal", value: "ne"},
-            {name: "like", value: "=match="}
+            {name: "like", value: "match"}
         ];
 
         /**
