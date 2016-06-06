@@ -8,17 +8,15 @@
                    uib-typeahead-editable="editable"
                    class="form-control"
                    ng-trim="true"
-                   uib-typeahead-focus
-
-                    />
+                   uib-typeahead-focus />
         </div>
         <div class="col-sm-2 form-group">
             <select
                     ng-model="meta.selected"
                     ng-options="item.name for item in select"
-                    class="form-control"
-
-                    ></select>
+                    class="form-control">
+                    <option value="">select</option>
+            </select>
         </div>
         <div class="col-sm-6 form-group">
             <input type="text"
@@ -27,10 +25,8 @@
                    placeholder="value"
                    uib-typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
                    class="form-control"
-
                    ng-trim="true"
-                   uib-typeahead-focus
-                    />
+                   uib-typeahead-focus />
         </div>
     </div>
 

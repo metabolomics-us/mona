@@ -1,6 +1,6 @@
 <form>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-8">
             <uib-accordion close-others="false">
                 <uib-accordion-group>
                     <uib-accordion-heading>Compound</uib-accordion-heading>
@@ -55,7 +55,8 @@
                                    placeholder="accurate mass"
                                    class="form-control"/>
                         </div>
-                        <div class="col-sm-5">
+                        <label for="accurateMassTolerance" class="col-sm-2 form-control-label">Tolerance (Da)</label>
+                        <div class="col-sm-3">
                             <input type="number"
                                    id="accurateMassTolerance"
                                    name="accurateMassTolerance"
@@ -87,8 +88,11 @@
                                    placeholder="accurate mass"
                                    class="form-control"/>
                         </div>
-                        <div class="col-sm-5">
+
+                        <label for="metaAccurteMass" class="col-sm-2 form-control-label">Tolerance (Da)</label>
+                        <div class="col-sm-3">
                             <input type="number"
+                                   id="metaAccurteMass"
                                    ng-model="metadataQuery.tolerance"
                                    placeholder="tolerance"
                                    value="0.5"
