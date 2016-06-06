@@ -3,24 +3,22 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.service
 import java.io.InputStreamReader
 import javax.annotation.PostConstruct
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, ReceivedEventCounter}
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration, Notification}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.amqp.core.{Message, MessageListener, Queue}
-import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.stereotype.Component
-import org.springframework.test.context.{TestContextManager, TestPropertySource}
+import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.concurrent.duration._
@@ -41,7 +39,7 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
   @Autowired
   val curationService: CurationService = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "CurationServiceTest" should {
 

@@ -29,11 +29,11 @@ class CurationControllerTest extends AbstractSpringControllerTest {
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "CurationControllerTest" should {
 
-    RestAssured.baseURI = s"http://localhost:${port}/rest"
+    RestAssured.baseURI = s"http://localhost:$port/rest"
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {
