@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service
   * Created by sajjan on 5/25/16.
   */
 @Service
-class DownloadSchedulerService extends LazyLogging{
+class DownloadSchedulerService extends LazyLogging {
 
 }
