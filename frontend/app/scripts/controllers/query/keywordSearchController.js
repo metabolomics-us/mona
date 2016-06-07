@@ -72,6 +72,9 @@
             if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(options.compound.name)) {
                 filtered.compound.push({inchiKey: options.compound.name});
             }
+            else if (/^[A-Z]{14}$/.test(options.compound.name)) {
+                filtered.compound.push({partInchi: options.compound.name});
+            }
             else {
                 if(angular.isDefined(options.compound.name)) {
                     filtered.compound.push({name: options.compound.name});
