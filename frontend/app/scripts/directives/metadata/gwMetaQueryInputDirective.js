@@ -107,6 +107,10 @@
             }
 
         };
+        
+        $scope.isNumber = function(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        };
 
         /**
          * adds a metadata query

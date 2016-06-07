@@ -53,7 +53,7 @@
 
                     if (angular.isDefined(meta.name) && angular.isDefined(meta.value)) {
                         if (op === 'ne') {
-                            query.push("metaData=q='name==\"" + meta.name + "\" and value" + op + "\"" + meta.value + "\"'");
+                            query.push("metaData=q='name==\"" + meta.name + "\" and value!=\""  + meta.value + "\"'");
                         }
                         else if(op === 'eq') {
                             query.push("metaData=q='name==\"" + meta.name + "\" and value==\"" + meta.value + "\"'");
