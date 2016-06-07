@@ -1,9 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.controller
 
+import java.util.UUID
 import java.util.concurrent.Future
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.{ScheduledDownload, DownloadSchedulerService}
 import io.swagger.annotations.ApiModel
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestMapping, RequestParam, RestController}
 
@@ -14,6 +17,9 @@ import org.springframework.web.bind.annotation.{RequestMapping, RequestParam, Re
 @RequestMapping(value = Array("/rest/downloads"))
 class DownloadSchedulerController extends LazyLogging {
 
+  @Autowired
+  val downloadSchedulerService: DownloadSchedulerService = null
+
   /**
     * schedules every spectra for the given query for curation
     *
@@ -21,16 +27,10 @@ class DownloadSchedulerController extends LazyLogging {
     */
   @RequestMapping(path = Array("/schedule"))
   @Async
-  def scheduleDownload(@RequestParam(required = true, name = "query") query: String): Future[DownloadJobScheduled] = {
+  def scheduleDownload(@RequestParam(required = true, name = "query") query: String): Future[ScheduledDownload] = {
     // Schedule download
-//    val download = queryDownloadSchedulerService.scheduleDownload(query)
+    val downloadObject: ScheduledDownload = downloadSchedulerService.scheduleDownload(query)
 
-    new AsyncResult[DownloadJobScheduled](DownloadJobScheduled(query))
+    new AsyncResult[ScheduledDownload](downloadObject)
   }
 }
-
-@ApiModel
-case class DownloadJobScheduled(id: String)
-
-@ApiModel
-case class DownloadJobError(error: String)

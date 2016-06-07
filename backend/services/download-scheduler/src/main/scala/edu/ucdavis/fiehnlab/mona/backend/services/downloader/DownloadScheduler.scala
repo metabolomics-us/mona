@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
-import org.springframework.security.config.annotation.web.configuration.{WebSecurityConfigurerAdapter, EnableWebSecurity}
+import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
 
 /**
@@ -24,7 +24,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @EnableDiscoveryClient
 @EnableWebSecurity
 @Order(5)
-@Import(Array(/*classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], */classOf[MongoConfig],
+@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
   classOf[JWTAuthenticationConfig], classOf[SwaggerConfig]))
 class DownloaderScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
