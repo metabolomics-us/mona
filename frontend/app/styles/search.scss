@@ -1,4 +1,11 @@
 
+//input[name="tolerance"]::webkit-input-placeholder {
+//    font-weight: bold;
+//}
+
+#tolerance::-webkit-input-placeholder {
+    font-weight: bolder;
+}
 /** Search tabs **/
 #search-box {
     margin-top: 40px;
