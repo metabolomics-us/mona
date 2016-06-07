@@ -27,14 +27,23 @@
                     var curCompound = compound[i];
 
                     for (var key in curCompound) {
-                        if (key === 'name') {
-                            query.push("compound.names=q='name=match=" + '\".*' + curCompound[key] + '.*\"\'');
-                        }
-                        else if (key === 'inchiKey') {
-                            query.push("compound.inchiKey==" + curCompound[key] + "\"");
-                        }
-                        else {
-                            query.push("compound.classification=q='value=match=" + '\".*' + curCompound[key] + '.*\"\'');
+                        if (curCompound.hasOwnProperty(key)) {
+                            var value = curCompound[key];
+
+                            switch (key) {
+                                case 'name':
+                                    query.push("compound.names=q='name=match=" + '\".*' + value + '.*\"\'');
+                                    break;
+                                case 'inchiKey':
+                                    query.push("compound.inchiKey==" + value + "\"");
+                                    break;
+                                case 'partInchi':
+                                    query.push("compound.inchiKey=match=\".*" + value + ".*\"");
+                                    break;
+                                default:
+                                    query.push("compound.classification=q='value=match=" + '\".*' + value + '.*\"\'');
+                                    break;
+                            }
                         }
                     }
                 }

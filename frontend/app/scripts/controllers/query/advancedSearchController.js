@@ -55,8 +55,11 @@
             if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(compound.name)) {
                 filtered.compound.push({inchiKey: compound.name})
             }
+            else if (/^[A-Z]{14}$/.test(compound.name)) {
+                filtered.compound.push({partInchi: compound.name});
+            }
             else {
-                if(angular.isDefined(compound.name)) {
+                if (angular.isDefined(compound.name)) {
                     filtered.compound.push({name: compound.name});
                 }
             }
@@ -100,7 +103,7 @@
                         value: curMeta.value
                     };
 
-                    if(angular.isDefined(curMeta.tolerance)) {
+                    if (angular.isDefined(curMeta.tolerance)) {
                         inputMetaValues.tolerance = curMeta.tolerance;
                     }
 
