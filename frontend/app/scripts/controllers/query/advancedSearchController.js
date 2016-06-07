@@ -94,11 +94,17 @@
             for (var i = 0, l = metadata.length; i < l; i++) {
                 var curMeta = metadata[i];
                 if (curMeta.name !== '' && curMeta.value !== '' && angular.isDefined(curMeta.selected)) {
-                    addedMeta.push({
+                    var inputMetaValues = {
                         name: curMeta.name,
                         operator: curMeta.selected.value,
                         value: curMeta.value
-                    });
+                    };
+
+                    if(angular.isDefined(curMeta.tolerance)) {
+                        inputMetaValues.tolerance = curMeta.tolerance;
+                    }
+
+                    addedMeta.push(inputMetaValues);
                 }
             }
             return addedMeta;

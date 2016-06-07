@@ -102,7 +102,7 @@
             filtered.groupMeta = {
                 'instrument type': [],
                 'ion mode': [],
-                'ms type': []
+                'ms level': []
             };
 
             // filter instruments
@@ -126,7 +126,7 @@
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.groupMeta['ms type'].push(value.name);
+                    filtered.groupMeta['ms level'].push(value.name);
                 }
             });
             SpectraQueryBuilderService.setQuery(filtered);
