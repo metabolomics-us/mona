@@ -53,10 +53,17 @@
 
                     if (angular.isDefined(meta.name) && angular.isDefined(meta.value)) {
                         if (op === 'ne') {
-                            query.push("metaData=q='name==\"" + meta.name + "\" and value!=\""  + meta.value + "\"'");
+                            query.push("metaData=q='name==\"" + meta.name + "\" and value!=\"" + meta.value + "\"'");
                         }
-                        else if(op === 'eq') {
-                            query.push("metaData=q='name==\"" + meta.name + "\" and value==\"" + meta.value + "\"'");
+                        else if (op === 'eq') {
+                            if (angular.isDefined(meta.tolerance)) {
+                                var leftOffset = parseInt(meta.value) - meta.tolerance;
+                                var rightOffset = parseInt(meta.value) + meta.tolerance;
+                                query.push("metaData=q='name==\"" + meta.name + "\" and value>=\"" + leftOffset + "\" or value <=\"" + rightOffset + "\"'");
+
+                            } else {
+                                query.push("metaData=q='name==\"" + meta.name + "\" and value==\"" + meta.value + "\"'");
+                            }
                         }
                         else {
                             query.push("metaData=q='name==\"" + meta.name + "\" and value=match=\".*" + meta.value + ".*\"'");
