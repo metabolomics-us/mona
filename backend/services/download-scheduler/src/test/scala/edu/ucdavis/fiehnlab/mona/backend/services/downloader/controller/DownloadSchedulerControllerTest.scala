@@ -4,7 +4,9 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.DownloaderScheduler
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.ScheduledDownload
 import org.junit.runner.RunWith
+import org.scalatest.Matchers
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -14,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[DownloaderScheduler]))
-class DownloadSchedulerControllerTest extends AbstractSpringControllerTest {
+class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with Matchers {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -33,13 +35,13 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest {
 
     "succeed if we are logged in " must {
       "schedule by user" in {
-        val result = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/downloads/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
-        assert(result.id == testQuery)
+        val result = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/downloads/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[ScheduledDownload])
+        assert(result.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$"))
       }
 
       "scheduleByQuery by admin" in {
-        val result = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/downloads/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[DownloadJobScheduled])
-        assert(result.id == testQuery)
+        val result = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/downloads/schedule?query=$testQuery").then().statusCode(200).extract().body().as(classOf[ScheduledDownload])
+        assert(result.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$"))
       }
     }
 
