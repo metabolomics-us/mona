@@ -1,6 +1,6 @@
-<div class="row">
+<div class="form-group row">
     <div ng-repeat="meta in query">
-        <div class="col-sm-4 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
+        <div class="col-sm-4" ng-class="{'has-error': !meta.name && meta.name != ''}">
             <input type="text"
                    ng-model="meta.name"
                    placeholder="metadata name"
@@ -8,29 +8,33 @@
                    uib-typeahead-editable="editable"
                    class="form-control"
                    ng-trim="true"
-                   uib-typeahead-focus
-
-                    />
+                   uib-typeahead-focus />
         </div>
-        <div class="col-sm-2 form-group">
+        <div class="col-sm-2">
             <select
                     ng-model="meta.selected"
                     ng-options="item.name for item in select"
-                    class="form-control"
-
-                    ></select>
+                    class="form-control">
+                    <option value="">-- select operator --</option>
+            </select>
         </div>
-        <div class="col-sm-6 form-group">
+        <div class="col-sm-3">
             <input type="text"
                    ng-model="meta.value"
-                   ng-disabled="!meta.name || meta.name == ''"
+                   ng-disabled="!meta.name || meta.name === ''"
                    placeholder="value"
                    uib-typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
                    class="form-control"
-
                    ng-trim="true"
-                   uib-typeahead-focus
-                    />
+                   uib-typeahead-focus />
+        </div>
+        <div class="col-sm-3">
+            <input type="number"
+                   ng-show="meta.value !== '' && isNumber(meta.value)"
+                   id="tolerance"
+                   ng-model="meta.tolerance"
+                   placeholder="tolerance range (+/-)"
+                   class="form-control"/>
         </div>
     </div>
 
