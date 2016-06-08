@@ -5,8 +5,8 @@ import java.nio.file.{Paths, Files}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.QueryExport
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.IQueryExportMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
 import org.springframework.beans.factory.annotation.{Value, Autowired}
 import org.springframework.stereotype.Service
 

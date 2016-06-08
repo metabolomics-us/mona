@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader
 
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaNotificationBusConfiguration, MonaEventBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
@@ -18,35 +20,10 @@ import org.springframework.security.config.http.SessionCreationPolicy
   * Created by sajjan on 5/25/16.
   */
 @SpringBootApplication
-@EnableDiscoveryClient
-@EnableWebSecurity
-@Order(5)
-@Import(Array(classOf[MongoConfig], classOf[JWTAuthenticationConfig]))
-class Downloader extends WebSecurityConfigurerAdapter {
+@Import(Array(classOf[MongoConfig], classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
+class Downloader extends WebSecurityConfigurerAdapter with LazyLogging {
 
-  @Autowired
-  val restSecurityService: RestSecurityService = null
-
-  /**
-    * only authenticated users can schedule downloads from the system
-    *
-    * @param http
-    */
-  override final def configure(http: HttpSecurity): Unit = {
-    restSecurityService.prepare(http)
-      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-      .and()
-      .authorizeRequests()
-
-      // users need to be authenticated to schedule downloads
-      .antMatchers(HttpMethod.GET, "/rest/downloads/schedule/*").hasAuthority("ADMIN")
-  }
-
-  override def configure(web: WebSecurity): Unit = {
-    web.ignoring().antMatchers(HttpMethod.GET, "/*")
-  }
 }
-
 
 object Downloader extends App {
   new SpringApplication(classOf[Downloader]).run()
