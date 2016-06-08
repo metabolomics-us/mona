@@ -40,8 +40,10 @@
                                 case 'partInchi':
                                     query.push("compound.inchiKey=match=\".*" + value + ".*\"");
                                     break;
-                                default:
+                                case 'match':
                                     query.push("compound.classification=q='value=match=" + '\".*' + value + '.*\"\'');
+                                    break;
+                                default:
                                     break;
                             }
                         }

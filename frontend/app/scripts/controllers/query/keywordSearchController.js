@@ -76,7 +76,7 @@
                 filtered.compound.push({partInchi: options.compound.name});
             }
             else {
-                if(angular.isDefined(options.compound.name)) {
+                if (angular.isDefined(options.compound.name)) {
                     filtered.compound.push({name: options.compound.name});
                 }
             }
