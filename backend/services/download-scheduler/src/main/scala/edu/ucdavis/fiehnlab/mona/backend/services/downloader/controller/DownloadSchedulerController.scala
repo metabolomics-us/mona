@@ -1,11 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.controller
 
-import java.util.UUID
 import java.util.concurrent.Future
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.{ScheduledDownload, DownloadSchedulerService}
-import io.swagger.annotations.ApiModel
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.{DownloadSchedulerService, ScheduledDownload}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestMapping, RequestParam, RestController}

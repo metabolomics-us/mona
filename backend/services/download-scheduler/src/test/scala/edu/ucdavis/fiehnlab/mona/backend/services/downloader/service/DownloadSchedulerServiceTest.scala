@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.DownloadScheduler
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
-import org.springframework.amqp.core.{Message, Queue, MessageListener}
+import org.springframework.amqp.core.{Message, MessageListener, Queue}
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer

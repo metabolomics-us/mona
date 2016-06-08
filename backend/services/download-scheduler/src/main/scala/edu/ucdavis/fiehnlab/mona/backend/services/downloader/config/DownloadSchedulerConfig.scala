@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.config
 
-import org.springframework.amqp.core.{BindingBuilder, Binding, DirectExchange, Queue}
+import org.springframework.amqp.core.Queue
 import org.springframework.context.annotation.{Bean, Configuration}
 
 /**
