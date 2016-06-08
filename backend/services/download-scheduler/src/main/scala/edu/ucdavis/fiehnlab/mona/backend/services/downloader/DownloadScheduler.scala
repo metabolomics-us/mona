@@ -26,7 +26,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
   classOf[JWTAuthenticationConfig], classOf[SwaggerConfig]))
-class DownloaderScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
+class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
   val restSecurityService: RestSecurityService = null
@@ -44,6 +44,9 @@ class DownloaderScheduler extends WebSecurityConfigurerAdapter with LazyLogging 
 
       // users need to be authenticated to schedule downloads
       .antMatchers(HttpMethod.GET, "/rest/downloads/schedule/*").hasAuthority("USER")
+
+      // must be an admin to schedule re-generation of predefined downloads
+      .antMatchers(HttpMethod.GET, "/rest/downloads/schedulePredefinedDownloads").hasAuthority("ADMIN")
   }
 
   override def configure(web: WebSecurity): Unit = {
@@ -52,5 +55,5 @@ class DownloaderScheduler extends WebSecurityConfigurerAdapter with LazyLogging 
 }
 
 object DownloadScheduler extends App {
-  new SpringApplication(classOf[DownloaderScheduler]).run()
+  new SpringApplication(classOf[DownloadScheduler]).run()
 }

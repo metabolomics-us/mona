@@ -31,20 +31,32 @@ class DownloadSchedulerService extends LazyLogging {
   val notifications: EventBus[Notification] = null
 
   /**
-    * sends this spectrum to our dedicated queue. This queue can have many consumers to then
-    * asynchronously process and curate the object
+    * Sends a query to be scheduled for download to our dedicated queue
     *
     * @param query
     */
   def scheduleDownload(query: String): ScheduledDownload = {
-    val downloadObject = ScheduledDownload(UUID.randomUUID.toString, query, new Date)
+    val downloadObject = ScheduledDownload(UUID.randomUUID.toString, query, new Date, null)
 
     rabbitTemplate.convertAndSend(queueName, downloadObject)
     notifications.sendEvent(Event(Notification(downloadObject, getClass.getName)))
 
     downloadObject
   }
+
+  /**
+    * sends this spectrum to our dedicated queue. This queue can have many consumers to then
+    * asynchronously process and curate the object
+    */
+  def schedulePredefinedDownloads(): ScheduledDownload = {
+    ScheduledDownload(UUID.randomUUID.toString, "", new Date, null)
+  }
 }
 
+
 @ApiModel
-case class ScheduledDownload(id: String, query: String, date: Date)
+case class ScheduledDownload(id: String,
+                             query: String,
+                             date: Date,
+                             emailAddress: String
+                            )

@@ -1,17 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.service
 
-import java.io.InputStreamReader
 import javax.annotation.PostConstruct
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.QueryDownloader
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.DownloadScheduler
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
-import org.springframework.amqp.core.{Message, MessageListener, Queue}
+import org.springframework.amqp.core.{Message, Queue, MessageListener}
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
@@ -21,66 +18,36 @@ import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
-import scala.concurrent.duration._
-
 /**
-  * Created by sajjan on 6/2/2016.
+  * Created by sajjan on 5/26/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[QueryDownloader]))
-class QueryDownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eventually {
+@SpringApplicationConfiguration(classes = Array(classOf[DownloadScheduler]))
+class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
-  val queryDownloadSchedulerService: QueryDownloadSchedulerService = null
-
-  new TestContextManager(this.getClass).prepareTestInstance(this)
-
-  "QueryDownloadSchedulerServiceTest" should {
-    "scheduleDownload" in {
-      assert(1 == 1)
-    }
-  }
-}
-/*
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[QueryDownloader]))
-class QueryDownloaderServiceTest extends AbstractSpringControllerTest with Eventually {
-
-  @Autowired
-  val testDownloadRunner: TestDownloadRunner = null
+  val testCurationRunner: TestDownloader = null
 
   @Autowired
   val notificationCounter: ReceivedEventCounter[Notification] = null
 
-//  @Autowired
-//  val curationService: CurationService = null
+  @Autowired
+  val downloadSchedulerService: DownloadSchedulerService = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "QueryDownloaderServiceTest" should {
+  "DownloadSchedulerServiceTest" should {
     "scheduleDownload" in {
-      val count = notificationCounter.getEventCount
-
-      testDownloadRunner.messageReceived = false
       assert(1 == 1)
-//      curationService.scheduleSpectra(spectrum)
-//
-//      eventually(timeout(10 seconds)) {
-//        assert(testCurationRunner.messageReceived)
-//      }
-//
-//      eventually(timeout(10 seconds)) {
-//        assert(notificationCounter.getEventCount > count)
-//      }
     }
   }
 }
 
 /**
-  * simple test class to ensure the message was processed
+  * Simple test class to ensure the message was processed
   */
 @Component
-class TestDownloadRunner extends MessageListener {
+class TestDownloader extends MessageListener {
 
   @Autowired
   private val connectionFactory: ConnectionFactory = null
@@ -89,16 +56,16 @@ class TestDownloadRunner extends MessageListener {
   val rabbitAdmin: RabbitAdmin = null
 
   @Autowired
-  val queue: Queue = null
+  val downloadQueue: Queue = null
 
   @PostConstruct
   def init() = {
-    rabbitAdmin.declareQueue(queue)
+    rabbitAdmin.declareQueue(downloadQueue)
 
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
 
-    container.setQueues(queue)
+    container.setQueues(downloadQueue)
     container.setMessageListener(this)
     container.setRabbitAdmin(rabbitAdmin)
     container.start()
@@ -108,4 +75,3 @@ class TestDownloadRunner extends MessageListener {
 
   override def onMessage(message: Message): Unit = messageReceived = true
 }
-*/
