@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.service
 
-import java.util.Date
-import java.util.UUID
+import java.util.{Date, UUID}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
