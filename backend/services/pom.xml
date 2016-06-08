@@ -17,5 +17,6 @@
         <module>curation-scheduler</module>
         <module>curation-runner</module>
         <module>downloader</module>
+        <module>download-scheduler</module>
     </modules>
 </project>
