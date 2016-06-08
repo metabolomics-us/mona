@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository
 
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.QueryExport
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 
@@ -21,8 +21,8 @@ trait IQueryExportMongoRepository extends PagingAndSortingRepository[QueryExport
   /**
     * returns the query export by it's id property
     *
-    * @param id
+    * @param emailAddress
     * @return
     */
-  def findById(id: String) : QueryExport
+  def findByEmailAddress(emailAddress: String) : QueryExport
 }
