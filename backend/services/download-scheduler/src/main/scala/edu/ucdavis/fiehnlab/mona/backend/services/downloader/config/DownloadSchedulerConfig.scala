@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.config
 
+import org.springframework.amqp.core.{BindingBuilder, Binding, DirectExchange, Queue}
 import org.springframework.context.annotation.{Bean, Configuration}
 
 /**
@@ -7,6 +8,12 @@ import org.springframework.context.annotation.{Bean, Configuration}
   */
 @Configuration
 class DownloadSchedulerConfig {
+
   @Bean(name = Array("spectra-download-queue"))
-  def queryDownloadQueue: String = "download-queue"
+  def downloadQueueName: String = "download-queue"
+
+  @Bean(name = Array("spectra-download-queue-instance"))
+  def downloadQueue: Queue = {
+    new Queue(downloadQueueName, false)
+  }
 }

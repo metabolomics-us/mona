@@ -33,4 +33,16 @@ class DownloadSchedulerController extends LazyLogging {
 
     new AsyncResult[ScheduledDownload](downloadObject)
   }
+
+  /**
+    * schedules the re-generation of predefined downloads
+    */
+  @RequestMapping(path = Array("/schedulePredefinedDownloads"))
+  @Async
+  def schedulePredefinedDownloads(): Future[ScheduledDownload] = {
+    // Schedule download
+    val downloadObject: ScheduledDownload = downloadSchedulerService.schedulePredefinedDownloads
+
+    new AsyncResult[ScheduledDownload](downloadObject)
+  }
 }
