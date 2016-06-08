@@ -72,8 +72,11 @@
             if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(options.compound.name)) {
                 filtered.compound.push({inchiKey: options.compound.name});
             }
+            else if (/^[A-Z]{14}$/.test(options.compound.name)) {
+                filtered.compound.push({partInchi: options.compound.name});
+            }
             else {
-                if(angular.isDefined(options.compound.name)) {
+                if (angular.isDefined(options.compound.name)) {
                     filtered.compound.push({name: options.compound.name});
                 }
             }
@@ -92,7 +95,7 @@
 
             // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered.compoundDa.push({formula: options.metadata.formula});
+                filtered.formula = options.metadata.formula;
             }
 
             /**
@@ -102,7 +105,7 @@
             filtered.groupMeta = {
                 'instrument type': [],
                 'ion mode': [],
-                'ms type': []
+                'ms level': []
             };
 
             // filter instruments
@@ -126,7 +129,7 @@
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.groupMeta['ms type'].push(value.name);
+                    filtered.groupMeta['ms level'].push(value.name);
                 }
             });
             SpectraQueryBuilderService.setQuery(filtered);
