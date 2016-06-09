@@ -16,7 +16,10 @@ case class QueryExport(
                         format: String,
                         count: Integer,
                         size: Long,
-                        emailAddress: String
+                        emailAddress: String,
+
+                        queryFile: String,
+                        exportFile: String
                       )
 
 @Document(collection = "QUERY_DOWNLOAD_REQUESTS")
@@ -29,8 +32,8 @@ case class QueryDownloadRequest(
 case class PredefinedQuery(
                             @(Id@field)
                             label: String,
-                            query: String,
                             description: String,
+                            query: String,
                             queryCount: Integer,
                             jsonExport: QueryExport,
                             mspExport: QueryExport

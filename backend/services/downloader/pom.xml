@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>domain</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
             <artifactId>api-server</artifactId>
         </dependency>
@@ -36,14 +41,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>amqp</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         </dependency>
 
         <dependency>
-            <artifactId>amqp</artifactId>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
