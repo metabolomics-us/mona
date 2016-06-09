@@ -72,8 +72,11 @@
             if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(options.compound.name)) {
                 filtered.compound.push({inchiKey: options.compound.name});
             }
+            else if (/^[A-Z]{14}$/.test(options.compound.name)) {
+                filtered.compound.push({partInchi: options.compound.name});
+            }
             else {
-                if(angular.isDefined(options.compound.name)) {
+                if (angular.isDefined(options.compound.name)) {
                     filtered.compound.push({name: options.compound.name});
                 }
             }
@@ -92,17 +95,17 @@
 
             // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered.compoundDa.push({formula: options.metadata.formula});
+                filtered.formula = options.metadata.formula;
             }
 
             /**
              * our model for metadata fields. Elements in each property will be
              * created with 'or' operator and properties will be concat with 'and' operator
              */
-            filtered.metaFilter = {
+            filtered.groupMeta = {
                 'instrument type': [],
                 'ion mode': [],
-                'ms type': []
+                'ms level': []
             };
 
             // filter instruments
@@ -111,7 +114,7 @@
                 for (var j in curInstrument) {
                     angular.forEach(curInstrument[j], function (value, key) {
                         if (value.selected === true)
-                            filtered.metaFilter['instrument type'].push(value.name);
+                            filtered.groupMeta['instrument type'].push(value.name);
                     });
                 }
             }
@@ -119,14 +122,14 @@
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metaFilter['ion mode'].push(value.name.toLowerCase());
+                    filtered.groupMeta['ion mode'].push(value.name.toLowerCase());
                 }
             });
 
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.metaFilter['ms type'].push(value.name);
+                    filtered.groupMeta['ms level'].push(value.name);
                 }
             });
             SpectraQueryBuilderService.setQuery(filtered);

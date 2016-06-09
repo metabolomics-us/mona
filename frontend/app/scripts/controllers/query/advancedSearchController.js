@@ -31,8 +31,7 @@
 
             filterQueryOptions();
             queryStringBuilder.buildAdvanceQuery();
-            // save query
-            // change location
+            $location.path('/spectra/browse');
         };
 
         function filterQueryOptions() {
@@ -43,21 +42,31 @@
             var filtered = SpectraQueryBuilderService.prepareQuery();
 
             // store operators
-            filtered.operand = {meta: metaData.operator.toLowerCase()};
-            filtered.operand.compound = [];
+            filtered.operand = {
+                metadata: [metaData.operator.toLowerCase()],
+                compound: []
+            };
 
             for (var i = 0; i < compound.operator.length; i++) {
                 filtered.operand.compound.push(compound.operator[i].toLowerCase());
             }
 
-            // filter class
-            if (angular.isDefined(compound.className)) {
-                filtered.compound.push({classification: compound.className});
-            }
-
             // filter compound name or inchikey
             if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(compound.name)) {
                 filtered.compound.push({inchiKey: compound.name})
+            }
+            else if (/^[A-Z]{14}$/.test(compound.name)) {
+                filtered.compound.push({partInchi: compound.name});
+            }
+            else {
+                if (angular.isDefined(compound.name)) {
+                    filtered.compound.push({name: compound.name});
+                }
+            }
+
+            // filter class
+            if (angular.isDefined(compound.className)) {
+                filtered.compound.push({classification: compound.className});
             }
 
             // filter compound metadata
@@ -66,7 +75,7 @@
 
             // filter compound measurement
             if (compound.exactMass !== null) {
-                filtered.compoundDa = {exactMass: compound.exactMass, tolerance: compound.tolerance};
+                filtered.compoundDa = [{'exact mass': compound.exactMass}, {tolerance: compound.tolerance}];
             }
 
 
@@ -76,7 +85,7 @@
 
             //filter metadata measurement
             if (metaData.exactMass !== null) {
-                filtered.metaDa = {exactMass: metaData.exactMass, tolerance: metaData.tolerance};
+                filtered.metadataDa = [{'exact mass': metaData.exactMass, tolerance: metaData.tolerance}];
             }
 
             SpectraQueryBuilderService.setQuery(filtered);
@@ -88,11 +97,17 @@
             for (var i = 0, l = metadata.length; i < l; i++) {
                 var curMeta = metadata[i];
                 if (curMeta.name !== '' && curMeta.value !== '' && angular.isDefined(curMeta.selected)) {
-                    addedMeta.push({
+                    var inputMetaValues = {
                         name: curMeta.name,
                         operator: curMeta.selected.value,
                         value: curMeta.value
-                    });
+                    };
+
+                    if (angular.isDefined(curMeta.tolerance)) {
+                        inputMetaValues.tolerance = curMeta.tolerance;
+                    }
+
+                    addedMeta.push(inputMetaValues);
                 }
             }
             return addedMeta;
