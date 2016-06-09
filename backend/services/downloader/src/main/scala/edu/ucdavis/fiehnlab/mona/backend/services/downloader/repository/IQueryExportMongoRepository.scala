@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 trait IQueryExportMongoRepository extends PagingAndSortingRepository[QueryExport, String] {
 
   /**
-    * returns the query export with this email address
+    * returns the query export with the given label
     *
     * @param label
     * @return
@@ -19,10 +19,18 @@ trait IQueryExportMongoRepository extends PagingAndSortingRepository[QueryExport
   def findByLabel(label: String): QueryExport
 
   /**
-    * returns the query export by it's id property
+    * returns the query exports with the given email address
     *
     * @param emailAddress
     * @return
     */
-  def findByEmailAddress(emailAddress: String) : QueryExport
+  def findByEmailAddress(emailAddress: String): Iterable[QueryExport]
+
+  /**
+    * returns the query exports with the given query
+    *
+    * @param query
+    * @return
+    */
+  def findByQuery(query: String): Iterable[QueryExport]
 }

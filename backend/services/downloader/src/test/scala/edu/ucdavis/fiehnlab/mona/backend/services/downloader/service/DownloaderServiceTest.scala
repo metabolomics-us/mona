@@ -1,35 +1,36 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.service
 
 import java.io.InputStreamReader
-import java.nio.file.{Files, Paths}
+import java.nio.file.{Paths, Files}
 
-import com.jayway.restassured.RestAssured
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.{RestClientConfig, RestClientTestConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper, JSONDomainReader}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.{QueryExport, Downloader}
 import org.junit.runner.RunWith
-import org.scalatest.concurrent.Eventually
+import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
+
 /**
   * Created by sajjan on 5/26/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientConfig], classOf[EmbeddedRestServerConfig], classOf[Downloader]))
-class DownloaderServiceTest extends AbstractSpringControllerTest with Eventually {
+@SpringApplicationConfiguration(classes = Array(classOf[Downloader]))
+class DownloaderServiceTest extends WordSpec with LazyLogging {
 
   @Autowired
   val downloaderService: DownloaderService = null
 
   @Autowired
-  val restClient: MonaSpectrumRestClient = null
+  val mongoRepository: ISpectrumMongoRepositoryCustom = null
+
+  val objectMapper: ObjectMapper = MonaMapper.create
 
   @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
   val dir: String = null
@@ -40,14 +41,102 @@ class DownloaderServiceTest extends AbstractSpringControllerTest with Eventually
     // Populate the database
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
+    "load some data" in {
+      mongoRepository.deleteAll()
 
+      for (spectrum <- exampleRecords) {
+        mongoRepository.save(spectrum)
+      }
+    }
 
-    val export: QueryExport = QueryExport("test", "", "json", 0, 0, null)
-    downloaderService.download(export)
+    "export all spectra as JSON without compression" in {
+      val export: QueryExport = QueryExport("All Spectra", "", "json", 0, 0, null, null, null)
+      val result: QueryExport = downloaderService.download(export, compressExport = false)
 
-    "export the query file" in {
-      assert(Files.exists(Paths.get(dir, "test-query.txt")))
-      assert(new String(Files.readAllBytes(Paths.get(dir, "test-query.txt"))).equals(export.query))
+      assert(result.count == 58)
+      assert(result.size > 0)
+      assert(result.exportFile.endsWith(".json"))
+      assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
+
+      val data: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(Files.newBufferedReader(Paths.get(dir, result.exportFile)))
+      assert(data.length == 58)
+
+      Files.delete(Paths.get(dir, result.queryFile))
+      Files.delete(Paths.get(dir, result.exportFile))
+    }
+
+    "export all spectra as JSON with compression" in {
+      val export: QueryExport = QueryExport("All Spectra", "", "json", 0, 0, null, null, null)
+      val result: QueryExport = downloaderService.download(export)
+
+      assert(result.count == 58)
+      assert(result.size > 0)
+      assert(result.exportFile.endsWith(".zip"))
+      assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
+
+      Files.delete(Paths.get(dir, result.queryFile))
+      Files.delete(Paths.get(dir, result.exportFile))
+    }
+
+    "export all spectra as MSP without compression" in {
+      val export: QueryExport = QueryExport("All Spectra", "", "msp", 0, 0, null, null, null)
+      val result: QueryExport = downloaderService.download(export, compressExport = false)
+
+      assert(result.count == 58)
+      assert(result.size > 0)
+      assert(result.exportFile.endsWith(".msp"))
+      assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
+
+      val data: Array[String] = new String(Files.readAllBytes(Paths.get(dir, result.exportFile))).split("\n\n")
+      assert(data.length == 58)
+
+      Files.delete(Paths.get(dir, result.queryFile))
+      Files.delete(Paths.get(dir, result.exportFile))
+    }
+
+    "export all spectra as MSP with compression" in {
+      val export: QueryExport = QueryExport("All Spectra", "", "msp", 0, 0, null, null, null)
+      val result: QueryExport = downloaderService.download(export)
+
+      assert(result.count == 58)
+      assert(result.size > 0)
+      assert(result.exportFile.endsWith(".zip"))
+      assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
+
+      Files.delete(Paths.get(dir, result.queryFile))
+      Files.delete(Paths.get(dir, result.exportFile))
+    }
+
+    "export negative mode spectra as JSON" in {
+      val export: QueryExport = QueryExport("Negative Mode Spectra", "metaData=q='name==\"ion mode\" and value==negative'", "json", 0, 0, null, null, null)
+      val result: QueryExport = downloaderService.download(export, compressExport = false)
+
+      assert(result.count == 25)
+      assert(result.size > 0)
+      assert(result.exportFile.endsWith(".json"))
+      assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
+
+      val data: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(Files.newBufferedReader(Paths.get(dir, result.exportFile)))
+      assert(data.length == 25)
+
+      Files.delete(Paths.get(dir, result.queryFile))
+      Files.delete(Paths.get(dir, result.exportFile))
+    }
+
+    "export negative mode spectra as MSP" in {
+      val export: QueryExport = QueryExport("Negative Mode Spectra", "metaData=q='name==\"ion mode\" and value==negative'", "msp", 0, 0, null, null, null)
+      val result: QueryExport = downloaderService.download(export, compressExport = false)
+
+      assert(result.count == 25)
+      assert(result.size > 0)
+      assert(result.exportFile.endsWith(".msp"))
+      assert(new String(Files.readAllBytes(Paths.get(dir, result.queryFile))).equals(export.query))
+
+      val data: Array[String] = new String(Files.readAllBytes(Paths.get(dir, result.exportFile))).split("\n\n")
+      assert(data.length == 25)
+
+      Files.delete(Paths.get(dir, result.queryFile))
+      Files.delete(Paths.get(dir, result.exportFile))
     }
   }
 }
