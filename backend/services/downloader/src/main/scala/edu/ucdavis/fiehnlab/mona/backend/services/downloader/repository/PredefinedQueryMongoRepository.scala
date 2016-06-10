@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
   * Created by sajjan on 6/6/16.
   */
 @Repository("predefinedQueryMongoRepository")
-trait IPredefinedQueryMongoRepository extends PagingAndSortingRepository[PredefinedQuery, String] {
+trait PredefinedQueryMongoRepository extends PagingAndSortingRepository[PredefinedQuery, String] {
 
   /**
     * returns the query export with this email address

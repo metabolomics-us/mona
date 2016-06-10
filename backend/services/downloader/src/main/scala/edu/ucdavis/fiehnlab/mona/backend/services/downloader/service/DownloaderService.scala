@@ -4,6 +4,7 @@ import java.io._
 import java.lang.Iterable
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Path, Files, Paths}
+import java.util.UUID
 import java.util.zip.{ZipEntry, ZipOutputStream}
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -14,7 +15,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.QueryExport
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.IQueryExportMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.QueryExportMongoRepository
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
@@ -31,7 +32,7 @@ class DownloaderService extends LazyLogging {
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
 
   @Autowired
-  val queryExportMongoRepository: IQueryExportMongoRepository = null
+  val queryExportMongoRepository: QueryExportMongoRepository = null
 
   val objectMapper: ObjectMapper = MonaMapper.create
 
@@ -134,11 +135,19 @@ class DownloaderService extends LazyLogging {
       }
     }
 
-    logger.info(s"Starting download for label ${export.label}")
+    // Generate label if one does not exist
+    val label: String =
+      if (export.label == null || export.label.isEmpty)
+        UUID.randomUUID.toString
+      else
+        export.label
+
+
+    logger.info(s"Starting download for label $label")
     logger.info(s"Query: ${export.query}")
 
     // Generate export filenames
-    val basename: String = buildExportBasename(export.label, export.emailAddress)
+    val basename: String = buildExportBasename(label, export.emailAddress)
 
     val queryFilename: String = s"$basename-query.txt"
     val exportFilename: String = s"$basename.${export.format}"
@@ -162,6 +171,8 @@ class DownloaderService extends LazyLogging {
     }
 
     bufferedWriter.close()
+
+    logger.info(s"Finished exporting $count spectra")
 
 
     // Compress results
@@ -197,6 +208,7 @@ class DownloaderService extends LazyLogging {
 
       // Update export object with filesize, query count and filenames
       export.copy(
+        label = label,
         count = count,
         size = Files.size(compressedFile),
 
@@ -206,6 +218,7 @@ class DownloaderService extends LazyLogging {
     } else {
       // Update export object with filesize, query count and filenames
       export.copy(
+        label = label,
         count = count,
         size = Files.size(exportFile),
 
