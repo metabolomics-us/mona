@@ -43,7 +43,7 @@ module.exports = function(config) {
             // source scripts
             'app/scripts/**/*.js',
 
-            // test scripts
+            /** test scripts **/
             //'test/spec/controllers/**/*.js',
             //'test/spec/services/**/*.js',
             //'test/spec/directives/**/*.js'
@@ -53,6 +53,8 @@ module.exports = function(config) {
 
 
         ],
+        plugins: ['karma-*'],
+
         exclude: ['app/scripts/theme.js'],
 
         // plugin to load our html templates as modules
@@ -75,10 +77,12 @@ module.exports = function(config) {
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: ['dots', 'junit', 'coverage'],
-	junitReporter: {
-		outputFile: 'test-results.xml',
-		suite: ''
-	},
+
+        junitReporter: {
+            outputDir: 'coverage/junit',
+		    outputFile: 'test-results.xml',
+		    suite: ''
+	    },
 
         // web server port
         port: 9876,
@@ -93,12 +97,12 @@ module.exports = function(config) {
 
 
         // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: false,
-        browsers: ['PhantomJS'],
-        singleRun: true,
+        autoWatch: true,
+        browsers: ['PhantomJS2'],
+        singleRun: false,
 
         // Concurrency level
         // how many browser should be started simultanous
         concurrency: Infinity
     });
-}
+};
