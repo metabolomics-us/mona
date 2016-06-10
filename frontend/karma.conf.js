@@ -47,13 +47,12 @@ module.exports = function(config) {
             //'test/spec/controllers/**/*.js',
             //'test/spec/services/**/*.js',
             //'test/spec/directives/**/*.js'
-            //'test/spec/controllers/authentication/authenticationController-spec.js',
-            //'test/spec/services/query/SpectraQueryBuilderService-spec.js',
-            'test/spec/services/query/rsqlParser-spec.js'
+            //'test/spec/services/query/rsqlParser-spec.js',
+            'test/spec/controllers/query/*.js'
 
 
         ],
-        plugins: ['karma-*'],
+        plugins: ['karma-*', 'phantom*'],
 
         exclude: ['app/scripts/theme.js'],
 
@@ -93,7 +92,7 @@ module.exports = function(config) {
 
 
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
 
 
         // enable / disable watching file and executing tests whenever any file changes
