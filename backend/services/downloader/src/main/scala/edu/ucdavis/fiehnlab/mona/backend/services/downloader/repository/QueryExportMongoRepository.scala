@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
   * Created by sajjan on 5/26/16.
   */
 @Repository("queryExportMongoRepository")
-trait IQueryExportMongoRepository extends PagingAndSortingRepository[QueryExport, String] {
+trait QueryExportMongoRepository extends PagingAndSortingRepository[QueryExport, String] {
 
   /**
     * returns the query export with the given label
@@ -17,20 +17,4 @@ trait IQueryExportMongoRepository extends PagingAndSortingRepository[QueryExport
     * @return
     */
   def findByLabel(label: String): QueryExport
-
-  /**
-    * returns the query exports with the given email address
-    *
-    * @param emailAddress
-    * @return
-    */
-  def findByEmailAddress(emailAddress: String): Iterable[QueryExport]
-
-  /**
-    * returns the query exports with the given query
-    *
-    * @param query
-    * @return
-    */
-  def findByQuery(query: String): Iterable[QueryExport]
 }
