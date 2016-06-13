@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.services.downloader
+package edu.ucdavis.fiehnlab.mona.backend.services.downloader.types
 
 import java.util.Date
 
