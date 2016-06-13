@@ -44,10 +44,7 @@
     "karma-junit-reporter": "^1.0.0",
     "karma-ng-html2js-preprocessor": "^1.0.0",
     "karma-ng-scenario": "^1.0.0",
-    "karma-phantomjs-launcher": "^1.0.0",
-    "karma-phantomjs2-launcher": "^0.5.0",
     "load-grunt-tasks": "^3.3.0",
-    "phantomjs-prebuilt": "^2.1.7",
     "serve-static": "^1.10.2",
     "time-grunt": "^1.2.2"
   },

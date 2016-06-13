@@ -14,7 +14,6 @@ module.exports = function(config) {
             'app/bower_components/jquery/dist/jquery.js',
 
             // moaClientApp vendor dependencies
-            'app/bower_components/angular-mocks/angular-mocks.js',
             'app/bower_components/angular-route/angular-route.js',
             'app/bower_components/angular-resource/angular-resource.js',
             'app/bower_components/angular-cookies/angular-cookies.js',
@@ -34,11 +33,11 @@ module.exports = function(config) {
             'app/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
             'app/bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
             'app/bower_components/angular-translate/angular-translate.js',
-            'app/bower_components/angularjs-viewhead/angularjs-viewhead.js',
+            'app/bower_components/AngularJS-Toaster/toaster.js',
+            'app/bower_components/angular-mocks/angular-mocks.js',
 
-            // load html templates into $templateCache for testing
-            //'app/*.html',
-            'app/views/**/*.html',
+
+            //'app/views/!**!/!*.html',
 
             // source scripts
             'app/scripts/**/*.js',
@@ -47,12 +46,11 @@ module.exports = function(config) {
             //'test/spec/controllers/**/*.js',
             //'test/spec/services/**/*.js',
             //'test/spec/directives/**/*.js'
-            //'test/spec/services/query/rsqlParser-spec.js',
-            'test/spec/controllers/query/*.js'
+            'test/spec/services/query/rsqlParser-spec.js'
+            //'test/spec/controllers/query/*.js'
 
 
         ],
-        plugins: ['karma-*', 'phantom*'],
 
         exclude: ['app/scripts/theme.js'],
 
@@ -92,12 +90,12 @@ module.exports = function(config) {
 
 
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_DEBUG,
+        logLevel: config.LOG_INFO,
 
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
-        browsers: ['PhantomJS2'],
+        browsers: ['Chrome'],
         singleRun: false,
 
         // Concurrency level
