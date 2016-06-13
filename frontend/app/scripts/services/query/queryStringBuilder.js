@@ -126,7 +126,7 @@
 
         function validateOperands(query) {
             if(!angular.isDefined(query.operand)) {
-                throw new Error('query.operand property is undefined');
+                throw new TypeError('query.operand property is undefined');
             }
         }
 
