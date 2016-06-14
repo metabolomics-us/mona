@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
 import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 
-import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Primary
@@ -22,17 +24,11 @@ public class GatewaySwaggerResourceProvider implements SwaggerResourcesProvider 
     private final Logger log = LoggerFactory.getLogger(GatewaySwaggerResourceProvider.class);
 
     //Can be used to get the list from registry/gateway later.
-    //@Inject
     @Autowired
     private ProxyRouteLocator routeLocator;
 
-    //@Inject
     @Autowired
     private DiscoveryClient discoveryClient;
-
-    public GatewaySwaggerResourceProvider() {
-
-    }
 
     @Override
     public List<SwaggerResource> get() {
@@ -52,15 +48,15 @@ public class GatewaySwaggerResourceProvider implements SwaggerResourcesProvider 
             if (services.size() > 0) {
                 ServiceInstance serviceInstance = services.get(0);
 
-                String location = serviceInstance.getUri() + "/v2/api-docs";
-                String newRoute = "/documentation/" + serviceId;
+                String location = "http://" + serviceInstance.getHost() + ":" +serviceInstance.getPort() + "/v2/api-docs";
+                String newRoute = "/" + serviceId + "/v2/api-docs";
 
                 cache.put(location, swaggerResource(serviceId, newRoute, "2.0"));
 
                 if (routes.get(newRoute) == null) {
                     log.info("adding new route: " + newRoute + " to location " + location);
-                       ZuulProperties.ZuulRoute route = new ZuulProperties.ZuulRoute();
                     routeLocator.addRoute(newRoute, location);
+
                 }
             }
 
@@ -75,8 +71,6 @@ public class GatewaySwaggerResourceProvider implements SwaggerResourcesProvider 
         swaggerResource.setName(name);
         swaggerResource.setLocation(location);
         swaggerResource.setSwaggerVersion(version);
-
-        log.info("swag it: " + location);
         return swaggerResource;
     }
 
