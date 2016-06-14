@@ -30,6 +30,8 @@
             var query = QueryCache.getSpectraQuery();
             compiled = [];
 
+            validateOperands(query);
+
             // build compound string
             if (angular.isDefined(query.compound) && query.compound.length > 0) {
                 compiled.push(qStrHelper.buildCompoundString(query.compound));
@@ -58,6 +60,7 @@
             }
 
             saveQuery();
+
         }
 
 
@@ -98,7 +101,7 @@
             // add metadata query
             if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
                 queryStr = qStrHelper.buildMetaString(query.metadata);
-                compiled.push('and',queryStr);
+                compiled.push('and', queryStr);
             }
 
             // add metadata measurement
@@ -119,6 +122,12 @@
 
             compiled = compiled.length > 0 ? compiled.join(' ') : defaultQuery;
             QueryCache.setSpectraQueryString(compiled);
+        }
+
+        function validateOperands(query) {
+            if(!angular.isDefined(query.operand)) {
+                throw new TypeError('query.operand property is undefined');
+            }
         }
 
         function buildTagsQueryString(tagQuery) {

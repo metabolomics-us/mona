@@ -14,7 +14,6 @@ module.exports = function(config) {
             'app/bower_components/jquery/dist/jquery.js',
 
             // moaClientApp vendor dependencies
-            'app/bower_components/angular-mocks/angular-mocks.js',
             'app/bower_components/angular-route/angular-route.js',
             'app/bower_components/angular-resource/angular-resource.js',
             'app/bower_components/angular-cookies/angular-cookies.js',
@@ -34,25 +33,25 @@ module.exports = function(config) {
             'app/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
             'app/bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
             'app/bower_components/angular-translate/angular-translate.js',
-            'app/bower_components/angularjs-viewhead/angularjs-viewhead.js',
+            'app/bower_components/AngularJS-Toaster/toaster.js',
+            'app/bower_components/angular-mocks/angular-mocks.js',
 
-            // load html templates into $templateCache for testing
-            //'app/*.html',
-            'app/views/**/*.html',
+
+            //'app/views/!**!/!*.html',
 
             // source scripts
             'app/scripts/**/*.js',
 
-            // test scripts
+            /** test scripts **/
             //'test/spec/controllers/**/*.js',
             //'test/spec/services/**/*.js',
             //'test/spec/directives/**/*.js'
-            //'test/spec/controllers/authentication/authenticationController-spec.js',
-            //'test/spec/services/query/SpectraQueryBuilderService-spec.js',
             'test/spec/services/query/rsqlParser-spec.js'
+            //'test/spec/controllers/query/*.js'
 
 
         ],
+
         exclude: ['app/scripts/theme.js'],
 
         // plugin to load our html templates as modules
@@ -75,10 +74,12 @@ module.exports = function(config) {
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: ['dots', 'junit', 'coverage'],
-	junitReporter: {
-		outputFile: 'test-results.xml',
-		suite: ''
-	},
+
+        junitReporter: {
+            outputDir: 'coverage/junit',
+		    outputFile: 'test-results.xml',
+		    suite: ''
+	    },
 
         // web server port
         port: 9876,
@@ -93,12 +94,12 @@ module.exports = function(config) {
 
 
         // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: false,
-        browsers: ['PhantomJS'],
-        singleRun: true,
+        autoWatch: true,
+        browsers: ['Chrome'],
+        singleRun: false,
 
         // Concurrency level
         // how many browser should be started simultanous
         concurrency: Infinity
     });
-}
+};
