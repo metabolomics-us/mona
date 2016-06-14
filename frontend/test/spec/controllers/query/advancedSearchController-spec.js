@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Controller: Keyword Search Controller', function () {
+describe('Controller: Advanced Search Controller', function () {
     beforeEach(module('moaClientApp'));
 
     var scope, ctrl;
@@ -8,7 +8,7 @@ describe('Controller: Keyword Search Controller', function () {
     beforeEach(function () {
         angular.mock.inject(function ($injector, $controller, $rootScope) {
             scope = $rootScope.$new();
-            ctrl = $controller('KeywordSearchController', {
+            ctrl = $controller('AdvancedSearchController', {
                 $scope: scope
             });
         });
@@ -19,8 +19,8 @@ describe('Controller: Keyword Search Controller', function () {
     });
 
     it('can submit a query', function () {
-        spyOn(scope, 'submitQuery').and.callThrough();
-        scope.submitQuery();
-        expect(scope.submitQuery).toHaveBeenCalled();
+        spyOn(scope, 'submitAdvQuery').and.callThrough();
+        scope.submitAdvQuery();
+        expect(scope.submitAdvQuery).toHaveBeenCalled();
     });
 });
