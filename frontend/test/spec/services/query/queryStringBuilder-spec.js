@@ -48,7 +48,7 @@ describe('factory: Query String Builder - ', function () {
         it('throws a error when operands are not present', function () {
             delete this.query.operand;
             cache.setSpectraQuery(this.query);
-            expect(cache.setSpectraQuery).toThrow();
+            expect(service.buildQuery).toThrow();
         });
 
         it('returns default query string when query object is empty', function () {
@@ -99,10 +99,47 @@ describe('factory: Query String Builder - ', function () {
 
     describe('buildAdvanceQuery parses query object and returns a RSQL string', function () {
         beforeEach(function () {
-            this.query.operand = ['and', 'and', 'and'];
+            this.query.operand = {
+                compound: ['and', 'and', 'and'],
+                metadata: ['and']
+            }
         });
 
+        it('throws a error when operands are not present', function () {
+            delete this.query.operand;
+            cache.setSpectraQuery(this.query);
+            expect(service.buildAdvanceQuery).toThrow();
+        });
 
+        it('handles partial inchikey query', function () {
+            this.query.compound = [{partInchi: 12345678901234}];
+            cache.setSpectraQuery(this.query);
+            service.buildAdvanceQuery();
+            expect(cache.getSpectraQuery('string')).toEqual('compound.inchiKey=match=".*12345678901234.*"');
+        });
+
+        it('handles all fields in advance query search, and returns a rsql string', function () {
+            this.query = {
+                operand: {
+                    compound: ['and', 'and', 'and'],
+                    metadata: ['and']
+                },
+                compound: [{name: 'test name'}, {classification: 'test class'}],
+                compoundMetada: [{name: 'compoundMeta', operator: 'eq', value: 'compoundValue1'}],
+                compoundDa: [{'exact mass': 10}, {tolerance: 1.5}],
+                metadata: [{name: 'meta1', operator: 'eq', value: 'value1'},
+                    {name: 'meta2', operator: 'ne', value: 'value2'},
+                    {name: 'meta3', operator: 'match', value: 'value3'}],
+                metadataDa: [{'exact mass': 10}, {tolerance: 1.5}]
+            };
+            cache.setSpectraQuery(this.query);
+            service.buildAdvanceQuery();
+            expect(cache.getSpectraQuery('string')).toEqual('compound.names=q=\'name=match=".*test name.*"\' and ' +
+                'compound.metaData=q=\'name=="compoundMeta" and value=="compoundValue1"\' and ' +
+                'compound.metaData=q=\'name=="exact mass" and value>="8.5" or value<="11.5"\' and ' +
+                'metaData=q=\'name=="meta1" and value=="value1"\' and metaData=q=\'name=="meta2" and value!="value2"\' and ' +
+                'metaData=q=\'name=="meta3" and value=match=".*value3.*"\'');
+        });
     });
 
 });
