@@ -8,7 +8,8 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{MonaMapper, JSONDomainReader}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.{QueryExport, Downloader}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.Downloader
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -50,7 +51,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
     }
 
     "export all spectra as JSON without compression" in {
-      val export: QueryExport = QueryExport("All Spectra", "", "json", 0, 0, null, null, null)
+      val export: QueryExport = QueryExport("All Spectra", "", "json", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.download(export, compressExport = false)
 
       assert(result.count == 58)
@@ -66,7 +67,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
     }
 
     "export all spectra as JSON with compression" in {
-      val export: QueryExport = QueryExport("All Spectra", "", "json", 0, 0, null, null, null)
+      val export: QueryExport = QueryExport("All Spectra", "", "json", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.download(export)
 
       assert(result.count == 58)
@@ -79,7 +80,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
     }
 
     "export all spectra as MSP without compression" in {
-      val export: QueryExport = QueryExport("All Spectra", "", "msp", 0, 0, null, null, null)
+      val export: QueryExport = QueryExport("All Spectra", "", "json", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.download(export, compressExport = false)
 
       assert(result.count == 58)
@@ -95,7 +96,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
     }
 
     "export all spectra as MSP with compression" in {
-      val export: QueryExport = QueryExport("All Spectra", "", "msp", 0, 0, null, null, null)
+      val export: QueryExport = QueryExport("All Spectra", "", "json", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.download(export)
 
       assert(result.count == 58)
@@ -108,7 +109,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
     }
 
     "export negative mode spectra as JSON" in {
-      val export: QueryExport = QueryExport("Negative Mode Spectra", "metaData=q='name==\"ion mode\" and value==negative'", "json", 0, 0, null, null, null)
+      val export: QueryExport = QueryExport("Negative Mode Spectra", "metaData=q='name==\"ion mode\" and value==negative'", "json", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.download(export, compressExport = false)
 
       assert(result.count == 25)
@@ -124,7 +125,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
     }
 
     "export negative mode spectra as MSP" in {
-      val export: QueryExport = QueryExport("Negative Mode Spectra", "metaData=q='name==\"ion mode\" and value==negative'", "msp", 0, 0, null, null, null)
+      val export: QueryExport = QueryExport("Negative Mode Spectra", "metaData=q='name==\"ion mode\" and value==negative'", "msp", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.download(export, compressExport = false)
 
       assert(result.count == 25)

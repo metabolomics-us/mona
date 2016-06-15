@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository
 
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.{Downloader, QueryExport}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.Downloader
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +27,7 @@ class QueryExportMongoRepositoryTest extends WordSpec {
 
     "be able to save and retrive a QueryExport object" in {
       queryExportMongoRepository.deleteAll()
-      queryExportMongoRepository.save(QueryExport("test", "", "json", 0, 0, null, null, null))
+      queryExportMongoRepository.save(QueryExport("test", "", "json", null, null, 0, 0, null, null))
 
       assert(queryExportMongoRepository.count() == 1)
       assert(queryExportMongoRepository.findByLabel("test") != null)

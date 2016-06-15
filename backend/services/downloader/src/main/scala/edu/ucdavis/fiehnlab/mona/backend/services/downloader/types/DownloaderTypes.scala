@@ -14,9 +14,11 @@ case class QueryExport(
                         label: String,
                         query: String,
                         format: String,
+                        emailAddress: String,
+
+                        date: Date,
                         count: Integer,
                         size: Long,
-                        emailAddress: String,
 
                         queryFile: String,
                         exportFile: String

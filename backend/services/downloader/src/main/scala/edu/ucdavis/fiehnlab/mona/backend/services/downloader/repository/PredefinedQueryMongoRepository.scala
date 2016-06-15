@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository
 
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.PredefinedQuery
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.PredefinedQuery
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 

@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository
 
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.{Downloader, QueryExport}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.Downloader
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.PredefinedQuery
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.test.context.{TestContextManager, TestPropertySource}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{TestContextManager, TestPropertySource}
 
 
 /**
@@ -18,18 +19,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 class PredefinedQueryMongoRepositoryTest extends WordSpec {
 
   @Autowired
-  val queryExportMongoRepository: QueryExportMongoRepository = null
+  val predefinedQueryMongoRepository: PredefinedQueryMongoRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "QueryExportMongoRepositoryTest" should {
+  "PredefinedQueryMongoRepositoryTest" should {
 
-    "be able to save and retrive a QueryExport object" in {
-      queryExportMongoRepository.deleteAll()
-      queryExportMongoRepository.save(QueryExport("test", "", "json", 0, 0, null, null, null))
+    "be able to save and retrive a PredefinedQuery object" in {
+      predefinedQueryMongoRepository.deleteAll()
+      predefinedQueryMongoRepository.save(PredefinedQuery("test", "", "", 0, null, null))
 
-      assert(queryExportMongoRepository.count() == 1)
-      assert(queryExportMongoRepository.findByLabel("test") != null)
+      assert(predefinedQueryMongoRepository.count() == 1)
+      assert(predefinedQueryMongoRepository.findByLabel("test") != null)
     }
   }
 }
