@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
+import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 /**
   * This class starts the curation service and let's it listen in the background for messages
@@ -26,6 +27,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableWebSecurity
+@EnableSwagger2
 @Order(5)
 /***
   * the server depends on these configurations to wire all it's internal components together
