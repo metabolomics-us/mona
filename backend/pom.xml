@@ -225,6 +225,12 @@
             </dependency>
 
             <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+                <artifactId>downloader</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.cwbase</groupId>
                 <artifactId>logback-redis-appender</artifactId>
                 <version>1.1.5</version>
