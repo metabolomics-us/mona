@@ -1,3 +1,5 @@
+//TODO: deprecate, we are no longer using modal diablog
+/*
 describe('Controller: Spectra Query Modal Controller', function() {
   beforeEach(module('moaClientApp'));
 
@@ -30,3 +32,4 @@ describe('Controller: Spectra Query Modal Controller', function() {
   });
 
 });
+*/

@@ -89,14 +89,26 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
       applicationArguments.getOptionValues("file").asScala.foreach { file =>
         logger.info(s"reading file: ${file}")
 
-        val parameters = new JobParametersBuilder().addString("pathToFile", file).addString("loginToken", token).toJobParameters
+        try {
+          val parameters = new JobParametersBuilder().addString("pathToFile", file).addString("loginToken", token).toJobParameters
 
-        if (applicationArguments.containsOption("legacy")) {
-          logger.debug("running legacy import mode")
-          jobLauncher.run(uploadLegacySpectraJob, parameters)
+          if (applicationArguments.containsOption("legacy")) {
+            logger.debug("running legacy import mode")
+            jobLauncher.run(uploadLegacySpectraJob, parameters)
+          }
+          else {
+            jobLauncher.run(uploadSpectraJob, parameters)
+          }
+
+          System.exit(1)
+
         }
-        else {
-          jobLauncher.run(uploadSpectraJob, parameters)
+        catch {
+
+          case e:Exception =>
+            logger.error(s"received error: ${e.getMessage}",e)
+            System.exit(-2)
+
         }
       }
     }
