@@ -4,7 +4,7 @@ import java.io._
 import java.lang.Iterable
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Path, Files, Paths}
-import java.util.UUID
+import java.util.{Date, UUID}
 import java.util.zip.{ZipEntry, ZipOutputStream}
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -14,8 +14,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.QueryExport
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.QueryExportMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
+import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
@@ -34,10 +35,10 @@ class DownloaderService extends LazyLogging {
   @Autowired
   val queryExportMongoRepository: QueryExportMongoRepository = null
 
-  val objectMapper: ObjectMapper = MonaMapper.create
-
   @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
   val dir: String = null
+
+  val objectMapper: ObjectMapper = MonaMapper.create
 
   /**
     *
@@ -220,6 +221,7 @@ class DownloaderService extends LazyLogging {
       export.copy(
         label = label,
         count = count,
+        date = new Date,
         size = Files.size(exportFile),
 
         queryFile = queryFilename,

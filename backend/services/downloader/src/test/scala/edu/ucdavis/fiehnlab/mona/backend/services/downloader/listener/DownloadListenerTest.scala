@@ -6,7 +6,8 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.{QueryExport, Downloader}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.Downloader
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,7 +43,7 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
     }
 
     "be able to download a file using a message" in {
-      val export: QueryExport = QueryExport("All Spectra", "", "json", 0, 0, null, null, null)
+      val export: QueryExport = QueryExport("All Spectra", "", "json", null, null, 0, 0, null, null)
 
       downloadListener.handleMessage(export)
     }
