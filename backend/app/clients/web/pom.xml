@@ -22,6 +22,9 @@
                 https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
                 <version>1.0</version>
 
+                <configuration>
+                    <installDirectory>target</installDirectory>
+                </configuration>
                 <executions>
 
                     <execution>
@@ -32,7 +35,6 @@
                         <configuration>
                             <nodeVersion>v5.3.0</nodeVersion>
                             <npmVersion>3.3.12</npmVersion>
-
                         </configuration>
                     </execution>
 
@@ -44,7 +46,6 @@
                         <!-- Optional configuration which provides for running any npm command -->
                         <configuration>
                             <arguments>install</arguments>
-
                         </configuration>
                     </execution>
 
@@ -55,8 +56,6 @@
                         </goals>
                         <configuration>
                             <arguments>install</arguments>
-
-
                         </configuration>
                     </execution>
 
@@ -66,7 +65,7 @@
                             <goal>grunt</goal>
                         </goals>
                         <configuration>
-                            <arguments>--no-color</arguments>
+                            <arguments>dist</arguments>
                         </configuration>
                     </execution>
 
