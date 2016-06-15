@@ -80,7 +80,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
     }
 
     "export all spectra as MSP without compression" in {
-      val export: QueryExport = QueryExport("All Spectra", "", "json", null, null, 0, 0, null, null)
+      val export: QueryExport = QueryExport("All Spectra", "", "msp", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.download(export, compressExport = false)
 
       assert(result.count == 58)
@@ -96,7 +96,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
     }
 
     "export all spectra as MSP with compression" in {
-      val export: QueryExport = QueryExport("All Spectra", "", "json", null, null, 0, 0, null, null)
+      val export: QueryExport = QueryExport("All Spectra", "", "msp", null, null, 0, 0, null, null)
       val result: QueryExport = downloaderService.download(export)
 
       assert(result.count == 58)
