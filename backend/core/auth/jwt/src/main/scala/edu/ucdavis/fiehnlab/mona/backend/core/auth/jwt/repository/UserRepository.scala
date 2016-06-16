@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
   * allows us to work with user objects
   */
 @Repository
-trait UserRepository  extends PagingAndSortingRepository[User,String] {
+trait UserRepository extends PagingAndSortingRepository[User, String] {
 
   /**
     * finds a given user by it's username
@@ -16,5 +16,5 @@ trait UserRepository  extends PagingAndSortingRepository[User,String] {
     * @param username
     * @return
     */
-  def findByUsername(username:String) : User
+  def findByUsername(username:String): User
 }
