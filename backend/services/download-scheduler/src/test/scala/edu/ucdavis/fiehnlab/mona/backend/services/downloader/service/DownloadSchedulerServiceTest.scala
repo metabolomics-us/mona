@@ -1,11 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.service
 
+import java.io.InputStreamReader
 import javax.annotation.PostConstruct
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.DownloadScheduler
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.PredefinedQueryMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.PredefinedQuery
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.amqp.core.{Message, MessageListener, Queue}
@@ -18,6 +23,8 @@ import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
+import scala.concurrent.duration._
+
 /**
   * Created by sajjan on 5/26/2016.
   */
@@ -26,7 +33,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired
-  val testCurationRunner: TestDownloader = null
+  val testRunner: TestDownloader = null
 
   @Autowired
   val notificationCounter: ReceivedEventCounter[Notification] = null
@@ -34,11 +41,45 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
   @Autowired
   val downloadSchedulerService: DownloadSchedulerService = null
 
+  @Autowired
+  val predefinedQueryRepository: PredefinedQueryMongoRepository = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "DownloadSchedulerServiceTest" should {
+    "load some data" in {
+      predefinedQueryRepository.deleteAll()
+      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
+    }
+
     "scheduleDownload" in {
-      assert(1 == 1)
+      val count = notificationCounter.getEventCount
+
+      testRunner.messageReceived = false
+      downloadSchedulerService.scheduleDownload("", "json")
+
+      eventually(timeout(10 seconds)) {
+        assert(testRunner.messageReceived)
+      }
+
+      eventually(timeout(10 seconds)) {
+        assert(notificationCounter.getEventCount == count + 1)
+      }
+    }
+
+    "schedulePredefinedDownloads" in {
+      val count = notificationCounter.getEventCount
+
+      testRunner.messageReceived = false
+      downloadSchedulerService.schedulePredefinedDownloads()
+
+      eventually(timeout(10 seconds)) {
+        assert(testRunner.messageReceived)
+      }
+
+      eventually(timeout(10 seconds)) {
+        assert(notificationCounter.getEventCount == count + 2)
+      }
     }
   }
 }
