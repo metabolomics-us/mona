@@ -1,13 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.listener
 
 import java.io.InputStreamReader
+import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.Downloader
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.PredefinedQueryMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,6 +28,9 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
 
   @Autowired
+  val predefinedQueryRepository: PredefinedQueryMongoRepository = null
+
+  @Autowired
   val downloadListener: DownloadListener = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -33,6 +38,7 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
   "DownloadListenerTest" must {
     // Populate the database
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+    val allSpectra: PredefinedQuery = PredefinedQuery("All Spectra", "", "", 0, null, null)
 
     "load some data" in {
       mongoRepository.deleteAll()
@@ -40,12 +46,15 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
       for (spectrum <- exampleRecords) {
         mongoRepository.save(spectrum)
       }
+
+      predefinedQueryRepository.deleteAll()
+      predefinedQueryRepository.save(allSpectra)
     }
 
-    "be able to download a file using a message" in {
-      val export: QueryExport = QueryExport("All Spectra", "", "json", null, null, 0, 0, null, null)
+    "be able to download a json file using a message" in {
+      val jsonExport: QueryExport = QueryExport("1", "All Spectra", "", "json", null, new Date, 0, 0, null, null)
 
-      downloadListener.handleMessage(export)
+      downloadListener.handleMessage(jsonExport)
     }
   }
 }
