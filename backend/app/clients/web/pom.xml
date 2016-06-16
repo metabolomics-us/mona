@@ -11,7 +11,37 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.app.clients</groupId>
     <artifactId>web</artifactId>
+    <properties>
+        <docker.expose>8080</docker.expose>
+    </properties>
 
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
+        <!-- config server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
+        <!-- configuration bus to refresh config files from git -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
@@ -59,6 +89,7 @@
                         </configuration>
                     </execution>
 
+                    <!--
                     <execution>
                         <id>grunt build</id>
                         <goals>
@@ -69,6 +100,7 @@
                         </configuration>
                     </execution>
 
+-->
                     <!--
                     <execution>
                         <id>javascript tests</id>
