@@ -41,7 +41,7 @@ class CurationService {
 
 /**
   * simple event to let people who are interested in notifications know that we scheduled one
- *
+  *
   * @param spectrum
   * @param time
   */

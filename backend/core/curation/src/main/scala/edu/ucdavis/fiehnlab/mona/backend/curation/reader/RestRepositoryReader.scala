@@ -12,7 +12,7 @@ import scala.beans.BeanProperty
   * connects to the mona server
   * and reads spectra from it utilzing the rest apik
   */
-class RestRepositoryReader(@BeanProperty val query: String = "",@BeanProperty val pageSize: Int = 10) extends ItemReader[Spectrum] with LazyLogging {
+class RestRepositoryReader(@BeanProperty val query: String = "", @BeanProperty val pageSize: Int = 10) extends ItemReader[Spectrum] with LazyLogging {
 
   @Autowired
   val spectrumRestClient: GenericRestClient[Spectrum, String] = null

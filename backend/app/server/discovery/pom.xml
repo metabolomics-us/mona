@@ -14,7 +14,6 @@
 
     <description>This module provides the discovery service and allows us to easily keep track of all the internal mona services</description>
 
-
     <properties>
         <docker.expose>8761</docker.expose>
     </properties>
@@ -31,5 +30,4 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
     </dependencies>
-
 </project>

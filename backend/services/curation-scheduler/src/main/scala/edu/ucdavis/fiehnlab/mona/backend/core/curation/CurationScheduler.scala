@@ -37,7 +37,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 class CurationScheduler extends WebSecurityConfigurerAdapter {
 
   @Autowired
-  val restSecurityService:RestSecurityService = null
+  val restSecurityService: RestSecurityService = null
 
   /**
     * only admins can schedule curations in the system
@@ -49,7 +49,6 @@ class CurationScheduler extends WebSecurityConfigurerAdapter {
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
       .authorizeRequests()
-      //saves need to be authenticated
       .antMatchers(HttpMethod.GET, "/rest/curation/**").hasAuthority("ADMIN")
   }
   /**
@@ -59,8 +58,7 @@ class CurationScheduler extends WebSecurityConfigurerAdapter {
     * @param web
     */
   override def configure(web: WebSecurity): Unit = {
-    web.ignoring()
-      .antMatchers(HttpMethod.GET, "/*")
+    web.ignoring().antMatchers(HttpMethod.GET, "/*")
   }
 }
 

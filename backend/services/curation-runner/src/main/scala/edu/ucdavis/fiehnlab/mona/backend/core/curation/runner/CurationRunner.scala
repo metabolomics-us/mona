@@ -82,8 +82,7 @@ class CurationListener(workflow: ItemProcessor[Spectrum,Spectrum],writer:RestRep
       logger.info(s"curated spectra: ${spectra.id}")
       writer.write(result)
       logger.info("saved spectra to system")
-    }
-    catch {
+    } catch {
       case e:Exception => logger.info(s"exception during curation of spectra, fail silently: ${e.getMessage}",e)
     }
   }

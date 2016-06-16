@@ -16,15 +16,14 @@
     </parent>
 
     <packaging>pom</packaging>
+
     <modules>
         <module>core</module>
         <module>services</module>
         <module>app</module>
     </modules>
 
-
     <dependencyManagement>
-
         <dependencies>
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
@@ -225,6 +224,12 @@
             </dependency>
 
             <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+                <artifactId>downloader</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.cwbase</groupId>
                 <artifactId>logback-redis-appender</artifactId>
                 <version>1.1.5</version>
@@ -249,8 +254,6 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>2.4.0</version>
             </dependency>
-
-
         </dependencies>
     </dependencyManagement>
 
@@ -278,7 +281,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
 
         <pluginManagement>
@@ -295,7 +297,5 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
     </build>
-
 </project>
