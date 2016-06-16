@@ -63,7 +63,7 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
       assert(result.count == 58)
       assert(result.size > 0)
 
-      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findByLabel(result.label)
+      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
       assert(predefinedQuery != null)
       assert(predefinedQuery.jsonExport != null)
       assert(predefinedQuery.jsonExport.id == jsonExport.id)
@@ -82,7 +82,7 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
       assert(result.count == 58)
       assert(result.size > 0)
 
-      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findByLabel(result.label)
+      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
       assert(predefinedQuery != null)
       assert(predefinedQuery.mspExport != null)
       assert(predefinedQuery.mspExport.id == mspExport.id)

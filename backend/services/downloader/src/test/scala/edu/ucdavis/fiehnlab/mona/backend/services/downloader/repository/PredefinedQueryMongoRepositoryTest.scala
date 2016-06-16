@@ -30,7 +30,7 @@ class PredefinedQueryMongoRepositoryTest extends WordSpec {
       predefinedQueryMongoRepository.save(PredefinedQuery("test", "", "", 0, null, null))
 
       assert(predefinedQueryMongoRepository.count() == 1)
-      assert(predefinedQueryMongoRepository.findByLabel("test") != null)
+      assert(predefinedQueryMongoRepository.findOne("test") != null)
     }
   }
 }
