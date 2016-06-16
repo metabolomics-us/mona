@@ -11,7 +11,6 @@
     
     <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
     <artifactId>download-scheduler</artifactId>
-    <version>1.3-SNAPSHOT</version>
 
     <description>
         This module handles query exporting for the pre-defined downloads and custom query download features
@@ -40,6 +39,11 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>mongo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+            <artifactId>downloader</artifactId>
         </dependency>
 
         <!-- test dependencies -->

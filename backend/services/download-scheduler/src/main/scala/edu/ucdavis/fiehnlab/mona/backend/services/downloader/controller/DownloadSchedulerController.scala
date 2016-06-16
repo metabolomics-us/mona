@@ -3,7 +3,8 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.controller
 import java.util.concurrent.Future
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.{DownloadSchedulerService, ScheduledDownload}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.DownloadSchedulerService
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestMapping, RequestParam, RestController}
@@ -25,11 +26,12 @@ class DownloadSchedulerController extends LazyLogging {
     */
   @RequestMapping(path = Array("/schedule"))
   @Async
-  def scheduleDownload(@RequestParam(required = true, name = "query") query: String): Future[ScheduledDownload] = {
+  def scheduleDownload(@RequestParam(required = true, name = "query") query: String,
+                       @RequestParam(required = false, name = "format", defaultValue = "json") format: String): Future[QueryExport] = {
     // Schedule download
-    val downloadObject: ScheduledDownload = downloadSchedulerService.scheduleDownload(query)
+    val downloadObject: QueryExport = downloadSchedulerService.scheduleDownload(query, format)
 
-    new AsyncResult[ScheduledDownload](downloadObject)
+    new AsyncResult[QueryExport](downloadObject)
   }
 
   /**
@@ -37,10 +39,10 @@ class DownloadSchedulerController extends LazyLogging {
     */
   @RequestMapping(path = Array("/schedulePredefinedDownloads"))
   @Async
-  def schedulePredefinedDownloads(): Future[ScheduledDownload] = {
+  def schedulePredefinedDownloads(): Future[Array[QueryExport]] = {
     // Schedule download
-    val downloadObject: ScheduledDownload = downloadSchedulerService.schedulePredefinedDownloads
+    val downloadObjects: Array[QueryExport] = downloadSchedulerService.schedulePredefinedDownloads()
 
-    new AsyncResult[ScheduledDownload](downloadObject)
+    new AsyncResult[Array[QueryExport]](downloadObjects)
   }
 }
