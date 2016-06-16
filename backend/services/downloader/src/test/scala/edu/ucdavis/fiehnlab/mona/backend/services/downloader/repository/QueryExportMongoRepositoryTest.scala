@@ -27,10 +27,10 @@ class QueryExportMongoRepositoryTest extends WordSpec {
 
     "be able to save and retrive a QueryExport object" in {
       queryExportMongoRepository.deleteAll()
-      queryExportMongoRepository.save(QueryExport("", "test", "", "json", null, null, 0, 0, null, null))
+      queryExportMongoRepository.save(QueryExport("test", "test", "", "json", null, null, 0, 0, null, null))
 
       assert(queryExportMongoRepository.count() == 1)
-      assert(queryExportMongoRepository.findByLabel("test") != null)
+      assert(queryExportMongoRepository.findOne("test") != null)
     }
   }
 }
