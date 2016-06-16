@@ -42,18 +42,13 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "CurationServiceTest" should {
-
-    val reader = JSONDomainReader.create[Spectrum]
-
-    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-
-    val spectrum: Spectrum = reader.read(input)
+    val exampleSpectrum: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
 
     "scheduleSpectra" in {
       val count = notificationCounter.getEventCount
 
       testCurationRunner.messageReceived = false
-      curationService.scheduleSpectra(spectrum)
+      curationService.scheduleSpectra(exampleSpectrum)
 
       eventually(timeout(10 seconds)) {
         assert(testCurationRunner.messageReceived)
