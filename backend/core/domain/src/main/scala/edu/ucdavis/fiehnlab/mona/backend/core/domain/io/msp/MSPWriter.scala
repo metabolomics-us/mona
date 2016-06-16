@@ -69,7 +69,7 @@ class MSPWriter extends DomainWriter {
   }
 
   /**
-    * generates an aray of string ion\tintensity
+    * generates an aray of string ion intensity
     *
     * @param spectrum
     * @return
@@ -80,7 +80,7 @@ class MSPWriter extends DomainWriter {
       val ion = pair(0)
       val intensity = pair(1)
 
-      s"${ion}\t${intensity}"
+      s"$ion $intensity"
   }
 
   def buildMetaDateField(spectrum: Spectrum, field: String): String = {
@@ -109,14 +109,14 @@ class MSPWriter extends DomainWriter {
     p.println(s"ID: ${spectrum.id}")
     p.println(s"MW: ${buildCompoundMetaData(spectrum, "total exact mass")}")
     p.println(s"Formula: ${buildCompoundMetaData(spectrum, "molecule formula")}")
-    p.println(s"Comments: ${buildComments(spectrum)}")
     p.println(s"PrecursorMZ: ${buildMetaDateField(spectrum, "precursor m/z")}")
+    p.println(s"Comments: ${buildComments(spectrum)}")
 
     val spectra = buildSpectraString(spectrum)
     p.println(s"Num Peaks: ${spectra.length}")
 
     spectra.foreach { value =>
-      p.println(s"${value}")
+      p.println(s"$value")
     }
 
     p.println()
