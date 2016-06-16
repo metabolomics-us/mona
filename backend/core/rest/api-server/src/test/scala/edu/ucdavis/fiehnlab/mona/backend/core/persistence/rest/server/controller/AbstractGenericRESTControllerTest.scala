@@ -56,6 +56,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
       "save may require authentication" in {
         if(saveRequiresAuthentication) {
           given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(401)
+          authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(200)
         } else {
           given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(200)
         }
