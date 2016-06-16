@@ -11,6 +11,8 @@ import scala.annotation.meta.field
 @Document(collection = "QUERY_EXPORTS")
 case class QueryExport(
                         @(Id@field)
+                        id: String,
+
                         label: String,
                         query: String,
                         format: String,

@@ -1,27 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.service
 
 import java.io._
-import java.lang.Iterable
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Path, Files, Paths}
-import java.util.{Date, UUID}
-import java.util.zip.{ZipEntry, ZipOutputStream}
+import java.nio.file.{Files, Path, Paths}
+import java.util.Date
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
-import org.springframework.beans.factory.InitializingBean
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
-
-import scala.collection.JavaConverters._
 
 /**
   * Created by sajjan on 5/25/16.
@@ -30,10 +18,7 @@ import scala.collection.JavaConverters._
 class DownloaderService extends LazyLogging {
 
   @Autowired
-  val mongoRepository: ISpectrumMongoRepositoryCustom = null
-
-  @Autowired
-  val queryExportMongoRepository: QueryExportMongoRepository = null
+  val downloadWriterService: DownloadWriterService = null
 
   @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
   val dir: String = null
@@ -58,70 +43,6 @@ class DownloaderService extends LazyLogging {
 
   /**
     *
-    * @param query
-    */
-  def executeQuery(query: String): Iterable[Spectrum] = {
-    if (query == null || query.isEmpty) {
-      mongoRepository.findAll
-    } else {
-      new DynamicIterable[Spectrum, String](query, 10) {
-
-        /**
-          * Loads more data from the server for the given query
-          */
-        override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
-          mongoRepository.rsqlQuery(query, pageable)
-        }
-      }
-    }
-  }
-
-  /**
-    *
-    * @param bufferedWriter
-    * @param query
-    * @return
-    */
-  def downloadAsJSON(bufferedWriter: BufferedWriter, query: String): Int = {
-    bufferedWriter.write("[")
-
-    val count: Int = executeQuery(query).asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
-      if (sum > 0) {
-        bufferedWriter.write(",")
-      }
-
-      bufferedWriter.write(objectMapper.writeValueAsString(spectrum))
-      sum + 1
-    }
-
-    bufferedWriter.write("]")
-
-    count
-  }
-
-  /**
-    *
-    * @param bufferedWriter
-    * @param query
-    * @return
-    */
-  def downloadAsMSP(bufferedWriter: BufferedWriter, query: String): Int = {
-    val mspWriter: MSPWriter = new MSPWriter
-
-    val count: Int = executeQuery(query).asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
-      if (sum > 0) {
-        bufferedWriter.write("\n")
-      }
-
-      mspWriter.write(spectrum, bufferedWriter)
-      sum + 1
-    }
-
-    count
-  }
-
-  /**
-    *
     * @param export
     */
   def download(export: QueryExport): QueryExport = download(export, compressExport = true)
@@ -136,10 +57,10 @@ class DownloaderService extends LazyLogging {
       }
     }
 
-    // Generate label if one does not exist
+    // Use the export ID as the label if one does not exist
     val label: String =
-      if (export.label == null || export.label.isEmpty)
-        UUID.randomUUID.toString
+      if(export.label == null || export.label.isEmpty)
+        export.id
       else
         export.label
 
@@ -156,61 +77,23 @@ class DownloaderService extends LazyLogging {
 
 
     // Export query string
-    logger.info(s"Exporting query file $queryFilename")
-    Files.write(Paths.get(dir, queryFilename), export.query.getBytes(StandardCharsets.UTF_8))
+    val queryFile: Path = Paths.get(dir, queryFilename)
+
+    downloadWriterService.writeQueryFile(queryFile, export.query)
 
 
     // Export query results
-    logger.info(s"Exporting spectra to file $exportFilename")
-
     val exportFile: Path = Paths.get(dir, exportFilename)
-    val bufferedWriter = Files.newBufferedWriter(exportFile)
+    val compressedFile: Path = Paths.get(dir, compressedExportFilename)
 
-    val count: Int = export.format match {
-      case "msp" => downloadAsMSP(bufferedWriter, export.query)
-      case "json" | _ => downloadAsJSON(bufferedWriter, export.query)
-    }
+    val count: Int = downloadWriterService.writeExportFile(exportFile, compressedFile, export.query, export.format, compressExport)
 
-    bufferedWriter.close()
-
-    logger.info(s"Finished exporting $count spectra")
-
-
-    // Compress results
     if (compressExport) {
-      logger.info("Compressing ${exportFilename} -> ${compressedExportFilename}")
-
-      val compressedFile: Path = Paths.get(dir, compressedExportFilename)
-      val compressedTemporaryFile: Path = Paths.get(dir, compressedExportFilename +".tmp")
-
-      val zipFile: ZipOutputStream = new ZipOutputStream(new FileOutputStream(compressedTemporaryFile.toAbsolutePath.toString))
-
-      zipFile.putNextEntry(new ZipEntry(exportFilename))
-
-      val inputStream: BufferedInputStream = new BufferedInputStream(new FileInputStream(Paths.get(dir, exportFilename).toAbsolutePath.toString))
-      val buffer: Array[Byte] = new Array[Byte](1024)
-      var length: Int = inputStream.read(buffer, 0, 1024)
-
-
-      while (length != -1) {
-        zipFile.write(buffer, 0, length)
-        length = inputStream.read(buffer, 0, 1024)
-      }
-
-      inputStream.close()
-      zipFile.closeEntry()
-      zipFile.close()
-
-      // Delete exported file and move temporary export file to stored location
-      Files.deleteIfExists(exportFile)
-      Files.deleteIfExists(compressedFile)
-      Files.move(compressedTemporaryFile, compressedFile)
-
-
       // Update export object with filesize, query count and filenames
       export.copy(
         label = label,
         count = count,
+        date = new Date,
         size = Files.size(compressedFile),
 
         queryFile = queryFilename,
