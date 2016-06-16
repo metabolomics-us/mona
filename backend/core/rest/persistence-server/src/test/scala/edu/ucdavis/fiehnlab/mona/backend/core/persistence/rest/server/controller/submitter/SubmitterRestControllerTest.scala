@@ -25,7 +25,7 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
   val submitterRepository: ISubmitterMongoRepository = null
 
   //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   /**
     * object to use for gets
@@ -41,5 +41,5 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
     */
   override def getId: String = getValue.id
 
-  override val requiresAuthForAllRequestes: Boolean = false
+  override val requiresAuthForAllRequests: Boolean = false
 }
