@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>uploader</module>
-        <module>compute</module>
+        <module>web</module>
     </modules>
 
 

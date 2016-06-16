@@ -47,15 +47,16 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
       .authorizeRequests()
-      //saves need to be authentifiated
+
+      //saves need to be authenticated
       .antMatchers(HttpMethod.POST, "/rest/spectra/**").authenticated()
       .antMatchers(HttpMethod.POST, "/rest/submitters/**").authenticated()
 
       //updates needs authentication
       .antMatchers(HttpMethod.PUT).authenticated()
+
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
-
   }
 
   /**
@@ -69,6 +70,7 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       //get is always available
       .antMatchers(HttpMethod.GET)
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")
+
       //no authentication for metadata
       .antMatchers(HttpMethod.POST, "/rest/metaData/**")
       .antMatchers(HttpMethod.GET, "/*")

@@ -30,7 +30,9 @@ import scala.collection.JavaConverters._
   */
 abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends AbstractSpringControllerTest {
 
-  val requiresAuthForAllRequestes:Boolean
+  val requiresAuthForAllRequests: Boolean
+
+  val saveRequiresAuthentication: Boolean = true
 
   /**
     * object to use for gets
@@ -48,50 +50,49 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 
   "after initializing the environment" when {
 
-    RestAssured.baseURI = s"http://localhost:${port}/rest"
-
+    RestAssured.baseURI = s"http://localhost:$port/rest"
 
     "A Rest Controller" should {
-
-      "save requires authorization" in {
-        given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"${endpoint}").then().statusCode(401)
-        authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"${endpoint}").then().statusCode(200)
+      "save may require authentication" in {
+        if(saveRequiresAuthentication) {
+          given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(401)
+          authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(200)
+        } else {
+          given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(200)
+        }
       }
 
       "searchCount" in {
-        if(requiresAuthForAllRequestes){
-          given().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/count").then().statusCode(401)
-          authenticate().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/count").then().statusCode(200)
-        }
-        else {
-          given().contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/count").then().statusCode(200)
+        if(requiresAuthForAllRequests) {
+          given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").then().statusCode(401)
+          authenticate().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").then().statusCode(200)
+        } else {
+          given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").then().statusCode(200)
         }
       }
 
       "get" in {
-        if(requiresAuthForAllRequestes) {
-          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(401)
-          authenticate().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
-        }
-        else{
-          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"${endpoint}/${getId}").then().statusCode(200)
+        if(requiresAuthForAllRequests) {
+          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").then().statusCode(401)
+          authenticate().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").then().statusCode(200)
+        } else{
+          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").then().statusCode(200)
         }
       }
 
       "put requires authorization" in {
-        given().log().all(true).contentType("application/json; charset=UTF-8").body(getValue).when().put(s"${endpoint}/${getId}").then().statusCode(401)
+        given().log().all(true).contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").then().statusCode(401)
 
-        authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"${endpoint}/${getId}").then().statusCode(200)
+        authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").then().statusCode(200)
       }
 
       "delete requires admin authorization" in {
-        given().contentType("application/json; charset=UTF-8").delete(s"${endpoint}/${getId}").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").delete(s"$endpoint/$getId").then().statusCode(401)
 
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete(s"${endpoint}/${getId}").then().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").then().statusCode(403)
 
-        authenticate().contentType("application/json; charset=UTF-8").when().delete(s"${endpoint}/${getId}").then().statusCode(200)
+        authenticate().contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").then().statusCode(200)
       }
-
     }
   }
 }
@@ -104,7 +105,6 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
 
   val port: Int = 9999
-
 
   @Autowired
   val userRepository: UserRepository = null
@@ -129,13 +129,11 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
 
 
   "our first test set" must {
-
     "prepare the object mapper for rest assured" in {
       //configure the mapper for rest assured
       RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
         override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
       }))
-
     }
 
     "reset the user base" in {
