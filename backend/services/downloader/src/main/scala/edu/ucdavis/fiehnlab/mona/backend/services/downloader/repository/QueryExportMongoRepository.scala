@@ -10,11 +10,4 @@ import org.springframework.stereotype.Repository
 @Repository("queryExportMongoRepository")
 trait QueryExportMongoRepository extends PagingAndSortingRepository[QueryExport, String] {
 
-  /**
-    * returns the query export with the given label
-    *
-    * @param label
-    * @return
-    */
-  def findByLabel(label: String): QueryExport
 }
