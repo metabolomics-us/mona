@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
@@ -8,7 +9,7 @@ import org.springframework.batch.item.ItemProcessor
   * Created by wohlgemuth on 3/11/16.
   */
 @Step(description = "this step will remove all computed metadata, names and tags from the given spectrum", workflow = "spectra-curation")
-class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
+class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   /**
     * processes the given spectrum and removes all it's computed meta data
@@ -17,10 +18,10 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
+    logger.info(s"Filtering computed data in spectrum ${spectrum.id}")
+
     val filteredCompound: Array[Compound] =
-      if (spectrum.compound == null) {
-        Array()
-      } else {
+      if (spectrum.compound != null) {
         spectrum.compound.map(compound =>
           compound.copy(
             classification = filterMetaData(compound.classification),
@@ -29,15 +30,22 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
             tags = filterTags(compound.tags)
           )
         )
+      } else {
+        Array()
       }
 
+    val filteredMetaData: Array[MetaData] = filterMetaData(spectrum.metaData)
+    val filteredTags: Array[Tags] = filterTags(spectrum.tags)
 
-    // Assembled filtered spectru
+    logger.info(s"Filtered metadata from ${spectrum.metaData.length} -> ${filteredMetaData.length}")
+    logger.info(s"Filtered tags from ${spectrum.tags.length} -> ${filteredTags.length}")
+
+    // Assembled filtered spectrum
     spectrum.copy(
       compound = filteredCompound,
-      metaData = filterMetaData(spectrum.metaData),
+      metaData = filteredMetaData,
       splash = null,
-      tags = filterTags(spectrum.tags)
+      tags = filteredTags
     )
   }
 
@@ -51,7 +59,7 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     if(metaData != null) {
       metaData.filter(!_.computed)
     } else {
-      null
+      Array()
     }
   }
 
@@ -65,7 +73,7 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     if(names != null) {
       names.filter(!_.computed)
     } else {
-      null
+      Array()
     }
   }
 
@@ -79,12 +87,11 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum]{
     if(tags != null) {
       tags.filter(!_.ruleBased)
     } else {
-      null
+      Array()
     }
   }
 }
 
 object RemoveComputedData {
-
   def apply: RemoveComputedData = new RemoveComputedData()
 }

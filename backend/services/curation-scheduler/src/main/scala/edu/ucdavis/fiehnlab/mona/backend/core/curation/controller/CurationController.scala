@@ -41,14 +41,12 @@ class CurationController {
     */
   @RequestMapping(path = Array("/{id}"))
   @Async
-  def curateById(@PathVariable("id") id: String,request:HttpServletRequest) :Future[CurationJobScheduled]= {
-
+  def curateById(@PathVariable("id") id: String, request: HttpServletRequest): Future[CurationJobScheduled] = {
     val spectrum = repository.findOne(id)
 
     if (spectrum == null) {
       throw new NoSuchRequestHandlingMethodException(request)
-    }
-    else {
+    } else {
       curationService.scheduleSpectra(spectrum)
       new AsyncResult[CurationJobScheduled](CurationJobScheduled(1))
     }
@@ -61,17 +59,15 @@ class CurationController {
     */
   @RequestMapping(path = Array(""))
   @Async
-  def curateByQuery(@RequestParam(required = false, name = "query") query: String) :Future[CurationJobScheduled]= {
-    if (query == null) {
-
-      val count:Int = repository.findAll().asScala.foldLeft(0){(sum,spectrum:Spectrum) =>
+  def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[CurationJobScheduled] = {
+    if (query == null || query.isEmpty) {
+      val count: Int = repository.findAll().asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
         curationService.scheduleSpectra(spectrum)
         sum + 1
       }
 
       new AsyncResult[CurationJobScheduled](CurationJobScheduled(count))
-    }
-    else {
+    } else {
       val iterable = new DynamicIterable[Spectrum, String](query, 10) {
         /**
           * loads more data from the server for the given query
@@ -81,7 +77,7 @@ class CurationController {
         }
       }
 
-      val count:Int = iterable.asScala.foldLeft(0){(sum,spectrum:Spectrum) =>
+      val count: Int = iterable.asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
         curationService.scheduleSpectra(spectrum)
         sum + 1
       }
@@ -93,4 +89,4 @@ class CurationController {
 }
 
 @ApiModel
-case class CurationJobScheduled(count:Int)
+case class CurationJobScheduled(count: Int)

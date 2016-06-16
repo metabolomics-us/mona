@@ -32,8 +32,8 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
       .authorizeRequests()
+
       //saves need to be authenticated
-      .antMatchers(HttpMethod.POST, "/rest/users/**").authenticated()
       .antMatchers(HttpMethod.GET, "/rest/users/**").hasAuthority("ADMIN")
 
       //only admins can extend tokens
@@ -42,7 +42,8 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/auth/info").authenticated()
 
       //updates needs authentication
-      .antMatchers(HttpMethod.PUT).authenticated()
+      .antMatchers(HttpMethod.PUT, "/rest/users/**").authenticated()
+
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
   }
@@ -54,7 +55,7 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
       .antMatchers(HttpMethod.POST, "/rest/auth/login")
+      .antMatchers(HttpMethod.POST, "/rest/users/**")
       .antMatchers(HttpMethod.GET, "/*")
   }
-
 }
