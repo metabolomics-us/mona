@@ -53,27 +53,27 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
     // Get molecular properties
     val molecularFormula: IMolecularFormula = MolecularFormulaManipulator.getMolecularFormula(molecule)
 
-    metaData.append( MetaData("computed", true, false, CommonMetaData.MOLECULAR_FORMULA,
+    metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.MOLECULAR_FORMULA,
       null, null, null, MolecularFormulaManipulator.getString(molecularFormula)))
 
-    metaData.append( MetaData("computed", true, false, CommonMetaData.TOTAL_EXACT_MASS,
+    metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.TOTAL_EXACT_MASS,
       null, null, null, MolecularFormulaManipulator.getTotalExactMass(molecularFormula)))
 
 
     // Calculate InChI
     val inchiGenerator: InChIGenerator = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule)
 
-    metaData.append( MetaData("computed", true, false, CommonMetaData.INCHI_CODE,
+    metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.INCHI_CODE,
       null, null, null, inchiGenerator.getInchi))
 
     logger.debug(s"return status is: ${inchiGenerator.getReturnStatus}")
-    metaData.append( MetaData("computed", true, false, CommonMetaData.INCHI_KEY,
+    metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.INCHI_KEY,
       null, null, null, inchiGenerator.getInchiKey))
 
 
     // Calculate SMILES
-    metaData.append( MetaData("computed", true, false, CommonMetaData.SMILES,
-      null, null, null, SmilesGenerator.generic().create(molecule)))
+    metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.SMILES,
+      null, null, null, SmilesGenerator.unique().create(molecule)))
 
 
     // Return compound with update metadata
