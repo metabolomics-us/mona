@@ -8,6 +8,4 @@ import org.springframework.stereotype.Repository
   * Created by sajjan on 5/26/16.
   */
 @Repository("queryExportMongoRepository")
-trait QueryExportMongoRepository extends PagingAndSortingRepository[QueryExport, String] {
-
-}
+trait QueryExportMongoRepository extends PagingAndSortingRepository[QueryExport, String]

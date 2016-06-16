@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.services.downloader
+package edu.ucdavis.fiehnlab.mona.backend.services.downloader.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
