@@ -40,7 +40,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
   //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "we will be connecting to the REST controller" when {
 
@@ -280,5 +280,5 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
     */
   override def getId: String = getValue.id
 
-  override val requiresAuthForAllRequestes: Boolean = false
+  override val requiresAuthForAllRequests: Boolean = false
 }
