@@ -11,7 +11,6 @@ import scala.reflect.ClassTag
   */
 trait AbstractVertex[ID] {
   val id: ID
-
 }
 
 /**
@@ -97,7 +96,7 @@ class Graph[ID, Vertex <: AbstractVertex[ID] : ClassTag, Edge <: AbstractEdge[ID
     * @param vertex
     * @return
     */
-  def hasChild(vertex: Vertex): Boolean = !getChildren(vertex).isEmpty
+  def hasChild(vertex: Vertex): Boolean = getChildren(vertex).nonEmpty
 
   /**
     * finds all the children
@@ -106,11 +105,7 @@ class Graph[ID, Vertex <: AbstractVertex[ID] : ClassTag, Edge <: AbstractEdge[ID
     * @return
     */
   def getChildren(vertex: Vertex): Set[Vertex] = {
-
-    edges.filter(_.from == vertex.id).collect {
-      case x: AbstractEdge[ID] => getNode(x.to).get
-    }.toArray[Vertex].toSet[Vertex]
-
+    edges.filter(_.from == vertex.id).map(x => getNode(x.to).get).toArray[Vertex].toSet[Vertex]
   }
 
   /**
@@ -119,9 +114,7 @@ class Graph[ID, Vertex <: AbstractVertex[ID] : ClassTag, Edge <: AbstractEdge[ID
     * @return
     */
   def heads: Set[Vertex] = {
-    nodeIndex.keys.filter(getParents(_).isEmpty).collect {
-      case x: ID => getNode(x).get
-    }.toArray[Vertex].toSet[Vertex]
+    nodeIndex.keys.filter(getParents(_).isEmpty).map(x => getNode(x).get).toArray[Vertex].toSet[Vertex]
   }
 
   /**
@@ -130,11 +123,7 @@ class Graph[ID, Vertex <: AbstractVertex[ID] : ClassTag, Edge <: AbstractEdge[ID
     * @return
     */
   def tails: Set[Vertex] = {
-
-    nodeIndex.keys.filter(getChildren(_).isEmpty).collect {
-      case x: ID => getNode(x).get
-    }.toArray[Vertex].toSet[Vertex]
-
+    nodeIndex.keys.filter(getChildren(_).isEmpty).map(x => getNode(x).get).toArray[Vertex].toSet[Vertex]
   }
 
   /**
@@ -160,9 +149,7 @@ class Graph[ID, Vertex <: AbstractVertex[ID] : ClassTag, Edge <: AbstractEdge[ID
     * @return
     */
   def getParents(vertex: Vertex): Set[Vertex] = {
-    edges.filter(_.to == vertex.id).collect {
-      case x: AbstractEdge[ID] => getNode(x.from).get
-    }.toArray.toSet
+    edges.filter(_.to == vertex.id).map(x => getNode(x.from).get).toArray.toSet
   }
 }
 

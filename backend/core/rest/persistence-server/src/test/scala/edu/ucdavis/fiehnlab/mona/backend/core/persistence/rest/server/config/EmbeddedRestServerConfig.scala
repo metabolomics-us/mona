@@ -16,7 +16,6 @@ import org.springframework.context.annotation.{Bean, Configuration, Import}
 @Import(Array(classOf[RestServerConfig]))
 class EmbeddedRestServerConfig extends LazyLogging {
 
-
   /**
     * the service which actually does the login for us
     *

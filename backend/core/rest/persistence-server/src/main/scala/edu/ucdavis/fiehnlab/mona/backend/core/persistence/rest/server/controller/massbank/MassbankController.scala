@@ -20,7 +20,7 @@ import scala.util.{Failure, Success, Try}
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/upload/massbank"))
-class MassbankController extends LazyLogging{
+class MassbankController extends LazyLogging {
 
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
@@ -30,22 +30,18 @@ class MassbankController extends LazyLogging{
 
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   @Async
-  def submit(@RequestHeader("Authorization") token:String, @RequestBody content:String  ) : Future[Spectrum]= {
+  def submit(@RequestHeader("Authorization") token: String, @RequestBody content: String): Future[Spectrum] = {
     val src: Source = Source.fromString(content)
-
     val result: Try[Spectrum] = MassBankToSpectrumMapper.parse(src)
 
     result match {
       case Success(spectrum) =>
         val spectra = spectrumPersistenceService.save(spectrum)
+        new AsyncResult[Spectrum](spectra)
 
-        new AsyncResult[Spectrum](
-          spectra
-        )
       case Failure(e) =>
         //logger.info(s"error parsing content: ${e.getMessage}",e)
         throw e
     }
-
   }
 }

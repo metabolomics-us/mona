@@ -49,5 +49,4 @@ class ElasticsearchConfig extends LazyLogging {
 
   @Bean
   def mappingUpdater: MappingUpdater = new MappingUpdater
-
 }
