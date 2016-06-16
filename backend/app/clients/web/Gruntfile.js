@@ -180,8 +180,8 @@ module.exports = function (grunt) {
                 exclude: ['bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/']
             },
             sass: {
-                src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-                ignorePath: 'bower_components/'
+                src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}']
+                //ignorePath: 'bower_components/'
             }
         },
 
