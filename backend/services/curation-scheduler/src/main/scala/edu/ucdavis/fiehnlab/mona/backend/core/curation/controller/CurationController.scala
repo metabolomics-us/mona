@@ -60,7 +60,7 @@ class CurationController {
   @RequestMapping(path = Array(""))
   @Async
   def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[CurationJobScheduled] = {
-    if (query == null) {
+    if (query == null || query.isEmpty) {
       val count: Int = repository.findAll().asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
         curationService.scheduleSpectra(spectrum)
         sum + 1
