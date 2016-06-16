@@ -67,16 +67,16 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
     bareDir.mkdirs()
 
     val file = new File(bareDir, "repository.git")
-    var git:Git = null
+    var git: Git = null
 
     if (!file.exists()) {
-      logger.info(s"creating new git repository ${file}")
+      logger.info(s"creating new git repository $file")
       git = Git.init().setDirectory(file).setBare(true).call()
-    }
-    else {
-      logger.info(s"open existing repository ${file}")
+    } else {
+      logger.info(s"open existing repository $file")
       git = Git.open(file)
     }
+
     git
   }
 
@@ -85,13 +85,12 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
   def gitRepository(bareGitRepository: Git): Git = {
 
     if (localDirectory.exists()) {
-      logger.info(s"opening checked out repository ${localDirectory}")
+      logger.info(s"opening checked out repository $localDirectory")
       Git.open(localDirectory)
-    }
-    else {
+    } else {
       logger.info("checking out remote repository")
       localDirectory.mkdirs()
-      val uri = s"file://${dir}/repository.git"
+      val uri = s"file://$dir/repository.git"
       val git = Git.cloneRepository().setDirectory(localDirectory).setURI(uri).setCloneAllBranches(true).setBare(false).setRemote("origin/master").setBranch("master").call()
 
       git
