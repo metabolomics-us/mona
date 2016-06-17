@@ -31,7 +31,7 @@ module.exports = function (grunt) {
         // Project settings
         yeoman: {
             // configurable paths
-            app: 'src/main/resources/static',//require('./bower.json').appPath || 'app',
+            app: 'src/main/angularjs',//require('./bower.json').appPath || 'app',
             dist: 'target'
         },
 
@@ -194,7 +194,7 @@ module.exports = function (grunt) {
                 imagesDir: '<%= yeoman.app %>/images',
                 javascriptsDir: '<%= yeoman.app %>/scripts',
                 fontsDir: '<%= yeoman.app %>/styles/fonts',
-                importPath: 'bower_components',
+                importPath: 'src/main/angularjs/bower_components',
                 httpImagesPath: '/images',
                 httpGeneratedImagesPath: '/images/generated',
                 httpFontsPath: '/styles/fonts',
