@@ -8,7 +8,7 @@
       .controller('SearchBoxController', searchBoxController);
 
     /* @ngInject */
-    function searchBoxController($scope, $uibModal, $location, $route, SpectraQueryBuilderService) {
+    function searchBoxController($scope, $location, $route, SpectraQueryBuilderService) {
         $scope.inputError = false;
 
 
@@ -58,20 +58,5 @@
             }
         };
 
-        /**
-         * opens our modal dialog to query spectra against the system
-         */
-        /*$scope.querySpectraDialog = function() {
-            var modalInstance = $uibModal.open({
-                templateUrl: '/views/spectra/query/query.html',
-                controller: 'QuerySpectrumModalController',
-                size: 'lg',
-                backdrop: 'true'
-            });
-
-            modalInstance.result.then(function(query) {
-                $location.path('/spectra/browse');
-            });
-        };*/
     }
 })();

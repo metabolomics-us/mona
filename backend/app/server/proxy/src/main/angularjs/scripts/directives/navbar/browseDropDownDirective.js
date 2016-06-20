@@ -17,7 +17,7 @@
         };
 
         return directive;
-        /* */
+        /* @ngInject */
         function browseController($scope, SpectraQueryBuilderService) {
 
             // reset query when user click browse

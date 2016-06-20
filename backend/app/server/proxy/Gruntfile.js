@@ -5,27 +5,22 @@
 
 module.exports = function (grunt) {
 
-    // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
-    // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
 
     // for grunt:serve to rewrite URLS and use HTML5 mode
     var serveStatic = require('serve-static');
     var pushState = require('connect-pushstate');
 
-
     // Define the configuration for all the tasks
     grunt.initConfig({
 
-        // Project settings
         yeoman: {
-            // configurable paths
-            app: 'src/main/angularjs',//require('./bower.json').appPath || 'app',
+            app: 'src/main/angularjs',
             dist: 'target/public'
         },
 
-        // Watches files for changes and runs tasks based on the changed files
+        // watcher for development
         watch: {
             bower: {
                 files: ['bower.json']
@@ -285,12 +280,9 @@ module.exports = function (grunt) {
                         '<%= yeoman.dist %>/scripts/scripts.js'
                     ]
                 }
-                //files: [{
-                //    expand: true,
-                //    cwd: 'target/.tmpGrunt/concat/scripts',
-                //    src: 'scripts.js',
-                //    dest: 'target/.tmpGrunt/concat/scripts'
-                //}]
+            },
+            dev: {
+
             }
         },
 
@@ -395,7 +387,7 @@ module.exports = function (grunt) {
             }
         }
     });
-    
+
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-ng-annotate');
     /**
@@ -453,7 +445,7 @@ module.exports = function (grunt) {
         'ngAnnotate:dist',
         'copy:dist',
         'cdnify',
-        //'uglify',
+        'uglify:dist',
         'rev',
         'usemin',
         'htmlmin',

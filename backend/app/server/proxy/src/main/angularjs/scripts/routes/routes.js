@@ -44,8 +44,7 @@
                 templateUrl: 'views/spectra/display/viewSpectrum.html',
                 controller: 'ViewSpectrumController',
                 resolve: {
-                    /* @ngInject */
-                    delayedSpectrum: function(Spectrum, $route, SpectrumCache) {
+                    delayedSpectrum: /* @ngInject */function(Spectrum, $route, SpectrumCache) {
                         // If a spectrum is not cached or the id requested does not match the
                         // cached spectrum, request it from the REST api
                         if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
@@ -72,8 +71,7 @@
                 templateUrl: 'views/spectra/browse/spectra.html',
                 controller: 'SpectraBrowserController',
                 resolve: {
-                    /* @ngInject */
-                    splash: function(SpectraQueryBuilderService, $route) {
+                    splash: /* @ngInject */function(SpectraQueryBuilderService, $route) {
                         SpectraQueryBuilderService.prepareQuery();
                         //add it to query
                         SpectraQueryBuilderService.addSpectraIdToQuery($route.current.params.splash);
@@ -113,8 +111,7 @@
                 templateUrl: 'views/statistics/times.html',
                 controller: 'StatisticsController',
                 resolve: {
-                    /* @ngInject */
-                    statistics: function(StatisticsService) {
+                    statistics: /* @ngInject */function(StatisticsService) {
                         return [
                             StatisticsService.executionTime({time: "day", method: "import", max: 100}),
                             StatisticsService.executionTime({time: "hour", method: "import", max: 100})
@@ -128,8 +125,7 @@
                 controller: 'StatisticsController',
 
                 resolve: {
-                    /* @ngInject */
-                    statistics: function(StatisticsService) {
+                    statistics: /* @ngInject */function(StatisticsService) {
                         return [
                             StatisticsService.executionTime({time: "day", method: "validation", max: 100}),
                             StatisticsService.executionTime({time: "hour", method: "validation", max: 100})
@@ -143,8 +139,7 @@
                 controller: 'StatisticsController',
 
                 resolve: {
-                    /* @ngInject */
-                    statistics: function(StatisticsService) {
+                    statistics: /* @ngInject */function(StatisticsService) {
                         return [
                             StatisticsService.executionTime({time: "day", method: "search", max: 100}),
                             StatisticsService.executionTime({time: "hour", method: "search", max: 100})

@@ -39,7 +39,7 @@
 3. testing min-safe
     add ng-strict-di after ng-app attribute in <html> tag
     uncomment uglify in grunt build task
-    run grunt:serve dist
+    run grunt serve:dist
     verify in console ng-strict-di does not throw any error
         If ng-strict-di throws errors, make sure you've prefix /* @ngInject */.
     
