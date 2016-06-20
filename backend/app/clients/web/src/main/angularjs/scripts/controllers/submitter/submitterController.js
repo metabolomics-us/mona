@@ -45,6 +45,7 @@
         $scope.displayCreateDialog = function() {
             var modalInstance = $uibModal.open({
                 templateUrl: '/views/submitters/dialog/createDialog.html',
+                /* @ngInject */
                 controller: 'SubmitterModalController',
                 size: 'lg',
                 backdrop: 'static',
@@ -70,6 +71,7 @@
         $scope.displayEditDialog = function(index) {
             var modalInstance = $uibModal.open({
                 templateUrl: '/views/submitters/dialog/editDialog.html',
+                /* @ngInject */
                 controller: 'SubmitterModalController',
                 size: 'lg',
                 backdrop: 'static',

@@ -1,7 +1,6 @@
 /**
  * displays our spectra
  * @param $scope
- * @param $uibModalInstance
  * @param spectrum
  * @param massSpec
  * @constructor

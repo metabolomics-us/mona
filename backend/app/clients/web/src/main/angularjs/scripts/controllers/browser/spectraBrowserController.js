@@ -5,7 +5,6 @@
  *
  * @param $scope
  * @param Spectrum
- * @param $uibModal
  * @param SpectraQueryBuilderService
  * @param $location
  * @param SpectrumCache
