@@ -115,5 +115,16 @@
                 </executions>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/resources</directory>
+            </resource>
+            <resource>
+                <directory>target/public</directory>
+                <targetPath>static</targetPath>
+            </resource>
+
+        </resources>
     </build>
 </project>
