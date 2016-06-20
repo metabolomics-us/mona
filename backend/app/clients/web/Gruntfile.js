@@ -7,13 +7,12 @@ module.exports = function (grunt) {
 
     // Load grunt tasks automatically
     require('load-grunt-tasks')(grunt);
-
-    // for grunt:serve to rewrite URLS and use HTML5 form
-    var serveStatic = require('serve-static');
-    var pushState = require('connect-pushstate');
-
     // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
+
+    // for grunt:serve to rewrite URLS and use HTML5 mode
+    var serveStatic = require('serve-static');
+    var pushState = require('connect-pushstate');
 
 
     // Define the configuration for all the tasks
@@ -62,7 +61,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // The actual grunt server settings
+        // grunt server for development purpose
         connect: {
             options: {
                 port: 9090,
@@ -107,7 +106,6 @@ module.exports = function (grunt) {
             }
         },
 
-        // Empties folders to start fresh
         clean: {
             dist: {
                 files: [{
@@ -182,9 +180,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // Reads HTML for usemin blocks to enable smart builds that automatically
-        // concat, minify and revision files. Creates configurations in memory so
-        // additional tasks can operate on them
+        // concatinate js and css files from index.html
         useminPrepare: {
             html: '<%= yeoman.app %>/index.html',
             options: {
@@ -210,12 +206,17 @@ module.exports = function (grunt) {
             }
         },
 
-        // The following *-min tasks produce minified files in the dist folder
-        // cssmin: {
-        //     options: {
-        //         relativeTo: '<%= yeoman.dist %>'
-        //     }
-        // },
+        // concatinate css files to main.css for distribution
+        cssmin: {
+            dist: {
+                files: {
+                    '<%= yeoman.dist %>/styles/main.css': [
+                        'target/.tmpGrunt/styles/{,*/}*.css',
+                        '<%= yeoman.app %>/styles/{,*/}*.css'
+                    ]
+                }
+            }
+        },
 
         // Changes the icon font path in the scss
         replace: {
@@ -374,19 +375,6 @@ module.exports = function (grunt) {
             ]
         },
 
-        // By default, your `index.html`'s <!-- Usemin block --> will take care of
-        // minification. These next options are pre-configured if you do not wish
-        // to use the Usemin blocks.
-        cssmin: {
-            dist: {
-                files: {
-                    '<%= yeoman.dist %>/styles/main.css': [
-                        'target/.tmpGrunt/styles/{,*/}*.css',
-                        '<%= yeoman.app %>/styles/{,*/}*.css'
-                    ]
-                }
-            }
-        },
 
         // minifies our scripts in the distribution folder
         uglify: {
@@ -405,24 +393,9 @@ module.exports = function (grunt) {
                 configFile: 'karma.conf.js',
                 singleRun: true
             }
-        },
-
-        compress: {
-            mona: {
-                options: {
-                    archive: 'mona-client.zip',
-                    mode: 'zip'
-                },
-                files: [
-                    {
-                        src: '**/*', cwd: 'dist', expand: true
-                    }
-                ]
-            }
         }
     });
-
-    grunt.loadNpmTasks('grunt-contrib-compress');
+    
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-ng-annotate');
     /**
@@ -497,7 +470,6 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('dist', [
         'setServer:dist',
-        'build',
-        'compress'
+        'build'
     ])
 };
