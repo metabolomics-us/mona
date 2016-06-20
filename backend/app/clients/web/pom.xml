@@ -89,7 +89,7 @@
                         </configuration>
                     </execution>
 
-                    <!--
+
                     <execution>
                         <id>grunt build</id>
                         <goals>
@@ -100,7 +100,6 @@
                         </configuration>
                     </execution>
 
--->
                     <!--
                     <execution>
                         <id>javascript tests</id>
