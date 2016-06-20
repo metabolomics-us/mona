@@ -426,7 +426,6 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-angular-templates');
-    grunt.loadNpmTasks('grunt-wiredep');
     grunt.loadNpmTasks('grunt-ng-annotate');
     /**
      * which server do we want to use for our application
