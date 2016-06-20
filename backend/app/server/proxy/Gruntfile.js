@@ -202,16 +202,15 @@ module.exports = function (grunt) {
         },
 
         // concatinate css files to main.css for distribution
-        cssmin: {
-            dist: {
-                files: {
-                    '<%= yeoman.dist %>/styles/main.css': [
-                        'target/.tmpGrunt/styles/{,*/}*.css',
-                        '<%= yeoman.app %>/styles/{,*/}*.css'
-                    ]
-                }
-            }
-        },
+        //cssmin: {
+        //    dist: {
+        //        files: {
+        //            '<%= yeoman.dist %>/styles/main.css': [
+        //                'target/.tmpGrunt/styles/{,*/}*.css'
+        //            ]
+        //        }
+        //    }
+        //},
 
         // Changes the icon font path in the scss
         replace: {
@@ -437,15 +436,15 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
-        'useminPrepare',
         'concurrent:dist',
+        'useminPrepare',
         'autoprefixer',
         'concat',
-        'cssmin:dist',
         'ngAnnotate:dist',
         'copy:dist',
         'cdnify',
-        'uglify:dist',
+        'cssmin',
+        //'uglify:dist',
         'rev',
         'usemin',
         'htmlmin',
