@@ -23,7 +23,7 @@ module.exports = function (grunt) {
         yeoman: {
             // configurable paths
             app: 'src/main/angularjs',//require('./bower.json').appPath || 'app',
-            dist: 'target'
+            dist: 'target/public'
         },
 
         // Watches files for changes and runs tasks based on the changed files
