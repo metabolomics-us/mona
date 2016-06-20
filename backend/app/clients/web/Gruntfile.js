@@ -3,14 +3,6 @@
 
 'use strict';
 
-// # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to recursively match all subfolders:
-// 'test/spec/**/*.js'
-
-
-
 module.exports = function (grunt) {
 
     // Load grunt tasks automatically
@@ -19,7 +11,6 @@ module.exports = function (grunt) {
     // for grunt:serve to rewrite URLS and use HTML5 form
     var serveStatic = require('serve-static');
     var pushState = require('connect-pushstate');
-    var modRewrite = require('connect-modrewrite');
 
     // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
@@ -38,8 +29,7 @@ module.exports = function (grunt) {
         // Watches files for changes and runs tasks based on the changed files
         watch: {
             bower: {
-                files: ['bower.json'],
-                tasks: ['bowerInstall']
+                files: ['bower.json']
             },
             js: {
                 files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
@@ -79,18 +69,16 @@ module.exports = function (grunt) {
                 // Change this to '0.0.0.0' to access the server from outside.
                 hostname: '0.0.0.0',
                 livereload: 35729,
-                middleware: function(connect, options) {
+                middleware: function (connect, options) {
                     var resources = [
-                       // modRewrite(['^(//bower_components+)$ /index.html [L]']),
                         pushState()
                     ];
 
-                    for(var i = 0; i < options.base.length; i++)
+                    for (var i = 0; i < options.base.length; i++)
                         resources.push(serveStatic(options.base[i]));
 
                     return resources;
                 }
-
             },
             livereload: {
                 options: {
@@ -149,41 +137,6 @@ module.exports = function (grunt) {
             }
         },
 
-        wiredep: {
-          app: {
-            src:['<%= yeoman.app %>/index.html'],
-            ignorePath: /\.\.\//
-          },
-          test: {
-            devDependencies: true,
-            src: 'karma.conf.js',
-            ignorePath: /\.\.\//,
-            fileTypes: {
-              js: {
-                block: /(([\s\t]*)\/\/\s*bower:*(\S*))(\n|\r)*?(\/\/\s*endbower)/gi,
-                detect: {
-                  js: /'(.*\.js)'/gi
-                },
-                replace: {
-                  js:'\'{{filePath}}\','
-                }
-              }
-            }
-          }
-        },
-
-        // Automatically inject Bower components into the app
-        bowerInstall: {
-            app: {
-                src: ['<%= yeoman.app %>/index.html'],
-                ignorePath: '<%= yeoman.app %>/',
-                exclude: ['bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/']
-            },
-            sass: {
-                src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}']
-                //ignorePath: 'bower_components/'
-            }
-        },
 
         // Compiles Sass to CSS and generates necessary files if requested
         compass: {
@@ -372,8 +325,8 @@ module.exports = function (grunt) {
                         src: ['generated/*']
                     },
 
-                    // scripts
-                    // remove if using ngmin and uglify
+
+                    // remove if using ngmin and uglify for js files
                     {
                         expand: true,
                         cwd: 'target/.tmpGrunt/concat/scripts',
@@ -500,7 +453,6 @@ module.exports = function (grunt) {
         grunt.task.run([
             'setServer:local',
             'clean:server',
-            'bowerInstall',
             'concurrent:server',
             'autoprefixer',
             'connect:livereload',
@@ -523,7 +475,6 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
-        'bowerInstall',
         'useminPrepare',
         'concurrent:dist',
         'autoprefixer',
@@ -540,7 +491,6 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', [
-        //'newer:jshint',
         'test',
         'build'
     ]);
