@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
+        <artifactId>core</artifactId>
+        <version>1.3-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+    <artifactId>bootstrap</artifactId>
+    <url>http://maven.apache.org</url>
+
+    <description>Configures and creates initial database entries and synchronization for a new MoNA instance</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>domain</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+            <artifactId>api-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>mongo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+            <artifactId>downloader</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+            <artifactId>download-scheduler</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+            <artifactId>domain</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
