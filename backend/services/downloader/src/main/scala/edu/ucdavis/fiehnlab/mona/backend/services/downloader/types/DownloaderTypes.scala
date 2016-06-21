@@ -26,12 +26,6 @@ case class QueryExport(
                         exportFile: String
                       )
 
-@Document(collection = "QUERY_DOWNLOAD_REQUESTS")
-case class QueryDownloadRequest(
-                                 date: Date,
-                                 label: String
-                               )
-
 @Document(collection = "PREDEFINED_QUERIES")
 case class PredefinedQuery(
                             @(Id@field)
