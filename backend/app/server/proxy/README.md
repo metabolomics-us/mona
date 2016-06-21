@@ -36,14 +36,13 @@
                 });
         }
 
-3. testing min-safe
-    add ng-strict-di after ng-app attribute in <html> tag
-    uncomment uglify in grunt build task
-    run grunt serve:dist
-    verify in console ng-strict-di does not throw any error
-        If ng-strict-di throws errors, make sure you've prefix /* @ngInject */.
-    
-    If everything goes well, remove ng-strict-di and push to production.
+3. testing min-safe & dependency injection
+     all files in DEV and PROD are annotated. If there are any errors, you will
+     see it in the browser in dev env
+    DEV
+        files are configured to automate annotation when dependency is added.
+    PROD
+        removes, and add annotations to scripts.js, then uglify.
     
     
 ***COMPILING SOURCE CODE***
