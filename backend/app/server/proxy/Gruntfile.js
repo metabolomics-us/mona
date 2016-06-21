@@ -202,16 +202,15 @@ module.exports = function (grunt) {
         },
 
         // concatinate css files to main.css for distribution
-        cssmin: {
-            dist: {
-                files: {
-                    '<%= yeoman.dist %>/styles/main.css': [
-                        'target/.tmpGrunt/styles/{,*/}*.css',
-                        '<%= yeoman.app %>/styles/{,*/}*.css'
-                    ]
-                }
-            }
-        },
+        //cssmin: {
+        //    dist: {
+        //        files: {
+        //            '<%= yeoman.dist %>/styles/main.css': [
+        //                'target/.tmpGrunt/styles/{,*/}*.css'
+        //            ]
+        //        }
+        //    }
+        //},
 
         // Changes the icon font path in the scss
         replace: {
@@ -331,14 +330,14 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/bootstrap',
+                        cwd: '<%= yeoman.app %>/bower_components/bootstrap',
                         src: ['fonts/*.*'],
                         dest: '<%= yeoman.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/components-font-awesome',
+                        cwd: '<%= yeoman.app %>/bower_components/components-font-awesome',
                         src: ['fonts/*.*'],
                         dest: '<%= yeoman.dist %>'
                     }
@@ -441,10 +440,10 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer',
         'concat',
-        'cssmin:dist',
         'ngAnnotate:dist',
         'copy:dist',
         'cdnify',
+        'cssmin',
         'uglify:dist',
         'rev',
         'usemin',
