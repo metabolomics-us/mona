@@ -4,6 +4,7 @@
 (function() {
     'use strict';
 
+    displaySpectraPanelController.$inject = ['$scope', '$location', 'SpectrumCache', '$log'];
     angular.module('moaClientApp')
         .directive('displaySpectraPanel', displaySpectraPanel);
 

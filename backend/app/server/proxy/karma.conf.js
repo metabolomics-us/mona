@@ -4,43 +4,43 @@
 module.exports = function(config) {
     config.set({
 
-        basePath: '',
+        basePath: 'src/main/angularjs',
         frameworks: ['jasmine'],
 
         files: [
             // development dependencies
-            'app/bower_components/angular/angular.js',
-            'app/bower_components/angular-jquery/dist/angular-jquery.js',
-            'app/bower_components/jquery/dist/jquery.js',
+            'bower_components/angular/angular.js',
+            'bower_components/angular-jquery/dist/angular-jquery.js',
+            'bower_components/jquery/dist/jquery.js',
 
             // moaClientApp vendor dependencies
-            'app/bower_components/angular-route/angular-route.js',
-            'app/bower_components/angular-resource/angular-resource.js',
-            'app/bower_components/angular-cookies/angular-cookies.js',
-            'app/bower_components/angular-animate/angular-animate.js',
-            'app/bower_components/angular-sanitize/angular-sanitize.js',
-            'app/bower_components/angular-bootstrap/ui-bootstrap.js',
-            'app/bower_components/angular-filter/dist/angular-filter.js',
-            'app/bower_components/angular-dialog-service/dist/dialogs.js',
-            'app/bower_components/angular-dialog-service/dist/dialogs-default-translations.js',
-            'app/bower_components/ng-tags-input/ng-tags-input.js',
-            'app/bower_components/angular-msp-parser/service.js',
-            'app/bower_components/angular-mgf-parser/service.js',
-            'app/bower_components/angular-massbank-parser/service.js',
-            'app/bower_components/angular-cts-service/service.js',
-            'app/bower_components/ng-file-upload/angular-file-upload.js',
-            'app/bower_components/angular-masspec-plotter/angular-masspec-plotter.js',
-            'app/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
-            'app/bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
-            'app/bower_components/angular-translate/angular-translate.js',
-            'app/bower_components/AngularJS-Toaster/toaster.js',
-            'app/bower_components/angular-mocks/angular-mocks.js',
+            'bower_components/angular-route/angular-route.js',
+            'bower_components/angular-resource/angular-resource.js',
+            'bower_components/angular-cookies/angular-cookies.js',
+            'bower_components/angular-animate/angular-animate.js',
+            'bower_components/angular-sanitize/angular-sanitize.js',
+            'bower_components/angular-bootstrap/ui-bootstrap.js',
+            'bower_components/angular-filter/dist/angular-filter.js',
+            'bower_components/angular-dialog-service/dist/dialogs.js',
+            'bower_components/angular-dialog-service/dist/dialogs-default-translations.js',
+            'bower_components/ng-tags-input/ng-tags-input.js',
+            'bower_components/angular-msp-parser/service.js',
+            'bower_components/angular-mgf-parser/service.js',
+            'bower_components/angular-massbank-parser/service.js',
+            'bower_components/angular-cts-service/service.js',
+            'bower_components/ng-file-upload/angular-file-upload.js',
+            'bower_components/angular-masspec-plotter/angular-masspec-plotter.js',
+            'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
+            'bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
+            'bower_components/angular-translate/angular-translate.js',
+            'bower_components/AngularJS-Toaster/toaster.js',
+            'bower_components/angular-mocks/angular-mocks.js',
 
 
-            //'app/views/!**!/!*.html',
+            //'views/!**!/!*.html',
 
             // source scripts
-            'app/scripts/**/*.js',
+            'scripts/**/*.js',
 
             /** test scripts **/
             //'test/spec/controllers/**/*.js',
@@ -53,11 +53,11 @@ module.exports = function(config) {
 
         ],
 
-        exclude: ['app/scripts/theme.js'],
+        exclude: ['scripts/theme.js'],
 
         // plugin to load our html templates as modules
         ngHtml2JsPreprocessor: {
-          stripPrefix: 'app/',
+          stripPrefix: '',
             moduleName: 'templates'
         },
 

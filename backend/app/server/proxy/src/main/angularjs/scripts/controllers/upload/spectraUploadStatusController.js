@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    SpectraUploadController.$inject = ['$scope', '$rootScope', 'AuthenticationService', 'UploadLibraryService'];
     angular.module('moaClientApp')
         .controller('SpectraUploadController', SpectraUploadController);
 

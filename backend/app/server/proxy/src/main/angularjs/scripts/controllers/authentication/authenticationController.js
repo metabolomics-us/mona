@@ -6,6 +6,7 @@
 
 (function() {
     'use strict';
+    AuthenticationController.$inject = ['$scope', '$rootScope', '$uibModal', 'AuthenticationService'];
     angular.module('moaClientApp')
       .controller('AuthenticationController', AuthenticationController);
 

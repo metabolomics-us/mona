@@ -6,6 +6,7 @@
 
 (function() {
     'use strict';
+    uploadLibraryService.$inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'gwMgfService', 'gwChemifyService', 'AuthenticationService', 'gwCtsService', '$log', '$q', '$timeout', 'gwMassbankService', '$filter', 'AsyncService', 'MetaDataOptimizationService'];
     angular.module('moaClientApp')
       .service('UploadLibraryService', uploadLibraryService);
 

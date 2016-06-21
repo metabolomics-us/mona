@@ -7,6 +7,7 @@
 (function() {
     'use strict';
 
+    chemicalSketcher.$inject = ['gwCtsService', '$log'];
     angular.module('moaClientApp')
       .directive('chemicalSketcher', chemicalSketcher);
 

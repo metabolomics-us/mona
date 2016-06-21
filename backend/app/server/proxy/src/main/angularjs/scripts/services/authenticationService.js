@@ -7,6 +7,7 @@
 // TODO: waiting for implementation of return user data for admin
 (function() {
     'use strict';
+    authenticationService.$inject = ['Submitter', '$log', '$q', '$http', '$rootScope', 'CookieService', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
       .service('AuthenticationService', authenticationService);
 

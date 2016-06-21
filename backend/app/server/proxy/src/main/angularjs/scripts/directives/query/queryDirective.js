@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    showQueryController.$inject = ['$scope', '$log', '$rootScope', 'SpectraQueryBuilderService', 'Spectrum'];
     angular.module('moaClientApp')
       .directive('showQuery', showQuery);
 

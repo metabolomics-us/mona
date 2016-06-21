@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    statisticsController.$inject = ['StatisticsService'];
     angular.module('moaClientApp')
       .directive('statistics', statistics);
 

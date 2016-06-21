@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    gwTagController.$inject = ['$scope', 'SpectraQueryBuilderService', '$location'];
     angular.module('moaClientApp')
       .directive('gwTag', gwTag);
 
