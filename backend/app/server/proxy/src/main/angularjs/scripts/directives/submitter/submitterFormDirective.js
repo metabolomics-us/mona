@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    submitterFormController.$inject = ['$scope'];
     angular.module('moaClientApp')
       .directive('submitterForm', submitterForm);
 

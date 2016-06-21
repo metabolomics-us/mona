@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    displayCompoundInfoController.$inject = ['$scope', '$log'];
     angular.module('moaClientApp')
       .directive('displayCompoundInfo', displayCompoundInfo);
 

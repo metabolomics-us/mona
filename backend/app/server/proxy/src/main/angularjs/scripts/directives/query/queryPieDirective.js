@@ -1,6 +1,7 @@
 (function() {
     'use strict';
 
+    queryPieController.$inject = ['$scope', '$location', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
       .directive('queryPie', queryPie);
 

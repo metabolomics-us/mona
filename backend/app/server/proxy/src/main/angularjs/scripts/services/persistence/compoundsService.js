@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    compound.$inject = ['$resource', 'REST_BACKEND_SERVER', 'MAX_COMPOUNDS'];
     angular.module('moaClientApp')
       .factory('Compound', compound);
 

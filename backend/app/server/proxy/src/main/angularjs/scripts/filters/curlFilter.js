@@ -10,20 +10,20 @@
      * generates a curl link for us
      */
     angular.module('moaClientApp')
-      .filter('curl', function(REST_BACKEND_SERVER) {
+      .filter('curl', ['REST_BACKEND_SERVER', function(REST_BACKEND_SERVER) {
           return function(input) {
               return 'curl ' + '\' '+ REST_BACKEND_SERVER + input +'\'' ;
           };
-      })
+      }])
 
     /**
      * generates a curl link as msp file for us
      */
-      .filter('curlAsMsp', function(curlFilter) {
+      .filter('curlAsMsp', ['curlFilter', function(curlFilter) {
           return function(input) {
               var object = angular.copy(input);
               object.format = "msp";
               return curlFilter(object)
           };
-      });
+      }]);
 })();

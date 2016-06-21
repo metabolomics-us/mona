@@ -5,6 +5,8 @@
 (function() {
     'use strict';
 
+    spectraScoreForUser.$inject = ['$compile', 'StatisticsService'];
+    spectraScoreForUserController.$inject = ['$scope'];
     angular.module('moaClientApp')
         .directive('spectraScoreForUser', spectraScoreForUser);
 

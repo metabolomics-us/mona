@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    SubmitterProfileController.$inject = ['$scope', '$location', 'AuthenticationService', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
         .controller('SubmitterProfileController', SubmitterProfileController);
 

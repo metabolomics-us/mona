@@ -9,7 +9,7 @@
 
     angular.module('moaClientApp')
         /* @ngInject */
-        .directive('gwNews', function(News, $interval, $timeout) {
+        .directive('gwNews', ['News', '$interval', '$timeout', function(News, $interval, $timeout) {
             return {
                 //must be an attribute
                 restrict: 'A',
@@ -31,10 +31,10 @@
                 priority: 1001,
 
 
-                controller: function($scope, $interval, $timeout) {
+                controller: ['$scope', '$interval', '$timeout', function($scope, $interval, $timeout) {
                     $scope.recentNews = [];
 
-                },
+                }],
 
                 //decorate our elements based on there properties
                 link: function($scope, element, attrs, ctrl) {
@@ -88,5 +88,5 @@
 
                 }
             }
-        });
+        }]);
 })();

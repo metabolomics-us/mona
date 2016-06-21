@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    queryTreeView.$inject = ['$compile'];
     angular.module('moaClientApp')
         .directive('queryTreeView', queryTreeView);
 

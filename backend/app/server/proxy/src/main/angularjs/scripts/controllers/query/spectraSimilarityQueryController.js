@@ -3,6 +3,7 @@
  */
 (function() {
     'use strict';
+    SpectraSimilarityQueryController.$inject = ['$scope', '$location', 'UploadLibraryService', 'SplashService', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
         .controller('SpectraSimilarityQueryController', SpectraSimilarityQueryController);
 

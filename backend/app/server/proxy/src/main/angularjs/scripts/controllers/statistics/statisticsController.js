@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    StatisticsController.$inject = ['$scope', 'statistics'];
     angular.module('moaClientApp')
         .controller('StatisticsController', StatisticsController);
 

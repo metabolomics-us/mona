@@ -1,5 +1,6 @@
 (function() {
     'use strict';
+    RegistrationModalController.$inject = ['$scope', '$rootScope', '$uibModalInstance', 'Submitter'];
     angular.module('moaClientApp')
       .controller('RegistrationModalController', RegistrationModalController);
 

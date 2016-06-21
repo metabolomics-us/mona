@@ -9,6 +9,7 @@
       .directive('browseDropDown', browseDropDown);
 
     function browseDropDown() {
+        browseController.$inject = ['$scope', 'SpectraQueryBuilderService'];
         var directive = {
             restrict: 'E',
             replace: true,

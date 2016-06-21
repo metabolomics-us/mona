@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    queryTreeController.$inject = ['$scope', 'Spectrum', '$location', '$filter', '$log', 'SpectraQueryBuilderService', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
         .controller('QueryTreeController', queryTreeController);
 
