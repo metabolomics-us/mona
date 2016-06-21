@@ -6,6 +6,7 @@
 (function() {
     'use strict';
 
+    scoreSpectra.$inject = ['$compile', '$filter', 'Spectrum', '$log'];
     angular.module('moaClientApp')
       .directive('scoreSpectra', scoreSpectra);
 
@@ -29,9 +30,9 @@
              * @param $rootScope
              */
             /* @ngInject */
-            controller: function($scope) {
+            controller: ['$scope', function($scope) {
 
-            },
+            }],
 
             //decorate our elements based on there properties
             link: function($scope, element, attrs, ngModel) {

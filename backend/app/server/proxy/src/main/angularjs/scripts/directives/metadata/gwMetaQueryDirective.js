@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    gwMetaQueryController.$inject = ['$scope', '$element', 'SpectraQueryBuilderService', '$location'];
     angular.module('moaClientApp')
       .directive('gwMetaQuery', gwMetaQuery);
 

@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    QuerySpectrumModalController.$inject = ['$scope', '$uibModalInstance', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
         .controller('QuerySpectrumModalController', QuerySpectrumModalController);
 

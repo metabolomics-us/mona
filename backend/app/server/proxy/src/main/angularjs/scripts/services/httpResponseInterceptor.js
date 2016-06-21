@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    httpResponseInterceptor.$inject = ['$q', '$location'];
     angular.module('moaClientApp')
       .factory('httpResponseInterceptor', httpResponseInterceptor);
 

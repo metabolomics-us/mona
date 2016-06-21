@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    gwSubmitterQueryController.$inject = ['$scope', '$element', 'SpectraQueryBuilderService', '$location', 'Spectrum'];
     angular.module('moaClientApp')
       .directive('gwSubmitterQuery', gwSubmitterQuery);
 

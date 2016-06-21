@@ -34,8 +34,8 @@
      * usage: in app.config
      */
         /* @ngInject */
-      .config(function($provide, $httpProvider) {
-          $provide.factory('httpInterceptor', function($q, $location, $rootScope) {
+      .config(['$provide', '$httpProvider', function($provide, $httpProvider) {
+          $provide.factory('httpInterceptor', ['$q', '$location', '$rootScope', function($q, $location, $rootScope) {
               $rootScope.httpError = [];
               return {
                   requestError: function(rejection) {
@@ -50,38 +50,38 @@
                       return $q.reject(rejection);
                   }
               };
-          });
+          }]);
 
           $httpProvider.defaults.useXDomain = true;
           delete $httpProvider.defaults.headers.common['X-Requested-With'];
           $httpProvider.interceptors.push('httpInterceptor');
-      })
+      }])
 
     /**
      * Set translator language for dialog service
      */
         /* @ngInject */
-      .config(function($translateProvider) {
+      .config(['$translateProvider', function($translateProvider) {
           $translateProvider.preferredLanguage('en-US');
           $translateProvider.useSanitizeValueStrategy('sanitize');
-      })
+      }])
 
     /**
      * App name
      */
         /* @ngInject */
-      .run(function($rootScope) {
+      .run(['$rootScope', function($rootScope) {
           $rootScope.APP_NAME = 'MassBank of North America';
           $rootScope.APP_NAME_ABBR = 'MoNA';
           $rootScope.APP_VERSION = 'alpha-2';
-      })
+      }])
 
     /**
      * Prompt user before leaving the page if spectra are being uploaded.
      * Uses $injector to bypass timeout error when testing with protractor.
      */
         /* @ngInject */
-      .run(function($window, $injector) {
+      .run(['$window', '$injector', function($window, $injector) {
           $window.onbeforeunload = function(e) {
               var service = $injector.get('UploadLibraryService');
 
@@ -90,5 +90,5 @@
                   return 'MoNA is ' + progress + '% done with processing and uploading spectra.';
               }
           };
-      });
+      }]);
 })();

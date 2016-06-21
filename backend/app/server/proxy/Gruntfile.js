@@ -26,10 +26,11 @@ module.exports = function (grunt) {
                 files: ['bower.json']
             },
             js: {
-                files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-                //tasks: ['newer:jshint:all'],
+                files: ['<%= yeoman.app %>/scripts/**/*.js'],
+                tasks: ['ngAnnotate:dev'],
                 options: {
-                    livereload: true
+                    livereload: true,
+                    nospawn : true
                 }
             },
             jsTest: {
@@ -261,6 +262,7 @@ module.exports = function (grunt) {
         ngAnnotate: {
             dist: {
                 options: {
+                    remove: true,
                     singleQuotes: true
                 },
                 files: {
@@ -270,7 +272,17 @@ module.exports = function (grunt) {
                 }
             },
             dev: {
-
+                options: {
+                    singleQuotes: true,
+                    remove: true
+                },
+                files: [
+                    {
+                        expand: true,
+                        src: ['<%= yeoman.app %>/scripts/**/*.js'],
+                        rename: function(dest, src) { return src}
+                    }
+                ]
             }
         },
 
@@ -405,6 +417,7 @@ module.exports = function (grunt) {
             'clean:server',
             'concurrent:server',
             'autoprefixer',
+            'ngAnnotate:dev',
             'connect:livereload',
             'watch'
         ]);

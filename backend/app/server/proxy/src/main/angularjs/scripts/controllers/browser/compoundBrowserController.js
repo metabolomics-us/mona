@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    CompoundBrowserController.$inject = ['$scope', 'Compound', '$location', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
       .controller('CompoundBrowserController', CompoundBrowserController);
 

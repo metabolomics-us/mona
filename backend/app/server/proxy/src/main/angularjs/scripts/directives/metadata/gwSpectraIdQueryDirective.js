@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    gwSpectraIdQueryController.$inject = ['$scope', '$element', 'SpectraQueryBuilderService', '$location'];
     angular.module('moaClientApp')
       .directive('gwSpectraIdQuery', gwSpectraIdQuery)
 
