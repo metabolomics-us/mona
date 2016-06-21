@@ -330,14 +330,14 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'src/main/angularjs/bower_components/bootstrap',
+                        cwd: '<%= yeoman.app %>/bower_components/bootstrap',
                         src: ['fonts/*.*'],
                         dest: '<%= yeoman.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'src/main/angularjs/bower_components/components-font-awesome',
+                        cwd: '<%= yeoman.app %>/bower_components/components-font-awesome',
                         src: ['fonts/*.*'],
                         dest: '<%= yeoman.dist %>'
                     }
