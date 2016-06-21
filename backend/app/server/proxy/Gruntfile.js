@@ -30,6 +30,7 @@ module.exports = function (grunt) {
                 tasks: ['ngAnnotate:dev'],
                 options: {
                     livereload: true,
+                    // ensure ngAnnotate:dev task is ran in same context(annotate only changed file), not spawning another task to annotate all files.
                     nospawn : true
                 }
             },
