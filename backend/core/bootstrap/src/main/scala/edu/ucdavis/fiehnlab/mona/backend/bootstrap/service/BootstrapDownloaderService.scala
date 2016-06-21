@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.bootstrap.service
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.PredefinedQueryMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.DownloadSchedulerService
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.PredefinedQuery
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
