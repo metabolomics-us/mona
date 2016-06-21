@@ -201,17 +201,6 @@ module.exports = function (grunt) {
             }
         },
 
-        // concatinate css files to main.css for distribution
-        //cssmin: {
-        //    dist: {
-        //        files: {
-        //            '<%= yeoman.dist %>/styles/main.css': [
-        //                'target/.tmpGrunt/styles/{,*/}*.css'
-        //            ]
-        //        }
-        //    }
-        //},
-
         // Changes the icon font path in the scss
         replace: {
             bower_css: {
