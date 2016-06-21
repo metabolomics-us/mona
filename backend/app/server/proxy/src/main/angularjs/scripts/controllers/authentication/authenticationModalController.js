@@ -1,5 +1,6 @@
 (function() {
     'use strict';
+    AuthenticationModalController.$inject = ['$scope', '$uibModalInstance', '$timeout', 'AuthenticationService'];
     angular.module('moaClientApp')
       .controller('AuthenticationModalController', AuthenticationModalController);
 

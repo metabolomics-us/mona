@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    CleanSpectraDataController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TaggingService', '$q', '$filter', 'AsyncService', '$log', '$timeout'];
     angular.module('moaClientApp')
         .controller('CleanSpectraDataController', CleanSpectraDataController);
 

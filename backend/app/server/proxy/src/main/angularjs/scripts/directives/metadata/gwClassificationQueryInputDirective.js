@@ -6,6 +6,7 @@
 (function() {
     'use strict';
 
+    gwClassInputController.$inject = ['$scope'];
     angular.module('moaClientApp')
         .directive('gwClassQueryInput', gwClassQueryInput);
 

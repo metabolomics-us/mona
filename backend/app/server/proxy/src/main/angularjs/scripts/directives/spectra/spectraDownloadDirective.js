@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    spectraDownloadController.$inject = ['$scope', 'SpectraQueryBuilderService', 'dialogs', 'Spectrum', '$http', '$filter', '$log', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
       .directive('spectraDownload', spectraDownload);
 

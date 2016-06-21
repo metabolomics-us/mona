@@ -8,6 +8,7 @@
 
 (function() {
     'use strict';
+    metadataService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
     angular.module('moaClientApp')
       .factory('MetadataService', metadataService);
 

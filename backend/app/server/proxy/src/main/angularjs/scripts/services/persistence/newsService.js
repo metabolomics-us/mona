@@ -1,5 +1,6 @@
 (function() {
     'use strict';
+    news.$inject = ['$resource', 'REST_BACKEND_SERVER', 'MAX_OBJECTS'];
     angular.module('moaClientApp')
       .factory('News', news);
 

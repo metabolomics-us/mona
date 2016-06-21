@@ -3,6 +3,7 @@
  */
 (function() {
     'use strict';
+    DocumentationTermController.$inject = ['$scope'];
     angular.module('moaClientApp')
         .controller('DocumentationTermController', DocumentationTermController);
 

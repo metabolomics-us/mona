@@ -1,5 +1,6 @@
 (function() {
     'use strict';
+    MainController.$inject = ['$scope', '$rootScope', '$log'];
     angular.module('moaClientApp')
       .controller('MainController', MainController);
 

@@ -6,6 +6,7 @@
 
 (function() {
     'use strict';
+    statisticsService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
     angular.module('moaClientApp')
       .factory('StatisticsService', statisticsService);
 

@@ -7,6 +7,7 @@
  */
 (function() {
     'use strict';
+    ViewSpectrumController.$inject = ['$scope', '$location', '$log', 'CookieService', 'Spectrum', 'delayedSpectrum'];
     angular.module('moaClientApp')
       .controller('ViewSpectrumController', ViewSpectrumController);
 

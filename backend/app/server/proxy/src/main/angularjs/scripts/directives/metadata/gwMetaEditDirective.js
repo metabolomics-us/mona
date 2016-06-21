@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    gwMetaEditController.$inject = ['$scope', '$element', 'MetaData', '$filter'];
     angular.module('moaClientApp')
       .directive('gwMetaEdit', gwMetaEdit);
 

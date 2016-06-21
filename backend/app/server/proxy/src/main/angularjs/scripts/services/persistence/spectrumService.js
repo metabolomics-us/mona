@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    spectrum.$inject = ['$resource', 'REST_BACKEND_SERVER', 'MAX_SPECTRA'];
     angular.module('moaClientApp')
       .factory('Spectrum', spectrum);
 
