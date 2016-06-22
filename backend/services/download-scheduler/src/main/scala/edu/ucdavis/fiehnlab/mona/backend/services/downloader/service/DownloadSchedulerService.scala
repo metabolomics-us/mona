@@ -7,8 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.PredefinedQueryMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{QueryExport, PredefinedQuery}
-import io.swagger.annotations.ApiModel
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}

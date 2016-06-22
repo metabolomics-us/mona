@@ -5,14 +5,12 @@ import java.util.Date
 
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.DownloadScheduler
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.{QueryExportMongoRepository, PredefinedQueryMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
 import org.junit.runner.RunWith
 import org.scalatest.Matchers
