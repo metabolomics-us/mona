@@ -27,11 +27,7 @@
     function displaySpectraPanelController($scope, $location, SpectrumCache, $log) {
 
         var truncateDecimal = function(s, length) {
-            return (typeof(s) === 'number') ?  s.toFixed(4) :  s;
-            //TODO: using toFixed() for truncate of number, depreciate once verified
-            /*var regex = new RegExp("\\s*(\\d+\\.\\d{" + length + "})\\d*\\s*");
-            var m = s.match(regex);
-            return (m !== null) ? s.replace(m[0].trim(), m[1]) : s;*/
+            return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
         };
 
         angular.forEach($scope.spectrum.metaData, function(meta, index) {
