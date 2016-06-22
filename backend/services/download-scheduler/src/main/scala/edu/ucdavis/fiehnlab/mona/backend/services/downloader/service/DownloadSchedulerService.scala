@@ -62,8 +62,7 @@ class DownloadSchedulerService extends InitializingBean with LazyLogging {
   }
 
   /**
-    * sends this spectrum to our dedicated queue. This queue can have many consumers to then
-    * asynchronously process and curate the object
+    * Schedules the download of all export formats for each predefined query download
     */
   def schedulePredefinedDownloads(): Array[QueryExport] = {
     val downloads: ArrayBuffer[QueryExport] = ArrayBuffer()
