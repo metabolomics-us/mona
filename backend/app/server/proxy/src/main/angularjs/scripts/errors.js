@@ -8,7 +8,7 @@
     'use strict';
     angular.module('moaClientApp')
         /* @ngInject */
-        .run(function($rootScope) {
+        .run(['$rootScope', function($rootScope) {
             //contains all our errors
             $rootScope.errors = [];
 
@@ -26,23 +26,23 @@
             $rootScope.clearErrors = function() {
                 $rootScope.errors = [];
             }
-        })
+        }])
 
 
         /**
          * general error handling
          */
         /* @ngInject */
-        .config(function($provide) {
-            $provide.decorator("$exceptionHandler", function($delegate, $injector) {
+        .config(['$provide', function($provide) {
+            $provide.decorator("$exceptionHandler", ['$delegate', '$injector', function($delegate, $injector) {
                 return function(exception, cause) {
                     var $rootScope = $injector.get("$rootScope");
                     $rootScope.addError({message: "Exception", reason: exception});
                     $delegate(exception, cause);
                 };
-            });
+            }]);
 
-        });
+        }]);
 })();
 
 
@@ -51,6 +51,7 @@
  */
 (function() {
     'use strict';
+    ApplicationError.$inject = ['$rootScope'];
     angular.module('moaClientApp')
       .service("ApplicationError", ApplicationError);
 

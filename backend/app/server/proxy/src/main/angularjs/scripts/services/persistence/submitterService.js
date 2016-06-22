@@ -3,6 +3,7 @@
  */
 (function() {
     'use strict';
+    submitter.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
     angular.module('moaClientApp')
       .factory('Submitter', submitter);
 

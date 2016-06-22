@@ -5,6 +5,7 @@
 (function() {
     'use strict';
 
+    gwTagDisplayController.$inject = ['$scope', '$element', '$log', 'TaggingService'];
     angular.module('moaClientApp')
       .directive('gwTagDisplay', gwTagDisplay)
 

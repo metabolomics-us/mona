@@ -16,12 +16,13 @@
 
 (function() {
     'use strict';
+    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', '$rootScope', '$timeout', '$log', 'MAX_SPECTRA', 'toaster'];
     angular.module('moaClientApp')
       .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
     function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location,
-                                      queryStringBuilder, SpectrumCache, $rootScope, $timeout, $log, MAX_SPECTRA, toaster, $routeParams) {
+                                      SpectrumCache, $rootScope, $timeout, $log, MAX_SPECTRA, toaster) {
 
         $scope.table = false;
         /**

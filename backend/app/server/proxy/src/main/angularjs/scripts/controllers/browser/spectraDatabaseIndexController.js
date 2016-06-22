@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    SpectraDatabaseIndexController.$inject = ['$scope', '$http', '$location', 'SpectraQueryBuilderService', 'MetadataService', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
       .controller('SpectraDatabaseIndexController', SpectraDatabaseIndexController);
 

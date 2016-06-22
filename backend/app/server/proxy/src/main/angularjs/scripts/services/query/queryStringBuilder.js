@@ -5,6 +5,7 @@
 
 (function () {
     'use strict';
+    queryStringBuilder.$inject = ['$log', 'QueryCache', 'qStrHelper'];
     angular.module('moaClientApp')
         .factory("queryStringBuilder", queryStringBuilder);
 

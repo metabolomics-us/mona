@@ -26,10 +26,12 @@ module.exports = function (grunt) {
                 files: ['bower.json']
             },
             js: {
-                files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-                //tasks: ['newer:jshint:all'],
+                files: ['<%= yeoman.app %>/scripts/**/*.js'],
+                tasks: ['ngAnnotate:dev'],
                 options: {
-                    livereload: true
+                    livereload: true,
+                    // ensure ngAnnotate:dev task is ran in same context(annotate only changed file), not spawning another task to annotate all files.
+                    nospawn : true
                 }
             },
             jsTest: {
@@ -201,18 +203,6 @@ module.exports = function (grunt) {
             }
         },
 
-        // concatinate css files to main.css for distribution
-        cssmin: {
-            dist: {
-                files: {
-                    '<%= yeoman.dist %>/styles/main.css': [
-                        'target/.tmpGrunt/styles/{,*/}*.css',
-                        '<%= yeoman.app %>/styles/{,*/}*.css'
-                    ]
-                }
-            }
-        },
-
         // Changes the icon font path in the scss
         replace: {
             bower_css: {
@@ -273,6 +263,7 @@ module.exports = function (grunt) {
         ngAnnotate: {
             dist: {
                 options: {
+                    remove: true,
                     singleQuotes: true
                 },
                 files: {
@@ -282,7 +273,17 @@ module.exports = function (grunt) {
                 }
             },
             dev: {
-
+                options: {
+                    singleQuotes: true,
+                    remove: true
+                },
+                files: [
+                    {
+                        expand: true,
+                        src: ['<%= yeoman.app %>/scripts/**/*.js'],
+                        rename: function(dest, src) { return src}
+                    }
+                ]
             }
         },
 
@@ -331,14 +332,14 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/bootstrap',
+                        cwd: '<%= yeoman.app %>/bower_components/bootstrap',
                         src: ['fonts/*.*'],
                         dest: '<%= yeoman.dist %>'
                     },
                     {
                         expand: true,
                         dot: true,
-                        cwd: 'bower_components/components-font-awesome',
+                        cwd: '<%= yeoman.app %>/bower_components/components-font-awesome',
                         src: ['fonts/*.*'],
                         dest: '<%= yeoman.dist %>'
                     }
@@ -417,6 +418,7 @@ module.exports = function (grunt) {
             'clean:server',
             'concurrent:server',
             'autoprefixer',
+            'ngAnnotate:dev',
             'connect:livereload',
             'watch'
         ]);
@@ -441,10 +443,10 @@ module.exports = function (grunt) {
         'concurrent:dist',
         'autoprefixer',
         'concat',
-        'cssmin:dist',
         'ngAnnotate:dist',
         'copy:dist',
         'cdnify',
+        'cssmin',
         'uglify:dist',
         'rev',
         'usemin',

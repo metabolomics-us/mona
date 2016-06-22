@@ -5,6 +5,8 @@
 (function() {
     'use strict';
 
+    spectraTopScoresForUsers.$inject = ['$compile', 'StatisticsService', 'Submitter'];
+    spectraTopScoresForUsersController.$inject = ['$scope'];
     angular.module('moaClientApp')
       .directive('spectraTopScoresForUsers', spectraTopScoresForUsers);
 

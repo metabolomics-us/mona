@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    SubmitterModalController.$inject = ['$scope', 'Submitter', '$uibModalInstance', 'newSubmitter'];
     angular.module('moaClientApp')
         .controller('SubmitterModalController', SubmitterModalController);
 
