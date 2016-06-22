@@ -1,13 +1,22 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.controller
 
+import java.io.File
+import java.nio.file.{Files, Paths, Path}
 import java.util.concurrent.Future
+import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.{QueryExportMongoRepository, PredefinedQueryMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.DownloadSchedulerService
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.QueryExport
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.InputStreamResource
+import org.springframework.http.{MediaType, HttpStatus, ResponseEntity, HttpHeaders}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.web.bind.annotation.{RequestMapping, RequestParam, RestController}
+import org.springframework.web.bind.annotation._
+import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
+
+import scala.collection.JavaConverters._
 
 /**
   * Created by sajjan on 5/25/16.
@@ -19,12 +28,46 @@ class DownloadSchedulerController extends LazyLogging {
   @Autowired
   val downloadSchedulerService: DownloadSchedulerService = null
 
+  @Autowired
+  val queryExportRepository: QueryExportMongoRepository = null
+
+  @Autowired
+  val predefinedQueryRepository: PredefinedQueryMongoRepository = null
+
+
+  /**
+    * Downloads a query export given the label
+    * @param id
+    * @param request
+    * @return
+    */
+  @RequestMapping(path = Array("/retrieve/{id}"), method = Array(RequestMethod.GET))
+  @Async
+  def download(@PathVariable("id") id: String, request: HttpServletRequest): Future[ResponseEntity[InputStreamResource]] = {
+    val queryExport: QueryExport = queryExportRepository.findOne(id)
+
+    if (queryExport == null) {
+      throw new NoSuchRequestHandlingMethodException(request)
+    } else {
+      val exportPath: Path = Paths.get(queryExport.exportFile)
+
+      new AsyncResult[ResponseEntity[InputStreamResource]](
+        ResponseEntity
+          .ok()
+          .contentLength(Files.size(exportPath))
+          .contentType(MediaType.APPLICATION_OCTET_STREAM)
+          .header("Content-Disposition", s"attachment; filename=${exportPath.getFileName}")
+          .body(new InputStreamResource(Files.newInputStream(exportPath)))
+      )
+    }
+  }
+
   /**
     * schedules every spectra for the given query for curation
     *
     * @param query
     */
-  @RequestMapping(path = Array("/schedule"))
+  @RequestMapping(path = Array("/schedule"), method = Array(RequestMethod.GET))
   @Async
   def scheduleDownload(@RequestParam(required = true, name = "query") query: String,
                        @RequestParam(required = false, name = "format", defaultValue = "json") format: String): Future[QueryExport] = {
@@ -35,9 +78,20 @@ class DownloadSchedulerController extends LazyLogging {
   }
 
   /**
+    * lists all available predefined downloads
+    */
+  @RequestMapping(path = Array("/predefined"), method = Array(RequestMethod.GET))
+  @Async
+  def listPredefinedDownloads(): Future[Array[PredefinedQuery]] = {
+    val data = predefinedQueryRepository.findAll().asScala.toArray
+
+    new AsyncResult[Array[PredefinedQuery]](data)
+  }
+
+  /**
     * schedules the re-generation of predefined downloads
     */
-  @RequestMapping(path = Array("/schedulePredefinedDownloads"))
+  @RequestMapping(path = Array("/schedulePredefined"), method = Array(RequestMethod.GET))
   @Async
   def schedulePredefinedDownloads(): Future[Array[QueryExport]] = {
     // Schedule download

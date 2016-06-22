@@ -29,7 +29,7 @@ class DownloadSchedulerService extends InitializingBean with LazyLogging {
   val queueName: String = null
 
   @Autowired
-  val predefinedQueryMongoRepository: PredefinedQueryMongoRepository = null
+  val predefinedQueryRepository: PredefinedQueryMongoRepository = null
 
 
   @Autowired
@@ -41,8 +41,8 @@ class DownloadSchedulerService extends InitializingBean with LazyLogging {
 
 
   def afterPropertiesSet() {
-    if (predefinedQueryMongoRepository.count == 0) {
-      predefinedQueryMongoRepository.save(PredefinedQuery("All Spectra", "All Spectra", "", 0, null, null))
+    if (predefinedQueryRepository.count == 0) {
+      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "All Spectra", "", 0, null, null))
     }
   }
 
@@ -67,7 +67,7 @@ class DownloadSchedulerService extends InitializingBean with LazyLogging {
   def schedulePredefinedDownloads(): Array[QueryExport] = {
     val downloads: ArrayBuffer[QueryExport] = ArrayBuffer()
 
-    predefinedQueryMongoRepository.findAll().asScala.foreach { predefinedQuery: PredefinedQuery =>
+    predefinedQueryRepository.findAll().asScala.foreach { predefinedQuery: PredefinedQuery =>
       if (predefinedQuery.jsonExport == null) {
         downloads.append(QueryExport(UUID.randomUUID.toString, predefinedQuery.label, predefinedQuery.query, "json", null, new Date, 0, 0, null, null))
       } else {

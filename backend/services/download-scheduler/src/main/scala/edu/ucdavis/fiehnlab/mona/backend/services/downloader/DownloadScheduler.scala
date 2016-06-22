@@ -48,11 +48,13 @@ class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
       .antMatchers(HttpMethod.GET, "/rest/downloads/schedule/*").hasAuthority("USER")
 
       // must be an admin to schedule re-generation of predefined downloads
-      .antMatchers(HttpMethod.GET, "/rest/downloads/schedulePredefinedDownloads").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.GET, "/rest/downloads/schedulePredefined").hasAuthority("ADMIN")
   }
 
   override def configure(web: WebSecurity): Unit = {
     web.ignoring().antMatchers(HttpMethod.GET, "/*")
+      .antMatchers(HttpMethod.GET, "/rest/downloads/retrieve/**")
+      .antMatchers(HttpMethod.GET, "/rest/downloads/predefined")
   }
 }
 
