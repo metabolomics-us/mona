@@ -23,7 +23,6 @@
 
             // reset query when user click browse
             $scope.resetQuery = function() {
-                console.log('test');
                 SpectraQueryBuilderService.prepareQuery();
             }
         }
