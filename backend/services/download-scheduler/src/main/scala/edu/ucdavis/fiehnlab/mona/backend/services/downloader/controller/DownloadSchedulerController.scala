@@ -1,17 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.controller
 
-import java.io.File
-import java.nio.file.{Files, Paths, Path}
+import java.nio.file.{Files, Path, Paths}
 import java.util.concurrent.Future
-import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
+import javax.servlet.http.HttpServletRequest
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.{QueryExportMongoRepository, PredefinedQueryMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.DownloadSchedulerService
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.InputStreamResource
-import org.springframework.http.{MediaType, HttpStatus, ResponseEntity, HttpHeaders}
+import org.springframework.http.{MediaType, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
