@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
+import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 /**
   * Created by sajjan on 5/25/16.
@@ -23,6 +24,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableWebSecurity
+@EnableSwagger2
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
   classOf[JWTAuthenticationConfig], classOf[SwaggerConfig]))
