@@ -6,6 +6,7 @@
 (function() {
     'use strict';
 
+    configure.$inject = ['$routeProvider', '$locationProvider'];
     angular.module('moaClientApp')
         .config(configure);
 
@@ -44,7 +45,7 @@
                 templateUrl: 'views/spectra/display/viewSpectrum.html',
                 controller: 'ViewSpectrumController',
                 resolve: {
-                    delayedSpectrum: /* @ngInject */function(Spectrum, $route, SpectrumCache) {
+                    delayedSpectrum: /* @ngInject */['Spectrum', '$route', 'SpectrumCache', function(Spectrum, $route, SpectrumCache) {
                         // If a spectrum is not cached or the id requested does not match the
                         // cached spectrum, request it from the REST api
                         if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
@@ -63,7 +64,7 @@
                             SpectrumCache.removeSpectrum();
                             return spectrum;
                         }
-                    }
+                    }]
                 }
             })
 
@@ -71,11 +72,11 @@
                 templateUrl: 'views/spectra/browse/spectra.html',
                 controller: 'SpectraBrowserController',
                 resolve: {
-                    splash: /* @ngInject */function(SpectraQueryBuilderService, $route) {
+                    splash: /* @ngInject */['SpectraQueryBuilderService', '$route', function(SpectraQueryBuilderService, $route) {
                         SpectraQueryBuilderService.prepareQuery();
                         //add it to query
                         SpectraQueryBuilderService.addSpectraIdToQuery($route.current.params.splash);
-                    }
+                    }]
                 }
             })
 
@@ -111,12 +112,12 @@
                 templateUrl: 'views/statistics/times.html',
                 controller: 'StatisticsController',
                 resolve: {
-                    statistics: /* @ngInject */function(StatisticsService) {
+                    statistics: /* @ngInject */['StatisticsService', function(StatisticsService) {
                         return [
                             StatisticsService.executionTime({time: "day", method: "import", max: 100}),
                             StatisticsService.executionTime({time: "hour", method: "import", max: 100})
                         ];
-                    }
+                    }]
                 }
             })
 
@@ -125,12 +126,12 @@
                 controller: 'StatisticsController',
 
                 resolve: {
-                    statistics: /* @ngInject */function(StatisticsService) {
+                    statistics: /* @ngInject */['StatisticsService', function(StatisticsService) {
                         return [
                             StatisticsService.executionTime({time: "day", method: "validation", max: 100}),
                             StatisticsService.executionTime({time: "hour", method: "validation", max: 100})
                         ]
-                    }
+                    }]
                 }
             })
 
@@ -139,12 +140,12 @@
                 controller: 'StatisticsController',
 
                 resolve: {
-                    statistics: /* @ngInject */function(StatisticsService) {
+                    statistics: /* @ngInject */['StatisticsService', function(StatisticsService) {
                         return [
                             StatisticsService.executionTime({time: "day", method: "search", max: 100}),
                             StatisticsService.executionTime({time: "hour", method: "search", max: 100})
                         ]
-                    }
+                    }]
                 }
             })
 

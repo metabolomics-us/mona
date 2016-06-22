@@ -1,6 +1,7 @@
 (function () {
     'use strict';
 
+    AdvancedSearchController.$inject = ['$scope', 'SpectraQueryBuilderService', 'queryStringBuilder', '$location', '$log'];
     angular.module('moaClientApp')
         .controller('AdvancedSearchController', AdvancedSearchController);
 

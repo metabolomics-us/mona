@@ -6,6 +6,7 @@
 (function () {
     'use strict';
 
+    qStrHelper.$inject = ['$log'];
     angular.module('moaClientApp')
         .factory('qStrHelper', qStrHelper);
 

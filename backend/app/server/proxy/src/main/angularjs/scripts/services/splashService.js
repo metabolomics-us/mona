@@ -4,6 +4,7 @@
 
 (function() {
     'use strict';
+    SplashService.$inject = ['$resource', '$http'];
     angular.module('moaClientApp')
       .factory('SplashService', SplashService);
 

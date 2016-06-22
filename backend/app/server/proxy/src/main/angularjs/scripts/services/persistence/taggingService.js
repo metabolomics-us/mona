@@ -5,6 +5,7 @@
 
 (function() {
     'use strict';
+    taggingService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
     angular.module('moaClientApp')
       .factory('TaggingService', taggingService);
 

@@ -4,6 +4,7 @@
 (function() {
     'use strict';
 
+    displayLibraryReferenceController.$inject = ['$scope', '$log'];
     angular.module('moaClientApp')
         .directive('displayLibraryReference', displayLibraryReference);
 

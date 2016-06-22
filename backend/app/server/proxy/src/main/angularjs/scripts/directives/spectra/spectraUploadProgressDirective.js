@@ -6,6 +6,7 @@
 (function() {
     'use strict';
 
+    spectraUploadProgressBarController.$inject = ['$scope', 'UploadLibraryService'];
     angular.module('moaClientApp')
       .directive('spectraUploadProgressBar', spectraUploadProgressBar);
 

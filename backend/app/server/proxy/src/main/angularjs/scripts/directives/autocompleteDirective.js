@@ -14,6 +14,7 @@
 (function() {
     'use strict';
 
+    flAngucomplete.$inject = ['$parse', '$http', '$sce', '$timeout'];
     angular.module('moaClientApp')
       .directive('flAngucomplete', flAngucomplete);
 

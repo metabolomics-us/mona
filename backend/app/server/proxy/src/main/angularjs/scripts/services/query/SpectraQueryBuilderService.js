@@ -6,6 +6,7 @@
 
 (function() {
     'use strict';
+    SpectraQueryBuilderService.$inject = ['QueryCache', 'Spectrum', 'MetadataService', '$log'];
     angular.module('moaClientApp')
       .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
