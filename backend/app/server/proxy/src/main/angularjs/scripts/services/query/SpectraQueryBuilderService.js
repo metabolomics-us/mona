@@ -407,10 +407,8 @@
                         metadata.selected = {};
                         metadata.selected.value = "eq";
                     }
-                    options[metadata.selected.value] = metadata.value;
 
-
-                    var meta = {'name': metadata.name, 'value': options};
+                    var meta = {'name': metadata.name, 'value': metadata.value, operator: metadata.selected.value};
 
                     if (metadata.unit !== null) {
                         meta.unit = {'eq': metadata.unit};

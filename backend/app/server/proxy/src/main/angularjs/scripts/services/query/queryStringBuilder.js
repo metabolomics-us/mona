@@ -31,6 +31,21 @@
         function updateQuery() {
             // options: compound, metadata, tags
             var query = QueryCache.getSpectraQuery();
+	        compiled = [];
+
+	        // updates compound metadata
+	        if (angular.isDefined(query.compound.metadata) && query.compound.metadata.length > 0) {
+		        queryStr = qStrHelper.buildMetaString(query.compound.metadata, true);
+		        compiled.push(queryStr);
+	        }
+
+	        // updates metadata
+	        if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
+		        queryStr = qStrHelper.buildMetaString(query.metadata);
+		        compiled.push('and', queryStr);
+	        }
+	        saveQuery();
+
         }
 
         /**
