@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationC
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.config.DownloadConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -27,7 +28,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
-  classOf[JWTAuthenticationConfig], classOf[SwaggerConfig]))
+  classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[DownloadConfig]))
 class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
@@ -48,11 +49,13 @@ class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
       .antMatchers(HttpMethod.GET, "/rest/downloads/schedule/*").hasAuthority("USER")
 
       // must be an admin to schedule re-generation of predefined downloads
-      .antMatchers(HttpMethod.GET, "/rest/downloads/schedulePredefinedDownloads").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.GET, "/rest/downloads/schedulePredefined").hasAuthority("ADMIN")
   }
 
   override def configure(web: WebSecurity): Unit = {
     web.ignoring().antMatchers(HttpMethod.GET, "/*")
+      .antMatchers(HttpMethod.GET, "/rest/downloads/retrieve/**")
+      .antMatchers(HttpMethod.GET, "/rest/downloads/predefined")
   }
 }
 
