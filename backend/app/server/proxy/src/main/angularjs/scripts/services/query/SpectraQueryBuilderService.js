@@ -375,6 +375,7 @@
                 }
             }
             QueryCache.setSpectraQuery(query);
+	        queryStringBuilder.updateQuery();
 
         };
 
