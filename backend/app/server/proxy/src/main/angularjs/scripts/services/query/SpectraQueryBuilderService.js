@@ -6,12 +6,12 @@
 
 (function() {
     'use strict';
-    SpectraQueryBuilderService.$inject = ['QueryCache', 'Spectrum', 'MetadataService', '$log'];
+    SpectraQueryBuilderService.$inject = ['QueryCache', 'queryStringBuilder', '$log'];
     angular.module('moaClientApp')
       .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
     /* @ngInject */
-    function SpectraQueryBuilderService(QueryCache, Spectrum, MetadataService, $log) {
+    function SpectraQueryBuilderService(QueryCache, queryStringBuilder, $log) {
 
         /**
          * provides us with the current query
@@ -414,6 +414,7 @@
 
                     if (metadata.unit !== null) {
                         meta.unit = {'eq': metadata.unit};
+
                     }
 
                     if (compound) {
@@ -428,8 +429,9 @@
                         //add a metadata query object
                         query.metadata.push(meta);
                     }
-
+					$log.info(query);
                     QueryCache.setSpectraQuery(query);
+	                queryStringBuilder.updateQuery();
                 }
             }
         };
