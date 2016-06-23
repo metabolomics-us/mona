@@ -18,10 +18,20 @@
 
         var service = {
             buildQuery: buildQuery,
-            buildAdvanceQuery: buildAdvanceQuery
+            buildAdvanceQuery: buildAdvanceQuery,
+            updateQuery: updateQuery
 
         };
         return service;
+
+
+        /**
+         * updates on the fly queries submitted by users
+         */
+        function updateQuery() {
+            // options: compound, metadata, tags
+            var query = QueryCache.getSpectraQuery();
+        }
 
         /**
          * builds a queryString when user submit keywordFilter form
@@ -88,8 +98,8 @@
 
             // add compound metadata
             operand = query.operand.compound.shift();
-            if (angular.isDefined(query.compoundMetada) && query.compoundMetada.length > 0) {
-                queryStr = qStrHelper.buildMetaString(query.compoundMetada, true);
+            if (angular.isDefined(query.compound.metadata) && query.compound.metadata.length > 0) {
+                queryStr = qStrHelper.buildMetaString(query.compound.metadata, true);
                 compiled.push(operand, queryStr);
             }
 
