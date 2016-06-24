@@ -191,7 +191,7 @@ services:
 
     depends_on:
       - webhooks
-    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "7777:7777"
 
@@ -240,12 +240,4 @@ services:
 
     depends_on:
       - curationScheduler
-    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
-
-  # download runner is utilized to handle downloading and compressing of query exports to the filesystem
-  downloader:
-    image: eros.fiehnlab.ucdavis.edu/mona-downloader:latest
-
-    depends_on:
-      - downloadScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar

@@ -71,7 +71,7 @@
             }
 
             // filter compound metadata
-            filtered.compoundMetada = addMetaData(compound.metadata);
+            filtered.compound.metadata = addMetaData(compound.metadata);
 
 
             // filter compound measurement
