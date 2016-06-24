@@ -9,7 +9,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.PredefinedQueryMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
 
@@ -21,7 +20,7 @@ import scala.collection.mutable.ArrayBuffer
   * Created by sajjan on 6/6/16.
   */
 @Service
-class DownloadSchedulerService extends InitializingBean with LazyLogging {
+class DownloadSchedulerService extends LazyLogging {
 
   @Autowired
   @Qualifier("spectra-download-queue")
@@ -30,20 +29,12 @@ class DownloadSchedulerService extends InitializingBean with LazyLogging {
   @Autowired
   val predefinedQueryRepository: PredefinedQueryMongoRepository = null
 
-
   @Autowired
   val rabbitTemplate: RabbitTemplate = null
-
 
   @Autowired
   val notifications: EventBus[Notification] = null
 
-
-  def afterPropertiesSet() {
-    if (predefinedQueryRepository.count == 0) {
-      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "All Spectra", "", 0, null, null))
-    }
-  }
 
   /**
     * Sends a query to be scheduled for download to our dedicated queue
