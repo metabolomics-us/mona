@@ -17,19 +17,17 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def buildName(spectrum: Spectrum): String = {
-    val compound = spectrum.compound.find(_.kind == "biological").get
+    val compound = spectrum.compound.find(_.kind == "biological")
 
     if (compound != null) {
-      val names = compound.names.sortBy(_.score).headOption.get
+      val names = compound.head.names.sortBy(_.score).headOption.orNull
 
       if (names == null) {
         "None"
-      }
-      else {
+      } else {
         names.name
       }
-    }
-    else {
+    } else {
       "None provided for biological compound"
     }
   }
@@ -83,11 +81,10 @@ class MSPWriter extends DomainWriter {
   }
 
   def buildMetaDateField(spectrum: Spectrum, field: String): String = {
-    val meta = spectrum.metaData.find(_.name == field).get
+    val meta = spectrum.metaData.find(_.name == field).orNull
     if (meta == null) {
       "0"
-    }
-    else {
+    } else {
       meta.value.toString
     }
   }
