@@ -128,7 +128,7 @@ class DownloadWriterService extends LazyLogging {
 
     // Compress results
     if (compress) {
-      logger.info("Compressing ${exportFilename} -> ${compressedExportFilename}")
+      logger.info(s"Compressing ${exportFile.getFileName} -> ${compressedFile.getFileName}")
 
       val compressedTemporaryFile: Path = Paths.get(compressedFile.getParent.toAbsolutePath.toString, compressedFile.getFileName.toString +".tmp")
 
