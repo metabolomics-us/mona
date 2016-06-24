@@ -51,7 +51,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       }
 
       queryExportRepository.deleteAll()
-      queryExportRepository.save(QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", null, new Date, 0, 0, null, null))
+      queryExportRepository.save(QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", "test", new Date, 0, 0, null, null))
 
       predefinedQueryRepository.deleteAll()
       predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
