@@ -42,15 +42,14 @@ class MSPWriter extends DomainWriter {
     */
   def buildCompoundMetaData(spectrum: Spectrum, value: String): String = {
     if (spectrum.compound.filter(_.kind == "biological") != null) {
-      val meta = spectrum.compound.filter(_.kind == "biological").head.metaData.find(_.name == value).get
+      val meta = spectrum.compound.filter(_.kind == "biological").head.metaData.find(_.name == value).orNull
+
       if (meta == null) {
         "0"
-      }
-      else {
+      } else {
         meta.value.toString
       }
-    }
-    else {
+    } else {
       "0"
     }
   }
