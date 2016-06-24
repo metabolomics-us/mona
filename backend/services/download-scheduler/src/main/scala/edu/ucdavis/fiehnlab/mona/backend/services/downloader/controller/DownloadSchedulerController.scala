@@ -8,7 +8,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.service.DownloadSchedulerService
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Value, Autowired}
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.{MediaType, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -33,9 +33,12 @@ class DownloadSchedulerController extends LazyLogging {
   @Autowired
   val predefinedQueryRepository: PredefinedQueryMongoRepository = null
 
+  @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
+  val exportDir: String = null
 
   /**
     * Downloads a query export given the label
+    *
     * @param id
     * @param request
     * @return
@@ -48,16 +51,20 @@ class DownloadSchedulerController extends LazyLogging {
     if (queryExport == null) {
       throw new NoSuchRequestHandlingMethodException(request)
     } else {
-      val exportPath: Path = Paths.get(queryExport.exportFile)
+      val exportPath: Path = Paths.get(exportDir, queryExport.exportFile)
 
-      new AsyncResult[ResponseEntity[InputStreamResource]](
-        ResponseEntity
-          .ok()
-          .contentLength(Files.size(exportPath))
-          .contentType(MediaType.APPLICATION_OCTET_STREAM)
-          .header("Content-Disposition", s"attachment; filename=${exportPath.getFileName}")
-          .body(new InputStreamResource(Files.newInputStream(exportPath)))
-      )
+      if (Files.exists(exportPath)) {
+        new AsyncResult[ResponseEntity[InputStreamResource]](
+          ResponseEntity
+            .ok()
+            .contentLength(Files.size(exportPath))
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .header("Content-Disposition", s"attachment; filename=${exportPath.getFileName}")
+            .body(new InputStreamResource(Files.newInputStream(exportPath)))
+        )
+      } else {
+        throw new NoSuchRequestHandlingMethodException(request)
+      }
     }
   }
 
