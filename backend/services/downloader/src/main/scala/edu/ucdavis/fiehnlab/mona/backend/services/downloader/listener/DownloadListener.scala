@@ -38,17 +38,19 @@ class DownloadListener extends GenericMessageListener[QueryExport] with LazyLogg
       if (result.emailAddress == null || result.emailAddress.isEmpty) {
         val predefinedQuery = predefinedQueryRepository.findOne(result.label)
 
-        // Update jsonExport or mspExport in the predefined query
-        val updatedPredefinedQuery =
-          if (result.format == "json")
-            predefinedQuery.copy(jsonExport = result, queryCount = result.count)
-          else if (result.format == "msp")
-            predefinedQuery.copy(mspExport = result, queryCount = result.count)
-          else
-            predefinedQuery
+        if (predefinedQuery != null) {
+          // Update jsonExport or mspExport in the predefined query
+          val updatedPredefinedQuery =
+            if (result.format == "json")
+              predefinedQuery.copy(jsonExport = result, queryCount = result.count)
+            else if (result.format == "msp")
+              predefinedQuery.copy(mspExport = result, queryCount = result.count)
+            else
+              predefinedQuery
 
-        // Save the updated predefined query
-        predefinedQueryRepository.save(updatedPredefinedQuery)
+          // Save the updated predefined query
+          predefinedQueryRepository.save(updatedPredefinedQuery)
+        }
       }
 
 
