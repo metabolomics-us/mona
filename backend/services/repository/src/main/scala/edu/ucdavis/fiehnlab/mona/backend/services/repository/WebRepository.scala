@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.services.repository
 
 import java.io.File
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.{ServletContext, ServletRequest}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
@@ -10,26 +9,21 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCon
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.{FileLayout, SubmitterInchiKeySplashId}
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.listener.RepositoryListener
-import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.servlet.{DefaultServlet, ServletHolder}
-import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode
+import edu.ucdavis.fiehnlab.mona.backend.services.repository.utility.FindDirectory
+import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.http.server.GitServlet
-import org.eclipse.jgit.lib.{Repository, StoredConfig}
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
-import org.eclipse.jgit.transport.RemoteConfig
+import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.transport.resolver.RepositoryResolver
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.context.embedded.jetty.{JettyEmbeddedServletContainerFactory, JettyServerCustomizer}
 import org.springframework.boot.context.embedded._
+import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory
 import org.springframework.context.annotation.{Bean, Configuration, DependsOn, Import}
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.web.WebApplicationInitializer
-import org.springframework.web.context.WebApplicationContext
 
 
 /**
@@ -39,17 +33,18 @@ import org.springframework.web.context.WebApplicationContext
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
 class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
+
+  @Autowired
+  val locator: FindDirectory = null
+  def localDirectory = new File(new File(this.locator.dir), "repository")
+
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
-      .antMatchers(HttpMethod.GET,"/**")
+      .antMatchers(HttpMethod.GET, "/**")
       .antMatchers("/repository/**")
       .antMatchers("/git/*").anyRequest()
   }
 
-  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
-  val dir: String = null
-
-  def localDirectory = new File(new File(this.dir), "repository")
 
   @Bean
   def fileLayout: FileLayout = {
@@ -62,8 +57,8 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
     * @return
     */
   @Bean
-  def bareGitRepository: Git = {
-    val bareDir = new File(dir)
+  def bareGitRepository(locator: FindDirectory): Git = {
+    val bareDir = new File(locator.dir)
     bareDir.mkdirs()
 
     val file = new File(bareDir, "repository.git")
@@ -82,7 +77,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Bean
   @DependsOn(Array("bareGitRepository"))
-  def gitRepository(bareGitRepository: Git): Git = {
+  def gitRepository(bareGitRepository: Git, locator:FindDirectory): Git = {
 
     if (localDirectory.exists()) {
       logger.info(s"opening checked out repository $localDirectory")
@@ -90,7 +85,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
     } else {
       logger.info("checking out remote repository")
       localDirectory.mkdirs()
-      val uri = s"file://$dir/repository.git"
+      val uri = s"file://${locator.dir}/repository.git"
       val git = Git.cloneRepository().setDirectory(localDirectory).setURI(uri).setCloneAllBranches(true).setBare(false).setRemote("origin/master").setBranch("master").call()
 
       git
@@ -104,10 +99,10 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 @Configuration
 class ConfigureJetty extends LazyLogging {
 
-  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
-  val dir: String = null
+  @Autowired
+  val locator: FindDirectory = null
 
-  def localDirectory = new File(new File(this.dir), "repository")
+  def localDirectory = new File(new File(this.locator.dir), "repository")
 
   @Bean
   def jetty: EmbeddedServletContainerFactory = {
@@ -118,6 +113,7 @@ class ConfigureJetty extends LazyLogging {
 
   /**
     * provides us with browsing access to the repository
+    *
     * @return
     */
   @Bean
@@ -140,11 +136,12 @@ class ConfigureJetty extends LazyLogging {
 
   /**
     * provides us with access to the git repository to easily check it out
+    *
     * @param bareGitRepository
     * @return
     */
   @Bean
-  def servletGit(bareGitRepository: Git): ServletRegistrationBean = {
+  def servletGit(bareGitRepository: Git,locator:FindDirectory): ServletRegistrationBean = {
     logger.info(s"registering our servlet and using dir: $localDirectory")
     val servlet = new GitServlet
 
@@ -159,7 +156,7 @@ class ConfigureJetty extends LazyLogging {
 
     val bean = new ServletRegistrationBean(servlet, "/git/*")
 
-    bean.addInitParameter("base-path", new File(dir).getAbsolutePath)
+    bean.addInitParameter("base-path", new File(locator.dir).getAbsolutePath)
     bean.addInitParameter("export-all", "1")
     bean.setLoadOnStartup(1)
     bean.setEnabled(true)
