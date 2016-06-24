@@ -28,9 +28,6 @@ class DownloadWriterService extends LazyLogging {
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
 
-  @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
-  val dir: String = null
-
   val objectMapper: ObjectMapper = MonaMapper.create
 
 
@@ -128,7 +125,7 @@ class DownloadWriterService extends LazyLogging {
 
     // Compress results
     if (compress) {
-      logger.info("Compressing ${exportFilename} -> ${compressedExportFilename}")
+      logger.info(s"Compressing ${exportFile.getFileName} -> ${compressedFile.getFileName}")
 
       val compressedTemporaryFile: Path = Paths.get(compressedFile.getParent.toAbsolutePath.toString, compressedFile.getFileName.toString +".tmp")
 

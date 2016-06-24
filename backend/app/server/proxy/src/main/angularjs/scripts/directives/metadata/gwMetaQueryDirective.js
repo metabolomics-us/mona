@@ -5,7 +5,7 @@
 (function() {
     'use strict';
 
-    gwMetaQueryController.$inject = ['$scope', '$element', 'SpectraQueryBuilderService', '$location'];
+    gwMetaQueryController.$inject = ['$scope', '$element', 'SpectraQueryBuilderService', '$location', '$log'];
     angular.module('moaClientApp')
       .directive('gwMetaQuery', gwMetaQuery);
 
@@ -31,7 +31,7 @@
 
     //controller to handle building new queries
     /* @ngInject */
-    function gwMetaQueryController($scope, $element, SpectraQueryBuilderService, $location) {
+    function gwMetaQueryController($scope, $element, SpectraQueryBuilderService, $location, $log) {
 
         //receive a click
         $scope.newQuery = function() {

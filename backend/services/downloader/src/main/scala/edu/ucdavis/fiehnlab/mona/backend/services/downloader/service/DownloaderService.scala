@@ -21,7 +21,7 @@ class DownloaderService extends LazyLogging {
   val downloadWriterService: DownloadWriterService = null
 
   @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
-  val dir: String = null
+  val exportDir: String = null
 
   val objectMapper: ObjectMapper = MonaMapper.create
 
@@ -49,7 +49,7 @@ class DownloaderService extends LazyLogging {
 
   def download(export: QueryExport, compressExport: Boolean): QueryExport = {
     // Create export directory if needed
-    val directory: File = new File(dir)
+    val directory: File = new File(exportDir)
 
     if (!directory.exists()) {
       if (!directory.mkdirs()) {
@@ -77,14 +77,14 @@ class DownloaderService extends LazyLogging {
 
 
     // Export query string
-    val queryFile: Path = Paths.get(dir, queryFilename)
+    val queryFile: Path = Paths.get(exportDir, queryFilename)
 
     downloadWriterService.writeQueryFile(queryFile, export.query)
 
 
     // Export query results
-    val exportFile: Path = Paths.get(dir, exportFilename)
-    val compressedFile: Path = Paths.get(dir, compressedExportFilename)
+    val exportFile: Path = Paths.get(exportDir, exportFilename)
+    val compressedFile: Path = Paths.get(exportDir, compressedExportFilename)
 
     val count: Int = downloadWriterService.writeExportFile(exportFile, compressedFile, export.query, export.format, compressExport)
 
