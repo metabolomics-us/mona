@@ -478,12 +478,12 @@
 					};
 
 					$http(req).then(function (data) {
-			                $log.('Spectra successfully Upload!');
-							$log.info('Spectra ID: ' + data.data.id);
+			                $log.info('Spectra successfully Upload!');
+							$log.info('Reference ID: ' + data.data.id);
 							$log.info(data);
 						},
 						function (err) {
-							$log.info(err)
+							$log.info(err);
 						});
 
 					//spectrum.$batchSave(spectrum.submitter.access_token);
