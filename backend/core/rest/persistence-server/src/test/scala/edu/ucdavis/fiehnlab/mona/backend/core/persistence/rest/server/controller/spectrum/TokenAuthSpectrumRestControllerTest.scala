@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
 import scala.concurrent.duration._
-import java.io.InputStreamReader
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader, StringWriter}
 
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
@@ -39,12 +39,88 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
   @Autowired
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
+
   //required for spring and scala tes
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "we will be connecting to the REST controller" when {
 
     "while working in it" should {
+
+      val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+
+      "have a working validation system" must {
+        val mapper = MonaMapper.create
+
+        "works on a correct spectra upload" in {
+
+          val spectrum = exampleRecords.head
+
+          val writer = new StringWriter()
+          mapper.writeValue(writer,spectrum)
+          val content = writer.toString
+
+          logger.info(s"content: $content")
+
+          authenticate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
+
+        }
+        "fails when an empty spectra is uploaded" in {
+
+          val spectrum = exampleRecords.head.copy(spectrum = null)
+
+          val writer = new StringWriter()
+          mapper.writeValue(writer,spectrum)
+          val content = writer.toString
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+
+        }
+
+        "fails if no submitter is provided" in {
+
+          val spectrum = exampleRecords.head.copy(submitter = null)
+
+          val writer = new StringWriter()
+          mapper.writeValue(writer,spectrum)
+          val content = writer.toString
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+
+        }
+
+        "fails if no compound is provided" in {
+
+          val spectrum = exampleRecords.head.copy(compound = Array())
+
+          val writer = new StringWriter()
+          mapper.writeValue(writer,spectrum)
+          val content = writer.toString
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+
+        }
+
+        "fails if compound is null" in {
+
+          val spectrum = exampleRecords.head.copy(compound = null)
+
+          val writer = new StringWriter()
+          mapper.writeValue(writer,spectrum)
+          val content = writer.toString
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+
+        }
+
+        "fails if id is null" in {
+
+          val spectrum = exampleRecords.head.copy(id = null)
+
+          val writer = new StringWriter()
+          mapper.writeValue(writer,spectrum)
+          val content = writer.toString
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+
+        }
+
+      }
 
       "we should be able to reset the repository" in {
         spectrumRepository.deleteAll()
@@ -57,7 +133,6 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to add spectra using POST at /rest/spectra with authentication" in {
-        val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
         val countBefore = spectrumRepository.count()
 
         assert(countBefore == 0)
