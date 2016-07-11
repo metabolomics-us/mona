@@ -18,6 +18,7 @@
 
         function handleLoginSuccess(response) {
             var token = response.data.token;
+
             $log.info(response);
             $rootScope.currentUser = {username: response.config.data.username, access_token: token};
             $http.defaults.headers.common['X-Auth-Token'] = token;
@@ -27,6 +28,7 @@
         }
 
         function handleLoginFail(response) {
+			$log.info(response);
             $rootScope.$broadcast('auth:login-error', response.data, response.status, response.headers, response.config);
             self.loggingIn = false;
         }
@@ -44,10 +46,20 @@
          */
         this.login = function(userName, password) {
             self.loggingIn = true;
+	        var req = {
+		        method: 'POST',
+		        url: REST_BACKEND_SERVER + '/rest/auth/login',
+		        headers: {
+			        'Content-Type': 'application/json'
+		        },
+		        data: {username: userName, password: password}
+	        };
+			$log.info(req);
+	        $http(req).then(handleLoginSuccess, handleLoginFail);
 
-            $http.post(REST_BACKEND_SERVER + '/rest/auth/login',
-              {username: userName, password: password},
-              {headers: {'Content-Type': 'application/json'}}).then(handleLoginSuccess, handleLoginFail);
+            //$http.post(REST_BACKEND_SERVER + '/rest/auth/login',
+            //  {username: userName, password: password},
+            //  {headers: {'Content-Type': 'application/json'}}).then(handleLoginSuccess, handleLoginFail);
         };
 
         /**

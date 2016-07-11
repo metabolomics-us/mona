@@ -12,6 +12,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.WebRepository
+import edu.ucdavis.fiehnlab.mona.backend.services.repository.utility.FindDirectory
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -35,9 +36,8 @@ class WebRepositoryListenerTest extends WordSpec with LazyLogging {
   @Autowired
   val repositoryListener: RepositoryListener = null
 
-
-  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona")
-  val dir: String = null
+  @Autowired
+  val locator:FindDirectory = null
 
   val reader = JSONDomainReader.create[Spectrum]
   val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
