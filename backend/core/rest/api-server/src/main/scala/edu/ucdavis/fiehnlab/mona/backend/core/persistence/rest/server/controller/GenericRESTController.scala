@@ -148,10 +148,7 @@ abstract class GenericRESTController[T] {
   @ResponseBody
   def put(@PathVariable("id") id: String, @Valid @RequestBody spectrum: T): Future[ResponseEntity[T]] = {
     new AsyncResult[ResponseEntity[T]](
-      new ResponseEntity(
-      getRepository.save(spectrum),
-        HttpStatus.OK
-      )
+      new ResponseEntity(getRepository.save(spectrum), HttpStatus.OK)
     )
   }
 }
