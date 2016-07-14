@@ -15,19 +15,19 @@ trait ISubmitterMongoRepository extends PagingAndSortingRepository[Submitter, St
     * @param email
     * @return
     */
-  def findByEmailAddress(email:String) : Submitter
+  def findByEmailAddress(email: String): Submitter
 
   /**
     * returns all submitters by there first name
     * @param firstName
     * @return
     */
-  def findByFirstName(firstName:String) : java.lang.Iterable[Submitter]
+  def findByFirstName(firstName: String): java.lang.Iterable[Submitter]
 
   /**
     * returns the submitter by it's id property
     * @param id
     * @return
     */
-  def findById(id:String) : Submitter
+  def findById(id: String): Submitter
 }

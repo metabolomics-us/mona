@@ -24,5 +24,4 @@ class FindDirectory {
       s"${tempDir}${System.getProperty("file.separator")}mona"
     }
   }
-
 }
