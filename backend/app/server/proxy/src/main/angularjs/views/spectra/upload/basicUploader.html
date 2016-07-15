@@ -1,0 +1,485 @@
+<div ng-value="error"></div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3><i class="fa fa-cloud-upload"></i> Basic Uploader</h3>
+
+        <div class="h5">Upload single mass spectra using a simple, guided wizard</div>
+        <br />
+
+
+        <!-- Select files to upload -->
+        <div ng-if="page == 0" class="panel panel-default">
+            <div class="panel-heading"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
+
+            <div class="panel-body">
+                <p class="lead">
+                    <small>Please choose a mass spectrum to upload.  You may choose to upload a file, which the uploader
+                    will parse and populate all available compound information and metadata, or you may paste a spectrum
+                    and fill in these data in the wizard.</small>
+                </p>
+                <br />
+
+                <label>Upload a File:</label>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <span class="btn btn-primary btn-file">
+                            Browse&hellip; <input type="file" ng-file-select="parseFiles($files)" />
+                        </span>
+                    </span>
+
+                    <input id="spectrumFile" type="text" class="form-control" ng-model="filenames" readonly />
+                </div>
+
+                <span class="help-block">Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files</span>
+
+                <br /><br />
+
+                <div class="input-group">
+                    <label>Paste a Mass Spectrum:</label>
+                    <textarea class="form-control" rows="10" ng-model="pastedSpectrum"></textarea>
+                    <span class="help-block">
+                        Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
+                        <code>[m/z] [intensity]</code><br />
+                        <code>[m/z] [intensity]</code><br />
+                        <code>...</code>
+                    </span>
+                    <a class="btn btn-primary" ng-click="parsePastedSpectrum(pastedSpectrum)">Submit Spectrum</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Loading message -->
+        <div ng-if="page == 1" class="panel panel-default">
+            <div class="panel-heading"><strong style="font-size: 1.2em;">Loading...</strong></div>
+            <div class="panel-body text-center">
+                <span class="spinner">
+                    <i class="fa fa-refresh fa-spin"></i>
+                    Please wait while your file is loaded and processed...
+                </span>
+            </div>
+        </div>
+
+
+        <!-- Error message if no spectra are found -->
+        <div ng-if="page == 2 && currentSpectrum === null" class="panel panel-default">
+            <div class="panel-heading"><strong style="font-size: 1.2em;">Loading...</strong></div>
+            <div class="panel-body text-center"><strong>No valid mass spectra found in the uploaded file(s)!</strong></div>
+        </div>
+
+
+        <!-- Display spectrum -->
+        <div ng-if="page == 2 && currentSpectrum !== null" class="panel panel-default">
+            <div class="panel-heading">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="restart()">&larr; Restart</a></li>
+                        <li><strong style="font-size: 1.2em;">Spectrum Viewer</strong></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="panel-body">
+                <p class="lead">
+                    <small>Below is your submitted mass spectrum.  Please verify that it appears as
+                    you expect <br /> You may also add annotations to specific peaks in the ion table below.</small>
+                </p>
+
+                <p class="lead" ng-if="fileHasMultipleSpectra">
+                    <small><strong>Note: </strong> The file you uploaded contains multiple mass spectral records.  The basic
+                    uploader is only designed to process a single spectrum, and so only the first spectrum in your file
+                    will be displayed.</small>
+                </p>
+
+                <div class="masspec-modal">
+                    <mass-spec ng-model="currentSpectrum.ions"></mass-spec>
+                </div>
+                <br />
+
+                <div style="margin-top: 10px;" ng-if="!showIonTable">
+                    <p><strong>This mass spectrum is very large!</strong></p>
+                    <p>It contains {{currentSpectrum.ions.length}} individual ions. Loading them all automatically can slow down your browser, but you can manually build the ion table:</p>
+                    <br />
+                    <p class="text-center"><a class="btn btn-primary" ng-click="$parent.showIonTable = true">Build Ion Table</a></p>
+                </div>
+
+                <div style="height: 500px; overflow: auto; margin-top: 10px;" ng-if="showIonTable">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th><a href="" ng-click="sortIonTable('ion')">Ion</a></th>
+                            <th><a href="" ng-click="sortIonTable('intensity')">Intensity</a></th>
+                            <th><a href="" ng-click="sortIonTable('relativeIntensity')">Relative Intensity</a></th>
+                            <th><a href="" ng-click="sortIonTable('annotation')">Annotation</a></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="ion in currentSpectrum.ions | orderBy:ionTableSort:ionTableSortReverse">
+                            <td><input type="checkbox" ng-model="ion.selected" /></td>
+                            <td>{{ion.ion | number : 4}}</td>
+                            <td>{{ion.intensity | number : 4}}</td>
+                            <td>{{ion.relativeIntensity | number : 4}}</td>
+                            <td>
+                                <input type="text" ng-model="ion.annotation" placeholder="Annotation" class="form-control" />
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="restart()">&larr; Restart</a></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+        <!-- Compound information -->
+        <div ng-if="page == 3" class="panel panel-default">
+            <div class="panel-heading">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li><strong style="font-size: 1.2em;">Compound Information</strong></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="panel-body">
+                <p class="lead">
+                    <small>MoNA requires that every spectrum have an associated compound.  This can be accomplished by
+                    providing an InChI Code, SMILES, a MOL/SDF file, or drawing the structure yourself.  You may also
+                    provide an InChIKey; however, be aware that InChIKeys for predicted structures may not exist in
+                    look-up services, and therefore cannot be used.</small>
+                </p>
+                <br />
+
+                <div class="row form-group">
+                    <div class="col-lg-3"><label>Names</label></div>
+                    <div class="col-lg-9">
+                        <input type="text"
+                               ng-repeat="name in currentSpectrum.names"
+                               ng-model="name"
+                               placeholder="Name"
+                               class="form-control" />
+                        <button type="button" class="btn btn-default btn-xs" ng-click="addName()">+</button>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-3 col-lg-3"><label>InChIKey</label></div>
+                    <div class="col-md-9 col-lg-9">
+                        <input type="text"
+                               ng-model="currentSpectrum.inchiKey"
+                               placeholder="InChIKey"
+                               class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-3 col-lg-3"><label>InChI</label></div>
+                    <div class="col-md-9 col-lg-9">
+                        <input type="text"
+                               ng-model="currentSpectrum.inchi"
+                               placeholder="InChI"
+                               class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-3 col-lg-3"><label>SMILES</label></div>
+                    <div class="col-md-9 col-lg-9">
+                        <input type="text"
+                               ng-model="currentSpectrum.smiles"
+                               placeholder="SMILES"
+                               class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <uib-accordion class="col-sm-12 col-lg-12">
+                        <uib-accordion-group>
+                            <uib-accordion-heading>Import MOL/SDF File</uib-accordion-heading>
+
+                            <div>
+                                Convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
+                                will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                            </div>
+                            <hr />
+
+                            <div class="form-group">
+                                <label>Copy and paste a molecular structure or upload a MOL/SDF file.</label>
+                                <textarea class="form-control" ng-model="currentSpectrum.molFile" rows="10"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <span class="btn btn-primary btn-file">
+                                                    Browse&hellip; <input type="file" ng-file-select="parseMolFile($files)" />
+                                                </span>
+                                            </span>
+
+                                    <input id="molFile" type="text" class="form-control" ng-model="filenames" readonly />
+                                </div>
+                                <div class="input-group">
+
+                                </div>
+                            </div>
+
+                                    <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
+                                        file with multiple structures, only the first structure will be read.</span>
+
+                            <div class="form-group text-center">
+                                <button ng-click="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                            </div>
+                        </uib-accordion-group>
+
+                        <uib-accordion-group>
+                            <uib-accordion-heading>Draw a Molecular Structure</uib-accordion-heading>
+
+                            <div>
+                                Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
+                                will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                            </div>
+                            <hr />
+
+                            <div class="text-center" chemical-sketcher id="molSketcher" ng-model="currentSpectrum.molFile"></div>
+
+                            <div class="form-group text-center">
+                                <button ng-click="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                            </div>
+                        </uib-accordion-group>
+                    </uib-accordion>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+        <!-- Spectrum metadata -->
+        <div ng-if="page == 4 && currentSpectrum !== null" class="panel panel-default">
+            <div class="panel-heading">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="panel-body">
+                <div class="lead">
+                    <small>
+                        Spectrum metadata can consist of:
+
+                        <ul>
+                            <li>Sample properties</li>
+                            <li>Instrument (e.g. chromatograph, column and spectrometer) manufacturer and model</li>
+                            <li>Analytical methods and conditions</li>
+                            <li>Authors, contributors, publication, license, etc.</li>
+                        </ul>
+
+                        While including such metadata is optional, it enables users to more easily find your records and
+                        for more complete query results.  In addition, providing accurate values for the recommended
+                        metadata will likely increase the overall score of your submitted spectrum.
+                    </small>
+                </div>
+                <br />
+
+                <div id="metadata_editor" style="margin-top: 10px;">
+                    <div ng-repeat="meta in currentSpectrum.meta">
+                        <div class="col-sm-5 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
+                            <input type="text"
+                                   ng-model="meta.name"
+                                   placeholder="Metadata Name"
+                                   class="form-control" />
+                        </div>
+                        <div class="col-sm-5 form-group">
+                            <input type="text"
+                                   ng-model="meta.value"
+                                   ng-disabled="!meta.name || meta.name == ''"
+                                   placeholder="Metadata Value"
+                                   class="form-control" />
+                        </div>
+                        <div class="col-sm-2 form-group">
+                            <button ng-click="removeMetadataField($index)" class="btn btn-default"
+                                    tooltip="Remove this metadata field"><i class="fa fa-minus-square"></i></button>
+                            <button ng-click="applyMetadataToAll($index)" class="btn btn-default"
+                                    tooltip="Copy this metadata value to all spectra"><i class="fa fa-files-o"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-default btn-xs" ng-click="addMetadataField()" tooltip="Add a new metadata field">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+        <!-- Spectrum tags -->
+        <div ng-if="page == 5 && currentSpectrum !== null" class="panel panel-default">
+            <div class="panel-heading">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li><strong style="font-size: 1.2em;">Tags</strong></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="panel-body">
+                <p class="lead">
+                    <small>
+                    Tags provide an easy way to categorize spectra and quickly query by these groups.  For example, there
+                    are tags for GC-MS and LC-MS spectra, as well as for spectral libraries such as MassBank and HMDB.
+                    <br /><br />
+                    Please add any tags here that you consider useful identifiers for this spectrum.
+                    </small>
+                </p>
+
+                <tags-input ng-model="currentSpectrum.tags"
+                            min-length="3"
+                            replace-spaces-with-dashes="false">
+
+                    <auto-complete source="loadTags($query)"
+                                   min-length="1"
+                                   load-on-empty="true"
+                                   load-on-down-arrow="true"
+                                   load-on-focus="true"></auto-complete>
+                </tags-input>
+            </div>
+
+            <div class="panel-footer">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+        <!-- Summary -->
+        <div ng-if="page == 6 && currentSpectrum !== null" class="panel panel-default">
+            <div class="panel-heading">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li><strong style="font-size: 1.2em;">Summary</strong></li>
+                        <li class="next"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="panel-body">
+                <p class="lead">
+                    <small>Please verify the provided information before uploading:</small>
+                </p>
+
+                <div class="page-header"><h3>Mass Spectrum</h3></div>
+                <div class="masspec-modal">
+                    <mass-spec ng-model="currentSpectrum.ions"></mass-spec>
+                </div>
+
+                <div class="page-header"><h3>Compound Information</h3></div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>InChIKey</td>
+                            <td>
+                                <span ng-if="currentSpectrum.inchiKey">{{currentSpectrum.inchiKey}}</span>
+                                <span ng-if="!currentSpectrum.inchiKey"><i>None Provided</i></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>InChI</td>
+                            <td style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <span ng-if="currentSpectrum.inchi">{{currentSpectrum.inchi}}</span>
+                                <span ng-if="!currentSpectrum.inchi"><i>None Provided</i></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SMILES</td>
+                            <td>
+                                <span ng-if="currentSpectrum.smiles">{{currentSpectrum.smiles}}</span>
+                                <span ng-if="!currentSpectrum.smiles"><i>None Provided</i></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="page-header"><h3>Spectrum Metadata</h3></div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="meta in currentSpectrum.meta">
+                        <td>{{meta.name}}</td>
+                        <td>{{meta.value}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="page-header"><h3>Tags</h3></div>
+                <ul>
+                    <li ng-if="currentSpectrum.tags.length == 0"><i>None Provided</i></li>
+                    <li ng-repeat="tag in currentSpectrum.tags">{{tag.text}}</li>
+                </ul>
+            </div>
+
+            <div class="panel-footer">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="next"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+    </div>
+</div>

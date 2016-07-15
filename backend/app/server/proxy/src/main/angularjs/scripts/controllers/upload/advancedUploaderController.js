@@ -4,12 +4,12 @@
 
 (function () {
 	'use strict';
-	CleanSpectraDataController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TaggingService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
+    AdvancedUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TaggingService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
 	angular.module('moaClientApp')
-		.controller('CleanSpectraDataController', CleanSpectraDataController);
+		.controller('AdvancedUploaderController', AdvancedUploaderController);
 
 	/* @ngInject */
-	function CleanSpectraDataController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService,
+	function AdvancedUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService,
 	                                    TaggingService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
 		// Loaded spectra data/status
 		$scope.spectraLoaded = 0;
@@ -57,7 +57,7 @@
 			$scope.spectra = [];
 
 			// Clear pool
-			AsyncService.resetPool();
+            AsyncService.resetPool();
 
 			// Scroll to top of the page
 			$window.scrollTo(0, 0);
@@ -489,7 +489,7 @@
 					//spectrum.$batchSave(spectrum.submitter.access_token);
 				}, $scope.spectrum);
 
-				$location.path('/uploadstatus');
+				$location.path('/upload/status');
 			}
 		};
 
