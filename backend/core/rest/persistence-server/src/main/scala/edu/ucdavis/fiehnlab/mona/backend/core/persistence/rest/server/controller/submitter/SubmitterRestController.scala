@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 import java.util.Collections
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
+import javax.validation.Valid
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
@@ -61,7 +62,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
   @ResponseBody
-  override def put(id: String, submitter: Submitter): Future[ResponseEntity[Submitter]] = {
+  override def put(@PathVariable("id") id: String, @Valid @RequestBody submitter: Submitter): Future[ResponseEntity[Submitter]] = {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
