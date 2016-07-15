@@ -118,31 +118,31 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
       writer.write(x.asInstanceOf[Spectrum], outputMessage.getBody)
     }
 
-
     t match {
       case y:Spectrum =>
         write(y)
+
       case x: Iterable[_] =>
         x.foreach { y =>
           write(y)
         }
+
       case x: Wrappers.JIterableWrapper[_] =>
         x.foreach { y =>
           write(y)
         }
+
       case x: util.Collection[_] =>
         x.asScala.foreach { y =>
           write(y)
         }
+
       case _ =>
         logger.info(s"what the fuck is this ${t}")
     }
-
-
   }
 
   override def supports(clazz: Class[_]): Boolean = {
-
     clazz match {
 
       case q if q == classOf[Spectrum] => true
@@ -155,5 +155,4 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
         false
     }
   }
-
 }
