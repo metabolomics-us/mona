@@ -25,11 +25,20 @@
 
             //uploading a mass spec
             .when('/upload', {
-                templateUrl: 'views/spectra/upload/cleanAndUploadSpectra.html',
-                controller: 'CleanSpectraDataController'
+                templateUrl: 'views/spectra/upload/upload.html'
             })
 
-            .when('/uploadstatus', {
+            .when('/upload/basic', {
+                templateUrl: 'views/spectra/upload/basicUploader.html',
+                controller: 'BasicUploaderController'
+            })
+
+            .when('/upload/advanced', {
+                templateUrl: 'views/spectra/upload/advancedUploader.html',
+                controller: 'AdvancedUploaderController'
+            })
+
+            .when('/upload/status', {
                 templateUrl: 'views/spectra/upload/uploadStatus.html',
                 controller: 'SpectraUploadController'
             })

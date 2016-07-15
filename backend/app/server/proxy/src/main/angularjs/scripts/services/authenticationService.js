@@ -46,6 +46,7 @@
          */
         this.login = function(userName, password) {
             self.loggingIn = true;
+
 	        var req = {
 		        method: 'POST',
 		        url: REST_BACKEND_SERVER + '/rest/auth/login',
@@ -54,6 +55,7 @@
 		        },
 		        data: {username: userName, password: password}
 	        };
+
 			$log.info(req);
 	        $http(req).then(handleLoginSuccess, handleLoginFail);
 
@@ -129,6 +131,5 @@
                 return null;
             }
         };
-
     }
 })();
