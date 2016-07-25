@@ -17,10 +17,10 @@
     <module>io</module>
     <module>amqp</module>
     <module>persistence</module>
+    <module>statistics</module>
     <module>auth</module>
     <module>rest</module>
     <module>client</module>
-    <module>statistics</module>
     <module>workflow</module>
     <module>curation</module>
     <module>bootstrap</module>
