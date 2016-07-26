@@ -1,8 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.app
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.RestServerConfig
 import org.springframework.beans.factory.annotation.Value
@@ -20,9 +22,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableDiscoveryClient
 @Import(Array(classOf[RestServerConfig],classOf[JWTAuthenticationConfig],classOf[SwaggerConfig]))
 @EnableSwagger2
-class RestPersistenceServer
+class RestPersistenceServer {
 
-object RestPersistenceServer extends App{
+  @Bean
+  def loginService: LoginService = new MongoLoginService
+}
+
+object RestPersistenceServer extends App {
   System.setProperty("spring.config.name", "persistence-service")
   new SpringApplication(classOf[RestPersistenceServer]).run()
 }
