@@ -49,9 +49,9 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
   override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
 
   override def addResourceHandlers(registry: ResourceHandlerRegistry): Unit = {
-    // Add handler for all static files
+    // Add handler for all static files and REST endpoints
     registry.addResourceHandler("/**/*.css", "/**/*.html", "/**/*.js", "/**/*.json", "/**/*.jpg", "/**/*.jpeg",
-        "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2")
+        "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2", "/rest/**")
       .addResourceLocations(resourceProperties.getStaticLocations: _*)
       .setCachePeriod(resourceProperties.getCachePeriod)
 
