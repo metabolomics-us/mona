@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.web.client.{HttpClientErrorException, RestOperations, RestTemplate}
+import org.springframework.web.client.{HttpStatusCodeException, RestOperations}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -112,7 +112,7 @@ class ClassifierProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     }
 
     catch {
-      case x: HttpClientErrorException =>
+      case x: HttpStatusCodeException =>
         logger.warn(s"received status code ${x.getStatusCode} for inchi ${compound.inchiKey}")
         compound
     }
