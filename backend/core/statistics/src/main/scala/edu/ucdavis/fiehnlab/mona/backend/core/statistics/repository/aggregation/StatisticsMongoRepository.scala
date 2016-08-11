@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.repository.aggregation
+package edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.aggregation
 
 trait StatisticsMongoRepository {
   /**

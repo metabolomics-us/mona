@@ -27,14 +27,10 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>rsql</artifactId>
         </dependency>
 
         <dependency>
@@ -47,13 +43,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>rsql</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
         </dependency>
 
         <dependency>
@@ -73,15 +62,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
             <scope>test</scope>
-
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
-
     </dependencies>
 </project>

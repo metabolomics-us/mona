@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.repository.aggregation
+package edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.aggregation
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.springframework.data

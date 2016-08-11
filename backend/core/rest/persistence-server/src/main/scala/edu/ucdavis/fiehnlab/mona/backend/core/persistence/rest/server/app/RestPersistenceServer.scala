@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.RestServerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -20,7 +21,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
   */
 @SpringBootApplication
 @EnableDiscoveryClient
-@Import(Array(classOf[RestServerConfig],classOf[JWTAuthenticationConfig],classOf[SwaggerConfig]))
+@Import(Array(classOf[RestServerConfig], classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[StatisticsRepositoryConfig]))
 @EnableSwagger2
 class RestPersistenceServer {
 

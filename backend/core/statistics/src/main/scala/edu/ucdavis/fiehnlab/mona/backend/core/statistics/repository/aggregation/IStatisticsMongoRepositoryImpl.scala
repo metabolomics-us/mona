@@ -1,9 +1,10 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.repository.aggregation
+package edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.aggregation
 
 import java.util.LinkedHashMap
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
@@ -11,6 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Repository
+
 import scala.collection.JavaConverters._
 
 @Repository
