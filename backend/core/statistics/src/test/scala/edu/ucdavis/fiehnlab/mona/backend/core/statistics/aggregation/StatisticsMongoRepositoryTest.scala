@@ -1,18 +1,18 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.aggregation
+package edu.ucdavis.fiehnlab.mona.backend.core.statistics.aggregation
 
 import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.{ MongoConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.TestConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.mongo.repository.aggregation.IStatisticsMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.aggregation.IStatisticsMongoRepository
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{TestPropertySource, ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 /**
   * This test extends `edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.SpectrumMongoRepositoryCustomTest`
@@ -37,7 +37,7 @@ class StatisticsMongoRepositoryTest extends WordSpec {
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "Metadata aggregation queries" should  {
 
@@ -50,10 +50,10 @@ class StatisticsMongoRepositoryTest extends WordSpec {
 
       "return the top records in the base metadata group" in {
         assert(msLevel.nonEmpty)
-        assert(msLevel == ("MS2",58) :: Nil)
+        assert(msLevel == ("MS2", 58) :: Nil)
 
         assert(ionMode.nonEmpty)
-        assert(ionMode == ("positive",33) :: ("negative",25) :: Nil)
+        assert(ionMode == ("positive", 33) :: ("negative", 25) :: Nil)
       }
 
       "throw an exception when given a null metadata field name" in {
