@@ -54,7 +54,6 @@
 
                     element.append('<canvas id="' + myId + '"></canvas>');
 
-
                     var sketcher = null;
 
                     //we can only view
@@ -80,30 +79,33 @@
                     var getMoleculeForModel = function(model) {
 
                         // model is array of object, we need to get the first one only
-                        model = model[0];
+                        if (Array.isArray(model)) {
+                            model = model[0];
+                        }
 
                         if (angular.isDefined(model)) {
-                            if (angular.isDefined(model.molFile)) {
+                            if (angular.isDefined(model.molFile) || model.indexOf('M  END') > -1) {
+                                var molFile = angular.isDefined(model.molFile) ? model.molFile : model;
+
                                 try {
-                                    //$log.debug('rendering mol file: \n' + model.molFile);
-                                    if (model.molFile.indexOf('\n') > 0) {
-                                        var mol = ChemDoodle.readMOL("\n" + model.molFile + "\n");
+                                    $log.debug('rendering mol file: \n' + molFile);
+                                    if (molFile.indexOf('\n') > 0) {
+                                        var mol = ChemDoodle.readMOL("\n" + molFile + "\n");
                                         sketcher.loadMolecule(mol);
                                     }
                                     else {
-                                        var mol = ChemDoodle.readMOL(model.molFile);
+                                        var mol = ChemDoodle.readMOL(molFile);
                                         sketcher.loadMolecule(mol);
-
                                     }
                                 } catch (e) {
-                                    $log.warn('problem rendering mol file:\n\n' + model.molFile);
+                                    $log.warn('problem rendering mol file:\n\n' + molFile);
                                 }
 
                                 return 'mol';
                             }
 
                             else {
-                                //$log.debug('converting from inchi: ' + model);
+                                $log.debug('converting from inchi: ' + model);
                                 gwCtsService.convertInchiKeyToMol(model, function(molecule) {
                                     var mol = ChemDoodle.readMOL(molecule);
                                     sketcher.loadMolecule(mol);
@@ -156,12 +158,14 @@
                      * tracks changes to the model and if it's changes attempt to draw the structure
                      */
                     $scope.$watch(function() {
-                        return ngModel.$modelValue;
+                        return $scope.bindModel;
                     }, function(newValue, oldValue) {
-                        if ($scope.readonly === false) {
-                            if (newValue !== oldValue) {
-                                getMoleculeForModel(newValue);
-                            }
+                        if (newValue !== oldValue) {
+                            getMoleculeForModel(newValue);
+                        }
+
+                        else if (newValue.molFile !== oldValue.molFile) {
+                            getMoleculeForModel(newValue);
                         }
                     });
 
