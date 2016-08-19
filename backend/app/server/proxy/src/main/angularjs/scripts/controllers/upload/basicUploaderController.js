@@ -4,12 +4,12 @@
 
 (function () {
     'use strict';
-    BasicUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TaggingService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
+    BasicUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'gwChemifyService', 'TaggingService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
     angular.module('moaClientApp')
         .controller('BasicUploaderController', BasicUploaderController);
 
     /* @ngInject */
-    function BasicUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService,
+    function BasicUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, gwChemifyService,
                                         TaggingService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
 
         $scope.currentSpectrum = null;
@@ -66,6 +66,109 @@
 
 
 
+        $scope.parsePastedSpectrum = function(pastedSpectrum) {
+            $log.debug("Parsing "+ pastedSpectrum);
+
+            $scope.spectrumIons = pastedSpectrum.split(' ').map(function(x) {
+                x = x.split(':');
+                var annotation = '';
+
+                return {
+                    ion: parseFloat(x[0]),
+                    intensity: parseFloat(x[1]),
+                    ionStr: x[0],
+                    intensityStr: x[1],
+                    annotation: annotation,
+                    selected: true
+                }
+            });
+
+            $scope.showIonTable = ($scope.spectrumIons.length < 500);
+            $scope.queryState = 2;
+            $scope.spectraCount = 1;
+            $scope.page = 2;
+
+            $scope.currentSpectrum = spectrum;
+            $scope.showIonTable = $scope.currentSpectrum.ions.length < 500;
+        };
+
+
+
+        function namesToInChIKey(names, callback) {
+            if (names.length == 0) {
+                return null;
+            } else {
+                gwChemifyService.nameToInChIKey(names[0], function(molecule) {
+                    console.log(molecule)
+                    if (molecule !== null) {
+                        callback(molecule);
+                    } else {
+                        namesToInChIKey(names.slice(1));
+                    }
+                }, function(error) {
+                    namesToInChIKey(names.slice(1));
+                });
+            }
+        }
+
+        $scope.retrieveCompoundData = function() {
+            $log.info("Retrieving MOL data...");
+
+            if ($scope.currentSpectrum.inchiKey) {
+                gwCtsService.convertInchiKeyToMol($scope.currentSpectrum.inchiKey, function (molecule) {
+                    if (molecule !== null) {
+                        $scope.currentSpectrum.molFile = molecule;
+                    } else if ($scope.currentSpectrum.inchi) {
+                        gwCtsService.convertInChICodeToMol($scope.currentSpectrum.inchi, function (molecule) {
+                            if (molecule !== null) {
+                                $scope.currentSpectrum.molFile = molecule;
+                            }
+                        });
+                    }
+                });
+            }
+
+            else if ($scope.currentSpectrum.inchi) {
+                gwCtsService.convertInChICodeToMol($scope.currentSpectrum.inchi, function (molecule) {
+                    if (molecule !== null) {
+                        $scope.currentSpectrum.molFile = molecule;
+                    }
+                });
+            }
+
+            else {
+                namesToInChIKey($scope.currentSpectrum.names, function(inchiKey) {
+                    if (inchiKey !== null) {
+                        console.log('Found InChIKey: '+ inchiKey)
+                        $scope.currentSpectrum.inchiKey = inchiKey;
+
+                        gwCtsService.convertInchiKeyToMol(inchiKey, function (molecule) {
+                            if (molecule !== null) {
+                                $scope.currentSpectrum.molFile = molecule;
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+
+        $scope.convertMolToInChI = function () {
+            if (angular.isDefined($scope.currentSpectrum.molFile) && $scope.currentSpectrum.molFile !== '') {
+                gwCtsService.convertToInchiKey($scope.currentSpectrum.molFile, function (result) {
+                    console.log(result);
+                    $scope.currentSpectrum.inchiKey = result.inchikey;
+                });
+            }
+        };
+
+        $scope.addName = function () {
+            if ($scope.currentSpectrum.names[$scope.currentSpectrum.names.length - 1] !== '') {
+                $scope.currentSpectrum.names.push('');
+            }
+        };
+
+
         /**
          * Parse spectra
          * @param files
@@ -115,17 +218,6 @@
                                 spectrum.ions[i].relativeIntensity = 100 * spectrum.ions[i].intensity / spectrum.basePeakIntensity;
                             }
 
-                            // Get structure from InChIKey if no InChI is provided
-                            if (angular.isDefined(spectrum.inchiKey) && angular.isUndefined(spectrum.inchi)) {
-                                $log.info("Retrieving MOL data...");
-
-                                gwCtsService.convertInchiKeyToMol(spectrum.inchiKey, function (molecule) {
-                                    if (molecule !== null) {
-                                        spectrum.molFile = molecule;
-                                    }
-                                });
-                            }
-
                             // Remove annotations and origin from metadata
                             spectrum.hiddenMetadata = spectrum.meta.filter(function (metadata) {
                                 return metadata.name === 'origin' || (angular.isDefined(metadata.category) && metadata.category === 'annotation');
@@ -140,12 +232,17 @@
                                 spectrum.meta.push({name: '', value: ''});
                             }
 
+
                             $log.info("Loaded spectrum from file "+ files[0].name);
 
                             $scope.$apply(function() {
                                 $scope.currentSpectrum = spectrum;
-                                $scope.page = 5;
+                                $scope.page = 2;
                                 $scope.showIonTable = $scope.currentSpectrum.ions.length < 500;
+
+                                if (!$scope.currentSpectrum.molFile) {
+                                    $scope.retrieveCompoundData();
+                                }
                             });
                         } else {
                             $log.info("Skipping additional spectrum in file "+ files[0].name);

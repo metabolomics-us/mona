@@ -157,18 +157,26 @@
             <div class="panel-body">
                 <p class="lead">
                     <small>MoNA requires that every spectrum have an associated compound.  This can be accomplished by
-                    providing an InChI Code, SMILES, a MOL/SDF file, or drawing the structure yourself.  You may also
+                    providing an InChI, InChIKey, SMILES, Name, a MOL/SDF file, or drawing the structure yourself.  You may also
                     provide an InChIKey; however, be aware that InChIKeys for predicted structures may not exist in
                     look-up services, and therefore cannot be used.</small>
                 </p>
+                <br />
+
+                <div ng-if="currentSpectrum.molFile" style="text-align: center;">
+                    <div chemical-sketcher readonly="true" width="500"
+                         height="500"
+                         id="compoundViewer"
+                         ng-model="currentSpectrum"></div>
+                </div>
                 <br />
 
                 <div class="row form-group">
                     <div class="col-lg-3"><label>Names</label></div>
                     <div class="col-lg-9">
                         <input type="text"
-                               ng-repeat="name in currentSpectrum.names"
-                               ng-model="name"
+                               ng-repeat="name in currentSpectrum.names track by $index"
+                               ng-model="currentSpectrum.names[$index]"
                                placeholder="Name"
                                class="form-control" />
                         <button type="button" class="btn btn-default btn-xs" ng-click="addName()">+</button>
@@ -195,6 +203,7 @@
                     </div>
                 </div>
 
+                <!--
                 <div class="row form-group">
                     <div class="col-md-3 col-lg-3"><label>SMILES</label></div>
                     <div class="col-md-9 col-lg-9">
@@ -203,6 +212,11 @@
                                placeholder="SMILES"
                                class="form-control" />
                     </div>
+                </div>
+                -->
+
+                <div class="form-group text-center">
+                    <button ng-click="retrieveCompoundData()" class="btn btn-primary">Update Compound</button>
                 </div>
 
                 <div class="row form-group">
@@ -224,11 +238,11 @@
 
                             <div class="form-group">
                                 <div class="input-group">
-                                            <span class="input-group-btn">
-                                                <span class="btn btn-primary btn-file">
-                                                    Browse&hellip; <input type="file" ng-file-select="parseMolFile($files)" />
-                                                </span>
-                                            </span>
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-primary btn-file">
+                                            Browse&hellip; <input type="file" ng-file-select="parseMolFile($files)" />
+                                        </span>
+                                    </span>
 
                                     <input id="molFile" type="text" class="form-control" ng-model="filenames" readonly />
                                 </div>
@@ -237,8 +251,8 @@
                                 </div>
                             </div>
 
-                                    <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
-                                        file with multiple structures, only the first structure will be read.</span>
+                            <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
+                                file with multiple structures, only the first structure will be read.</span>
 
                             <div class="form-group text-center">
                                 <button ng-click="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
@@ -276,8 +290,107 @@
         </div>
 
 
-        <!-- Spectrum metadata -->
+        <!-- Recommended spectrum metadata -->
         <div ng-if="page == 4 && currentSpectrum !== null" class="panel panel-default">
+            <div class="panel-heading">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="panel-body">
+                <div class="lead">
+                    <small>
+                        Metadata provides a more complete view of a mass spectrum and allows users to more easily find
+                        spectra of importance.  It also improves the accuracy of the MoNA auto-curation and can improve
+                        the spectrum's score.  The following are a list of <b>strongly recommended</b> metadata to provide.
+                    </small>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <div>
+                        <label>Source Introduction / Chromatography Type:</label> <br />
+                        <input type="radio" name="chromatography" value="Liquid Chromatography (LC)" /> Liquid Chromatography (LC) <br />
+                        <input type="radio" name="chromatography" value="Gas Chromatography (GC)" /> Gas Chromatography (GC) <br />
+                        <input type="radio" name="chromatography" value="Direct Injection/Infusion (DI)" /> Direct Injection/Infusion (DI) <br />
+                        <input type="radio" name="chromatography" value="Capillary Electrophoresis (CE)" /> Capillary Electrophoresis (CE) <br />
+                    </div>
+                    <br />
+
+                    <div>
+                        <label>Ionization Method:</label> <br />
+                        <input type="radio" name="ionization" value="Atmospheric Pressure Chemical Ionization (APCI)" /> Atmospheric Pressure Chemical Ionization (APCI) <br />
+                        <input type="radio" name="ionization" value="Chemical Ionization (CI)" /> Chemical Ionization (CI) <br />
+                        <input type="radio" name="ionization" value="Electron Impact (EI)" /> Electron Impact (EI) <br />
+                        <input type="radio" name="ionization" value="Electrospray Ionization (ESI)" /> Electrospray Ionization (ESI) <br />
+                        <input type="radio" name="ionization" value="Fast Atom Bombardment (FAB)" /> Fast Atom Bombardment (FAB) <br />
+                        <input type="radio" name="ionization" value="Matrix Assisted Laser Desorption Ionization (MALDI)" /> Matrix Assisted Laser Desorption Ionization (MALDI) <br />
+                    </div>
+                    <br />
+
+                    <div>
+                        <label>Mass Analyzer / Detector Type:</label> <br />
+                        <input type="checkbox" name="ionanalyzer" value="b" /> Magnetic Sector (B) <br />
+                        <input type="checkbox" name="ionanalyzer" value="e" /> Electrostatic Sector (E)<br />
+                        <input type="checkbox" name="ionanalyzer" value="q" /> Quadrupole (Q) <br />
+                        <input type="checkbox" name="ionanalyzer" value="tof" /> Time of Flight (TOF)<br />
+                        <input type="checkbox" name="ionanalyzer" value="it" /> Ion Trap (IT) <br />
+                        <input type="checkbox" name="ionanalyzer" value="ft" /> Fourier Transform (FT)<br />
+                    </div>
+                    <br />
+
+                    <div>
+                        <label>Polarity / Ion Mode:</label> <br />
+                        <input type="radio" name="ionmode" value="Positive" /> Positive <br />
+                        <input type="radio" name="ionmode" value="Negative" /> Negative<br />
+                    </div>
+                    <br />
+
+                    <div>
+                        <label>MS Type / Level:</label> <br />
+                        <input type="radio" name="mstype" value="MS"/> MS <br />
+                        <input type="radio" name="mstype" value="MS1"/> MS1 <br />
+                        <input type="radio" name="mstype" value="MS2"/> MS2 <br />
+                        <input type="radio" name="mstype" value="MS3"/> MS3 <br />
+                        <input type="radio" name="mstype" value="MS4"/> MS4 <br />
+                    </div>
+                    <br />
+
+                    <div>
+                        <label>Precursor m/z:</label> <br />
+                        <input type="text" class="form-control" />
+
+                        <label>Precursor Type:</label> <br />
+                        <input type="text" class="form-control" />
+                    </div>
+                    <br />
+                    <br />
+
+                    <div>
+                        <label>Authors (comma-separated):</label> <br />
+                        <input type="text" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="panel-footer">
+                <nav>
+                    <ul class="pager" style="margin: 0px !important;">
+                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+        <!-- Recommended spectrum metadata -->
+        <div ng-if="page == 5 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
@@ -336,6 +449,7 @@
                 </div>
             </div>
 
+
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
@@ -348,7 +462,7 @@
 
 
         <!-- Spectrum tags -->
-        <div ng-if="page == 5 && currentSpectrum !== null" class="panel panel-default">
+        <div ng-if="page == 6 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
@@ -393,7 +507,7 @@
 
 
         <!-- Summary -->
-        <div ng-if="page == 6 && currentSpectrum !== null" class="panel panel-default">
+        <div ng-if="page == 7 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
@@ -415,6 +529,14 @@
                 </div>
 
                 <div class="page-header"><h3>Compound Information</h3></div>
+                <div ng-if="currentSpectrum.molFile" style="text-align: center;">
+                    <div chemical-sketcher readonly="true" width="250"
+                         height="250"
+                         id="compoundSummaryViewer"
+                         ng-model="currentSpectrum"></div>
+                </div>
+
+
                 <table class="table table-striped">
                     <thead>
                         <tr>
