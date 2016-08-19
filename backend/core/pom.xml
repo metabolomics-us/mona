@@ -16,8 +16,8 @@
     <module>domain</module>
     <module>io</module>
     <module>amqp</module>
-    <module>statistics</module>
     <module>persistence</module>
+    <module>statistics</module>
     <module>auth</module>
     <module>rest</module>
     <module>client</module>
