@@ -34,6 +34,7 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- test dependencies -->
