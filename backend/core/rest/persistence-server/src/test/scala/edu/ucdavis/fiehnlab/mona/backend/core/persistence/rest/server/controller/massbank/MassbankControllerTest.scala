@@ -17,6 +17,7 @@ import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import com.jayway.restassured.RestAssured._
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 
 import scala.io.Source
 
@@ -36,11 +37,11 @@ class MassbankControllerTest extends AbstractSpringControllerTest with Eventuall
   @Autowired
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "MassbankControllerTest" must {
 
-    RestAssured.baseURI = s"http://localhost:${port}/rest"
+    RestAssured.baseURI = s"http://localhost:$port/rest"
 
     val src: Source = Source.fromURL(getClass.getResource(s"/massbank/singleRecord.txt"))
 

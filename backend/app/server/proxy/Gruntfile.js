@@ -391,6 +391,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-angular-templates');
     grunt.loadNpmTasks('grunt-ng-annotate');
+
     /**
      * which server do we want to use for our application
      */
@@ -400,7 +401,7 @@ module.exports = function (grunt) {
             grunt.file.copy('serverDeploy.js', 'src/main/angularjs/scripts/server.js');
         }
         else if (target === 'local') {
-            grunt.file.copy('local.js', 'src/main/angularjs/scripts/server.js');
+            grunt.file.copy('serverLocal.js', 'src/main/angularjs/scripts/server.js');
         }
         else {
             //

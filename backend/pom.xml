@@ -117,6 +117,12 @@
             </dependency>
 
             <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>statistics</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>edu.ucdavis.fiehnlab.splash</groupId>
                 <artifactId>core</artifactId>
                 <version>1.8</version>

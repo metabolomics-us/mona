@@ -6,11 +6,12 @@ import javax.servlet.http.HttpServletRequest
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
-import org.springframework.http.ResponseEntity
+import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.validation.annotation.Validated
@@ -50,23 +51,31 @@ class UserController extends GenericRESTController[User] {
   }
 
   /**
-    * saves the provided spectrum at the given path
+    * saves the provided user at the given path
     *
     * @param id
     * @param user
     * @return
     */
+  @Async
+  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
+  @ResponseBody
   override def put(@PathVariable("id") id: String, @Validated @RequestBody user: User): Future[ResponseEntity[User]] = {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
+    val loginInfo: LoginInfo = loginService.info(token)
 
-    println("YAYAYA")
-    println(token)
-    println(loginService.info(token).roles.asScala.mkString(", "))
-
-    if (loginService.info(token).roles.contains("ADMIN")) {
+    if (loginInfo.roles.contains("ADMIN")) {
+      // Admins can update any user
       super.put(id, user)
     } else {
-      super.put(id, user.copy(roles = Collections.emptyList()))
+      // Users can only update their own accounts
+      val existingUser: User = userRepository.findOne(id)
+
+      if (loginInfo.username == existingUser.username) {
+        super.put(id, user.copy(roles = Collections.emptyList()))
+      } else {
+        new AsyncResult[ResponseEntity[User]](new ResponseEntity[User](HttpStatus.FORBIDDEN))
+      }
     }
   }
 

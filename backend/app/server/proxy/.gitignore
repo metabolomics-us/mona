@@ -1,3 +1,4 @@
 bower_components
 .sass-cache/
 coverage
+server.js

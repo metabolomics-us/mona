@@ -151,6 +151,7 @@ public class SwaggerRedirectFilter extends ZuulFilter {
                                  HttpServletRequest request, MultiValueMap<String, String> headers,
                                  MultiValueMap<String, String> params, InputStream requestEntity)
             throws Exception {
+
         Map<String, Object> info = this.helper.debug(verb, uri, headers, params,
                 requestEntity);
         URL host = RequestContext.getCurrentContext().getRouteHost();
@@ -301,6 +302,4 @@ public class SwaggerRedirectFilter extends ZuulFilter {
             throw new RuntimeException(ex);
         }
     }
-
-
 }

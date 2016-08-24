@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 @Component
 class FindDirectory {
 
-  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}≈")
+  @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}")
   private val tempDir:String = null
 
   /**
@@ -24,5 +24,4 @@ class FindDirectory {
       s"${tempDir}${System.getProperty("file.separator")}mona"
     }
   }
-
 }

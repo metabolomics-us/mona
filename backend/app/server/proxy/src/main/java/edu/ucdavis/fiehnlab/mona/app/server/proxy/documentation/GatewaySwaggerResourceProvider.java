@@ -43,7 +43,6 @@ public class GatewaySwaggerResourceProvider implements SwaggerResourcesProvider 
 
             List<ServiceInstance> services = discoveryClient.getInstances(serviceId);
 
-
             if (services.size() > 0) {
                 ServiceInstance serviceInstance = services.get(0);
 
@@ -55,10 +54,8 @@ public class GatewaySwaggerResourceProvider implements SwaggerResourcesProvider 
                 if (routes.get(newRoute) == null) {
                     log.info("adding new route: " + newRoute + " to location " + location);
                     routeLocator.addRoute(newRoute, location);
-
                 }
             }
-
         });
 
         resources.addAll(cache.values());
@@ -72,6 +69,4 @@ public class GatewaySwaggerResourceProvider implements SwaggerResourcesProvider 
         swaggerResource.setSwaggerVersion(version);
         return swaggerResource;
     }
-
-
 }

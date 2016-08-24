@@ -120,12 +120,9 @@
 
             //if we have  a key or an inchi
             if (spectrumObject.inchiKey !== null && spectrumObject.inchi !== null) {
-
                 self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData).then(function(submittedSpectra) {
-
                     //assign our result
                     defer.resolve(submittedSpectra);
-
                 });
             }
 
