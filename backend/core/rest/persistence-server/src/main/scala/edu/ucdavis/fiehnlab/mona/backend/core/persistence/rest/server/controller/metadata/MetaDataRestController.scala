@@ -26,7 +26,6 @@ class MetaDataRestController {
   @Autowired
   val mongoOperations: MongoOperations = null
 
-
   /**
     * this is the utilized repository, doing all the heavy lifting
     */
@@ -43,12 +42,15 @@ class MetaDataRestController {
       group("metaData.name")
     )
 
-    val result:List[String] = mongoOperations.aggregate(aggregations, "SPECTRUM", classOf[DBObject]).asScala.collect{ case x:DBObject => x.get("_id").toString}.toList
+    val result: List[String] = mongoOperations.aggregate(aggregations, "SPECTRUM", classOf[DBObject]).asScala.collect{ case x: DBObject => x.get("_id").toString}.toList
 
-    new AsyncResult[util.List[String]](
-      result.asJava
-    )
+    new AsyncResult[util.List[String]](result.asJava)
+  }
 
+  @RequestMapping(path = Array("/names/search"), method = Array(RequestMethod.POST))
+  @Async
+  def searchMetaDataName(@RequestBody partialMetaDataName: WrappedString): Future[java.util.List[String]] = {
+    null
   }
 
   @RequestMapping(path = Array("/values"), method = Array(RequestMethod.POST))
@@ -61,10 +63,14 @@ class MetaDataRestController {
       group("metaData.value")
     )
 
-    val result:List[Any] = mongoOperations.aggregate(aggregations, "SPECTRUM", classOf[DBObject]).asScala.collect{ case x:DBObject => x.get("_id")}.toList
+    val result: List[Any] = mongoOperations.aggregate(aggregations, "SPECTRUM", classOf[DBObject]).asScala.collect{ case x: DBObject => x.get("_id")}.toList
 
-    new AsyncResult[util.List[Any]](
-      result.asJava
-    )
+    new AsyncResult[util.List[Any]](result.asJava)
+  }
+
+  @RequestMapping(path = Array("/values/search"), method = Array(RequestMethod.GET))
+  @Async
+  def searchMetaDataValues(@RequestBody metaDataName: WrappedString, @RequestBody partialMetaDataValue: WrappedString): Future[java.util.List[String]] = {
+    null
   }
 }

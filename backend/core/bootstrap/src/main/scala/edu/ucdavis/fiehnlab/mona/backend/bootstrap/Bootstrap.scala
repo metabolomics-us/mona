@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.bootstrap
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.bootstrap.service.BootstrapDownloaderService
+import edu.ucdavis.fiehnlab.mona.backend.bootstrap.service.{BootstrapAuthenticationService, BootstrapDownloaderService}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.config.DownloadConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.{ApplicationArguments, ApplicationRunner, SpringApplication}
@@ -18,7 +18,13 @@ class Bootstrap extends ApplicationRunner with LazyLogging {
   @Autowired
   val downloaderService: BootstrapDownloaderService = null
 
+  @Autowired
+  val authenticationService: BootstrapAuthenticationService = null
+
   override def run(applicationArguments: ApplicationArguments): Unit = {
+    // Add admin accounts
+    authenticationService.createAdminAccounts()
+
     // Configure downloader
     downloaderService.createPredefinedQueries()
   }

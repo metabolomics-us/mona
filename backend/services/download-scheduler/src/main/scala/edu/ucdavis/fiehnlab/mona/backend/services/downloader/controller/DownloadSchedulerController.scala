@@ -46,12 +46,19 @@ class DownloadSchedulerController extends LazyLogging {
   @RequestMapping(path = Array("/retrieve/{id}"), method = Array(RequestMethod.GET))
   @Async
   def download(@PathVariable("id") id: String, request: HttpServletRequest): Future[ResponseEntity[InputStreamResource]] = {
+
+    logger.info(s"Starting download of $id...")
+
     val queryExport: QueryExport = queryExportRepository.findOne(id)
 
     if (queryExport == null) {
+      logger.info(s"\t-> Download object $id does not exist!")
+
       throw new NoSuchRequestHandlingMethodException(request)
     } else {
       val exportPath: Path = Paths.get(exportDir, queryExport.exportFile)
+
+      logger.info(s"\t-> Attempting to download file ${exportPath.toAbsolutePath.toString}...")
 
       if (Files.exists(exportPath)) {
         new AsyncResult[ResponseEntity[InputStreamResource]](
@@ -63,6 +70,8 @@ class DownloadSchedulerController extends LazyLogging {
             .body(new InputStreamResource(Files.newInputStream(exportPath)))
         )
       } else {
+        logger.info(s"\t-> Download file ${exportPath.toAbsolutePath.toString} does not exist!")
+
         throw new NoSuchRequestHandlingMethodException(request)
       }
     }

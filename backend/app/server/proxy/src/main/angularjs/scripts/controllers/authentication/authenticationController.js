@@ -29,7 +29,7 @@
         };
 
         self.isAdmin = function() {
-            if (AuthenticationService.isLoggedIn()) {
+            if (AuthenticationService.isLoggedIn() && angular.isDefined($rootScope.currentUser.roles)) {
                 for (var i = 0; i < $rootScope.currentUser.roles.length; i++) {
                     if ($rootScope.currentUser.roles[i].authority === ADMIN_ROLE_NAME)
                         return true;

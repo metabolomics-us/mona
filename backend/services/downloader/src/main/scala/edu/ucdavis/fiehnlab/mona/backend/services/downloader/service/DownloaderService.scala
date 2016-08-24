@@ -53,7 +53,7 @@ class DownloaderService extends LazyLogging {
 
     if (!directory.exists()) {
       if (!directory.mkdirs()) {
-        throw new FileNotFoundException("was not able to create storage directory at: ${downloadPath}")
+        throw new FileNotFoundException(s"was not able to create storage directory at: $exportDir")
       }
     }
 
@@ -71,9 +71,9 @@ class DownloaderService extends LazyLogging {
     // Generate export filenames
     val basename: String = buildExportBasename(label, export.emailAddress)
 
-    val queryFilename: String = s"$basename-query.txt"
-    val exportFilename: String = s"$basename.${export.format}"
-    val compressedExportFilename: String = s"$basename-${export.format}.zip"
+    val queryFilename: String = s"MoNA-export-$basename-query.txt"
+    val exportFilename: String = s"MoNA-export-$basename.${export.format}"
+    val compressedExportFilename: String = s"MoNA-export-$basename-${export.format}.zip"
 
 
     // Export query string
