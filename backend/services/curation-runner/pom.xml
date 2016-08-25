@@ -17,7 +17,6 @@
 
 
     <dependencies>
-
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>curation</artifactId>
@@ -27,7 +26,6 @@
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
             <artifactId>api-server</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
