@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component
 @SpringBootApplication
 @EnableWebSecurity
 @EnableDiscoveryClient
-@Import(Array(classOf[RestClientConfig],classOf[CurationConfig]))
+@Import(Array(classOf[RestClientConfig], classOf[CurationConfig]))
 @Order(1)
 class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging {
 

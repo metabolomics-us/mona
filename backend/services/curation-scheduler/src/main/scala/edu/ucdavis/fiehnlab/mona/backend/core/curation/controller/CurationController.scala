@@ -8,11 +8,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import io.swagger.annotations.ApiModel
+import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.web.bind.annotation.{PathVariable, RequestMapping, RequestParam, RestController}
+import org.springframework.web.bind.annotation._
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
 
 import scala.collection.JavaConverters._
@@ -32,6 +33,9 @@ class CurationController {
 
   @Autowired
   val curationService: CurationService = null
+
+  @Autowired
+  val curationWorkflow: ItemProcessor[Spectrum, Spectrum] = null
 
   /**
     * schedules the spectra with the specified id for curation
@@ -86,6 +90,13 @@ class CurationController {
     }
   }
 
+  /**
+    * curate a single spectrum
+    */
+  @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
+  def curateSpectrum(@RequestBody spectrum: Spectrum): Future[ResponseEntity[Spectrum]] = {
+    new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity(curationWorkflow.process(spectrum), HttpStatus.OK))
+  }
 }
 
 @ApiModel
