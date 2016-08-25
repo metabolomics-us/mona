@@ -42,6 +42,7 @@ class ClassifierProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   def classify(compound: Compound): Compound = {
     val url = s"http://classyfire.wishartlab.com/entities/${compound.inchiKey}.json"
     logger.info(s"invoking url $url")
+    
     try {
       val result: ResponseEntity[Classifier] = restOperations.getForEntity(url, classOf[Classifier])
 
@@ -52,47 +53,47 @@ class ClassifierProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         val buffer: ArrayBuffer[MetaData] = ArrayBuffer()
 
         if (classifier.kingdom != null)
-          buffer += MetaData("classification", computed = true, hidden = false, "kingdom", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", classifier.kingdom.name)
+          buffer += MetaData("classification", computed = true, hidden = false, "kingdom", null, null, url, classifier.kingdom.name)
 
         if (classifier.`class` != null)
-          buffer += MetaData("classification", computed = true, hidden = false, "class", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", classifier.`class`.name)
+          buffer += MetaData("classification", computed = true, hidden = false, "class", null, null, url, classifier.`class`.name)
 
         if (classifier.subclass != null)
-          buffer += MetaData("classification", computed = true, hidden = false, "subclass", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", classifier.subclass.name)
+          buffer += MetaData("classification", computed = true, hidden = false, "subclass", null, null, url, classifier.subclass.name)
 
         if (classifier.superclass != null)
-          buffer += MetaData("classification", computed = true, hidden = false, "superclass", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", classifier.superclass.name)
+          buffer += MetaData("classification", computed = true, hidden = false, "superclass", null, null, url, classifier.superclass.name)
 
         if (classifier.alternative_parents != null) {
           classifier.alternative_parents.foreach { parent =>
-            buffer += MetaData("classification", computed = true, hidden = false, "alternative parent", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", parent.name)
+            buffer += MetaData("classification", computed = true, hidden = false, "alternative parent", null, null, url, parent.name)
           }
         }
 
         if (classifier.intermediate_nodes != null) {
           var level = 0
           classifier.intermediate_nodes.foreach { parent =>
-            buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level $level", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", parent.name)
+            buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level $level", null, null, url, parent.name)
             level = level + 1
           }
         }
 
         if (classifier.predicted_lipidmaps_terms != null) {
           classifier.predicted_lipidmaps_terms.foreach { term =>
-            buffer += MetaData("classification", computed = true, hidden = false, "predicted lipidmaps", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", term)
+            buffer += MetaData("classification", computed = true, hidden = false, "predicted lipidmaps", null, null, url, term)
           }
         }
 
 
         if (classifier.substituents != null) {
           classifier.substituents.foreach { term =>
-            buffer += MetaData("classification", computed = true, hidden = false, "substituents", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", term)
+            buffer += MetaData("classification", computed = true, hidden = false, "substituents", null, null, url, term)
           }
         }
 
 
         if(classifier.direct_parent != null && classifier.direct_parent.name != null) {
-          buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, "http://classyfire.wishartlab.com/entities/QASFUMOKHFSJGL-LAFRSMQTSA-N", classifier.direct_parent.name)
+          buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, url, classifier.direct_parent.name)
         }
 
 

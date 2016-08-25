@@ -39,6 +39,8 @@ class CurationScheduler extends WebSecurityConfigurerAdapter {
   @Autowired
   val restSecurityService: RestSecurityService = null
 
+
+
   /**
     * only admins can schedule curations in the system
     *
@@ -58,7 +60,9 @@ class CurationScheduler extends WebSecurityConfigurerAdapter {
     * @param web
     */
   override def configure(web: WebSecurity): Unit = {
-    web.ignoring().antMatchers(HttpMethod.GET, "/*")
+    web.ignoring()
+      .antMatchers(HttpMethod.GET, "/*")
+      .antMatchers(HttpMethod.POST, "/rest/curation")
   }
 }
 
