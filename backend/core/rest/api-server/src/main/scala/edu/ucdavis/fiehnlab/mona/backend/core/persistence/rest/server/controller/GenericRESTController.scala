@@ -8,7 +8,8 @@ import java.util.concurrent.Future
 import javax.servlet.{ServletRequest, ServletResponse}
 import javax.validation.Valid
 
-import org.springframework.data.domain.PageRequest
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
+import org.springframework.data.domain.{Page, PageRequest, Pageable}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -26,7 +27,9 @@ import scala.collection.JavaConverters._
   */
 abstract class GenericRESTController[T] {
 
-  /**
+  var fetchSize:Int=50
+
+    /**
     * utilized repository
     *
     * @return
@@ -56,7 +59,12 @@ abstract class GenericRESTController[T] {
         }
       }
       else {
-        getRepository.findAll().asScala
+        new DynamicIterable[T,String]("",fetchSize) {
+          /**
+            * loads more data from the server for the given query
+            */
+          override def fetchMoreData(query: String, pageable: Pageable): Page[T] =getRepository.findAll(pageable)
+        }.asScala
       }
     }
 
