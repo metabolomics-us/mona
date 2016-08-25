@@ -72,6 +72,7 @@
                     sketcher.specs.atoms_useJMOLColors = true;
                     sketcher.specs.bonds_clearOverlaps_2D = true;
 
+
                     /**
                      * checks if our model has a molFile attribute or assumes that it's an inchiKey
                      * @param model spectrum object or inchi key
@@ -89,6 +90,7 @@
 
                                 try {
                                     $log.debug('rendering mol file: \n' + molFile);
+
                                     if (molFile.indexOf('\n') > 0) {
                                         var mol = ChemDoodle.readMOL("\n" + molFile + "\n");
                                         sketcher.loadMolecule(mol);
@@ -97,8 +99,10 @@
                                         var mol = ChemDoodle.readMOL(molFile);
                                         sketcher.loadMolecule(mol);
                                     }
+                                    sketcher.repaint();
                                 } catch (e) {
                                     $log.warn('problem rendering mol file:\n\n' + molFile);
+                                    $log.warn(e);
                                 }
 
                                 return 'mol';
@@ -129,30 +133,30 @@
                     /**
                      * get the actual molecule information and tell our parent scope that this value needs updating. Obviously in case of a read only sketcher we ignore it
                      */
-                    if ($scope.readonly === false) {
-                        sketcher.click = function() {
-                            //make sure everything is in the angular context
-                            $scope.$apply(
-                              function() {
-                                  var mol = sketcher.getMolecule();
-                                  var molFile = ChemDoodle.writeMOL(mol);
-
-                                  //$log.debug('received click event and trying to generate inchi for: ' + molFile);
-                                  //gwCtsService.convertToInchiKey(molFile, function (result) {
-                                  //
-                                  //    //$log.debug('received result: ' + result);
-                                  //    $scope.bindModel = result.inchikey;
-                                  //
-                                  //});
-
-                                  console.log(molFile);
-
-                                  // Export as MOL file
-                                  $scope.bindModel = molFile;
-                              }
-                            );
-                        };
-                    }
+                    // if ($scope.readonly === false) {
+                    //     sketcher.click = function() {
+                    //         //make sure everything is in the angular context
+                    //         $scope.$apply(
+                    //           function() {
+                    //               var mol = sketcher.getMolecule();
+                    //               var molFile = ChemDoodle.writeMOL(mol);
+                    //
+                    //               //$log.debug('received click event and trying to generate inchi for: ' + molFile);
+                    //               //gwCtsService.convertToInchiKey(molFile, function (result) {
+                    //               //
+                    //               //    //$log.debug('received result: ' + result);
+                    //               //    $scope.bindModel = result.inchikey;
+                    //               //
+                    //               //});
+                    //
+                    //               console.log(molFile);
+                    //
+                    //               // Export as MOL file
+                    //               $scope.bindModel = molFile;
+                    //           }
+                    //         );
+                    //     };
+                    // }
 
                     /**
                      * tracks changes to the model and if it's changes attempt to draw the structure
@@ -161,10 +165,6 @@
                         return $scope.bindModel;
                     }, function(newValue, oldValue) {
                         if (newValue !== oldValue) {
-                            getMoleculeForModel(newValue);
-                        }
-
-                        else if (newValue.molFile !== oldValue.molFile) {
                             getMoleculeForModel(newValue);
                         }
                     });
