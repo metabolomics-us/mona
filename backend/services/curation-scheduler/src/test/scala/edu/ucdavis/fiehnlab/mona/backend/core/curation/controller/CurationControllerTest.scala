@@ -1,18 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 
-import java.io.InputStreamReader
+import java.io.{InputStreamReader, StringWriter}
 
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier.ClassifierProcessor
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation.{Bean, Configuration}
@@ -34,6 +34,7 @@ class CurationControllerTest extends AbstractSpringControllerTest {
   "CurationControllerTest" should {
 
     RestAssured.baseURI = s"http://localhost:$port/rest"
+
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {
@@ -94,10 +95,25 @@ class CurationControllerTest extends AbstractSpringControllerTest {
 
 
       "curateAll" in {
-        val result:CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
         assert(result.count == exampleRecords.length)
       }
 
+
+      "curateSpectrum" ignore {
+        val mapper = MonaMapper.create
+        val writer = new StringWriter()
+        mapper.writeValue(writer, exampleRecords.head)
+        val content = writer.toString
+
+        logger.info(s"content: $content")
+        logger.info(exampleRecords.head.toString)
+
+
+        val result: Spectrum = given().contentType("application/json; charset=UTF-8").body(content).when().post("/curation").then().statusCode(200).extract().body().as(classOf[Spectrum])
+
+        assert(result.score == null)
+      }
     }
   }
 }
