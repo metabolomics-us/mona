@@ -100,7 +100,7 @@ class CurationControllerTest extends AbstractSpringControllerTest {
       }
 
 
-      "curateSpectrum" ignore {
+      "curateSpectrum" in {
         val mapper = MonaMapper.create
         val writer = new StringWriter()
         mapper.writeValue(writer, exampleRecords.head)
