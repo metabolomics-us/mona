@@ -156,23 +156,21 @@
 
             <div class="panel-body">
                 <p class="lead">
-                    <small>MoNA requires that every spectrum have an associated compound.  This can be accomplished by
-                    providing an InChI, InChIKey, SMILES, Name, a MOL/SDF file, or drawing the structure yourself.  You may also
-                    provide an InChIKey; however, be aware that InChIKeys for predicted structures may not exist in
-                    look-up services, and therefore cannot be used.</small>
+                    <small>MoNA requires that every spectrum has an associated compound.  This can be accomplished by
+                    providing an InChI, InChIKey, SMILES, Name, a MOL/SDF file, or drawing the structure yourself.  Please
+                    be aware that some names or InChIKeys may not exist in compound databases, and therefore cannot be used.</small>
                 </p>
                 <br />
 
                 <div ng-if="currentSpectrum.molFile" style="text-align: center;">
-                    <div chemical-sketcher readonly="true" width="500"
-                         height="500"
+                    <div chemical-sketcher readonly="true"
                          id="compoundViewer"
-                         ng-model="currentSpectrum"></div>
+                         ng-model="currentSpectrum.molFile"></div>
                 </div>
                 <br />
 
                 <div class="row form-group">
-                    <div class="col-lg-3"><label>Names</label></div>
+                    <div class="col-lg-3"><label>Names:</label></div>
                     <div class="col-lg-9">
                         <input type="text"
                                ng-repeat="name in currentSpectrum.names track by $index"
@@ -184,7 +182,7 @@
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-md-3 col-lg-3"><label>InChIKey</label></div>
+                    <div class="col-md-3 col-lg-3"><label>InChIKey:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                                ng-model="currentSpectrum.inchiKey"
@@ -194,7 +192,7 @@
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-md-3 col-lg-3"><label>InChI</label></div>
+                    <div class="col-md-3 col-lg-3"><label>InChI:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
                                ng-model="currentSpectrum.inchi"
@@ -217,6 +215,7 @@
 
                 <div class="form-group text-center">
                     <button ng-click="retrieveCompoundData()" class="btn btn-primary">Update Compound</button>
+                    <button ng-click="resetCompound()" class="btn btn-danger">Reset Compound</button>
                 </div>
 
                 <div class="row form-group">
@@ -225,6 +224,7 @@
                             <uib-accordion-heading>Import MOL/SDF File</uib-accordion-heading>
 
                             <div>
+                                Load a MOL file to attach to thisd spectrum record.  Please note that the MOL data must contain explicit hydrogens to
                                 Convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
                                 will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
                                 using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
@@ -310,28 +310,59 @@
                         the spectrum's score.  The following are a list of <b>strongly recommended</b> metadata to provide.
                     </small>
                 </div>
+                <br />
 
                 <div style="margin-top: 10px;">
                     <div>
                         <label>Source Introduction / Chromatography Type:</label> <br />
-                        <input type="radio" name="chromatography" value="Liquid Chromatography (LC)" /> Liquid Chromatography (LC) <br />
-                        <input type="radio" name="chromatography" value="Gas Chromatography (GC)" /> Gas Chromatography (GC) <br />
-                        <input type="radio" name="chromatography" value="Direct Injection/Infusion (DI)" /> Direct Injection/Infusion (DI) <br />
-                        <input type="radio" name="chromatography" value="Capillary Electrophoresis (CE)" /> Capillary Electrophoresis (CE) <br />
+                        <select class="form-control" name="chromatography" ng-model="metadata.chromatography">
+                            <option value="" selected="selected">Select One</option>
+                            <option value="Liquid Chromatography (LC)">Liquid Chromatography (LC)</option>
+                            <option value="Gas Chromatography (GC)">Gas Chromatography (GC)</option>
+                            <option value="Direct Injection/Infusion (DI)">Direct Injection/Infusion (DI)</option>
+                            <option value="Capillary Electrophoresis (CE)">Capillary Electrophoresis (CE)</option>
+                        </select>
                     </div>
                     <br />
 
                     <div>
-                        <label>Ionization Method:</label> <br />
-                        <input type="radio" name="ionization" value="Atmospheric Pressure Chemical Ionization (APCI)" /> Atmospheric Pressure Chemical Ionization (APCI) <br />
-                        <input type="radio" name="ionization" value="Chemical Ionization (CI)" /> Chemical Ionization (CI) <br />
-                        <input type="radio" name="ionization" value="Electron Impact (EI)" /> Electron Impact (EI) <br />
-                        <input type="radio" name="ionization" value="Electrospray Ionization (ESI)" /> Electrospray Ionization (ESI) <br />
-                        <input type="radio" name="ionization" value="Fast Atom Bombardment (FAB)" /> Fast Atom Bombardment (FAB) <br />
-                        <input type="radio" name="ionization" value="Matrix Assisted Laser Desorption Ionization (MALDI)" /> Matrix Assisted Laser Desorption Ionization (MALDI) <br />
+                        <label>MS Type / Level:</label> <br />
+                        <select class="form-control" name="mstype" ng-model="metadata.mstype">
+                            <option value="" selected="selected">Select One</option>
+                            <option value="MS">MS</option>
+                            <option value="MS2">MS2</option>
+                            <option value="MS3">MS3</option>
+                            <option value="MS4">MS4</option>
+                            <option value="MS5">MS5</option>
+                        </select>
                     </div>
                     <br />
 
+                    <div ng-if="metadata.mstype && metadata.mstype != 'Select One' && metadata.mstype != 'MS'">
+                        <label>Precursor m/z:</label> <br />
+                        <input type="text" class="form-control" name="precursormz" ng-model="metadata.precursormz" />
+                        <br />
+
+                        <label>Precursor Type:</label> <br />
+                        <input type="text" class="form-control" name="precursortype" ng-model="metadata.precursortype"  />
+                        <br />
+                    </div>
+
+                    <div>
+                        <label>Ionization Method:</label> <br />
+                        <select class="form-control" name="ionization" ng-model="metadata.ionization">
+                            <option value="" selected="selected">Select One</option>
+                            <option value="Atmospheric Pressure Chemical Ionization (APCI)">Atmospheric Pressure Chemical Ionization (APCI)</option>
+                            <option value="Electron Impact (EI)">Electron Impact (EI)</option>
+                            <option value="Chemical Ionization (CI)">Chemical Ionization (CI)</option>
+                            <option value="Electrospray Ionization (ESI)">Electrospray Ionization (ESI)</option>
+                            <option value="Fast Atom Bombardment (FAB)">Fast Atom Bombardment (FAB)</option>
+                            <option value="Matrix Assisted Laser Desorption Ionization (MALDI)">Matrix Assisted Laser Desorption Ionization (MALDI)</option>
+                        </select>
+                    </div>
+                    <br />
+
+                    <!--
                     <div>
                         <label>Mass Analyzer / Detector Type:</label> <br />
                         <input type="checkbox" name="ionanalyzer" value="b" /> Magnetic Sector (B) <br />
@@ -342,31 +373,17 @@
                         <input type="checkbox" name="ionanalyzer" value="ft" /> Fourier Transform (FT)<br />
                     </div>
                     <br />
+                    -->
 
                     <div>
                         <label>Polarity / Ion Mode:</label> <br />
-                        <input type="radio" name="ionmode" value="Positive" /> Positive <br />
-                        <input type="radio" name="ionmode" value="Negative" /> Negative<br />
+                        <select class="form-control" name="ionmode" ng-model="metadata.ionmode">
+                            <option value="" selected="selected">Select One</option>
+                            <option value="Positive">Positive</option>
+                            <option value="Negative">Negative</option>
+                        </select>
                     </div>
                     <br />
-
-                    <div>
-                        <label>MS Type / Level:</label> <br />
-                        <input type="radio" name="mstype" value="MS"/> MS <br />
-                        <input type="radio" name="mstype" value="MS1"/> MS1 <br />
-                        <input type="radio" name="mstype" value="MS2"/> MS2 <br />
-                        <input type="radio" name="mstype" value="MS3"/> MS3 <br />
-                        <input type="radio" name="mstype" value="MS4"/> MS4 <br />
-                    </div>
-                    <br />
-
-                    <div>
-                        <label>Precursor m/z:</label> <br />
-                        <input type="text" class="form-control" />
-
-                        <label>Precursor Type:</label> <br />
-                        <input type="text" class="form-control" />
-                    </div>
                     <br />
                     <br />
 

@@ -12,8 +12,9 @@
     function BasicUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, gwChemifyService,
                                         TaggingService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
 
-        $scope.currentSpectrum = null;
-        $scope.page = 0;
+        $scope.currentSpectrum = {names: []};
+        $scope.metadata = {};
+        $scope.page = 4;
         $scope.fileHasMultipleSpectra = false;
         $scope.showIonTable = true;
 
@@ -93,7 +94,19 @@
         };
 
 
+        $scope.resetCompound = function() {
+            $scope.currentSpectrum.molFile = '';
+            $scope.currentSpectrum.inchi = '';
+            $scope.currentSpectrum.inchiKey = '';
+            $scope.names = [];
+        };
 
+
+        /**
+         * Convert an array of names to an InChIKey based on the first result
+         * @param names array of compound names
+         * @param callback
+         */
         function namesToInChIKey(names, callback) {
             if (names.length == 0) {
                 return null;
@@ -111,6 +124,9 @@
             }
         }
 
+        /**
+         * Generate MOL file from available compound information
+         */
         $scope.retrieveCompoundData = function() {
             $log.info("Retrieving MOL data...");
 
