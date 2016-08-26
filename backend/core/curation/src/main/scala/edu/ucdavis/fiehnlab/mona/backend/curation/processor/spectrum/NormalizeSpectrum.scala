@@ -29,7 +29,7 @@ class NormalizeSpectrum extends ItemProcessor[Spectrum,Spectrum] with LazyLoggin
 
     // Compute the relative spectrum
     if ((maxIntensity - INTENSITY_SCALE) > INTENSITY_EPS) {
-      val relativeSpectrum: String = ions.map(x => "%s:%0.6f".format(x(0), x(1).toDouble / maxIntensity * INTENSITY_SCALE)).mkString(" ")
+      val relativeSpectrum: String = ions.map(x => "%s:%1.6f".format(x(0), x(1).toDouble / maxIntensity * INTENSITY_SCALE)).mkString(" ")
 
       // Replace the spectrum with the relative spectrum
       spectrum.copy(
