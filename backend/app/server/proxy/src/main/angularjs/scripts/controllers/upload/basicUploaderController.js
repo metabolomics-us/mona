@@ -12,11 +12,14 @@
     function BasicUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, gwChemifyService,
                                         TaggingService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
 
-        $scope.currentSpectrum = {names: []};
+        $scope.currentSpectrum = null;;
         $scope.metadata = {};
-        $scope.page = 4;
+        $scope.page = 0;
         $scope.fileHasMultipleSpectra = false;
         $scope.showIonTable = true;
+
+
+        $scope.metadataNames = ["accession", "acqusition time", "activation parameter", "activation time", "adduct", "authors", "capillary temperature", "capillary voltage", "collision energy", "collision gas", "column", "column pressure", "column temperature", "derivative form", "derivative mass", "derivative sum formula", "derivative type", "desolvation gas flow", "desolvation temperature", "exact mass", "flow gradient", "flow rate", "fragmentation method", "fragmentation mode", "gas pressure", "gradient", "injection temperature", "injection volume", "instrument", "instrument type", "ion guide voltage", "ionization energy", "ionization potential", "ion mode", "ion source", "ion source temperature", "ion spray voltage", "mass accuracy", "mass error", "mobile phase a", "mobile phase b", "ms level", "nebulizer", "nebulizing gas", "needle voltage", "publication", "raw data file", "reagent gas", "resolution", "resolution setting", "retention index", "retention time", "running buffer", "running voltage", "sample", "sample dripping", "sample injection", "sample introduction", "solvent", "source instrument", "source temperature", "source voltage", "transfer line temperature", "voltage"];
 
 
         /**
@@ -49,10 +52,12 @@
          * Handle switching pages
          */
         $scope.previousPage = function () {
+            $window.scrollTo(0, 0);
             $scope.page--;
         };
 
         $scope.nextPage = function () {
+            $window.scrollTo(0, 0);
             $scope.page++;
         };
 
@@ -70,9 +75,15 @@
         $scope.parsePastedSpectrum = function(pastedSpectrum) {
             $log.debug("Parsing "+ pastedSpectrum);
 
-            $scope.spectrumIons = pastedSpectrum.split(' ').map(function(x) {
-                x = x.split(':');
+            var spectrumString = '';
+
+            var ions = pastedSpectrum.split('\n').map(function(x) {
+                x = x.split(' ');
                 var annotation = '';
+
+                if(spectrumString != '')
+                    spectrumString += ' ';
+                spectrumString += x[0] +':'+ x[1];
 
                 return {
                     ion: parseFloat(x[0]),
@@ -83,13 +94,14 @@
                     selected: true
                 }
             });
+            console.log(ions)
 
-            $scope.showIonTable = ($scope.spectrumIons.length < 500);
+            $scope.showIonTable = (ions.length < 500);
             $scope.queryState = 2;
             $scope.spectraCount = 1;
             $scope.page = 2;
 
-            $scope.currentSpectrum = spectrum;
+            $scope.currentSpectrum = {names: [''], meta: [{}], ions: ions};
             $scope.showIonTable = $scope.currentSpectrum.ions.length < 500;
         };
 
@@ -277,6 +289,16 @@
         };
 
 
+        $scope.addMetadataField = function () {
+            $scope.currentSpectrum.meta.push({name: '', value: ''});
+        };
+
+        $scope.removeMetadataField = function (index) {
+            $scope.currentSpectrum.meta.splice(index, 1);
+        };
+        
+
+
         /**
          * Upload current data
          */
@@ -312,6 +334,10 @@
         };
 
 
+        function validateSpectra() {
+            return true;
+        }
+
         $scope.uploadFile = function () {
             if (validateSpectra()) {
                 // Reset the spectrum count if necessary
@@ -322,12 +348,7 @@
                     UploadLibraryService.uploadStartTime = new Date().getTime();
                 }
 
-                // Re-add origin and annotations to metadata:
-                for (var i = 0; i < $scope.spectra.length; i++) {
-                    $scope.spectra[i].meta.push.apply($scope.spectra[i].meta, $scope.spectra[i].hiddenMetadata);
-                }
-
-                UploadLibraryService.uploadSpectra($scope.spectra, function (spectrum) {
+                UploadLibraryService.uploadSpectra([$scope.currentSpectrum], function (spectrum) {
                     $log.info(spectrum);
                     var req = {
                         method: 'POST',
@@ -339,21 +360,53 @@
                         data: JSON.stringify(spectrum)
                     };
 
-                    $http(req).then(function (data) {
-                            $log.info('Spectra successfully Upload!');
-                            $log.info('Reference ID: ' + data.data.id);
-                            $log.info(data);
-                        },
-                        function (err) {
-                            $log.info(err);
-                        });
+                    // $http(req).then(function (data) {
+                    //         $log.info('Spectra successfully Upload!');
+                    //         $log.info('Reference ID: ' + data.data.id);
+                    //         $log.info(data);
+                    //     },
+                    //     function (err) {
+                    //         $log.info(err);
+                    //     });
 
                     //spectrum.$batchSave(spectrum.submitter.access_token);
-                }, $scope.spectrum);
+                }, [$scope.currentSpectrum]);
 
                 $location.path('/upload/status');
             }
         };
+
+
+
+        $scope.queryMetadataValues = function(name, value) {
+
+            if (angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') === '') {
+                return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search', {
+                    query: {
+                        name: name,
+                        value: {isNotNull: ''},
+                        property: 'stringValue',
+                        deleted: false
+                    }
+                }).then(function(data) {
+                    return data.data;
+                });
+
+            }
+            else {
+                return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
+                    query: {
+                        name: name,
+                        value: {ilike: '%' + value + '%'},
+                        property: 'stringValue',
+                        deleted: false
+                    }
+                }).then(function(data) {
+                    return data.data;
+                });
+            }
+        };
+
 
 
         /**
@@ -376,6 +429,7 @@
          */
         (function () {
             // Get tags
+            /*
             TaggingService.query(
                 function (data) {
                     $scope.tags = data;
@@ -384,6 +438,7 @@
                     $log.error('failed: ' + error);
                 }
             );
+            */
         })();
      }
 })();
