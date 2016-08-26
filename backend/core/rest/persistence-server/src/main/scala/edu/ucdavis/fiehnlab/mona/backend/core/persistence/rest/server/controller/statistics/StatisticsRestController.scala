@@ -21,8 +21,7 @@ import scala.collection.JavaConverters._
   */
 @CrossOrigin
 @RestController
-@RequestMapping(Array("/rest" +
-  ""))
+@RequestMapping(Array("/rest"))
 class StatisticsRestController {
 
   @Autowired
