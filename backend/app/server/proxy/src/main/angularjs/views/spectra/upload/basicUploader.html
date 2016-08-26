@@ -306,8 +306,9 @@
                 <div class="lead">
                     <small>
                         Metadata provides a more complete view of a mass spectrum and allows users to more easily find
-                        spectra of importance.  It also improves the accuracy of the MoNA auto-curation and can improve
-                        the spectrum's score.  The following are a list of <b>strongly recommended</b> metadata to provide.
+                        spectra of importance.  It also improves the accuracy of the MoNA auto-curation and can boost
+                        the score of this spectrum record.  The following are a list of <b>strongly recommended</b>
+                        metadata to provide.
                     </small>
                 </div>
                 <br />
@@ -385,11 +386,10 @@
                     </div>
                     <br />
                     <br />
-                    <br />
 
                     <div>
                         <label>Authors (comma-separated):</label> <br />
-                        <input type="text" class="form-control" />
+                        <input type="text" class="form-control" ng-model="metadata.authors" />
                     </div>
                 </div>
             </div>
@@ -421,18 +421,14 @@
             <div class="panel-body">
                 <div class="lead">
                     <small>
-                        Spectrum metadata can consist of:
+                        In addition to the recommended metadata, we encourage users to provide any other information
+                        available about this mass spectral record including:
 
                         <ul>
                             <li>Sample properties</li>
-                            <li>Instrument (e.g. chromatograph, column and spectrometer) manufacturer and model</li>
+                            <li>Instrument manufacturer and model</li>
                             <li>Analytical methods and conditions</li>
-                            <li>Authors, contributors, publication, license, etc.</li>
                         </ul>
-
-                        While including such metadata is optional, it enables users to more easily find your records and
-                        for more complete query results.  In addition, providing accurate values for the recommended
-                        metadata will likely increase the overall score of your submitted spectrum.
                     </small>
                 </div>
                 <br />
@@ -443,6 +439,7 @@
                             <input type="text"
                                    ng-model="meta.name"
                                    placeholder="Metadata Name"
+                                   uib-typeahead="x for x in metadataNames | filter:$viewValue | limitTo:8"
                                    class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
@@ -450,13 +447,12 @@
                                    ng-model="meta.value"
                                    ng-disabled="!meta.name || meta.name == ''"
                                    placeholder="Metadata Value"
+                                   uib-typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
                                    class="form-control" />
                         </div>
                         <div class="col-sm-2 form-group">
                             <button ng-click="removeMetadataField($index)" class="btn btn-default"
                                     tooltip="Remove this metadata field"><i class="fa fa-minus-square"></i></button>
-                            <button ng-click="applyMetadataToAll($index)" class="btn btn-default"
-                                    tooltip="Copy this metadata value to all spectra"><i class="fa fa-files-o"></i></button>
                         </div>
                     </div>
 
@@ -479,6 +475,7 @@
 
 
         <!-- Spectrum tags -->
+        <!--
         <div ng-if="page == 6 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
@@ -521,10 +518,10 @@
                 </nav>
             </div>
         </div>
-
+        -->
 
         <!-- Summary -->
-        <div ng-if="page == 7 && currentSpectrum !== null" class="panel panel-default">
+        <div ng-if="page == 6 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
@@ -546,11 +543,15 @@
                 </div>
 
                 <div class="page-header"><h3>Compound Information</h3></div>
+                <div>
+                    <ul>
+                        <li ng-repeat="name in currentSpectrum.names">{{name}}</li>
+                    </ul>
+                </div>
                 <div ng-if="currentSpectrum.molFile" style="text-align: center;">
-                    <div chemical-sketcher readonly="true" width="250"
-                         height="250"
+                    <div chemical-sketcher readonly="true"
                          id="compoundSummaryViewer"
-                         ng-model="currentSpectrum"></div>
+                         ng-model="currentSpectrum.molFile"></div>
                 </div>
 
 
@@ -576,6 +577,7 @@
                                 <span ng-if="!currentSpectrum.inchi"><i>None Provided</i></span>
                             </td>
                         </tr>
+                        <!--
                         <tr>
                             <td>SMILES</td>
                             <td>
@@ -583,6 +585,7 @@
                                 <span ng-if="!currentSpectrum.smiles"><i>None Provided</i></span>
                             </td>
                         </tr>
+                        ->
                     </tbody>
                 </table>
 
@@ -595,6 +598,42 @@
                     </tr>
                     </thead>
                     <tbody>
+
+                    <tr ng-if="metadata.chromatography && metadata.chromatography != 'Select One'">
+                        <td>Source Introduction / Chromatography Type</td>
+                        <td>{{metadata.chromatography}}</td>
+                    </tr>
+
+                    <tr ng-if="metadata.mstype && metadata.mstype != 'Select One'">
+                        <td>MS Type / Level</td>
+                        <td>{{metadata.mstype}}</td>
+                    </tr>
+
+                    <tr ng-if="metadata.precursormz && metadata.precursormz != 'Select One'">
+                        <td>Precursor m/z</td>
+                        <td>{{metadata.precursormz}}</td>
+                    </tr>
+
+                    <tr ng-if="metadata.precursortype && metadata.precursortype != 'Select One'">
+                        <td>Precursor Type</td>
+                        <td>{{metadata.precursortype}}</td>
+                    </tr>
+
+                    <tr ng-if="metadata.ionization && metadata.ionization != 'Select One'">
+                        <td>Ionization Method</td>
+                        <td>{{metadata.ionization}}</td>
+                    </tr>
+
+                    <tr ng-if="metadata.ionmode && metadata.ionmode != 'Select One'">
+                        <td>Polarity / Ion Mode</td>
+                        <td>{{metadata.ionmode}}</td>
+                    </tr>
+
+                    <tr ng-if="metadata.authors">
+                        <td>Authors</td>
+                        <td>{{metadata.authors}}</td>
+                    </tr>
+
                     <tr ng-repeat="meta in currentSpectrum.meta">
                         <td>{{meta.name}}</td>
                         <td>{{meta.value}}</td>
@@ -602,11 +641,13 @@
                     </tbody>
                 </table>
 
+                <!--
                 <div class="page-header"><h3>Tags</h3></div>
                 <ul>
                     <li ng-if="currentSpectrum.tags.length == 0"><i>None Provided</i></li>
                     <li ng-repeat="tag in currentSpectrum.tags">{{tag.text}}</li>
                 </ul>
+                -->
             </div>
 
             <div class="panel-footer">
