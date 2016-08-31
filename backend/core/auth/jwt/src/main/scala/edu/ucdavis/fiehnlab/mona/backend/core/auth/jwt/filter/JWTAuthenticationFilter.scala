@@ -29,9 +29,12 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
   override def doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, filterChain: FilterChain): Unit = {
 
     logger.debug("filtering...")
+
     val request = servletRequest.asInstanceOf[HttpServletRequest]
     val response = servletResponse.asInstanceOf[HttpServletResponse]
+
     logger.debug(s"url: ${request.getRequestURL} with ${request.getMethod}")
+
     try {
       val authHeader = request.getHeaderNames.asScala.filter( _.toLowerCase() == "authorization").toList
 

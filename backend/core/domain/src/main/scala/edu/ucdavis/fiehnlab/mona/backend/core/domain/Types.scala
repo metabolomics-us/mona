@@ -97,6 +97,9 @@ case class Tags(
   * @param names
   * @param tags
   * @param computed
+  * @param score
+  * @param kind
+  * @param classification
   */
 case class Compound(
                      @Deprecated //might be better to be removed
@@ -254,6 +257,9 @@ case class Spectrum(
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
 
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
+                     annotations: Array[MetaData],
+
                      @(Field@field)(`type` = FieldType.Object)
                      score: Score,
 
@@ -304,7 +310,8 @@ object Spectrum {
       score = spectrum.score,
       id = spectrum.id,
       lastUpdated = spectrum.lastUpdated,
-      metaData = spectrum.metaData,
+      metaData = spectrum.metaData.filter(_.category != "annotation"),
+      annotations = spectrum.metaData.filter(_.category == "annotation"),
       submitter = spectrum.submitter,
       tags = spectrum.tags,
       library = spectrum.library,

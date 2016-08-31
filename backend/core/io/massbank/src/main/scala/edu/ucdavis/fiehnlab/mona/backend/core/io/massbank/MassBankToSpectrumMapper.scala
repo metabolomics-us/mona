@@ -18,6 +18,7 @@ trait MassBankToSpectrumMapper {
       score = null,
 
       metaData = extractMetadata(record),
+      annotations = Array(),
       compound = Array(extractBiologicalCompound(record)),
 
       spectrum = formatPeaks(record.massSpectraPeakDataGroup.peak),
