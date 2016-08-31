@@ -37,8 +37,8 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     val filteredMetaData: Array[MetaData] = filterMetaData(spectrum.metaData)
     val filteredTags: Array[Tags] = filterTags(spectrum.tags)
 
-    logger.info(s"Filtered metadata from ${spectrum.metaData.length} -> ${filteredMetaData.length}")
-    logger.info(s"Filtered tags from ${spectrum.tags.length} -> ${filteredTags.length}")
+    logger.info(s"Filtered metadata from ${Option(spectrum.metaData).getOrElse(Array()).length} -> ${filteredMetaData.length}")
+    logger.info(s"Filtered tags from ${Option(spectrum.tags).getOrElse(Array()).length} -> ${filteredTags.length}")
 
     // Assembled filtered spectrum
     spectrum.copy(
