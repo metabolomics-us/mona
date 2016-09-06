@@ -33,9 +33,9 @@ class ClassifierProcessorTest extends WordSpec {
 
   "ClassifierProcessorTest" should {
 
-    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
+    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
-    val spectrumGiven: Spectrum = reader.read(input)
+    val spectrumGiven: Spectrum = exampleRecords.head
 
     "process" in {
 
@@ -43,7 +43,7 @@ class ClassifierProcessorTest extends WordSpec {
       val output = classyfireProcessor.process(spectrumGiven)
 
       output.compound.foreach{ compound =>
-        // Skip assertion if ClasyFire is offline
+        // Skip assertion if ClassyFire is offline
         if (compound.classification != null) {
           assert(compound.classification.length > 0)
         }
