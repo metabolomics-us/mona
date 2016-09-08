@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
+import java.lang
 import java.util.LinkedHashMap
 
 import com.mongodb.DBObject
@@ -72,7 +73,9 @@ class StatisticsService {
     }
   }
 
-  def getMetaDataStatistics: Iterable[MetaDataStatistics] = metaDataStatisticsRepository.findAll().asScala
+  def getMetaDataStatistics: lang.Iterable[MetaDataStatistics] = metaDataStatisticsRepository.findAll
+
+  def countMetaDataStatistics: Long = metaDataStatisticsRepository.count()
 
   def updateMetaDataStatistics() = metaDataAggregation().foreach(metaDataStatisticsRepository.save(_))
 
@@ -94,7 +97,9 @@ class StatisticsService {
       .toArray
   }
 
-  def getTagStatistics: Iterable[TagStatistics] = tagStatisticsRepository.findAll().asScala
+  def getTagStatistics: lang.Iterable[TagStatistics] = tagStatisticsRepository.findAll
+
+  def countTagStatistics: Long = tagStatisticsRepository.count()
 
   def updateTagStatistics() = tagAggregation().foreach(tagStatisticsRepository.save(_))
 
@@ -103,5 +108,4 @@ class StatisticsService {
     updateTagStatistics()
     updateMetaDataStatistics()
   }
-
 }

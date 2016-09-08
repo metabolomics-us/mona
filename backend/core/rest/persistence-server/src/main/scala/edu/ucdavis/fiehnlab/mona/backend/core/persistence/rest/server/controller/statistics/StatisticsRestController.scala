@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.web.bind.annotation.{CrossOrigin, RequestMapping, RequestMethod, RestController}
+import org.springframework.web.bind.annotation._
 
 import scala.collection.JavaConverters._
 
@@ -25,24 +25,35 @@ import scala.collection.JavaConverters._
 class StatisticsRestController {
 
   @Autowired
-  val mongoOperations: MongoOperations = null
-
-  @Autowired
   val spectrumRepository: ISpectrumMongoRepositoryCustom = null
 
-  val statisticsService: StatisticsService = new StatisticsService
+  @Autowired
+  val statisticsService: StatisticsService = null
 
 
   @RequestMapping(path = Array("/statistics/tags"), method = Array(RequestMethod.GET))
   @Async
-  def listTags: Future[Iterable[TagStatistics]] = new AsyncResult[Iterable[TagStatistics]](statisticsService.getTagStatistics)
+  def listTags: Future[Iterable[TagStatistics]] = new AsyncResult[Iterable[TagStatistics]](statisticsService.getTagStatistics.asScala)
 
   @RequestMapping(path = Array("/statistics/metaData"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaData: Future[Iterable[MetaDataStatistics]] = new AsyncResult[Iterable[MetaDataStatistics]](statisticsService.getMetaDataStatistics)
+  def listMetaData: Future[Iterable[MetaDataStatistics]] = new AsyncResult[Iterable[MetaDataStatistics]](statisticsService.getMetaDataStatistics.asScala)
 
   
   @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.GET))
   @Async
-  def updateStatistics() = statisticsService.updateStatistics()
+  @ResponseBody
+  def updateStatistics(): Future[StatisticsSummary] = {
+    statisticsService.updateStatistics()
+
+    new AsyncResult[StatisticsSummary](StatisticsSummary(
+      statisticsService.countMetaDataStatistics,
+      statisticsService.countTagStatistics
+    ))
+  }
 }
+
+case class StatisticsSummary(
+                            metaDataCount: Long,
+                            tagsCount: Long
+                            )

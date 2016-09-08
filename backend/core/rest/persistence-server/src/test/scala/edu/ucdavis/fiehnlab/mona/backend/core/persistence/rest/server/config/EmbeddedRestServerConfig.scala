@@ -22,7 +22,7 @@ class EmbeddedRestServerConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def loginService:LoginService = new MongoLoginService
+  def loginService: LoginService = new MongoLoginService
 
 }
 @SpringBootApplication(exclude = Array(classOf[MongoAutoConfiguration]))
