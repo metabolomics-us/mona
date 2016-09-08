@@ -14,6 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, 
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
@@ -24,14 +25,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlgemuth on 3/8/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig],classOf[JWTAuthenticationConfig],classOf[TestConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]))
 class MetaDataRestControllerTest extends AbstractSpringControllerTest {
 
   @Autowired
   val spectrumRepository: ISpectrumMongoRepositoryCustom = null
 
   // required for spring and scala tests
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
   "we will be connecting to the REST controller" when {
@@ -40,24 +41,25 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
       override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
     }))
 
-
-    RestAssured.baseURI = s"http://localhost:${port}/rest"
+    RestAssured.baseURI = s"http://localhost:$port/rest"
 
     "when connected we should be able to" should {
 
-      spectrumRepository.deleteAll()
+      "clear repository and add data" in {
+        spectrumRepository.deleteAll()
+        assert(spectrumRepository.count() == 0)
 
-      //58 spectra for us to work with
-      val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-      assert(exampleRecords.length == 58)
+        //58 spectra for us to work with
+        val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+        assert(exampleRecords.length == 58)
 
-      //save each record
-      exampleRecords.foreach { x => spectrumRepository.save(x) }
-
+        //save each record
+        exampleRecords.foreach { x => spectrumRepository.save(x) }
+      }
 
       "we should be able to query all meta data names from the service" in {
         val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names").then().statusCode(200).extract().body().as(classOf[Array[String]])
-        assert(result.length > 44)
+        assert(result.length == 44)
       }
 
       "we should be able to query all the meta data values for a specific name" in {
