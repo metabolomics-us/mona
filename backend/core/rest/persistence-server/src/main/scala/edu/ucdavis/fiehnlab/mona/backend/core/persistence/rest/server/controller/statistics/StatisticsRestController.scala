@@ -40,9 +40,8 @@ class StatisticsRestController {
   def listMetaData: Future[Iterable[MetaDataStatistics]] = new AsyncResult[Iterable[MetaDataStatistics]](statisticsService.getMetaDataStatistics.asScala)
 
   
-  @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.POST))
   @Async
-  @ResponseBody
   def updateStatistics(): Future[StatisticsSummary] = {
     statisticsService.updateStatistics()
 
