@@ -63,7 +63,7 @@ abstract class GenericRESTController[T] {
           /**
             * loads more data from the server for the given query
             */
-          override def fetchMoreData(query: String, pageable: Pageable): Page[T] =getRepository.findAll(pageable)
+          override def fetchMoreData(query: String, pageable: Pageable): Page[T] = getRepository.findAll(pageable)
         }.asScala
       }
     }
