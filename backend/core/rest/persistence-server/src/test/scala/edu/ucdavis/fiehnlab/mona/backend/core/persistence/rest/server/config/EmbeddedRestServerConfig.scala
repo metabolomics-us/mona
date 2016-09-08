@@ -5,6 +5,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 import org.springframework.context.annotation.{Bean, Configuration, Import}
@@ -26,5 +27,5 @@ class EmbeddedRestServerConfig extends LazyLogging {
 
 }
 @SpringBootApplication(exclude = Array(classOf[MongoAutoConfiguration]))
-@Import(Array(classOf[MongoConfig]))
+@Import(Array(classOf[MongoConfig], classOf[StatisticsRepositoryConfig]))
 class TestConfig
