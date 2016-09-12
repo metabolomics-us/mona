@@ -17,6 +17,7 @@ import org.openscience.cdk.io.{MDLV2000Reader, MDLV2000Writer}
 import org.openscience.cdk.tools.CDKHydrogenAdder
 import org.openscience.cdk.tools.manipulator.{AtomContainerManipulator, MolecularFormulaManipulator}
 import org.springframework.batch.item.ItemProcessor
+import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -25,89 +26,95 @@ import scala.collection.mutable.ArrayBuffer
   */
 @Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCTSCompoundData], workflow = "spectra-curation")
 class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
+
+  val compoundConversion: CompoundConversion = new CompoundConversion
+
+
   override def process(spectrum: Spectrum): Spectrum = {
-    val updatedCompound: Array[Compound] = spectrum.compound.map(calculateCompoundProperties)
+    logger.info(s"${spectrum.id}: Calculating compound properties...")
+
+    val updatedCompound: Array[Compound] = spectrum.compound.map(compound => calculateCompoundProperties(compound, spectrum.id))
 
     // Assembled spectrum with updated compounds
     spectrum.copy(compound = updatedCompound)
   }
 
-  protected def inchiToMol(inchi: String): String = {
-    val inchiGeneratorFactory: InChIGeneratorFactory = InChIGeneratorFactory.getInstance()
-    val inChIToStructure: InChIToStructure = inchiGeneratorFactory.getInChIToStructure(inchi, DefaultChemObjectBuilder.getInstance())
 
-    if (inChIToStructure.getReturnStatus != INCHI_RET.OKAY && inChIToStructure.getReturnStatus != INCHI_RET.WARNING) {
-      null
-    } else {
-      val stringWriter: StringWriter = new StringWriter()
-      val mdlWriter: MDLV2000Writer = new MDLV2000Writer(stringWriter)
-
-      mdlWriter.writeMolecule(inChIToStructure.getAtomContainer)
-      mdlWriter.close()
-
-      stringWriter.toString
-    }
-  }
-
-  def calculateCompoundProperties(compound: Compound): Compound = {
+  def calculateCompoundProperties(compound: Compound, id: String): Compound = {
     // Updated metadata to add to this compound
     val metaData: ArrayBuffer[MetaData] = new ArrayBuffer[MetaData]()
-
     compound.metaData.foreach(x => metaData.append(x))
 
 
-    val molFile: String =
-      if (compound.molFile != null) compound.molFile
-      else if (compound.inchi != null) inchiToMol(compound.inchi)
-      else null
+    // Get the MOL definition and CDK molecule
+    val (molDefinition, molecule): (String, IAtomContainer) =
+      // Parse provided MOL definition
+      if (compound.molFile != null) {
+        logger.info(s"$id: Parsing MOL definition")
+
+        (compound.molFile, compoundConversion.parseMolDefinition(compound.molFile))
+      }
+
+      // Parse InChI
+      else if (compound.inchi != null) {
+        val molecule: IAtomContainer = compoundConversion.inchiToMolecule(compound.inchi)
+        val molDefinition: String = compoundConversion.generateMolDefinition(molecule)
+
+        (molDefinition, molecule)
+      }
+
+      else {
+        val smiles: Option[MetaData] = compound.metaData.find(_.name.toLowerCase() == "smiles")
+
+        // Parse SMILES
+        if (smiles.isDefined) {
+          logger.info(s"$id: Converting SMILES to MOL definition")
+
+          val molecule: IAtomContainer = compoundConversion.smilesToMolecule(compound.inchi)
+          val molDefinition: String = compoundConversion.generateMolDefinition(molecule)
+
+          (molDefinition, molecule)
+        } else {
+          (null, null)
+        }
+      }
 
 
-    if (molFile == null) {
+    if (molDefinition == null) {
+      logger.warn(s"$id: No MOL definition found!")
+      compound
+    }
+
+    else if (molecule == null) {
+      logger.warn(s"$id: Unable to load provided structure information with CDK")
       compound
     }
 
     else {
       // Read MOL data
-      val reader = new MDLV2000Reader(new StringReader(molFile))
-      val molecule: IAtomContainer = reader.read(new AtomContainer())
+      logger.debug(s"$id: Received mol:\n $molDefinition")
 
-      logger.debug(s"received mol:\n $molFile")
-
-      // Update molecule
-      AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
-      CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
-      AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
-
-
-      // Get molecular properties
-      val molecularFormula: IMolecularFormula = MolecularFormulaManipulator.getMolecularFormula(molecule)
-
+      // Calculate molecular properties
       metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.MOLECULAR_FORMULA,
-        null, null, null, MolecularFormulaManipulator.getString(molecularFormula)))
+        null, null, null, compoundConversion.moleculeToMolecularFormula(molecule)))
 
       metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.TOTAL_EXACT_MASS,
-        null, null, null, MolecularFormulaManipulator.getTotalExactMass(molecularFormula)))
-
+        null, null, null, compoundConversion.moleculeToTotalExactMass(molecule)))
 
       // Calculate InChI
-      val inchiGenerator: InChIGenerator = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule)
-
       metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.INCHI_CODE,
-        null, null, null, inchiGenerator.getInchi))
+        null, null, null, compoundConversion.moleculeToInChI(molecule)))
 
-      logger.debug(s"return status is: ${inchiGenerator.getReturnStatus}")
       metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.INCHI_KEY,
-        null, null, null, inchiGenerator.getInchiKey))
-
+        null, null, null, compoundConversion.moleculeToInChIKey(molecule)))
 
       // Calculate SMILES
       metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.SMILES,
-        null, null, null, SmilesGenerator.unique().create(molecule)))
-
+        null, null, null, compoundConversion.moleculeToSMILES(molecule)))
 
       // Return compound with update metadata
       compound.copy(
-        molFile = molFile,
+        molFile = molDefinition,
         metaData = metaData.toArray
       )
     }
