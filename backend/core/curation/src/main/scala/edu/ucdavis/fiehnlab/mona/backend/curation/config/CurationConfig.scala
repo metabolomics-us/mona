@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{LegacySpectrum, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{AnnotationWorkflow, Workflow, WorkflowBuilder}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.{CalculateCompoundProperties, CompoundConversion}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier.ClassifierProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateSplash, NormalizeSpectrum}
