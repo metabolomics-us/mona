@@ -86,7 +86,7 @@ class DownloaderService extends LazyLogging {
     val exportFile: Path = Paths.get(exportDir, exportFilename)
     val compressedFile: Path = Paths.get(exportDir, compressedExportFilename)
 
-    val count: Int = downloadWriterService.writeExportFile(exportFile, compressedFile, export.query, export.format, compressExport)
+    val count: Long = downloadWriterService.writeExportFile(exportFile, compressedFile, export.query, export.format, compressExport)
 
     if (compressExport) {
       // Update export object with filesize, query count and filenames

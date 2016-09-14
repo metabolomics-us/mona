@@ -1,20 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.service
 
-import java.io.{BufferedWriter, FileInputStream, BufferedInputStream, FileOutputStream}
+import java.io.{BufferedInputStream, FileInputStream, FileOutputStream}
 import java.lang.Iterable
 import java.nio.charset.StandardCharsets
-import java.nio.file.{Paths, Files, Path}
+import java.nio.file.{Files, Path, Paths}
 import java.util.zip.{ZipEntry, ZipOutputStream}
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.writer.{JSONDownloader, MSPDownloader}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
@@ -26,74 +20,11 @@ import scala.collection.JavaConverters._
 class DownloadWriterService extends LazyLogging {
 
   @Autowired
-  val mongoRepository: ISpectrumMongoRepositoryCustom = null
+  val mspDownloader: MSPDownloader = null
 
-  val objectMapper: ObjectMapper = MonaMapper.create
+  @Autowired
+  val jsonDownloader: JSONDownloader = null
 
-
-  /**
-    *
-    * @param query
-    */
-  def executeQuery(query: String): Iterable[Spectrum] = {
-    if (query == null || query.isEmpty) {
-      mongoRepository.findAll
-    } else {
-      new DynamicIterable[Spectrum, String](query, 10) {
-
-        /**
-          * Loads more data from the server for the given query
-          */
-        override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
-          mongoRepository.rsqlQuery(query, pageable)
-        }
-      }
-    }
-  }
-
-  /**
-    *
-    * @param bufferedWriter
-    * @param query
-    * @return
-    */
-  def downloadAsJSON(bufferedWriter: BufferedWriter, query: String): Int = {
-    bufferedWriter.write("[")
-
-    val count: Int = executeQuery(query).asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
-      if (sum > 0) {
-        bufferedWriter.write(",")
-      }
-
-      bufferedWriter.write(objectMapper.writeValueAsString(spectrum))
-      sum + 1
-    }
-
-    bufferedWriter.write("]")
-
-    count
-  }
-
-  /**
-    *
-    * @param bufferedWriter
-    * @param query
-    * @return
-    */
-  def downloadAsMSP(bufferedWriter: BufferedWriter, query: String): Int = {
-    val mspWriter: MSPWriter = new MSPWriter
-
-    val count: Int = executeQuery(query).asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
-      if (sum > 0) {
-        bufferedWriter.write("\n")
-      }
-
-      mspWriter.write(spectrum, bufferedWriter)
-      sum + 1
-    }
-
-    count
-  }
 
   /**
     *
@@ -108,17 +39,14 @@ class DownloadWriterService extends LazyLogging {
   }
 
 
-  def writeExportFile(exportFile: Path, compressedFile: Path, query: String, format: String, compress: Boolean): Int = {
+  def writeExportFile(exportFile: Path, compressedFile: Path, query: String, format: String, compress: Boolean): Long = {
     logger.info(s"Exporting spectra to file ${exportFile.getFileName}")
 
-    val bufferedWriter = Files.newBufferedWriter(exportFile)
-
-    val count: Int = format match {
-      case "msp" => downloadAsMSP(bufferedWriter, query)
-      case "json" | _ => downloadAsJSON(bufferedWriter, query)
+    val count: Long = format match {
+      case "msp" => mspDownloader.write(query, exportFile)
+      case "json" | _ => jsonDownloader.write(query, exportFile)
     }
 
-    bufferedWriter.close()
 
     logger.info(s"Finished exporting $count spectra")
 
