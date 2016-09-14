@@ -15,6 +15,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpec
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.MetaDataStatistics
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
@@ -63,10 +64,10 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
       }
 
       "we should be able to query all the meta data values for a specific name" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("authors")).post("/metaData/values").then().statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("authors")).post("/metaData/values").then().statusCode(200).extract().body().as(classOf[MetaDataStatistics])
 
-        assert(result.length == 1)
-        assert(result.head.equals("Mark Earll, Stephan Beisken, EMBL-EBI"))
+        assert(result.name == "authors")
+        assert(result.values.map(_.value).contains("Mark Earll, Stephan Beisken, EMBL-EBI"))
       }
     }
   }

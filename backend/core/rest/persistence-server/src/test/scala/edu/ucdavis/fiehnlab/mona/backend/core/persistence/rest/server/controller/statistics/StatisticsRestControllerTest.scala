@@ -68,10 +68,7 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
       }
 
       "update the statistics as an admin" in {
-        val result: StatisticsSummary = authenticate().contentType("application/json; charset=UTF-8").log().all(true).when().post("/statistics/update").then().log().all(true).statusCode(200).extract().as(classOf[StatisticsSummary])
-
-        assert(result.metaDataCount == 44)
-        assert(result.tagsCount == 3)
+        authenticate().contentType("application/json; charset=UTF-8").log().all(true).when().post("/statistics/update").then().log().all(true).statusCode(200).extract()
       }
 
       "get metadata statistics" in {
@@ -80,7 +77,7 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
       }
 
       "get tag statistics" in {
-        val result: Array[TagStatistics] = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/statistics/tags").then().log().all(true).statusCode(200).extract().as(classOf[Array[TagStatistics]])
+        val result: Array[TagStatistics] = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/tags").then().log().all(true).statusCode(200).extract().as(classOf[Array[TagStatistics]])
         assert(result.length == 3)
       }
     }
