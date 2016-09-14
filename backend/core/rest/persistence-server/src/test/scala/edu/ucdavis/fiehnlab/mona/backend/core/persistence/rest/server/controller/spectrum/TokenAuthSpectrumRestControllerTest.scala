@@ -129,6 +129,8 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
         eventually(timeout(10 seconds)) {
           assert(spectrumRepository.count() == 0)
+          assert(spectrumMongoRepository.count() == 0)
+          assert(spectrumElasticRepository.count() == 0)
         }
       }
 
@@ -269,11 +271,11 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         }
       }
 
-      "we need to be authenticated for PUTrequestss" in {
+      "we need to be authenticated for PUT requests" in {
         given().contentType("application/json; charset=UTF-8").when().body(Spectrum).put(s"/spectra/TADA_NEW_ID").then().statusCode(401)
       }
 
-      "we should be able to update a spectrum at a given path using PUT as /rest/spectra " in {
+      "we should be able to update a spectrum at a given path using PUT at /rest/spectra " in {
         val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
         val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
@@ -285,6 +287,23 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         eventually(timeout(10 seconds)) {
           //should not exist anymore
           given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(404)
+        }
+      }
+
+      "we should be able to delete our updated spectrum using DELETE at /rest/spectra" in {
+        val repositoryCount = spectrumRepository.count()
+        val mongoRepositoryCount = spectrumMongoRepository.count()
+        val elasticRepositoryCount = spectrumElasticRepository.count()
+
+        authenticate().when().delete(s"/spectra/TADA_NEW_ID").then().statusCode(200)
+
+        eventually(timeout(10 seconds)) {
+          //should not exist anymore
+          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().statusCode(404)
+
+          assert(spectrumRepository.count() == repositoryCount - 1)
+          assert(spectrumMongoRepository.count() == mongoRepositoryCount - 1)
+          assert(spectrumMongoRepository.count() == elasticRepositoryCount - 1)
         }
       }
     }
