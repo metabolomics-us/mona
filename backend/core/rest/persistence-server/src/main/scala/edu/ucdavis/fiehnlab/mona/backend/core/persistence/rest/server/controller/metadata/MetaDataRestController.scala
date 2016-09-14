@@ -6,7 +6,10 @@ import java.util.concurrent.Future
 import com.mongodb.DBObject
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import org.springframework.beans.factory.annotation.Autowired
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.StatisticsService
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.MetaDataStatistics
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.data.mongodb.core.query.Criteria
@@ -26,48 +29,45 @@ class MetaDataRestController {
   @Autowired
   val mongoOperations: MongoOperations = null
 
-  /**
-    * this is the utilized repository, doing all the heavy lifting
-    */
   @Autowired
-  val spectrumRepository: ISpectrumMongoRepositoryCustom = null
+  val statisticsService: StatisticsService = null
 
 
+  /**
+    * List unique metadata names
+    * @return
+    */
   @RequestMapping(path = Array("/names"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaDataName: Future[java.util.List[String]] = {
+  def listMetaDataNames: Future[Array[String]] = new AsyncResult[Array[String]](statisticsService.getMetaDataNames)
 
-    val aggregations = newAggregation(
-      unwind("$metaData"),
-      group("metaData.name")
-    )
-
-    val result: List[String] = mongoOperations.aggregate(aggregations, "SPECTRUM", classOf[DBObject]).asScala.collect{ case x: DBObject => x.get("_id").toString}.toList
-
-    new AsyncResult[util.List[String]](result.asJava)
-  }
-
+  /**
+    *
+    * @param partialMetaDataName
+    * @return
+    */
   @RequestMapping(path = Array("/names/search"), method = Array(RequestMethod.POST))
   @Async
   def searchMetaDataName(@RequestBody partialMetaDataName: WrappedString): Future[java.util.List[String]] = {
     null
   }
 
+  /**
+    *
+    * @param metaDataName
+    * @return
+    */
   @RequestMapping(path = Array("/values"), method = Array(RequestMethod.POST))
   @Async
-  def listMetaDataValue(@RequestBody metaDataName: WrappedString): Future[java.util.List[Any]] = {
+  def listMetaDataValue(@RequestBody metaDataName: WrappedString): AsyncResult[MetaDataStatistics] =
+    new AsyncResult[MetaDataStatistics](statisticsService.getMetaDataStatistics(metaDataName.string))
 
-    val aggregations = newAggregation(
-      unwind("$metaData"),
-      `match`(Criteria.where("metaData.name").is(metaDataName.string)),
-      group("metaData.value")
-    )
-
-    val result: List[Any] = mongoOperations.aggregate(aggregations, "SPECTRUM", classOf[DBObject]).asScala.collect{ case x: DBObject => x.get("_id")}.toList
-
-    new AsyncResult[util.List[Any]](result.asJava)
-  }
-
+  /**
+    *
+    * @param metaDataName
+    * @param partialMetaDataValue
+    * @return
+    */
   @RequestMapping(path = Array("/values/search"), method = Array(RequestMethod.GET))
   @Async
   def searchMetaDataValues(@RequestBody metaDataName: WrappedString, @RequestBody partialMetaDataValue: WrappedString): Future[java.util.List[String]] = {

@@ -25,34 +25,35 @@ import scala.collection.JavaConverters._
 class StatisticsRestController {
 
   @Autowired
-  val spectrumRepository: ISpectrumMongoRepositoryCustom = null
-
-  @Autowired
   val statisticsService: StatisticsService = null
 
 
-  @RequestMapping(path = Array("/statistics/tags"), method = Array(RequestMethod.GET))
+  /**
+    * Get a list of unique tags and their respective counts
+    * @return
+    */
+  @RequestMapping(path = Array("/tags"), method = Array(RequestMethod.GET))
   @Async
   def listTags: Future[Iterable[TagStatistics]] = new AsyncResult[Iterable[TagStatistics]](statisticsService.getTagStatistics.asScala)
 
+  /**
+    * Get all metadata statistics
+    * @return
+    */
   @RequestMapping(path = Array("/statistics/metaData"), method = Array(RequestMethod.GET))
   @Async
   def listMetaData: Future[Iterable[MetaDataStatistics]] = new AsyncResult[Iterable[MetaDataStatistics]](statisticsService.getMetaDataStatistics.asScala)
 
-  
+  /**
+    * Update statistics
+    * @return
+    */
   @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.POST))
   @Async
-  def updateStatistics(): Future[StatisticsSummary] = {
+  @ResponseBody
+  def updateStatistics(): String = {
     statisticsService.updateStatistics()
 
-    new AsyncResult[StatisticsSummary](StatisticsSummary(
-      statisticsService.countMetaDataStatistics,
-      statisticsService.countTagStatistics
-    ))
+    "Statistics update queued"
   }
 }
-
-case class StatisticsSummary(
-                            metaDataCount: Long,
-                            tagsCount: Long
-                            )
