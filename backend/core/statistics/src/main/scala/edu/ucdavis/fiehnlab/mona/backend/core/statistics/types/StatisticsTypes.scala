@@ -12,8 +12,13 @@ import scala.annotation.meta.field
 case class MetaDataStatistics(
                                @(Id@field)
                                name: String,
-                               values: Array[(String, Int)]
+                               values: Array[MetaDataValueCount]
                              )
+
+case class MetaDataValueCount(
+                        value: String,
+                        count: Int
+                        )
 
 @Document(collection = "STATISTICS_TAGS")
 case class TagStatistics(
