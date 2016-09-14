@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConf
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataValueCount, TagStatistics}
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -51,18 +51,44 @@ class StatisticsServiceTest extends WordSpec {
       assert(result.length == 44)
     }
 
-    "perform metadata aggregation" in {
-      val result: Array[MetaDataStatistics] = statisticsService.metaDataAggregation()
-      assert(result.length == 44)
+    "perform metadata aggregation for ms level" in {
+      val result: MetaDataStatistics = statisticsService.metaDataAggregation("ms level")
 
-      assert(result.filter(_.name == "ms level").head.values sameElements Array(("MS2", 58)))
-      assert(result.filter(_.name == "ion mode").head.values sameElements Array(("positive", 33), ("negative", 25)))
+      assert(result.values.length == 1)
+      assert(result.values sameElements Array(MetaDataValueCount("MS2", 58)))
+    }
+
+    "perform metadata aggregation for ion mode" in {
+      val result: MetaDataStatistics = statisticsService.metaDataAggregation("ion mode")
+
+      assert(result.values.length == 2)
+      assert(result.values sameElements Array(MetaDataValueCount("positive", 33), MetaDataValueCount("negative", 25)))
     }
 
     "persist metadata statistics" in {
       metaDataStatisticsRepository.deleteAll()
       statisticsService.updateMetaDataStatistics()
+
       assert(metaDataStatisticsRepository.count() == 44)
+    }
+
+    "get metadata names from repository" in {
+      val result = statisticsService.getMetaDataNames
+      assert(result.length == 44)
+    }
+
+    "get metadata aggregation for ms level from repository" in {
+      val result = statisticsService.getMetaDataStatistics("ms level")
+
+      assert(result.values.length == 1)
+      assert(result.values sameElements Array(MetaDataValueCount("MS2", 58)))
+    }
+
+    "get metadata aggregation for ion mode from repository" in {
+      val result = statisticsService.getMetaDataStatistics("ion mode")
+
+      assert(result.values.length == 2)
+      assert(result.values sameElements Array(MetaDataValueCount("positive", 33), MetaDataValueCount("negative", 25)))
     }
 
 
