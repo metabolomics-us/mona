@@ -19,7 +19,7 @@ case class QueryExport(
                         emailAddress: String,
 
                         date: Date,
-                        count: Integer,
+                        count: Long,
                         size: Long,
 
                         queryFile: String,
@@ -31,8 +31,10 @@ case class PredefinedQuery(
                             @(Id@field)
                             label: String,
                             description: String,
+
                             query: String,
-                            queryCount: Integer,
+                            queryCount: Long,
+
                             jsonExport: QueryExport,
                             mspExport: QueryExport
                           )
