@@ -55,6 +55,6 @@ class BootstrapDownloaderService extends LazyLogging {
     saveQuery("Libraries - HMDB", "Human Metabolome Database", "tags.text==hmdb")
     saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", "tags.text==gnps")
     saveQuery("Libraries - LipidBlast", "LipidBlast In-Silico MS/MS Database for Lipid Identification", "tags.text==lipidblast")
-    saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", "tags.text==FAHFA")
+    saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", "tags.text==fahfa")
   }
 }
