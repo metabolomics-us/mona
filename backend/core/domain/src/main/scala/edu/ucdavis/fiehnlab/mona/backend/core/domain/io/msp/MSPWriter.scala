@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp
 
 import java.io.{PrintWriter, Writer}
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 
 /**
@@ -17,10 +17,12 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def buildName(spectrum: Spectrum): String = {
-    val compound = spectrum.compound.find(_.kind == "biological")
+    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
     if (compound != null) {
-      val names = compound.head.names.sortBy(_.score).headOption.orNull
+      // TODO Re-enable sorting by score when implemented
+      // val names = compound.head.names.sortBy(_.score).headOption.orNull
+      val names = compound.names.headOption.orNull
 
       if (names == null) {
         "None"
@@ -28,7 +30,7 @@ class MSPWriter extends DomainWriter {
         names.name
       }
     } else {
-      "None provided for biological compound"
+      "No name provided"
     }
   }
 
@@ -39,8 +41,10 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def buildCompoundMetaData(spectrum: Spectrum, value: String): String = {
-    if (spectrum.compound.filter(_.kind == "biological") != null) {
-      val meta = spectrum.compound.filter(_.kind == "biological").head.metaData.find(_.name == value).orNull
+    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+
+    if (compound != null) {
+      val meta = compound.metaData.find(_.name == value).orNull
 
       if (meta == null) {
         "0"
