@@ -87,7 +87,7 @@
 					isArray: false
 				},
 				'getPredefinedQueries': {
-					url: REST_BACKEND_SERVER + '/rest/stored/query?max=100',
+					url: REST_BACKEND_SERVER + '/rest/downloads/predefined',
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json'

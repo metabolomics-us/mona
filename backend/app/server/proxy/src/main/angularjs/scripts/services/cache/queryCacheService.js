@@ -47,12 +47,11 @@
             // Using $injector is ugly, but is what angular.run uses to avoid circular dependency
             queryType = queryType || undefined;
 
-            if (this.query === null) {
+            if (this.query === null && this.queryString === null) {
                 $injector.get('SpectraQueryBuilderService').prepareQuery();
             }
 
-            return typeof(queryType) !== 'undefined' && queryType === 'string' ?
-                this.queryString :  this.query;
+            return typeof(queryType) !== 'undefined' && queryType === 'string' ? this.queryString : this.query;
         };
 
         /**

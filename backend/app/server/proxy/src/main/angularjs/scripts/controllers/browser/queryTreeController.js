@@ -16,11 +16,11 @@
         };
 
         $scope.downloadJSON = function(node) {
-            window.location.href = REST_BACKEND_SERVER +'/rest/spectra/search/download/'+ node.jsonExport.id;
+            return REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.jsonExport.id;
         };
 
         $scope.downloadMSP = function(node) {
-            window.location.href = REST_BACKEND_SERVER +'/rest/spectra/search/download/'+ node.mspExport.id;
+            return REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.mspExport.id;
         };
 
         (function() {
