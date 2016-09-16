@@ -18,7 +18,7 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    logger.info(s"Filtering computed data in spectrum ${spectrum.id}")
+    logger.info(s"${spectrum.id}: Filtering computed data")
 
     val filteredCompound: Array[Compound] =
       if (spectrum.compound != null) {
