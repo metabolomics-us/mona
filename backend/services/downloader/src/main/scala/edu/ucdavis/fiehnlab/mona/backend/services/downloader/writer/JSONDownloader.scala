@@ -6,12 +6,12 @@ import java.nio.file.Path
 import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.{Component, Service}
 
 /**
   * Created by sajjan on 9/13/16.
   */
-@Component
+@Service
 class JSONDownloader extends AbstractDownloader {
 
   val objectMapper: ObjectMapper = MonaMapper.create

@@ -10,14 +10,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable}
-import org.springframework.stereotype.Component
-
-import scala.collection.JavaConverters._
+import org.springframework.stereotype.Service
 
 /**
   * Created by sajjan on 9/13/16.
   */
-@Component
+@Service
 abstract class AbstractDownloader extends LazyLogging {
 
   @Autowired
@@ -29,7 +27,7 @@ abstract class AbstractDownloader extends LazyLogging {
     * @param query
     */
   def executeQuery(query: String): Iterable[Spectrum] = {
-    new DynamicIterable[Spectrum, String](query, 10) {
+    new DynamicIterable[Spectrum, String](query, 25) {
 
       /**
         * Loads more data from the server for the given query
@@ -86,12 +84,14 @@ abstract class AbstractDownloader extends LazyLogging {
     * Export file
     */
   def write(query: String, exportFile: Path): Long = {
-
     val bufferedWriter = Files.newBufferedWriter(exportFile)
     bufferedWriter.write(getFilePrefix)
 
     var count: Long = 0
     val total: Long = countQuery(query)
+
+    logger.info(s"${exportFile.getFileName}: Starting export of $total spectra")
+
     val it = executeQuery(query).iterator
 
     while(it.hasNext) {
