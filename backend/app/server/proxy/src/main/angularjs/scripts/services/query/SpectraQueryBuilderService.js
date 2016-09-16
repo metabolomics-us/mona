@@ -47,6 +47,10 @@
             QueryCache.setSpectraQuery(query);
         };
 
+        this.setQueryString = function(query) {
+            QueryCache.setSpectraQueryString(query);
+        };
+
 
         /**
          * updates a pre-compiled query with the given
