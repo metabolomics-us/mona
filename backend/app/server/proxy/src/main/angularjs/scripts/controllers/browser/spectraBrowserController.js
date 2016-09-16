@@ -246,10 +246,17 @@
         /**
          * our list view and default view
          */
-        (function list() {
+        (function() {
             $scope.spectraScrollStartLocation = 0;
             $scope.spectra = [];
             showSplash();
+
+            // Handle queries passed in the URL
+            if($location.search().hasOwnProperty('query')) {
+                $log.info('Accepting query from URL: '+ $location.search().query);
+                SpectraQueryBuilderService.setQueryString($location.search().query);
+            }
+
             // Submit our initial query
             $scope.submitQuery();
         })();
