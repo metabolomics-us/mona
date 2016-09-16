@@ -47,6 +47,8 @@
 
                 }
 
+                // TODO re-enable scoring
+                /*
                 if (!angular.isDefined($scope.score)) {
                     $scope.score = 0;
 
@@ -56,8 +58,8 @@
                         //adjusting the score with the just generated value
                         $scope.score = result.explaination.scaledScore;
                     });
-
                 }
+                */
 
                 $scope.score = $filter('number')($scope.score, 0);
             }
