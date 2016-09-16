@@ -1,7 +1,7 @@
 <div class="panel panel-default">
-    <div class="panel-heading" ng-click="viewSpectrum()">
+    <div class="panel-heading">
         <div class="panel-title">
-            <span><a style="cursor: pointer">{{spectrum.compound[0].names[0].name}}</a></span>
+            <span><a style="cursor: pointer" ng-href="{{viewSpectrum()}}">{{spectrum.compound[0].names[0].name}}</a></span>
             <span class="pull-right">Score: <span score-spectra ng-model="spectrum"></span></span>
         </div>
     </div>
@@ -80,13 +80,15 @@
                         <span gw-tag rule-based="tag.ruleBased == true" value="tag" type="spectrum"></span>
                     </li>
 
+                    <!--
                     <li class="pull-right">
-                        <button class="btn btn-success" ng-click="viewSpectrum()" uib-tooltip-placement="left"
+                        <a class="btn btn-success" ng-href="{{viewSpectrum()}}" uib-tooltip-placement="left"
                                 tooltip="click, to display all the spectra information">
 
                             <i class="fa fa-external-link fa-fw"></i>display full information
-                        </button>
+                        </a>
                     </li>
+                    -->
                 </ul>
             </div>
         </div>

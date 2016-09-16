@@ -42,10 +42,11 @@
          * @param id
          * @param index
          */
-        $scope.viewSpectrum = function(id) {
-            SpectrumCache.setBrowserSpectra($scope.spectrum);
+        $scope.viewSpectrum = function() {
+            // SpectrumCache.setBrowserSpectra($scope.spectrum);
             SpectrumCache.setSpectrum($scope.spectrum);
-            $location.path('/spectra/display/' + $scope.spectrum.id);
+
+            return '/spectra/display/' + $scope.spectrum.id;
         };
     }
 })();

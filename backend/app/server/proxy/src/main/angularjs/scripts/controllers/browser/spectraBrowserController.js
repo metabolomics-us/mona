@@ -86,8 +86,6 @@
             $scope.spectraLoadLength = -1;
             $scope.spectra = [];
 
-            // Add query parameters to query refining
-
             $scope.calculateResultCount();
 
             //actually load our data
@@ -143,7 +141,7 @@
             SpectrumCache.setBrowserSpectra($scope.spectra);
             SpectrumCache.setSpectrum($scope.spectra[index]);
 
-            $location.path('/spectra/display/' + id);
+            return '/spectra/display/' + id;
         };
 
 
@@ -198,7 +196,7 @@
                 // Note the start time for timing the spectrum search
                 $scope.startTime = Date.now();
 
-                $log.debug('SUBMITTED QUERY: ' + payload);
+                $log.debug('Submitted query: '+ payload);
 
                 if (payload === '/rest/spectra') {
                     Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);
@@ -215,12 +213,14 @@
 
         function searchSuccess(data) {
             $scope.duration = (Date.now() - $scope.startTime) / 1000;
+
             if (data.length === 0) {
                 $scope.dataAvailable = false;
             } else {
                 // Add data to spectra object
                 $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
             }
+
             hideSplash();
             $scope.loadingMore = false;
             page += 1;
