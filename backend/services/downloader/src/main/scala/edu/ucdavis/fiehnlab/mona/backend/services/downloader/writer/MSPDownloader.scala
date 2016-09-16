@@ -5,12 +5,12 @@ import java.nio.file.Path
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.{Component, Service}
 
 /**
   * Created by sajjan on 9/13/16.
   */
-@Component
+@Service
 class MSPDownloader extends AbstractDownloader {
 
   val mspWriter: MSPWriter = new MSPWriter
