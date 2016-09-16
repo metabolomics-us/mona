@@ -24,6 +24,7 @@
         </div>
     </div>
 </div>
+
 <toaster-container toaster-options="{'animation-class': 'toast-center', 'time-out': 0, 'close-button':true}"></toaster-container>
 
 <div ng-value="error"></div>
@@ -37,26 +38,30 @@
 <div class="row">
     <div class="col-md-8">
         <div class="form-group">
-            <button class="btn btn-primary" ng-click="table = true" uib-tooltip-placement="right"
-                    uib-tooltip="click, to display the data in tabular mode"
+            <button class="btn btn-primary"
+                    ng-show="table == false" ng-click="table = true"
+                    uib-tooltip-placement="right"
+                    uib-tooltip="Display spectra in tabular mode"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-table fa-fw"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="table = false" uib-tooltip-placement="right"
-                    uib-tooltip="click, to display the data in grid mode"
+            <button class="btn btn-primary"
+                    ng-show="table == true" ng-click="table = false"
+                    uib-tooltip-placement="right"
+                    uib-tooltip="Display spectra in grid mode"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
             </button>
 
             <button class="btn btn-primary" ng-click="initSearch()" uib-tooltip-placement="right"
-                    uib-tooltip="click, to open the advanced query dialog"
+                    uib-tooltip="Start a new query"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-search fa-fw"></i>
             </button>
 
             <button class="btn btn-primary" ng-click="submitQuery()" uib-tooltip-placement="right"
-                    uib-tooltip="click, to refresh the query" uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay="2">
+                    uib-tooltip="Reset the current query" uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay="2">
                 <i class="fa fa-2x fa-refresh fa-fw"></i>
             </button>
 
