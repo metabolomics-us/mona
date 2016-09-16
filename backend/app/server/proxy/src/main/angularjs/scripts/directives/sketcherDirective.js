@@ -85,11 +85,11 @@
                         }
 
                         if (angular.isDefined(model)) {
-                            if (angular.isDefined(model.molFile) || model.indexOf('M  END') > -1) {
+                            if (angular.isDefined(model.molFile) || (angular.isString(model) && model.indexOf('M  END') > -1)) {
                                 var molFile = angular.isDefined(model.molFile) ? model.molFile : model;
 
                                 try {
-                                    $log.debug('rendering mol file: \n' + molFile);
+                                    //$log.debug('rendering mol file: \n' + molFile);
 
                                     if (molFile.indexOf('\n') > 0) {
                                         var mol = ChemDoodle.readMOL("\n" + molFile + "\n");
@@ -108,8 +108,9 @@
                                 return 'mol';
                             }
 
-                            else {
-                                $log.debug('converting from inchi: ' + model);
+                            else if (angular.isString(model) && /^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test(model)) {
+                                $log.debug('Converting from InChIKey to MOL: '+ model);
+                                
                                 gwCtsService.convertInchiKeyToMol(model, function(molecule) {
                                     var mol = ChemDoodle.readMOL(molecule);
                                     sketcher.loadMolecule(mol);
