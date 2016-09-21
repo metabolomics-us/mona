@@ -13,7 +13,7 @@ import org.springframework.batch.item.ItemProcessor
 class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   /**
-    * criteria for GC/MS identification
+    * Criteria for GC/MS identification
     */
   val GCMS_METADATA_CRITERIA: Map[String, Array[String]] = Map(
     (CommonMetaData.INSTRUMENT, Array(".*gcms.*", ".*gc-ms.*", ".*gc/ms.*")),
@@ -23,7 +23,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
   )
 
   /**
-    * criteria for LC/MS identification
+    * Criteria for LC/MS identification
     */
   val LCMS_METADATA_CRITERIA: Map[String, Array[String]] = Map(
     (CommonMetaData.INSTRUMENT, Array(".*lcms.*", ".*lc-ms.*", ".*lc/ms.*", ".*ltq.*")),
@@ -33,7 +33,13 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     ("*", Array(".*direct infusion.*"))
   )
 
-
+  /**
+    * Criteria for CE/MS identification
+    */
+  val CEMS_METADATA_CRITERIA: Map[String, Array[String]] = Map(
+    (CommonMetaData.INSTRUMENT, Array("ce-.*")),
+    (CommonMetaData.INSTRUMENT_TYPE, Array("ce-.*"))
+  )
 
 
   /**
@@ -69,9 +75,21 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     else {
       val isGCMS = isGCMSSpectrum(spectrum)
       val isLCMS = isLCMSSpectrum(spectrum)
+      val isCEMS = isCEMSSpectrum(spectrum)
+
 
       if (isGCMS && isLCMS) {
         logger.warn(s"Spectrum ${spectrum.id} was identified as both GC/MS and LC/MS!")
+        spectrum
+      }
+
+      else if (isGCMS && isCEMS) {
+        logger.warn(s"Spectrum ${spectrum.id} was identified as both GC/MS and CE/MS!")
+        spectrum
+      }
+
+      else if (isLCMS && isCEMS) {
+        logger.warn(s"Spectrum ${spectrum.id} was identified as both LC/MS and CE/MS!")
         spectrum
       }
 
@@ -83,7 +101,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
           if (spectrum.tags.exists(_.text == CommonTags.GCMS_SPECTRUM))
             spectrum.tags
           else
-            spectrum.tags :+ new Tags(true, CommonTags.GCMS_SPECTRUM)
+            spectrum.tags :+ Tags(ruleBased = true, CommonTags.GCMS_SPECTRUM)
 
          spectrum.copy(tags = updatedTags)
       }
@@ -96,7 +114,20 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
           if (spectrum.tags.exists(_.text == CommonTags.LCMS_SPECTRUM))
             spectrum.tags
           else
-            spectrum.tags :+ new Tags(true, CommonTags.LCMS_SPECTRUM)
+            spectrum.tags :+ Tags(ruleBased = true, CommonTags.LCMS_SPECTRUM)
+
+        spectrum.copy(tags = updatedTags)
+      }
+
+      else if (isCEMS) {
+        logger.info(s"Identified spectrum ${spectrum.id} as CE/MS")
+
+        // Add CEMS tag
+        val updatedTags: Array[Tags] =
+        if (spectrum.tags.exists(_.text == CommonTags.CEMS_SPECTRUM))
+          spectrum.tags
+        else
+          spectrum.tags :+ Tags(ruleBased = true, CommonTags.CEMS_SPECTRUM)
 
         spectrum.copy(tags = updatedTags)
       }
@@ -127,6 +158,16 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     */
   def isLCMSSpectrum(spectrum: Spectrum): Boolean = {
     spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA))
+  }
+
+  /**
+    * check if a spectrum is LC/MS
+    *
+    * @param spectrum
+    * @return
+    */
+  def isCEMSSpectrum(spectrum: Spectrum): Boolean = {
+    spectrum.metaData.exists(validateMetaData(_, CEMS_METADATA_CRITERIA))
   }
 
 
