@@ -1,55 +1,57 @@
 <form>
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group row">
-                <label for="inputCompound" class="col-sm-2 form-control-label">Compound</label>
-                <div class="col-sm-10">
-                    <input type="text" ng-model="queryOptions.compound.name" class="form-control" id="inputCompound"
-                           placeholder="name or inChiKey">
-                </div>
+            <div class="table-responsive">
+                <table class="table table-condensed table-borderless">
+                    <thead>
+                    <tr>
+                        <th>Compound</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <input type="text" ng-model="queryOptions.compound.name"
+                                   class="form-control"
+                                   placeholder="Name or InChIKey">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="text" ng-model="queryOptions.compound.className"
+                                   class="form-control"
+                                   placeholder="Compound Class"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="text" ng-model="queryOptions.metadata.formula"
+                                   class="form-control"
+                                   placeholder="Molecular Formula">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="number" ng-model="queryOptions.metadata.exactMass"
+                                   class="form-control"
+                                   placeholder="Exact Mass">
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group-addon">&pm;</div>
+                                <input type="number" ng-model="queryOptions.metadata.tolerance"
+                                       class="form-control"
+                                       value="0.5">
+                                <div class="input-group-addon">Da</div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        <div class="form-group row">
-            <div class="col-sm-10 col-sm-offset-2">
-                <input type="text" ng-model="queryOptions.compound.className"
-                       class="form-control"
-                       placeholder="compound class"/>
-            </div>
-        </div>
-            <div class="form-group row">
-                <div class="col-sm-2">
-                    <select class="form-control" ng-model="queryOptions.firstOperand">
-                        <option>AND</option>
-                        <option>OR</option>
-                    </select>
-                </div>
-                <div class="col-sm-5">
-                    <input type="number" ng-model="queryOptions.metadata.exactMass" class="form-control"
-                           id="inputExactMass"
-                           placeholder="exact mass">
-                </div>
-                <label for="inputTolerance" class="col-sm-2 form-control-label">Tolerance (Da)</label>
 
-                <div class="col-sm-3">
-                    <input type="number" ng-model="queryOptions.metadata.tolerance" class="form-control"
-                           id="inputTolerance"
-                           value="0.5">
-                </div>
-            </div>
             <div class="form-group row">
-                <div class="col-sm-2">
-                    <select class="form-control" ng-model="queryOptions.secondOperand">
-                        <option>AND</option>
-                        <option>OR</option>
-                    </select>
-                </div>
-                <div class="col-sm-5">
-                    <input type="text" ng-model="queryOptions.metadata.formula" class="form-control"
-                           id="inputFormula"
-                           placeholder="formula">
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-sm-10">
+                <div class="col-sm-12">
                     <div class="table-responsive">
                         <table class="table table-condensed">
                             <thead>
@@ -68,8 +70,9 @@
                     </div>
                 </div>
             </div>
+
             <div class="form-group row">
-                <div class="col-sm-7">
+                <div class="col-sm-12">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -89,6 +92,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-md-6">
             <div class="row">
                 <div class="col-sm-12">
@@ -113,6 +117,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
@@ -138,6 +143,7 @@
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
