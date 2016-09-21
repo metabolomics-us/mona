@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="table-responsive">
-                <table class="table table-condensed table-borderless">
+                <table class="table header-fixed table-borderless">
                     <thead>
                     <tr>
                         <th>Compound</th>
@@ -53,27 +53,6 @@
             <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
-                        <table class="table table-condensed">
-                            <thead>
-                            <tr>
-                                <th>MS Type</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td ng-repeat="ms in msType track by $index">
-                                    <input type="checkbox" ng-model="ms.selected"> {{ms.name}}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-sm-12">
-                    <div class="table-responsive">
                         <table class="table">
                             <thead>
                             <tr>
@@ -94,7 +73,7 @@
         </div>
 
         <div class="col-md-6">
-            <div class="row">
+            <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
                         <table class="table header-fixed">
@@ -106,7 +85,7 @@
                             <tbody>
                             <tr>
                                 <td>
-                                     <span ng-repeat="n in instrumentType[0].SI track by $index">
+                                     <span ng-repeat="n in sourceIntroduction track by $index">
                                          <input type="checkbox" ng-model="n.selected"> {{n.name}} {{n.abv}}
                                          <br/>
                                      </span>
@@ -118,22 +97,19 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
-                        <table class="table header-fixed">
+                        <table class="table table-condensed">
                             <thead>
                             <tr>
-                                <th>Ionization Method</th>
+                                <th>MS Type</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td>
-                                     <span ng-repeat="n in instrumentType[1].IM track by $index">
-                                         <input type="checkbox" ng-model="n.selected"> {{n.name}} {{n.abv}}
-                                         <br/>
-                                     </span>
+                                <td ng-repeat="ms in msType track by $index">
+                                    <input type="checkbox" ng-model="ms.selected"> {{ms.name}}
                                 </td>
                             </tr>
                             </tbody>
