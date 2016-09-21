@@ -90,13 +90,13 @@
             filtered.compoundDa = [];
             // filter exact mass
             if (options.metadata.exactMass !== null) {
-                filtered.compoundDa.push({'exact mass': options.metadata.exactMass});
+                filtered.compoundDa.push({'total exact mass': options.metadata.exactMass});
                 filtered.compoundDa.push({tolerance: options.metadata.tolerance});
             }
 
             // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered.formula = options.metadata.formula;
+                filtered['molecular formula'] = options.metadata.formula;
             }
 
             /**
