@@ -1,11 +1,56 @@
 <li class="dropdown" uib-dropdown>
     <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
-        Spectra <span class="fa fa-caret-down"></span>
+        <i class="fa fa-bar-chart"></i> Spectra <i class="fa fa-caret-down"></i>
     </a>
 
     <ul class="uib-dropdown-menu">
-        <li><a href="spectra/search">Search</a></li>
-        <li><a ng-click="resetQuery()"  href="spectra/browse">Browse</a></li>
+        <li><a href="spectra/search">Search Spectra</a></li>
+        <li><a ng-click="resetQuery()"  href="spectra/browse">Browse Spectra</a></li>
+        <li class="divider"></li>
         <li><a href="spectra/dbindex">Database Index</a></li>
+        <li><a href="statistics">Statistics</a></li>
+        <!--
+        <li class="divider"></li>
+        <li>
+            <a href="statistics/query">
+                <div>
+                    <p><strong>average query time</strong><span
+                        class="pull-right text-muted">&nbsp;</span></p>
+                    <statistics timeframe="month" query="search"></statistics>
+                </div>
+
+            </a>
+        </li>
+        <li>
+            <a href="statistics/validation">
+                <div>
+                    <p><strong>average validation time</strong><span class="pull-right text-muted">&nbsp;</span>
+                    </p>
+                    <statistics timeframe="month" query="validation"></statistics>
+                </div>
+
+            </a>
+        </li>
+        <li>
+            <a href="statistics/import">
+                <div>
+                    <p><strong>average upload time</strong><span
+                        class="pull-right text-muted">&nbsp;</span></p>
+                    <statistics timeframe="month" query="import"></statistics>
+                </div>
+
+            </a>
+        </li>
+        -->
+        <li class="divider"></li>
+        <li>
+            <a href="upload/status">
+                <div>
+                    <p><strong>Upload Progress</strong><span class="pull-right text muted">&nbsp;</span>
+                    </p>
+                    <spectra-upload-progress-bar></spectra-upload-progress-bar>
+                </div>
+            </a>
+        </li>
     </ul>
 </li>
