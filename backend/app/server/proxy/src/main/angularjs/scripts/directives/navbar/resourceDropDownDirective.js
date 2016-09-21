@@ -6,7 +6,7 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('resDropDown', resDropDown);
+      .directive('resourceDropDown', resDropDown);
 
     function resDropDown() {
         var directive = {
