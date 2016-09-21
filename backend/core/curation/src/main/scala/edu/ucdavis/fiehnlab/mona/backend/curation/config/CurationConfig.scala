@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.{CalculateCompoundProperties, CompoundConversion}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier.ClassifierProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata.{NormalizeIonizationTypeValue, NormalizeMSLevelValue, NormalizeMetaDataNames}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateSplash, NormalizeSpectrum}
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONFileSpectraReader, JSONLegacyFileSpectraReader}
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
@@ -87,11 +88,21 @@ class CurationConfig extends LazyLogging {
       add(
         Array(
           new RemoveComputedData,
+
+          // Compound curation
           new CalculateCompoundProperties,
+          classifierProcessor,
+
+          // Spectrum-level curaiton
           new NormalizeSpectrum,
           new CalculateSplash,
-          classifierProcessor,
-          new IdentifyChromatography
+
+          // Metadata curation
+          new NormalizeMetaDataNames,
+
+          new IdentifyChromatography,
+          new NormalizeIonizationTypeValue,
+          new NormalizeMSLevelValue
         )
       ).build()
 
