@@ -155,6 +155,7 @@
                                     </div>
                                 </uib-accordion-group>
 
+                                <!--
                                 <uib-accordion-group is-open="accordionStatus.isSimilarSpectraOpen">
                                     <uib-accordion-heading>
                                         <div ng-click="loadSimilarSpectra()">
@@ -220,6 +221,7 @@
                                         </table>
                                     </div>
                                 </uib-accordion-group>
+                                -->
                             </uib-accordion>
                         </div>
                     </div>
@@ -231,25 +233,27 @@
 
                             <uib-accordion close-others="false">
                                 <uib-accordion-group ng-repeat="compound in spectrum.compound track by $index"
-                                    is-open="accordionStatus.isCompoundOpen[$index]" >
+                                                     is-open="accordionStatus.isCompoundOpen[$index]" >
                                     <uib-accordion-heading>
-                                        <div> {{compound.kind | ucfirst}} <i class="pull-right glyphicon"
-                                                                          ng-class="{'glyphicon-chevron-down': accordionStatus.isCompoundOpen[$index],
-                                                                      'glyphicon-chevron-right': !accordionStatus.isCompoundOpen[$index]}"></i>
+                                        <div>
+                                            {{compound.kind | ucfirst}}
+                                            <i class="pull-right glyphicon"
+                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isCompoundOpen[$index],
+                                                          'glyphicon-chevron-right': !accordionStatus.isCompoundOpen[$index]}"></i>
                                         </div>
                                     </uib-accordion-heading>
-                                        <div display-compound-info compound="compound"></div>
+
+                                    <div display-compound-info compound="compound"></div>
                                 </uib-accordion-group>
                             </uib-accordion>
                         </div>
                     </div>
-
                     <br/>
 
                     <div class="row">
                         <div class="col-md-12">
                             <div ng-show="spectrum.metaData.length">
-                                <h4>Mass Spectrum Metadata</h4>
+                                <h4>Mass Spectral Metadata</h4>
                                 <table class="table">
                                     <thead>
                                     <tr>
