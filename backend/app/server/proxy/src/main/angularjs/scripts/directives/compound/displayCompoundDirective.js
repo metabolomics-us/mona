@@ -26,11 +26,8 @@
 
     /* @ngInject */
     function displayCompoundInfoController($scope, $log) {
-        $log.info($scope.compound);
-
         //calculate some unique id for the compound picture
         $scope.pictureId = Math.floor(Math.random() * 1000);
         $scope.chemId = Math.floor(Math.random() * 1000);
-
     }
 })();

@@ -222,6 +222,11 @@ h2 {
     border-bottom: 10px solid white;
 }
 
+.navbar .navbar-right > li > .dropdown-menu:after {
+    left: auto;
+    right: 3px;
+}
+
 // Mobile Navigation
 @media (max-width: 767px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
