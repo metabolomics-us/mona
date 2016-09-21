@@ -1,48 +1,22 @@
 <div>
     <div class="row">
-        <div class="col-md-8">
-            <div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>name</th>
-                        <th>value</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>InChIKey</td>
-                        <td>{{compound.inchiKey}}</td>
-                    </tr>
-
-                    <tr ng-repeat="meta in compound.metaData |  filter: {category: '!external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | unique:'name' | orderBy : 'name':true  ">
-
-                        <td class="col-lg-4 col-md-6">
-                            <span gw-meta-query value="meta" compound="true">{{meta.name}}</span>
-                        </td>
-                        <td class="col-lg-8 col-md-6">
-                            {{meta.value}} {{meta.unit}}
-
-                            <!-- display this, if there seems to be something odd with this value -->
-                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle"></i>
-
-                            <!-- display this, if it's a computed value -->
-                            <i ng-show="meta.computed == true" class="fa fa-flask" tooltip-placement="top"
-                               tooltip="This value was computed via automated curation"></i>
-                        </td>
-                    </tr>
-
-                    </tbody>
-                </table>
+        <div class="col-md-6">
+            <h4>Chemical Names</h4>
+            <div ng-show="compound.names.length">
+                <ul>
+                    <li ng-repeat="name in compound.names">{{name.name}}</li>
+                </ul>
             </div>
         </div>
-        <div class="col-md-4">
 
+        <div class="col-md-6">
             <div class="text-right">
                 <div class="h5">
                     <span class="dropdown" uib-dropdown>
-                        <a href class="dropdown-toggle" uib-dropdown-toggle><i class="fa fa-cloud-download"></i>
-                            Download</a>
+                        <a href class="dropdown-toggle" uib-dropdown-toggle>
+                            <i class="fa fa-cloud-download"></i>
+                            Download Structure
+                        </a>
 
                         <ul class="uib-dropdown-menu">
                             <li>
@@ -57,6 +31,7 @@
                         </ul>
                     </span>
                 </div>
+
                 <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
                      id="big-{{pictureId}}-CompoundViewer_{{chemId}}" ng-model="compound"></div>
             </div>
@@ -65,12 +40,53 @@
 
     <div class="row">
         <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
 
+                <tbody>
+                <tr ng-if="compound.inchiKey">
+                    <td>Provided InChIKey</td>
+                    <td>{{compound.inchiKey}}</td>
+                </tr>
+
+                <tr ng-if="compound.inchi">
+                    <td>Provided InChI</td>
+                    <td>{{compound.inchi}}</td>
+                </tr>
+
+                <tr ng-repeat="meta in compound.metaData |  filter: {category: '!external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | unique:'name' | orderBy : 'name':true  ">
+                    <td class="col-lg-4 col-md-6">
+                        <span gw-meta-query value="meta" compound="true">{{meta.name}}</span>
+                    </td>
+                    <td class="col-lg-8 col-md-6">
+                        {{meta.value}} {{meta.unit}}
+
+                        <!-- display this, if there seems to be something odd with this value -->
+                        <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle"></i>
+
+                        <!-- display this, if it's a computed value -->
+                        <i ng-show="meta.computed == true" class="fa fa-flask" tooltip-placement="top"
+                           tooltip="Value calculated by MoNA auto curation"></i>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
             <div ng-show="compound.metaData.length == 0">
                 <div class="alert alert-info">
-                    Sorry we do not have any metadata at this point in time for this compound
+                    Sorry we do not have any metadata for this compound
                 </div>
             </div>
+
             <div ng-show="compound.metaData.length > 0">
                 <table class="table">
                     <thead>
@@ -106,22 +122,8 @@
 
                         </td>
                     </tr>
-
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div ng-show="compound.names.length">
-                <ul class="list-inline">
-                    <li ng-repeat="name in compound.names">{{name.name}}
-                        <span ng-if="!$last">,</span>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
