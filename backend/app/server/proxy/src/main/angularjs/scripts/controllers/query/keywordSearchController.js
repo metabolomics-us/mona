@@ -24,14 +24,15 @@
                 }
             };
 
+            $scope.sourceIntroduction = [
+                {name: 'Liquid Chromatography', abv: '(LC)'},
+                {name: 'Gas Chromatography', abv: '(GC)'},
+                {name: 'Direct Injection/Infusion', abv: '(DI)'},
+                {name: 'Capillary Electrophoresis', abv: '(CE)'}
+            ];
+
 
             $scope.instrumentType = [
-                {
-                    SI: [{name: 'Liquid Chromatography', abv: '(LC)'},
-                        {name: 'Gas Chromatography', abv: '(GC)'},
-                        {name: 'Direct Injection/Infusion', abv: '(DI)'},
-                        {name: 'Capillary Electrophoresis', abv: '(CE)'}]
-                },
                 {
                     IM: [{name: 'Atmospheric Pressure Chemical Ionization', abv: '(APCI)'},
                         {name: 'Chemical Ionization', abv: '(CI)'},
@@ -48,7 +49,7 @@
 
 
         $scope.submitQuery = function () {
-            filterKeywordSearchOptions($scope.queryOptions, $scope.instrumentType, $scope.msType, $scope.ionMode);
+            filterKeywordSearchOptions($scope.queryOptions, $scope.sourceIntroduction, $scope.msType, $scope.ionMode);
             queryStringBuilder.buildQuery();
             $location.path('/spectra/browse');
         };
@@ -61,7 +62,7 @@
          * @param ms
          * @param ionMode
          */
-        function filterKeywordSearchOptions(options, instruments, ms, ionMode) {
+        function filterKeywordSearchOptions(options, sourceIntroduction, ms, ionMode) {
 
             var filtered = SpectraQueryBuilderService.prepareQuery();
 
@@ -104,21 +105,17 @@
              * created with 'or' operator and properties will be concat with 'and' operator
              */
             filtered.groupMeta = {
-                'instrument type': [],
+                'source introduction': [],
                 'ion mode': [],
                 'ms level': []
             };
 
-            // filter instruments
-            for (var i = 0; i < instruments.length; i++) {
-                var curInstrument = instruments[i];
-                for (var j in curInstrument) {
-                    angular.forEach(curInstrument[j], function (value, key) {
-                        if (value.selected === true)
-                            filtered.groupMeta['instrument type'].push(value.name);
-                    });
+            // add source introduction
+            angular.forEach(sourceIntroduction, function (value, key) {
+                if (value.selected === true) {
+                    filtered.groupMeta['source introduction'].push(value.name.toLowerCase());
                 }
-            }
+            });
 
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
