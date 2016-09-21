@@ -13,7 +13,6 @@ import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.data.domain.{Page, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.ResponseBody
 
 import scala.collection.JavaConverters._
 
@@ -223,7 +222,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * delete all objects in the system
     */
   @CacheEvict(value = Array("spectra"), allEntries = true)
-  override def deleteAll(): Unit = spectrumMongoRepository.findAll().asScala.foreach(delete(_))
+  override def deleteAll(): Unit = spectrumMongoRepository.findAll().asScala.foreach(delete)
 
   /**
     * find all spectra with the given id
