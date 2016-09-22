@@ -28,7 +28,7 @@
                     '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i>' +
 
-                    '    <span ng-if="node.query !== null"><a href="" ng-click="executeQuery(node)"><i class="fa fa-search"></i> {{node.label}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>'+
+                    '    <span ng-if="node.query !== null"><a ng-href="{{executeQuery(node)}}"><i class="fa fa-search"></i> {{node.label}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>'+
                     '    <span ng-if="node.query === null"> {{node.label}}</span>'+
 
                     '    <span class="pull-right">' +
