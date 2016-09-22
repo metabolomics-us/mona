@@ -112,19 +112,20 @@
          * log us out
          */
         this.logout = function() {
-            if (this.isLoggedIn()) {
-                $http.post(REST_BACKEND_SERVER + '/rest/auth/logout', {})
-                  .then(function success(response) {
-                      $rootScope.$broadcast('auth:logout', response.data, response.status, response.headers, response.config);
-                  }, function fail(response) {
-                      $rootScope.$broadcast('auth:logout', response.data, response.status, response.headers, response.config);
-                  });
-            } else {
-                $rootScope.$broadcast('auth:logout', null, null, null, null);
-            }
+            // if (this.isLoggedIn()) {
+            //     $http.post(REST_BACKEND_SERVER + '/rest/auth/logout', {})
+            //       .then(function success(response) {
+            //           $rootScope.$broadcast('auth:logout', response.data, response.status, response.headers, response.config);
+            //       }, function fail(response) {
+            //           $rootScope.$broadcast('auth:logout', response.data, response.status, response.headers, response.config);
+            //       });
+            // } else {
+            //     $rootScope.$broadcast('auth:logout', null, null, null, null);
+            // }
 
+            $rootScope.$broadcast('auth:logout', null, null, null, null);
             $rootScope.currentUser = null;
-            $http.defaults.headers.common['X-Auth-Token'] = undefined;
+            // $http.defaults.headers.common['X-Auth-Token'] = undefined;
             CookieService.remove('AuthorizationToken');
         };
 
