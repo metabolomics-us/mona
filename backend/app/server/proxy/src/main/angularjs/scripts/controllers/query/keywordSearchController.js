@@ -64,21 +64,25 @@
             if (chromatography.length > 0) {
                 var queryString = QueryCache.getSpectraQuery('string');
 
-                queryString = queryString + " and (";
+                if (queryString == "/rest/spectra")
+                    queryString = "";
+
+                if (queryString != "")
+                    queryString = queryString + " and ";
+
+                if (chromatography.length > 1)
+                    queryString = queryString + "(";
 
                 for (var i = 0; i < chromatography.length; i++) {
                     if (i > 0)
                         queryString = queryString + " or ";
-                    queryString = queryString + "tags=q='name.eq==" + chromatography[i] + '/MS\"\')'
+                    queryString = queryString + "tags=q='text==\"" + chromatography[i] + '-MS\"\''
                 }
 
-                queryString = queryString + ")";
+                if (chromatography.length > 1)
+                    queryString = queryString + ")";
+                QueryCache.setSpectraQueryString(queryString);
             }
-
-
-
-
-
 
             $location.path('/spectra/browse');
         };
