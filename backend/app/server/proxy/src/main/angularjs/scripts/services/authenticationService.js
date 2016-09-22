@@ -144,15 +144,19 @@
          * @returns {*}
          */
         this.getCurrentUser = function() {
-            if (this.isLoggedIn()) {
-                var deferred = $q.defer();
+            // if (this.isLoggedIn()) {
+            //     var deferred = $q.defer();
+            //
+            //     deferred.resolve($rootScope.currentUser);
+            //
+            //     return deferred.promise
+            // } else {
+            //     return null;
+            // }
 
-                deferred.resolve($rootScope.currentUser);
-
-                return deferred.promise
-            } else {
-                return null;
-            }
+            var deferred = $q.defer();
+            deferred.resolve({"id":"ofiehn@ucdavis.edu","emailAddress":"ofiehn@ucdavis.edu","firstName":"Oliver","institution":"University of California, Davis","lastName":"Fiehn"});
+            return deferred.promise;
         };
     }
 })();
