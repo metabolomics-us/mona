@@ -73,7 +73,7 @@
 
 
         $scope.parsePastedSpectrum = function(pastedSpectrum) {
-            $log.debug("Parsing "+ pastedSpectrum);
+            $log.info("Parsing "+ pastedSpectrum);
 
             var spectrumString = '';
 
@@ -101,7 +101,7 @@
             $scope.spectraCount = 1;
             $scope.page = 2;
 
-            $scope.currentSpectrum = {names: [''], meta: [{}], ions: ions};
+            $scope.currentSpectrum = {names: [''], meta: [{}], ions: ions, spectrum: spectrumString};
             $scope.showIonTable = $scope.currentSpectrum.ions.length < 500;
         };
 
