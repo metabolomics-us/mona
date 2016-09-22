@@ -44,8 +44,9 @@
                     if (angular.isDefined(delayedSpectrum.score.scaledScore)) {
                         $scope.score = delayedSpectrum.score.scaledScore;
                     }
-
                 }
+
+                $scope.score = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
 
                 // TODO re-enable scoring
                 /*
