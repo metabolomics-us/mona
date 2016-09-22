@@ -50,7 +50,7 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
 
       //saves need to be authenticated
       .antMatchers(HttpMethod.POST, "/rest/spectra/**").authenticated()
-      .antMatchers(HttpMethod.POST, "/rest/submitters/**").authenticated()
+      .antMatchers(HttpMethod.POST, "/rest/submitters").authenticated()
 
       //updates needs authentication
       .antMatchers(HttpMethod.PUT).authenticated()
