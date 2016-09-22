@@ -11,8 +11,7 @@
     /* @ngInject */
     function queryTreeController($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
         $scope.executeQuery = function(node) {
-            SpectraQueryBuilderService.setQuery(JSON.parse(node.query));
-            $location.path('/spectra/browse');
+            return '/spectra/browse?query='+ node.query;
         };
 
         $scope.downloadJSON = function(node) {
