@@ -79,6 +79,8 @@
          * @param metadata
          */
         function convertName(metadata) {
+            if (metadata == null || metadata.name == null || metadata.name == "")
+                return null;
 
             metadata.name = metadata.name.replace(/_/g, " ").toLowerCase();
 
