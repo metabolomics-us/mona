@@ -21,6 +21,9 @@
 
             $log.info(response);
             $rootScope.currentUser = {username: response.config.data.username, access_token: token};
+            $log.info("Login success.  Current user:");
+            $log.info($rootScope.currentUser);
+
             $http.defaults.headers.common['X-Auth-Token'] = token;
             CookieService.update('AuthorizationToken', token);
             $rootScope.$broadcast('auth:login-success', token, response.status, response.headers, response.config);
@@ -73,13 +76,33 @@
 
             if (this.isLoggedIn()) {
                 access_token = $rootScope.currentUser.access_token;
+                $log.info("Validation: logged in: "+ access_token);
             } else {
                 access_token = CookieService.get('AuthorizationToken');
+                $log.info("Validation: getting token from cookie: "+ access_token);
             }
 
             if (angular.isDefined(access_token)) {
-                $http.defaults.headers.common['X-Auth-Token'] = access_token;
-                $http.post(REST_BACKEND_SERVER + '/rest/auth/validate', {}).then(handleLoginSuccess, handleValidationFail);
+                // $http.defaults.headers.common['X-Auth-Token'] = access_token;
+
+                var req = {
+                    method: 'POST',
+                    url: REST_BACKEND_SERVER + '/rest/auth/info',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + access_token
+                    },
+                    data: {
+                        token: access_token
+                    }
+                };
+
+                $http(req).then(function(response) {
+                    $log.info(response);
+                    $rootScope.currentUser = {username: response.data.username, access_token: response.config.data.token};
+                    $log.info("Login success.  Current user:");
+                    $log.info($rootScope.currentUser);
+                }, handleValidationFail);
 
             } else
                 self.loggingIn = false;
