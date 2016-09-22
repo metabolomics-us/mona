@@ -26,8 +26,9 @@
     /* @ngInject */
     function displayLibraryReferenceController($scope, $log) {
 
+
         // Empty string if no library object exists
-        if ($scope.spectrum.library === null) {
+        if (!$scope.spectrum.library) {
             $scope.libraryString = '';
             return;
         }
