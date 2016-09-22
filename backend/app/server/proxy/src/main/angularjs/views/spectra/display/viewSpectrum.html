@@ -230,7 +230,8 @@
                                                      is-open="accordionStatus.isCompoundOpen[$index]" >
                                     <uib-accordion-heading>
                                         <div>
-                                            {{compound.kind | ucfirst}}
+                                            <span ng-if="compound.kind !== null">{{compound.kind | ucfirst}}</span>
+                                            <span ng-of="compound.kind === null">Submitted Compound</span>
                                             <i class="pull-right glyphicon"
                                                ng-class="{'glyphicon-chevron-down': accordionStatus.isCompoundOpen[$index],
                                                           'glyphicon-chevron-right': !accordionStatus.isCompoundOpen[$index]}"></i>
