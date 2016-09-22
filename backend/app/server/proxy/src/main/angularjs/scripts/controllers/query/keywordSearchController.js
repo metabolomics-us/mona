@@ -1,12 +1,12 @@
 (function () {
     'use strict';
 
-    KeywordSearchController.$inject = ['$scope', 'SpectraQueryBuilderService', 'queryStringBuilder', '$log', '$location'];
+    KeywordSearchController.$inject = ['$scope', 'SpectraQueryBuilderService', 'queryStringBuilder', '$log', '$location', 'QueryCache'];
     angular.module('moaClientApp')
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, SpectraQueryBuilderService, queryStringBuilder, $log, $location) {
+    function KeywordSearchController($scope, SpectraQueryBuilderService, queryStringBuilder, $log, $location, QueryCache) {
 
         (function initForm() {
             $scope.queryOptions = {
@@ -25,10 +25,10 @@
             };
 
             $scope.sourceIntroduction = [
-                {name: 'Liquid Chromatography', abv: '(LC)'},
-                {name: 'Gas Chromatography', abv: '(GC)'},
-                {name: 'Direct Injection/Infusion', abv: '(DI)'},
-                {name: 'Capillary Electrophoresis', abv: '(CE)'}
+                {name: 'Liquid Chromatography', abv: 'LC'},
+                {name: 'Gas Chromatography', abv: 'GC'},
+                // {name: 'Direct Injection/Infusion', abv: 'DI'},
+                {name: 'Capillary Electrophoresis', abv: 'CE'}
             ];
 
 
@@ -49,8 +49,37 @@
 
 
         $scope.submitQuery = function () {
+            // TODO improve query building routines
             filterKeywordSearchOptions($scope.queryOptions, $scope.sourceIntroduction, $scope.msType, $scope.ionMode);
             queryStringBuilder.buildQuery();
+
+            var chromatography = [];
+
+            angular.forEach($scope.sourceIntroduction, function (value, key) {
+                if (value.selected === true) {
+                    chromatography.push(value.abv);
+                }
+            });
+
+            if (chromatography.length > 0) {
+                var queryString = QueryCache.getSpectraQuery('string');
+
+                queryString = queryString + " and (";
+
+                for (var i = 0; i < chromatography.length; i++) {
+                    if (i > 0)
+                        queryString = queryString + " or ";
+                    queryString = queryString + "tags=q='name.eq==" + chromatography[i] + '/MS\"\')'
+                }
+
+                queryString = queryString + ")";
+            }
+
+
+
+
+
+
             $location.path('/spectra/browse');
         };
 
@@ -105,22 +134,22 @@
              * created with 'or' operator and properties will be concat with 'and' operator
              */
             filtered.groupMeta = {
-                'source introduction': [],
-                'ion mode': [],
+                // 'source introduction': [],
+                'ionization type': [],
                 'ms level': []
             };
 
             // add source introduction
-            angular.forEach(sourceIntroduction, function (value, key) {
-                if (value.selected === true) {
-                    filtered.groupMeta['source introduction'].push(value.name.toLowerCase());
-                }
-            });
+            // angular.forEach(sourceIntroduction, function (value, key) {
+            //     if (value.selected === true) {
+            //         filtered.groupMeta['source introduction'].push(value.name.toLowerCase());
+            //     }
+            // });
 
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    filtered.groupMeta['ion mode'].push(value.name.toLowerCase());
+                    filtered.groupMeta['ionization type'].push(value.name.toLowerCase());
                 }
             });
 
@@ -130,6 +159,7 @@
                     filtered.groupMeta['ms level'].push(value.name);
                 }
             });
+
             SpectraQueryBuilderService.setQuery(filtered);
         }
 
