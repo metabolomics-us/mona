@@ -179,8 +179,10 @@
                 var s = self.buildSpectrum();
 
                 //assign structure information
-                s.biologicalCompound.inchiKey = spectra.inchiKey;
-                s.biologicalCompound.inchi = spectra.inchi;
+                if (spectra.inchiKey !== null)
+                    s.biologicalCompound.inchiKey = spectra.inchiKey;
+                if (spectra.inchi !== null)
+                    s.biologicalCompound.inchi = spectra.inchi;
 
                 if (angular.isDefined(spectra.molFile) && spectra.molFile !== null) {
                     s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
@@ -190,18 +192,30 @@
                 s.biologicalCompound.names = [];
 
                 if (angular.isDefined(spectra.name)) {
-                    s.biologicalCompound.names.push(spectra.name);
+                    if (spectrum.name != "")
+                        s.biologicalCompound.names.push({name: spectra.name});
                 }
 
                 if (angular.isDefined(spectra.names)) {
                     for (var i = 0; i < spectra.names.length; i++) {
-                        s.biologicalCompound.names.push(spectra.names[i]);
+                        if (spectra.names[i] != "")
+                            s.biologicalCompound.names.push({name: spectra.names[i]});
                     }
                 }
 
                 s.biologicalCompound.metaData = [];
 
+                s.compound = [s.biologicalCompound]
+
                 s.spectrum = spectra.spectrum;
+
+                // TODO fix server side generation of ids
+                s.id = (function () {
+                    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+                    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+                            return (Math.random() * 16 | 0).toString(16);
+                        }).toLowerCase();
+                })();
 
                 if (angular.isDefined(spectra.tags)) {
                     spectra.tags.forEach(function(tag) {
@@ -209,10 +223,10 @@
                     });
                 }
 
-                s.comments = [{comment: "this spectra was added to the system, by utilizing a library upload."}];
-                if (angular.isDefined(spectra.comments)) {
-                    s.comments.push({comment: spectra.comments});
-                }
+                // s.comments = [{comment: "this spectra was added to the system, by utilizing a library upload."}];
+                // if (angular.isDefined(spectra.comments)) {
+                //     s.comments.push({comment: spectra.comments});
+                // }
 
                 metaData.forEach(function(e) {
                     s.metaData.push(e);

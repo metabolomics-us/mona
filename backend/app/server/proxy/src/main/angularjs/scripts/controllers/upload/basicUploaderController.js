@@ -348,26 +348,36 @@
                     UploadLibraryService.uploadStartTime = new Date().getTime();
                 }
 
+                console.log("Uploading");
+                console.log($scope.currentSpectrum);
+
                 UploadLibraryService.uploadSpectra([$scope.currentSpectrum], function (spectrum) {
-                    $log.info(spectrum);
+                    $log.info("submitting spectrum");
+                    console.log(spectrum);
+
                     var req = {
                         method: 'POST',
                         url: REST_BACKEND_SERVER + '/rest/spectra',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': 'bearer ' + spectrum.submitter.access_token
+                            'Authorization': 'Bearer ' + $rootScope.currentUser.access_token
                         },
                         data: JSON.stringify(spectrum)
                     };
 
-                    // $http(req).then(function (data) {
-                    //         $log.info('Spectra successfully Upload!');
-                    //         $log.info('Reference ID: ' + data.data.id);
-                    //         $log.info(data);
-                    //     },
-                    //     function (err) {
-                    //         $log.info(err);
-                    //     });
+                    console.log(req);
+
+                    $http(req).then(function (data) {
+                            $log.info('Spectra successfully Upload!');
+                            $log.info('Reference ID: ' + data.data.id);
+                            $log.info(data);
+
+                            $rootScope.$broadcast('spectra:uploadsuccess', data);
+                        },
+                        function (error) {
+                            $log.info(error);
+                            $rootScope.$broadcast('spectra:uploaderror', error);
+                        });
 
                     //spectrum.$batchSave(spectrum.submitter.access_token);
                 }, [$scope.currentSpectrum]);
