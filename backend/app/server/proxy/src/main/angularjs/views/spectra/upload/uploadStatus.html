@@ -5,7 +5,6 @@
             <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a> before uploading spectra!</h3>
         </div>
         -->
-
         <div ng-show="spectraUploaded">
             <h3>Thank you for your submission!</h3>
 
@@ -17,18 +16,32 @@
 
             <spectra-upload-progress-bar></spectra-upload-progress-bar>
             <hr/>
-            <a class="btn btn-primary" href="#/upload">Upload More Mass Spectra</a>
+            <a class="btn btn-primary" href="/upload">Upload More Mass Spectra</a>
 
-            <!--
-            <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload More Mass Spectra</button>
-            -->
+            <br /><br />
+            <hr/>
+            <div>
+                <h4>Your uploaded spectra will appear below as they are processed:</h4>
+
+                <div ng-if="spectra.length == 0">
+                    <h4><i class="fa fa-cog fa-spin fa-2x fa-fw"></i> Loading...</h4>
+                </div>
+
+                <div ng-if="spectra.length > 0">
+                    <ul>
+                        <li ng-repeat="spectrum in spectra | orderBy:'-' | limitTo:10">
+                            Spectrum <a ng-href="/spectra/display/{{spectrum.id}}">{{spectrum.id}}</a> was successfully uploaded!
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <div ng-show="!spectraUploaded">
             <h3>The upload queue is empty!</h3>
             <br />
 
-            <a class="btn btn-primary" href="#/upload">Upload Mass Spectra</a>
+            <a class="btn btn-primary" href="/upload">Upload Mass Spectra</a>
 
             <!--
             <h3>Upload Mass Spectra Wizard</h3>
@@ -37,13 +50,6 @@
                 provide you with all the help you need.</p>
             <button type="button" class="btn btn-primary" ng-click="uploadSpectraDialog()">Upload Mass Spectra</button>
             -->
-        </div>
-
-        <br /><br />
-        <hr/>
-        <div>
-            <h4>Recently uploaded spectra from all over the world!</h4>
-            <div gw-news limit="100" type="upload"></div>
         </div>
     </div>
 </div>
