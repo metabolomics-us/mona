@@ -73,28 +73,28 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     }
 
     else {
-      val isGCMS = isGCMSSpectrum(spectrum)
-      val isLCMS = isLCMSSpectrum(spectrum)
-      val isCEMS = isCEMSSpectrum(spectrum)
+      val isGCMS = spectrum.metaData.exists(validateMetaData(_, GCMS_METADATA_CRITERIA))
+      val isLCMS = spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA))
+      val isCEMS = spectrum.metaData.exists(validateMetaData(_, CEMS_METADATA_CRITERIA))
 
 
       if (isGCMS && isLCMS) {
-        logger.warn(s"Spectrum ${spectrum.id} was identified as both GC/MS and LC/MS!")
+        logger.warn(s"${spectrum.id}: Identified as both GC/MS and LC/MS!")
         spectrum
       }
 
       else if (isGCMS && isCEMS) {
-        logger.warn(s"Spectrum ${spectrum.id} was identified as both GC/MS and CE/MS!")
+        logger.warn(s"${spectrum.id}: Identified as both GC/MS and CE/MS!")
         spectrum
       }
 
       else if (isLCMS && isCEMS) {
-        logger.warn(s"Spectrum ${spectrum.id} was identified as both LC/MS and CE/MS!")
+        logger.warn(s"${spectrum.id}: Identified as both LC/MS and CE/MS!")
         spectrum
       }
 
       else if (isGCMS) {
-        logger.info(s"Identified spectrum ${spectrum.id} as GC/MS")
+        logger.info(s"${spectrum.id}: Identified as GC/MS")
 
         // Add GCMS tag and metadata
         val updatedTags: Array[Tags] =
@@ -107,7 +107,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
       }
 
       else if (isLCMS) {
-        logger.info(s"Identified spectrum ${spectrum.id} as LC/MS")
+        logger.info(s"${spectrum.id}: Identified as LC/MS")
 
         // Add LCMS tag
         val updatedTags: Array[Tags] =
@@ -120,7 +120,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
       }
 
       else if (isCEMS) {
-        logger.info(s"Identified spectrum ${spectrum.id} as CE/MS")
+        logger.info(s"${spectrum.id}: Identified as CE/MS")
 
         // Add CEMS tag
         val updatedTags: Array[Tags] =
@@ -133,41 +133,10 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
       }
 
       else {
-        logger.warn(s"Spectrum ${spectrum.id} has unidentifiable chromotography")
+        logger.warn(s"${spectrum.id}: Unidentifiable chromotography")
         spectrum
       }
     }
-  }
-
-
-  /**
-    * check if a spectrum is GC/MS
-    *
-    * @param spectrum
-    * @return
-    */
-  def isGCMSSpectrum(spectrum: Spectrum): Boolean = {
-    spectrum.metaData.exists(validateMetaData(_, GCMS_METADATA_CRITERIA))
-  }
-
-  /**
-    * check if a spectrum is LC/MS
-    *
-    * @param spectrum
-    * @return
-    */
-  def isLCMSSpectrum(spectrum: Spectrum): Boolean = {
-    spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA))
-  }
-
-  /**
-    * check if a spectrum is LC/MS
-    *
-    * @param spectrum
-    * @return
-    */
-  def isCEMSSpectrum(spectrum: Spectrum): Boolean = {
-    spectrum.metaData.exists(validateMetaData(_, CEMS_METADATA_CRITERIA))
   }
 
 
@@ -177,37 +146,40 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return
     */
   def validateMetaData(metaData: MetaData, criteria: Map[String, Array[String]]): Boolean = {
-    criteria.exists(x =>
-      // Check that the metadata name matches the name criterion
-      if (x._1 == "*" || metaData.name.toLowerCase == x._1.toLowerCase) {
-        logger.trace(s"MetaData name ${metaData.name} matches criterion ${x._1}")
+    criteria.exists {
+      case (name: String, terms: Array[String]) =>
+        // Check that the metadata name matches the name criterion
+        if (name == "*" || metaData.name.toLowerCase == name.toLowerCase) {
+          logger.debug(s"MetaData name ${metaData.name} matches criterion $name")
 
-        // Check that the metadata value matches the value criteria
-        x._2.exists(y =>
-          if (metaData.value.toString.toLowerCase == y.toLowerCase) {
-            logger.trace(s"MetaData value ${metaData.value} matches value criterion ${y}")
-            true
-          }
+          // Check that the metadata value matches the value criteria
+          terms.exists(term =>
+            if (metaData.value.toString.toLowerCase == term.toLowerCase) {
+              logger.info(s"MetaData value ${metaData.value} matches value criterion $term")
+              true
+            }
 
-          else if (metaData.unit != null && metaData.unit.toLowerCase == y.toLowerCase) {
-            logger.trace(s"MetaData value ${metaData.value} matches unit criterion ${y}")
-            true
-          }
+            else if (metaData.unit != null && metaData.unit.toLowerCase == term.toLowerCase) {
+              logger.info(s"MetaData value ${metaData.value} matches unit criterion $term")
+              true
+            }
 
-          else if (metaData.value.toString.matches("(?i)"+ y)) {
-            logger.trace(s"MetaData value ${metaData.value} matches regex criterion ${y}")
-            true
-          }
+            else if (metaData.value.toString.toLowerCase.matches(term)) {
+              logger.info(s"MetaData value ${metaData.value} matches regex criterion $term")
+              true
+            }
 
-          else {
-            false
-          }
-        )
-      }
+            else {
+              false
+            }
+          )
+        }
 
-      else {
-        false
-      }
-    )
+        else {
+          false
+        }
+
+      case _ => false
+    }
   }
 }
