@@ -19,9 +19,6 @@
         $scope.showIonTable = true;
 
 
-        $scope.metadataNames = ["accession", "acqusition time", "activation parameter", "activation time", "adduct", "authors", "capillary temperature", "capillary voltage", "collision energy", "collision gas", "column", "column pressure", "column temperature", "derivative form", "derivative mass", "derivative sum formula", "derivative type", "desolvation gas flow", "desolvation temperature", "exact mass", "flow gradient", "flow rate", "fragmentation method", "fragmentation mode", "gas pressure", "gradient", "injection temperature", "injection volume", "instrument", "instrument type", "ion guide voltage", "ionization energy", "ionization potential", "ion mode", "ion source", "ion source temperature", "ion spray voltage", "mass accuracy", "mass error", "mobile phase a", "mobile phase b", "ms level", "nebulizer", "nebulizing gas", "needle voltage", "publication", "raw data file", "reagent gas", "resolution", "resolution setting", "retention index", "retention time", "running buffer", "running voltage", "sample", "sample dripping", "sample injection", "sample introduction", "solvent", "source instrument", "source temperature", "source voltage", "transfer line temperature", "voltage"];
-
-
         /**
          * Sort order for the ion table - default m/z ascending
          */
@@ -387,34 +384,22 @@
         };
 
 
-
+        /**
+         *
+         * @param name
+         * @param value
+         * @returns {*}
+         */
         $scope.queryMetadataValues = function(name, value) {
+            if (angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') === '')
+                value = '';
 
-            if (angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') === '') {
-                return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search', {
-                    query: {
-                        name: name,
-                        value: {isNotNull: ''},
-                        property: 'stringValue',
-                        deleted: false
-                    }
-                }).then(function(data) {
-                    return data.data;
-                });
-
-            }
-            else {
-                return $http.post(REST_BACKEND_SERVER + '/rest/meta/data/search?max=10', {
-                    query: {
-                        name: name,
-                        value: {ilike: '%' + value + '%'},
-                        property: 'stringValue',
-                        deleted: false
-                    }
-                }).then(function(data) {
-                    return data.data;
-                });
-            }
+            return $http.post(
+                REST_BACKEND_SERVER + '/rest/metaData/values/search',
+                {metaDataName: name, partialMetaDataValue: value}
+            ).then(function(data) {
+                return data.data;
+            });
         };
 
 
@@ -435,20 +420,19 @@
         };
 
         /**
-         * Performs initialization and acquisition of data used by the wizard
+         * Performs initialization and acquisition of data
          */
         (function () {
+
+            // Get metadata names
+            $http.get(REST_BACKEND_SERVER + '/rest/metaData/names').then(function(data) {
+                $scope.metadataNames = data.data;
+            });
+
             // Get tags
-            /*
-            TaggingService.query(
-                function (data) {
-                    $scope.tags = data;
-                },
-                function (error) {
-                    $log.error('failed: ' + error);
-                }
-            );
-            */
+            $http.get(REST_BACKEND_SERVER + '/rest/tags').then(function(data) {
+                $scope.tags = data.data;
+            });
         })();
      }
 })();
