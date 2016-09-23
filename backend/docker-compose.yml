@@ -148,6 +148,8 @@ services:
       - "8080:8080"
     depends_on:
       - config
+    environment:
+      - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
 
     #we will be waiting 5 minutes for the discovery service to start up an than start any jar file.
     #java opts can be overriden in the container
