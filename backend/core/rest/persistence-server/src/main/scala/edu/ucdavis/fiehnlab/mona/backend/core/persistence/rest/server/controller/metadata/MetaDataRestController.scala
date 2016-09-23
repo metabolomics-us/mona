@@ -48,9 +48,8 @@ class MetaDataRestController {
     */
   @RequestMapping(path = Array("/names/search"), method = Array(RequestMethod.POST))
   @Async
-  def searchMetaDataName(@RequestBody partialMetaDataName: WrappedString): Future[java.util.List[String]] = {
-    null
-  }
+  def searchMetaDataName(@RequestBody partialMetaDataName: WrappedString): Future[Array[String]] =
+    new AsyncResult[Array[String]](statisticsService.getMetaDataNames.filter(_.toLowerCase.contains(partialMetaDataName.string.toLowerCase)))
 
   /**
     *
@@ -64,13 +63,19 @@ class MetaDataRestController {
 
   /**
     *
-    * @param metaDataName
-    * @param partialMetaDataValue
+    * @param metaData
     * @return
     */
-  @RequestMapping(path = Array("/values/search"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/values/search"), method = Array(RequestMethod.POST))
   @Async
-  def searchMetaDataValues(@RequestBody metaDataName: WrappedString, @RequestBody partialMetaDataValue: WrappedString): Future[java.util.List[String]] = {
-    null
+  def searchMetaDataValues(@RequestBody metaData: MetaDataValueSearch): Future[Array[String]] = {
+    new AsyncResult[Array[String]](
+      statisticsService.getMetaDataStatistics(metaData.metaDataName)
+        .values.map(_.value)
+        .filter(_.toLowerCase.contains(metaData.partialMetaDataValue.toLowerCase))
+    )
   }
 }
+
+
+case class MetaDataValueSearch(metaDataName: String, partialMetaDataValue: String)
