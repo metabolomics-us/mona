@@ -42,6 +42,9 @@ class BootstrapDownloaderService extends LazyLogging {
 
     // Create library exports
     createLibraryQueries()
+
+    // Create general exports
+    createGeneralQueries()
   }
 
   /**
@@ -56,5 +59,17 @@ class BootstrapDownloaderService extends LazyLogging {
     saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", "tags.text==gnps")
     saveQuery("Libraries - LipidBlast", "LipidBlast In-Silico MS/MS Database for Lipid Identification", "tags.text==lipidblast")
     saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", "tags.text==fahfa")
+    saveQuery("Libraries - iTree", "iTree Mass Spectral Tree Library", "tags.text==itree")
+    saveQuery("Libraries - RTX5 Fiehnlib", "RTX5 Fiehn Lab Metabolic Profiling Library", "tags.text==fiehnlib")
+  }
+
+  /**
+    * Define predefined queries of general queries
+    *
+    * @return
+    */
+  def createGeneralQueries() = {
+//    saveQuery("GC/MS", "GC/MS spectra", "tags.text==\"GC/MS\"")
+//    saveQuery("LC/MS", "LC/MS spectra", "tags.text==\"LC/MS\"")
   }
 }
