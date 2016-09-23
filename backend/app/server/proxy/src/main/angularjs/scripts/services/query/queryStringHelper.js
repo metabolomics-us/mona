@@ -36,7 +36,7 @@
                                     query.push("compound.names=q='name=match=" + '\".*' + value + '.*\"\'');
                                     break;
                                 case 'inchiKey':
-                                    query.push("compound.inchiKey==" + value + "\"");
+                                    query.push("compound.inchiKey==" + value);
                                     break;
                                 case 'partInchi':
                                     query.push("compound.inchiKey=match=\".*" + value + ".*\"");
