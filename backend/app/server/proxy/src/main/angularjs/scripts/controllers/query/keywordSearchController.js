@@ -27,7 +27,6 @@
             $scope.sourceIntroduction = [
                 {name: 'Liquid Chromatography', abv: 'LC'},
                 {name: 'Gas Chromatography', abv: 'GC'},
-                // {name: 'Direct Injection/Infusion', abv: 'DI'},
                 {name: 'Capillary Electrophoresis', abv: 'CE'}
             ];
 
@@ -139,8 +138,8 @@
              */
             filtered.groupMeta = {
                 // 'source introduction': [],
-                'ionization type': [],
-                'ms level': []
+                'ion mode': [],
+                'ms type': []
             };
 
             // add source introduction
@@ -153,14 +152,14 @@
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    filtered.groupMeta['ionization type'].push(value.name.toLowerCase());
+                    filtered.groupMeta['ion mode'].push(value.name.toUpperCase());
                 }
             });
 
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.groupMeta['ms level'].push(value.name);
+                    filtered.groupMeta['ms type'].push(value.name);
                 }
             });
 

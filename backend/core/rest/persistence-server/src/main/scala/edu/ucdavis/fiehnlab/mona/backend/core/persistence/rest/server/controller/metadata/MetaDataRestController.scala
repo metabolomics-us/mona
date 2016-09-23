@@ -71,8 +71,11 @@ class MetaDataRestController {
   def searchMetaDataValues(@RequestBody metaData: MetaDataValueSearch): Future[Array[String]] = {
     new AsyncResult[Array[String]](
       statisticsService.getMetaDataStatistics(metaData.metaDataName)
-        .values.map(_.value)
-        .filter(_.toLowerCase.contains(metaData.partialMetaDataValue.toLowerCase))
+        .values
+        .filter(_.value.toLowerCase.contains(metaData.partialMetaDataValue.toLowerCase))
+        .sortBy(-_.count)
+        .map(_.value)
+        .take(25)
     )
   }
 }
