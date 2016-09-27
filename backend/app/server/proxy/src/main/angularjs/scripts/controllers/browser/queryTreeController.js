@@ -15,11 +15,11 @@
         };
 
         $scope.downloadJSON = function(node) {
-            return REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.jsonExport.id;
+            return 'http://mona.fiehnlab.ucdavis.edu/rest/downloads/retrieve/'+ node.jsonExport.id;
         };
 
         $scope.downloadMSP = function(node) {
-            return REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.mspExport.id;
+            return 'http://mona.fiehnlab.ucdavis.edu/rest/downloads/retrieve/'+ node.mspExport.id;
         };
 
         (function() {
