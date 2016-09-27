@@ -139,7 +139,7 @@
             filtered.groupMeta = {
                 // 'source introduction': [],
                 'ion mode': [],
-                'ms type': []
+                'ms level': []
             };
 
             // add source introduction
@@ -159,7 +159,7 @@
             // add ms type to query
             angular.forEach(ms, function (value, key) {
                 if (value.selected === true) {
-                    filtered.groupMeta['ms type'].push(value.name);
+                    filtered.groupMeta['ms level'].push(value.name);
                 }
             });
 
