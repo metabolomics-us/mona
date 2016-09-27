@@ -50,7 +50,6 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     */
   override def process(spectrum: Spectrum): Spectrum = {
     val tags: Array[Tags] = spectrum.tags.filter(x => x.text == CommonTags.GCMS_SPECTRUM || x.text == CommonTags.LCMS_SPECTRUM)
-    val metaData: Array[MetaData] = spectrum.metaData.filter(x => x.name == CommonMetaData.SAMPLE_INTRODUCTION)
 
     if (tags.length == 1) {
       logger.info(s"Spectrum ${spectrum.id} already has identified chromotography: ${tags(0).text}")
@@ -59,16 +58,6 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
 
     else if (tags.length > 1) {
       logger.warn(s"Spectrum ${spectrum.id} has multiple chromotography tags!")
-      spectrum
-    }
-
-    if (metaData.length == 1) {
-      logger.info(s"Spectrum ${spectrum.id} already has identified source introduction: ${tags(0).text}")
-      spectrum
-    }
-
-    else if (metaData.length > 1) {
-      logger.warn(s"Spectrum ${spectrum.id} has multiple source introduction metadata!")
       spectrum
     }
 
