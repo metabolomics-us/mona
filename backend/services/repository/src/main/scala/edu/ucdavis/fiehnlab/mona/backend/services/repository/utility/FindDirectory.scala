@@ -10,18 +10,17 @@ import org.springframework.stereotype.Component
 class FindDirectory {
 
   @Value("${mona.repository:#{systemProperties['java.io.tmpdir']}}")
-  private val tempDir:String = null
+  private val exportDirectory: String = null
 
   /**
     * computes our corrected directory for usage
     * @return
     */
   def dir: String = {
-    if(tempDir.endsWith(System.getProperty("file.separator"))){
-      s"${tempDir}mona"
-    }
-    else{
-      s"${tempDir}${System.getProperty("file.separator")}mona"
+    if(exportDirectory.endsWith(System.getProperty("file.separator"))) {
+      s"${exportDirectory}mona_repository"
+    } else {
+      s"${exportDirectory}${System.getProperty("file.separator")}mona_repository"
     }
   }
 }
