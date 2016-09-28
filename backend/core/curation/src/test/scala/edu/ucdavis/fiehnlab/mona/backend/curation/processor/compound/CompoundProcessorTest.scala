@@ -51,8 +51,6 @@ class CompoundProcessorTest extends WordSpec {
         null, Array.empty[MetaData], null, Array.empty[Names], Array.empty[Tags], computed = false, null)
 
       val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, "UT001056")
-
-      println(molDefinition)
     }
   }
 }
