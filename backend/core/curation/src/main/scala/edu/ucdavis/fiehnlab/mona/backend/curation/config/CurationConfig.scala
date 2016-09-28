@@ -80,7 +80,7 @@ class CurationConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def curationWorkflow(classifierProcessor: ClassifierProcessor): ItemProcessor[Spectrum, Spectrum] = {
+  def curationWorkflow(classifierProcessor: ClassifierProcessor, calculateCompoundProperties: CalculateCompoundProperties): ItemProcessor[Spectrum, Spectrum] = {
     val flow:Workflow[Spectrum] = WorkflowBuilder.
       create[Spectrum].
       enableAnnotationLinking(false).
@@ -90,7 +90,7 @@ class CurationConfig extends LazyLogging {
           new RemoveComputedData,
 
           // Compound curation
-          new CalculateCompoundProperties,
+          calculateCompoundProperties,
           classifierProcessor,
 
           // Spectrum-level curaiton
