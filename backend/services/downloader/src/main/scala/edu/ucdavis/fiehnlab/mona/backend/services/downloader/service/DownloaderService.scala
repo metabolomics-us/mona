@@ -20,8 +20,8 @@ class DownloaderService extends LazyLogging {
   @Autowired
   val downloadWriterService: DownloadWriterService = null
 
-  @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
-  val exportDir: String = null
+  @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
+  val downloadDir: String = null
 
   val objectMapper: ObjectMapper = MonaMapper.create
 
@@ -49,11 +49,11 @@ class DownloaderService extends LazyLogging {
 
   def download(export: QueryExport, compressExport: Boolean): QueryExport = {
     // Create export directory if needed
-    val directory: File = new File(exportDir)
+    val directory: File = new File(downloadDir)
 
     if (!directory.exists()) {
       if (!directory.mkdirs()) {
-        throw new FileNotFoundException(s"was not able to create storage directory at: $exportDir")
+        throw new FileNotFoundException(s"was not able to create storage directory at: $downloadDir")
       }
     }
 
@@ -77,14 +77,14 @@ class DownloaderService extends LazyLogging {
 
 
     // Export query string
-    val queryFile: Path = Paths.get(exportDir, queryFilename)
+    val queryFile: Path = Paths.get(downloadDir, queryFilename)
 
     downloadWriterService.writeQueryFile(queryFile, export.query)
 
 
     // Export query results
-    val exportFile: Path = Paths.get(exportDir, exportFilename)
-    val compressedFile: Path = Paths.get(exportDir, compressedExportFilename)
+    val exportFile: Path = Paths.get(downloadDir, exportFilename)
+    val compressedFile: Path = Paths.get(downloadDir, compressedExportFilename)
 
     val count: Long = downloadWriterService.writeExportFile(exportFile, compressedFile, export.query, export.format, compressExport)
 
