@@ -27,128 +27,10 @@ class StatisticsService {
   val mongoOperations: MongoOperations = null
 
   @Autowired
-  @Qualifier("metadataStatisticsMongoRepository")
-  val metaDataStatisticsRepository: MetaDataStatisticsMongoRepository = null
+  val metaDataStatisticsService: MetaDataStatisticsService = null
 
   @Autowired
-  @Qualifier("tagStatisticsMongoRepository")
-  val tagStatisticsRepository: TagStatisticsMongoRepository = null
-
-
-  /**
-    * Collect a list of unique metadata names
-    * @return
-    */
-  def metaDataNameAggregation(): Array[String] = {
-    val aggregationQuery = newAggregation(
-      classOf[Spectrum],
-      unwind("$metaData"),
-      group("metaData.name")
-    )
-
-    mongoOperations
-      .aggregate(aggregationQuery, "SPECTRUM", classOf[DBObject])
-      .asScala
-      .collect { case x: DBObject => x.get("_id").toString}
-      .toArray
-  }
-
-  /**
-    * Collect a list of unique metadata values and their respective counts for a given metadata name
-    * @param metaDataName
-    * @return
-    */
-  def metaDataAggregation(metaDataName: String): MetaDataStatistics = {
-    val aggregationQuery = newAggregation(
-      classOf[Spectrum],
-      project("metaData"),
-      unwind("metaData"),
-      `match`(Criteria.where("metaData.name").is(metaDataName)),
-      project(bind("value", "metaData.value")),
-      group("value").count().as("total"),
-      project("total").and("value").previousOperation(),
-      sort(Sort.Direction.DESC, "total")
-    )
-
-    val results = mongoOperations
-      .aggregate(aggregationQuery, classOf[Spectrum], classOf[LinkedHashMap[String, Object]])
-      .getMappedResults
-      .asScala
-      .map(x => MetaDataValueCount(x.get("value").toString, x.get("total").asInstanceOf[Int]))
-      .toArray
-
-    MetaDataStatistics(metaDataName, results)
-  }
-
-  /**
-    * Get all data in the metadata statistics repository
-    * @return
-    */
-  def getMetaDataStatistics: lang.Iterable[MetaDataStatistics] = metaDataStatisticsRepository.findAll
-
-  /**
-    * Get data for the given metadata name from the metadata statistics repository
-    * @return
-    */
-  def getMetaDataStatistics(metaDataName: String): MetaDataStatistics = metaDataStatisticsRepository.findOne(metaDataName)
-
-  /**
-    * Get a list of unique metadata names from the metadata statistics repository
-    */
-  def getMetaDataNames: Array[String] = mongoOperations.getCollection("STATISTICS_METADATA").distinct("_id").asScala.map(_.toString).toArray
-
-  /**
-    * Count the data in the metadata statistics repository
-    * @return
-    */
-  def countMetaDataStatistics: Long = metaDataStatisticsRepository.count()
-
-  /**
-    * Update the data in the metadata statistics repository
-    * @return
-    */
-  def updateMetaDataStatistics() =
-    metaDataNameAggregation() foreach { x => metaDataStatisticsRepository.save(metaDataAggregation(x)) }
-
-
-  /**
-    * Collect a list of unique tags with their respective counts
-    * @return
-    */
-  def tagAggregation(): Array[TagStatistics] = {
-    val aggregationQuery = newAggregation(
-      classOf[Spectrum],
-      unwind("$tags"),
-      project(bind("text", "tags.text")),
-      group("text").count().as("total"),
-      project("total").and("value").previousOperation(),
-      sort(Sort.Direction.DESC, "total")
-    )
-
-    mongoOperations
-      .aggregate(aggregationQuery, "SPECTRUM", classOf[DBObject])
-      .asScala
-      .map(x => TagStatistics(x.get("value").toString, x.get("total").asInstanceOf[Int]))
-      .toArray
-  }
-
-  /**
-    * Get all data in the tag statistics repository
-    * @return
-    */
-  def getTagStatistics: lang.Iterable[TagStatistics] = tagStatisticsRepository.findAll
-
-  /**
-    * Count the data in the tag statistics repository
-    * @return
-    */
-  def countTagStatistics: Long = tagStatisticsRepository.count()
-
-  /**
-    * Update the data in the tag statistics repository
-    * @return
-    */
-  def updateTagStatistics() = tagAggregation().foreach(tagStatisticsRepository.save(_))
+  val tagStatisticsService: TagStatisticsService = null
 
 
   /**
@@ -156,7 +38,9 @@ class StatisticsService {
     */
   @Async
   def updateStatistics() = {
-    updateTagStatistics()
-    updateMetaDataStatistics()
+    metaDataStatisticsService.updateMetaDataStatistics()
+    tagStatisticsService.updateTagStatistics()
+
+
   }
 }

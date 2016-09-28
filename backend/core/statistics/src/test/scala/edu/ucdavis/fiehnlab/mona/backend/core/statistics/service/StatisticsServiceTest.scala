@@ -35,7 +35,11 @@ class StatisticsServiceTest extends WordSpec {
   val tagStatisticsRepository: TagStatisticsMongoRepository = null
 
   @Autowired
-  val statisticsService: StatisticsService = null
+  val metaDataStatisticsService: MetaDataStatisticsService = null
+
+  @Autowired
+  val tagStatisticsService: TagStatisticsService = null
+
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
@@ -47,19 +51,19 @@ class StatisticsServiceTest extends WordSpec {
     exampleRecords.foreach(spectrumMongoRepository.save(_))
 
     "perform metadata name aggregation" in {
-      val result: Array[String] = statisticsService.metaDataNameAggregation()
+      val result: Array[String] = metaDataStatisticsService.metaDataNameAggregation()
       assert(result.length == 44)
     }
 
     "perform metadata aggregation for ms level" in {
-      val result: MetaDataStatistics = statisticsService.metaDataAggregation("ms level")
+      val result: MetaDataStatistics = metaDataStatisticsService.metaDataAggregation("ms level")
 
       assert(result.values.length == 1)
       assert(result.values sameElements Array(MetaDataValueCount("MS2", 58)))
     }
 
     "perform metadata aggregation for ion mode" in {
-      val result: MetaDataStatistics = statisticsService.metaDataAggregation("ion mode")
+      val result: MetaDataStatistics = metaDataStatisticsService.metaDataAggregation("ion mode")
 
       assert(result.values.length == 2)
       assert(result.values sameElements Array(MetaDataValueCount("positive", 33), MetaDataValueCount("negative", 25)))
@@ -67,25 +71,25 @@ class StatisticsServiceTest extends WordSpec {
 
     "persist metadata statistics" in {
       metaDataStatisticsRepository.deleteAll()
-      statisticsService.updateMetaDataStatistics()
+      metaDataStatisticsService.updateMetaDataStatistics()
 
       assert(metaDataStatisticsRepository.count() == 44)
     }
 
     "get metadata names from repository" in {
-      val result = statisticsService.getMetaDataNames
+      val result = metaDataStatisticsService.getMetaDataNames
       assert(result.length == 44)
     }
 
     "get metadata aggregation for ms level from repository" in {
-      val result = statisticsService.getMetaDataStatistics("ms level")
+      val result = metaDataStatisticsService.getMetaDataStatistics("ms level")
 
       assert(result.values.length == 1)
       assert(result.values sameElements Array(MetaDataValueCount("MS2", 58)))
     }
 
     "get metadata aggregation for ion mode from repository" in {
-      val result = statisticsService.getMetaDataStatistics("ion mode")
+      val result = metaDataStatisticsService.getMetaDataStatistics("ion mode")
 
       assert(result.values.length == 2)
       assert(result.values sameElements Array(MetaDataValueCount("positive", 33), MetaDataValueCount("negative", 25)))
@@ -93,7 +97,7 @@ class StatisticsServiceTest extends WordSpec {
 
 
     "perform tag aggregation" in {
-      val result: Array[TagStatistics] = statisticsService.tagAggregation()
+      val result: Array[TagStatistics] = tagStatisticsService.tagAggregation()
       assert(result.length == 3)
       assert(result.map(_.text) sameElements Array("massbank", "LCMS", "noisy spectra"))
       assert(result.map(_.count) sameElements Array(58, 58, 3))
@@ -101,7 +105,7 @@ class StatisticsServiceTest extends WordSpec {
 
     "persist tag statistics" in {
       tagStatisticsRepository.deleteAll()
-      statisticsService.updateTagStatistics()
+      tagStatisticsService.updateTagStatistics()
       assert(tagStatisticsRepository.count() == 3)
     }
   }

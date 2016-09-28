@@ -6,7 +6,7 @@ import java.util.concurrent.Future
 import com.mongodb.DBObject
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.StatisticsService
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.{MetaDataStatisticsService, StatisticsService, TagStatisticsService}
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, TagStatistics}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.mongodb.core.MongoOperations
@@ -27,6 +27,12 @@ class StatisticsRestController {
   @Autowired
   val statisticsService: StatisticsService = null
 
+  @Autowired
+  val metaDataStatisticsService: MetaDataStatisticsService = null
+
+  @Autowired
+  val tagStatisticsService: TagStatisticsService = null
+
 
   /**
     * Get a list of unique tags and their respective counts
@@ -34,7 +40,7 @@ class StatisticsRestController {
     */
   @RequestMapping(path = Array("/tags"), method = Array(RequestMethod.GET))
   @Async
-  def listTags: Future[Iterable[TagStatistics]] = new AsyncResult[Iterable[TagStatistics]](statisticsService.getTagStatistics.asScala)
+  def listTags: Future[Iterable[TagStatistics]] = new AsyncResult[Iterable[TagStatistics]](tagStatisticsService.getTagStatistics.asScala)
 
   /**
     * Get all metadata statistics
@@ -42,7 +48,7 @@ class StatisticsRestController {
     */
   @RequestMapping(path = Array("/statistics/metaData"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaData: Future[Iterable[MetaDataStatistics]] = new AsyncResult[Iterable[MetaDataStatistics]](statisticsService.getMetaDataStatistics.asScala)
+  def listMetaData: Future[Iterable[MetaDataStatistics]] = new AsyncResult[Iterable[MetaDataStatistics]](metaDataStatisticsService.getMetaDataStatistics.asScala)
 
   /**
     * Update statistics

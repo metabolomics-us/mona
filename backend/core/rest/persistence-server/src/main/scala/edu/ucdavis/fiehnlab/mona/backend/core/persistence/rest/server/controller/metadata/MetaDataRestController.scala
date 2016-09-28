@@ -7,7 +7,7 @@ import com.mongodb.DBObject
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.StatisticsService
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.{MetaDataStatisticsService, StatisticsService}
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.MetaDataStatistics
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.mongodb.core.MongoOperations
@@ -30,7 +30,7 @@ class MetaDataRestController {
   val mongoOperations: MongoOperations = null
 
   @Autowired
-  val statisticsService: StatisticsService = null
+  val metaDataStatisticsService: MetaDataStatisticsService = null
 
 
   /**
@@ -39,7 +39,7 @@ class MetaDataRestController {
     */
   @RequestMapping(path = Array("/names"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaDataNames: Future[Array[String]] = new AsyncResult[Array[String]](statisticsService.getMetaDataNames)
+  def listMetaDataNames: Future[Array[String]] = new AsyncResult[Array[String]](metaDataStatisticsService.getMetaDataNames)
 
   /**
     *
@@ -49,7 +49,7 @@ class MetaDataRestController {
   @RequestMapping(path = Array("/names/search"), method = Array(RequestMethod.POST))
   @Async
   def searchMetaDataName(@RequestBody partialMetaDataName: WrappedString): Future[Array[String]] =
-    new AsyncResult[Array[String]](statisticsService.getMetaDataNames.filter(_.toLowerCase.contains(partialMetaDataName.string.toLowerCase)))
+    new AsyncResult[Array[String]](metaDataStatisticsService.getMetaDataNames.filter(_.toLowerCase.contains(partialMetaDataName.string.toLowerCase)))
 
   /**
     *
@@ -59,7 +59,7 @@ class MetaDataRestController {
   @RequestMapping(path = Array("/values"), method = Array(RequestMethod.POST))
   @Async
   def listMetaDataValue(@RequestBody metaDataName: WrappedString): AsyncResult[MetaDataStatistics] =
-    new AsyncResult[MetaDataStatistics](statisticsService.getMetaDataStatistics(metaDataName.string))
+    new AsyncResult[MetaDataStatistics](metaDataStatisticsService.getMetaDataStatistics(metaDataName.string))
 
   /**
     *
@@ -70,7 +70,7 @@ class MetaDataRestController {
   @Async
   def searchMetaDataValues(@RequestBody metaData: MetaDataValueSearch): Future[Array[String]] = {
     new AsyncResult[Array[String]](
-      statisticsService.getMetaDataStatistics(metaData.metaDataName)
+      metaDataStatisticsService.getMetaDataStatistics(metaData.metaDataName)
         .values
         .filter(_.value.toLowerCase.contains(metaData.partialMetaDataValue.toLowerCase))
         .sortBy(-_.count)
