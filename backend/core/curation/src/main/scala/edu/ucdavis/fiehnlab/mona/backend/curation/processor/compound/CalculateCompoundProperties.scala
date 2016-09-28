@@ -27,7 +27,11 @@ import scala.collection.mutable.ArrayBuffer
 @Step(description = "this step calculates the compound properties using the CDK", previousClass = classOf[FetchCTSCompoundData], workflow = "spectra-curation")
 class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
-  val compoundConversion: CompoundConversion = new CompoundConversion
+  @Autowired
+  val compoundProcessor: CompoundProcessor = null
+
+  @Autowired
+  val compoundConversion: CompoundConversion = null
 
 
   override def process(spectrum: Spectrum): Spectrum = {
@@ -47,37 +51,7 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
 
     // Get the MOL definition and CDK molecule
-    val (molDefinition, molecule): (String, IAtomContainer) =
-      // Parse provided MOL definition
-      if (compound.molFile != null) {
-        logger.info(s"$id: Parsing MOL definition")
-
-        (compound.molFile, compoundConversion.parseMolDefinition(compound.molFile))
-      }
-
-      // Parse InChI
-      else if (compound.inchi != null) {
-        val molecule: IAtomContainer = compoundConversion.inchiToMolecule(compound.inchi)
-        val molDefinition: String = compoundConversion.generateMolDefinition(molecule)
-
-        (molDefinition, molecule)
-      }
-
-      else {
-        val smiles: Option[MetaData] = compound.metaData.find(_.name.toLowerCase() == "smiles")
-
-        // Parse SMILES
-        if (smiles.isDefined) {
-          logger.info(s"$id: Converting SMILES to MOL definition")
-
-          val molecule: IAtomContainer = compoundConversion.smilesToMolecule(compound.inchi)
-          val molDefinition: String = compoundConversion.generateMolDefinition(molecule)
-
-          (molDefinition, molecule)
-        } else {
-          (null, null)
-        }
-      }
+    val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, id)
 
 
     if (molDefinition == null) {
