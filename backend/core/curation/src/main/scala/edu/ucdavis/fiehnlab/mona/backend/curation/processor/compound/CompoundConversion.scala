@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 import java.io.{StringReader, StringWriter}
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
 import net.sf.jniinchi.INCHI_RET
 import org.openscience.cdk.exception.CDKException
 import org.openscience.cdk.graph.ConnectivityChecker
@@ -14,12 +15,12 @@ import org.openscience.cdk.smiles.{SmilesGenerator, SmilesParser}
 import org.openscience.cdk.tools.CDKHydrogenAdder
 import org.openscience.cdk.tools.manipulator.{AtomContainerManipulator, MolecularFormulaManipulator}
 import org.openscience.cdk.{AtomContainer, DefaultChemObjectBuilder}
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.{Component, Service}
 
 /**
   * Created by sajjan on 8/31/16.
   */
-@Component
+@Service
 class CompoundConversion extends LazyLogging {
 
   /**
@@ -59,7 +60,9 @@ class CompoundConversion extends LazyLogging {
     val returnStatus = inchiToStructure.getReturnStatus
 
     if (returnStatus != INCHI_RET.OKAY && returnStatus != INCHI_RET.WARNING) {
-      throw new CDKException(s"Structure generation failed: ${returnStatus.toString}\n [ ${inchiToStructure.getMessage}\t${inchiToStructure.getWarningFlags}")
+      logger.error(s"Structure generation failed: ${returnStatus.toString}\n [ ${inchiToStructure.getMessage}\t${inchiToStructure.getWarningFlags}")
+
+      null
     } else {
       if (returnStatus == INCHI_RET.WARNING) {
         logger.warn(s"InChI warning: ${inchiToStructure.getMessage}")
@@ -108,18 +111,19 @@ class CompoundConversion extends LazyLogging {
 
     val molSet: IAtomContainerSet = ConnectivityChecker.partitionIntoMolecules(molecule)
 
-    if (molSet.getAtomContainerCount == 1) {
-      // Generate 2D structure
-      val structureDiagramGenerator: StructureDiagramGenerator = new StructureDiagramGenerator(molecule)
-      structureDiagramGenerator.generateCoordinates()
-
-      mdlWriter.writeMolecule(structureDiagramGenerator.getMolecule)
-      mdlWriter.close()
-
-      stringWriter.toString
-    } else {
-      throw new CDKException("Cannot generate MOL definition of disconnected molecules")
+    if (molSet.getAtomContainerCount > 1) {
+      logger.warn("Generating MOL definition of disconnected molecules")
     }
+
+    // Generate 2D structure
+    // TODO Handle disconnected structures
+    val structureDiagramGenerator: StructureDiagramGenerator = new StructureDiagramGenerator(molecule)
+    structureDiagramGenerator.generateCoordinates()
+
+    mdlWriter.writeMolecule(structureDiagramGenerator.getMolecule)
+    mdlWriter.close()
+
+    stringWriter.toString
   }
 
 
