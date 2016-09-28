@@ -13,6 +13,7 @@ services:
     command: echo 'Data Container for our images'
     volumes:
      - /data/db
+     - /data/mona
 
   #contains all the different configuration files for the services
   config_container:
@@ -173,7 +174,7 @@ services:
 
   # download scheduler to queue download jobs from users or for predefined downloads
   # exposes endpoints to schedule, list and initiate downloads
-  downloadScheduler:
+  downloader:
     image: eros.fiehnlab.ucdavis.edu/mona-download-scheduler:latest
 
     depends_on:
@@ -181,6 +182,9 @@ services:
     entrypoint: ./wait-for-it.sh webhooks:4440 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "7777:7777"
+
+    volumes_from:
+      - data_container
 
   #provides us with a presentation of the content of mona as form of repository
   repository:
@@ -191,6 +195,9 @@ services:
     entrypoint: ./wait-for-it.sh webhooks:4440 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "8888:8888"
+
+    volumes_from:
+      - data_container
 
 
 ################################################################################################################
