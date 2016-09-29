@@ -9,7 +9,7 @@
         $scope.errors = [];
         $scope.state = 'register';
 
-        $scope.newSubmitter = {'emailAddress': 'a@a', firstName: 'a', lastName: 'a', institution: 'a', password: 'a'};
+        $scope.newSubmitter = {};
 
         $scope.cancelDialog = function() {
             $uibModalInstance.dismiss('cancel');
