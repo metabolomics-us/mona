@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.types
 
+import java.util.Date
+
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
@@ -26,3 +28,17 @@ case class TagStatistics(
                            text: String,
                            count: Int
                          )
+
+@Document(collection = "STATISTICS")
+case class GlobalStatistics(
+                            @(Id@field)
+                            id: String,
+                            date: Date,
+                            spectrumCount: Long,
+                            compoundCount: Long,
+                            metaDataCount: Long,
+                            metaDataValueCount: Long,
+                            tagCount: Long,
+                            tagValueCount: Long,
+                            submitterCount: Long
+                           )

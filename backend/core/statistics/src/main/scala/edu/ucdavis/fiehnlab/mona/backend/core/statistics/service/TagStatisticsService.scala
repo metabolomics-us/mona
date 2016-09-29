@@ -21,11 +21,11 @@ import scala.collection.JavaConverters._
 class TagStatisticsService {
 
   @Autowired
-  val mongoOperations: MongoOperations = null
+  private val mongoOperations: MongoOperations = null
 
   @Autowired
   @Qualifier("tagStatisticsMongoRepository")
-  val tagStatisticsRepository: TagStatisticsMongoRepository = null
+  private val tagStatisticsRepository: TagStatisticsMongoRepository = null
 
 
   /**

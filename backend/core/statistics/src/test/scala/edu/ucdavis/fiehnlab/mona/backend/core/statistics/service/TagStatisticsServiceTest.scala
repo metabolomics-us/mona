@@ -7,14 +7,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{GlobalStatisticsMongoRepository, MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataValueCount, TagStatistics}
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.data.domain.Sort
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 /**
   * Created by sajjan on 8/4/16.
@@ -22,43 +21,40 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations=Array("classpath:application.properties"))
-class StatisticsServiceTest extends WordSpec {
+class TagStatisticsServiceTest extends WordSpec {
 
   @Autowired
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
 
   @Autowired
-  @Qualifier("globalStatisticsMongoRepository")
-  val globalStatisticsRepository: GlobalStatisticsMongoRepository = null
+  @Qualifier("tagStatisticsMongoRepository")
+  val tagStatisticsRepository: TagStatisticsMongoRepository = null
 
   @Autowired
-  val statisticsService: StatisticsService = null
+  val tagStatisticsService: TagStatisticsService = null
 
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "Statistics Service" should {
+  "Tag Statistics Service" should {
 
     spectrumMongoRepository.deleteAll()
-    globalStatisticsRepository.deleteAll()
-
     exampleRecords.foreach(spectrumMongoRepository.save(_))
-    assert(spectrumMongoRepository.count() == 58)
 
-    "perform aggregation counts" in {
-      val result = statisticsService.updateGlobalStatistics()
 
-      assert(globalStatisticsRepository.findOne(result.id) != null)
+    "perform tag aggregation" in {
+      val result: Array[TagStatistics] = tagStatisticsService.tagAggregation()
+      assert(result.length == 3)
+      assert(result.map(_.text) sameElements Array("massbank", "LCMS", "noisy spectra"))
+      assert(result.map(_.count) sameElements Array(58, 58, 3))
+    }
 
-      assert(result.spectrumCount == 58)
-      assert(result.compoundCount == 0)
-      assert(result.metaDataCount == 44)
-      assert(result.metaDataValueCount == 2120)
-      assert(result.tagCount == 3)
-      assert(result.tagValueCount == 119)
-      assert(result.submitterCount == 1)
+    "persist tag statistics" in {
+      tagStatisticsRepository.deleteAll()
+      tagStatisticsService.updateTagStatistics()
+      assert(tagStatisticsRepository.count() == 3)
     }
   }
 }
