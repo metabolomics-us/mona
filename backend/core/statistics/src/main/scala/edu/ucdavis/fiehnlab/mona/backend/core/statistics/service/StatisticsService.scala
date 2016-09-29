@@ -65,7 +65,16 @@ class StatisticsService {
 
 
     // MetaData count
-    val metaDataCount: Long = metaDataStatisticsService.countMetaDataStatistics
+    val metaDataCount: Long =
+      mongoOperations.aggregate(
+        newAggregation(
+          classOf[Spectrum],
+          project("metaData"),
+          unwind("metaData"),
+          group("metaData.name"),
+          group().count().as("count")
+        ), classOf[Spectrum], classOf[AggregationResult]
+      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
 
 
     // MetaData value count
@@ -81,7 +90,16 @@ class StatisticsService {
 
 
     // Tag count
-    val tagCount: Long = tagStatisticsService.countTagStatistics
+    val tagCount: Long =
+      mongoOperations.aggregate(
+        newAggregation(
+          classOf[Spectrum],
+          project("tags"),
+          unwind("tags"),
+          group("tags.text"),
+          group().count().as("count")
+        ), classOf[Spectrum], classOf[AggregationResult]
+      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
 
 
     // Tag value count
