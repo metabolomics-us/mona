@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.lang
-import java.util.LinkedHashMap
+import java.util.{Date, LinkedHashMap}
 
 import com.mongodb.DBObject
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataValueCount, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{GlobalStatisticsMongoRepository, MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{GlobalStatistics, MetaDataStatistics, MetaDataValueCount, TagStatistics}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
@@ -24,14 +25,93 @@ import scala.collection.JavaConverters._
 class StatisticsService {
 
   @Autowired
-  val mongoOperations: MongoOperations = null
+  private val mongoOperations: MongoOperations = null
 
   @Autowired
-  val metaDataStatisticsService: MetaDataStatisticsService = null
+  private val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
 
   @Autowired
-  val tagStatisticsService: TagStatisticsService = null
+  private val globalStatisticsRepository: GlobalStatisticsMongoRepository = null
 
+  @Autowired
+  private val metaDataStatisticsService: MetaDataStatisticsService = null
+
+  @Autowired
+  private val tagStatisticsService: TagStatisticsService = null
+
+
+  /**
+    * Update the data in the global statistics repository
+    * @return
+    */
+  def updateGlobalStatistics() = {
+    // Spectrum count
+    val spectrumCount: Long = spectrumMongoRepository.count()
+
+
+    // Compound count
+    // TODO: Use only first InChIKey block
+    val compoundCount: Long =
+      mongoOperations.aggregate(
+        newAggregation(
+          classOf[Spectrum],
+          project("compound"),
+          unwind("compound"),
+          unwind("compound.metaData"),
+          `match`(Criteria.where("compound.metaData.name").is("InChIKey")),
+          group().count().as("count")
+        ), classOf[Spectrum], classOf[AggregationResult]
+      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
+
+
+    // MetaData count
+    val metaDataCount: Long = metaDataStatisticsService.countMetaDataStatistics
+
+
+    // MetaData value count
+    val metaDataValueCount: Long =
+      mongoOperations.aggregate(
+        newAggregation(
+          classOf[Spectrum],
+          project("metaData"),
+          unwind("metaData"),
+          group().count().as("count")
+        ), classOf[Spectrum], classOf[AggregationResult]
+      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
+
+
+    // Tag count
+    val tagCount: Long = tagStatisticsService.countTagStatistics
+
+
+    // Tag value count
+    val tagValueCount: Long =
+      mongoOperations.aggregate(
+        newAggregation(
+          classOf[Spectrum],
+          project("tags"),
+          unwind("tags"),
+          group().count().as("count")
+        ), classOf[Spectrum], classOf[AggregationResult]
+      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
+
+
+    // Submitter count
+    val submitterCount: Long =
+      mongoOperations.aggregate(
+        newAggregation(
+          classOf[Spectrum],
+          project("submitter"),
+          group("submitter.emailAddress").count().as("count"),
+          group().count().as("count")
+        ), classOf[Spectrum], classOf[AggregationResult]
+      ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
+
+
+    // Save global statistics
+    globalStatisticsRepository.save(GlobalStatistics(null, new Date, spectrumCount, compoundCount, metaDataCount,
+      metaDataValueCount, tagCount, tagValueCount, submitterCount))
+  }
 
   /**
     * Update all statistics
@@ -40,7 +120,9 @@ class StatisticsService {
   def updateStatistics() = {
     metaDataStatisticsService.updateMetaDataStatistics()
     tagStatisticsService.updateTagStatistics()
-
-
+    updateGlobalStatistics()
   }
 }
+
+
+case class AggregationResult(_id: String, count: Long)

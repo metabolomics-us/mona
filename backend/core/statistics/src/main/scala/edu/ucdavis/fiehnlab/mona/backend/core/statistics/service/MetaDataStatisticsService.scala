@@ -24,11 +24,11 @@ import scala.collection.JavaConverters._
 class MetaDataStatisticsService {
 
   @Autowired
-  val mongoOperations: MongoOperations = null
+  private val mongoOperations: MongoOperations = null
 
   @Autowired
   @Qualifier("metadataStatisticsMongoRepository")
-  val metaDataStatisticsRepository: MetaDataStatisticsMongoRepository = null
+  private val metaDataStatisticsRepository: MetaDataStatisticsMongoRepository = null
 
 
   /**
