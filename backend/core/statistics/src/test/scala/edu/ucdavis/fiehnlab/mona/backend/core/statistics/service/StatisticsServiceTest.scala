@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.io.InputStreamReader
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
@@ -22,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations=Array("classpath:application.properties"))
-class StatisticsServiceTest extends WordSpec {
+class StatisticsServiceTest extends WordSpec with LazyLogging {
 
   @Autowired
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -41,14 +42,18 @@ class StatisticsServiceTest extends WordSpec {
 
   "Statistics Service" should {
 
-    spectrumMongoRepository.deleteAll()
-    globalStatisticsRepository.deleteAll()
+    "load data" in {
+      spectrumMongoRepository.deleteAll()
+      globalStatisticsRepository.deleteAll()
 
-    exampleRecords.foreach(spectrumMongoRepository.save(_))
-    assert(spectrumMongoRepository.count() == 58)
+      exampleRecords.foreach(spectrumMongoRepository.save(_))
+      assert(spectrumMongoRepository.count() == 58)
+    }
 
     "perform aggregation counts" in {
       val result = statisticsService.updateGlobalStatistics()
+
+      logger.info(result.toString)
 
       assert(globalStatisticsRepository.findOne(result.id) != null)
 
