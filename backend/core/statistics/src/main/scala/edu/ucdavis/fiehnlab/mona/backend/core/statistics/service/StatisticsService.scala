@@ -114,6 +114,15 @@ class StatisticsService {
   }
 
   /**
+    *
+    * @return
+    */
+  def getGlobalStatistics: GlobalStatistics =
+    globalStatisticsRepository.findAll(new Sort(Sort.Direction.DESC, "date"))
+      .asScala.headOption.getOrElse(GlobalStatistics(null, new Date, 0, 0, 0, 0, 0, 0, 0))
+
+
+  /**
     * Update all statistics
     */
   @Async
