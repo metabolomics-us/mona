@@ -15,7 +15,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpec
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{GlobalStatistics, MetaDataStatistics, TagStatistics}
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
@@ -79,6 +79,18 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
       "get tag statistics" in {
         val result: Array[TagStatistics] = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/tags").then().log().all(true).statusCode(200).extract().as(classOf[Array[TagStatistics]])
         assert(result.length == 3)
+      }
+
+      "get global statistics" in {
+        val result: GlobalStatistics = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/statistics/global").then().log().all(true).statusCode(200).extract().as(classOf[GlobalStatistics])
+
+        assert(result.spectrumCount == 58)
+        assert(result.compoundCount == 0)
+        assert(result.metaDataCount == 44)
+        assert(result.metaDataValueCount == 2120)
+        assert(result.tagCount == 3)
+        assert(result.tagValueCount == 119)
+        assert(result.submitterCount == 1)
       }
     }
   }
