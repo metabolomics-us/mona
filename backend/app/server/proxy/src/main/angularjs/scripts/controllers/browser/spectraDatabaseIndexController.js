@@ -52,11 +52,15 @@
         /**
          * Query for total statistics
          */
-        var queryTotalStatistics = function() {
-            return $http.get(REST_BACKEND_SERVER + '/rest/statistics/countAll/')
-              .success(function(data) {
-                  $scope.totalData = data;
-              });
+        var getGlobalStatistics = function() {
+            return $http.get(REST_BACKEND_SERVER + '/rest/statistics/global')
+                .then(
+                    function(response) {
+                        $scope.globalData = response.data;
+                        console.log(response);
+                    },
+                    function(response) {}
+                );
         };
 
 
@@ -95,13 +99,13 @@
             //);
 
             // Temporary fix
-            queryMetadataValues(112); // ion mode
-            queryMetadataValues(107); // instrument type
-            queryMetadataValues(676); // ms type
-            queryMetadataValues(117); // precursor type
-            queryMetadataValues(2079592); // derivative type
+            // queryMetadataValues(112); // ion mode
+            // queryMetadataValues(107); // instrument type
+            // queryMetadataValues(676); // ms type
+            // queryMetadataValues(117); // precursor type
+            // queryMetadataValues(2079592); // derivative type
 
-            queryTotalStatistics();
+            getGlobalStatistics();
         })();
     }
 })();
