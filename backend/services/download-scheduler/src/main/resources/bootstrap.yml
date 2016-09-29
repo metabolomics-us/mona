@@ -13,4 +13,4 @@ server:
 
 #basic information who we are
 info:
-  component: MoNA Download Scheduler
+  component: MoNA Downloader Service
