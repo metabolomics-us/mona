@@ -50,6 +50,18 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
     compound.metaData.foreach(x => metaData.append(x))
 
 
+    // Add submitted InChI and InChIKey to metadata if we haven't already
+    if (compound.inchi != null && compound.metaData.forall(_.name != CommonMetaData.INCHI_CODE)) {
+      metaData.append(MetaData("none", computed = false, hidden = false, CommonMetaData.INCHI_CODE,
+        null, null, null, compound.inchi))
+    }
+
+    if (compound.inchiKey != null && compound.metaData.forall(_.name != CommonMetaData.INCHI_KEY)) {
+      metaData.append(MetaData("none", computed = false, hidden = false, CommonMetaData.INCHI_KEY,
+        null, null, null, compound.inchiKey))
+    }
+
+
     // Get the MOL definition and CDK molecule
     val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, id)
 
