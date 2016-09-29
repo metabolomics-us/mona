@@ -51,7 +51,7 @@ class StatisticsServiceTest extends WordSpec with LazyLogging {
     }
 
     "perform aggregation counts" in {
-      val result = statisticsService.updateGlobalStatistics()
+      val result = statisticsService.updateStatistics()
 
       logger.info(result.toString)
 
