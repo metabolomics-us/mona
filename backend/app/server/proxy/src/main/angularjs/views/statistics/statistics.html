@@ -11,32 +11,37 @@
             <tbody>
                 <tr>
                     <td>Total Submitters</td>
-                    <td>{{totalData.submitters}}</td>
+                    <td>{{totalData.submitterCount}}</td>
                 </tr>
                 <tr>
                     <td>Total Spectra</td>
-                    <td>{{totalData.spectra}}</td>
+                    <td>{{totalData.spectrumCount}}</td>
                 </tr>
                 <tr>
                     <td>Total Compounds</td>
-                    <td>{{totalData.compounds}}</td>
+                    <td>{{totalData.compoundCount}}</td>
                 </tr>
                 <tr>
                     <td>Total Metadata Types</td>
-                    <td>{{totalData.metadata}}</td>
+                    <td>{{totalData.metaDataCount}}</td>
                 </tr>
                 <tr>
                     <td>Total Metadata Values</td>
-                    <td>{{totalData.metadataValue}}</td>
+                    <td>{{totalData.metaDataValueCount}}</td>
+                </tr>
+                <tr>
+                    <td>Total Tags Types</td>
+                    <td>{{totalData.tagCount}}</td>
                 </tr>
                 <tr>
                     <td>Total Tags</td>
-                    <td>{{totalData.tags}}</td>
+                    <td>{{totalData.tagValueCount}}</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
+    <!--
     <div class="col-md-12" ng-repeat="(name, data) in fieldData">
         <h4 class="page-header">{{name | titlecase}} <span ng-show="data.length > 10">(Top 10)</span></h4>
 
@@ -44,4 +49,5 @@
             <query-pie style="display: none; width: 400px; height: 100%;" ng-model="data" data-name="name"></query-pie>
         </div>
     </div>
+    -->
 </div>
