@@ -17,7 +17,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     */
   val GCMS_METADATA_CRITERIA: Map[String, Array[String]] = Map(
     (CommonMetaData.INSTRUMENT, Array(".*gcms.*", ".*gc-ms.*", ".*gc/ms.*")),
-    (CommonMetaData.INSTRUMENT_TYPE, Array(".*gc.*", "ei-b")),
+    (CommonMetaData.INSTRUMENT_TYPE, Array(".*gc.*", "ei-b", "ci-b")),
     (CommonMetaData.IONIZATION_ENERGY, Array("ev")),
     (CommonMetaData.SAMPLE_INTRODUCTION, Array(".*gc.*", ".*gas.*"))
   )
@@ -30,7 +30,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     (CommonMetaData.INSTRUMENT_TYPE, Array(".*lc.*")),
     (CommonMetaData.SOLVENT, Array(".*")),
     (CommonMetaData.SAMPLE_INTRODUCTION, Array(".*lc.*", ".*liquid.*")),
-    ("*", Array(".*direct infusion.*"))
+    ("*", Array(".*direct infusion.*", ".*direct injection.*"))
   )
 
   /**
