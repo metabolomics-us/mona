@@ -99,7 +99,11 @@ class SubmitterInchiKeySplashId(val baseDir: File) extends FileLayout {
       compound = spectrum.compound.head
     }
 
-    val inchiKeyDir = new File(submitterDir, compound.inchiKey)
+    val inchiKey: String =
+      if (compound.inchiKey != null) compound.inchiKey
+      else compound.metaData.filter(_.name == "InChIKey").map(_.value.toString).headOption.getOrElse("none")
+
+    val inchiKeyDir = new File(submitterDir, inchiKey)
     val splashDir = new File(inchiKeyDir, SplashUtil.splash(spectrum.spectrum, SpectraType.MS))
 
     splashDir
