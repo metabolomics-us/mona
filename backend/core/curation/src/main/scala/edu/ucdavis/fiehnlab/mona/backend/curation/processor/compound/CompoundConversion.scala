@@ -5,7 +5,7 @@ import java.io.{StringReader, StringWriter}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
 import net.sf.jniinchi.INCHI_RET
-import org.openscience.cdk.exception.CDKException
+import org.openscience.cdk.exception.{CDKException, InvalidSmilesException}
 import org.openscience.cdk.graph.ConnectivityChecker
 import org.openscience.cdk.inchi.{InChIGeneratorFactory, InChIToStructure}
 import org.openscience.cdk.interfaces.{IAtomContainer, IAtomContainerSet}
@@ -29,14 +29,25 @@ class CompoundConversion extends LazyLogging {
     * @return
     */
   def smilesToMolecule(smiles: String): IAtomContainer = {
-    val smilesParser: SmilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance())
-    val molecule: IAtomContainer = smilesParser.parseSmiles(smiles)
+    try {
+      val smilesParser: SmilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance())
+      val molecule: IAtomContainer = smilesParser.parseSmiles(smiles)
 
-    AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
-    CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
-    AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
+      AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
+      CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
+      AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
 
-    molecule
+      molecule
+    } catch {
+      case e: InvalidSmilesException =>
+        logger.error("Invalid SMILES Code")
+        e.printStackTrace()
+        null
+      case e: Exception =>
+        logger.error("Unknown SMILES Error")
+        e.printStackTrace()
+        null
+    }
   }
 
   /**
@@ -60,7 +71,7 @@ class CompoundConversion extends LazyLogging {
     val returnStatus = inchiToStructure.getReturnStatus
 
     if (returnStatus != INCHI_RET.OKAY && returnStatus != INCHI_RET.WARNING) {
-      logger.error(s"Structure generation failed: ${returnStatus.toString}\n [ ${inchiToStructure.getMessage}\t${inchiToStructure.getWarningFlags}")
+      logger.error(s"Structure generation failed: ${returnStatus.toString}\n[${inchiToStructure.getMessage}]\n[${inchiToStructure.getWarningFlags}]")
 
       null
     } else {
