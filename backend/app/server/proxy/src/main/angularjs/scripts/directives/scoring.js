@@ -45,9 +45,7 @@
                         $scope.score = delayedSpectrum.score.scaledScore;
                     }
                 }
-
-                $scope.score = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
-
+                
                 // TODO re-enable scoring
                 /*
                 if (!angular.isDefined($scope.score)) {

@@ -10,7 +10,7 @@
 
         <div class="col-sm-9">
             <input type="text" class="form-control" id="firstName" name="firstName"
-                   placeholder="please enter your first name"
+                   placeholder="Please enter your first name"
                    ng-model="newSubmitter.firstName" required/>
 
             <p ng-show="submitterForm.firstName.$invalid && !submitterForm.firstName.$pristine" class="help-block">
@@ -25,7 +25,7 @@
 
         <div class="col-sm-9">
             <input type="text" class="form-control" id="lastName" name="lastName"
-                   placeholder="please enter your last name" ng-model="newSubmitter.lastName" required/>
+                   placeholder="Please enter your last name" ng-model="newSubmitter.lastName" required/>
 
             <p ng-show="submitterForm.lastName.$invalid && !submitterForm.lastName.$pristine" class="help-block">
                 Your last name is required.</p>
@@ -38,7 +38,7 @@
         <label for="institution" class="control-label col-sm-3">Institution:</label>
 
         <div class="col-sm-9">
-            <input type="institution" class="form-control" placeholder="please enter your institution" id="institution"
+            <input type="institution" class="form-control" placeholder="Please enter your institution" id="institution"
                    name="institution" ng-model="newSubmitter.institution" required/>
 
             <p ng-show="submitterForm.institution.$invalid && !submitterForm.institution.$pristine" class="help-block">
@@ -52,7 +52,7 @@
         <label for="email" class="control-label col-sm-3">Email Address:</label>
 
         <div class="col-sm-9">
-            <input type="email" class="form-control" placeholder="please enter your email address" id="email"
+            <input type="email" class="form-control" placeholder="Please enter your email address" id="email"
                    name="email" ng-model="newSubmitter.emailAddress" required/>
 
             <p ng-show="submitterForm.email.$invalid && !submitterForm.email.$pristine" class="help-block">
@@ -66,7 +66,7 @@
         <label for="password" class="control-label col-sm-3">Password:</label>
 
         <div class="col-sm-9">
-            <input  class="form-control" placeholder="please enter your password" id="password"
+            <input  class="form-control" placeholder="Please enter your password" id="password"
                    name="password" type="password" ng-model="newSubmitter.password" required/>
 
             <p ng-show="submitterForm.password.$invalid && !submitterForm.password.$pristine" class="help-block">
@@ -80,7 +80,7 @@
         <label for="password_match" class="control-label col-sm-3">Re-enter Password:</label>
 
         <div class="col-sm-9">
-            <input  class="form-control" placeholder="please enter your password" id="password_match"
+            <input  class="form-control" placeholder="Please re-enter your password" id="password_match"
                     name="password_match" type="password" ng-model="newSubmitter.password_match"
                     password-match="newSubmitter.password" required/>
 
