@@ -252,8 +252,26 @@
             showSplash();
 
             // Handle queries passed in the URL
+            if($location.search().hasOwnProperty('inchikey')) {
+                $log.info('Accepting InChIKey query from URL: '+ $location.search().inchikey);
+
+                if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($location.search().inchikey)) {
+                    SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value==\""+ $location.search().inchikey +"\"'");
+                } else {
+                    SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value=match=\""+ $location.search().inchikey +"-.*\"'");
+                }
+            }
+
+            if($location.search().hasOwnProperty('splash')) {
+                $log.info('Accepting SPLASH query from URL: '+ $location.search().splash);
+
+                SpectraQueryBuilderService.setQueryString("splash.splash=="+ $location.search().splash);
+            }
+
+
             if($location.search().hasOwnProperty('query')) {
                 $log.info('Accepting query from URL: '+ $location.search().query);
+                
                 SpectraQueryBuilderService.setQueryString($location.search().query);
             }
 
