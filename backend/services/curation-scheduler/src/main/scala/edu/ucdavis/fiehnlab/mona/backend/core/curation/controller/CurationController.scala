@@ -29,7 +29,7 @@ import scala.collection.JavaConverters._
 class CurationController {
 
   @Autowired
-  val repository: ISpectrumMongoRepositoryCustom = null
+  val mongoRepository: ISpectrumMongoRepositoryCustom = null
 
   @Autowired
   val curationService: CurationService = null
@@ -46,7 +46,7 @@ class CurationController {
   @RequestMapping(path = Array("/{id}"))
   @Async
   def curateById(@PathVariable("id") id: String, request: HttpServletRequest): Future[CurationJobScheduled] = {
-    val spectrum = repository.findOne(id)
+    val spectrum = mongoRepository.findOne(id)
 
     if (spectrum == null) {
       throw new NoSuchRequestHandlingMethodException(request)
@@ -64,30 +64,28 @@ class CurationController {
   @RequestMapping(path = Array(""))
   @Async
   def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[CurationJobScheduled] = {
-    if (query == null || query.isEmpty) {
-      val count: Int = repository.findAll().asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
-        curationService.scheduleSpectra(spectrum)
-        sum + 1
-      }
-
-      new AsyncResult[CurationJobScheduled](CurationJobScheduled(count))
-    } else {
-      val iterable = new DynamicIterable[Spectrum, String](query, 10) {
-        /**
-          * loads more data from the server for the given query
-          */
-        override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
-          repository.rsqlQuery(query, pageable)
+    val it = new DynamicIterable[Spectrum, String](query, 10) {
+      /**
+        * Loads more data from the server for the given query
+        */
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
+        if (query == null || query.isEmpty) {
+          mongoRepository.findAll(pageable)
+        } else {
+          mongoRepository.rsqlQuery(query, pageable)
         }
       }
+    }.iterator
 
-      val count: Int = iterable.asScala.foldLeft(0) { (sum, spectrum: Spectrum) =>
-        curationService.scheduleSpectra(spectrum)
-        sum + 1
-      }
+    var count: Int = 0
 
-      new AsyncResult[CurationJobScheduled](CurationJobScheduled(count))
+    while(it.hasNext) {
+      val spectrum = it.next()
+      curationService.scheduleSpectra(spectrum)
+      count += 1
     }
+
+    new AsyncResult[CurationJobScheduled](CurationJobScheduled(count))
   }
 
   /**
