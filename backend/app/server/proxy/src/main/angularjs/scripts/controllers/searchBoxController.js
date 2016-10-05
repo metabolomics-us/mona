@@ -19,29 +19,32 @@
                 return;
             }
 
-            var path = '/';
             searchBoxQuery = searchBoxQuery.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 
             // Handle InChIKey
-            if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(searchBoxQuery)) {
-                path = '/spectra/browse?query=compound.inchiKey=='+ searchBoxQuery;
+            if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test(searchBoxQuery)) {
+                SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value==\""+ searchBoxQuery +"\"'");
+            }
+
+            if (/^[A-Z]{14}$/.test(searchBoxQuery)) {
+                SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value=match=\""+ searchBoxQuery +"-.*\"'");
             }
 
             // Handle SPLASH
             else if (/^(splash[0-9]{2}-[a-z0-9]{4}-[0-9]{10}-[a-z0-9]{20})$/.test(searchBoxQuery)) {
-                path = '/spectra/browse?query=splash.splash=='+ searchBoxQuery;
+                SpectraQueryBuilderService.setQueryString("splash.splash=="+ searchBoxQuery);
             }
 
             // Handle name query
             else {
-                path = '/spectra/browse?query=compound.names=q=\'name=match=".*'+ searchBoxQuery +'.*"\'';
+                SpectraQueryBuilderService.setQueryString("compound.names=q='name=match=\".*"+ searchBoxQuery +".*\"'");
             }
 
             // Update view
-            if ($location.path() === path) {
+            if ($location.path().indexOf('/spectra/browse') > -1) {
                 $route.reload();
             } else {
-                $location.path(path);
+                $location.path('/spectra/browse');
             }
         };
 
