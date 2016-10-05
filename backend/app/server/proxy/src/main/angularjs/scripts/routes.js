@@ -78,15 +78,11 @@
             })
 
             .when('/spectra/splash/:splash', {
-                templateUrl: 'views/spectra/browse/spectra.html',
-                controller: 'SpectraBrowserController',
-                resolve: {
-                    splash: /* @ngInject */['SpectraQueryBuilderService', '$route', function(SpectraQueryBuilderService, $route) {
-                        SpectraQueryBuilderService.prepareQuery();
-                        //add it to query
-                        SpectraQueryBuilderService.addSpectraIdToQuery($route.current.params.splash);
-                    }]
-                }
+                redirectTo: "/spectra/browse"
+            })
+
+            .when('/spectra/inchikey/:inchikey', {
+                redirectTo: "/spectra/browse"
             })
 
             //database index
