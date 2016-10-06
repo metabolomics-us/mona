@@ -85,9 +85,12 @@ class MetaDataStatisticsServiceTest extends WordSpec {
 
     "get metadata aggregation for ion mode from repository" in {
       val result = metaDataStatisticsService.getMetaDataStatistics("ion mode")
+      val values = result.values.sortBy(_.count)
 
-      assert(result.values.length == 2)
-      assert(result.values sameElements Array(MetaDataValueCount("positive", 33), MetaDataValueCount("negative", 25)))
+
+      assert(values.length == 2)
+      assert(values.head == MetaDataValueCount("negative", 25))
+      assert(values.last == MetaDataValueCount("positive", 33))
     }
   }
 }
