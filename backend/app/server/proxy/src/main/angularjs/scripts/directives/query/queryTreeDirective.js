@@ -32,8 +32,8 @@
                     '    <span ng-if="node.query === null"> {{node.label}}</span>'+
 
                     '    <span class="pull-right">' +
-                    '        <span ng-if="node.jsonExport !== null"><a ng-href="{{downloadJSON(node)}}"><i class="fa fa-download"></i> Download JSON</a> ({{node.jsonExport.size | bytes}})</span>&nbsp;' +
-                    '        <span ng-if="node.mspExport !== null"><a ng-href="{{downloadMSP(node)}}"><i class="fa fa-download"></i> Download MSP</a> ({{node.mspExport.size | bytes}})</span>  ' +
+                    '        <span ng-if="node.jsonExport !== null"><a ng-href="{{downloadJSON(node)}}" target="_self"><i class="fa fa-download"></i> Download JSON</a> ({{node.jsonExport.size | bytes}})</span>&nbsp;' +
+                    '        <span ng-if="node.mspExport !== null"><a ng-href="{{downloadMSP(node)}}" target="_self"><i class="fa fa-download"></i> Download MSP</a> ({{node.mspExport.size | bytes}})</span>  ' +
                     '        <span ng-if="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>' +
                     '   </span>' +
                     '</p>'+
