@@ -15,11 +15,11 @@
         };
 
         $scope.downloadJSON = function(node) {
-            return 'http://mona.fiehnlab.ucdavis.edu/rest/downloads/retrieve/'+ node.jsonExport.id;
+            return '/rest/downloads/retrieve/'+ node.jsonExport.id;
         };
 
         $scope.downloadMSP = function(node) {
-            return 'http://mona.fiehnlab.ucdavis.edu/rest/downloads/retrieve/'+ node.mspExport.id;
+            return '/rest/downloads/retrieve/'+ node.mspExport.id;
         };
 
         (function() {
