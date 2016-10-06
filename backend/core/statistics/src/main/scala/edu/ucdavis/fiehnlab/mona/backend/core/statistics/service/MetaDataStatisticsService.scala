@@ -100,10 +100,26 @@ class MetaDataStatisticsService {
     */
   def countMetaDataStatistics: Long = metaDataStatisticsRepository.count()
 
+  
   /**
     * Update the data in the metadata statistics repository
     * @return
     */
-  def updateMetaDataStatistics() =
-  metaDataNameAggregation() foreach { x => metaDataStatisticsRepository.save(metaDataAggregation(x)) }
+  def updateMetaDataStatistics() = {
+    val aggregationQuery = newAggregation(
+      classOf[Spectrum],
+      project("metaData"),
+      unwind("metaData"),
+      project().and("metaData.name").as("name").and("metaData.value").as("value"),
+      group("name", "value").count().as("count"),
+      project("name").and("grouped").nested(bind("value", "value").and("count", "count")),
+      group("name").push("grouped").as("values")
+    )
+
+    mongoOperations
+      .aggregate(aggregationQuery, classOf[Spectrum], classOf[MetaDataStatistics])
+      .getMappedResults
+      .asScala
+      .foreach(metaDataStatisticsRepository.save(_))
+  }
 }
