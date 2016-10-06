@@ -33,7 +33,7 @@ class DownloadSchedulerController extends LazyLogging {
   @Autowired
   val predefinedQueryRepository: PredefinedQueryMongoRepository = null
 
-  @Value("${mona.export.path:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_exports")
+  @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
   val exportDir: String = null
 
   /**

@@ -100,7 +100,7 @@ class MetaDataStatisticsService {
     */
   def countMetaDataStatistics: Long = metaDataStatisticsRepository.count()
 
-  
+
   /**
     * Update the data in the metadata statistics repository
     * @return
