@@ -32,8 +32,8 @@
                     '    <span ng-if="node.query === null"> {{node.label}}</span>'+
 
                     '    <span class="pull-right">' +
-                    '        <span ng-if="node.jsonExport !== null"><a ng-href="{{downloadJSON(node)}}" target="_self"><i class="fa fa-download"></i> Download JSON</a> ({{node.jsonExport.size | bytes}})</span>&nbsp;' +
-                    '        <span ng-if="node.mspExport !== null"><a ng-href="{{downloadMSP(node)}}" target="_self"><i class="fa fa-download"></i> Download MSP</a> ({{node.mspExport.size | bytes}})</span>  ' +
+                    '        <span ng-if="node.jsonExport !== null"><a ng-href="{{downloadJSON(node)}}" target="_self" download><i class="fa fa-download"></i> Download JSON</a> ({{node.jsonExport.size | bytes}})</span>&nbsp;' +
+                    '        <span ng-if="node.mspExport !== null"><a ng-href="{{downloadMSP(node)}}" target="_self" download><i class="fa fa-download"></i> Download MSP</a> ({{node.mspExport.size | bytes}})</span>  ' +
                     '        <span ng-if="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>' +
                     '   </span>' +
                     '</p>'+
@@ -43,18 +43,16 @@
                     if(depth == 0) {
                         template = '<div class="list-group panel-query-tree well">'+ template +'</div>';
 
-                        //create tree object if not exists
+                        // Create tree object if not exists
                         scope[treeId] = scope[treeId] || {};
 
-                        //if node head clicks,
-                        scope[treeId].selectNodeHead = scope[treeId].selectNodeHead || function( selectedNode ){
-
-                            //Collapse or Expand
+                        // Collapse/expand node
+                        scope[treeId].selectNodeHead = scope[treeId].selectNodeHead || function(selectedNode) {
                             selectedNode.collapsed = !selectedNode.collapsed;
                         };
 
-                        //if node label clicks,
-                        scope[treeId].selectNodeLabel = scope[treeId].selectNodeLabel || function( selectedNode ){
+                        // If node label clicks,
+                        scope[treeId].selectNodeLabel = scope[treeId].selectNodeLabel || function(selectedNode) {
 
                             //remove highlight from previous node
                             if( scope[treeId].currentNode && scope[treeId].currentNode.selected ) {
