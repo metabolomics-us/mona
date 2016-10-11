@@ -78,11 +78,11 @@
             })
 
             .when('/spectra/splash/:splash', {
-                redirectTo: "/spectra/browse"
+                redirectTo: '/spectra/browse'
             })
 
             .when('/spectra/inchikey/:inchikey', {
-                redirectTo: "/spectra/browse"
+                redirectTo: '/spectra/browse'
             })
 
             //database index
@@ -92,6 +92,10 @@
             })
 
             .when('/spectra/querytree', {
+                redirectTo: '/downloads'
+            })
+
+            .when('/downloads', {
                 templateUrl: 'views/spectra/dbindex/queryTree.html',
                 controller: 'QueryTreeController'
             })
