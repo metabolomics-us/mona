@@ -14,6 +14,11 @@ services:
     volumes:
      - /data/db
      - /data/mona
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-data-volume"
 
   #contains all the different configuration files for the services
   config_container:
@@ -21,6 +26,11 @@ services:
     command: echo 'Data Container for our images'
     volumes:
      - /usr/share/elasticsearch/config
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "configuration-volume"
 
 ################################################################################################################
 #This section provides us with the required databases and should be changed later
@@ -34,6 +44,11 @@ services:
       - data_container
     ports:
       - "27017:27017"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-mongodb"
 
 ################################################################################################################
 # This section defines our elastic search cluster and one master node, which is publically exposed
@@ -42,10 +57,15 @@ services:
 
   #defines a node, which can be scaled on the fly
   elasticsearch_node:
-     image: elasticsearch:1.7.5
-     volumes_from:
-       - config_container:ro
-     entrypoint: ./bin/elasticsearch -Xmx4g
+    image: elasticsearch:1.7.5
+    volumes_from:
+      - config_container:ro
+    entrypoint: ./bin/elasticsearch -Xmx4g
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-es-node"
 
 
   #defines the master node and should not be scaled
@@ -59,6 +79,11 @@ services:
        - "9500:9200"
        - "9300:9300"
     entrypoint: ./bin/elasticsearch -Xmx4g
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-es-master"
 
 ################################################################################################################
 # This section provides us with access to the required messaging queues and services for caching application
@@ -72,6 +97,11 @@ services:
     ports:
       - "15673:15672"
       - "5673:5672"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-rabbitmq"
 
   #used for caching and as a log buffer internally
   redis:
@@ -79,6 +109,11 @@ services:
     hostname: redis
     ports:
       - "6379:6379"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-redis"
 
 ################################################################################################################
 # This section defines our required services, need to connect mona apps
@@ -99,6 +134,11 @@ services:
 
     environment:
       - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-discovery"
 
 # The configuration service, provides to every client his required configuration
 # the client needs to have a bootstrap.yml to register against it
@@ -126,6 +166,12 @@ services:
     environment:
       - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
 
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-config"
+
 # this proxy server is the main entry point for mona and should be preferable always be used
 
   proxy:
@@ -142,6 +188,12 @@ services:
     #the configuration points the task as the right ip address for the discovery server
     #we also define the url for our configuration server here
     entrypoint: ./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xss4m -Xmx1g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-proxy"
 
 
 ################################################################################################################
@@ -160,6 +212,12 @@ services:
     ports:
     - "4440:4444"
 
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-webhooks"
+
   #curation scheduler to notify rabbit queue, if any messages are send down the bus
   #it also exposes a couple of rest enpoints to manually schedule curation tasks
   #to the system
@@ -171,6 +229,12 @@ services:
     entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "5555:5555"
+
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-scheduler"
 
   # download scheduler to queue download jobs from users or for predefined downloads
   # exposes endpoints to schedule, list and initiate downloads
@@ -186,6 +250,12 @@ services:
     volumes_from:
       - data_container
 
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-downloader"
+
   #provides us with a presentation of the content of mona as form of repository
   repository:
     image: eros.fiehnlab.ucdavis.edu/mona-repository
@@ -199,6 +269,11 @@ services:
     volumes_from:
       - data_container
 
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-repository"
 
 ################################################################################################################
 # This section defines services, which can be scaled from 1-n times and should be started last
@@ -211,6 +286,11 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-auth"
 
   #persistences and query interface
   persistence:
@@ -219,6 +299,11 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-persistence"
 
   # bootstrapper
   bootstrap:
@@ -227,6 +312,11 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-bootstrap"
 
   #curation runner is utilized to actually curate spectra
   curationRunner:
@@ -235,3 +325,8 @@ services:
     depends_on:
       - curationScheduler
     entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+        tag: "mona-curation"
