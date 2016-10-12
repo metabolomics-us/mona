@@ -31,7 +31,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     (CommonMetaData.SOLVENT, Array(".*")),
     (CommonMetaData.SAMPLE_INTRODUCTION, Array(".*lc.*", ".*liquid.*")),
     ("ion source", Array(".*lc.*")),
-    ("*", Array(".*direct infusion.*", ".*direct injection.*"))
+    ("*", Array(".*direct infusion.*", ".*direct injection.*", "flow-injection", "flow injection"))
   )
 
   /**

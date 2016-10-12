@@ -34,7 +34,7 @@ class NormalizeIonizationTypeValue extends ItemProcessor[Spectrum,Spectrum] with
     * @return
     */
   def normalizeIonModeData(metaData: MetaData) : MetaData = {
-    if (metaData.name == CommonMetaData.IONIZATION_TYPE) {
+    if (metaData.name == CommonMetaData.IONIZATION_MODE) {
       val value: String = metaData.value.toString.toLowerCase.trim
 
       logger.debug(s"Found ionization type metadata with value: $value")
