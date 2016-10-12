@@ -33,7 +33,7 @@ object CommonMetaData {
 
   val SAMPLE_INTRODUCTION: String = "sample introduction"
 
-  val IONIZATION_TYPE: String = "ionization type"
+  val IONIZATION_MODE: String = "ionization mode"
 
   val DERIVATIZATION_TYPE: String = "derivatization type"
 
