@@ -4,12 +4,12 @@
 
 (function() {
     'use strict';
-    queryTreeController.$inject = ['$scope', 'Spectrum', '$location', '$filter', '$log', 'SpectraQueryBuilderService', 'REST_BACKEND_SERVER'];
+    queryTreeController.$inject = ['$scope', 'Spectrum', '$log', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
         .controller('QueryTreeController', queryTreeController);
 
     /* @ngInject */
-    function queryTreeController($scope, Spectrum, $location, $filter, $log, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
+    function queryTreeController($scope, Spectrum, $log, REST_BACKEND_SERVER) {
         $scope.executeQuery = function(node) {
             return '/spectra/browse?query='+ node.query;
         };
