@@ -14,13 +14,12 @@ dataformat	data format
 flowrate	flow rate
 weight	molecular weight
 transfarline temperature	transfer line temperature
-ionizationmode	ionization type
+ionizationmode	ionization mode
 precursormz	precursor m/z
 precursor ion	precursor type
 m/z difference	delta m/z
 source instrument	instrument
 z	charge state
-ionization	ionization type
 principal investigator	senior author
 instrument configuration	instrument
 submituser	submitter
@@ -33,17 +32,18 @@ retentiontime	retention time
 BP	base peak
 charge	charge state
 B	magnetic field strength
-ion mode	ionization type
-scan polarity	ionization type
+ion mode	ionization mode
+scan polarity	ionization mode
 data processing	data transformation
 selected ion m/z	precursor m/z
 molecule formula	molecular formula
 flow	flow rate
-polarity	ionization type
+polarity	ionization mode
 retentionindex	retention index
 ri	retention index
-ionization mode	ionization type
-AC$MASS_SPECTROMETRY: ION_MODE	ionization type
+ionization type	ionization mode
+AC$MASS_SPECTROMETRY: ION_MODE	ionization mode
+AC$ANALYTICAL_CONDITION: MODE	ionization mode
 compoundclass	compound class
 mz exact	exact mass
 Magnetic Field	magnetic field strength
@@ -54,7 +54,7 @@ thomson	m/z
 activation	precursor activation
 mstype	ms level
 ms type	ms level
-ionmode	ionization type
+ionmode	ionization mode
 Scan Duration	dwell time
 scan function	scan law
 rt	retention time
