@@ -152,7 +152,7 @@
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    filtered.groupMeta['ion mode'].push(value.name.toUpperCase());
+                    filtered.groupMeta['ion mode'].push(value.name.toLowerCase());
                 }
             });
 
