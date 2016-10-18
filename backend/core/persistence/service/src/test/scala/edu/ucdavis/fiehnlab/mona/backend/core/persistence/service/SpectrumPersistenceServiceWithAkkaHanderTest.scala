@@ -2,10 +2,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service
 
 import java.io.InputStreamReader
 
-import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBusListener, ReceivedEventCounter}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Compound, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
@@ -48,7 +47,8 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
   @Autowired
   val eventCounter: ReceivedEventCounter[Spectrum] = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
+
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
@@ -70,7 +70,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
 
 
     List(1, 2, 3).foreach { iteration =>
-      s"we run every test several times, since we have caching, this one is iteration ${iteration}" should {
+      s"we run every test several times, since we have caching, this one is iteration $iteration" should {
 
         "have at least one listener assigned " in {
           assert(spectrumPersistenceService.eventScheduler.persistenceEventListeners.size() > 1)
@@ -93,59 +93,34 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "query all data" in {
-          val result = spectrumPersistenceService.findAll().iterator
-
-          var count = 0
-          while (result.hasNext) {
-            count = count + 1
-            result.next()
-          }
-
-          assert(count == exampleRecords.length)
+          val result = spectrumPersistenceService.findAll()
+          assert(result.asScala.size == exampleRecords.length)
         }
 
         "query all data with pagination " in {
           val result: Page[Spectrum] = spectrumPersistenceService.findAll(new PageRequest(0, 10))
-          assert(result.getTotalPages() == 6)
+          assert(result.getTotalPages == 6)
         }
 
         "query data with the query tags=q='text==LCMS'" in {
-          val result = spectrumPersistenceService.findAll("tags=q='text==LCMS'").iterator
+          val result = spectrumPersistenceService.findAll("tags=q='text==LCMS'")
+          assert(result.asScala.size == exampleRecords.length)
+        }
 
-          var count = 0
-          while (result.hasNext) {
-            count = count + 1
-            result.next()
-          }
-
-          assert(count == exampleRecords.length)
+        "query data with the query tags.text==LCMS" in {
+          val result = spectrumPersistenceService.findAll("tags.text==LCMS")
+          assert(result.asScala.size == exampleRecords.length)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==positive'" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""").iterator
-
-          var count = 0
-          while (result.hasNext) {
-            count = count + 1
-            result.next()
-          }
-
-          assert(count == 33)
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""")
+          assert(result.asScala.size == 33)
         }
-
 
         "query data with the query metaData=q='name==\"ion mode\" and value==negative'" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""").iterator
-
-          var count = 0
-          while (result.hasNext) {
-            count = count + 1
-            result.next()
-          }
-
-          assert(count == 25)
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""")
+          assert(result.asScala.size == 25)
         }
-
 
         "query data with pagination" in {
           val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", new PageRequest(0, 10))
@@ -154,22 +129,17 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "update data" in {
-
           val countBefore = spectrumPersistenceService.count()
           val spectrum: Spectrum = spectrumPersistenceService.findAll().iterator.next()
 
           val toUpdate = spectrum.copy(spectrum = "1:1")
-
           assert(spectrum.id == toUpdate.id)
-          spectrumPersistenceService.update(toUpdate)
 
+          spectrumPersistenceService.update(toUpdate)
           val updated = spectrumPersistenceService.findOne(spectrum.id)
 
           assert(updated.spectrum == "1:1")
-
-          val countAfter = spectrumPersistenceService.count()
-
-          assert(countAfter == countBefore)
+          assert(countBefore == spectrumPersistenceService.count())
         }
 
         "present us with a count for data in the repository" in {
@@ -180,7 +150,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
           assert(spectrumPersistenceService.count("metaData=q='name==\"ion mode\" and value==negative'") == 25)
         }
 
-        "we should be able to execute custom queries like compound.names.name=='META-HYDROXYBENZOIC ACID'" ignore {
+        "we should be able to execute custom queries like compound.names.name=='META-HYDROXYBENZOIC ACID'" in {
           val exampleRecords = spectrumPersistenceService.findAll("""compound.names.name=='META-HYDROXYBENZOIC ACID'""")
           assert(exampleRecords.asScala.toList.size == 1)
         }
@@ -197,11 +167,9 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
           spectrumPersistenceService.delete(spectra)
 
           eventually(timeout(10 seconds)) {
-
             assert(spectrumPersistenceService.count() == count - 1)
             assert(spectrumMongoRepository.count() == count - 1)
             assert(spectrumElasticRepository.count() == count - 1)
-
           }
         }
 
