@@ -37,8 +37,6 @@ class BootstrapDownloaderService extends LazyLogging {
     * @return
     */
   def createPredefinedQueries() = {
-    // Create export for all spectra
-    saveQuery("All Spectra", "All Spectra", "")
 
     // Create library exports
     createLibraryQueries()
@@ -53,14 +51,14 @@ class BootstrapDownloaderService extends LazyLogging {
     * @return
     */
   def createLibraryQueries() = {
-    saveQuery("Libraries - MassBank", "MassBank Spectral Database", "tags.text==massbank")
-    saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", "tags.text==respect")
-    saveQuery("Libraries - HMDB", "Human Metabolome Database", "tags.text==hmdb")
-    saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", "tags.text==gnps")
-    saveQuery("Libraries - LipidBlast", "LipidBlast In-Silico MS/MS Database for Lipid Identification", "tags.text==lipidblast")
-    saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", "tags.text==fahfa")
-    saveQuery("Libraries - iTree", "iTree Mass Spectral Tree Library", "tags.text==itree")
-    saveQuery("Libraries - RTX5 Fiehnlib", "RTX5 Fiehn Lab Metabolic Profiling Library", "tags.text==fiehnlib")
+    saveQuery("Libraries - MassBank", "MassBank Spectral Database", "tags.text==MassBank")
+    saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", "tags.text==ReSpect")
+    saveQuery("Libraries - HMDB", "Human Metabolome Database", "tags.text==HMDB")
+    saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", "tags.text==GNPS")
+    saveQuery("Libraries - LipidBlast", "LipidBlast In-Silico MS/MS Database for Lipid Identification", "tags.text==LipidBlast")
+    saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", "tags.text==FAHFA")
+    saveQuery("Libraries - iTree", "iTree Mass Spectral Tree Library", "tags.text==iTree")
+    saveQuery("Libraries - RTX5 Fiehnlib", "RTX5 Fiehn Lab Metabolic Profiling Library", "tags.text==FiehnLib")
   }
 
   /**
@@ -69,7 +67,12 @@ class BootstrapDownloaderService extends LazyLogging {
     * @return
     */
   def createGeneralQueries() = {
-//    saveQuery("GC/MS", "GC/MS spectra", "tags.text==\"GC/MS\"")
-//    saveQuery("LC/MS", "LC/MS spectra", "tags.text==\"LC/MS\"")
+    // Create export for all spectra
+    saveQuery("All Spectra", "All Spectra", "")
+//    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text=='in-silico'")
+//    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", "")
+
+    saveQuery("GC/MS", "GC/MS spectra", "tags.text==\"GC-MS\"")
+    saveQuery("LC/MS", "LC/MS spectra", "tags.text==\"LC-MS\"")
   }
 }
