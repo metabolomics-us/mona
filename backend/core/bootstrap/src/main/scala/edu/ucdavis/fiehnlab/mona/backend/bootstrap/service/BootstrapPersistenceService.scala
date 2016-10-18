@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service
   * Created by sajjan on 7/14/16.
   */
 @Service
-class BootstrapAuthenticationService {
+class BootstrapPersistenceService {
 
-  def createAdminAccounts() = {
+  def synchronizeDatabases() = {
 
   }
 }
