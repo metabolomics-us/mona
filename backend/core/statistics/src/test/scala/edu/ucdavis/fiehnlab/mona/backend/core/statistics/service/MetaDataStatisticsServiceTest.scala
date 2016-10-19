@@ -42,8 +42,11 @@ class MetaDataStatisticsServiceTest extends WordSpec {
 
   "MetaData Statistics Service" should {
 
-    spectrumMongoRepository.deleteAll()
-    exampleRecords.foreach(spectrumMongoRepository.save(_))
+    "load data" in {
+      spectrumMongoRepository.deleteAll()
+      exampleRecords.foreach(spectrumMongoRepository.save(_))
+      assert(spectrumMongoRepository.count() == 58)
+    }
 
     "perform metadata name aggregation" in {
       val result: Array[String] = metaDataStatisticsService.metaDataNameAggregation()
