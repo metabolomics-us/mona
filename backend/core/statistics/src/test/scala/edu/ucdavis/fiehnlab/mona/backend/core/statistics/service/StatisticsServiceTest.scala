@@ -36,7 +36,7 @@ class StatisticsServiceTest extends WordSpec with LazyLogging {
   val statisticsService: StatisticsService = null
 
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -47,7 +47,7 @@ class StatisticsServiceTest extends WordSpec with LazyLogging {
       globalStatisticsRepository.deleteAll()
 
       exampleRecords.foreach(spectrumMongoRepository.save(_))
-      assert(spectrumMongoRepository.count() == 58)
+      assert(spectrumMongoRepository.count() == 50)
     }
 
     "perform aggregation counts" in {
@@ -57,12 +57,12 @@ class StatisticsServiceTest extends WordSpec with LazyLogging {
 
       assert(globalStatisticsRepository.findOne(result.id) != null)
 
-      assert(result.spectrumCount == 58)
-      assert(result.compoundCount == 0)
-      assert(result.metaDataCount == 44)
-      assert(result.metaDataValueCount == 2120)
-      assert(result.tagCount == 3)
-      assert(result.tagValueCount == 119)
+      assert(result.spectrumCount == 50)
+      assert(result.compoundCount == 21)
+      assert(result.metaDataCount == 21)
+      assert(result.metaDataValueCount == 1050)
+      assert(result.tagCount == 2)
+      assert(result.tagValueCount == 100)
       assert(result.submitterCount == 1)
     }
   }
