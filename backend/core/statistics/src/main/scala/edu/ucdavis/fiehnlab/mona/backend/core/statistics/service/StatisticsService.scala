@@ -3,7 +3,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 import java.lang
 import java.util.{Date, LinkedHashMap}
 
-import com.mongodb.DBObject
+import com.mongodb.{BasicDBObject, DBObject}
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{GlobalStatisticsMongoRepository, MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
+import org.springframework.data.mongodb.core.aggregation.{AggregationOperation, AggregationOperationContext}
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
@@ -22,7 +24,7 @@ import scala.collection.JavaConverters._
   * Created by sajjan on 8/2/16.
   */
 @Service
-class StatisticsService {
+class StatisticsService extends LazyLogging {
 
   @Autowired
   private val mongoOperations: MongoOperations = null
@@ -50,7 +52,6 @@ class StatisticsService {
 
 
     // Compound count
-    // TODO: Use only first InChIKey block
     val compoundCount: Long =
       mongoOperations.aggregate(
         newAggregation(
@@ -59,6 +60,21 @@ class StatisticsService {
           unwind("compound"),
           unwind("compound.metaData"),
           `match`(Criteria.where("compound.metaData.name").is("InChIKey")),
+          project().and("compound.metaData.value").as("value"),
+
+          // Get first InChIKey block and group
+          new AggregationOperation() {
+            override def toDBObject(context: AggregationOperationContext): DBObject =
+              context.getMappedObject(new BasicDBObject(
+                "$project", new BasicDBObject(
+                  "value", new BasicDBObject(
+                    "$substr", Array("$value", 0, 14)
+                  )
+                )
+              ))
+          },
+
+          group("value"),
           group().count().as("count")
         ), classOf[Spectrum], classOf[AggregationResult]
       ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
