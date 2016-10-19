@@ -65,5 +65,10 @@ class TagStatisticsService {
     * Update the data in the tag statistics repository
     * @return
     */
-  def updateTagStatistics() = tagAggregation().foreach(tagStatisticsRepository.save(_))
+  def updateTagStatistics() = {
+    val results: Array[TagStatistics] = tagAggregation()
+
+    tagStatisticsRepository.deleteAll()
+    results.foreach(tagStatisticsRepository.save(_))
+  }
 }

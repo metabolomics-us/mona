@@ -82,6 +82,8 @@ class CompoundClassStatisticsService {
         }
       }
 
+      compoundClassStatisticsRepository.deleteAll()
+
       results.values.foreach(x =>
         compoundClassStatisticsRepository.save(CompoundClassStatistics(x.name, x.spectrumCount, x.compounds.size)))
   }
