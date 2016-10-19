@@ -40,9 +40,11 @@ class TagStatisticsServiceTest extends WordSpec {
 
   "Tag Statistics Service" should {
 
-    spectrumMongoRepository.deleteAll()
-    exampleRecords.foreach(spectrumMongoRepository.save(_))
-
+    "load data" in {
+      spectrumMongoRepository.deleteAll()
+      exampleRecords.foreach(spectrumMongoRepository.save(_))
+      assert(spectrumMongoRepository.count() == 58)
+    }
 
     "perform tag aggregation" in {
       val result: Array[TagStatistics] = tagStatisticsService.tagAggregation()
