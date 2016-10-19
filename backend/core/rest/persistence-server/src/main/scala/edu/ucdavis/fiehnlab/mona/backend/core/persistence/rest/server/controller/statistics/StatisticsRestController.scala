@@ -6,8 +6,8 @@ import java.util.concurrent.Future
 import com.mongodb.DBObject
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.{MetaDataStatisticsService, StatisticsService, TagStatisticsService}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{GlobalStatistics, MetaDataStatistics, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.{CompoundClassStatisticsService, MetaDataStatisticsService, StatisticsService, TagStatisticsService}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{CompoundClassStatistics, GlobalStatistics, MetaDataStatistics, TagStatistics}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
@@ -26,6 +26,9 @@ class StatisticsRestController {
 
   @Autowired
   val statisticsService: StatisticsService = null
+
+  @Autowired
+  val compoundClassStatisticsService: CompoundClassStatisticsService = null
 
   @Autowired
   val metaDataStatisticsService: MetaDataStatisticsService = null
@@ -57,6 +60,15 @@ class StatisticsRestController {
   @RequestMapping(path = Array("/statistics/global"), method = Array(RequestMethod.GET))
   @Async
   def getGlobalStatistics: Future[GlobalStatistics] = new AsyncResult[GlobalStatistics](statisticsService.getGlobalStatistics)
+
+  /**
+    * Get all compound class statistics
+    * @return
+    */
+  @RequestMapping(path = Array("/statistics/compoundClasses"), method = Array(RequestMethod.GET))
+  @Async
+  def getCompoundClassStatistics: Future[Iterable[CompoundClassStatistics]] =
+    new AsyncResult[Iterable[CompoundClassStatistics]](compoundClassStatisticsService.getCompoundClassStatistics.asScala)
 
 
 
