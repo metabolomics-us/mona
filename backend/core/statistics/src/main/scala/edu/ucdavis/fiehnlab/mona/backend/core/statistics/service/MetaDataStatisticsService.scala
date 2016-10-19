@@ -116,10 +116,12 @@ class MetaDataStatisticsService {
       group("name").push("grouped").as("values")
     )
 
-    mongoOperations
+    val results: Iterable[MetaDataStatistics] = mongoOperations
       .aggregate(aggregationQuery, classOf[Spectrum], classOf[MetaDataStatistics])
       .getMappedResults
       .asScala
-      .foreach(metaDataStatisticsRepository.save(_))
+
+    metaDataStatisticsRepository.deleteAll()
+    results.foreach(metaDataStatisticsRepository.save(_))
   }
 }
