@@ -35,7 +35,6 @@ class MetaDataStatisticsServiceTest extends WordSpec {
   val metaDataStatisticsService: MetaDataStatisticsService = null
 
 
-
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)

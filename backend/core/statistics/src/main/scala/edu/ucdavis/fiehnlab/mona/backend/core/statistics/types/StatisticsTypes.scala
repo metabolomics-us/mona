@@ -42,3 +42,11 @@ case class GlobalStatistics(
                             tagValueCount: Long,
                             submitterCount: Long
                            )
+
+@Document(collection = "STATISTICS_COMPOUNDCLASS")
+case class CompoundClassStatistics(
+                                   @(Id@field)
+                                   name: String,
+                                   spectrumCount: Int,
+                                   compoundCount: Int
+                                  )
