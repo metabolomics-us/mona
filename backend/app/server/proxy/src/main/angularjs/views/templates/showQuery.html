@@ -1,16 +1,13 @@
 <div>
-    <uib-accordion close-others="true" uib-tooltip-placement="right" uib-tooltip="click, to display the currently executed query"
-               uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
-        <uib-accordion-group heading="display generated query" is-open="status.isOpen"
-                         ng-click="status.isOpen != status.isOpen">
-
+    <uib-accordion close-others="true">
+        <uib-accordion-group heading="Display Generated Query" is-open="status.isOpen" ng-click="status.isOpen != status.isOpen">
             <div>
-                Generated RsqlQuery to use in third party software
-                <pre>{{query | json}}</pre>
+                Generated RSQL Query:
+                <pre>{{query}}</pre>
             </div>
 
             <div>
-                Generated RsqlQuery to use directly from curl:
+                Example cURL command to download all spectral records matching the generated RSQL query:
                 <pre>{{query | curl}}</pre>
             </div>
 

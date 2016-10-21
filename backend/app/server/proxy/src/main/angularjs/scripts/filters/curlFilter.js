@@ -12,7 +12,11 @@
     angular.module('moaClientApp')
       .filter('curl', ['REST_BACKEND_SERVER', function(REST_BACKEND_SERVER) {
           return function(input) {
-              return 'curl ' + '\' '+ REST_BACKEND_SERVER + input +'\'' ;
+              // TODO Receiving empty spectrum objects?
+              console.log(input);
+
+              input = input && typeof(input) == 'string' ? input.replace(/"/g, '\\"') : '';
+              return 'curl "'+ REST_BACKEND_SERVER +'/rest/spectra/search?query='+ input +'"';
           };
       }])
 
