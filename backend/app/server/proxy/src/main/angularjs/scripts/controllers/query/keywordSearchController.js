@@ -117,7 +117,7 @@
 
             // filter class
             if (angular.isDefined(options.compound.className)) {
-                filtered.compound.push({classification: options.compound.className});
+                filtered.classification = options.compound.className;
             }
 
             filtered.compoundDa = [];
