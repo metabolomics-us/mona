@@ -138,7 +138,7 @@
              */
             filtered.groupMeta = {
                 // 'source introduction': [],
-                'ion mode': [],
+                'ionization mode': [],
                 'ms level': []
             };
 
@@ -152,7 +152,7 @@
             // add ion mode
             angular.forEach(ionMode, function (value, key) {
                 if (value.selected === true) {
-                    filtered.groupMeta['ion mode'].push(value.name.toLowerCase());
+                    filtered.groupMeta['ionization mode'].push(value.name.toLowerCase());
                 }
             });
 
