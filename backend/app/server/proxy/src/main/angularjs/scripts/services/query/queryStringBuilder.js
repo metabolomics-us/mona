@@ -67,8 +67,13 @@
 
             // build compound metadata string
             operand = query.operand.shift();
-            if (angular.isDefined(query.compoundDa) && query.compoundDa.length > 0) {
-                queryStr = qStrHelper.buildMeasurementString(query.compoundDa);
+            if (angular.isDefined(query.compoundDa)) {
+                // queryStr = qStrHelper.buildMeasurementString(query.compoundDa);
+                var leftOffset = query.compoundDa.mass - query.compoundDa.tolerance,
+                    rightOffset = query.compoundDa.mass + query.compoundDa.tolerance;
+                
+                queryStr =  "compound.metaData=q='name==\"total exact mass\" and "+
+                    "value>=" + leftOffset + " and value<=" + rightOffset + "'";
                 compiled.push(operand, queryStr);
             }
 
