@@ -129,7 +129,7 @@
 
             // filter formula
             if (angular.isDefined(options.metadata.formula)) {
-                filtered['molecular formula'] = options.metadata.formula;
+                filtered['formula'] = options.metadata.formula;
             }
 
             /**
