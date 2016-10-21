@@ -120,11 +120,9 @@
                 filtered.classification = options.compound.className;
             }
 
-            filtered.compoundDa = [];
             // filter exact mass
             if (options.metadata.exactMass !== null) {
-                filtered.compoundDa.push({'total exact mass': options.metadata.exactMass});
-                filtered.compoundDa.push({tolerance: options.metadata.tolerance});
+                filtered.compoundDa = {mass: options.metadata.exactMass, tolerance: options.metadata.tolerance};
             }
 
             // filter formula
