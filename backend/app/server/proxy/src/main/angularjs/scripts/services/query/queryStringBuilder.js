@@ -58,6 +58,8 @@
 
             validateOperands(query);
 
+            console.log(query)
+
             // build compound string
             if (angular.isDefined(query.compound) && query.compound.length > 0) {
                 compiled.push(qStrHelper.buildCompoundString(query.compound));
@@ -73,7 +75,7 @@
             // add formula
             operand = query.operand.shift();
             if (angular.isDefined(query.formula)) {
-                queryStr = "compound.metaData=q='name==\"formula\" and value==\"" + query.formula + "\"'";
+                queryStr = "compound.metaData=q='name==\"molecular formula\" and value=match=\".*" + query.formula + ".*\"'";
                 compiled.push(operand, queryStr);
             }
 
