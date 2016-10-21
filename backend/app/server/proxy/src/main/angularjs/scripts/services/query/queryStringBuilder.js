@@ -79,6 +79,13 @@
                 compiled.push(operand, queryStr);
             }
 
+            // add classification
+            operand = query.operand.shift();
+            if (angular.isDefined(query.classification)) {
+                queryStr = "compound.classification=q='value=match=\".*" + query.classification + ".*\"'";
+                compiled.push(operand, queryStr);
+            }
+
             //build metadata filter string from search page
             if (angular.isDefined(query.groupMeta)) {
                 queryStr = qStrHelper.addMetaFilterQueryString(query.groupMeta);
