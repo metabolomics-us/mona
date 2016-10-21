@@ -1,41 +1,41 @@
 <div class="row">
     <div class="col-md-12">
         <h3>Statistics</h3>
-        <p>View the distributions of metadata values and perform simple queries on the individual spectrum attributes.</p>
+        <!--<p>View the distributions of metadata values and perform simple queries on the individual spectrum attributes.</p>-->
     </div>
 
     <div class="col-md-12">
-        <h5>Database Information</h5>
+        <h5><b>Database Information</b></h5>
 
         <table class="table">
             <tbody>
                 <tr>
-                    <td>Total Submitters</td>
-                    <td>{{totalData.submitterCount}}</td>
+                    <td>Total Submitters:</td>
+                    <td>{{globalData.submitterCount | number}}</td>
                 </tr>
                 <tr>
-                    <td>Total Spectra</td>
-                    <td>{{totalData.spectrumCount}}</td>
+                    <td>Total Spectra:</td>
+                    <td>{{globalData.spectrumCount | number}}</td>
                 </tr>
                 <tr>
-                    <td>Total Compounds</td>
-                    <td>{{totalData.compoundCount}}</td>
+                    <td>Total Compounds:</td>
+                    <td>{{globalData.compoundCount | number}}</td>
                 </tr>
                 <tr>
-                    <td>Total Metadata Types</td>
-                    <td>{{totalData.metaDataCount}}</td>
+                    <td>Total Metadata Types:</td>
+                    <td>{{globalData.metaDataCount | number}}</td>
                 </tr>
                 <tr>
-                    <td>Total Metadata Values</td>
-                    <td>{{totalData.metaDataValueCount}}</td>
+                    <td>Total Metadata Values:</td>
+                    <td>{{globalData.metaDataValueCount | number}}</td>
                 </tr>
                 <tr>
-                    <td>Total Tags Types</td>
-                    <td>{{totalData.tagCount}}</td>
+                    <td>Total Tags Types:</td>
+                    <td>{{globalData.tagCount | number}}</td>
                 </tr>
                 <tr>
-                    <td>Total Tags</td>
-                    <td>{{totalData.tagValueCount}}</td>
+                    <td>Total Tags:</td>
+                    <td>{{globalData.tagValueCount | number}}</td>
                 </tr>
             </tbody>
         </table>
