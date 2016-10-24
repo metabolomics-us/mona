@@ -59,6 +59,7 @@ class BootstrapDownloaderService extends LazyLogging {
     saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", "tags.text==FAHFA")
     saveQuery("Libraries - iTree", "iTree Mass Spectral Tree Library", "tags.text==iTree")
     saveQuery("Libraries - RTX5 Fiehnlib", "RTX5 Fiehn Lab Metabolic Profiling Library", "tags.text==FiehnLib")
+    saveQuery("Libraries - MetaboBASE", "Bruker Sumner MetaboBASE Plant Library", "tags.text==MetaboBASE")
   }
 
   /**
