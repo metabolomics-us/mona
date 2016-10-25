@@ -41,6 +41,7 @@ class CompoundClassStatisticsServiceTest extends WordSpec {
 
     "perform aggregation" in {
       compoundClassStatisticsService.updateCompoundClassStatistics()
+
       assert(compoundClassStatisticsService.countCompoundClassStatistics == 5)
 
       assert(compoundClassStatisticsService.getCompoundClassStatistics("Organic compounds").spectrumCount == 50)

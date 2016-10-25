@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
+import org.springframework.data.mongodb.core.mapreduce.MapReduceOptions
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Service
 
@@ -49,60 +50,86 @@ class CompoundClassStatisticsService {
 
 
   /**
+    * JavaScript map function for MapReduce operation
+    */
+  private val mapFunction: String =
+    """function() {
+      |    for (var i = 0; i < this.compound.length; i++) {
+      |        // Find all InChIKey first blocks
+      |        var inchikeys = this.compound[i].metaData
+      |          .filter(function(x) { return x.name == "InChIKey"; })
+      |          .map(function(x) { return x.value.slice(0, 14); });
+      |
+      |        // Continue if no InChIKey is found or no classification is present
+      |        if (inchikeys.length == 0 || !("classification" in this.compound[i]) || this.compound[i].classification.length == 0)
+      |            continue;
+      |
+      |        // Get compound classes
+      |        var compoundClasses = {};
+      |        var compoundClassString = [];
+      |
+      |        for (var j = 0; j < this.compound[i].classification.length; j++)
+      |            compoundClasses[this.compound[i].classification[j].name] = this.compound[i].classification[j].value;
+      |
+      |        if ("kingdom" in compoundClasses && compoundClasses.kingdom != "Chemical entities")
+      |            compoundClassString.push(compoundClasses.kingdom)
+      |        if ("superclass" in compoundClasses)
+      |            compoundClassString.push(compoundClasses.superclass)
+      |        if ("class" in compoundClasses)
+      |            compoundClassString.push(compoundClasses.class)
+      |        if ("subclass" in compoundClasses)
+      |            compoundClassString.push(compoundClasses.subclass)
+      |
+      |        // Emit each level of the compound class as the key and an object
+      |        // consisting of the spectrum id and inchikeys as the value
+      |        if (compoundClassString.length > 0) {
+      |            for (var j = 0; j < compoundClassString.length; j++)
+      |                emit(compoundClassString.slice(0, j + 1).join("|"), {spectra: [this._id], compounds: inchikeys});
+      |        }
+      |    }
+      |};""".stripMargin
+
+  /**
+    * JavaScript reduce function for MapReduce operation
+    */
+  private val reduceFunction: String =
+    """function(compoundClass, values) {
+      |    var result = {spectra: [], compounds: []};
+      |
+      |    // Concatenate arrays containing spectrum ids and inchikeys
+      |    for (var i = 0; i < values.length; i++) {
+      |        result.spectra = result.spectra.concat(values[i].spectra);
+      |        result.compounds = result.compounds.concat(values[i].compounds);
+      |    }
+      |
+      |    return result;
+      |};""".stripMargin
+
+  /**
+    * JavaScript finalize function for MapReduce operation
+    */
+  private val finalizeFunction: String =
+    """function(compoundClass, reducedValue) {
+      |    // Return the number of distinct spectrum ids and inchikeys
+      |    reducedValue.spectra = new Set(reducedValue.spectra).size;
+      |    reducedValue.compounds = new Set(reducedValue.compounds).size;
+      |
+      |    return reducedValue;
+      |};""".stripMargin
+
+
+  /**
     * Collect a list of compound class groups with spectrum and compound counts
     * @return
     */
   def updateCompoundClassStatistics() = {
-    val aggregationQuery = newAggregation(
-      classOf[Spectrum],
-      unwind("$compound"),
-      unwind("$compound.metaData"),
-      `match`(Criteria.where("compound.metaData.name").is("InChIKey")),
-      unwind("$compound.classification"),
-      `match`(Criteria.where("compound.classification.name").in("kingdom", "superclass", "class", "subclass")),
-      project(bind("InChIKey", "compound.metaData.value"))
-        .and("id").as("spectrumId")
-        .and("classification").nested(bind("name", "compound.classification.name").and("value", "compound.classification.value")),
-      group("spectrumId", "InChIKey")
-        .addToSet("classification").as("classifications")
-    )
-
-    val results: scala.collection.mutable.Map[String, MutableCompoundClassNode] = scala.collection.mutable.Map[String, MutableCompoundClassNode]()
-
-    mongoOperations
-      .aggregate(aggregationQuery, "SPECTRUM", classOf[CompoundClassAggregation])
+    mongoOperations.mapReduce("SPECTRUM", mapFunction, reduceFunction,
+      new MapReduceOptions().outputCollection("STATISTICS_COMPOUNDCLASS").finalizeFunction(finalizeFunction),
+      classOf[CompoundClassAggregation])
       .asScala
-      .foreach { compoundClassAggregation: CompoundClassAggregation =>
-        generateCompoundClassString(compoundClassAggregation).foreach { compoundClass: String =>
-          val compoundClassNode: MutableCompoundClassNode = results.getOrElse(compoundClass, new MutableCompoundClassNode(compoundClass))
-          compoundClassNode.spectrumCount += 1
-          compoundClassNode.compounds += compoundClassAggregation.InChIKey.split("-").head
-
-          results(compoundClass) = compoundClassNode
-        }
-      }
-
-      compoundClassStatisticsRepository.deleteAll()
-
-      results.values.foreach(x =>
-        compoundClassStatisticsRepository.save(CompoundClassStatistics(x.name, x.spectrumCount, x.compounds.size)))
-  }
-
-
-  private def generateCompoundClassString(compoundClass: CompoundClassAggregation): Array[String] = {
-    val values = Array("kingdom", "superclass", "class", "subclass")
-      .map(x => compoundClass.classifications.find(_.name == x).orNull)
-      .filter(_ != null)
-      .map(_.value)
-      .filter(_ != "Chemical entities")
-
-    values.indices.map(i => values.slice(0, i + 1).mkString("|")).toArray
+      .foreach(x => compoundClassStatisticsRepository.save(CompoundClassStatistics(x._id, x.value.spectra, x.value.compounds)))
   }
 }
 
-case class CompoundClassAggregation(spectrumId: String, InChIKey: String, classifications: Array[CompoundClassEntry])
-case class CompoundClassEntry(name: String, value: String)
-
-class MutableCompoundClassNode(val name: String,
-                               var spectrumCount: Int = 0,
-                               var compounds: scala.collection.mutable.Set[String] = scala.collection.mutable.Set[String]())
+private case class CompoundClassAggregation(_id: String, value: CompoundClassCount)
+private case class CompoundClassCount(spectra: Int, compounds: Int)
