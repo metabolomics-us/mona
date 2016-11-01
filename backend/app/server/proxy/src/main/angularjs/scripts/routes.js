@@ -43,7 +43,7 @@
                 controller: 'SpectraUploadController'
             })
 
-            //displaying a single compound
+            //spectrum browser
             .when('/spectra/browse', {
                 templateUrl: 'views/spectra/browse/spectra.html',
                 controller: 'SpectraBrowserController'
