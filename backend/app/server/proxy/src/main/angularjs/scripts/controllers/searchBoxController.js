@@ -32,7 +32,11 @@
 
             // Handle SPLASH
             else if (/^(splash[0-9]{2}-[a-z0-9]{4}-[0-9]{10}-[a-z0-9]{20})$/.test(searchBoxQuery)) {
-                SpectraQueryBuilderService.setQueryString("splash.splash=="+ searchBoxQuery);
+                SpectraQueryBuilderService.setQueryString("splash.splash==" + searchBoxQuery);
+            }
+
+            else if (/^splash[0-9]{2}/.test(searchBoxQuery)) {
+                SpectraQueryBuilderService.setQueryString("splash.splash=match="+ searchBoxQuery +".*");
             }
 
             // Handle name query
