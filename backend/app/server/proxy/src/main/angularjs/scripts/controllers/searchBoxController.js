@@ -26,7 +26,7 @@
                 SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value==\""+ searchBoxQuery +"\"'");
             }
 
-            if (/^[A-Z]{14}$/.test(searchBoxQuery)) {
+            else if (/^[A-Z]{14}$/.test(searchBoxQuery)) {
                 SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value=match=\""+ searchBoxQuery +"-.*\"'");
             }
 
@@ -47,6 +47,5 @@
                 $location.path('/spectra/browse');
             }
         };
-
     }
 })();
