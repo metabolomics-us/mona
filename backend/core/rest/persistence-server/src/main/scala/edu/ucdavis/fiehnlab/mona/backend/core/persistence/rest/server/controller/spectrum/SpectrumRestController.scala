@@ -34,30 +34,33 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     * @param query
     * @return
     */
-  @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET),produces = Array("application/json","text/msp"))
+  @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET), produces = Array("application/json","text/msp"))
   @Async
   @ResponseBody
   def searchRSQL(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestParam(value = "query", required = true) query: WrappedString, request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
-
-    val data: Iterable[Spectrum] = {
-      if (size != null) {
-        if (page != null) {
-          spectrumPersistenceService.findAll(query.string, new PageRequest(page, size)).getContent.asScala
+    if (query == null || query.string == "") {
+      list(page, size)
+    } else {
+      val data: Iterable[Spectrum] = {
+        if (size != null) {
+          if (page != null) {
+            spectrumPersistenceService.findAll(query.string, new PageRequest(page, size)).getContent.asScala
+          }
+          else {
+            spectrumPersistenceService.findAll(query.string, new PageRequest(0, size)).getContent.asScala
+          }
         }
         else {
-          spectrumPersistenceService.findAll(query.string, new PageRequest(0, size)).getContent.asScala
+          spectrumPersistenceService.findAll(query.string).asScala
         }
       }
-      else {
-        spectrumPersistenceService.findAll(query.string).asScala
-      }
-    }
 
-    new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
-      new ResponseEntity(
-        data, HttpStatus.OK
+      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
+        new ResponseEntity(
+          data, HttpStatus.OK
+        )
       )
-    )
+    }
   }
 
   /**

@@ -47,7 +47,7 @@ abstract class GenericRESTController[T] {
   @RequestMapping(path = Array(""), method = Array(RequestMethod.GET),produces = Array("application/json","text/msp"))
   @Async
   @ResponseBody
-  def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer ,servletRequest: ServletRequest,servletResponse: ServletResponse ): Future[ResponseEntity[Iterable[T]]] = {
+  def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[ResponseEntity[Iterable[T]]] = {
 
     val data: Iterable[T] = {
       if (size != null) {
