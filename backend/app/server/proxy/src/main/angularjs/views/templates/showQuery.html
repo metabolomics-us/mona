@@ -3,19 +3,18 @@
         <uib-accordion-group heading="Display Generated Query" is-open="status.isOpen" ng-click="status.isOpen != status.isOpen">
             <div>
                 Generated RSQL Query:
-                <pre>{{query}}</pre>
-            </div>
-
+                <pre>{{angular.isDefined(query) && query != '' ? query : "[Empty Query]"}}</pre>
             <div>
-                Example cURL command to download all spectral records matching the generated RSQL query:
+                Example cURL command to download all spectral JSON records matching the generated RSQL query:
                 <pre>{{query | curl}}</pre>
             </div>
 
+            <div>To download as an MSP file, add the header: <code>Accept: text/msp</code>.</div>
 
-            <!-- <div>
-                Generated Query to use directly from curl as library file:
-                <pre>{{query | curlAsMsp}}</pre>
-            </div>-->
+            <div>
+                <strong>Note:</strong> Please refer to the <a href="downloads">downloads page</a> before starting large query
+                downloads to avoid putting unnecessary strain on the servers.
+            </div>
 
             <div class="row" ng-show="auth.isLoggedIn() && auth.isAdmin()">
                 <div class="col-md-12">
@@ -30,7 +29,6 @@
                                 uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                             <i class="fa fa-2x fa-users fa-fw"></i>
                         </button>
-
                     </div>
                 </div>
             </div>
