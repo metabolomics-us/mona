@@ -5,7 +5,7 @@
 (function() {
     'use strict';
 
-    spectraDownloadController.$inject = ['$scope', 'SpectraQueryBuilderService', 'dialogs', 'Spectrum', '$http', '$filter', '$log', 'REST_BACKEND_SERVER'];
+    spectraDownloadController.$inject = ['$scope', 'SpectraQueryBuilderService', 'dialogs', '$http', '$filter', '$log', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
       .directive('spectraDownload', spectraDownload);
 
@@ -16,7 +16,7 @@
             templateUrl: '/views/templates/spectra/download.html',
             replace: true,
             scope: {
-                spectra: '=spectra'
+                spectrum: '=spectrum'
             },
             controller: spectraDownloadController
         };
@@ -26,7 +26,7 @@
 
     /* @ngInject */
     function spectraDownloadController($scope, SpectraQueryBuilderService, dialogs,
-                                       Spectrum, $http, $filter, $log, REST_BACKEND_SERVER) {
+                                       $http, $filter, $log, REST_BACKEND_SERVER) {
         /**
          * does the actual downloading of the content
          * @param data
@@ -47,12 +47,14 @@
         /**
          * attempts to download a msp file
          */
-        $scope.downloadAsMsp = function() {
-            if (angular.isDefined($scope.spectra)) {
-                var uri = $filter('spectraDownloadAsMsp')($scope.spectra.id);
-
-                $http.get(uri).then(function(returnData) {
-                    $scope.downloadData(returnData.data, $scope.spectra.id + ".msp");
+        $scope.downloadAsMSP = function() {
+            if (angular.isDefined($scope.spectrum)) {
+                $http({
+                    method: 'GET',
+                    url: REST_BACKEND_SERVER +'/rest/spectra/'+ $scope.spectrum.id,
+                    headers: {'Accept': 'text/msp'}
+                }).then(function(returnData) {
+                    $scope.downloadData(returnData.data, $scope.spectrum.id + ".msp");
                 });
             } else {
                 var query = angular.copy(SpectraQueryBuilderService.getQuery());
@@ -65,12 +67,14 @@
         /**
          * attempts to download as a mona file
          */
-        $scope.downloadAsMona = function() {
-            if (angular.isDefined($scope.spectra)) {
-                var uri = $filter('spectraDownload')($scope.spectra.id);
-
-                $http.get(uri).then(function(returnData) {
-                    $scope.downloadData($filter('json')(returnData.data), $scope.spectra.id + ".json");
+        $scope.downloadAsJSON = function() {
+            if (angular.isDefined($scope.spectrum)) {
+                $http({
+                    method: 'GET',
+                    url: REST_BACKEND_SERVER +'/rest/spectra/'+ $scope.spectrum.id,
+                    headers: {'Accept': 'application/json'}
+                }).then(function(response) {
+                    $scope.downloadData($filter('json')(response.data), $scope.spectrum.id + ".json");
                 });
             } else {
                 var query = angular.copy(SpectraQueryBuilderService.getQuery());
