@@ -14,19 +14,15 @@
                 <div class="h5">
                     <span class="dropdown" uib-dropdown>
                         <a href class="dropdown-toggle" uib-dropdown-toggle>
-                            <i class="fa fa-cloud-download"></i>
-                            Download Structure
+                            <i class="fa fa-cloud-download"></i> Download Structure
                         </a>
 
                         <ul class="uib-dropdown-menu">
                             <li>
-                                <a href="{{compound.id | compoundDownloadAsMolFile }}" target="_blank">as Mol file</a>
+                                <a ng-click="downloadAsMOL()" target="_blank">as MOL file</a>
                             </li>
                             <li>
-                                <a href="{{compound.id | compoundDownloadAsSDFFile }}" target="_blank">as SDF file</a>
-                            </li>
-                            <li>
-                                <a href="{{compound.id | compoundDownloadFile }}" target="_blank">as MoNA file</a>
+                                <a ng-click="downloadAsJSON()" target="_blank">as MoNA JSON Record</a>
                             </li>
                         </ul>
                     </span>
