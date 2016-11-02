@@ -28,16 +28,17 @@
     function spectraDownloadController($scope, SpectraQueryBuilderService, dialogs,
                                        $http, $filter, $log, REST_BACKEND_SERVER) {
         /**
-         * does the actual downloading of the content
+         * Emulate the downloading of a file given its contents and name
          * @param data
-         * @param name
+         * @param filename
+         * @param mimetype
          */
-        $scope.downloadData = function(data, name) {
+        $scope.downloadData = function(data, filename, mimetype) {
             var hiddenElement = document.createElement('a');
 
-            hiddenElement.href = 'data:attachment/csv,' + encodeURI(data);
+            hiddenElement.href = 'data:'+ mimetype +',' + encodeURI(data);
             hiddenElement.target = '_blank';
-            hiddenElement.download = name;
+            hiddenElement.download = filename;
 
             document.body.appendChild(hiddenElement);
             hiddenElement.click();
@@ -54,7 +55,7 @@
                     url: REST_BACKEND_SERVER +'/rest/spectra/'+ $scope.spectrum.id,
                     headers: {'Accept': 'text/msp'}
                 }).then(function(returnData) {
-                    $scope.downloadData(returnData.data, $scope.spectrum.id + ".msp");
+                    $scope.downloadData(returnData.data, $scope.spectrum.id + '.msp', 'text/msp');
                 });
             } else {
                 var query = angular.copy(SpectraQueryBuilderService.getQuery());
@@ -74,7 +75,7 @@
                     url: REST_BACKEND_SERVER +'/rest/spectra/'+ $scope.spectrum.id,
                     headers: {'Accept': 'application/json'}
                 }).then(function(response) {
-                    $scope.downloadData($filter('json')(response.data), $scope.spectrum.id + ".json");
+                    $scope.downloadData($filter('json')(response.data), $scope.spectrum.id + '.json', 'application/json');
                 });
             } else {
                 var query = angular.copy(SpectraQueryBuilderService.getQuery());
@@ -88,7 +89,7 @@
          * submit query for exporting and show modal dialog response
          */
         var submitQueryExportRequest = function(query) {
-            var uri = REST_BACKEND_SERVER + "/rest/spectra/search/export";
+            var uri = REST_BACKEND_SERVER + '/rest/spectra/search/export';
 
             $http.post(uri, query).then(
               function(response) {
