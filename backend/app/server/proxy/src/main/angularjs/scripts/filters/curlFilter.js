@@ -7,27 +7,24 @@
     'use strict';
 
     /**
-     * generates a curl link for us
+     * Generates a cURL link for us to download a given RSQL query
      */
     angular.module('moaClientApp')
       .filter('curl', ['REST_BACKEND_SERVER', function(REST_BACKEND_SERVER) {
           return function(input) {
+              // Use location.host if the server url is empty for deployment mode
+              var host = REST_BACKEND_SERVER == '' ? location.origin : REST_BACKEND_SERVER;
+
               // TODO Receiving empty spectrum objects?
               console.log(input);
 
               input = input && typeof(input) == 'string' ? input.replace(/"/g, '\\"') : '';
-              return 'curl "'+ REST_BACKEND_SERVER +'/rest/spectra/search?query='+ input +'"';
+
+              if (input != '') {
+                  return 'curl "' + host + '/rest/spectra/search?query=' + input + '"';
+              } else {
+                  return 'curl "' + host + '/rest/spectra"';
+              }
           };
       }])
-
-    /**
-     * generates a curl link as msp file for us
-     */
-      .filter('curlAsMsp', ['curlFilter', function(curlFilter) {
-          return function(input) {
-              var object = angular.copy(input);
-              object.format = "msp";
-              return curlFilter(object)
-          };
-      }]);
 })();
