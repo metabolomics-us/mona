@@ -40,9 +40,11 @@
             isCompoundOpen: []
         };
 
-        for (var i = 0; i < $scope.spectrum.compound.length; i ++) {
-            var name = 'DisplayCompound' + i;
-            $scope.accordionStatus.isCompoundOpen.push(CookieService.getBooleanValue(name, false));
+        if (angular.isDefined($scope.spectrum.compound)) {
+            for (var i = 0; i < $scope.spectrum.compound.length; i++) {
+                var name = 'DisplayCompound' + i;
+                $scope.accordionStatus.isCompoundOpen.push(CookieService.getBooleanValue(name, false));
+            }
         }
 
         /**
@@ -163,21 +165,24 @@
 
 
             // truncate metadata
-            for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
-                var curMeta = delayedSpectrum.metaData[i];
+            if (angular.isDefined(delayedSpectrum.metaData)) {
+                for (var i = 0; i < delayedSpectrum.metaData.length; i++) {
+                    var curMeta = delayedSpectrum.metaData[i];
 
-                var name = curMeta.name.toLowerCase();
+                    var name = curMeta.name.toLowerCase();
 
-                if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
-                    curMeta.value = truncateMass(curMeta.value);
-                } else if (name.indexOf('retention') > -1) {
-                    curMeta.value = truncateRetentionTime(curMeta.value);
+                    if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                        curMeta.value = truncateMass(curMeta.value);
+                    } else if (name.indexOf('retention') > -1) {
+                        curMeta.value = truncateRetentionTime(curMeta.value);
+                    }
                 }
             }
 
             // truncate compounds
-            for(var i = 0, l = delayedSpectrum.compound.length; i < l; i++) {
-                var compoundMeta = delayedSpectrum.compound[i].metaData;
+            if (angular.isDefined(delayedSpectrum.compound)) {
+                for (var i = 0; i < delayedSpectrum.compound.length; i++) {
+                    var compoundMeta = delayedSpectrum.compound[i].metaData;
                     for (var j = 0, m = compoundMeta.length; j < m; j++) {
                         var metadata = compoundMeta[j];
                         var name = metadata.name.toLowerCase();
@@ -185,11 +190,9 @@
                         if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
                             metadata.value = truncateMass(metadata.value);
                         }
+                    }
                 }
             }
-
-
-            // Create mass spectrum table
 
 
             // Regular expression to extract ions
@@ -198,9 +201,11 @@
             // Assemble our annotation matrix
             var meta = [];
 
-            for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
-                if (delayedSpectrum.metaData[i].category === 'annotation') {
-                    meta.push(delayedSpectrum.metaData[i]);
+            if (angular.isDefined(delayedSpectrum.metaData)) {
+                for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
+                    if (delayedSpectrum.metaData[i].category === 'annotation') {
+                        meta.push(delayedSpectrum.metaData[i]);
+                    }
                 }
             }
 
