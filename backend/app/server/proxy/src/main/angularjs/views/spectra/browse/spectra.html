@@ -110,7 +110,7 @@
             -->
 
             <button class="btn btn-primary" ng-click="queryOpen = queryOpen ? false : true" uib-tooltip-placement="left"
-                    uib-tooltip="this is the number of your received results, click to see more query details">
+                    uib-tooltip="Number of spectra retrieved in this query, click to see additional details">
 
                 <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{queryResultCount}}
                 <span ng-show="auth.isAdmin() && duration !== undefined"> ({{duration | number: 2}} s)</span>
