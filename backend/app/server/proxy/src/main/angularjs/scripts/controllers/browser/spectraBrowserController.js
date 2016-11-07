@@ -217,7 +217,7 @@
 
             // Handle InChIKey queries
             if($location.search().hasOwnProperty('inchikey')) {
-                $log.info('Accepting InChIKey query from URL: '+ $location.search().inchikey);
+                $log.debug('Accepting InChIKey query from URL: '+ $location.search().inchikey);
 
                 if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($location.search().inchikey)) {
                     SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey);
@@ -230,7 +230,7 @@
 
             // Handle SPLASH queries
             if($location.search().hasOwnProperty('splash')) {
-                $log.info('Accepting SPLASH query from URL: '+ $location.search().splash);
+                $log.debug('Accepting SPLASH query from URL: '+ $location.search().splash);
 
                 SpectraQueryBuilderService.addSplashToQuery($location.search().splash);
                 SpectraQueryBuilderService.executeQuery();
@@ -238,7 +238,7 @@
 
             // Handle general queries
             if($location.search().hasOwnProperty('query')) {
-                $log.info('Accepting query from URL: '+ $location.search().query);
+                $log.debug('Accepting query from URL: '+ $location.search().query);
                 $scope.query = $location.search().query;
             }
 

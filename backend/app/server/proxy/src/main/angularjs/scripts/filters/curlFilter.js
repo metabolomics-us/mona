@@ -15,9 +15,6 @@
               // Use location.host if the server url is empty for deployment mode
               var host = REST_BACKEND_SERVER == '' ? location.origin : REST_BACKEND_SERVER;
 
-              // TODO Receiving empty spectrum objects?
-              console.log(input);
-
               input = input && typeof(input) == 'string' ? input.replace(/"/g, '\\"') : '';
 
               if (input != '') {
