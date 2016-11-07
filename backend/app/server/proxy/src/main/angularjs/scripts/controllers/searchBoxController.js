@@ -41,12 +41,7 @@
                 SpectraQueryBuilderService.addNameToQuery(searchBoxQuery);
             }
 
-            // Update view
-            if ($location.path().indexOf('/spectra/browse') > -1) {
-                $route.reload();
-            } else {
-                $location.path('/spectra/browse');
-            }
+            SpectraQueryBuilderService.executeQuery();
         };
     }
 })();
