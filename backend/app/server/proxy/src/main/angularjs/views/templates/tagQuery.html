@@ -1,0 +1,16 @@
+<div class="btn-group top5" uib-dropdown>
+    <button type="button" class="btn dropdown-toggle btn-sm" uib-dropdown-toggle
+            ng-class="{'btn-info' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}">
+
+        <span ng-if="tag.ruleBased">
+            <i class='fa fa-flask'></i>
+        </span>
+
+        {{tag.text}} <span class="caret left30"></span>
+    </button>
+
+    <ul class="uib-dropdown-menu">
+        <li><a ng-click="newQuery()">Create New Query</a></li>
+        <li><a ng-click="addToQuery()">Add to Query</a></li>
+    </ul>
+</div>
