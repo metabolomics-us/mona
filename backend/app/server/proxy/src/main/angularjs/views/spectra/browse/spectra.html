@@ -31,7 +31,42 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div show-query></div>
+        <uib-accordion close-others="true">
+            <uib-accordion-group heading="Display Generated Query" is-open="queryOpen">
+                <div>
+                    Generated RSQL Query:
+                    <pre>{{query != '' ? query : "[Empty Query]"}}</pre>
+                    <div>
+                        Example cURL command to download all spectral JSON records matching the generated RSQL query:
+                        <pre>{{query | curl}}</pre>
+                    </div>
+
+                    <div>To download as an MSP file, add the header: <code>Accept: text/msp</code>.</div>
+
+                    <div>
+                        <strong>Note:</strong> Please refer to the <a href="downloads">downloads page</a> before starting large query
+                        downloads to avoid putting unnecessary strain on the servers.
+                    </div>
+
+                    <div class="row" ng-show="auth.isLoggedIn() && auth.isAdmin()">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <button class="btn btn-danger" ng-click="curateSpectra()" uib-tooltip-placement="right"
+                                        uib-tooltip="click, to curate all spectra, based on this query"
+                                        uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
+                                    <i class="fa fa-2x fa-tasks fa-fw"></i>
+                                </button>
+                                <button class="btn btn-danger" ng-click="associateSpectra()" uib-tooltip-placement="right"
+                                        uib-tooltip="click, to associate all spectra, based on this query. This try's to automatically remap the submitter to the author fields"
+                                        uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
+                                    <i class="fa fa-2x fa-users fa-fw"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </uib-accordion-group>
+        </uib-accordion>
     </div>
 </div>
 
@@ -74,7 +109,7 @@
             <div ng-show="auth.isLoggedIn()" spectra-download></div>
             -->
 
-            <button class="btn btn-primary" ng-click="displayQuery()" uib-tooltip-placement="left"
+            <button class="btn btn-primary" ng-click="queryOpen = queryOpen ? false : true" uib-tooltip-placement="left"
                     uib-tooltip="this is the number of your received results, click to see more query details">
 
                 <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{queryResultCount}}

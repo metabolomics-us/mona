@@ -32,6 +32,17 @@
         $scope.spectra = [];
 
         /**
+         * loads more spectra into the given view
+         */
+        var page = 0;
+
+        /**
+         * Executed query
+         * @type {string}
+         */
+        $scope.query = '';
+
+        /**
          * load more spectra
          */
         $scope.spectraLoadLength = -1;
