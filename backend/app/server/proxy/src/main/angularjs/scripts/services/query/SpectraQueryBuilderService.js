@@ -6,462 +6,170 @@
 
 (function() {
     'use strict';
-    SpectraQueryBuilderService.$inject = ['QueryCache', 'queryStringBuilder', '$log'];
+    SpectraQueryBuilderService.$inject = ['$log', '$location'];
     angular.module('moaClientApp')
-      .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
+        .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
     /* @ngInject */
-    function SpectraQueryBuilderService(QueryCache, queryStringBuilder, $log) {
+    function SpectraQueryBuilderService($log, $location) {
 
         /**
-         * provides us with the current query
-         * @returns {*|QueryCache.spectraQuery}
+         * Stored query
          */
-        this.getQuery = function() {
-            var query = QueryCache.getSpectraQuery();
+        this.query = [];
 
-            if (query === null) {
-                query = this.prepareQuery();
+        /**
+         * Stored RSQL query string, only used when the query is set from outside this query builder
+         */
+        this.queryString = '';
+
+
+        this.getQuery = function() {
+            if (this.query == null) {
+                this.prepareQuery()
             }
 
-            return query;
-        };
-
-        this.getRsqlQuery = function() {
-            return QueryCache.getSpectraQuery('string');
-        };
-
-        this.prepareQuery = function() {
-            var query = {
-                compound: [],
-                metadata: [],
-                tags: []
-            };
-            QueryCache.setSpectraQuery(query);
-            QueryCache.setSpectraQueryString('/rest/spectra');
-
-            return query;
+            return this.query;
         };
 
         this.setQuery = function(query) {
-            QueryCache.setSpectraQuery(query);
+            this.query = query;
+            this.queryString = '';
         };
 
-        this.setQueryString = function(query) {
-            QueryCache.setSpectraQueryString(query);
+        this.setQueryString = function(queryString) {
+            this.query = [];
+            this.queryString = queryString;
+        };
+
+        this.prepareQuery = function() {
+            this.query = [];
+            this.queryString = '';
+        };
+
+        /**
+         * Generate RSQL query from the query components.  Uses queryString as a base
+         * if provided so that a user can start with a predefined or user-specified query
+         * and add additional search terms to it.
+         */
+        this.getRSQLQuery = function() {
+            if (this.queryString == '') {
+                return this.query.join(' and ');
+            } else {
+                return this.query.concat([this.queryString]).join(' and ');
+            }
+        };
+
+        this.executeQuery = function() {
+            var query = this.getRSQLQuery();
+            $log.info('Executing query: '+ query);
+            
+            $location.path('/spectra/browse').search({query: (query == '') ? null : query});
         };
 
 
         /**
-         * updates a pre-compiled query with the given
+         * Build a metadata query, using a recursive approach if dealing with an array of values
+         * @param name name of metadata field
+         * @param value value(s) to query by
+         * @param collection metadata field to query within (e.g. metaData, compound.metaData, compound.classification)
+         * @param tolerance tolerance value for floating-point queries
+         * @param partialQuery whether to perform a partial string search
+         * @returns {string}
          */
-        this.updateQuery = function(query, tags, compiled) {
+        var buildMetaDataQuery = function(name, value, collection, tolerance, partialQuery) {
+            $log.info("buildMetaDataQuery: "+ name +"; "+ value +"; "+ collection +"; "+ tolerance +"; "+ partialQuery)
+            $log.info(typeof(tolerance) +" "+ typeof(partialQuery))
+            $log.info(angular.isDefined(tolerance) +" "+ angular.isDefined(partialQuery))
 
-            //no query assigned, use the one from the cache
+            // Handle array of values
+            if (Array.isArray(value)) {
+                var subqueries = value.map(function(x) {
+                    return buildMetaDataQuery(name, x, collection, tolerance, partialQuery);
+                });
 
-            if (compiled === null) {
-                compiled = this.getQuery();
+                return '('+ subqueries.join(' or ') + ')';
             }
 
-            if (tags === null || tags === undefined) {
-                tags = [];
-            }
-
-            /* Tolerances are not used, and so the REST calls and logic are disabled
-             TODO Re-enable upon addition of correct data types in database
-
-            // Get all metadata in a single dictionary
-            var meta = {};
-
-            MetadataService.metadata(
-                function(data) {
-                    for (var i = 0, l = data.length; i < l; i++) {
-                        meta[data[i].name] = data[i];
-                    }
-                },
-                function(error) {
-                    $log.error('metadata failed: ' + error);
-                }
-            );
-            */
-
-
-            // Handle all query components
-            Object.keys(query).forEach(function(element) {
-                if (element === "submitter" && query[element]) {
-                    compiled.submitter = query[element];
-                }
-
-                else if (element === "nameFilter" && query[element]) {
-                    compiled.compound.name = query[element];
-                }
-
-                else if (element === "inchiFilter" && query[element]) {
-                    if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(query[element])) {
-                        compiled.compound.inchiKey = query[element];
-                    } else {
-                        compiled.compound.inchiKey = query[element];
-                    }
-                }
-
-                /* Tolerances are not used, and so the REST calls and logic are disabled
-                   TODO Re-enable upon addition of correct data types in database
-
-                // Ignore tolerance values
-                else if (element.indexOf("_tolerance", element.length - 10) !== -1) {
-                    //nothing to see here
-                }
-
-                else {
-                    if (query[element]) {
-                        if (meta.hasOwnProperty(element) && meta[element].type === "double") {
-                            if ((element + "_tolerance") in query && query[element + "_tolerance"]) {
-                                var min = parseFloat(query[element]) - parseFloat(query[element + "_tolerance"]);
-                                var max = parseFloat(query[element]) + parseFloat(query[element + "_tolerance"]);
-                                compiled.metadata.push({name: element, value: {between: [min, max]}});
-                            } else
-                                compiled.metadata.push({name: element, value: {eq: parseFloat(query[element])}});
-                        } else {
-                            compiled.metadata.push({name: element, value: {eq: query[element]}});
-                        }
-                    }
-                }
-                */
-            });
-
-
-            // Add all tags to query
-            if (tags.length > 0) {
-                for (var i = 0, l = tags.length; i < l; i++) {
-                    compiled.tags.push(tags[i]);
-                }
-            }
-
-            QueryCache.setSpectraQuery(compiled);
-
-            return compiled;
-        };
-
-        /**
-         * compiles our dedicated query to execute it against another service
-         * @param query
-         * @param metadata
-         * @param tags
-         */
-        this.compileQuery = function(query, tags) {
-            return this.updateQuery(query, tags, this.prepareQuery());
-        };
-
-        /**
-         * removes a tag from a query
-         * @param tag
-         */
-        this.removeTagFromQuery = function(tag) {
-            var query = this.getQuery();
-
-            var index = query.tags.indexOf(tag);
-
-            if (index > -1) {
-                query.tags.splice(query.tags.indexOf(tag), 1);
-            }
-
-            if (query.compound.tags) {
-                index = query.compound.tags.indexOf(tag);
-
-                if (index > -1) {
-                    query.compound.tags.splice(query.compound.tags.indexOf(tag), 1);
-                }
-            }
-
-            QueryCache.setSpectraQuery(query);
-        };
-
-        /**
-         * adds the given id || hash to the query
-         * @param id
-         */
-        this.addSpectraIdToQuery = function(id) {
-
-            var query = this.getQuery();
-
-            if (!query.id) {
-                query.id = [];
-            }
-
-            query.id.push(id);
-
-            QueryCache.setSpectraQuery(query);
-
-        };
-
-        /**
-         * finds similar spectra for this histogram
-         * @param id
-         */
-        this.addSimilarSpectraToQuery = function(hash, spectra) {
-            var query = this.getQuery();
-
-            if (!query.match) {
-                query.match = {};
-            }
-            if (angular.isDefined(spectra)) {
-                query.match.spectra = spectra;
-            }
-
-            if (angular.isDefined(hash) && hash !== null) {
-                //still dirty...
-                query.match.histogram = hash.split("-")[1];
-                query.match.histogramScore = 0.9;
-
-            }
-
-            QueryCache.setSpectraQuery(query);
-        };
-
-        this.addMatchingHistogramToQuery = function(hash) {
-            var query = this.getQuery();
-
-            if (!query.match) {
-                query.match = {};
-            }
-
-            query.match.histogram = hash.split("-")[1];
-            query.match.histogramScore = 1;
-
-            QueryCache.setSpectraQuery(query);
-        };
-
-        /**
-         * finds exact spectra for this histogram
-         * @param id
-         */
-        this.addExactSpectraSearchToQuery = function(hash) {
-            var query = this.getQuery();
-
-            if (!query.match) {
-                query.match = {};
-            }
-            query.match.exact = hash;
-
-            QueryCache.setSpectraQuery(query);
-        };
-
-        /**
-         * finds exact spectra for this histogram
-         * @param id
-         */
-        this.addTop10IonsSearchToQuery = function(hash) {
-            var query = this.getQuery();
-
-            if (!query.match) {
-                query.match = {};
-            }
-            query.match.top10 = hash;
-
-            QueryCache.setSpectraQuery(query);
-        };
-
-
-        /**
-         * removes this spectra id from the query
-         * @param id
-         */
-        this.removeSpectraIdFromQuery = function(id) {
-
-            var query = this.getQuery();
-
-            if (query.id) {
-
-                //create a metadata query object
-
-                for (var i = 0, l = query.id.length; i < l; i++) {
-                    if (query.id[i] === id) {
-                        query.id.splice(i, 1);
-                    }
-                }
-            }
-
-            QueryCache.setSpectraQuery(query);
-
-        };
-
-        /**
-         * adds a tag to the query
-         * tag: {
-         *          name :  {
-         *              "eq" : "tada"
-         *          }
-         *      }
-         *
-         * @param tag
-         * @param isCompound is this a tag of a compound
-         */
-        this.addTagToQuery = function(tag, isCompound, includeExclude) {
-            if (tag) {
-                this.removeTagFromQuery(tag);
-                var query = this.getQuery();
-
-                if (isCompound) {
-                    if (!query.compound.tags) {
-                        query.compound.tags = [];
-                    }
-                    query.compound.tags.push(tag);
-                }
-                else {
-                    if (includeExclude === '+') {
-                        query.tags.push(
-                            {
-                                name: {
-                                    eq: tag
-                                }
-                            }
-                        );
-                    }
-                    else if (includeExclude === '-') {
-                        query.tags.push(
-                            {
-                                name: {
-                                    ne: tag
-                                }
-                            }
-                        );
-                    }
-                    else {
-                        query.tags.push(
-                            {
-                                name: {
-                                    eq: tag
-                                }
-                            }
-                        );
-                    }
-
-                }
-                QueryCache.setSpectraQuery(query);
-            }
-        };
-
-        /**
-         * resets all tags
-         */
-        this.clearTagsFromQuery = function() {
-            var query = this.getQuery();
-
-            query.tags = [];
-
-            QueryCache.setSpectraQuery(query);
-        };
-
-        /**
-         * removes metadata from teh query
-         * @param metadata
-         */
-        this.removeMetaDataFromQuery = function(metadata) {
-            var query = this.getQuery();
-
-            if (query.metadata) {
-
-                //create a metadata query object
-
-                for (var i = 0, l = query.metadata.length; i < l; i++) {
-                    if (query.metadata[i].name === metadata.name) {
-                        query.metadata.splice(i, 1);
-                    }
-                }
-            }
-
-            if (query.compound.metadata) {
-
-                for (var i = 0, l = query.compound.metadata.length; i < l; i++) {
-                    if (query.compound.metadata[i].name === metadata.name) {
-                        query.compound.metadata.splice(i, 1);
-                    }
-                }
-            }
-            QueryCache.setSpectraQuery(query);
-	        queryStringBuilder.updateQuery();
-
-        };
-
-        /**
-         * adds further metadata to the query
-         * @param metadata
-         * @param compound
-         */
-        this.addMetaDataToQuery = function(metadata, compound) {
-            if (metadata) {
-                if (metadata.name && metadata.name !== '') {
-                    this.removeMetaDataFromQuery(metadata);
-
-
-                    var query = this.getQuery();
-
-                    if (compound === null) {
-                        compound = false;
-                    }
-
-                    if (query.metadata === null) {
-                        query.metadata = [];
-                    }
-
-
-                    //build query data object
-                    var options = {};
-
-                    if (!angular.isDefined(metadata.selected)) {
-                        metadata.selected = {};
-                        metadata.selected.value = "eq";
-                    }
-
-                    var meta = {'name': metadata.name, 'value': metadata.value, operator: metadata.selected.value};
-
-                    if (metadata.unit !== null) {
-                        meta.unit = {'eq': metadata.unit};
-
-                    }
-
-                    if (compound) {
-                        if (query.compound.metadata == null) {
-                            query.compound.metadata = [];
-                        }
-                        query.compound.metadata.push(meta);
-
-                    }
-
-                    else {
-                        //add a metadata query object
-                        query.metadata.push(meta);
-                    }
-					$log.info(query);
-                    QueryCache.setSpectraQuery(query);
-	                queryStringBuilder.updateQuery();
+            // Handle individual values
+            else {
+                if (typeof tolerance !== 'undefined') {
+                    var leftBoundary = parseFloat(value) - tolerance;
+                    var rightBoundary = parseFloat(value) + tolerance;
+
+                    return collection + '=q=\'name=="' + name + '" and value >= '+ leftBoundary +' and value <= '+ rightBoundary +'\''
+                } else if (typeof partialQuery !== 'undefined') {
+                    return collection + '=q=\'name=="' + name + '" and value=match=".*' + value + '.*"\'';
+                } else {
+                    return collection + '=q=\'name=="' + name + '" and value=="' + value + '"\'';
                 }
             }
         };
 
-        /**
-         * adds the user to query
-         * @param emailAddress
-         */
+        this.addMetaDataToQuery = function(name, value, partialQuery) {
+            this.query.push(buildMetaDataQuery(name, value, 'metaData', undefined, partialQuery));
+        };
+
+        this.addNumericalMetaDataToQuery = function(name, value, tolerance) {
+            this.query.push(buildMetaDataQuery(name, value, 'metaData', tolerance, undefined));
+        };
+
+        this.addCompoundMetaDataToQuery = function(name, value, partialQuery) {
+            this.query.push(buildMetaDataQuery(name, value, 'compound.metaData', undefined, partialQuery));
+        };
+
+        this.addNumericalCompoundMetaDataToQuery = function(name, value, tolerance) {
+            this.query.push(buildMetaDataQuery(name, value, 'compound.metaData', tolerance, undefined));
+        };
+
+        this.addClassificationToQuery = function(name, value, partialQuery) {
+            this.query.push(buildMetaDataQuery(name, value, 'compound.classification', undefined, partialQuery));
+        };
+
+        this.addGeneralClassificationToQuery = function(value) {
+            this.query.push('compound.classification=q=\'value=match=".*'+ value +'.*"\'');
+        };
+
+        this.addNameToQuery = function(name) {
+            this.query.push('compound.names=q=\'name=match=".*'+ name +'.*"\'');
+        };
+
+        var buildTagQuery = function(value, partialQuery) {
+            // Handle array of values
+            if (Array.isArray(value)) {
+                var subqueries = value.map(function(x) {
+                    return buildTagQuery(x, partialQuery);
+                });
+
+                return '('+ subqueries.join(' or ') + ')';
+            }
+
+            // Handle individual values
+            else {
+                if (typeof partialQuery !== 'undefined') {
+                    return 'tags.text=match=".*'+ value +'.*"';
+                } else {
+                    return 'tags.text=="'+ value +'"';
+                }
+            }
+        };
+
+        this.addTagToQuery = function(query, partialQuery) {
+            this.query.push(buildTagQuery(query, partialQuery));
+        };
+
+        this.addSplashToQuery = function(query) {
+            if (/^(splash[0-9]{2}-[a-z0-9]{4}-[0-9]{10}-[a-z0-9]{20})$/.test(query)) {
+                this.query.push('splash.splash=="'+ query +'"');
+            } else if (/^splash[0-9]{2}/.test(query)) {
+                this.query.push('splash.splash=match="'+ query +'.*"');
+            } else {
+                this.query.push('splash.splash=match=".*'+ query +'.*"');
+            }
+        };
+
         this.addUserToQuery = function(emailAddress) {
-            var query = this.getQuery();
-
-            query.submitter = emailAddress;
-
-            QueryCache.setSpectraQuery(query);
-
-        };
-
-        /**
-         * removes the user from the query
-         */
-        this.removeUserFromQuery = function() {
-            var query = this.getQuery();
-
-            query.submitter = null;
-
-            QueryCache.setSpectraQuery(query);
-
+            this.query.push('submitter.emailAddress=="'+ emailAddress +'"');
         };
     }
 })();
