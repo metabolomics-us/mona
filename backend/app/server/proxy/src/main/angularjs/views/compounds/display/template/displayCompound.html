@@ -57,7 +57,7 @@
 
                 <tr ng-repeat="meta in compound.metaData |  filter: {category: '!external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | unique:'name' | orderBy : 'name':true  ">
                     <td class="col-lg-4 col-md-6">
-                        <span gw-meta-query value="meta" compound="true">{{meta.name}}</span>
+                        <span metadata-query value="meta" compound="true">{{meta.name}}</span>
                     </td>
                     <td class="col-lg-8 col-md-6">
                         {{meta.value}} {{meta.unit}}
@@ -95,9 +95,8 @@
                     <tr ng-repeat="meta in compound.metaData |  filter: {category: 'external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | unique:'name' | orderBy : 'name':false  ">
 
                         <td class="col-lg-4 col-md-6">
-                            <span gw-meta-query value="meta" compound="true">
-
-                            {{meta.name}}
+                            <span metadata-query value="meta" compound="true">
+                                {{meta.name}}
                             </span>
                         </td>
                         <td class="col-lg-8 col-md-6">
