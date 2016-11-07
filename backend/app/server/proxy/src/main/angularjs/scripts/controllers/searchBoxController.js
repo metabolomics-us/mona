@@ -6,7 +6,7 @@
     'use strict';
     searchBoxController.$inject = ['$scope', '$location', '$route', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
-      .controller('SearchBoxController', searchBoxController);
+        .controller('SearchBoxController', searchBoxController);
 
     /* @ngInject */
     function searchBoxController($scope, $location, $route, SpectraQueryBuilderService) {
@@ -20,28 +20,25 @@
             }
 
             searchBoxQuery = searchBoxQuery.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+            SpectraQueryBuilderService.prepareQuery();
 
             // Handle InChIKey
             if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test(searchBoxQuery)) {
-                SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value==\""+ searchBoxQuery +"\"'");
+                SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', searchBoxQuery);
             }
 
             else if (/^[A-Z]{14}$/.test(searchBoxQuery)) {
-                SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value=match=\""+ searchBoxQuery +"-.*\"'");
+                SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', searchBoxQuery, true);
             }
 
             // Handle SPLASH
-            else if (/^(splash[0-9]{2}-[a-z0-9]{4}-[0-9]{10}-[a-z0-9]{20})$/.test(searchBoxQuery)) {
-                SpectraQueryBuilderService.setQueryString("splash.splash==" + searchBoxQuery);
-            }
-
             else if (/^splash[0-9]{2}/.test(searchBoxQuery)) {
-                SpectraQueryBuilderService.setQueryString("splash.splash=match="+ searchBoxQuery +".*");
+                SpectraQueryBuilderService.addSplashToQuery(searchBoxQuery);
             }
 
             // Handle name query
             else {
-                SpectraQueryBuilderService.setQueryString("compound.names=q='name=match=\".*"+ searchBoxQuery +".*\"'");
+                SpectraQueryBuilderService.addNameToQuery(searchBoxQuery);
             }
 
             // Update view
