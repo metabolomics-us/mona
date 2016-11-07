@@ -27,7 +27,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="submitter in submitters | filter:submitter.query" id="submitter_{{submitter.id}}">
-                <td><span gw-submitter-query submitter="submitter">{{submitter.firstName}}</span></td>
+                <td><span submitter-query submitter="submitter">{{submitter.firstName}}</span></td>
                 <td>{{submitter.lastName}}</td>
                 <td>{{submitter.institution}}</td>
                 <td>{{submitter.emailAddress}}</td>
