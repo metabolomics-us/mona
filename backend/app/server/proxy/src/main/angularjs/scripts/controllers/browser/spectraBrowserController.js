@@ -53,6 +53,9 @@
         $scope.queryResultCount = 0;
 
 
+        /**
+         * Handle search splash
+         */
         $scope.searchSplash = false;
 
         function hideSplash() {
@@ -66,13 +69,11 @@
         }
 
         /**
-         * reset the current query
+         * Reset the current query
          */
         $scope.resetQuery = function() {
             SpectraQueryBuilderService.prepareQuery();
-
-            // Submit blank query
-            $scope.submitQuery();
+            SpectraQueryBuilderService.executeQuery();
         };
 
         /**
@@ -90,7 +91,6 @@
 
             //actually load our data
             $scope.loadMoreSpectra();
-
         };
 
         /**
@@ -98,6 +98,10 @@
          */
         $scope.displayQuery = function() {
             $rootScope.$broadcast('spectra:query:show');
+        };
+
+        $scope.initSearch = function() {
+            $location.path('spectra/search').search({});
         };
 
         /**
@@ -108,7 +112,7 @@
 
             $scope.queryResultCount = "Loading...";
 
-            var queryString = SpectraQueryBuilderService.getRsqlQuery();
+            var queryString = SpectraQueryBuilderService.getRSQLQuery();
 
             if(queryString === '/rest/spectra') {
                 Spectrum.searchSpectraCount({endpoint: 'count'}, function(data) {
@@ -127,9 +131,6 @@
         };
 
 
-        $scope.initSearch = function() {
-            $location.path('spectra/search');
-        };
 
         /**
          * @Deprecated
@@ -180,28 +181,23 @@
         /**
          * loads more spectra into the given view
          */
-
         var page = 0;
 
         $scope.loadMoreSpectra = function() {
-            //inform other controllers that we are starting to load spectra
-            $rootScope.$broadcast('spectra:starting:query');
-
             if (!$scope.loadingMore && $scope.spectraLoadLength !== $scope.spectra.length && $scope.dataAvailable) {
                 //search utilizing our compiled query so that it can be easily refined over time
                 $scope.loadingMore = true;
                 $scope.spectraLoadLength = $scope.spectra.length;
 
-                var payload = SpectraQueryBuilderService.getRsqlQuery();
+                var payload = SpectraQueryBuilderService.getRSQLQuery();
                 // Note the start time for timing the spectrum search
                 $scope.startTime = Date.now();
 
                 $log.debug('Submitted query: '+ payload);
 
-                if (payload === '/rest/spectra') {
+                if (payload === '') {
                     Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);
-                }
-                else {
+                } else {
                     Spectrum.searchSpectra({endpoint: 'search', query: payload, page: page, size: MAX_SPECTRA}, searchSuccess, searchError);
                 }
             }
