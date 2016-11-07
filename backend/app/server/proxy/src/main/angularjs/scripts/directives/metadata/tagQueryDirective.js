@@ -10,9 +10,9 @@
         .directive('tagQuery', tagQuery);
 
     function tagQuery() {
-        var directive = {
+        return {
             restrict: 'A',
-            templateUrl: '/views/templates/tagQuery.html',
+            templateUrl: '/views/templates/query/tagQuery.html',
             replace: true,
             scope: {
                 ruleBased: '=',
@@ -23,14 +23,12 @@
             priority: 1001,
             controller: tagQueryController
         };
-
-        return directive;
     }
 
     /* @ngInject */
     function tagQueryController($scope, SpectraQueryBuilderService, $location) {
         /**
-         * Create a new query based on the selected metadata value
+         * Create a new query based on the selected tag value
          */
         $scope.newQuery = function() {
             SpectraQueryBuilderService.prepareQuery();
@@ -38,7 +36,7 @@
         };
 
         /**
-         * Add selected metadata value to the current query
+         * Add selected tag value to the current query
          */
         $scope.addToQuery = function() {
             if (angular.isDefined($scope.type) && $scope.type == 'compound') {
