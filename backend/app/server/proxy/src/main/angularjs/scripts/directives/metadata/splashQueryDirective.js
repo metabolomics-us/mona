@@ -5,7 +5,7 @@
 (function() {
     'use strict';
 
-    splashQueryController.$inject = ['$scope', 'SpectraQueryBuilderService', '$location'];
+    splashQueryController.$inject = ['$scope', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
         .directive('splashQuery', splashQuery);
 
@@ -23,7 +23,7 @@
     }
 
     /* @ngInject */
-    function splashQueryController($scope, SpectraQueryBuilderService, $location) {
+    function splashQueryController($scope, SpectraQueryBuilderService) {
         /**
          * Create a new query based on the selected SPLASH
          */
