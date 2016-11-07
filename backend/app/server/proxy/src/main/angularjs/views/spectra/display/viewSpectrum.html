@@ -254,15 +254,15 @@
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>category</th>
-                                        <th>name</th>
-                                        <th>value</th>
+                                        <th>Category</th>
+                                        <th>Name</th>
+                                        <th>Value</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: ['category','name']">
                                         <td class="col-lg-2 col-md-4">
-                                            <span metadata-query value="meta"> {{meta.category}}</span>
+                                            {{meta.category}}
                                         </td>
                                         <td class="col-lg-2 col-md-4">
                                             <span metadata-query value="meta"> {{meta.name}}</span>
@@ -276,53 +276,6 @@
                             </div>
                             <br/>
 
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" id="inlineCheckbox1" ng-model="show.hidden"> Would you like to
-                                see hidden metadata fields?
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div ng-show="spectrum.metaData.length && show.hidden == true">
-                                <h4>Mass Spectrum Metadata - hidden</h4>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>category</th>
-                                        <th>name</th>
-                                        <th>value</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: 'true'} | orderBy: ['category','name']">
-                                        <td class="col-lg-2 col-md-4">
-                                            <span metadata-query value="meta"> {{meta.category}}</span>
-                                        </td>
-                                        <td class="col-lg-2 col-md-4">
-                                            <span value="meta"> {{meta.name}}</span>
-                                        </td>
-                                        <td class="col-lg-8 col-md-4">
-                                            <span gw-value value="meta">{{meta.value | number:4 }} {{meta.unit}}</span>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <br/>
-
-                            <div ng-show="spectrum.comments.length">
-                                <h4>Comments</h4>
-
-                                <ul>
-                                    <li ng-repeat="comment in spectrum.comments">{{comment.comment}}</li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>
