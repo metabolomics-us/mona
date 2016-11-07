@@ -60,7 +60,7 @@
                      ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | filter: {category: '!computed'} | orderBy: ['name'] |  limitTo:12">
 
                     <div class="col-lg-5 col-md-5 col-sm-6">
-                        <span gw-meta-query value="meta">
+                        <span metadata-query value="meta">
                             {{meta.name}}
                         </span>
                     </div>
