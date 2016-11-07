@@ -78,10 +78,6 @@
          * @returns {string}
          */
         var buildMetaDataQuery = function(name, value, collection, tolerance, partialQuery) {
-            $log.info("buildMetaDataQuery: "+ name +"; "+ value +"; "+ collection +"; "+ tolerance +"; "+ partialQuery)
-            $log.info(typeof(tolerance) +" "+ typeof(partialQuery))
-            $log.info(angular.isDefined(tolerance) +" "+ angular.isDefined(partialQuery))
-
             // Handle array of values
             if (Array.isArray(value)) {
                 var subqueries = value.map(function(x) {
