@@ -45,16 +45,6 @@
                 </thead>
 
                 <tbody>
-                <tr ng-if="compound.inchiKey">
-                    <td>Provided InChIKey</td>
-                    <td>{{compound.inchiKey}}</td>
-                </tr>
-
-                <tr ng-if="compound.inchi">
-                    <td>Provided InChI</td>
-                    <td>{{compound.inchi}}</td>
-                </tr>
-
                 <tr ng-repeat="meta in compound.metaData |  filter: {category: '!external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | unique:'name' | orderBy : 'name':true  ">
                     <td class="col-lg-4 col-md-6">
                         <span metadata-query value="meta" compound="true">{{meta.name}}</span>
@@ -77,44 +67,35 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div ng-show="compound.metaData.length == 0">
-                <div class="alert alert-info">
-                    Sorry we do not have any metadata for this compound
-                </div>
-            </div>
-
-            <div ng-show="compound.metaData.length > 0">
+            <div ng-show="(compound.metaData |  filter: {category: 'external id'}).length > 0">
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>external id</th>
-                        <th>value</th>
+                        <th>External Identifier</th>
+                        <th>Value</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="meta in compound.metaData |  filter: {category: 'external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | unique:'name' | orderBy : 'name':false  ">
-
                         <td class="col-lg-4 col-md-6">
                             <span metadata-query value="meta" compound="true">
                                 {{meta.name}}
                             </span>
                         </td>
-                        <td class="col-lg-8 col-md-6">
 
+                        <td class="col-lg-8 col-md-6">
                             <span ng-if="meta.url === ''">{{meta.value}}</span>
+
                             <a ng-if="meta.url !== ''"  href="{{meta.url}}" target="_blank">
                                 {{meta.value}}
                             </a>
 
                             <!-- display this, if there seems to be something odd with this value -->
-                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle">
-
-                            </i>
+                            <i ng-show="meta.suspect == true" class="fa fa-exclamation-triangle"></i>
 
                             <!-- display this, if it's a computed value -->
                             <i ng-show="meta.computed == true" class="fa fa-flask" tooltip-placement="top"
-                               tooltip="This value was computed via automated curation"></i>
-
+                               tooltip="Calculated by MoNA auto curation"></i>
                         </td>
                     </tr>
                     </tbody>
