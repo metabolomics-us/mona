@@ -1,6 +1,6 @@
 /**
  * This factory will parse the query Modal object and returns an RSQL Query String
- *
+ * TODO DELETE
  */
 
 (function () {
@@ -44,8 +44,8 @@
 		        queryStr = qStrHelper.buildMetaString(query.metadata);
 		        compiled.push('and', queryStr);
 	        }
-	        saveQuery();
 
+	        saveQuery();
         }
 
         /**
