@@ -130,7 +130,7 @@
             this.query.push('compound.names=q=\'name=match=".*'+ name +'.*"\'');
         };
 
-        var buildTagQuery = function(value, partialQuery) {
+        var buildTagQuery = function(value, collection, partialQuery) {
             // Handle array of values
             if (Array.isArray(value)) {
                 var subqueries = value.map(function(x) {
@@ -143,15 +143,19 @@
             // Handle individual values
             else {
                 if (typeof partialQuery !== 'undefined') {
-                    return 'tags.text=match=".*'+ value +'.*"';
+                    return collection+ '.text=match=".*'+ value +'.*"';
                 } else {
-                    return 'tags.text=="'+ value +'"';
+                    return collection +'.text=="'+ value +'"';
                 }
             }
         };
 
         this.addTagToQuery = function(query, partialQuery) {
-            this.query.push(buildTagQuery(query, partialQuery));
+            this.query.push(buildTagQuery(query, 'tags', partialQuery));
+        };
+
+        this.addCompoundTagToQuery = function(query, partialQuery) {
+            this.query.push(buildTagQuery(query, 'compound.tags', partialQuery));
         };
 
         this.addSplashToQuery = function(query) {
