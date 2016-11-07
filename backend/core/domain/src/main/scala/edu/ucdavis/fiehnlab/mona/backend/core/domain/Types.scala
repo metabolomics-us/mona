@@ -194,12 +194,16 @@ case class Submitter(
                       @(Id@field)
                       id: String,
 
+                      @(Indexed@field)
                       emailAddress: String,
 
+                      @(Indexed@field)
                       firstName: String,
 
+                      @(Indexed@field)
                       institution: String,
 
+                      @(Indexed@field)
                       lastName: String
                     )
 
@@ -214,14 +218,14 @@ case class Submitter(
 case class Author(
                    @(Indexed@field)
                    emailAddress: String,
-                   @(Indexed@field)
 
+                   @(Indexed@field)
                    firstName: String,
-                   @(Indexed@field)
 
+                   @(Indexed@field)
                    institution: String,
-                   @(Indexed@field)
 
+                   @(Indexed@field)
                    lastName: String
                  )
 
