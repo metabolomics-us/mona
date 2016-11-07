@@ -4,12 +4,12 @@
 
 (function() {
     'use strict';
-    SubmitterProfileController.$inject = ['$scope', '$location', 'AuthenticationService', 'SpectraQueryBuilderService'];
+    SubmitterProfileController.$inject = ['$scope', 'AuthenticationService', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
         .controller('SubmitterProfileController', SubmitterProfileController);
 
     /* @ngInject */
-    function SubmitterProfileController($scope, $location, AuthenticationService, SpectraQueryBuilderService) {
+    function SubmitterProfileController($scope, AuthenticationService, SpectraQueryBuilderService) {
         $scope.$on('auth:login-success', function(event, data, status, headers, config) {
             AuthenticationService.getCurrentUser().then(function(data) {
                 $scope.user = data;
@@ -22,10 +22,10 @@
             });
         })();
 
-
         $scope.queryUserSpectra = function() {
-            SpectraQueryBuilderService.compileQuery({submitter: $scope.user.emailAddress});
-            $location.path('/spectra/browse/');
+            SpectraQueryBuilderService.prepareQuery();
+            SpectraQueryBuilderService.addUserToQuery($scope.user.emailAddress);
+            SpectraQueryBuilderService.executeQuery();
         };
     }
 })();
