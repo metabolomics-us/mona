@@ -10,9 +10,9 @@
         .directive('metadataQuery', metadataQuery);
 
     function metadataQuery() {
-        var directive = {
+        return {
             restrict: 'A',
-            templateUrl: '/views/templates/meta/metadataQuery.html',
+            templateUrl: '/views/templates/query/metadataQuery.html',
             replace: true,
             transclude: true,
             scope: {
@@ -21,8 +21,6 @@
             },
             controller: metadataQueryController
         };
-
-        return directive;
     }
 
     /* @ngInject */
