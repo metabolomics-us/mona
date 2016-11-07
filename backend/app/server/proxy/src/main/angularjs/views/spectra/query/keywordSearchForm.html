@@ -11,35 +11,35 @@
                     <tbody>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ng-model="queryOptions.compound.name"
+                            <input type="text" ng-model="query.name"
                                    class="form-control"
                                    placeholder="Name or InChIKey">
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ng-model="queryOptions.compound.className"
+                            <input type="text" ng-model="query.classification"
                                    class="form-control"
                                    placeholder="Compound Class"/>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ng-model="queryOptions.metadata.formula"
+                            <input type="text" ng-model="query.formula"
                                    class="form-control"
                                    placeholder="Molecular Formula">
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="number" ng-model="queryOptions.metadata.exactMass"
+                            <input type="number" ng-model="query.exactMass"
                                    class="form-control"
                                    placeholder="Exact Mass">
                         </td>
                         <td>
                             <div class="input-group">
                                 <div class="input-group-addon">&pm;</div>
-                                <input type="number" ng-model="queryOptions.metadata.tolerance"
+                                <input type="number" ng-model="query.exactMassTolerance"
                                        class="form-control"
                                        value="0.5">
                                 <div class="input-group-addon">Da</div>
@@ -61,8 +61,8 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td ng-repeat="ion in ionMode track by $index">
-                                    <input type="checkbox" ng-model="ion.selected"> {{ion.name}}
+                                <td ng-repeat="x in ionMode">
+                                    <input type="checkbox" ng-model="x.selected"> {{x.name}}
                                 </td>
                             </tr>
                             </tbody>
@@ -85,8 +85,8 @@
                             <tbody>
                             <tr>
                                 <td>
-                                     <span ng-repeat="n in sourceIntroduction track by $index">
-                                         <input type="checkbox" ng-model="n.selected"> {{n.name}} ({{n.abv}})
+                                     <span ng-repeat="x in sourceIntroduction">
+                                         <input type="checkbox" ng-model="x.selected"> {{x.name}} ({{x.abv}})
                                          <br/>
                                      </span>
                                 </td>
@@ -108,8 +108,8 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td ng-repeat="ms in msType track by $index">
-                                    <input type="checkbox" ng-model="ms.selected"> {{ms.name}}
+                                <td ng-repeat="x in msType">
+                                    <input type="checkbox" ng-model="x.selected"> {{x.name}}
                                 </td>
                             </tr>
                             </tbody>
