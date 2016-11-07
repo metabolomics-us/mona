@@ -1,30 +1,20 @@
 /**
  * Created by sajjan on 6/11/14.
- * /**
- * this controller is handling the browsing of compounds in the moa-client application
  *
- * @param $scope
- * @param Spectrum
- * @param SpectraQueryBuilderService
- * @param $location
- * @param SpectrumCache
- * @param $rootScope
- * @param $timeout
- * @constructor
+ * This controller is handling the browsing of spectra
  */
-
 
 (function() {
     'use strict';
-    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', '$rootScope', '$timeout', '$log', 'MAX_SPECTRA', 'toaster'];
+    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', '$timeout', '$log', 'MAX_SPECTRA', 'toaster'];
     angular.module('moaClientApp')
       .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location,
-                                      SpectrumCache, $rootScope, $timeout, $log, MAX_SPECTRA, toaster) {
+    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, $timeout, $log, MAX_SPECTRA, toaster) {
 
         $scope.table = false;
+
         /**
          * contains all local objects and is our model
          * @type {Array}
@@ -69,15 +59,19 @@
          */
         $scope.searchSplash = false;
 
-        function hideSplash() {
+        var hideSplash = function() {
             $timeout(function () {
                 $scope.searchSplash = false;
-            }, 100)
-        }
+            }, 50)
+        };
 
-        function showSplash() {
-            $scope.searchSplash = true;
-        }
+
+        /**
+         * Start a new search
+         */
+        $scope.searchSpectra = function() {
+            $location.path('spectra/search').search({});
+        };
 
         /**
          * Reset the current query
@@ -88,10 +82,9 @@
         };
 
         /**
-         * submits our build query to the backend
+         * Submits our query to the server
          */
         $scope.submitQuery = function() {
-
             $scope.dataAvailable = true;
 
             // Reset spectra
@@ -100,48 +93,23 @@
 
             $scope.calculateResultCount();
 
-            //actually load our data
+            // Load our data
             $scope.loadMoreSpectra();
         };
 
         /**
-         * fires an event for directives to show the current query
-         */
-        $scope.displayQuery = function() {
-            $rootScope.$broadcast('spectra:query:show');
-        };
-
-        $scope.initSearch = function() {
-            $location.path('spectra/search').search({});
-        };
-
-        /**
-         * calculates how my results this current query will return
+         * Calculates the number of results for the given query
          */
         $scope.calculateResultCount = function() {
-            //reports the count for the complete query response
-
             $scope.queryResultCount = "Loading...";
 
-            var queryString = SpectraQueryBuilderService.getRSQLQuery();
-
-            if(queryString === '/rest/spectra') {
-                Spectrum.searchSpectraCount({endpoint: 'count'}, function(data) {
-                    $scope.queryResultCount = data.count;
-                });
-            }
-            else {
-                Spectrum.searchSpectraCount({
-                    endpoint: 'count',
-                    query: queryString
-                }, function (data) {
-                    $scope.queryResultCount = data.count;
-                });
-            }
-
+            Spectrum.searchSpectraCount({
+                endpoint: 'count',
+                query: $scope.query
+            }, function (data) {
+                $scope.queryResultCount = data.count;
+            });
         };
-
-
 
         /**
          * @Deprecated
@@ -158,11 +126,10 @@
 
 
         /**
-         * Get natural mass as accurate mass of spectrum
+         * Get total exact mass as accurate mass of spectrum
          */
         $scope.addAccurateMass = function(spectra) {
-
-            for (var i = 0, l = spectra.length; i < l; i++) {
+            for (var i = 0; i < spectra.length; i++) {
                 var mass = '';
                 var spectrum = spectra[i];
 
@@ -189,32 +156,22 @@
             return spectra;
         };
 
-        /**
-         * loads more spectra into the given view
-         */
-        var page = 0;
-
         $scope.loadMoreSpectra = function() {
             if (!$scope.loadingMore && $scope.spectraLoadLength !== $scope.spectra.length && $scope.dataAvailable) {
                 //search utilizing our compiled query so that it can be easily refined over time
                 $scope.loadingMore = true;
                 $scope.spectraLoadLength = $scope.spectra.length;
 
-                var payload = SpectraQueryBuilderService.getRSQLQuery();
                 // Note the start time for timing the spectrum search
                 $scope.startTime = Date.now();
 
-                $log.debug('Submitted query: '+ payload);
+                $log.debug('Submitted query: '+ $scope.query);
 
-                if (payload === '') {
+                if ($scope.query === '') {
                     Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);
                 } else {
-                    Spectrum.searchSpectra({endpoint: 'search', query: payload, page: page, size: MAX_SPECTRA}, searchSuccess, searchError);
+                    Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, page: page, size: MAX_SPECTRA}, searchSuccess, searchError);
                 }
-            }
-            //inform other controllers that we finished loading spectra
-            if ($scope.spectra) {
-                $rootScope.$broadcast('spectra:loaded', $scope.spectra);
             }
         };
 
@@ -233,9 +190,10 @@
             page += 1;
         }
 
-        function searchError(err) {
+        function searchError(error) {
             hideSplash();
             $scope.loadingMore = false;
+            
             toaster.pop({
                 type: 'error',
                 title: 'Unable to complete request',
@@ -250,39 +208,40 @@
         });
 
 
-        /**
-         * our list view and default view
-         */
         (function() {
             $scope.spectraScrollStartLocation = 0;
             $scope.spectra = [];
-            showSplash();
 
-            // Handle queries passed in the URL
+            // Display splash overlay
+            $scope.searchSplash = true;
+
+            // Handle InChIKey queries
             if($location.search().hasOwnProperty('inchikey')) {
                 $log.info('Accepting InChIKey query from URL: '+ $location.search().inchikey);
 
                 if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($location.search().inchikey)) {
-                    SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value==\""+ $location.search().inchikey +"\"'");
+                    SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey);
                 } else {
-                    SpectraQueryBuilderService.setQueryString("compound.metaData=q='name==\"InChIKey\" and value=match=\""+ $location.search().inchikey +"-.*\"'");
+                    SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey, true);
                 }
+
+                SpectraQueryBuilderService.executeQuery();
             }
 
+            // Handle SPLASH queries
             if($location.search().hasOwnProperty('splash')) {
                 $log.info('Accepting SPLASH query from URL: '+ $location.search().splash);
 
-                SpectraQueryBuilderService.setQueryString("splash.splash=="+ $location.search().splash);
+                SpectraQueryBuilderService.addSplashToQuery($location.search().splash);
+                SpectraQueryBuilderService.executeQuery();
             }
 
-
+            // Handle general queries
             if($location.search().hasOwnProperty('query')) {
                 $log.info('Accepting query from URL: '+ $location.search().query);
-                
-                SpectraQueryBuilderService.setQueryString($location.search().query);
+                $scope.query = $location.search().query;
             }
 
-            // Submit our initial query
             $scope.submitQuery();
         })();
     }
