@@ -1,168 +1,106 @@
 (function () {
     'use strict';
 
-    KeywordSearchController.$inject = ['$scope', 'SpectraQueryBuilderService', 'queryStringBuilder', '$log', '$location', 'QueryCache'];
+    KeywordSearchController.$inject = ['$scope', 'SpectraQueryBuilderService', '$log'];
     angular.module('moaClientApp')
         .controller('KeywordSearchController', KeywordSearchController);
 
     /* @ngInject */
-    function KeywordSearchController($scope, SpectraQueryBuilderService, queryStringBuilder, $log, $location, QueryCache) {
+    function KeywordSearchController($scope, SpectraQueryBuilderService, $log) {
 
-        (function initForm() {
-            $scope.queryOptions = {
-                firstOperand: 'AND',
-                secondOperand: 'AND',
-                compound: {
-                    inchiKey: null
-                },
-                metadata: {
-                    insType: [],
-                    msType: [],
-                    ionMode: [],
-                    exactMass: null,
-                    tolerance: 0.5
-                }
-            };
-
-            $scope.sourceIntroduction = [
-                {name: 'Liquid Chromatography', abv: 'LC'},
-                {name: 'Gas Chromatography', abv: 'GC'},
-                {name: 'Capillary Electrophoresis', abv: 'CE'}
-            ];
-
-
-            $scope.instrumentType = [
-                {
-                    IM: [{name: 'Atmospheric Pressure Chemical Ionization', abv: '(APCI)'},
-                        {name: 'Chemical Ionization', abv: '(CI)'},
-                        {name: 'Electron Impact', abv: '(EI)'},
-                        {name: 'Electrospray Ionization', abv: '(ESI)'},
-                        {name: 'Fast Atom Bombardment', abv: '(FAB)'},
-                        {name: 'Matrix Assisted Laser Desorption Ionization', abv: '(MALDI)'}]
-                }
-            ];
-
-            $scope.msType = [{name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
-            $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
-        })();
-
-
-        $scope.submitQuery = function () {
-            // TODO improve query building routines
-            filterKeywordSearchOptions($scope.queryOptions, $scope.sourceIntroduction, $scope.msType, $scope.ionMode);
-            queryStringBuilder.buildQuery();
-
-            var chromatography = [];
-
-            angular.forEach($scope.sourceIntroduction, function (value, key) {
-                if (value.selected === true) {
-                    chromatography.push(value.abv);
-                }
-            });
-
-            if (chromatography.length > 0) {
-                var queryString = QueryCache.getSpectraQuery('string');
-
-                if (queryString == "/rest/spectra")
-                    queryString = "";
-
-                if (queryString != "")
-                    queryString = queryString + " and ";
-
-                if (chromatography.length > 1)
-                    queryString = queryString + "(";
-
-                for (var i = 0; i < chromatography.length; i++) {
-                    if (i > 0)
-                        queryString = queryString + " or ";
-                    queryString = queryString + "tags=q='text==\"" + chromatography[i] + '-MS\"\''
-                }
-
-                if (chromatography.length > 1)
-                    queryString = queryString + ")";
-                QueryCache.setSpectraQueryString(queryString);
-            }
-
-            $location.path('/spectra/browse');
+        $scope.query = {
+            exactMassTolerance: 0.5
         };
+
+        /**
+          * Form fields
+          */
+        $scope.sourceIntroduction = [
+            {name: 'Liquid Chromatography', abv: 'LC'},
+            {name: 'Gas Chromatography', abv: 'GC'},
+            {name: 'Capillary Electrophoresis', abv: 'CE'}
+        ];
+
+        $scope.ionizationMethod = [
+            {name: 'Atmospheric Pressure Chemical Ionization', abv: '(APCI)'},
+            {name: 'Chemical Ionization', abv: '(CI)'},
+            {name: 'Electron Impact', abv: '(EI)'},
+            {name: 'Electrospray Ionization', abv: '(ESI)'},
+            {name: 'Fast Atom Bombardment', abv: '(FAB)'},
+            {name: 'Matrix Assisted Laser Desorption Ionization', abv: '(MALDI)'}
+        ];
+
+        $scope.msType = [{name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
+        $scope.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
 
 
         /**
-         * filter user input and add it to query cache
-         * @param options
-         * @param instruments
-         * @param ms
-         * @param ionMode
+         * Process given query parameters and execute query
          */
-        function filterKeywordSearchOptions(options, sourceIntroduction, ms, ionMode) {
+        $scope.submitQuery = function () {
+            SpectraQueryBuilderService.prepareQuery();
 
-            var filtered = SpectraQueryBuilderService.prepareQuery();
-
-            filtered.operand = [];
-            filtered.operand.push(options.firstOperand.toLowerCase());
-            filtered.operand.push(options.secondOperand.toLowerCase());
-
-            // filter compound
-            if (/^([A-Z]{14}-[A-Z]{10}-[A-Z,0-9])+$/.test(options.compound.name)) {
-                filtered.compound.push({inchiKey: options.compound.name});
-            }
-            else if (/^[A-Z]{14}$/.test(options.compound.name)) {
-                filtered.compound.push({partInchi: options.compound.name});
-            }
-            else {
-                if (angular.isDefined(options.compound.name)) {
-                    filtered.compound.push({name: options.compound.name});
-                }
+            // Query Name/InChIKey search
+            if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($scope.query.name)) {
+                SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $scope.query.name);
+            } else if (/^[A-Z]{14}$/.test($scope.query.name)) {
+                SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $scope.query.name, true);
+            } else if (angular.isDefined($scope.query.name)) {
+                SpectraQueryBuilderService.addNameToQuery($scope.query.name);
             }
 
-            // filter class
-            if (angular.isDefined(options.compound.className)) {
-                filtered.classification = options.compound.className;
+            // Query compound classification
+            if (angular.isDefined($scope.query.classification)) {
+                SpectraQueryBuilderService.addGeneralClassificationToQuery($scope.query.classification);
             }
 
-            // filter exact mass
-            if (options.metadata.exactMass !== null) {
-                filtered.compoundDa = {mass: options.metadata.exactMass, tolerance: options.metadata.tolerance};
+            // Query molecular formula
+            if (angular.isDefined($scope.query.formula)) {
+                SpectraQueryBuilderService.addCompoundMetaDataToQuery('molecular formula', $scope.query.formula, true);
             }
 
-            // filter formula
-            if (angular.isDefined(options.metadata.formula)) {
-                filtered['formula'] = options.metadata.formula;
+            // Query exact mass
+            if (angular.isDefined($scope.query.exactMass)) {
+                SpectraQueryBuilderService.addNumericalCompoundMetaDataToQuery('total exact mass', $scope.query.exactMass, $scope.query.exactMassTolerance);
             }
 
-            /**
-             * our model for metadata fields. Elements in each property will be
-             * created with 'or' operator and properties will be concat with 'and' operator
-             */
-            filtered.groupMeta = {
-                // 'source introduction': [],
-                'ionization mode': [],
-                'ms level': []
-            };
+            // Handle chromatography
+            var chromatography = $scope.sourceIntroduction.reduce(function(result, element) {
+                if (element.selected)
+                    result.push(element.abv + '-MS');
+                return result;
+            }, []);
 
-            // add source introduction
-            // angular.forEach(sourceIntroduction, function (value, key) {
-            //     if (value.selected === true) {
-            //         filtered.groupMeta['source introduction'].push(value.name.toLowerCase());
-            //     }
-            // });
+            if (chromatography.length > 0) {
+                SpectraQueryBuilderService.addTagToQuery(chromatography);
+            }
 
-            // add ion mode
-            angular.forEach(ionMode, function (value, key) {
-                if (value.selected === true) {
-                    filtered.groupMeta['ionization mode'].push(value.name.toLowerCase());
-                }
-            });
+            // Handle ionization mode
+            var ionMode = $scope.ionMode.reduce(function(result, element) {
+                if (element.selected)
+                    result.push(element.name.toLowerCase());
+                return result;
+            }, []);
 
-            // add ms type to query
-            angular.forEach(ms, function (value, key) {
-                if (value.selected === true) {
-                    filtered.groupMeta['ms level'].push(value.name);
-                }
-            });
+            if (ionMode.length > 0) {
+                SpectraQueryBuilderService.addMetaDataToQuery('ionization mode', ionMode);
+            }
 
-            SpectraQueryBuilderService.setQuery(filtered);
-        }
 
+            // Handle MS type
+            var msType = $scope.msType.reduce(function(result, element) {
+                if (element.selected)
+                    result.push(element.name);
+                return result;
+            }, []);
+
+            if (msType.length > 0) {
+                SpectraQueryBuilderService.addMetaDataToQuery('ms level', msType);
+            }
+
+
+            // Redirect to the spectra browser
+            SpectraQueryBuilderService.executeQuery();
+        };
     }
 })();
