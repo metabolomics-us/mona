@@ -108,7 +108,7 @@ class MSPWriter extends DomainWriter {
     p.println(s"Name: ${buildName(spectrum)}")
     p.println(s"ID: ${spectrum.id}")
     p.println(s"MW: ${buildCompoundMetaData(spectrum, "total exact mass")}")
-    p.println(s"Formula: ${buildCompoundMetaData(spectrum, "molecule formula")}")
+    p.println(s"Formula: ${buildCompoundMetaData(spectrum, "molecular formula")}")
     p.println(s"PrecursorMZ: ${buildMetaDateField(spectrum, "precursor m/z")}")
     p.println(s"Comments: ${buildComments(spectrum)}")
 
