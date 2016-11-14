@@ -14,7 +14,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, 
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.MetaDataStatistics
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -59,28 +58,40 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
       }
 
       "we should be able to generate statistics" in {
-        authenticate().contentType("application/json; charset=UTF-8").log().all(true).when().post("/statistics/update").then().log().all(true).statusCode(200).extract()
+        authenticate().contentType("application/json; charset=UTF-8").when().post("/statistics/update").then().log().all(true).statusCode(200).extract()
       }
 
       "we should be able to query all meta data names from the service" in {
-        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/names").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
         assert(result.length == 44)
       }
 
       "we should be able to search for metadata names" in {
-        val result = given().contentType("application/json; charset=UTF-8").log().all().when().body(WrappedString("inst")).post("/metaData/names/search").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("inst")).post("/metaData/names/search").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
         assert(result.length == 2)
       }
 
       "we should be able to query all the meta data values for a specific name" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("authors")).post("/metaData/values").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
+        val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/values/authors").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
 
         assert(result.name == "authors")
-        assert(result.values.map(_.value).contains("Mark Earll, Stephan Beisken, EMBL-EBI"))
+        assert(result.values.length == 1)
+        assert(result.values.head.value == "Mark Earll, Stephan Beisken, EMBL-EBI")
+        assert(result.values.head.count == 58)
       }
 
+      "we should be able to query all the meta data values for a specific name thaty contains spaces" in {
+        val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/values/ms level").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
+
+        assert(result.name == "ms level")
+        assert(result.values.length == 1)
+        assert(result.values.head.value == "MS2")
+        assert(result.values.head.count == 58)
+      }
+
+
       "we should be able to search for metadata values" in {
-        val result = given().contentType("application/json; charset=UTF-8").log().all().when().body(MetaDataValueSearch("authors", "Mark")).post("/metaData/values/search").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().body(WrappedString("Mark")).post("/metaData/values/search/authors").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
         assert(result.length == 1)
       }
     }
