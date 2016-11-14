@@ -56,29 +56,28 @@ class MetaDataRestController {
     * @param metaDataName
     * @return
     */
-  @RequestMapping(path = Array("/values"), method = Array(RequestMethod.POST))
+  @RequestMapping(path = Array("/values/{name}"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaDataValue(@RequestBody metaDataName: WrappedString): AsyncResult[MetaDataStatistics] =
-    new AsyncResult[MetaDataStatistics](metaDataStatisticsService.getMetaDataStatistics(metaDataName.string))
+  def listMetaDataValue(@PathVariable("name") metaDataName: String): AsyncResult[MetaDataStatistics] =
+    new AsyncResult[MetaDataStatistics](metaDataStatisticsService.getMetaDataStatistics(metaDataName))
+
 
   /**
     *
-    * @param metaData
+    * @param metaDataName
+    * @param partialMetaDataValue
     * @return
     */
-  @RequestMapping(path = Array("/values/search"), method = Array(RequestMethod.POST))
+  @RequestMapping(path = Array("/values/search/{name}"), method = Array(RequestMethod.POST))
   @Async
-  def searchMetaDataValues(@RequestBody metaData: MetaDataValueSearch): Future[Array[String]] = {
+  def searchMetaDataValues(@PathVariable("name") metaDataName: String, @RequestBody partialMetaDataValue: WrappedString): Future[Array[String]] = {
     new AsyncResult[Array[String]](
-      metaDataStatisticsService.getMetaDataStatistics(metaData.metaDataName)
+      metaDataStatisticsService.getMetaDataStatistics(metaDataName)
         .values
-        .filter(_.value.toLowerCase.contains(metaData.partialMetaDataValue.toLowerCase))
+        .filter(_.value.toLowerCase.contains(partialMetaDataValue.string.toLowerCase))
         .sortBy(-_.count)
         .map(_.value)
         .take(25)
     )
   }
 }
-
-
-case class MetaDataValueSearch(metaDataName: String, partialMetaDataValue: String)
