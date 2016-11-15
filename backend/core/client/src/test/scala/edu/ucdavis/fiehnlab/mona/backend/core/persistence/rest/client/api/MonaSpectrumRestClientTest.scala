@@ -32,17 +32,17 @@ class MonaSpectrumRestClientTest extends AbstractRestClientTest {
   "we must be able to" must {
     "get all available meta data names" in {
       val set = monaSpectrumRestClient.listMetaDataNames
-
-      assert(set.size > 0)
+      assert(set.nonEmpty)
     }
 
     "get all available meta data values for a given name" in {
       val set: Array[String] = monaSpectrumRestClient.listMetaDataNames
+      assert(set.nonEmpty)
 
-      assert(set.size > 0)
       for (s <- set) {
         val content = monaSpectrumRestClient.listMetaDataValues(s)
-        assert(content.size > 0)
+        println(content)
+        assert(content.nonEmpty)
       }
     }
   }
