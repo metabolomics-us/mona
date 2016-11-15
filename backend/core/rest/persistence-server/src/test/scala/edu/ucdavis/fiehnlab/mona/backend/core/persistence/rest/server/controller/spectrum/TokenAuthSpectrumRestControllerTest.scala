@@ -168,7 +168,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         assert(10 == exampleRecords.length)
 
         for (spec <- exampleRecords) {
-          assert(firstRecords.contains(spec) == false)
+          assert(!firstRecords.contains(spec))
         }
       }
 
