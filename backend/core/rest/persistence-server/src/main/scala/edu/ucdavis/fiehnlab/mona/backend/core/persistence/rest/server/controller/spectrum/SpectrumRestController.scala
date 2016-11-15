@@ -49,8 +49,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
           else {
             spectrumPersistenceService.findAll(query.string, new PageRequest(0, size)).getContent.asScala
           }
-        }
-        else {
+        } else {
           spectrumPersistenceService.findAll(query.string).asScala
         }
       }

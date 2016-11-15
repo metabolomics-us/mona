@@ -58,21 +58,21 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
       }
 
       "we should be able to generate statistics" in {
-        authenticate().contentType("application/json; charset=UTF-8").when().post("/statistics/update").then().log().all(true).statusCode(200).extract()
+        authenticate().contentType("application/json; charset=UTF-8").log().all().when().post("/statistics/update").then().log().all(true).statusCode(200).extract()
       }
 
       "we should be able to query all meta data names from the service" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/names").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
         assert(result.length == 44)
       }
 
       "we should be able to search for metadata names" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().body(WrappedString("inst")).post("/metaData/names/search").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names?search=inst").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
         assert(result.length == 2)
       }
 
       "we should be able to query all the meta data values for a specific name" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/values/authors").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/values?name=authors").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
 
         assert(result.name == "authors")
         assert(result.values.length == 1)
@@ -80,8 +80,8 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
         assert(result.values.head.count == 58)
       }
 
-      "we should be able to query all the meta data values for a specific name thaty contains spaces" in {
-        val result = given().contentType("application/json; charset=UTF-8").when().get("/metaData/values/ms level").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
+      "we should be able to query all the meta data values for a specific name that contains spaces" in {
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/values?name=ms level").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
 
         assert(result.name == "ms level")
         assert(result.values.length == 1)
@@ -89,10 +89,16 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
         assert(result.values.head.count == 58)
       }
 
+      "we should be able to query all the meta data values for a specific name that special characters" in {
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/values?name=precursor m/z").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
+
+        assert(result.name == "precursor m/z")
+        assert(result.values.length == 55)
+      }
 
       "we should be able to search for metadata values" in {
-        val result = given().contentType("application/json; charset=UTF-8").log().all().when().body(WrappedString("Mark")).post("/metaData/values/search/authors").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
-        assert(result.length == 1)
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/values?name=authors&search=Mark").then().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
+        assert(result.values.length == 1)
       }
     }
   }

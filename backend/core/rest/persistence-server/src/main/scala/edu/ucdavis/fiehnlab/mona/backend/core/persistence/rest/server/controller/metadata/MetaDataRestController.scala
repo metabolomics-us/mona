@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.web.bind.annotation._
+import org.springframework.web.bind.annotation.{RequestParam, _}
 
 import scala.collection.JavaConverters._
 
@@ -34,50 +34,44 @@ class MetaDataRestController {
 
 
   /**
-    * List unique metadata names
+    * List unique metadata names and filter metadata names if query is given
     * @return
     */
   @RequestMapping(path = Array("/names"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaDataNames: Future[Array[String]] = new AsyncResult[Array[String]](metaDataStatisticsService.getMetaDataNames)
+  def listMetaDataName(@RequestParam(value = "search", required = false) partialMetaDataName: String): Future[Array[String]] = {
+    if (partialMetaDataName == null || partialMetaDataName.isEmpty) {
+      new AsyncResult[Array[String]](metaDataStatisticsService.getMetaDataNames)
+    } else {
+      new AsyncResult[Array[String]](metaDataStatisticsService.getMetaDataNames.filter(_.toLowerCase.contains(partialMetaDataName.toLowerCase)))
+    }
+  }
 
   /**
-    *
-    * @param partialMetaDataName
-    * @return
-    */
-  @RequestMapping(path = Array("/names/search"), method = Array(RequestMethod.POST))
-  @Async
-  def searchMetaDataName(@RequestBody partialMetaDataName: WrappedString): Future[Array[String]] =
-    new AsyncResult[Array[String]](metaDataStatisticsService.getMetaDataNames.filter(_.toLowerCase.contains(partialMetaDataName.string.toLowerCase)))
-
-  /**
-    *
+    * List unique metadata values for a given metadata name and search values if query is given
     * @param metaDataName
     * @return
     */
-  @RequestMapping(path = Array("/values/{name}"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/values"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaDataValue(@PathVariable("name") metaDataName: String): AsyncResult[MetaDataStatistics] =
-    new AsyncResult[MetaDataStatistics](metaDataStatisticsService.getMetaDataStatistics(metaDataName))
+  def listMetaDataValues(@RequestParam(value = "name", required = true) metaDataName: String,
+                        @RequestParam(value = "search", required = false) partialMetaDataValue: String): AsyncResult[MetaDataStatistics] = {
 
+    val metaDataStatistics: MetaDataStatistics = metaDataStatisticsService.getMetaDataStatistics(metaDataName)
 
-  /**
-    *
-    * @param metaDataName
-    * @param partialMetaDataValue
-    * @return
-    */
-  @RequestMapping(path = Array("/values/search/{name}"), method = Array(RequestMethod.POST))
-  @Async
-  def searchMetaDataValues(@PathVariable("name") metaDataName: String, @RequestBody partialMetaDataValue: WrappedString): Future[Array[String]] = {
-    new AsyncResult[Array[String]](
-      metaDataStatisticsService.getMetaDataStatistics(metaDataName)
-        .values
-        .filter(_.value.toLowerCase.contains(partialMetaDataValue.string.toLowerCase))
-        .sortBy(-_.count)
-        .map(_.value)
-        .take(25)
-    )
+    if (partialMetaDataValue == null || partialMetaDataValue.isEmpty) {
+      println(metaDataStatistics)
+      new AsyncResult[MetaDataStatistics](metaDataStatistics)
+    } else {
+      // Filter the metadata values and take the top 25
+      new AsyncResult[MetaDataStatistics](
+        metaDataStatistics.copy(values =
+          metaDataStatistics.values
+            .filter(_.value.toLowerCase.contains(partialMetaDataValue.toLowerCase))
+            .sortBy(-_.count)
+            .take(25)
+        )
+      )
+    }
   }
 }
