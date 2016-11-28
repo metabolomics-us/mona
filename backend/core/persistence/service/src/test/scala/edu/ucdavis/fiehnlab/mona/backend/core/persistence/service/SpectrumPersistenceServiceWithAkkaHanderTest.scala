@@ -27,6 +27,7 @@ import scala.util.Properties
 
 @SpringBootApplication
 class TestConfig
+
 /**
   * Created by wohlg on 3/15/2016.
   */

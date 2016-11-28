@@ -22,7 +22,6 @@ import scala.beans.BeanProperty
   */
 
 case class MetaData(
-
                      @(Indexed@field)
                      category: String,
 
@@ -57,11 +56,9 @@ case class MetaData(
                      @(TupleSerialize@field)
                      @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
                      value: Any
-
                    )
 
 case class Names(
-
                   @(Indexed@field)
                   @(Field@field)(`type` = FieldType.Boolean, index = FieldIndex.not_analyzed)
                   computed: Boolean,
@@ -136,15 +133,12 @@ case class Compound(
                    )
 
 case class Impacts(
-
                     impactValue: Double,
 
                     reason: String
                   )
 
-
 case class Score(
-
                   impacts: Array[Impacts],
 
                   relativeScore: Double, //ns
@@ -154,9 +148,7 @@ case class Score(
                   score: Double
                 )
 
-
 case class Splash(
-
                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                    block1: String, //ns
 
@@ -187,7 +179,6 @@ case class Splash(
   */
 @Document(collection = "SUBMITTER")
 case class Submitter(
-
                       /**
                         * primary id for the user, can be any string
                         */
@@ -415,3 +406,11 @@ object HelperTypes {
   case class LoginInfo(username: String, validFrom: Date, validTo: Date, roles: java.util.List[String])
 
 }
+
+
+@Document(collection = "COUNTERS")
+case class Counter(
+                    @(Id@field)
+                    id: String,
+                    count: Long
+                  )

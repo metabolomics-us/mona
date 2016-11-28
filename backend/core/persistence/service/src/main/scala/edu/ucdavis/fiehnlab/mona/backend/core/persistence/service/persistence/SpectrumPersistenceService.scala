@@ -247,7 +247,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   }
 
   /**
-    * delete all entities for the spectrym
+    * delete all entities for the spectrum
     *
     * @param entities
     */
