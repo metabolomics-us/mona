@@ -31,17 +31,17 @@ class CounterServiceTest extends WordSpec with LazyLogging {
     counterRepository.deleteAll()
 
     "create a new counter" in {
-      val result = counterService.getNextSequence("spectrumID")
+      val result = counterService.getNextCounterValue("spectrumID")
       assert(result != null)
       assert(result.count == 1)
     }
 
     "increment the counter" in {
-      (2 to 10).foreach(i => assert(counterService.getNextSequence("spectrumID").count == i))
+      (2 to 10).foreach(i => assert(counterService.getNextCounterValue("spectrumID").count == i))
     }
 
     "create another counter" in {
-      val result = counterService.getNextSequence("otherCounter")
+      val result = counterService.getNextCounterValue("otherCounter")
       assert(result != null)
       assert(result.count == 1)
     }

@@ -242,11 +242,10 @@ case class Spectrum(
                      compound: Array[Compound],
 
                      @(Id@field)
-                     @(NotNull@field)
-                     @(NotEmpty@field)
                      @BeanProperty
                      id: String,
 
+                     dateCreated: Date,
                      lastUpdated: Date,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
@@ -304,6 +303,7 @@ object Spectrum {
       spectrum = spectrum.spectrum,
       score = spectrum.score,
       id = spectrum.id,
+      dateCreated = spectrum.dateCreated,
       lastUpdated = spectrum.lastUpdated,
       metaData = spectrum.metaData.filter(_.category != "annotation"),
       annotations = spectrum.metaData.filter(_.category == "annotation"),
@@ -336,6 +336,7 @@ case class LegacySpectrum(
                            biologicalCompound: Compound,
                            chemicalCompound: Compound,
                            id: String,
+                           dateCreated: Date,
                            lastUpdated: Date,
                            metaData: Array[MetaData],
                            score: Score,
