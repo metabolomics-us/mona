@@ -28,7 +28,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
   /**
-    * this executes a search against the reposiroty and can cause out of memory errors. We recommend to utilize this method with
+    * this executes a search against the repository and can cause out of memory errors. We recommend to utilize this method with
     * pagination as well
     *
     * @param query
@@ -37,7 +37,11 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET), produces = Array("application/json","text/msp"))
   @Async
   @ResponseBody
-  def searchRSQL(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer, @RequestParam(value = "query", required = true) query: WrappedString, request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
+  def searchRSQL(@RequestParam(value = "page", required = false) page: Integer,
+                 @RequestParam(value = "size", required = false) size: Integer,
+                 @RequestParam(value = "query", required = true) query: WrappedString,
+                 request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
+
     if (query == null || query.string == "") {
       list(page, size)
     } else {

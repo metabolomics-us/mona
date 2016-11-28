@@ -8,6 +8,4 @@ import org.springframework.context.annotation.{Configuration, Import}
 
 @Configuration
 @Import(Array(classOf[PersistenceServiceConfig]))
-class EmbeddedServiceConfig {
-
-}
+class EmbeddedServiceConfig
