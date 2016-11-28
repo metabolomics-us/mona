@@ -13,7 +13,8 @@ trait MassBankToSpectrumMapper {
   /** One-to-one mapping of MassBank record fields to base metadata fields */
   def recordToSpectrum(record: MassBankRecord): Spectrum = {
     Spectrum(
-      id = record.recordSpecificGroup.accession orNull,
+      id = record.recordSpecificGroup.accession.orNull,
+      dateCreated = null,
       lastUpdated = null,
       score = null,
 
