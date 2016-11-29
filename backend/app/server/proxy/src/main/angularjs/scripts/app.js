@@ -72,7 +72,11 @@
          * Configure Google Analytics
          */
         .config(['AnalyticsProvider', function(AnalyticsProvider) {
-            AnalyticsProvider.setAccount('UA-87692241-2');
+            AnalyticsProvider
+                .setAccount('UA-87692241-2')
+                .trackPages(true)
+                .ignoreFirstPageLoad(true)
+                .trackUrlParams(true);
         }])
         .run(['Analytics', function(Analytics) {}])
 
