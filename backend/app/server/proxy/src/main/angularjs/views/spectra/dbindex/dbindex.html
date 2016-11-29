@@ -1,23 +1,85 @@
 <div class="row">
-    <div class="col-md-12">
-        <h3><i class="fa  fa-database "></i> Database Index</h3>
+    <div class="col-md-12" id="search-box">
+        <h3><i class="fa fa-database"></i> Database Index &amp; Statistics</h3>
 
-        <div class="h5">
-            Perform simple queries based on single spectrum attributes. The numbers refer to the number of spectra in
-            the database that are associated with each metadata value.
-        </div>
+        <uib-tabset active="activeJustified">
+            <uib-tab index="0" select="selectTab(0)">
+                <uib-tab-heading class="search-heading">Database Content</uib-tab-heading>
 
-        <div ng-repeat="(name, data) in fieldData">
-            <h4 class="page-header">{{name | titlecase}}</h4>
+                <h5><b>Database Information:</b></h5>
 
-            <div class="row">
-                <div class="col-sm-4 text-left" ng-repeat-start="meta in data | orderBy:'count':true">
-                    <span class="left10"> ({{meta.count}})</span>
-                    <a style="cursor: pointer;" ng-click="submitQuery(name, meta.value)">{{meta.value}}</a>
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>Submitters:</td>
+                        <td>{{globalData.submitterCount | number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Spectral Records:</td>
+                        <td>{{globalData.spectrumCount | number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Unique Compounds (first InChIKey block):</td>
+                        <td>{{globalData.compoundCount | number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Metadata Types:</td>
+                        <td>{{globalData.metaDataCount | number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Metadata Values:</td>
+                        <td>{{globalData.metaDataValueCount | number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Tags Types:</td>
+                        <td>{{globalData.tagCount | number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Tags:</td>
+                        <td>{{globalData.tagValueCount | number}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </uib-tab>
+
+            <uib-tab index="1" select="selectTab(1)">
+                <uib-tab-heading class="search-heading">MetaData</uib-tab-heading>
+
+                <div class="h5">
+                    The pie chart below shows the distribution of metadata values for the selected metadata type.
+                    Clicking on the elements in the legend will show/hide chart sections, and clicking on a section in
+                    the pie chart will execute a query for the selected value.
                 </div>
-                <div class="clearfix" ng-if="$index % 3 == 2"></div>
-                <div ng-repeat-end=""></div>
-            </div>
-        </div>
+
+                <div>
+                    <select data-ng-options="f.title for f in metadataFields"
+                            data-ng-model="selectedMetadataField"
+                            data-ng-change="selectMetadataField(selectedMetadataField)"></select>
+                </div>
+
+                <div class="text-center"><h4>{{selectedMetadataField.title}}</h4></div>
+
+                <nvd3 options="metadataChartOptions"
+                      config="{refreshDataOnly: false}"
+                      data="selectedMetadataField.data"
+                      api="api.metadataChart"></nvd3>
+            </uib-tab>
+
+            <uib-tab index="2" select="selectTab(2)">
+                <uib-tab-heading class="search-heading">Compound Classes</uib-tab-heading>
+
+                <div class="h5">
+                    This sunburst chart displays the breakdown of compound classifications, which were obtained using
+                    <a href="http://classyfire.wishartlab.com/">ClassyFire</a>.  Clicking on a partition will zoom into it
+                    and display a finer-grained view of its child partitions.  Clicking on the center circle will zoom out
+                    to the parent partition.
+                </div>
+
+                <nvd3 options="sunburstOptions"
+                      data="compoundClassData"
+                      class="with-3d-shadow with-transitions"
+                      api="api.compoundClassChart"></nvd3>
+            </uib-tab>
+        </uib-tabset>
     </div>
 </div>

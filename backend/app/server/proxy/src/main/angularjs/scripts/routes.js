@@ -84,8 +84,8 @@
                 redirectTo: '/spectra/browse'
             })
 
-            //database index
-            .when('/spectra/dbindex', {
+            //database index and statistics
+            .when('/spectra/statistics', {
                 templateUrl: 'views/spectra/dbindex/dbindex.html',
                 controller: 'SpectraDatabaseIndexController'
             })
@@ -108,12 +108,6 @@
             .when('/spectra/similarity', {
                 templateUrl: 'views/spectra/query/similarityQuery.html',
                 controller: 'SpectraSimilarityQueryController'
-            })
-
-            //statistics page
-            .when('/statistics', {
-                templateUrl: 'views/statistics/statistics.html',
-                controller: 'SpectraDatabaseIndexController'
             })
 
             //user profile page

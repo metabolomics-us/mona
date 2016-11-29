@@ -27,6 +27,7 @@
         'mgcrea.bootstrap.affix',
         'pascalprecht.translate',
         'toaster',
+        'nvd3',
         'angular-google-analytics'
     ])
 
