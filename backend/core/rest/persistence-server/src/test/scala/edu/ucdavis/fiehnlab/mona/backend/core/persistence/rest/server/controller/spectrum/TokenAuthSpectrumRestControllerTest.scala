@@ -53,73 +53,66 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         val mapper = MonaMapper.create
 
         "works on a correct spectra upload" in {
-
           val spectrum = exampleRecords.head
 
           val writer = new StringWriter()
           mapper.writeValue(writer,spectrum)
-          val content = writer.toString
 
+          val content = writer.toString
           logger.info(s"content: $content")
 
           authenticate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
-
         }
-        "fails when an empty spectra is uploaded" in {
 
+        "fails when an empty spectra is uploaded" in {
           val spectrum = exampleRecords.head.copy(spectrum = null)
 
           val writer = new StringWriter()
           mapper.writeValue(writer,spectrum)
+
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
-
         }
 
         "fails if no submitter is provided" in {
-
           val spectrum = exampleRecords.head.copy(submitter = null)
 
           val writer = new StringWriter()
           mapper.writeValue(writer,spectrum)
+
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
-
         }
 
         "fails if no compound is provided" in {
-
           val spectrum = exampleRecords.head.copy(compound = Array())
 
           val writer = new StringWriter()
           mapper.writeValue(writer,spectrum)
+
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
-
         }
 
         "fails if compound is null" in {
-
           val spectrum = exampleRecords.head.copy(compound = null)
 
           val writer = new StringWriter()
           mapper.writeValue(writer,spectrum)
+
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
-
         }
 
-        "fails if id is null" in {
-
-          val spectrum = exampleRecords.head.copy(id = null)
+        "fails if id is empty" in {
+          val spectrum = exampleRecords.head.copy(id = "")
 
           val writer = new StringWriter()
           mapper.writeValue(writer,spectrum)
+
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
-
         }
-
       }
 
       "we should be able to reset the repository" in {
