@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.EventScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.counter.CounterService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.listener.AkkaEventScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.synchronization.SpectrumElasticEventListener
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 /**
   * Created by wohlg on 3/16/2016.
   */
-@ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService], classOf[SpectrumElasticEventListener], classOf[EventScheduler[Spectrum]]))
+@ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService], classOf[SpectrumElasticEventListener], classOf[EventScheduler[Spectrum]], classOf[CounterService]))
 @Configuration
 @Import(Array(classOf[ElasticsearchConfig], classOf[MongoConfig], classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration]))
 class PersistenceServiceConfig {
