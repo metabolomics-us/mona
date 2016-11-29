@@ -41,6 +41,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   @Autowired
   val counterService: CounterService = null
 
+
   @Autowired(required = false)
   val eventScheduler: EventScheduler[Spectrum] = null
 
