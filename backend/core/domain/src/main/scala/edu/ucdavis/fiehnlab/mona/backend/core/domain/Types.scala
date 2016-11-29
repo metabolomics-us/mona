@@ -410,9 +410,9 @@ object HelperTypes {
 }
 
 
-@Document(collection = "COUNTERS")
-case class Counter(
-                    @(Id@field)
-                    id: String,
-                    count: Long
-                  )
+@Document(collection = "SEQUENCE")
+case class Sequence(
+                     @(Id@field)
+                     id: String,
+                     value: Long
+                   )

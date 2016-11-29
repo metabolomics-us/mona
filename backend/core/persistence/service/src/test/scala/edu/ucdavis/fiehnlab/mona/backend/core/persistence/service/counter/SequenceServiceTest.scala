@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.counter
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.CounterMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.SequenceMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.EmbeddedServiceConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -16,13 +16,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig], classOf[TestConfig]))
-class CounterServiceTest extends WordSpec with LazyLogging {
+class SequenceServiceTest extends WordSpec with LazyLogging {
 
   @Autowired
-  val counterService: CounterService = null
+  val counterService: SequenceService = null
 
   @Autowired
-  val counterRepository: CounterMongoRepository = null
+  val counterRepository: SequenceMongoRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -31,19 +31,19 @@ class CounterServiceTest extends WordSpec with LazyLogging {
     counterRepository.deleteAll()
 
     "create a new counter" in {
-      val result = counterService.getNextCounterValue("spectrumID")
+      val result = counterService.getNextSequenceValue("spectrumID")
       assert(result != null)
-      assert(result.count == 1)
+      assert(result.value == 1)
     }
 
     "increment the counter" in {
-      (2 to 10).foreach(i => assert(counterService.getNextCounterValue("spectrumID").count == i))
+      (2 to 10).foreach(i => assert(counterService.getNextSequenceValue("spectrumID").value == i))
     }
 
     "create another counter" in {
-      val result = counterService.getNextCounterValue("otherCounter")
+      val result = counterService.getNextSequenceValue("otherCounter")
       assert(result != null)
-      assert(result.count == 1)
+      assert(result.value == 1)
     }
   }
 }

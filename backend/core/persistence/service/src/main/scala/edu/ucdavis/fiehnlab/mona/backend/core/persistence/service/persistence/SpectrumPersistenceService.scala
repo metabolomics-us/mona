@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.{Event, EventScheduler}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.counter.CounterService
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.counter.SequenceService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.data.domain.{Page, Pageable, Sort}
@@ -39,7 +39,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
   @Autowired
-  val counterService: CounterService = null
+  val sequenceService: SequenceService = null
 
 
   @Autowired(required = false)
@@ -112,7 +112,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   @CacheEvict(value = Array("spectra"))
   final override def save[S <: Spectrum](entity: S): S = {
     val transformedEntity = entity.copy(
-      id = Option(entity.id).getOrElse(counterService.getNextMoNAID),
+      id = Option(entity.id).getOrElse(sequenceService.getNextMoNAID),
       dateCreated = Option(entity.dateCreated).getOrElse(new Date),
       lastUpdated = new Date
     )
