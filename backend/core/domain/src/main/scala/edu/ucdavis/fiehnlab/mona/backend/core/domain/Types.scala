@@ -242,6 +242,7 @@ case class Spectrum(
                      compound: Array[Compound],
 
                      @(Id@field)
+                     @(Size@field)(min = 1)
                      @BeanProperty
                      id: String,
 
