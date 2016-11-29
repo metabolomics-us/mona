@@ -26,148 +26,105 @@ class SpectrumValidationTest extends WordSpec with LazyLogging{
 
   val reader = JSONDomainReader.create[Spectrum]
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "SpectrumValidationTest" should {
-
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-
     val spectrum: Spectrum = reader.read(input)
 
-    logger.info(s"validator is ${validator}")
+    logger.info(s"validator is $validator")
 
 
     "read spectrum is valid" in {
-
       val constraints = validator.validate[Spectrum](spectrum).asScala
+      logger.info(s"$constraints")
 
-      logger.info(s"${constraints}")
-
-      assert(constraints.size == 0)
-
+      assert(constraints.isEmpty)
     }
 
     "submitter" in {
-
       val failing = spectrum.copy(submitter = null)
-
       assert(failing.submitter == null)
-      val constraints = validator.validate[Spectrum](failing).asScala
 
-      logger.info(s"${constraints}")
+      val constraints = validator.validate[Spectrum](failing).asScala
+      logger.info(s"$constraints")
 
       assert(constraints.size == 1)
-
     }
 
     "spectrum is not null" in {
-
       val failing = spectrum.copy(spectrum = null)
       assert(failing.spectrum == null)
 
       val constraints = validator.validate[Spectrum](failing).asScala
+      logger.info(s"$constraints")
 
-      logger.info(s"${constraints}")
-
-      assert(constraints.size >= 1)
+      assert(constraints.nonEmpty)
     }
 
     "spectrum is not empty" in {
-
       val failing = spectrum.copy(spectrum = "")
       assert(failing.spectrum == "")
 
       val constraints = validator.validate[Spectrum](failing).asScala
+      logger.info(s"$constraints")
 
-      logger.info(s"${constraints}")
-
-      assert(constraints.size >= 1)
+      assert(constraints.nonEmpty)
     }
 
     "compound must be specified" in {
-
       val failing = spectrum.copy(compound = Array())
       assert(failing.compound.length == 0)
 
       val constraints = validator.validate[Spectrum](failing).asScala
-
-      logger.info(s"${constraints}")
+      logger.info(s"$constraints")
 
       assert(constraints.size == 1)
-
     }
 
 
-    "id is not null" in {
+    "id can be null" in {
+      val nonfailing = spectrum.copy(id = null)
+      assert(nonfailing.id == null)
 
-      val failing = spectrum.copy(id = null)
+      val constraints = validator.validate[Spectrum](nonfailing).asScala
+      logger.info(s"$constraints")
 
-      assert(failing.id == null)
-      val constraints = validator.validate[Spectrum](failing).asScala
-
-      logger.info(s"${constraints}")
-
-      assert(constraints.size >= 1)
-
-
+      assert(constraints.isEmpty)
     }
 
     "id is not empty" in {
+      val failing = spectrum.copy(id = "")
+      assert(failing.id == "")
 
-      val failing = spectrum.copy(id = null)
-
-      assert(failing.id == null)
       val constraints = validator.validate[Spectrum](failing).asScala
+      logger.info(s"$constraints")
 
-      logger.info(s"${constraints}")
-
-      assert(constraints.size >= 1)
-
-
+      assert(constraints.nonEmpty)
     }
 
-
     "authors" in {
-
       val failing = spectrum.copy(authors = null)
 
       val constraints = validator.validate[Spectrum](failing).asScala
 
-      assert(constraints.size == 0)
-
+      assert(constraints.isEmpty)
     }
 
     "metaData" in {
-
       val failing = spectrum.copy(metaData = null)
 
       val constraints = validator.validate[Spectrum](failing).asScala
 
-      assert(constraints.size == 0)
-
-    }
-
-    "library" in {
-
-    }
-
-    "score" in {
-
-    }
-
-    "tags" in {
-
+      assert(constraints.isEmpty)
     }
 
     "splash" in {
-
       val failing = spectrum.copy(splash = null)
 
       val constraints = validator.validate[Spectrum](failing).asScala
 
-      assert(constraints.size == 0)
-
+      assert(constraints.isEmpty)
     }
-
   }
 }
