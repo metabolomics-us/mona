@@ -42,6 +42,7 @@
                         $scope.queries[data[i].label] = data[i];
 
                         var label = data[i].label.split(' - ');
+                        data[i].downloadLabel = data[i].label.replace(/ /g, '_').replace(/\//g, '-');
                         data[i].depth = label.length;
                         data[i].id = i;
                         data[i].children = [];

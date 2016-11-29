@@ -6,12 +6,12 @@
 
 (function() {
     'use strict';
-    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', '$timeout', '$log', 'MAX_SPECTRA', 'toaster'];
+    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', '$timeout', '$log', 'MAX_SPECTRA', 'toaster', 'Analytics'];
     angular.module('moaClientApp')
       .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, $timeout, $log, MAX_SPECTRA, toaster) {
+    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, $timeout, $log, MAX_SPECTRA, toaster, Analytics) {
 
         $scope.table = false;
 
@@ -166,6 +166,9 @@
                 $scope.startTime = Date.now();
 
                 $log.debug('Submitted query: '+ $scope.query);
+
+                // Log query with google analytics
+                Analytics.trackEvent('query', 'execute', $scope.query, page);
 
                 if ($scope.query === '') {
                     Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);

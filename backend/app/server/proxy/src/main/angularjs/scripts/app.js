@@ -75,8 +75,7 @@
             AnalyticsProvider
                 .setAccount('UA-87692241-2')
                 .trackPages(true)
-                .ignoreFirstPageLoad(true)
-                .trackUrlParams(true);
+                .ignoreFirstPageLoad(true);
         }])
         .run(['Analytics', function(Analytics) {}])
 
