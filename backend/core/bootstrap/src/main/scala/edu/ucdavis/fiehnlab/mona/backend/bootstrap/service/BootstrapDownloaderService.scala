@@ -23,7 +23,7 @@ class BootstrapDownloaderService extends LazyLogging {
     * @param query
     * @return
     */
-  def saveQuery(label: String, description: String, query: String) = {
+  def saveQuery(label: String, description: String, query: String): Unit = {
     if (!predefinedQueryRepository.exists(label)) {
       logger.info(s"Saving predefined query: $label")
       predefinedQueryRepository.save(PredefinedQuery(label, description, query, 0, null, null))
@@ -36,7 +36,7 @@ class BootstrapDownloaderService extends LazyLogging {
     *
     * @return
     */
-  def createPredefinedQueries() = {
+  def createPredefinedQueries(): Unit = {
 
     // Create library exports
     createLibraryQueries()
@@ -50,7 +50,7 @@ class BootstrapDownloaderService extends LazyLogging {
     *
     * @return
     */
-  def createLibraryQueries() = {
+  def createLibraryQueries(): Unit = {
     saveQuery("Libraries - MassBank", "MassBank Spectral Database", "tags.text==MassBank")
     saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", "tags.text==ReSpect")
     saveQuery("Libraries - HMDB", "Human Metabolome Database", "tags.text==HMDB")
@@ -67,7 +67,7 @@ class BootstrapDownloaderService extends LazyLogging {
     *
     * @return
     */
-  def createGeneralQueries() = {
+  def createGeneralQueries(): Unit = {
     // Create export for all spectra
     saveQuery("All Spectra", "All Spectra", "")
 //    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text=='in-silico'")

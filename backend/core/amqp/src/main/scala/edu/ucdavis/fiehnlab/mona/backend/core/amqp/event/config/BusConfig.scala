@@ -40,7 +40,6 @@ class BusConfig extends LazyLogging{
     template.setMessageConverter(jsonConverter)
     template
   }
-
 }
 
 /**
@@ -49,7 +48,7 @@ class BusConfig extends LazyLogging{
   */
 @Import(Array(classOf[BusConfig]))
 @Configuration
-class MonaEventBusConfiguration{
+class MonaEventBusConfiguration {
 
   /**
     * required to notify the main event bus about spectra being modified events
@@ -68,7 +67,6 @@ class MonaEventBusConfiguration{
     */
   @Bean
   def eventCounter(eventBus: EventBus[Spectrum] ): ReceivedEventCounter[Spectrum] = new ReceivedEventCounter[Spectrum](eventBus)
-
 }
 
 /**
@@ -77,11 +75,10 @@ class MonaEventBusConfiguration{
   */
 @Import(Array(classOf[BusConfig]))
 @Configuration
-class MonaNotificationBusConfiguration{
-
+class MonaNotificationBusConfiguration {
 
   @Bean
-  def notificationsBus:EventBus[Notification]= new EventBus[Notification]("mona-notification-bus")
+  def notificationsBus:EventBus[Notification] = new EventBus[Notification]("mona-notification-bus")
 
 
   /**
@@ -91,12 +88,13 @@ class MonaNotificationBusConfiguration{
     * @return
     */
   @Bean
-  def notificationBusCounter(eventBus: EventBus[Notification] ): ReceivedEventCounter[Notification] = new ReceivedEventCounter[Notification](eventBus)
-
+  def notificationBusCounter(eventBus: EventBus[Notification]): ReceivedEventCounter[Notification] = new ReceivedEventCounter[Notification](eventBus)
 }
+
 /**
-  * defines a notification event and is used to notify other objects on the subscribed bus that stuff is happening and if they want they can react to it it or not
+  * defines a notification event and is used to notify other objects on the subscribed bus that stuff is
+  * happening and if they want they can react to it it or not
   * @param value
   * @param origin
   */
-case class Notification(value:Any, origin:String)
+case class Notification(value: Any, origin: String)

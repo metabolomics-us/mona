@@ -10,7 +10,7 @@ import org.scalatest.FunSuite
 /**
   * Created by wohlg_000 on 3/10/2016.
   */
-class ElasticMedaDataDeserializerTest extends FunSuite {
+class ElasticMetaDataDeserializerTest extends FunSuite {
 
   def getJson(metaData: MetaData): String = {
 
@@ -39,7 +39,7 @@ class ElasticMedaDataDeserializerTest extends FunSuite {
 
     val json = getJson(data)
 
-    val deserializer = new ElasticMedaDataDeserializer
+    val deserializer = new ElasticMetaDataDeserializer
 
     val copy = deserializer.deserialize(getParser(json),null)
 
@@ -53,7 +53,7 @@ class ElasticMedaDataDeserializerTest extends FunSuite {
 
     val json = getJson(data)
 
-    val deserializer = new ElasticMedaDataDeserializer
+    val deserializer = new ElasticMetaDataDeserializer
 
     val copy = deserializer.deserialize(getParser(json),null)
 
@@ -67,7 +67,7 @@ class ElasticMedaDataDeserializerTest extends FunSuite {
 
     val json = getJson(data)
 
-    val deserializer = new ElasticMedaDataDeserializer
+    val deserializer = new ElasticMetaDataDeserializer
 
     val copy = deserializer.deserialize(getParser(json),null)
 
