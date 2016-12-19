@@ -5,11 +5,13 @@ import java.io.IOException
 import com.netflix.zuul.ZuulFilter
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.documentation.SwaggerRedirectFilter
+import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.LoggableDispatcherServlet
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.web.ResourceProperties
+import org.springframework.boot.autoconfigure.web.{DispatcherServletAutoConfiguration, ResourceProperties}
+import org.springframework.boot.context.embedded.ServletRegistrationBean
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy
@@ -20,6 +22,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.stereotype.Controller
+import org.springframework.web.servlet.DispatcherServlet
 import org.springframework.web.servlet.config.annotation.{CorsRegistry, ResourceHandlerRegistry, WebMvcConfigurerAdapter}
 import org.springframework.web.servlet.resource.PathResourceResolver
 import springfox.documentation.swagger2.annotations.EnableSwagger2
@@ -38,6 +41,16 @@ class ProxyServer {
   @Bean
   def rewriteFilter: ZuulFilter = {
     new SwaggerRedirectFilter()
+  }
+
+  @Bean
+  def dispatcherRegistration: ServletRegistrationBean = {
+    new ServletRegistrationBean(dispatcherServlet)
+  }
+
+  @Bean(name = Array(DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME))
+  def dispatcherServlet: DispatcherServlet = {
+    new LoggableDispatcherServlet()
   }
 }
 
