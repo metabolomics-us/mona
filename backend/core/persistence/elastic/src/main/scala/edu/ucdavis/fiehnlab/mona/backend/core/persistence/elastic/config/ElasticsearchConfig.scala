@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{ElasticMedaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{ElasticMetaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import org.elasticsearch.client.{Client, ElasticsearchClient}
 import org.elasticsearch.node.NodeBuilder
@@ -34,7 +34,7 @@ class ElasticsearchConfig extends LazyLogging {
         val module = new SimpleModule()
 
         module.addSerializer(classOf[MetaData], new ElasticMetaDataSerializer)
-        module.addDeserializer(classOf[MetaData], new ElasticMedaDataDeserializer)
+        module.addDeserializer(classOf[MetaData], new ElasticMetaDataDeserializer)
 
         mapper.registerModule(module)
 

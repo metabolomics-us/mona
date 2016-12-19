@@ -111,19 +111,15 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 25)
           }
 
-
           "we should be able to execute RSQL queries like metaData=q='name=match=\"ion.mode\" and value=negative' in " in {
             val result = getRepository.rsqlQuery("metaData=q='name=match=\"ion.mode\" and value==negative'")
             assert(result.size == 25)
           }
 
-
-
           "we should be able to execute RSQL queries like metaData=q='name=\"ion mode\" and value=match=negativ[ewq]' in " in {
             val result = getRepository.rsqlQuery("metaData=q='name==\"ion mode\" and value=match=negativ[ewq]'")
             assert(result.size == 25)
           }
-
 
           "we should be able to execute RSQL queries like tags=q='text==LCMS' in " in {
             val result = getRepository.rsqlQuery("tags=q='text==LCMS'")
@@ -136,7 +132,6 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
           }
 
           "readding the same events should be an update" in {
-
             val it = getRepository.findAll().iterator()
 
             while (it.hasNext) {
@@ -144,8 +139,6 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             }
 
             assert(getRepository.count() == exampleRecords.length)
-
-
           }
 
           "retrieve all data" in {
@@ -176,7 +169,6 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
 
           "possible to delete all data" in {
-
             getRepository.deleteAll()
 
             assert(0 == getRepository.count())
@@ -184,9 +176,6 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
         }
       }
     }
-
-
-
   }
 
   def getRepository: RSQLRepositoryCustom[T, Q] with CrudRepository[T, String]

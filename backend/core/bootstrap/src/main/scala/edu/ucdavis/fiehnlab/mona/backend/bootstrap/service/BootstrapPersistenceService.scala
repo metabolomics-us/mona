@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class BootstrapPersistenceService {
 
-  def synchronizeDatabases() = {
+  def synchronizeDatabases(): Unit = {
 
   }
 }

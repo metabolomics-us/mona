@@ -96,10 +96,10 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
             // create a new context to pass to the children so we don't modify the one
             // that may get reused from "above"
             return nestedQuery(field, condition(node, context.createChieldContent(node.getField().asKey())));
+        } else if(RegexStringFieldImpl.REGEX.equals(node.getOperator())){
+            return new RegexpQueryBuilder(field, single(values).toString());
+        } else {
+            throw new UnsupportedOperationException("This visitor does not support the operator " + operator + ".");
         }
-        else if(RegexStringFieldImpl.REGEX.equals(node.getOperator())){
-            return new RegexpQueryBuilder(field,single(values).toString());
-        }
-        throw new UnsupportedOperationException("This visitor does not support the operator " + operator + ".");
     }
 }

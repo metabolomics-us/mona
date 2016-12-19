@@ -21,6 +21,7 @@ class ElasticMetaDataSerializer extends JsonSerializer[MetaData] with LazyLoggin
     for (field <- fields) {
       try {
         field.setAccessible(true)
+
         //check for annotation
         if (field.getAnnotation(classOf[TupleSerialize]) != null) {
           val t = field.get(value)
@@ -34,24 +35,25 @@ class ElasticMetaDataSerializer extends JsonSerializer[MetaData] with LazyLoggin
             case _ =>
               if(t != null) {
                 jsonGenerator.writeStringField("value_text", t.toString)
-              }
-              else{
-                throw new RuntimeException(s"object was null for ${value}, which is not permitted!")
+                jsonGenerator.writeStringField("value_text_analyzed", t.toString)
+              } else{
+                throw new RuntimeException(s"object was null for $value, which is not permitted!")
               }
           }
         }
+
         //write normal fields
         else {
           jsonGenerator.writeObjectField(field.getName, field.get(value))
         }
-      }
-      catch {
+      } catch {
         case e: IllegalArgumentException =>
           logger.warn(e.getMessage, e)
         case e: IllegalAccessException =>
           logger.warn(e.getMessage, e)
       }
     }
+
     jsonGenerator.writeEndObject()
   }
 }
@@ -60,7 +62,7 @@ class ElasticMetaDataSerializer extends JsonSerializer[MetaData] with LazyLoggin
   * builds a meta data object based on it's given properties and tries to evaluate the value correctly for the
   * different representations
   */
-class ElasticMedaDataDeserializer extends JsonDeserializer[MetaData] with LazyLogging {
+class ElasticMetaDataDeserializer extends JsonDeserializer[MetaData] with LazyLogging {
   val numberDeserializer: NumberDeserializer = new NumberDeserializer
   val monaMapper = MonaMapper.create
 
@@ -77,13 +79,11 @@ class ElasticMedaDataDeserializer extends JsonDeserializer[MetaData] with LazyLo
 
     if (text != null) {
       metaData.copy(value = text.asText())
-    }
-    else if (number != null) {
+    } else if (number != null) {
       try {
         metaData.copy(value = number.toString.toInt)
-      }
-      catch {
-        case x: NumberFormatException => {
+      } catch {
+        case x: NumberFormatException =>
           //in case it's stored as 123.0, which technically is an int
           if (number.toString.endsWith(".0")) {
             metaData.copy(value = number.toString.substring(0, number.toString.indexOf(".")).toInt)
@@ -91,13 +91,10 @@ class ElasticMedaDataDeserializer extends JsonDeserializer[MetaData] with LazyLo
           else {
             metaData.copy(value = number.asDouble())
           }
-        }
       }
-    }
-    else if (boolean != null) {
+    } else if (boolean != null) {
       metaData.copy(value = boolean.asBoolean())
-    }
-    else {
+    } else {
       logger.warn("we found no custom field, investigate! returning default object")
       metaData
     }
