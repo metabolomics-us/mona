@@ -13,7 +13,6 @@ import org.springframework.web.util.{ContentCachingRequestWrapper, ContentCachin
   * Created by sajjan on 12/15/16.
   * http://stackoverflow.com/a/39207422/406772
   */
-/
 class LoggableDispatcherServlet extends DispatcherServlet {
 
   override def doDispatch(request: HttpServletRequest, response: HttpServletResponse): Unit = {
@@ -44,20 +43,26 @@ class LoggableDispatcherServlet extends DispatcherServlet {
 
   private def log(request: HttpServletRequest, response: HttpServletResponse, duration: Long): Unit = {
 
-    // Extract cached POST data
-    val requestWrapper: ContentCachingRequestWrapper = WebUtils.getNativeRequest(request, classOf[ContentCachingRequestWrapper])
-    val postDataBuffer: Array[Byte] = requestWrapper.getContentAsByteArray
+    // Start logging in background
+    new Thread(new Runnable {
+      override def run(): Unit = {
 
-    val postData: String =
-      if (postDataBuffer.isEmpty)
-        null
-      else
-        new String(postDataBuffer, 0, postDataBuffer.length, requestWrapper.getCharacterEncoding)
+        // Extract cached POST data
+        val requestWrapper: ContentCachingRequestWrapper = WebUtils.getNativeRequest(request, classOf[ContentCachingRequestWrapper])
+        val postDataBuffer: Array[Byte] = requestWrapper.getContentAsByteArray
 
-    // Create logging message
-    val logMessage: LogMessage = LogMessage(response.getStatus, request.getMethod, request.getRequestURI, request.getQueryString, postData, request.getRemoteAddr, duration)
+        val postData: String =
+          if (postDataBuffer.isEmpty)
+            null
+          else
+            new String(postDataBuffer, 0, postDataBuffer.length, requestWrapper.getCharacterEncoding)
 
-    logger.info(logMessage)
+        // Create logging message
+        val logMessage: LogMessage = LogMessage(response.getStatus, request.getMethod, request.getRequestURI, request.getQueryString, postData, request.getRemoteAddr, duration)
+
+        logger.info(logMessage)
+      }
+    }).start()
   }
 
   private def updateResponse(response: HttpServletResponse): Unit = {
