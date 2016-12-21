@@ -1,11 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.app.server.proxy.logging
 
 import java.io.{BufferedReader, InputStreamReader}
+import java.util.Date
 import java.util.stream.Collectors
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.commons.io.IOUtils
+import org.springframework.data.repository.{CrudRepository, Repository}
 import org.springframework.web.servlet.DispatcherServlet
 import org.springframework.web.util.{ContentCachingRequestWrapper, ContentCachingResponseWrapper, WebUtils}
 
@@ -13,58 +14,81 @@ import org.springframework.web.util.{ContentCachingRequestWrapper, ContentCachin
   * Created by sajjan on 12/15/16.
   * http://stackoverflow.com/a/39207422/406772
   */
-class LoggableDispatcherServlet extends DispatcherServlet {
+class LoggableDispatcherServlet(val loggingService: LoggingService) extends DispatcherServlet {
 
+  /**
+    *
+    * @param request
+    * @param response
+    */
   override def doDispatch(request: HttpServletRequest, response: HttpServletResponse): Unit = {
 
     // Add caching wrapper to request and response if necessary
-    val cachingRequest: HttpServletRequest =
-      if (!request.isInstanceOf[ContentCachingRequestWrapper])
-        new ContentCachingRequestWrapper(request)
-      else
-        request
-
-    val cachingResponse: HttpServletResponse =
-      if (!response.isInstanceOf[ContentCachingResponseWrapper])
-        new ContentCachingResponseWrapper(response)
-      else
-        response
+//    val cachingRequest: HttpServletRequest =
+//      if (!request.isInstanceOf[ContentCachingRequestWrapper])
+//        new ContentCachingRequestWrapper(request)
+//      else
+//        request
+//
+//    val cachingResponse: HttpServletResponse =
+//      if (!response.isInstanceOf[ContentCachingResponseWrapper])
+//        new ContentCachingResponseWrapper(response)
+//      else
+//        response
 
     // Time request
     val startTime: Long = System.currentTimeMillis()
 
     try {
-      super.doDispatch(cachingRequest, cachingResponse)
+//      super.doDispatch(cachingRequest, cachingResponse)
+      super.doDispatch(request, response)
+
     } finally {
-      log(cachingRequest, cachingResponse, System.currentTimeMillis() - startTime)
-      updateResponse(cachingResponse)
+//      log(cachingRequest, cachingResponse, System.currentTimeMillis() - startTime)
+//      updateResponse(cachingResponse)
+      log(new ContentCachingRequestWrapper(request), new ContentCachingResponseWrapper(response), System.currentTimeMillis() - startTime)
     }
   }
 
+  /**
+    *
+    * @param request
+    * @param response
+    * @param duration
+    */
   private def log(request: HttpServletRequest, response: HttpServletResponse, duration: Long): Unit = {
 
-    // Start logging in background
-    new Thread(new Runnable {
-      override def run(): Unit = {
+    // Get http properties
+    val httpStatus: Int = response.getStatus
+    val httpMethod: String = request.getMethod
+    val requestURI: String = request.getRequestURI
+    val requestQueryString: String = request.getQueryString
 
-        // Extract cached POST data
-        val requestWrapper: ContentCachingRequestWrapper = WebUtils.getNativeRequest(request, classOf[ContentCachingRequestWrapper])
-        val postDataBuffer: Array[Byte] = requestWrapper.getContentAsByteArray
+    // Get IP Address
+    val ipAddress: String =
+      if (request.getHeader("X-FORWARDED-FOR") != null)
+        request.getHeader("X-FORWARDED-FOR")
+      else
+        request.getRemoteAddr
 
-        val postData: String =
-          if (postDataBuffer.isEmpty)
-            null
-          else
-            new String(postDataBuffer, 0, postDataBuffer.length, requestWrapper.getCharacterEncoding)
+    // Extract cached POST data
+    val requestWrapper: ContentCachingRequestWrapper = WebUtils.getNativeRequest(request, classOf[ContentCachingRequestWrapper])
+    val postDataBuffer: Array[Byte] = requestWrapper.getContentAsByteArray
 
-        // Create logging message
-        val logMessage: LogMessage = LogMessage(response.getStatus, request.getMethod, request.getRequestURI, request.getQueryString, postData, request.getRemoteAddr, duration)
+    val postData: String =
+      if (postDataBuffer.isEmpty)
+        null
+      else
+        new String(postDataBuffer, 0, postDataBuffer.length, requestWrapper.getCharacterEncoding)
 
-        logger.info(logMessage)
-      }
-    }).start()
+    // Log request
+    loggingService.logRequest(httpStatus, httpMethod, requestURI, requestQueryString, postData, ipAddress, duration)
   }
 
+  /**
+    *
+    * @param response
+    */
   private def updateResponse(response: HttpServletResponse): Unit = {
     WebUtils.getNativeResponse(response, classOf[ContentCachingResponseWrapper]).copyBodyToResponse()
   }

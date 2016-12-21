@@ -26,16 +26,14 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
@@ -45,14 +43,22 @@
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
             <artifactId>api-server</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+            <artifactId>mongo</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zuul</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
+
         <!-- config server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -76,9 +82,16 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.maxmind.geoip2</groupId>
+            <artifactId>geoip2</artifactId>
+            <version>2.5.0</version>
         </dependency>
     </dependencies>
 
@@ -94,8 +107,8 @@
                 <configuration>
                     <installDirectory>target</installDirectory>
                 </configuration>
-                <executions>
 
+                <executions>
                     <execution>
                         <id>install node and npm</id>
                         <goals>
@@ -149,8 +162,7 @@
                             <karmaConfPath>src/test/javascript/karma.conf.ci.js</karmaConfPath>
                         </configuration>
                     </execution>
-
--->
+                    -->
                 </executions>
             </plugin>
         </plugins>
@@ -159,11 +171,11 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
+
             <resource>
                 <directory>target/public</directory>
                 <targetPath>static</targetPath>
             </resource>
-
         </resources>
     </build>
 </project>

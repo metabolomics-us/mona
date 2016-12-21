@@ -5,7 +5,8 @@ import java.io.IOException
 import com.netflix.zuul.ZuulFilter
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.documentation.SwaggerRedirectFilter
-import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.LoggableDispatcherServlet
+import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.{LoggableDispatcherServlet, LoggingService}
+import edu.ucdavis.fiehnlab.mona.app.server.proxy.repository.LogMessageMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
@@ -38,6 +39,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 class ProxyServer {
 
+  @Autowired
+  val loggingService: LoggingService = null
+
   @Bean
   def rewriteFilter: ZuulFilter = {
     new SwaggerRedirectFilter()
@@ -50,12 +54,13 @@ class ProxyServer {
 
   @Bean(name = Array(DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME))
   def dispatcherServlet: DispatcherServlet = {
-    new LoggableDispatcherServlet()
+    new LoggableDispatcherServlet(loggingService)
   }
 }
 
 @Configuration
 class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
+
   @Autowired
   val resourceProperties: ResourceProperties = null
 
@@ -87,6 +92,7 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
 @Import(Array(classOf[SwaggerConfig]))
 @Order(10)
 class SecurityConfig extends WebSecurityConfigurerAdapter {
+
   override def configure(web: WebSecurity) {
     web.ignoring.antMatchers("/**")
   }
