@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.io.InputStreamReader
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
@@ -21,7 +22,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations=Array("classpath:application.properties"))
-class TagStatisticsServiceTest extends WordSpec {
+class TagStatisticsServiceTest extends WordSpec with LazyLogging{
 
   @Autowired
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -49,7 +50,9 @@ class TagStatisticsServiceTest extends WordSpec {
     "perform tag aggregation" in {
       val result: Array[TagStatistics] = tagStatisticsService.tagAggregation()
       assert(result.length == 3)
-      assert(result.map(_.text) sameElements Array("massbank", "LCMS", "noisy spectra"))
+
+      println(s"content: ${result.sortBy(_.text).map(_.text).mkString(" ")}")
+      assert(result.sortBy(_.text).map(_.text) sameElements Array("LCMS", "massbank", "noisy spectra"))
       assert(result.map(_.count) sameElements Array(58, 58, 3))
     }
 
