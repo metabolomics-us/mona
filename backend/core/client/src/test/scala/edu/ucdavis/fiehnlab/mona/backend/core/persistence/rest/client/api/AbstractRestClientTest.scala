@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 import scala.concurrent.duration._
-
 import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
@@ -11,6 +10,7 @@ import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.test.context.TestContextManager
+import org.springframework.web.client.HttpClientErrorException
 
 import scala.collection.JavaConverters._
 
@@ -147,6 +147,15 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually{
 
           assert(countBefore - countAfter == 1)
         }
+      }
+
+      "to query none existing data should result in a 404" in {
+
+        val thrown = intercept[HttpClientErrorException] {
+          spectrumRestClient.get("I don't Exist And I Like Beer, but whiskey is not bad either")
+        }
+
+        assert(thrown.getMessage == "404 Not Found")
       }
     }
   }

@@ -1,0 +1,179 @@
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service
+
+import com.oracle.javafx.jmx.json.JSONReader.EventType
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.http.{HttpStatus, ResponseEntity}
+import org.springframework.scheduling.annotation.Async
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
+
+import scala.collection.JavaConverters._
+
+/**
+  * a simple service to ensure we can trigger the internally defined webhooks
+  */
+@Service
+class WebHookService extends LazyLogging {
+
+  @Autowired
+  val webhookRepository: WebHookRepository = null
+
+  val restTemplate: RestTemplate = new RestTemplate()
+
+  @Autowired
+  val notifications: EventBus[Notification] = null
+
+  /**
+    * our connection to the local repository
+    */
+  @Autowired
+  val spectrumPersistenceService: SpectrumPersistenceService = null
+
+
+  /**
+    * our remote connection to the main mona server, as configured in our application properties
+    */
+  @Autowired
+  val monaSpectrumRestClient: MonaSpectrumRestClient = null
+
+  /**
+    * triggers a invocation of all the webhooks in the system based on the given id
+    *
+    * @param id
+    */
+  def trigger(id: String, eventType: String): Array[WebHookResult] = {
+
+    logger.debug(s"triggering all event hooks for id: ${id}")
+
+    val hooks = webhookRepository.findAll().asScala
+
+    if (hooks.isEmpty) {
+      logger.debug("no event hooks provided in the system!")
+      Array[WebHookResult]()
+    }
+    else {
+      hooks.collect {
+
+        case hook: WebHook =>
+          val url = s"${hook.url}${id}-${eventType}"
+
+          logger.debug(s"triggering event: ${url}")
+
+          try {
+            restTemplate.getForObject(url, classOf[String])
+
+            val result = WebHookResult(hook.name, url)
+
+            notifications.sendEvent(Event(Notification(result, getClass.getName)))
+            result
+          }
+          catch {
+            case x: Throwable =>
+              logger.debug(x.getMessage, x)
+              val result = WebHookResult(hook.name, url, false, x.getMessage)
+              notifications.sendEvent(Event(Notification(result, getClass.getName)))
+              result
+            case _ => throw new RuntimeException("this should never have happened, something is odd in the webhook service!")
+          }
+
+      }.toArray
+    }
+  }
+
+  /**
+    * synchronizes the given event type against the configured master mona server
+    *
+    * @param id
+    * @param eventType
+    * @return
+    */
+  def sync(id: String, eventType: String): ResponseEntity[Any] = {
+
+    try {
+      eventType match {
+
+        case Event.ADD =>
+          logger.info("adding spectra")
+
+          logger.info(s"fetching spectrum from remote mona server for id: ${id}")
+          val spectrum: Spectrum = monaSpectrumRestClient.get(id)
+
+          val result = spectrumPersistenceService.save(spectrum)
+
+          logger.info(s"internal spectra is: ${result}")
+          new ResponseEntity[Any](result, HttpStatus.OK)
+        case Event.DELETE =>
+          logger.info("deleting spectra")
+
+          //make sure spectra doesn't exist in remote first
+          try {
+            monaSpectrumRestClient.get(id)
+
+            //throw an error, since we can't delete a spectra which officially exists on the remote server side
+            new ResponseEntity[Any](s"sorry this spectra (${id}) does still exist on the remote server", HttpStatus.NOT_FOUND)
+          }
+          catch {
+            case e: HttpClientErrorException =>
+              if (e.getMessage == "404 Not Found") {
+                //spectra does not exit, now we can delete it safely
+                val spectrum = spectrumPersistenceService.findOne(id)
+
+                if (spectrum != null) {
+                  spectrumPersistenceService.delete(id)
+                  new ResponseEntity[Any](HttpStatus.OK)
+                }
+                else {
+                  new ResponseEntity[Any](s"sorry this spectra (${id}) did not exist on the local server", HttpStatus.NOT_FOUND)
+                }
+              }
+              else {
+                new ResponseEntity[Any](e.getMessage, HttpStatus.BAD_REQUEST)
+              }
+          }
+
+        case Event.UPDATE =>
+          logger.info("updating spectra")
+
+          logger.info(s"fetching spectrum from remote mona server for id: ${id}")
+          val spectrum: Spectrum = monaSpectrumRestClient.get(id)
+          val result = spectrumPersistenceService.update(spectrum)
+
+          new ResponseEntity[Any](result, HttpStatus.OK)
+        case _ =>
+          new ResponseEntity[Any](s"invalid request, event must match ${Event.ADD}/${Event.DELETE}/${Event.UPDATE}", HttpStatus.BAD_REQUEST)
+      }
+    }
+    catch {
+      case e: HttpClientErrorException =>
+        new ResponseEntity[Any](s"spectrum with ${id} was not found on origin server: ${e.getMessage}", HttpStatus.NOT_FOUND)
+    }
+  }
+
+  /**
+    * pulls a copy from the remote mona service. Optionally allows you to specify a query
+    */
+  //@Async
+  def pull(query: Option[String] = None) = {
+    val count = monaSpectrumRestClient.count(Option("""metaData=q='name=="flow gradient" and value=="99/1 at 0-1 min, 61/39 at 3 min, 0.1/99.9 at 14-16 min, 99/1 at 16.1-20 min"'"""))
+    logger.info(s"expected spectra to pull: $count")
+    var counter = 0
+    monaSpectrumRestClient.stream(query,fetchSize = Option(1)).foreach { spectrum:Spectrum =>
+      counter = counter + 1
+      logger.info(s"spectrum: ${spectrum.id} - ${spectrum.splash}")
+      spectrumPersistenceService.save(spectrum)
+    }
+
+    logger.info(s"retrieved ${counter} spectra from master")
+  }
+
+}
