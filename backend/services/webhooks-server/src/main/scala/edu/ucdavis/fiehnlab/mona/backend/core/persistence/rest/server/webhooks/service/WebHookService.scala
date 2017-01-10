@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service
 
-import com.oracle.javafx.jmx.json.JSONReader.EventType
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
@@ -10,11 +9,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSp
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 
 import scala.collection.JavaConverters._
@@ -171,6 +168,7 @@ class WebHookService extends LazyLogging {
       counter = counter + 1
       logger.info(s"spectrum: ${spectrum.id} - ${spectrum.splash}")
       spectrumPersistenceService.save(spectrum)
+      Thread.sleep(100)
     }
 
     logger.info(s"retrieved ${counter} spectra from master")
