@@ -121,7 +121,7 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
             var last: Iterable[Spectrum] = null
 
             for (i <- 1 to 250) {
-              val current: Iterable[Spectrum] = spectrumRestClient.list(query = Option("tags=q='text=match=\"[(LCMS)(lcms)]+\"'"), pageSize = Option(x), page = Option(1))
+              val current: Iterable[Spectrum] = spectrumRestClient.list(query = Option("tags=q='text=match=\"[(LCMS)(lcms)]+\"'"), pageSize = Option(x), page = Option(0))
               if (last == null) {
                 last = current
               }
@@ -132,10 +132,13 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
 
               var run = false
               (current zip last).foreach { s: (Spectrum, Spectrum) =>
+                logger.info(s"comparing ${s._1.id} to ${s._2.id}")
                 run = true
                 assert(s._1.id == s._2.id)
 
               }
+
+              logger.info("")
 
               assert(run)
 
