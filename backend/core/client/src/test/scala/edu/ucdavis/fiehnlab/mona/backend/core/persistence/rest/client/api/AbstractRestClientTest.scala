@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 import scala.concurrent.duration._
 import java.io.InputStreamReader
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -9,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.TestContextManager
 import org.springframework.web.client.HttpClientErrorException
 
@@ -17,7 +19,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/2/16.
   */
-abstract class AbstractRestClientTest extends WordSpec with Eventually{
+abstract class AbstractRestClientTest extends WordSpec with Eventually with LazyLogging{
   @Value( """${local.server.port}""")
   val port: Int = 0
 
@@ -111,6 +113,24 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually{
       }
 
 
+      "possible to execute the same query several times and receive always the same result" must {
+
+        "support pageable sizes of 1" in {
+          var last: Spectrum = null
+
+          for (i <- 1 to 250) {
+            val current: Spectrum = spectrumRestClient.list(query = Option("tags=q='text=match=\"[(LCMS)(lcms)]+\"'"),pageSize = Option(1),page = Option(1)).iterator.next()
+            if (last == null) {
+              last = current
+            }
+            logger.info(s"received spectrum is ${current.id}")
+
+            assert(last.id == current.id)
+
+          }
+        }
+
+      }
       "it should be possible to paginate over several pages" in {
         val dataFirst = spectrumRestClient.list(pageSize = Some(10), page = Some(0)).toList
         val dataSecond = spectrumRestClient.list(pageSize = Some(10), page = Some(1)).toList

@@ -4,6 +4,7 @@ import java.io.InputStreamReader
 import java.lang.Iterable
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.WordSpec
 import org.springframework.data.domain.{Page, PageRequest}
@@ -155,6 +156,26 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
             val it = result.iterator()
             assert(it.hasNext)
+          }
+
+          "possible to execute the same query several times and receive always the same result" must {
+
+            "support pageable sizes of 1" in {
+              var last: Spectrum = null;
+              val page = new PageRequest(0, 1)
+
+              for (i <- 1 to 250) {
+                val current: Spectrum = getRepository.rsqlQuery("tags=q='text=match=\"[(LCMS)(lcms)]+\"'", page).iterator().next().asInstanceOf[Spectrum]
+                if (last == null) {
+                  last = current
+                }
+
+                logger.info(s"received spectrum is ${current.id}")
+                assert(last.id == current.id)
+
+              }
+            }
+
           }
 
 
