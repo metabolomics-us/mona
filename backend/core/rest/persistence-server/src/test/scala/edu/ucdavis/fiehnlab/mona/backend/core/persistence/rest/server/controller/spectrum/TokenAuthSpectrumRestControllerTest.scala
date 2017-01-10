@@ -204,7 +204,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         assert(count == 1)
       }
 
-      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" in {
+      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" ignore {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 21)
 

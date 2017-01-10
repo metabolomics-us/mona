@@ -145,7 +145,10 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
         logger.debug(s"calling path: ${path}")
         val result = restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
 
-        logger.debug(s"received: ${result}")
+
+        logger.info(s"received: ${result.size}")
+        result.foreach{s => logger.info(s"\tspectra: ${s}, page: ${pageable.getPageNumber} size: ${pageable.getPageSize}")}
+
         new PageImpl[T](result.toList.asJava, pageable, internalCount)
       }
     }.asScala
@@ -188,6 +191,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
       case _ =>
         s"$requestPath$utilizedPageSize$pageToLookAt"
     }
+    logger.info(s"path to invoke: ${pathToInvoke}")
     restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
   }
 
