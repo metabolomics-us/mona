@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.{ShouldMatchers, WordSpec}
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.data.domain.PageRequest
@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by wohlgemuth on 3/2/16.
   */
-abstract class AbstractRestClientTest extends WordSpec with Eventually with LazyLogging{
+abstract class AbstractRestClientTest extends WordSpec with Eventually with LazyLogging with ShouldMatchers{
   @Value( """${local.server.port}""")
   val port: Int = 0
 
@@ -115,18 +115,31 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
 
       "possible to execute the same query several times and receive always the same result" must {
 
-        "support pageable sizes of 1" in {
-          var last: Spectrum = null
+        for( x <- 1 to 10) {
 
-          for (i <- 1 to 250) {
-            val current: Spectrum = spectrumRestClient.list(query = Option("tags=q='text=match=\"[(LCMS)(lcms)]+\"'"),pageSize = Option(1),page = Option(1)).iterator.next()
-            if (last == null) {
-              last = current
+          s"support pageable sizes of ${x}" in {
+            var last: Iterable[Spectrum] = null
+
+            for (i <- 1 to 250) {
+              val current: Iterable[Spectrum] = spectrumRestClient.list(query = Option("tags=q='text=match=\"[(LCMS)(lcms)]+\"'"), pageSize = Option(x), page = Option(1))
+              if (last == null) {
+                last = current
+              }
+
+              assert(current.size == last.size)
+
+              assert(current.size == x)
+
+              var run = false
+              (current zip last).foreach { s: (Spectrum, Spectrum) =>
+                run = true
+                assert(s._1.id == s._2.id)
+
+              }
+
+              assert(run)
+
             }
-            logger.info(s"received spectrum is ${current.id}")
-
-            assert(last.id == current.id)
-
           }
         }
 

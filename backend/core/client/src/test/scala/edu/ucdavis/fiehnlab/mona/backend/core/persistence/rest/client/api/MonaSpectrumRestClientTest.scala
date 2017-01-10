@@ -41,7 +41,6 @@ class MonaSpectrumRestClientTest extends AbstractRestClientTest {
 
       for (s <- set) {
         val content = monaSpectrumRestClient.listMetaDataValues(s)
-        println(content)
         assert(content.nonEmpty)
       }
     }
