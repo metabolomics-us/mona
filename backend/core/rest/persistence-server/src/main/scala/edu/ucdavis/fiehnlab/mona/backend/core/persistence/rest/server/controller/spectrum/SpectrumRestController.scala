@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.{PageRequest, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpHeaders, HttpStatus, MediaType, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -48,10 +48,10 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
       val data: Iterable[Spectrum] = {
         if (size != null) {
           if (page != null) {
-            spectrumPersistenceService.findAll(query.string, new PageRequest(page, size)).getContent.asScala
+            spectrumPersistenceService.findAll(query.string, new PageRequest(page, size,Sort.Direction.ASC,"id")).getContent.asScala
           }
           else {
-            spectrumPersistenceService.findAll(query.string, new PageRequest(0, size)).getContent.asScala
+            spectrumPersistenceService.findAll(query.string, new PageRequest(0, size,Sort.Direction.ASC,"id")).getContent.asScala
           }
         } else {
           spectrumPersistenceService.findAll(query.string).asScala
