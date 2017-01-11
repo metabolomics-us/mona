@@ -190,18 +190,19 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to execute custom name subqueries and counts at /rest/spectra/search using GET" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='Trigenolline'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+
         assert(exampleRecords.length == 1)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='Trigenolline'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 1)
       }
 
       "we should be able to execute custom name queries at /rest/spectra/search using GET" ignore {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='Trigenolline'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 1)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='Trigenolline'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 1)
       }
 
