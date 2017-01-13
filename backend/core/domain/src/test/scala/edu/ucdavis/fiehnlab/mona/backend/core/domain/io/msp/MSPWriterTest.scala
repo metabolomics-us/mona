@@ -34,8 +34,17 @@ class MSPWriterTest extends WordSpec {
       "result must contain"  must {
         "inchi key" in {
           assert(out.toString.contains("InChIKey: QASFUMOKHFSJGL-LAFRSMQTSA-N"))
-
         }
+        "inchi code" in {
+          assert(out.toString.contains("InChI Code=InChI=1S/C27H41NO2/c1-15-11-24-25(28-14-15)17(3)27(30-24)10-8-20-21-6-5-18-12-19(29)7-9-26(18,4)23(21)13-22(20)16(27)2/h5,15,17,19-21,23-25,28-29H,6-14H2,1-4H3/t15-,17+,19-,20-,21-,23-,24+,25-,26-,27-/m0/s1"))
+        }
+        "observed inchi code" in {
+          assert(out.toString.contains("Observed InChI Code=InChI=1S/C27H41NO2/c1-15-11-24-25(28-14-15)17(3)27(30-24)10-8-20-21-6-5-18-12-19(29)7-9-26(18,4)23(21)13-22(20)16(27)2/h5,15,17,19-21,23-25,28-29H,6-14H2,1-4H3/t15-,17+,19-,20-,21-,23-,24+,25-,26-,27-/m0/s1"))
+        }
+        "has synonyms" in {
+          assert(out.toString.contains("Synonym: 11-deoxojervine"))
+        }
+
       }
     }
   }
