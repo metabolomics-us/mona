@@ -31,6 +31,12 @@ class MSPWriterTest extends WordSpec {
         println(out.toString)
       }
 
+      "result must contain"  must {
+        "inchi key" in {
+          assert(out.toString.contains("InChIKey: QASFUMOKHFSJGL-LAFRSMQTSA-N"))
+
+        }
+      }
     }
   }
 }

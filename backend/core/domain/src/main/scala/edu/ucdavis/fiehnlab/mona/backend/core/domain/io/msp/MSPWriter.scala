@@ -22,7 +22,7 @@ class MSPWriter extends DomainWriter {
     if (compound != null) {
       // TODO Re-enable sorting by score when implemented
       // val names = compound.head.names.sortBy(_.score).headOption.orNull
-      val names = compound.names.headOption.orNull
+      val names = compound.names.filter(_).headOption.orNull
 
       if (names == null) {
         "None"
@@ -56,6 +56,16 @@ class MSPWriter extends DomainWriter {
     }
   }
 
+  def buildCompoundInchiKey(spectrum: Spectrum): String = {
+    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+
+    if (compound != null) {
+      s"InChIKey: ${compound.inchiKey}"
+    } else {
+      ""
+    }
+  }
+
   /**
     * builds teh comment string in the format "name=value"
     *
@@ -63,10 +73,15 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def buildComments(spectrum: Spectrum): String = {
-    spectrum.metaData.collect {
+
+    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+
+    val spectra = spectrum.metaData.collect {
       case value: MetaData =>
         s""""${value.name}=${value.value}""""
     }.mkString(" ")
+
+    s"""${spectra} "InChI Code=${compound.inchi}" """
   }
 
   /**
@@ -107,7 +122,10 @@ class MSPWriter extends DomainWriter {
 
     p.println(s"Name: ${buildName(spectrum)}")
     p.println(s"ID: ${spectrum.id}")
+    p.println(buildCompoundInchiKey(spectrum))
+
     p.println(s"MW: ${buildCompoundMetaData(spectrum, "total exact mass")}")
+
     p.println(s"Formula: ${buildCompoundMetaData(spectrum, "molecular formula")}")
     p.println(s"PrecursorMZ: ${buildMetaDateField(spectrum, "precursor m/z")}")
     p.println(s"Comments: ${buildComments(spectrum)}")
