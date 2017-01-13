@@ -66,9 +66,9 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     * @param id
     * @param eventType
     */
-  @RequestMapping(path = Array("/sync/{id}/{type}"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/sync"), method = Array(RequestMethod.GET))
   @Async
-  def sync(@PathVariable("id") id: String, @PathVariable("type") eventType: String): ResponseEntity[Any] = {
+  def sync(@RequestParam("id") id: String, @RequestParam("type") eventType: String): ResponseEntity[Any] = {
     webHookService.sync(id, eventType)
   }
 }
