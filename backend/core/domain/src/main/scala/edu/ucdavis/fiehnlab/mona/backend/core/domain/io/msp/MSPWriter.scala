@@ -34,16 +34,16 @@ class MSPWriter extends DomainWriter {
     }
   }
 
-  def buildSynonyms(spectrum: Spectrum): String = {
+  def buildSynonyms(spectrum: Spectrum): Seq[String] = {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
     if (compound != null) {
       compound.names.filter(!_.computed).map { name =>
         s"Synonym: ${name.name}"
-      }.mkString("\n")
+      }
     }
     else {
-      ""
+      Seq.empty[String]
     }
   }
 
@@ -75,7 +75,7 @@ class MSPWriter extends DomainWriter {
     if (compound != null) {
       s"InChIKey: ${compound.inchiKey}"
     } else {
-      ""
+      s"InChIKey: None"
     }
   }
 
@@ -89,12 +89,15 @@ class MSPWriter extends DomainWriter {
 
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
+    val observed: Compound = spectrum.compound.find(_.kind == "observed").getOrElse(spectrum.compound.head)
+
     val spectra = spectrum.metaData.collect {
       case value: MetaData =>
         s""""${value.name}=${value.value}""""
     }.mkString(" ")
 
-    s"""${spectra} "InChI Code=${compound.inchi}" """
+    s"""${spectra} "InChI Code=${compound.inchi}" "Observed InChI Code=${observed.inchi}"""".stripMargin
+
   }
 
   /**
@@ -134,7 +137,10 @@ class MSPWriter extends DomainWriter {
     val p = new PrintWriter(writer)
 
     p.println(s"Name: ${buildName(spectrum)}")
-    p.println(buildSynonyms(spectrum))
+
+    buildSynonyms(spectrum).foreach{
+      p.println
+    }
 
     p.println(s"ID: ${spectrum.id}")
     p.println(buildCompoundInchiKey(spectrum))
