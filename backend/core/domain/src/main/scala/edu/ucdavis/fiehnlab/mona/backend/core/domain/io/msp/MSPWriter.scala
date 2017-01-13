@@ -22,7 +22,7 @@ class MSPWriter extends DomainWriter {
     if (compound != null) {
       // TODO Re-enable sorting by score when implemented
       // val names = compound.head.names.sortBy(_.score).headOption.orNull
-      val names = compound.names.filter(_).headOption.orNull
+      val names = compound.names.filter(!_.computed).headOption.orNull
 
       if (names == null) {
         "None"
@@ -31,6 +31,19 @@ class MSPWriter extends DomainWriter {
       }
     } else {
       "No name provided"
+    }
+  }
+
+  def buildSynonyms(spectrum: Spectrum): String = {
+    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+
+    if (compound != null) {
+      compound.names.filter(!_.computed).map { name =>
+        s"Synonym: ${name.name}"
+      }.mkString("\n")
+    }
+    else {
+      ""
     }
   }
 
@@ -121,6 +134,8 @@ class MSPWriter extends DomainWriter {
     val p = new PrintWriter(writer)
 
     p.println(s"Name: ${buildName(spectrum)}")
+    p.println(buildSynonyms(spectrum))
+
     p.println(s"ID: ${spectrum.id}")
     p.println(buildCompoundInchiKey(spectrum))
 
