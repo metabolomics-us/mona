@@ -67,6 +67,7 @@ class MSPWriter extends DomainWriter {
       case value: MetaData =>
         s""""${value.name}=${value.value}""""
     }.mkString(" ")
+
   }
 
   /**
