@@ -50,6 +50,12 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     )
   }
 
+
+  /**
+    * pulls all data from the master
+    * @param query
+    * @return
+    */
   @RequestMapping(path = Array("/pull"), method = Array(RequestMethod.POST))
   def pull(@RequestParam(name = "query", required = false, defaultValue = "") query: String) = {
     if (query == "") {
@@ -57,6 +63,22 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     }
     else {
       webHookService.pull(Some(query))
+    }
+  }
+
+
+  /**
+    * pushes all local data, to all it's slaves
+    * @param query
+    * @return
+    */
+  @RequestMapping(path = Array("/push"), method = Array(RequestMethod.POST))
+  def push(@RequestParam(name = "query", required = false, defaultValue = "") query: String) = {
+    if (query == "") {
+      webHookService.push()
+    }
+    else {
+      webHookService.push(Some(query))
     }
   }
 

@@ -6,11 +6,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.{WebHookRepository, WebHookResultRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
+import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpStatus, ResponseEntity}
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 
@@ -21,6 +23,9 @@ import scala.collection.JavaConverters._
   */
 @Service
 class WebHookService extends LazyLogging {
+
+  @Autowired
+  val webHookResultRepository: WebHookResultRepository = null
 
   @Autowired
   val webhookRepository: WebHookRepository = null
@@ -59,29 +64,29 @@ class WebHookService extends LazyLogging {
       Array[WebHookResult]()
     }
     else {
-      hooks.collect {
+      hooks.map { hook: WebHook =>
 
-        case hook: WebHook =>
-          val url = s"${hook.url}?id=${id}&type=${eventType}"
+        val url = s"${hook.url}?id=${id}&type=${eventType}"
 
-          logger.debug(s"triggering event: ${url}")
+        logger.debug(s"triggering event: ${url}")
 
-          try {
-            restTemplate.getForObject(url, classOf[String])
+        try {
+          restTemplate.getForObject(url, classOf[String])
 
-            val result = WebHookResult(hook.name, url)
+          val result = webHookResultRepository.save(WebHookResult(ObjectId.get().toHexString, hook.name, url))
+          notifications.sendEvent(Event(Notification(result, getClass.getName)))
 
+          result
+        }
+        catch {
+          case x: Throwable =>
+            logger.debug(x.getMessage, x)
+            val result = webHookResultRepository.save(WebHookResult(ObjectId.get().toHexString, hook.name, url, success = false, x.getMessage))
             notifications.sendEvent(Event(Notification(result, getClass.getName)))
+
             result
-          }
-          catch {
-            case x: Throwable =>
-              logger.debug(x.getMessage, x)
-              val result = WebHookResult(hook.name, url, false, x.getMessage)
-              notifications.sendEvent(Event(Notification(result, getClass.getName)))
-              result
-            case _ => throw new RuntimeException("this should never have happened, something is odd in the webhook service!")
-          }
+          case _ => throw new RuntimeException("this should never have happened, something is odd in the webhook service!")
+        }
 
       }.toArray
     }
@@ -97,7 +102,7 @@ class WebHookService extends LazyLogging {
   def sync(id: String, eventType: String): ResponseEntity[Any] = {
 
     try {
-      eventType match {
+      eventType.toLowerCase match {
 
         case Event.ADD =>
           logger.info("adding spectra")
@@ -159,12 +164,12 @@ class WebHookService extends LazyLogging {
   /**
     * pulls a copy from the remote mona service. Optionally allows you to specify a query
     */
-  //@Async
+  @Async
   def pull(query: Option[String] = None) = {
-    val count = monaSpectrumRestClient.count(Option("""metaData=q='name=="flow gradient" and value=="99/1 at 0-1 min, 61/39 at 3 min, 0.1/99.9 at 14-16 min, 99/1 at 16.1-20 min"'"""))
+    val count = monaSpectrumRestClient.count(query)
     logger.info(s"expected spectra to pull: $count")
     var counter = 0
-    monaSpectrumRestClient.stream(query).foreach { spectrum:Spectrum =>
+    monaSpectrumRestClient.stream(query).foreach { spectrum: Spectrum =>
       counter = counter + 1
       logger.info(s"spectrum: ${spectrum.id} - ${spectrum.splash}")
       spectrumPersistenceService.save(spectrum)
@@ -172,6 +177,20 @@ class WebHookService extends LazyLogging {
     }
 
     logger.info(s"retrieved ${counter} spectra from master")
+  }
+
+  /**
+    * pushes all spectra as update to all slaves of this server
+    *
+    * @param query
+    */
+  @Async
+  def push(query: Option[String] = None) = {
+
+    //should send it as job to the backend
+    spectrumPersistenceService.findAll().asScala.foreach { spectrum =>
+      trigger(spectrum.id, Event.UPDATE)
+    }
   }
 
 }

@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller.WebhookController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.listener.WebHookEventBusListener
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.{WebHookRepository, WebHookResultRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service.WebHookService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
@@ -18,7 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 
 @Configuration
-@EnableMongoRepositories(basePackageClasses = Array(classOf[WebHookRepository]))
+@EnableMongoRepositories(basePackageClasses = Array(classOf[WebHookRepository],classOf[WebHookResultRepository]))
 @ComponentScan(basePackageClasses = Array(classOf[WebhookController],classOf[WebHookRepository],classOf[WebHookService],classOf[WebHookEventBusListener]))
 @Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[SwaggerConfig]))
 @Order(1)
@@ -40,6 +40,8 @@ class WebHookSecurity extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
       //saves need to be authenticated
       .antMatchers(HttpMethod.POST, "/rest/webhooks/**").authenticated()
+      .antMatchers(HttpMethod.POST, "/rest/webhooks/push").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/webhooks/pull").hasAuthority("ADMIN")
 
       //updates needs authentication
       .antMatchers(HttpMethod.PUT).authenticated()

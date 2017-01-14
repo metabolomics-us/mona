@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.config.WebHookSecurity
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.{WebHookRepository, WebHookResultRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
@@ -29,6 +29,9 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
   @Autowired
   val webHookRepository: WebHookRepository = null
+
+  @Autowired
+  val webHookResultRepository: WebHookResultRepository = null
 
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
@@ -104,6 +107,10 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
         given().body(getValue).when().post(s"/webhooks/pull").then().statusCode(401)
       }
 
+      "require admin authentication" in {
+        authenticate("test", "test-secret").body(getValue).when().post(s"/webhooks/pull").then().statusCode(401)
+      }
+
       "be able to download a specific query from the remote, with a small amount of results" in {
         spectrumPersistenceService.deleteAll()
         eventually(timeout(50 seconds), interval(1000 millis)) {
@@ -169,6 +176,68 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       }
     }
 
+    "be able to push all our data to all our slaves" must  {
+
+      "require authentication" in {
+        given().body(getValue).when().post(s"/webhooks/push").then().statusCode(401)
+      }
+
+
+      "require admin authentication" in {
+        authenticate("test", "test-secret").body(getValue).when().post(s"/webhooks/push").then().statusCode(401)
+      }
+
+      "able to execute, without a timeout" in {
+
+        //TODO update it once mona works correctly
+        val queryCount = 100 //
+
+
+
+        //reset the database
+        spectrumPersistenceService.deleteAll()
+        eventually(timeout(5 seconds)) {
+          assert(spectrumPersistenceService.count() == 0)
+        }
+
+        webHookRepository.deleteAll()
+
+        eventually(timeout(5 seconds)) {
+          assert(webHookRepository.count() == 0)
+        }
+
+        webHookResultRepository.deleteAll()
+
+        eventually(timeout(5 seconds)) {
+          assert(webHookResultRepository.count() == 0)
+        }
+
+
+        //get some data from our main mona service
+        authenticate().post("""/webhooks/pull?query=metaData=q='name=="collision energy" and value=="50 eV"'""").then().statusCode(200)
+
+        eventually(timeout(50 seconds), interval(1000 millis)) {
+          logger.info(s"local db is now: ${spectrumPersistenceService.count()} spectra")
+          assert(spectrumPersistenceService.count() >= queryCount)
+        }
+
+
+        //add a slave
+
+        authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/webhooks").then().statusCode(200)
+
+        //push everything to our slave
+        authenticate().body(getValue).when().post(s"/webhooks/push").then().statusCode(200)
+
+
+        eventually(timeout(50 seconds), interval(1000 millis)) {
+          logger.info(s"webhook events: ${webHookResultRepository.count()} spectra pushed")
+          assert(webHookResultRepository.count() >= queryCount)
+        }
+
+      }
+
+    }
     "be able to synchronize itself against a main mona server" should {
 
       "able to handle add events " in {
