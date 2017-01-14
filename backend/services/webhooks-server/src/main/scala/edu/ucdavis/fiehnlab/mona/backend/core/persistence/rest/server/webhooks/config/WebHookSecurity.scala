@@ -39,9 +39,10 @@ class WebHookSecurity extends WebSecurityConfigurerAdapter {
       .and()
       .authorizeRequests()
       //saves need to be authenticated
-      .antMatchers(HttpMethod.POST, "/rest/webhooks/**").authenticated()
+
       .antMatchers(HttpMethod.POST, "/rest/webhooks/push").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/webhooks/pull").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/webhooks/**").authenticated()
 
       //updates needs authentication
       .antMatchers(HttpMethod.PUT).authenticated()

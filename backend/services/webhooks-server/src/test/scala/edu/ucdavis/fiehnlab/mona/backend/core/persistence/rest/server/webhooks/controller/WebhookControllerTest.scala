@@ -108,7 +108,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       }
 
       "require admin authentication" in {
-        authenticate("test", "test-secret").body(getValue).when().post(s"/webhooks/pull").then().statusCode(401)
+        authenticate("test", "test-secret").body(getValue).when().post(s"/webhooks/pull").then().statusCode(403)
       }
 
       "be able to download a specific query from the remote, with a small amount of results" in {
@@ -184,7 +184,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
 
       "require admin authentication" in {
-        authenticate("test", "test-secret").body(getValue).when().post(s"/webhooks/push").then().statusCode(401)
+        authenticate("test", "test-secret").body(getValue).when().post(s"/webhooks/push").then().statusCode(403)
       }
 
       "able to execute, without a timeout" in {
