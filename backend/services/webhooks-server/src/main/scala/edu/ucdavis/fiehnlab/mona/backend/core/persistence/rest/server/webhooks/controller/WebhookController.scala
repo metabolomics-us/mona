@@ -40,7 +40,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     *
     * @param id
     */
-  @RequestMapping(path = Array("/trigger/{id}/{type}"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/trigger/{id}/{type}"), method = Array(RequestMethod.POST))
   def triggerHooksForSpectrumId(@PathVariable("id") id: String, @PathVariable("type") eventType: String): Future[Array[WebHookResult]] = {
 
     logger.info(s"triggering event hooks for spectra: ${id} and type ${eventType}")

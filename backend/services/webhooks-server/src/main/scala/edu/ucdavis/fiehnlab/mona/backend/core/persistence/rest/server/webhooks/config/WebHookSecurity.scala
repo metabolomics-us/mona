@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller.WebhookController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.listener.WebHookEventBusListener
@@ -42,6 +41,7 @@ class WebHookSecurity extends WebSecurityConfigurerAdapter {
 
       .antMatchers(HttpMethod.POST, "/rest/webhooks/push").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/webhooks/pull").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/webhooks/trigger/**").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/webhooks/**").authenticated()
 
       //updates needs authentication
