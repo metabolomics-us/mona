@@ -50,6 +50,12 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     )
   }
 
+
+  /**
+    * pulls all data from the master
+    * @param query
+    * @return
+    */
   @RequestMapping(path = Array("/pull"), method = Array(RequestMethod.POST))
   def pull(@RequestParam(name = "query", required = false, defaultValue = "") query: String) = {
     if (query == "") {
@@ -60,15 +66,31 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     }
   }
 
+
+  /**
+    * pushes all local data, to all it's slaves
+    * @param query
+    * @return
+    */
+  @RequestMapping(path = Array("/push"), method = Array(RequestMethod.POST))
+  def push(@RequestParam(name = "query", required = false, defaultValue = "") query: String) = {
+    if (query == "") {
+      webHookService.push()
+    }
+    else {
+      webHookService.push(Some(query))
+    }
+  }
+
   /**
     * provides a webhook client from mona to a master mona instance
     *
     * @param id
     * @param eventType
     */
-  @RequestMapping(path = Array("/sync/{id}/{type}"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/sync"), method = Array(RequestMethod.GET))
   @Async
-  def sync(@PathVariable("id") id: String, @PathVariable("type") eventType: String): ResponseEntity[Any] = {
+  def sync(@RequestParam("id") id: String, @RequestParam("type") eventType: String): ResponseEntity[Any] = {
     webHookService.sync(id, eventType)
   }
 }
