@@ -134,7 +134,7 @@
             // Handle array of values
             if (Array.isArray(value)) {
                 var subqueries = value.map(function(x) {
-                    return buildTagQuery(x, partialQuery);
+                    return buildTagQuery(x, collection, partialQuery);
                 });
 
                 return '('+ subqueries.join(' or ') + ')';
@@ -143,7 +143,7 @@
             // Handle individual values
             else {
                 if (typeof partialQuery !== 'undefined') {
-                    return collection+ '.text=match=".*'+ value +'.*"';
+                    return collection + '.text=match=".*'+ value +'.*"';
                 } else {
                     return collection +'.text=="'+ value +'"';
                 }
