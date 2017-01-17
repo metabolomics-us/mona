@@ -2,6 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 
 import java.util.Date
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
@@ -18,7 +20,7 @@ case class WebHook(
                     @(Id@field)
                     name: String,
                     url: String,
-                    description: String= "None provided"
+                    description: String = "None provided"
                   )
 
 /**
@@ -31,7 +33,8 @@ case class WebHook(
   */
 @Document(collection = "WEBHOOKS_TRIGGERED")
 case class WebHookResult(
-
+                          @(Id@field)
+                          id: String,
                           @(Indexed@field)
                           name: String,
                           url: String,
