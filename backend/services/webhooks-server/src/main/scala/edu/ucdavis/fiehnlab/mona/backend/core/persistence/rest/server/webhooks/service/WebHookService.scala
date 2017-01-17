@@ -169,11 +169,11 @@ class WebHookService extends LazyLogging {
     val count = monaSpectrumRestClient.count(query)
     logger.info(s"expected spectra to pull: $count")
     var counter = 0
+
     monaSpectrumRestClient.stream(query).foreach { spectrum: Spectrum =>
       counter = counter + 1
       logger.info(s"spectrum: ${spectrum.id} - ${spectrum.splash}")
       spectrumPersistenceService.save(spectrum)
-      Thread.sleep(100)
     }
 
     logger.info(s"retrieved ${counter} spectra from master")
