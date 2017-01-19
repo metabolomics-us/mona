@@ -18,5 +18,6 @@
         <module>curation-runner</module>
         <module>downloader</module>
         <module>download-scheduler</module>
+        <module>webhooks-server</module>
     </modules>
 </project>

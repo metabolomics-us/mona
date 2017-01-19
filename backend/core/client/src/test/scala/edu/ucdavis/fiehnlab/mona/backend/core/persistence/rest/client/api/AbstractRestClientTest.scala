@@ -1,23 +1,25 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 import scala.concurrent.duration._
-
 import java.io.InputStreamReader
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.{ShouldMatchers, WordSpec}
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.TestContextManager
+import org.springframework.web.client.HttpClientErrorException
 
 import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 3/2/16.
   */
-abstract class AbstractRestClientTest extends WordSpec with Eventually{
+abstract class AbstractRestClientTest extends WordSpec with Eventually with LazyLogging with ShouldMatchers{
   @Value( """${local.server.port}""")
   val port: Int = 0
 
@@ -111,6 +113,40 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually{
       }
 
 
+      "possible to execute the same query several times and receive always the same result" must {
+
+        for( x <- 1 to 10) {
+
+          s"support pageable sizes of ${x}" in {
+            var last: Iterable[Spectrum] = null
+
+            for (i <- 1 to 250) {
+              val current: Iterable[Spectrum] = spectrumRestClient.list(query = Option("tags=q='text=match=\"[(LCMS)(lcms)]+\"'"), pageSize = Option(x), page = Option(0))
+              if (last == null) {
+                last = current
+              }
+
+              assert(current.size == last.size)
+
+              assert(current.size == x)
+
+              var run = false
+              (current zip last).foreach { s: (Spectrum, Spectrum) =>
+                logger.info(s"comparing ${s._1.id} to ${s._2.id}")
+                run = true
+                assert(s._1.id == s._2.id)
+
+              }
+
+              logger.info("")
+
+              assert(run)
+
+            }
+          }
+        }
+
+      }
       "it should be possible to paginate over several pages" in {
         val dataFirst = spectrumRestClient.list(pageSize = Some(10), page = Some(0)).toList
         val dataSecond = spectrumRestClient.list(pageSize = Some(10), page = Some(1)).toList
@@ -147,6 +183,15 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually{
 
           assert(countBefore - countAfter == 1)
         }
+      }
+
+      "to query none existing data should result in a 404" in {
+
+        val thrown = intercept[HttpClientErrorException] {
+          spectrumRestClient.get("I don't Exist And I Like Beer, but whiskey is not bad either")
+        }
+
+        assert(thrown.getMessage == "404 Not Found")
       }
     }
   }

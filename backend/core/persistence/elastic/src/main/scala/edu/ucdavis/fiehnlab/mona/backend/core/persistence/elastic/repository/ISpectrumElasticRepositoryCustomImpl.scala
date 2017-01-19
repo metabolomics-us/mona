@@ -37,6 +37,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     val search = getSearch(query)
     search.setPageable(pageable)
 
+
     elasticsearchTemplate.queryForPage(search, classOf[Spectrum])
   }
 
