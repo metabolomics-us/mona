@@ -38,6 +38,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
   val locator: FindDirectory = null
+
   def localDirectory = new File(new File(this.locator.dir), "repository")
 
   override def configure(web: WebSecurity): Unit = {

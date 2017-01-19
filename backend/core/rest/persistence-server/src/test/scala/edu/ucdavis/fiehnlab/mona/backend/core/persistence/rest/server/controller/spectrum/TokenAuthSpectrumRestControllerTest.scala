@@ -15,6 +15,7 @@ import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.MediaType
 import org.springframework.test.context.TestContextManager
@@ -56,7 +57,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           val spectrum = exampleRecords.head
 
           val writer = new StringWriter()
-          mapper.writeValue(writer,spectrum)
+          mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
           logger.info(s"content: $content")
@@ -68,7 +69,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           val spectrum = exampleRecords.head.copy(spectrum = null)
 
           val writer = new StringWriter()
-          mapper.writeValue(writer,spectrum)
+          mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
@@ -78,7 +79,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           val spectrum = exampleRecords.head.copy(submitter = null)
 
           val writer = new StringWriter()
-          mapper.writeValue(writer,spectrum)
+          mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
@@ -88,7 +89,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           val spectrum = exampleRecords.head.copy(compound = Array())
 
           val writer = new StringWriter()
-          mapper.writeValue(writer,spectrum)
+          mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
@@ -98,7 +99,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           val spectrum = exampleRecords.head.copy(compound = null)
 
           val writer = new StringWriter()
-          mapper.writeValue(writer,spectrum)
+          mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
@@ -108,7 +109,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           val spectrum = exampleRecords.head.copy(id = "")
 
           val writer = new StringWriter()
-          mapper.writeValue(writer,spectrum)
+          mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
           authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
@@ -189,22 +190,23 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to execute custom name subqueries and counts at /rest/spectra/search using GET" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='Trigenolline'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+
         assert(exampleRecords.length == 1)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='META-HYDROXYBENZOIC ACID'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='Trigenolline'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 1)
       }
 
       "we should be able to execute custom name queries at /rest/spectra/search using GET" ignore {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='Trigenolline'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 1)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='META-HYDROXYBENZOIC ACID'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='Trigenolline'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 1)
       }
 
-      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" in {
+      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" ignore {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 21)
 
@@ -212,6 +214,33 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         assert(count == 21)
       }
 
+
+      "we should be able to execute the same query several times and receive always the same result" must {
+
+        "support pageable sizes of 1" in {
+          var last: Spectrum = null
+          var fetchedLast = false
+
+          for (i <- 1 to 250) {
+
+            val result: Array[Spectrum] = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?size=1&page=2&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+
+            assert(result.size == 1)
+
+            val current = result(0)
+
+            if (last == null) {
+              last = current
+              assert(fetchedLast == false)
+              fetchedLast = true
+            }
+            else {
+              assert(last.id == current.id)
+            }
+          }
+        }
+
+      }
       "we should be able to get a query count without providing a query" in {
         val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 48)
@@ -310,7 +339,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         }
 
         "text/msp must produce a msp file" in {
-          given().header("accept","text/msp").when().log().all(true).get("/spectra").then().contentType("text/msp").statusCode(200).log().all(true)
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra").then().contentType("text/msp").statusCode(200).log().all(true)
         }
       }
 
@@ -324,7 +353,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         "text/msp must produce a msp file" in {
           val spec = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])(0)
 
-          given().header("accept","text/msp").when().log().all(true).get(s"/spectra/${spec.id}").then().log().all(true).contentType("text/msp").statusCode(200)
+          given().header("accept", "text/msp").when().log().all(true).get(s"/spectra/${spec.id}").then().log().all(true).contentType("text/msp").statusCode(200)
         }
       }
 
@@ -336,7 +365,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         }
 
         "text/msp must produce a msp file" in {
-          given().header("accept","text/msp").when().log().all(true).get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
         }
       }
 

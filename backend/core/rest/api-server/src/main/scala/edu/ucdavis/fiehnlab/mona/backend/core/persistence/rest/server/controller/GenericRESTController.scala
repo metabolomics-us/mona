@@ -9,7 +9,7 @@ import javax.servlet.{ServletRequest, ServletResponse}
 import javax.validation.Valid
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
-import org.springframework.data.domain.{Page, PageRequest, Pageable}
+import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -52,10 +52,10 @@ abstract class GenericRESTController[T] {
     val data: Iterable[T] = {
       if (size != null) {
         if (page != null) {
-          getRepository.findAll(new PageRequest(page, size)).getContent.asScala
+          getRepository.findAll(new PageRequest(page, size,Sort.Direction.ASC,"id")).getContent.asScala
         }
         else {
-          getRepository.findAll(new PageRequest(0, size)).getContent.asScala
+          getRepository.findAll(new PageRequest(0, size,Sort.Direction.ASC,"id")).getContent.asScala
         }
       }
       else {
