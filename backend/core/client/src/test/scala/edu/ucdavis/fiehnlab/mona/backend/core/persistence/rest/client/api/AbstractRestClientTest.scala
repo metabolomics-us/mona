@@ -98,7 +98,7 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually{
 
 
       "it should be possible to stream all values" in {
-        val count = spectrumRestClient.list().foldLeft(0)((sum, _) => sum + 1)
+        val count = spectrumRestClient.stream(None).foldLeft(0)((sum, _) => sum + 1)
         assert(count == 58)
       }
 
