@@ -220,7 +220,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def count(): Long = spectrumElasticRepository.count()
+  def count(): Long = spectrumMongoRepository.count()
 
   /**
     * returns the count matching the given RSQL query

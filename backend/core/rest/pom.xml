@@ -21,6 +21,5 @@
         <module>api-server</module>
         <module>auth-server</module>
         <module>persistence-server</module>
-        <module>webhooks-server</module>
     </modules>
 </project>

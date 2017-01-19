@@ -68,7 +68,6 @@ class RestClientConfig extends LazyLogging {
     * @return
     */
   @Bean
-  @Primary
   def loginService(@Value("${mona.rest.server.host:localhost}")monaServerHost: String, @Value("${mona.rest.server.port:8080}") monaServerPort:Int ): LoginService = new RestLoginService(monaServerHost, monaServerPort)
 
   /**
