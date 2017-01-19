@@ -40,26 +40,20 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
             for (spectrum <- exampleRecords) {
               val size = getRepository.count()
-
               val result = getRepository.save(spectrum) //saveOrUpdate
               assert(result.isInstanceOf[T])
 
               val newSize = getRepository.count()
-
               assert(newSize == size + 1)
             }
-
           }
 
           s"we should have ${exampleRecords.length} records in the repository now" in {
             assert(getRepository.count() == 58)
           }
 
-
           "we should be able to execute RSQL queries like compound=q='inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N'" in {
-
             val result = getRepository.rsqlQuery(s"compound=q='inchiKey==GHSJKUNUIHUPDF-BYPYZUCNSA-N and kind==biological'")
-
             assert(result.size() == 1)
           }
 
@@ -75,7 +69,6 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
           "we should be able to execute RSQL queries like splash.block1=='splash10' with pagination" in {
             val result: Page[T] = getRepository.rsqlQuery(s"splash.block1==splash10", new PageRequest(0, 10))
-
             assert(result.getContent.size() == 10)
             assert(result.getTotalPages == 6)
           }
@@ -167,10 +160,8 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(exampleRecords.length - 1 == getRepository.count())
           }
 
-
           "possible to delete all data" in {
             getRepository.deleteAll()
-
             assert(0 == getRepository.count())
           }
         }
