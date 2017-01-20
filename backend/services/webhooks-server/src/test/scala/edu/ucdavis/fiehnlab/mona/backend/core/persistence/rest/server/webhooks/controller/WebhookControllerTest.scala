@@ -102,7 +102,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
       }
     }
-    "be able to pull a copy from the remote server" ignore {
+    "be able to pull a copy from the remote server" must {
 
       "require authentication" in {
         given().body(getValue).when().post(s"/webhooks/pull").then().statusCode(401)
