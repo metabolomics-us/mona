@@ -4,3 +4,13 @@ mona:
     server:
       host: mona.fiehnlab.ucdavis.edu
       port: 80
+spring:
+  cloud:
+    config:
+      uri:  http://localhost:1111
+
+  rabbitmq:
+    host: 127.0.0.1
+  data:
+    mongodb:
+      host: 127.0.0.1
