@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource
   */
 @Configuration
 @Import(Array(classOf[MongoConfig]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
+@TestPropertySource(locations = Array("classpath:application.properties"))
 class EmbeddedAuthConfig {
 
   /**

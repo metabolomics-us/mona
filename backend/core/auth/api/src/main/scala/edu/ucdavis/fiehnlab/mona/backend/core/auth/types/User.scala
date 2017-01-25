@@ -16,7 +16,7 @@ import scala.annotation.meta.field
 case class Role(name: String)
 
 /**
-  * defines an account in the system
+  * Defines a user account in the system
   *
   * @param username
   * @param password
@@ -29,5 +29,3 @@ case class User(
                  password: String,
                  roles: java.util.List[Role] = new util.ArrayList[Role]()
                )
-
-

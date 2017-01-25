@@ -1,8 +1,7 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.jwt.service
+package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.{EmbeddedAuthConfig, JWTAuthenticationConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.{JWTAuthenticationService, JWTTokenService}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -15,7 +14,7 @@ import org.springframework.test.context.{TestPropertySource, ContextConfiguratio
   * that the generated tokens can be authenticated
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig],classOf[JWTAuthenticationConfig]))
+@ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
 @TestPropertySource(locations=Array("classpath:application.properties"))
 class JWTTokenServiceTest extends WordSpec {
 
@@ -28,7 +27,7 @@ class JWTTokenServiceTest extends WordSpec {
   @Autowired
   val authenticationService: JWTAuthenticationService = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "JWTTokenServiceTest" should {
 
