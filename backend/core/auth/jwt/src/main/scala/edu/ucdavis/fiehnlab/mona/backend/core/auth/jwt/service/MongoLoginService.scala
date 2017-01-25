@@ -9,9 +9,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 /**
-  * simple login implementation utilizing mongo as a service
+  * Simple login implementation utilizing mongo as a service
   */
 class MongoLoginService extends LoginService with LazyLogging {
 
@@ -22,7 +23,7 @@ class MongoLoginService extends LoginService with LazyLogging {
   val tokenService: TokenService = null
 
   /**
-    * does a login and returns a token for us, which can be used internally
+    * Performs a login and returns a token for us, which can be used internally
     * or externally
     *
     * @return
@@ -35,18 +36,16 @@ class MongoLoginService extends LoginService with LazyLogging {
 
     if (user == null) {
       throw new UsernameNotFoundException(s"sorry user ${request.username} was not found")
-    }
-    else if (user.password != request.password) {
+    } else if (!new BCryptPasswordEncoder().matches(request.password, user.password)) {
       throw new BadCredentialsException("sorry the provided credentials were invalid!")
-    }
-    else {
+    } else {
       logger.debug("login was successful")
       LoginResponse(tokenService.generateToken(user))
     }
   }
 
   /**
-    * generates publicly interesting info about the given token
+    * Generates publicly interesting info about the given token
     *
     * @param token
     * @return
@@ -54,7 +53,7 @@ class MongoLoginService extends LoginService with LazyLogging {
   override def info(token: String): LoginInfo = tokenService.info(token)
 
   /**
-    * extends the given token, to create a token which doesn't expire for ten years
+    * Extends the given token, to create a token which doesn't expire for ten years
     *
     * @param token
     * @return
@@ -62,6 +61,6 @@ class MongoLoginService extends LoginService with LazyLogging {
   override def extend(token: String): LoginResponse = {
     val info = tokenService.info(token)
 
-    new LoginResponse(tokenService.generateToken(userRepository.findByUsername(info.username), 24*365*10))
+    LoginResponse(tokenService.generateToken(userRepository.findByUsername(info.username), 24 * 365 * 10))
   }
 }
