@@ -58,7 +58,7 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
         filterChain.doFilter(servletRequest, servletResponse)
       } catch {
         case e: AuthenticationException => throw e
-        case e: Exception => throw new AuthenticationServiceException("sorry an unexpected error happened", e)
+        case e: Exception => throw new AuthenticationServiceException(s"sorry an unexpected error happened: ${e.getMessage}", e)
       }
     } catch {
       case e: AuthenticationException =>
