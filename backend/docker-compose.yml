@@ -95,8 +95,8 @@ services:
     image:  rabbitmq:3-management
     hostname: rabbitmq
     ports:
-      - "15673:15672"
-      - "5673:5672"
+      - "15672:15672"
+      - "5672:5672"
  #   logging:
  #     driver: gelf
  #     options:
