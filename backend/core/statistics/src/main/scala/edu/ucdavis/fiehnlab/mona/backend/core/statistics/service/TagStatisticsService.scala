@@ -40,7 +40,7 @@ class TagStatisticsService {
       group("text").count().as("total"),
       project("total").and("value").previousOperation(),
       sort(Sort.Direction.DESC, "total")
-    )
+    ).withOptions(newAggregationOptions().allowDiskUse(true).build())
 
     mongoOperations
       .aggregate(aggregationQuery, "SPECTRUM", classOf[DBObject])
@@ -65,7 +65,7 @@ class TagStatisticsService {
     * Update the data in the tag statistics repository
     * @return
     */
-  def updateTagStatistics() = {
+  def updateTagStatistics(): Unit = {
     val results: Array[TagStatistics] = tagAggregation()
 
     tagStatisticsRepository.deleteAll()

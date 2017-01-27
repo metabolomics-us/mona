@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import java.lang
-import java.util.LinkedHashMap
+import java.{lang, util}
 
 import com.mongodb.DBObject
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -40,7 +39,7 @@ class MetaDataStatisticsService {
       classOf[Spectrum],
       unwind("$metaData"),
       group("metaData.name")
-    )
+    ).withOptions(newAggregationOptions().allowDiskUse(true).build())
 
     mongoOperations
       .aggregate(aggregationQuery, "SPECTRUM", classOf[DBObject])
@@ -52,7 +51,7 @@ class MetaDataStatisticsService {
 
   /**
     * Collect a list of unique metadata values and their respective counts for a given metadata name
-    * @param metaDataName
+    * @param metaDataName name to query
     * @return
     */
   def metaDataAggregation(metaDataName: String): MetaDataStatistics = {
@@ -65,10 +64,10 @@ class MetaDataStatisticsService {
       group("value").count().as("total"),
       project("total").and("value").previousOperation(),
       sort(Sort.Direction.DESC, "total")
-    )
+    ).withOptions(newAggregationOptions().allowDiskUse(true).build())
 
     val results = mongoOperations
-      .aggregate(aggregationQuery, classOf[Spectrum], classOf[LinkedHashMap[String, Object]])
+      .aggregate(aggregationQuery, classOf[Spectrum], classOf[util.LinkedHashMap[String, Object]])
       .getMappedResults
       .asScala
       .map(x => MetaDataValueCount(x.get("value").toString, x.get("total").asInstanceOf[Int]))
@@ -105,7 +104,7 @@ class MetaDataStatisticsService {
     * Update the data in the metadata statistics repository
     * @return
     */
-  def updateMetaDataStatistics() = {
+  def updateMetaDataStatistics(): Unit = {
     val aggregationQuery = newAggregation(
       classOf[Spectrum],
       project("metaData"),
@@ -114,7 +113,7 @@ class MetaDataStatisticsService {
       group("name", "value").count().as("count"),
       project("name").and("grouped").nested(bind("value", "value").and("count", "count")),
       group("name").push("grouped").as("values")
-    )
+    ).withOptions(newAggregationOptions().allowDiskUse(true).build())
 
     val results: Iterable[MetaDataStatistics] = mongoOperations
       .aggregate(aggregationQuery, classOf[Spectrum], classOf[MetaDataStatistics])
