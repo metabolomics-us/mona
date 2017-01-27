@@ -1,15 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import java.lang
-import java.util.{Date, LinkedHashMap}
+import java.util.Date
 
 import com.mongodb.{BasicDBObject, DBObject}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{GlobalStatisticsMongoRepository, MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{GlobalStatistics, MetaDataStatistics, MetaDataValueCount, TagStatistics}
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.GlobalStatisticsMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.GlobalStatistics
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
@@ -49,7 +48,7 @@ class StatisticsService extends LazyLogging {
     * Update the data in the global statistics repository
     * @return
     */
-  def updateGlobalStatistics() = {
+  def updateGlobalStatistics(): GlobalStatistics = {
     // Spectrum count
     val spectrumCount: Long = spectrumMongoRepository.count()
 
@@ -79,7 +78,8 @@ class StatisticsService extends LazyLogging {
 
           group("value"),
           group().count().as("count")
-        ), classOf[Spectrum], classOf[AggregationResult]
+        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
+        classOf[Spectrum], classOf[AggregationResult]
       ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
 
 
@@ -92,7 +92,8 @@ class StatisticsService extends LazyLogging {
           unwind("metaData"),
           group("metaData.name"),
           group().count().as("count")
-        ), classOf[Spectrum], classOf[AggregationResult]
+        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
+        classOf[Spectrum], classOf[AggregationResult]
       ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
 
 
@@ -104,7 +105,8 @@ class StatisticsService extends LazyLogging {
           project("metaData"),
           unwind("metaData"),
           group().count().as("count")
-        ), classOf[Spectrum], classOf[AggregationResult]
+        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
+        classOf[Spectrum], classOf[AggregationResult]
       ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
 
 
@@ -117,7 +119,8 @@ class StatisticsService extends LazyLogging {
           unwind("tags"),
           group("tags.text"),
           group().count().as("count")
-        ), classOf[Spectrum], classOf[AggregationResult]
+        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
+        classOf[Spectrum], classOf[AggregationResult]
       ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
 
 
@@ -129,7 +132,8 @@ class StatisticsService extends LazyLogging {
           project("tags"),
           unwind("tags"),
           group().count().as("count")
-        ), classOf[Spectrum], classOf[AggregationResult]
+        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
+        classOf[Spectrum], classOf[AggregationResult]
       ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
 
 
@@ -141,7 +145,8 @@ class StatisticsService extends LazyLogging {
           project("submitter"),
           group("submitter.emailAddress").count().as("count"),
           group().count().as("count")
-        ), classOf[Spectrum], classOf[AggregationResult]
+        ).withOptions(newAggregationOptions().allowDiskUse(true).build()),
+        classOf[Spectrum], classOf[AggregationResult]
       ).getMappedResults.asScala.headOption.getOrElse(AggregationResult(null, 0)).count
 
 
@@ -163,7 +168,7 @@ class StatisticsService extends LazyLogging {
     * Update all statistics
     */
   @Async
-  def updateStatistics() = {
+  def updateStatistics(): GlobalStatistics = {
     metaDataStatisticsService.updateMetaDataStatistics()
     tagStatisticsService.updateTagStatistics()
     compoundClassStatisticsService.updateCompoundClassStatistics()
