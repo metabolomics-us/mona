@@ -3,10 +3,5 @@ node_modules
 **/.DS_Store
 **/*.iml
 **/.idea/
-angularjs/moa-client/.idea/
-.Rproj.user
-mona-client.zip
-client.zip
-*.war
 *.log
 backend/load_test/*.hprof
