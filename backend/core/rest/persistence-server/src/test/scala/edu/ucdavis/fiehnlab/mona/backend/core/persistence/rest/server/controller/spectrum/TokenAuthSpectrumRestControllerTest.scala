@@ -1,12 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
-import scala.concurrent.duration._
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader, StringWriter}
+import java.io.{InputStreamReader, StringWriter}
 
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum, Splash}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Splash}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
@@ -15,12 +14,12 @@ import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.MediaType
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
+import scala.concurrent.duration._
 import scala.util.Properties
 
 /**
@@ -29,7 +28,8 @@ import scala.util.Properties
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]))
 class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra") with Eventually {
-  val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
+
+  val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 
   @Autowired
   val spectrumRepository: SpectrumPersistenceService = null
@@ -231,7 +231,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
             if (last == null) {
               last = current
-              assert(fetchedLast == false)
+              assert(!fetchedLast)
               fetchedLast = true
             }
             else {
@@ -331,9 +331,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
     }
 
     "we must be able to support different content types" must {
-
       "/spectra" should {
-
         "support application/json" in {
           given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
         }
@@ -341,31 +339,42 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         "text/msp must produce a msp file" in {
           given().header("accept", "text/msp").when().log().all(true).get("/spectra").then().contentType("text/msp").statusCode(200).log().all(true)
         }
+
+        "text/msp must produce a msp file with size set" in {
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra?size=2").then().contentType("text/msp").statusCode(200).log().all(true)
+        }
+
+        "text/msp must produce a msp file with pagination" in {
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra?size=2&page=1").then().contentType("text/msp").statusCode(200).log().all(true)
+        }
       }
 
       "/spectra/id" should {
-
         "application/json must produce a json file" in {
           val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
-
         }
 
         "text/msp must produce a msp file" in {
           val spec = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])(0)
-
           given().header("accept", "text/msp").when().log().all(true).get(s"/spectra/${spec.id}").then().log().all(true).contentType("text/msp").statusCode(200)
         }
       }
 
       "/spectra/search" should {
-
         "application/json must produce a json file" in {
           val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
-
         }
 
         "text/msp must produce a msp file" in {
           given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
+        }
+
+        "text/msp must produce a msp file with size set" in {
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?size=2&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
+        }
+
+        "text/msp must produce a msp file with pagination" in {
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?size=2&page=1&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
         }
       }
 
@@ -378,7 +387,6 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           }
         }
       }
-
     }
   }
 
