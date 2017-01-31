@@ -142,7 +142,7 @@ class MSPWriter extends DomainWriter {
       p.println
     }
 
-    p.println(s"ID: ${spectrum.id}")
+    p.println(s"DB#: ${spectrum.id}")
     p.println(buildCompoundInchiKey(spectrum))
 
     p.println(s"MW: ${buildCompoundMetaData(spectrum, "total exact mass")}")
