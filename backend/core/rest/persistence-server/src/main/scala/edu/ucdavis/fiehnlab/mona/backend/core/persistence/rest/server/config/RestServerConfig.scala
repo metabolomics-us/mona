@@ -122,23 +122,20 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
     }
 
     t match {
-      case y:Spectrum =>
+      case y: Spectrum =>
         write(y)
 
       case x: Iterable[_] =>
-        x.foreach { y =>
-          write(y)
-        }
+        x.foreach(write)
 
       case x: Wrappers.JIterableWrapper[_] =>
-        x.foreach { y =>
-          write(y)
-        }
+        x.foreach(write)
+
+      case x: Wrappers.JListWrapper[_] =>
+        x.foreach(write)
 
       case x: util.Collection[_] =>
-        x.asScala.foreach { y =>
-          write(y)
-        }
+        x.asScala.foreach(write)
 
       case _ =>
         logger.info(s"what the fuck is this ${t}")
@@ -147,14 +144,13 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
 
   override def supports(clazz: Class[_]): Boolean = {
     clazz match {
-
       case q if q == classOf[Spectrum] => true
       case q if q == classOf[Iterable[_]] => true
       case q if q == classOf[Wrappers.JIterableWrapper[_]] => true
+      case q if q == classOf[Wrappers.JListWrapper[_]] => true
       case q if q == classOf[util.Collection[_]] => true
-
       case _ =>
-        //        logger.debug(s"unknown class type provided: ${clazz}")
+        logger.warn(s"Unknown class type provided to MSP converter: ${clazz}")
         false
     }
   }

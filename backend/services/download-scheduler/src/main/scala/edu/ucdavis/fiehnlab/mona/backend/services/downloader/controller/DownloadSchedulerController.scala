@@ -86,6 +86,7 @@ class DownloadSchedulerController extends LazyLogging {
   @Async
   def scheduleDownload(@RequestParam(required = true, name = "query") query: String,
                        @RequestParam(required = false, name = "format", defaultValue = "json") format: String): Future[QueryExport] = {
+
     // Schedule download
     val downloadObject: QueryExport = downloadSchedulerService.scheduleDownload(query, format)
 
