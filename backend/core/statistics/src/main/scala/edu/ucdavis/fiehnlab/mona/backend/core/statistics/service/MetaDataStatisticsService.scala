@@ -2,14 +2,16 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.{lang, util}
 
-import com.mongodb.DBObject
+import com.mongodb.{BasicDBObject, DBObject}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataValueCount}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.Sort
+import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
+import org.springframework.data.mongodb.core.aggregation.{AggregationOperation, AggregationOperationContext}
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Service
 
@@ -35,6 +37,7 @@ class MetaDataStatisticsService {
     * @return
     */
   def metaDataNameAggregation(): Array[String] = {
+
     val aggregationQuery = newAggregation(
       classOf[Spectrum],
       unwind("$metaData"),
@@ -55,6 +58,7 @@ class MetaDataStatisticsService {
     * @return
     */
   def metaDataAggregation(metaDataName: String): MetaDataStatistics = {
+
     val aggregationQuery = newAggregation(
       classOf[Spectrum],
       project("metaData"),
@@ -90,6 +94,7 @@ class MetaDataStatisticsService {
 
   /**
     * Get a list of unique metadata names from the metadata statistics repository
+    *
     */
   def getMetaDataNames: Array[String] = mongoOperations.getCollection("STATISTICS_METADATA").distinct("_id").asScala.map(_.toString).toArray
 
@@ -104,7 +109,8 @@ class MetaDataStatisticsService {
     * Update the data in the metadata statistics repository
     * @return
     */
-  def updateMetaDataStatistics(): Unit = {
+  def updateMetaDataStatistics(sliceCount: Int = 100): Unit = {
+
     val aggregationQuery = newAggregation(
       classOf[Spectrum],
       project("metaData"),
@@ -112,7 +118,20 @@ class MetaDataStatisticsService {
       project().and("metaData.name").as("name").and("metaData.value").as("value"),
       group("name", "value").count().as("count"),
       project("name").and("grouped").nested(bind("value", "value").and("count", "count")),
-      group("name").push("grouped").as("values")
+      sort(Direction.DESC, "grouped.count").and(Direction.ASC, "grouped.name"),
+      group("name").push("grouped").as("values"),
+
+      // Needed to use the slice operation - can be removed when upgrading to in spring-data-mongodb 1.10.0.RELEASE
+      new AggregationOperation() {
+        override def toDBObject(context: AggregationOperationContext): DBObject =
+          context.getMappedObject(new BasicDBObject(
+            "$project", new BasicDBObject(
+              "values", new BasicDBObject(
+                "$slice", Array("$values", sliceCount)
+              )
+            )
+          ))
+      }
     ).withOptions(newAggregationOptions().allowDiskUse(true).build())
 
     val results: Iterable[MetaDataStatistics] = mongoOperations
