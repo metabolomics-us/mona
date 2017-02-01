@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier
+package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
@@ -15,7 +15,7 @@ import scala.collection.mutable.ArrayBuffer
   * this class connects to the external classifier processor and computes classification information for this spectra
   */
 @Step(description = "run's classification rules from the wishart's lab classyfire tool")
-class ClassifierProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
+class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   @Autowired
   protected val restOperations: RestOperations = null

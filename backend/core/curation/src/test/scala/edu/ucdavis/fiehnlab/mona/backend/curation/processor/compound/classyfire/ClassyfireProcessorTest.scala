@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier
+package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire
 
 import java.io.InputStreamReader
 
@@ -23,13 +23,14 @@ import org.springframework.web.client.RestTemplate
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
-class ClassifierProcessorTest extends WordSpec {
-  val reader = JSONDomainReader.create[Spectrum]
+class ClassyfireProcessorTest extends WordSpec {
+
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   @Autowired
-  val classyfireProcessor: ClassifierProcessor = null
+  val classyfireProcessor: ClassyfireProcessor = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "ClassifierProcessorTest" should {
 
