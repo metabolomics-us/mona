@@ -150,7 +150,7 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
       case q if q == classOf[Wrappers.JListWrapper[_]] => true
       case q if q == classOf[util.Collection[_]] => true
       case _ =>
-        logger.warn(s"Unknown class type provided to MSP converter: ${clazz}")
+        logger.debug(s"Unknown class type provided to MSP converter: ${clazz}")
         false
     }
   }
