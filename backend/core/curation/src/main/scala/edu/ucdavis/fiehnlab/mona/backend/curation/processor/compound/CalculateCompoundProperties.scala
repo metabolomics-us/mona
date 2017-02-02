@@ -1,21 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
-import java.io.{StringReader, StringWriter}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.FetchCTSCompoundData
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
-import net.sf.jniinchi.INCHI_RET
-import org.openscience.cdk.inchi.{InChIGenerator, InChIGeneratorFactory, InChIToStructure}
-import org.openscience.cdk.smiles.SmilesGenerator
-import org.openscience.cdk.{AtomContainer, DefaultChemObjectBuilder}
-import org.openscience.cdk.interfaces.{IAtomContainer, IChemObject, IMolecularFormula}
-import org.openscience.cdk.io.{MDLV2000Reader, MDLV2000Writer}
-import org.openscience.cdk.tools.CDKHydrogenAdder
-import org.openscience.cdk.tools.manipulator.{AtomContainerManipulator, MolecularFormulaManipulator}
+import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
 
