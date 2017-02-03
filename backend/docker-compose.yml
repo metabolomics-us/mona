@@ -275,6 +275,22 @@ services:
 #        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
 #        tag: "mona-repository"
 
+  #provides us with the mona similarity service
+  similarity:
+    image: eros.fiehnlab.ucdavis.edu/mona-similarity
+
+    depends_on:
+      - webhooks
+    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    ports:
+    - "9999:9999"
+
+#    logging:
+#      driver: gelf
+#      options:
+#        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+#        tag: "mona-similarity"
+
 ################################################################################################################
 # This section defines services, which can be scaled from 1-n times and should be started last
 # just to keep the logfile nice and tidy

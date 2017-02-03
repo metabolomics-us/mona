@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>services</artifactId>
     <packaging>pom</packaging>
     <modules>
@@ -19,5 +18,6 @@
         <module>downloader</module>
         <module>download-scheduler</module>
         <module>webhooks-server</module>
+        <module>similarity</module>
     </modules>
 </project>
