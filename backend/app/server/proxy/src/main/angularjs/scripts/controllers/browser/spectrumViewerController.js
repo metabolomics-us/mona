@@ -91,36 +91,17 @@
          * Loading of similar spectra
          */
         $scope.loadingSimilarSpectra = true;
-        $scope.similarityResult = {};
         $scope.similarSpectra = [];
 
         $scope.loadSimilarSpectra = function() {
             if (!$scope.loadingSimilarSpectra)
                 return;
 
-
             Spectrum.searchSimilarSpectra(
-                {spectra: $scope.spectrum.id, minSimilarity: 500, maxHits: 5},
+                {spectrum: $scope.spectrum.spectrum, minSimilarity: 0.5},
                 function(data) {
-                    $scope.similarityResult = data;
-
-                    if (data.result.length === 0) {
-                        $scope.loadingSimilarSpectra = false;
-                    }
-
-                    for (var i = 0, l = data.result.length; i < l; i++) {
-                        Spectrum.get({id: data.result[i].id}, function(s) {
-                            for (var j = 0, k = $scope.similarityResult.result.length; j < k; j++) {
-                                if ($scope.similarityResult.result[j].id === s.id) {
-                                    s.similarity = $scope.similarityResult.result[j].similarity;
-                                    break;
-                                }
-                            }
-
-                            $scope.similarSpectra.push(s);
-                            $scope.loadingSimilarSpectra = false;
-                        });
-                    }
+                    $scope.similarSpectra = data;
+                    $scope.loadingSimilarSpectra = false;
                 }, function(data) {
                     $scope.loadingSimilarSpectra = false;
                 }
@@ -237,6 +218,4 @@
             }
         })();
     }
-
-
 })();
