@@ -22,12 +22,10 @@
                         <div class="col-md-12">
                             <div class="panel top17 panel-default" ng-show="spectrum.score">
                                 <div class="panel-heading">
-                                    Explanation for the score of {{spectrum.score.score | number
-                                    :4}}/{{spectrum.score.scaledScore | number :1}} stars
+                                    Explanation for the score of {{spectrum.score.score | number:4}} / {{spectrum.score.scaledScore | number:1}} stars
                                 </div>
                                 <div class="panel-body">
-                                    Green elements show that this had a positive impact, while red elements display a
-                                    negative impact.
+                                    Green elements show that this had a positive impact, while red elements display a negative impact.
                                 </div>
                                 <table class="table">
                                     <thead>
@@ -56,7 +54,8 @@
                         <div class="col-md-12">
                             <ul class="list-unstyled">
                                 <li>
-                                    <div class="h5"><span data-display-library-reference spectrum="spectrum"></span>
+                                    <div class="h5">
+                                        <span data-display-library-reference spectrum="spectrum"></span>
                                     </div>
                                 </li>
                             </ul>
@@ -151,25 +150,24 @@
                                     </div>
                                 </uib-accordion-group>
 
-                                <!--
                                 <uib-accordion-group is-open="accordionStatus.isSimilarSpectraOpen">
                                     <uib-accordion-heading>
                                         <div ng-click="loadSimilarSpectra()">
-                                            Similar Spectra<i class="pull-right glyphicon"
-                                                              ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
-                                                       'glyphicon-chevron-right': !accordionStatus.isSimilarSpectraOpen}"></i>
+                                            Similar Spectra
+                                            <i class="pull-right glyphicon"
+                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
+                                                          'glyphicon-chevron-right': !accordionStatus.isSimilarSpectraOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
 
                                     <div class="text-center" ng-show="loadingSimilarSpectra">
-                                        <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span>
-                                        </p>
+                                        <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span></p>
 
                                         <p>Please wait - this can take some time depending on server load.</p>
                                     </div>
 
                                     <div class="text-center" ng-show="!loadingSimilarSpectra && !similarSpectra.length">
-                                        <h4>No similar spectra found.</h4>
+                                        <h4>No spectra found with similarity > 500.</h4>
                                     </div>
 
                                     <div class="text-center" ng-show="!loadingSimilarSpectra && similarSpectra.length">
@@ -186,12 +184,13 @@
                                             <tbody>
                                             <tr ng-show="spectra.length == 0">
                                             </tr>
-                                            <tr ng-repeat="s in similarSpectra | orderBy:'-similarity'"
-                                                ng-click="viewSpectrum(s.id)">
-                                                <td>{{s.id}}</td>
+                                            <tr ng-repeat="s in similarSpectra | filter"
+                                                ng-if="s.hit.id != spectrum.id"
+                                                ng-click="viewSpectrum(s.hit.id)">
+                                                <td>{{s.hit.id}}</td>
                                                 <td>
                                                     <ul class="list-unstyled">
-                                                        <li ng-repeat="name in s.biologicalCompound.names | limitTo:3">
+                                                        <li ng-repeat="name in s.hit.compound[0].names | limitTo:3">
                                                             {{name.name}}
                                                         </li>
                                                     </ul>
@@ -200,8 +199,8 @@
                                                     <div class="center-block" chemical-sketcher readonly="true"
                                                          width="100"
                                                          height="100"
-                                                         id="bioSketch_{{s.id}}"
-                                                         ng-model="spectrum.biologicalCompound"></div>
+                                                         id="bioSketch_{{s.hit.id}}"
+                                                         ng-model="s.hit.compound[0]"></div>
                                                 </td>
                                                 <td>
                                                     <div class="masspec-mini">
@@ -210,14 +209,13 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <p class="text-center">{{s.similarity | number:0}} / 1000</p>
+                                                    <p class="text-center">{{s.score * 1000 | number:0}} / 1000</p>
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </uib-accordion-group>
-                                -->
                             </uib-accordion>
                         </div>
                     </div>
@@ -275,7 +273,6 @@
                                 </table>
                             </div>
                             <br/>
-
                         </div>
                     </div>
                 </div>
