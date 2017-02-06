@@ -34,8 +34,8 @@
          * @type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
          */
         $scope.accordionStatus = {
-            isSpectraOpen: CookieService.getBooleanValue("DisplaySpectraisSpectraOpen", true),
-            isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false),
+            isSpectraOpen: true,
+            isIonTableOpen: false,
             isSimilarSpectraOpen: false,
             isCompoundOpen: []
         };
