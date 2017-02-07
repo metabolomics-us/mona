@@ -240,13 +240,13 @@ h2 {
 }
 
 // search button
-.input-group-btn:last-child > .btn {
+.nav .input-group-btn:last-child > .btn {
     margin-left: -1px;
     color: #002855;
     background-color: #DEB31A;
 }
 
-//Top Right Navigation Dropdown Styles*****
+// Top Right Navigation Dropdown Styles*****
 .nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
     background-color: #335379;
     color: #DFC166;

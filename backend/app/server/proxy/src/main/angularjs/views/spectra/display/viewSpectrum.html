@@ -182,8 +182,6 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr ng-show="spectra.length == 0">
-                                            </tr>
                                             <tr ng-repeat="s in similarSpectra | filter"
                                                 ng-if="s.hit.id != spectrum.id"
                                                 ng-click="viewSpectrum(s.hit.id)">
