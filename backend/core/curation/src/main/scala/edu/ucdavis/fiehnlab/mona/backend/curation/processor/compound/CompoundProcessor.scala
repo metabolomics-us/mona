@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Component, Service}
@@ -68,10 +69,20 @@ class CompoundMOLProcessor extends AbstractCompoundProcessor {
 class CompoundInChIProcessor extends AbstractCompoundProcessor {
 
   def process(compound: Compound, id: String): (String, IAtomContainer) = {
-    if (compound.inchi != null) {
+    val inchiMetaData: Option[MetaData] = compound.metaData.find(_.name.toLowerCase() == CommonMetaData.INCHI_CODE.toLowerCase())
+
+    val inchi: String =
+      if (compound.inchi != null && compound.inchi != "")
+        compound.inchi
+      else if (inchiMetaData.isDefined && inchiMetaData.get.value.toString != "")
+        inchiMetaData.get.value.toString
+      else
+          null
+
+    if (inchi != null) {
       logger.info(s"$id: Converting InChI to MOL definition...")
 
-      val molecule: IAtomContainer = compoundConversion.inchiToMolecule(compound.inchi)
+      val molecule: IAtomContainer = compoundConversion.inchiToMolecule(inchi)
 
       if (molecule != null) {
         logger.info(s"$id: InChI conversion successful")
@@ -92,10 +103,10 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
 class CompoundSMILESProcessor extends AbstractCompoundProcessor {
 
   def process(compound: Compound, id: String): (String, IAtomContainer) = {
-    val smiles: Option[MetaData] = compound.metaData.find(_.name.toLowerCase() == "smiles")
+    val smiles: Option[MetaData] = compound.metaData.find(_.name.toLowerCase() == CommonMetaData.SMILES.toLowerCase())
 
     // Parse SMILES
-    if (smiles.isDefined) {
+    if (smiles.isDefined && smiles.get.value.toString != "") {
       logger.info(s"$id: Converting SMILES to MOL definition")
 
       val molecule: IAtomContainer = compoundConversion.smilesToMolecule(smiles.get.value.toString)
