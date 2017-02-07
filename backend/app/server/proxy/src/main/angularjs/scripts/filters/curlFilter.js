@@ -18,7 +18,7 @@
               input = input && typeof(input) == 'string' ? input.replace(/"/g, '\\"') : '';
 
               if (input != '') {
-                  return 'curl "' + host + '/rest/spectra/search?query=' + input + '"';
+                  return 'curl "' + host + '/rest/spectra/search?query='+ input +'"';
               } else {
                   return 'curl "' + host + '/rest/spectra"';
               }

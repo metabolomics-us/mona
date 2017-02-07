@@ -156,6 +156,10 @@
             return spectra;
         };
 
+
+        /**
+         * Execute query
+         */
         $scope.loadMoreSpectra = function() {
             if (!$scope.loadingMore && $scope.spectraLoadLength !== $scope.spectra.length && $scope.dataAvailable) {
                 //search utilizing our compiled query so that it can be easily refined over time
@@ -209,6 +213,16 @@
                 $(window).scrollTop($scope.spectraScrollStartLocation);
             }, 1);
         });
+
+
+        /**
+         * Query dropdown and editor
+         */
+        $scope.editQuery = false;
+
+        $scope.updateQuery = function(query) {
+            $location.search('query', query);
+        };
 
 
         (function() {

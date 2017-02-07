@@ -34,8 +34,20 @@
         <uib-accordion close-others="true">
             <uib-accordion-group heading="Display Generated Query" is-open="queryOpen">
                 <div>
-                    Generated RSQL Query:
-                    <pre>{{query != '' ? query : "[Empty Query]"}}</pre>
+                    Generated RSQL Query: <a href="" ng-click="editQuery = !editQuery"><i class="fa fa-pencil-square-o"></i></a>
+
+                    <pre ng-if="!editQuery">{{query != '' ? query : "[Empty Query]"}}</pre>
+                    <div ng-if="editQuery">
+                        <form ng-submit="updateQuery(query)">
+                            <div class="input-group">
+                                <input type="text" ng-model="query" class="form-control" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="submit">Update Query</button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+
                     <div>
                         Example cURL command to download all spectral JSON records matching the generated RSQL query:
                         <pre>{{query | curl}}</pre>
