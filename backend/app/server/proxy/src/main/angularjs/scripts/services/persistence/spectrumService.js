@@ -36,12 +36,12 @@
 					}
 				},
 				'searchSimilarSpectra': {
-					url: REST_BACKEND_SERVER + '/rest/spectra/similarity?max=' + MAX_SPECTRA,
+					url: REST_BACKEND_SERVER + '/rest/similarity/search',
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					isArray: false
+					isArray: true
 				},
 				'batchSave': function (token) {
 					return {

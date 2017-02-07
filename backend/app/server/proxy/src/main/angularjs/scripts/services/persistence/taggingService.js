@@ -15,12 +15,10 @@
         $http.defaults.useXDomain = true;
 
         return $resource(
-            REST_BACKEND_SERVER + '/rest/tags/:id?max=100',
-            {id: "@id"},
+            REST_BACKEND_SERVER + '/rest/tags',
             {
                 'update': {
                     method: 'PUT'
-
                 },
                 'statistics': {
                     url: REST_BACKEND_SERVER + '/rest/statistics/tags/spectra/countAll?max=' + 100,
