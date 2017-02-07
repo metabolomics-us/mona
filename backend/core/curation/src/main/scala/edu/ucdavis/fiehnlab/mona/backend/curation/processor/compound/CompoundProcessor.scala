@@ -53,7 +53,7 @@ trait AbstractCompoundProcessor extends LazyLogging {
 class CompoundMOLProcessor extends AbstractCompoundProcessor {
 
   def process(compound: Compound, id: String): (String, IAtomContainer) = {
-    if (compound.molFile != null) {
+    if (compound.molFile != null || compound.molFile == "") {
       logger.info(s"$id: Parsing MOL definition")
       (compound.molFile, compoundConversion.parseMolDefinition(compound.molFile))
     } else {
