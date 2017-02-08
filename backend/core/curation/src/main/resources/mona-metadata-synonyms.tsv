@@ -52,10 +52,10 @@ adduct ion name	adduct
 IE	ionization energy
 thomson	m/z
 activation	precursor activation
-mstype	ms level
-ms type	ms level
 ionmode	ionization mode
 Scan Duration	dwell time
 scan function	scan law
 rt	retention time
 analyzer	mass analyzer
+derivative type	derivatization type
+derivative form	derivative formula
