@@ -172,8 +172,7 @@ services:
 #        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
 #        tag: "mona-config"
 
-# this proxy server is the main entry point for mona and should be preferable always be used
-
+  # this proxy server is the main entry point for mona and should be preferable always be used
   proxy:
     image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
     ports:
@@ -194,6 +193,20 @@ services:
 #      options:
 #        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
 #        tag: "mona-proxy"
+
+
+  # bootstrapper
+  bootstrap:
+    image: eros.fiehnlab.ucdavis.edu/mona-bootstrap:latest
+
+    depends_on:
+      - config
+    entrypoint: ./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+#    logging:
+#      driver: gelf
+#      options:
+#        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
+#        tag: "mona-bootstrap"
 
 
 ################################################################################################################
@@ -320,19 +333,6 @@ services:
 #      options:
 #        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
 #        tag: "mona-persistence"
-
-  # bootstrapper
-  bootstrap:
-    image: eros.fiehnlab.ucdavis.edu/mona-bootstrap:latest
-
-    depends_on:
-      - curationScheduler
-    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
-#    logging:
-#      driver: gelf
-#      options:
-#        gelf-address: "udp://ipa.fiehnlab.ucdavis.edu:12201"
-#        tag: "mona-bootstrap"
 
   #curation runner is utilized to actually curate spectra
   curationRunner:
