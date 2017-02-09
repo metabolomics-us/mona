@@ -28,14 +28,14 @@ class SimilarityController {
 
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.POST))
   @ResponseBody
-  def similaritySearch(@RequestBody message: SimilaritySearchRequest): Array[SearchResult] = {
+  def similaritySearch(@RequestBody message: SimilaritySearchRequest, @RequestParam(value = "size", required = false) size: Integer): Array[SearchResult] = {
 
     val spectrum: SimpleSpectrum = new SimpleSpectrum(null, message.spectrum)
 
     indexUtilities.search(spectrum, AlgorithmTypes.DEFAULT, 0.5)
       .toArray
       .sortBy(-_.score)
-      .take(10)
+      .take(if (size != null) size else 25)
       .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
   }
 
