@@ -16,7 +16,7 @@ class LinearIndex(override val binningMethod: BinningMethod, override val cache:
   /**
     * Contains our actual data in a standard java collection
     */
-  var collection: java.util.Map[String, SimpleSpectrum] = createBacking()
+  var indexMap: java.util.Map[String, SimpleSpectrum] = createBacking()
 
   /**
     * Defines the collection to use for the backing, allowing for easy overwriting in subclasses to
@@ -36,7 +36,7 @@ class LinearIndex(override val binningMethod: BinningMethod, override val cache:
   override def lookup(spectrum: SimpleSpectrum): Option[SimpleSpectrum] = {
     logger.trace(s"looking up: ${spectrum.splash}")
 
-    collection.get(spectrum.splash) match {
+    indexMap.get(spectrum.splash) match {
       case null => None
       case x: SimpleSpectrum => Some(x)
     }
@@ -50,7 +50,7 @@ class LinearIndex(override val binningMethod: BinningMethod, override val cache:
     */
   override def doIndex(spectrum: SimpleSpectrum): Index = {
     logger.trace(s"indexing: ${spectrum.splash}")
-    collection.put(spectrum.splash, spectrum)
+    indexMap.put(spectrum.splash, spectrum)
     this
   }
 
@@ -60,14 +60,14 @@ class LinearIndex(override val binningMethod: BinningMethod, override val cache:
     * @param key
     * @return
     */
-  override def get(key: Any): Iterable[SimpleSpectrum] = collection.values()
+  override def get(key: Any): Iterable[SimpleSpectrum] = indexMap.values()
 
   /**
     * Size of this index
     *
     * @return
     */
-  override def size: Int = collection.size()
+  override def size: Int = indexMap.size()
 
   override def toString: String = this.getClass.getSimpleName + "(linear)" + "(" + binningMethod + ")"
 }

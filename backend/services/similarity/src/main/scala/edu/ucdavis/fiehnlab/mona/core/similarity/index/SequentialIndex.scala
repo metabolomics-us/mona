@@ -12,7 +12,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
   * @param cache
   * @param indexes
   */
-class SequentialIndex(override val binningMethod: BinningMethod, override val cache: SpectrumCache, val indexes: Seq[Index])extends Index(binningMethod, cache) {
+class SequentialIndex(override val binningMethod: BinningMethod, override val cache: SpectrumCache, val indexes: Seq[Index]) extends Index(binningMethod, cache) {
 
   val internalIndex: Index = new LinearIndex(binningMethod, cache)
 
