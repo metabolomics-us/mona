@@ -7,6 +7,8 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.mona.core.similarity.run.Calculate
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{BinnedSimpleSpectrum, ComputationalResult, ResultHandler, SimpleSpectrum}
 
+import scala.collection.mutable
+
 /**
   * The definition of a spectral index
   *
@@ -86,7 +88,7 @@ abstract class Index(val binningMethod: BinningMethod, val cache: SpectrumCache)
   final def search(spectrum: SimpleSpectrum, similarity: Similarity, threshold: Double = 0.5): Iterable[ComputationalResult] = {
     val runner = Calculate.create
 
-    val data = scala.collection.mutable.Set[ComputationalResult]()
+    val data = mutable.Set[ComputationalResult]()
 
     runner.calculate(spectrum, this, threshold, similarity, new ResultHandler {
       override def handleResult(result: ComputationalResult): Unit = data += result

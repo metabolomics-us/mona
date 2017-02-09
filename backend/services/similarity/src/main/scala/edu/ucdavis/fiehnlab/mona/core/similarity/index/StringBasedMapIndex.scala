@@ -27,7 +27,7 @@ abstract class StringBasedMapIndex(binningMethod: BinningMethod, cache: Spectrum
     * Defines the collection to use for the backing
     */
   def createBacking(): java.util.Map[String, java.util.Set[SimpleSpectrum]] =
-    new java.util.concurrent.ConcurrentHashMap[String, java.util.Set[SimpleSpectrum]]()
+    new java.util.concurrent.ConcurrentHashMap[String, util.Set[SimpleSpectrum]]()
 
   /**
     * Defined the backing for the internal association with keys

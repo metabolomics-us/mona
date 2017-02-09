@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
   */
 class HistogramIndex(binningMethod: BinningMethod, cache: SpectrumCache, val histogram: Histogram) extends StringBasedMapIndex(binningMethod, cache) {
 
-  def this() = this(new NoBinningMethod, SpectrumCache.create(),Histogram.create())
+  def this() = this(new NoBinningMethod, SpectrumCache.create(), Histogram.create())
 
   /**
     * Builds the internal key to utilize
