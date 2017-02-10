@@ -38,7 +38,7 @@ class RestLoginService(val remoteServer: String, val remotePort: Int, val protoc
     header.set("Authorization", s"Bearer $token")
     header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON))
 
-    val url = s"$protocol://$remoteServer}:$remotePort}/rest/auth/info"
+    val url = s"$protocol://$remoteServer:$remotePort/rest/auth/info"
     logger.info(s"invoking url: $url")
 
     restOperations.exchange(url,HttpMethod.POST, new HttpEntity[LoginResponse](LoginResponse(token), header), classOf[LoginInfo]).getBody
