@@ -109,9 +109,7 @@ class MetaDataStatisticsService {
     val query: Query = new Query()
     query.fields().exclude("values")
 
-    mongoOperations.find(query, classOf[MetaDataStatisticsSummary], "STATISTICS_METADATA")
-      .asScala
-      .toArray
+    mongoOperations.find(query, classOf[MetaDataStatisticsSummary], "STATISTICS_METADATA").asScala.toArray
   }
 
   /**
