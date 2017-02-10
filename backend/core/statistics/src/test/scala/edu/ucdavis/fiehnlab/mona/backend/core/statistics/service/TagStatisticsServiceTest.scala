@@ -35,23 +35,21 @@ class TagStatisticsServiceTest extends WordSpec with LazyLogging{
   val tagStatisticsService: TagStatisticsService = null
 
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "Tag Statistics Service" should {
 
-    "load data" in {
+    "load data monaRecords.json" in {
+      val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+
       spectrumMongoRepository.deleteAll()
       exampleRecords.foreach(spectrumMongoRepository.save(_))
       assert(spectrumMongoRepository.count() == 58)
     }
 
-    "perform tag aggregation" in {
+    "perform tag aggregation on old MoNA records" in {
       val result: Array[TagStatistics] = tagStatisticsService.tagAggregation().sortBy(_.text)
       assert(result.length == 3)
-
-      result.foreach(println)
 
       assert(result.map(_.text) sameElements Array("LCMS", "massbank", "noisy spectra"))
       assert(result.map(_.count) sameElements Array(58, 58, 3))
@@ -62,6 +60,23 @@ class TagStatisticsServiceTest extends WordSpec with LazyLogging{
       tagStatisticsRepository.deleteAll()
       tagStatisticsService.updateTagStatistics()
       assert(tagStatisticsRepository.count() == 3)
+    }
+
+    "load data curatedRecords.json" in {
+      val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
+
+      spectrumMongoRepository.deleteAll()
+      exampleRecords.foreach(spectrumMongoRepository.save(_))
+      assert(spectrumMongoRepository.count() == 50)
+    }
+
+    "perform tag aggregation on curated records" in {
+      val result: Array[TagStatistics] = tagStatisticsService.tagAggregation().sortBy(_.text)
+      assert(result.length == 2)
+
+      assert(result.map(_.text) sameElements Array("LC-MS", "massbank"))
+      assert(result.map(_.count) sameElements Array(50, 50))
+      assert(result.map(_.ruleBased) sameElements Array(true, false))
     }
   }
 }
