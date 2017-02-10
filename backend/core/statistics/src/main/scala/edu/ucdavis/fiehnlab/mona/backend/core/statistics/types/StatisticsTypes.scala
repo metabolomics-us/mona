@@ -14,8 +14,14 @@ import scala.annotation.meta.field
 case class MetaDataStatistics(
                                @(Id@field)
                                name: String,
+                               count: Int,
                                values: Array[MetaDataValueCount]
                              )
+
+case class MetaDataStatisticsSummary(
+                                    name: String,
+                                    count: Int
+                                    )
 
 case class MetaDataValueCount(
                         value: String,
