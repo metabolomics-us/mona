@@ -209,14 +209,6 @@
 
                 s.spectrum = spectra.spectrum;
 
-                // TODO fix server side generation of ids
-                s.id = (function () {
-                    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-                    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
-                            return (Math.random() * 16 | 0).toString(16);
-                        }).toLowerCase();
-                })();
-
                 if (angular.isDefined(spectra.tags)) {
                     spectra.tags.forEach(function(tag) {
                         s.tags.push(tag);
