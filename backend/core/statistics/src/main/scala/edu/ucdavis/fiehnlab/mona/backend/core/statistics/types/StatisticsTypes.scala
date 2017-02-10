@@ -19,8 +19,9 @@ case class MetaDataStatistics(
                              )
 
 case class MetaDataStatisticsSummary(
-                                    name: String,
-                                    count: Int
+                                      @(Id@field)
+                                      name: String,
+                                      count: Int
                                     )
 
 case class MetaDataValueCount(
