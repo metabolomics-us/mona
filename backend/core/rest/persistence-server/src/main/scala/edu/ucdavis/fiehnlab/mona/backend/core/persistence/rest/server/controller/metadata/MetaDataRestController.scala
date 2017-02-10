@@ -8,11 +8,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.{MetaDataStatisticsService, StatisticsService}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.MetaDataStatistics
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.data.mongodb.core.aggregation.Aggregation._
-import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestParam, _}
 
@@ -39,11 +37,16 @@ class MetaDataRestController {
     */
   @RequestMapping(path = Array("/names"), method = Array(RequestMethod.GET))
   @Async
-  def listMetaDataName(@RequestParam(value = "search", required = false) partialMetaDataName: String): Future[Array[String]] = {
+  def listMetaDataName(@RequestParam(value = "search", required = false) partialMetaDataName: String): Future[Array[MetaDataStatisticsSummary]] = {
     if (partialMetaDataName == null || partialMetaDataName.isEmpty) {
-      new AsyncResult[Array[String]](metaDataStatisticsService.getMetaDataNames)
+      new AsyncResult[Array[MetaDataStatisticsSummary]](metaDataStatisticsService.getMetaDataNames)
     } else {
-      new AsyncResult[Array[String]](metaDataStatisticsService.getMetaDataNames.filter(_.toLowerCase.contains(partialMetaDataName.toLowerCase)))
+
+      metaDataStatisticsService
+        .getMetaDataNames.foreach(println)
+      new AsyncResult[Array[MetaDataStatisticsSummary]](
+        metaDataStatisticsService
+          .getMetaDataNames.filter(_.name.toLowerCase.contains(partialMetaDataName.toLowerCase)))
     }
   }
 

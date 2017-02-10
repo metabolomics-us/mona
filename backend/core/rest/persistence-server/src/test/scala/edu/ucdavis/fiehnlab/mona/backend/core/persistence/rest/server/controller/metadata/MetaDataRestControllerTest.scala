@@ -14,7 +14,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, 
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.MetaDataStatistics
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary}
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
@@ -62,12 +62,12 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
       }
 
       "we should be able to query all meta data names from the service" in {
-        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[MetaDataStatisticsSummary]])
         assert(result.length == 44)
       }
 
       "we should be able to search for metadata names" in {
-        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names?search=inst").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[String]])
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/names?search=inst").then().log().all(true).statusCode(200).extract().body().as(classOf[Array[MetaDataStatisticsSummary]])
         assert(result.length == 2)
       }
 
