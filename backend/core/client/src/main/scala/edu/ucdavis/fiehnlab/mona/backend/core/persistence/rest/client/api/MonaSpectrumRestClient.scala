@@ -14,14 +14,18 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
   /**
     * returns a list of all available metadata names
     */
-  def listMetaDataNames: Array[String] =
-    restOperations.getForObject(s"$monaRestServer/$metaDataPath/names", classOf[Array[String]])
+  def listMetaDataNames: Array[String] = {
+    restOperations.getForObject(s"$monaRestServer/$metaDataPath/names", classOf[Array[MetaDataName]]).map(_.name)
+  }
 
   /**
     * gets all available metadata values for the given name
     *
     * @param name
     */
-  def listMetaDataValues(name: String): Array[Any] =
+  def listMetaDataValues(name: String): Array[Any] = {
     restOperations.getForObject(s"$monaRestServer/$metaDataPath/values?name=$name", classOf[Array[Any]])
+  }
 }
+
+case class MetaDataName(name: String, count: Int)
