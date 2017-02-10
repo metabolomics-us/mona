@@ -36,10 +36,6 @@ class TagStatisticsService {
     val aggregationQuery = newAggregation(
       classOf[Spectrum],
       unwind("$tags"),
-//      project(bind("text", "tags.text")),
-//      group("text").count().as("total"),
-//      project("total").and("count").previousOperation(),
-//      sort(Sort.Direction.DESC, "total")
       project().and("tags.text").as("text").and("tags.ruleBased").as("ruleBased"),
       group("text", "ruleBased").count().as("count"),
       project("count").and("_id.text").as("_id").and("_id.ruleBased").as("ruleBased"),

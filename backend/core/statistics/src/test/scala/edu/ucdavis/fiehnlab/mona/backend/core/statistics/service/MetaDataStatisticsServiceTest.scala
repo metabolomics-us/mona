@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConf
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataValueCount}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary, MetaDataValueCount}
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -49,13 +49,15 @@ class MetaDataStatisticsServiceTest extends WordSpec {
     }
 
     "perform metadata name aggregation" in {
-      val result: Array[String] = metaDataStatisticsService.metaDataNameAggregation()
+      val result: Array[MetaDataStatisticsSummary] = metaDataStatisticsService.metaDataNameAggregation()
       assert(result.length == 44)
+      assert(result.forall(_.count > 0))
     }
 
     "perform metadata aggregation for ms level" in {
       val result: MetaDataStatistics = metaDataStatisticsService.metaDataAggregation("ms level")
 
+      assert(result.count == 58)
       assert(result.values.length == 1)
       assert(result.values sameElements Array(MetaDataValueCount("MS2", 58)))
     }
@@ -63,6 +65,7 @@ class MetaDataStatisticsServiceTest extends WordSpec {
     "perform metadata aggregation for ion mode" in {
       val result: MetaDataStatistics = metaDataStatisticsService.metaDataAggregation("ion mode")
 
+      assert(result.count == 58)
       assert(result.values.length == 2)
       assert(result.values sameElements Array(MetaDataValueCount("positive", 33), MetaDataValueCount("negative", 25)))
     }
@@ -77,13 +80,15 @@ class MetaDataStatisticsServiceTest extends WordSpec {
       }
 
       "get metadata names from repository" in {
-        val result = metaDataStatisticsService.getMetaDataNames
+        val result: Array[MetaDataStatisticsSummary] = metaDataStatisticsService.getMetaDataNames
         assert(result.length == 44)
+        assert(result.forall(_.count > 0))
       }
 
       "get metadata aggregation for ms level from repository" in {
         val result = metaDataStatisticsService.getMetaDataStatistics("ms level")
 
+        assert(result.count == 58)
         assert(result.values.length == 1)
         assert(result.values sameElements Array(MetaDataValueCount("MS2", 58)))
       }
