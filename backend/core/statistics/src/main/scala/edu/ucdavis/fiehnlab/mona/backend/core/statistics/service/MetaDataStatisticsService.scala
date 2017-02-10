@@ -56,7 +56,7 @@ class MetaDataStatisticsService {
     * @param metaDataName name to query
     * @return
     */
-  def metaDataAggregation(metaDataName: String, sliceCount: Int = 100): MetaDataStatistics = {
+  def metaDataAggregation(metaDataName: String, sliceCount: Int = 1000): MetaDataStatistics = {
 
     val aggregationQuery = newAggregation(
       classOf[Spectrum],
@@ -125,7 +125,7 @@ class MetaDataStatisticsService {
     * Update the data in the metadata statistics repository
     * @return
     */
-  def updateMetaDataStatistics(sliceCount: Int = 100): Unit = {
+  def updateMetaDataStatistics(sliceCount: Int = 1000): Unit = {
 
     val aggregationQuery = newAggregation(
       classOf[Spectrum],
