@@ -26,6 +26,7 @@ case class MetaDataValueCount(
 case class TagStatistics(
                            @(Id@field)
                            text: String,
+                           ruleBased: Boolean,
                            count: Int
                          )
 
