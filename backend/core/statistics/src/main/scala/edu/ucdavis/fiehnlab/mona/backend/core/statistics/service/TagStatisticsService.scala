@@ -36,17 +36,21 @@ class TagStatisticsService {
     val aggregationQuery = newAggregation(
       classOf[Spectrum],
       unwind("$tags"),
-      project(bind("text", "tags.text")),
-      group("text").count().as("total"),
-      project("total").and("value").previousOperation(),
-      sort(Sort.Direction.DESC, "total")
+//      project(bind("text", "tags.text")),
+//      group("text").count().as("total"),
+//      project("total").and("count").previousOperation(),
+//      sort(Sort.Direction.DESC, "total")
+      project().and("tags.text").as("text").and("tags.ruleBased").as("ruleBased"),
+      group("text", "ruleBased").count().as("count"),
+      project("count").and("_id.text").as("_id").and("_id.ruleBased").as("ruleBased"),
+      sort(Sort.Direction.DESC, "count")
     ).withOptions(newAggregationOptions().allowDiskUse(true).build())
 
     mongoOperations
-      .aggregate(aggregationQuery, "SPECTRUM", classOf[DBObject])
-      .asScala
-      .map(x => TagStatistics(x.get("value").toString, x.get("total").asInstanceOf[Int]))
-      .toArray
+      .aggregate(aggregationQuery, "SPECTRUM", classOf[TagStatistics])
+      .asScala.toArray
+//      .map(x => TagStatistics(x.get("value").toString, x.get("total").asInstanceOf[Int]))
+//      .toArray
   }
 
   /**

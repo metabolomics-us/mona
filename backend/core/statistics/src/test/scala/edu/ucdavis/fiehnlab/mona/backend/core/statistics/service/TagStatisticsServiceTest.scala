@@ -21,7 +21,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
+@TestPropertySource(locations = Array("classpath:application.properties"))
 class TagStatisticsServiceTest extends WordSpec with LazyLogging{
 
   @Autowired
@@ -48,12 +48,14 @@ class TagStatisticsServiceTest extends WordSpec with LazyLogging{
     }
 
     "perform tag aggregation" in {
-      val result: Array[TagStatistics] = tagStatisticsService.tagAggregation()
+      val result: Array[TagStatistics] = tagStatisticsService.tagAggregation().sortBy(_.text)
       assert(result.length == 3)
 
-      println(s"content: ${result.sortBy(_.text).map(_.text).mkString(" ")}")
-      assert(result.sortBy(_.text).map(_.text) sameElements Array("LCMS", "massbank", "noisy spectra"))
+      result.foreach(println)
+
+      assert(result.map(_.text) sameElements Array("LCMS", "massbank", "noisy spectra"))
       assert(result.map(_.count) sameElements Array(58, 58, 3))
+      assert(result.map(_.ruleBased) sameElements Array(false, false, false))
     }
 
     "persist tag statistics" in {
