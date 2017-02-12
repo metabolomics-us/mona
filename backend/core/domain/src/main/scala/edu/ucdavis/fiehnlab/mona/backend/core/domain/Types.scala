@@ -366,6 +366,7 @@ case class LegacySpectrum(
   */
 case class Library(
                     id: String,
+                    library: String,
                     description: String,
                     link: String,
                     tag: Tags
