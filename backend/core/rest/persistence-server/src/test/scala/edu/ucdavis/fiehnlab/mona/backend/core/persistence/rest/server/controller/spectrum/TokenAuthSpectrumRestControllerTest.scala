@@ -221,7 +221,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           var last: Spectrum = null
           var fetchedLast = false
 
-          for (i <- 1 to 250) {
+          for (i <- 1 to 25) {
 
             val result: Array[Spectrum] = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?size=1&page=2&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
