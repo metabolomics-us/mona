@@ -1,13 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import java.{lang, util}
-
 import com.mongodb.{BasicDBObject, DBObject}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary, MetaDataValueCount}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
@@ -93,7 +90,7 @@ class MetaDataStatisticsService {
     * Get all data in the metadata statistics repository
     * @return
     */
-  def getMetaDataStatistics: lang.Iterable[MetaDataStatistics] = metaDataStatisticsRepository.findAll
+  def getMetaDataStatistics: Iterable[MetaDataStatistics] = metaDataStatisticsRepository.findAll().asScala
 
   /**
     * Get data for the given metadata name from the metadata statistics repository

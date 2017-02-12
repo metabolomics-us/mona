@@ -81,6 +81,11 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
         assert(result.length == 2)
       }
 
+      "get library tag statistics" in {
+        val result: Array[TagStatistics] = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/tags/library").then().log().all(true).statusCode(200).extract().as(classOf[Array[TagStatistics]])
+        assert(result.length == 1)
+      }
+
       "get global statistics" in {
         val result: GlobalStatistics = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/statistics/global").then().log().all(true).statusCode(200).extract().as(classOf[GlobalStatistics])
 
