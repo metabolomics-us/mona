@@ -111,7 +111,7 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
           s"support pageable sizes of $x" in {
             var last: Iterable[Spectrum] = null
 
-            for (_ <- 1 to 10) {
+            for (_ <- 1 to 25) {
               val current: Iterable[Spectrum] = spectrumRestClient.list(query = Option("tags=q='text=match=\"[(LCMS)(lcms)]+\"'"), pageSize = Option(x), page = Option(0))
 
               if (last == null) {
