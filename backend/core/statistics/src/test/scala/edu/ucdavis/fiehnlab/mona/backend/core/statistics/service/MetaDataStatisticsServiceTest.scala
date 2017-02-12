@@ -111,13 +111,13 @@ class MetaDataStatisticsServiceTest extends WordSpec {
       }
 
       "ensure that each metadata group has at most 5 values" in {
-        metaDataStatisticsService.getMetaDataStatistics.asScala.foreach { x =>
+        metaDataStatisticsService.getMetaDataStatistics.foreach { x =>
           assert(x.values.head.count == x.values.map(_.count).max)
         }
       }
 
       "ensure that the maximum count of each metadata group is the first value" in {
-        metaDataStatisticsService.getMetaDataStatistics.asScala.foreach { x =>
+        metaDataStatisticsService.getMetaDataStatistics.foreach { x =>
           assert(x.values.length <= 5)
         }
       }

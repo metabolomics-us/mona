@@ -34,7 +34,8 @@ case class TagStatistics(
                            @(Id@field)
                            text: String,
                            ruleBased: Boolean,
-                           count: Int
+                           count: Int,
+                           category: String
                          )
 
 @Document(collection = "STATISTICS")

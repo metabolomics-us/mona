@@ -8,8 +8,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataValueCount, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.TagStatistics
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -77,6 +77,13 @@ class TagStatisticsServiceTest extends WordSpec with LazyLogging{
       assert(result.map(_.text) sameElements Array("LC-MS", "massbank"))
       assert(result.map(_.count) sameElements Array(50, 50))
       assert(result.map(_.ruleBased) sameElements Array(true, false))
+    }
+
+    "perform library tag aggregation on curated records" in {
+      val result: Array[TagStatistics] = tagStatisticsService.libraryTagsAggregation()
+
+      assert(result.length == 1)
+      assert(result.head == TagStatistics("massbank", ruleBased = false, 58, "library"))
     }
   }
 }
