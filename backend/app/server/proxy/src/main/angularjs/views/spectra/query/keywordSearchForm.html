@@ -122,7 +122,7 @@
             </div>
 
             <!-- Library tags -->
-            <div class="form-group row">
+            <div class="form-group row" ng-if="libraryTags && libraryTags.length > 0">
                 <div class="col-sm-12">
                     <div class="table-responsive">
                         <table class="table table-condensed">
@@ -135,7 +135,7 @@
                             <tr>
                                 <td>
                                     <span ng-repeat="x in libraryTags">
-                                        <label><input type="checkbox" ng-model="x.selected" label> {{x.text}}</label>
+                                        <input type="checkbox" ng-model="x.selected" label> {{x.text}}
                                         <br />
                                     </span>
                                 </td>

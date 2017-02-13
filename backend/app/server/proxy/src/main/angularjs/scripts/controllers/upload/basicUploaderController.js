@@ -12,7 +12,7 @@
     function BasicUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, gwChemifyService,
                                         TaggingService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
 
-        $scope.currentSpectrum = null;;
+        $scope.currentSpectrum = null;
         $scope.metadata = {};
         $scope.page = 0;
         $scope.fileHasMultipleSpectra = false;
@@ -68,7 +68,6 @@
         };
 
 
-
         $scope.parsePastedSpectrum = function(pastedSpectrum) {
             $log.info("Parsing "+ pastedSpectrum);
 
@@ -91,7 +90,6 @@
                     selected: true
                 }
             });
-            console.log(ions)
 
             $scope.showIonTable = (ions.length < 500);
             $scope.queryState = 2;
@@ -121,7 +119,6 @@
                 return null;
             } else {
                 gwChemifyService.nameToInChIKey(names[0], function(molecule) {
-                    console.log(molecule)
                     if (molecule !== null) {
                         callback(molecule);
                     } else {
@@ -164,7 +161,7 @@
             else {
                 namesToInChIKey($scope.currentSpectrum.names, function(inchiKey) {
                     if (inchiKey !== null) {
-                        console.log('Found InChIKey: '+ inchiKey)
+                        console.log('Found InChIKey: '+ inchiKey);
                         $scope.currentSpectrum.inchiKey = inchiKey;
 
                         gwCtsService.convertInchiKeyToMol(inchiKey, function (molecule) {
