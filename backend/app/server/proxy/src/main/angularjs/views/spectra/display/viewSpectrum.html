@@ -170,11 +170,13 @@
                                         <h4>No spectra found with similarity > 500.</h4>
                                     </div>
 
-                                    <div class="text-center" ng-show="!loadingSimilarSpectra && similarSpectra.length">
+                                    <div class="text-center" ng-show="!loadingSimilarSpectra && similarSpectra.length"
+                                         style="height: 400px; overflow: auto; margin-top: 10px;">
+
                                         <table class="table table-hover table-striped" style="table-layout: fixed;">
                                             <thead>
                                             <tr>
-                                                <th></th>
+                                                <th>ID</th>
                                                 <th class="text-center">Name</th>
                                                 <th class="text-right" style="width: 110px">Structure</th>
                                                 <th class="text-right" style="width: 110px">Spectrum</th>
@@ -183,12 +185,12 @@
                                             </thead>
                                             <tbody>
                                             <tr ng-repeat="s in similarSpectra | filter"
-                                                ng-if="s.hit.id != spectrum.id"
-                                                ng-click="viewSpectrum(s.hit.id)">
-                                                <td>{{s.hit.id}}</td>
+                                                ng-if="s.id != spectrum.id"
+                                                ng-click="viewSpectrum(s.id)">
+                                                <td>{{s.id}}</td>
                                                 <td>
                                                     <ul class="list-unstyled">
-                                                        <li ng-repeat="name in s.hit.compound[0].names | limitTo:3">
+                                                        <li ng-repeat="name in s.compound[0].names | limitTo:3">
                                                             {{name.name}}
                                                         </li>
                                                     </ul>
@@ -197,8 +199,8 @@
                                                     <div class="center-block" chemical-sketcher readonly="true"
                                                          width="100"
                                                          height="100"
-                                                         id="bioSketch_{{s.hit.id}}"
-                                                         ng-model="s.hit.compound[0]"></div>
+                                                         id="bioSketch_{{s.id}}"
+                                                         ng-model="s.compound[0]"></div>
                                                 </td>
                                                 <td>
                                                     <div class="masspec-mini">
@@ -207,7 +209,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <p class="text-center">{{s.score * 1000 | number:0}} / 1000</p>
+                                                    <p class="text-center">{{s.similarity * 1000 | number:0}} / 1000</p>
                                                 </td>
                                             </tr>
                                             </tbody>
