@@ -7,28 +7,22 @@
     </div>
 
     <div class="panel-body">
-        <div class="row" ng-if="spectrum.queryOptions !== undefined">
-            <div class="col-md-12">
-                <ul class="list-inline">
-                    <li class="pull-left" ng-if="spectrum.queryOptions.spectralSimilarity !== undefined">
-                        <h4>
-                            <span class="label label-primary" >
-                                Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
-                            </span>
-                        </h4>
-                    </li>
-                    <li class="pull-left" ng-if="spectrum.queryOptions.histogramSimilarity !== undefined">
-                        <h4>
-                            <span class="label label-info">
-                                Histogram Similarity: {{1000 * spectrum.queryOptions.histogramSimilarity | number:0}}
-                            </span>
-                        </h4>
-                    </li>
-                </ul>
-            </div>
-        </div>
         <div class="row">
             <div class="col-lg-6 col-md-5 col-sm-5">
+                <div class="row" ng-if="spectrum.similarity !== undefined">
+                    <div class="col-md-12">
+                        <ul class="list-inline">
+                            <li class="pull-left">
+                                <h4>
+                            <span class="label label-primary" >
+                                Similarity: {{1000 * spectrum.similarity | number:0}}
+                            </span>
+                                </h4>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-lg-6 col-md-12 col-sm-12">
                         <div class="masspec-medium">
@@ -45,7 +39,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row top17" ng-if="spectrum.library">
+                <div class="row" ng-if="spectrum.library">
                     <hr />
                     <div class="col-lg-12 col-md-12">
                         <ul class="list-unstyled">

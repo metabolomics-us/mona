@@ -48,6 +48,11 @@
                 controller: 'SpectraBrowserController'
             })
 
+            .when('/spectra/similaritySearch', {
+                templateUrl: 'views/spectra/browse/spectra.html',
+                controller: 'SpectraBrowserController'
+            })
+
             //view individual spectrum
             .when('/spectra/display/:id', {
                 templateUrl: 'views/spectra/display/viewSpectrum.html',
@@ -101,12 +106,6 @@
 
             .when('/spectra/search', {
                 templateUrl: 'views/spectra/query/search.html'
-            })
-
-            //query by similarity
-            .when('/spectra/similarity', {
-                templateUrl: 'views/spectra/query/similarityQuery.html',
-                controller: 'SpectraSimilarityQueryController'
             })
 
             //user profile page
