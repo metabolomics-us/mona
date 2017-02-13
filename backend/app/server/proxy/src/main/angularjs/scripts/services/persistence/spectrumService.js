@@ -41,7 +41,14 @@
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					isArray: true
+					isArray: true,
+					transformResponse: function (data) {
+					    data = angular.fromJson(data).map(function (spectrum) {
+                            spectrum.hit.similarity = spectrum.score;
+                            return spectrum.hit;
+                        });
+						return data;
+					}
 				},
 				'batchSave': function (token) {
 					return {
