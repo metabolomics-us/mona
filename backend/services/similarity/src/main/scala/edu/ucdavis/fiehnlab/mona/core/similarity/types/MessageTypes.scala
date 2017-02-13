@@ -9,4 +9,4 @@ case class IndexSummary(indexType: IndexType, indexName: String, indexSize: Int)
 
 case class IndexSummaryRequest()
 
-case class SimilaritySearchRequest(spectrum: String)
+case class SimilaritySearchRequest(spectrum: String, minSimilarity: Double)
