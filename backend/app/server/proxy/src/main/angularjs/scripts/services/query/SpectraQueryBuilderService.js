@@ -69,6 +69,24 @@
 
 
         /**
+         * Stored similarity query
+         */
+        this.similarityQuery = {spectrum: '58.943437:0.504423 102.934132:100.000000 130.914854:0.588876', minSimilarity: 500};
+
+        this.setSimilarityQuery = function(query) {
+            this.similarityQuery = query;
+        };
+
+        this.hasSimilarityQuery = function() {
+            return this.similarityQuery != null;
+        };
+
+        this.getSimilarityQuery = function() {
+            return this.similarityQuery;
+        };
+
+
+        /**
          * Build a metadata query, using a recursive approach if dealing with an array of values
          * @param name name of metadata field
          * @param value value(s) to query by

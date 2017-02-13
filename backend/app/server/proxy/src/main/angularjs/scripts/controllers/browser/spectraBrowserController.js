@@ -98,6 +98,23 @@
         };
 
         /**
+         * Submits similarity query to the server
+         */
+        $scope.submitSimilarityQuery = function() {
+            $scope.startTime = Date.now();
+
+            Spectrum.searchSimilarSpectra(
+                SpectraQueryBuilderService.getSimilarityQuery(),
+                function(data) {
+                    searchSuccess(data);
+                    $scope.queryResultCount = data.length;
+                    $scope.dataAvailable = false;
+                },
+                searchError
+            );
+        };
+
+        /**
          * Calculates the number of results for the given query
          */
         $scope.calculateResultCount = function() {
@@ -232,34 +249,51 @@
             // Display splash overlay
             $scope.searchSplash = true;
 
-            // Handle InChIKey queries
-            if($location.search().hasOwnProperty('inchikey')) {
-                $log.debug('Accepting InChIKey query from URL: '+ $location.search().inchikey);
+            // Handle similarity search
+            if ($location.path() === '/spectra/similaritySearch') {
+                $log.debug('Executing similarity search...');
+                $scope.loadingMore = true;
 
-                if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($location.search().inchikey)) {
-                    SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey);
+                if (SpectraQueryBuilderService.hasSimilarityQuery()) {
+                    $scope.submitSimilarityQuery();
                 } else {
-                    SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey, true);
+                    $location.path('/spectra/search?type=similarity')
+                }
+            }
+
+            // Handle all other queries
+            else {
+                $log.debug('Executing spectrum query...');
+
+                // Handle InChIKey queries
+                if ($location.search().hasOwnProperty('inchikey')) {
+                    $log.debug('Accepting InChIKey query from URL: ' + $location.search().inchikey);
+
+                    if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($location.search().inchikey)) {
+                        SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey);
+                    } else {
+                        SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey, true);
+                    }
+
+                    SpectraQueryBuilderService.executeQuery();
                 }
 
-                SpectraQueryBuilderService.executeQuery();
+                // Handle SPLASH queries
+                if ($location.search().hasOwnProperty('splash')) {
+                    $log.debug('Accepting SPLASH query from URL: ' + $location.search().splash);
+
+                    SpectraQueryBuilderService.addSplashToQuery($location.search().splash);
+                    SpectraQueryBuilderService.executeQuery();
+                }
+
+                // Handle general queries
+                if ($location.search().hasOwnProperty('query')) {
+                    $log.debug('Accepting query from URL: ' + $location.search().query);
+                    $scope.query = $location.search().query;
+                }
+
+                $scope.submitQuery();
             }
-
-            // Handle SPLASH queries
-            if($location.search().hasOwnProperty('splash')) {
-                $log.debug('Accepting SPLASH query from URL: '+ $location.search().splash);
-
-                SpectraQueryBuilderService.addSplashToQuery($location.search().splash);
-                SpectraQueryBuilderService.executeQuery();
-            }
-
-            // Handle general queries
-            if($location.search().hasOwnProperty('query')) {
-                $log.debug('Accepting query from URL: '+ $location.search().query);
-                $scope.query = $location.search().query;
-            }
-
-            $scope.submitQuery();
         })();
     }
 })();
