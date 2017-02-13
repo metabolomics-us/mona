@@ -7,7 +7,7 @@
     'use strict';
     taggingService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
     angular.module('moaClientApp')
-      .factory('TaggingService', taggingService);
+        .factory('TaggingService', taggingService);
 
     /* @ngInject */
     function taggingService($resource, REST_BACKEND_SERVER, $http) {
@@ -15,13 +15,10 @@
         $http.defaults.useXDomain = true;
 
         return $resource(
-            REST_BACKEND_SERVER + '/rest/tags',
+            REST_BACKEND_SERVER +'/rest/tags', {},
             {
-                'update': {
-                    method: 'PUT'
-                },
-                'statistics': {
-                    url: REST_BACKEND_SERVER + '/rest/statistics/tags/spectra/countAll?max=' + 100,
+                'library': {
+                    url: REST_BACKEND_SERVER + '/rest/tags/library',
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

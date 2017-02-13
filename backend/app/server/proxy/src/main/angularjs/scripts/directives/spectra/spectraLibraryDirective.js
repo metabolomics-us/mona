@@ -45,7 +45,7 @@
         var library = $scope.spectrum.library;
 
         // Handle a provided library link
-        if (angular.isDefined(library.link)) {
+        if (angular.isDefined(library.link) && library.link != "") {
             // Link to library but no identifier
             if (!angular.isDefined(library.id)) {
                 $scope.libraryString += '<a href="'+ library.link +'" target="_blank">'+
