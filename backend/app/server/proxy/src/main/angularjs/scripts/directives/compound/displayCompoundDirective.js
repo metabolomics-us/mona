@@ -7,10 +7,10 @@
 
     displayCompoundInfoController.$inject = ['$scope', '$log', 'dialogs', '$filter'];
     angular.module('moaClientApp')
-      .directive('displayCompoundInfo', displayCompoundInfo);
+        .directive('displayCompoundInfo', displayCompoundInfo);
 
     function displayCompoundInfo() {
-        var directive = {
+        return {
             require: "ngModel",
             restrict: "A",
             replace: true,
@@ -20,15 +20,13 @@
             templateUrl: '/views/compounds/display/template/displayCompound.html',
             controller: displayCompoundInfoController
         };
-
-        return directive;
     }
 
     /* @ngInject */
     function displayCompoundInfoController($scope, $log, dialogs, $filter) {
         //calculate some unique id for the compound picture
-        $scope.pictureId = Math.floor(Math.random() * 1000);
-        $scope.chemId = Math.floor(Math.random() * 1000);
+        $scope.pictureId = Math.floor(Math.random() * 100000);
+        $scope.chemId = Math.floor(Math.random() * 100000);
 
 
         /**
