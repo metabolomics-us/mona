@@ -165,7 +165,7 @@ class WebHookService extends LazyLogging {
     * pulls a copy from the remote mona service. Optionally allows you to specify a query
     */
   @Async
-  def pull(query: Option[String] = None) = {
+  def pull(query: Option[String] = None): Unit = {
     val count = monaSpectrumRestClient.count(query)
     logger.info(s"expected spectra to pull: $count")
     var counter = 0
@@ -176,7 +176,7 @@ class WebHookService extends LazyLogging {
       spectrumPersistenceService.save(spectrum)
     }
 
-    logger.info(s"retrieved ${counter} spectra from master")
+    logger.info(s"retrieved $counter spectra from master")
   }
 
   /**
@@ -185,12 +185,10 @@ class WebHookService extends LazyLogging {
     * @param query
     */
   @Async
-  def push(query: Option[String] = None) = {
-
+  def push(query: Option[String] = None): Unit = {
     //should send it as job to the backend
     spectrumPersistenceService.findAll().asScala.foreach { spectrum =>
       trigger(spectrum.id, Event.UPDATE)
     }
   }
-
 }
