@@ -73,7 +73,12 @@ class BootstrapDownloaderService extends LazyLogging {
 //    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text=='in-silico'")
 //    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", "")
 
-    saveQuery("GC/MS", "GC/MS spectra", "tags.text==\"GC-MS\"")
-    saveQuery("LC/MS", "LC/MS spectra", "tags.text==\"LC-MS\"")
+    saveQuery("GC/MS", "GC/MS spectra", """tags.text=="GC-MS"""")
+    saveQuery("LC/MS", "LC/MS spectra", """tags.text=="LC-MS"""")
+    saveQuery("LC/MS - MS/MS", "LC/MS spectra", """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"'""")
+    saveQuery("LC/MS - MS/MS - Positive Mode", "LC/MS spectra",
+      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"' and metaData=q='name=="ionization mode" and value=="positive"'""")
+    saveQuery("LC/MS - MS/MS - Negative Mode", "LC/MS spectra",
+      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"' and metaData=q='name=="ionization mode" and value=="negative"'""")
   }
 }
