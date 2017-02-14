@@ -11,7 +11,9 @@
                     <span class="caret left30"></span>
                 </button>
                 <ul class="uib-dropdown-menu">
-                    <li ng-repeat="opt in options"><a ng-click="opt.action(tag, status)">{{opt.name}}</a></li>
+                    <li><a ng-click="tag.selected = '+'">+ Has Tag</a></li>
+                    <li><a ng-click="tag.selected ='-'">- Does Not Have Tag</a></li>
+                    <li ng-if="tag.selected"><a ng-click="tag.selected = false">Remove from Query</a></li>
                 </ul>
             </div>
         </li>

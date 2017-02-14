@@ -148,11 +148,11 @@
             this.query.push('compound.names=q=\'name=match=".*'+ name +'.*"\'');
         };
 
-        var buildTagQuery = function(value, collection, partialQuery) {
+        var buildTagQuery = function(value, collection, queryType) {
             // Handle array of values
             if (Array.isArray(value)) {
                 var subqueries = value.map(function(x) {
-                    return buildTagQuery(x, collection, partialQuery);
+                    return buildTagQuery(x, collection, queryType);
                 });
 
                 return '('+ subqueries.join(' or ') + ')';
@@ -160,20 +160,22 @@
 
             // Handle individual values
             else {
-                if (typeof partialQuery !== 'undefined') {
+                if (typeof queryType !== 'undefined' && queryType == 'match') {
                     return collection + '.text=match=".*'+ value +'.*"';
+                } else if (typeof queryType !== 'undefined' && queryType == 'ne') {
+                    return collection +'.text!="'+ value +'"';
                 } else {
                     return collection +'.text=="'+ value +'"';
                 }
             }
         };
 
-        this.addTagToQuery = function(query, partialQuery) {
-            this.query.push(buildTagQuery(query, 'tags', partialQuery));
+        this.addTagToQuery = function(query, queryType) {
+            this.query.push(buildTagQuery(query, 'tags', queryType));
         };
 
-        this.addCompoundTagToQuery = function(query, partialQuery) {
-            this.query.push(buildTagQuery(query, 'compound.tags', partialQuery));
+        this.addCompoundTagToQuery = function(query, queryType) {
+            this.query.push(buildTagQuery(query, 'compound.tags', queryType));
         };
 
         this.addSplashToQuery = function(query) {
