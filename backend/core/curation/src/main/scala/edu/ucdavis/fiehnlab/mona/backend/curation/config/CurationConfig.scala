@@ -4,10 +4,10 @@ import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundExceptio
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{LegacySpectrum, Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{AnnotationWorkflow, Workflow, WorkflowBuilder}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.{CalculateCompoundProperties, CompoundConversion}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{Workflow, WorkflowBuilder}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.{FinalizeCuration, RemoveComputedData}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata.{NormalizeIonizationModeValue, NormalizeMSLevelValue, NormalizeMetaDataNames}
@@ -81,7 +81,7 @@ class CurationConfig extends LazyLogging {
     */
   @Bean
   def curationWorkflow(classifierProcessor: ClassyfireProcessor, calculateCompoundProperties: CalculateCompoundProperties): ItemProcessor[Spectrum, Spectrum] = {
-    val flow:Workflow[Spectrum] = WorkflowBuilder.
+    val flow: Workflow[Spectrum] = WorkflowBuilder.
       create[Spectrum].
       enableAnnotationLinking(false).
       forceLinear(true).
@@ -102,7 +102,10 @@ class CurationConfig extends LazyLogging {
 
           new IdentifyChromatography,
           new NormalizeIonizationModeValue,
-          new NormalizeMSLevelValue
+          new NormalizeMSLevelValue,
+
+          // Add validation metadata
+          new FinalizeCuration
         )
       ).build()
 
