@@ -116,6 +116,15 @@
                 SpectraQueryBuilderService.addTagToQuery(libraryTags);
             }
 
+            // Handle all other tags
+            $scope.queryTags.forEach(function(tag) {
+                console.log(tag)
+                if (tag.selected == '+') {
+                    SpectraQueryBuilderService.addTagToQuery(tag.text);
+                } else if (tag.selected == '-') {
+                    SpectraQueryBuilderService.addTagToQuery(tag.text, 'ne');
+                }
+            });
 
             // Redirect to the spectra browser
             SpectraQueryBuilderService.executeQuery();
@@ -124,8 +133,8 @@
         (function() {
             TaggingService.query(
                 function (tags) {
-                    $scope.tags = tags.filter(function(x) {
-                        return x.category != 'library';
+                    $scope.queryTags = tags.filter(function(x) {
+                        return x.category != 'library' && !x.ruleBased;
                     });
 
                     $scope.libraryTags = tags.filter(function(x) {
