@@ -365,3 +365,7 @@ input[readonly] {
 .table-borderless tbody>tr:nth-child(n+2)>td {
   border: none;
 }
+
+.tooltip-inner {
+  max-width: 300px;
+}
