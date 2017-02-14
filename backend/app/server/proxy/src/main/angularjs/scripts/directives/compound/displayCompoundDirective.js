@@ -17,7 +17,7 @@
             scope: {
                 compound: '=compound'
             },
-            templateUrl: '/views/compounds/display/template/displayCompound.html',
+            templateUrl: '/views/compounds/displayCompound.html',
             controller: displayCompoundInfoController
         };
     }
