@@ -5,7 +5,7 @@
 (function() {
     'use strict';
 
-    tagDisplayController.$inject = ['$scope', '$log', '$timeout', 'TaggingService'];
+    tagDisplayController.$inject = ['$scope', '$log', '$timeout', 'TagService'];
     angular.module('moaClientApp')
         .directive('tagDisplay', tagDisplay);
 
@@ -24,7 +24,7 @@
 
     // Controller to handle building of the queries
     /* @ngInject */
-    function tagDisplayController($scope, $log, $timeout, TaggingService) {
+    function tagDisplayController($scope, $log, $timeout, TagService) {
 
         $scope.tagClass = function(tag) {
             var tagClass = [];
@@ -58,7 +58,7 @@
             if (angular.isUndefined($scope.tags)) {
                 $scope.tags = [];
 
-                TaggingService.query(
+                TagService.query(
                     function(data) {
                         $scope.tags = data;
 

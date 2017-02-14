@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    KeywordSearchController.$inject = ['$scope', 'SpectraQueryBuilderService', 'TaggingService', '$log'];
+    KeywordSearchController.$inject = ['$scope', 'SpectraQueryBuilderService', 'TagService', '$log'];
     angular.module('moaClientApp')
         .directive('keywordSearchForm', keywordSearchForm);
 
@@ -14,7 +14,7 @@
     }
 
     /* @ngInject */
-    function KeywordSearchController($scope, SpectraQueryBuilderService, TaggingService, $log) {
+    function KeywordSearchController($scope, SpectraQueryBuilderService, TagService, $log) {
 
         $scope.query = {
             exactMassTolerance: 0.5
@@ -131,7 +131,7 @@
         };
 
         (function() {
-            TaggingService.query(
+            TagService.query(
                 function (tags) {
                     $scope.queryTags = tags.filter(function(x) {
                         return x.category != 'library' && !x.ruleBased;

@@ -4,13 +4,13 @@
 
 (function () {
     'use strict';
-    BasicUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'gwChemifyService', 'TaggingService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
+    BasicUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'gwChemifyService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
     angular.module('moaClientApp')
         .controller('BasicUploaderController', BasicUploaderController);
 
     /* @ngInject */
     function BasicUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, gwChemifyService,
-                                        TaggingService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
+                                        $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
 
         $scope.currentSpectrum = null;
         $scope.metadata = {};
