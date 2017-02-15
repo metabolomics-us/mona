@@ -25,13 +25,18 @@ class BootstrapPersistenceService extends LazyLogging {
 
     while(it.hasNext) {
       val spectrum: Spectrum = it.next()
-      spectrumPersistenceService.fireSyncEvent(spectrum)
       counter += 1
 
+      try {
+        spectrumPersistenceService.fireSyncEvent(spectrum)
+      } catch {
+        case e: Exception => logger.warn(s"Synchronization failed for ${spectrum.id}")
+      }
+
       if (counter % 10000 == 0) {
-        logger.info(s"\tSynchronized spectrum #$counter with id ${spectrum.id}")
+        logger.info(s"Synchronized spectrum #$counter with id ${spectrum.id}")
       } else {
-        logger.trace(s"\tSynchronized spectrum #$counter with id ${spectrum.id}")
+        logger.trace(s"Synchronized spectrum #$counter with id ${spectrum.id}")
       }
     }
 
