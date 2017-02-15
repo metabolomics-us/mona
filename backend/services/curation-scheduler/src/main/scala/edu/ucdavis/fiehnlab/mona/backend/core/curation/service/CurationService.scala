@@ -23,7 +23,6 @@ class CurationService {
   @Autowired
   val rabbitTemplate: RabbitTemplate = null
 
-
   @Autowired
   val notifications: EventBus[Notification] = null
 
@@ -33,7 +32,7 @@ class CurationService {
     *
     * @param spectrum
     */
-  def scheduleSpectra(spectrum:Spectrum) = {
+  def scheduleSpectrum(spectrum: Spectrum): Unit = {
     rabbitTemplate.convertAndSend(queueName, spectrum)
     notifications.sendEvent(Event(Notification(CurationScheduled(spectrum), getClass.getName)))
   }

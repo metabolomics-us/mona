@@ -51,7 +51,7 @@ class CurationController {
     if (spectrum == null) {
       throw new NoSuchRequestHandlingMethodException(request)
     } else {
-      curationService.scheduleSpectra(spectrum)
+      curationService.scheduleSpectrum(spectrum)
       new AsyncResult[CurationJobScheduled](CurationJobScheduled(1))
     }
   }
@@ -64,6 +64,7 @@ class CurationController {
   @RequestMapping(path = Array(""))
   @Async
   def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[CurationJobScheduled] = {
+
     val it = new DynamicIterable[Spectrum, String](query, 10) {
       /**
         * Loads more data from the server for the given query
@@ -81,7 +82,7 @@ class CurationController {
 
     while(it.hasNext) {
       val spectrum = it.next()
-      curationService.scheduleSpectra(spectrum)
+      curationService.scheduleSpectrum(spectrum)
       count += 1
     }
 

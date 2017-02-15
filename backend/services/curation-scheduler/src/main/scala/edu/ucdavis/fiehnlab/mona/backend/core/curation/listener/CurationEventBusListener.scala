@@ -26,7 +26,7 @@ class CurationEventBusListener @Autowired()(val bus:EventBus[Spectrum]) extends 
     event.eventType match {
         //we only care about ADDs at this point in time
       case Event.ADD =>
-        curationService.scheduleSpectra(event.content)
+        curationService.scheduleSpectrum(event.content)
 
       case _ => //ignore not of interest
     }
