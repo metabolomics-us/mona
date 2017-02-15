@@ -4,27 +4,36 @@ import java.io.{InputStreamReader, StringWriter}
 
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
+import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.TestCurationRunner
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
 import org.junit.runner.RunWith
+
+import scala.concurrent.duration._
+import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
+
 /**
   * Created by wohlg on 4/13/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[CurationScheduler]))
-class CurationControllerTest extends AbstractSpringControllerTest {
+class CurationControllerTest extends AbstractSpringControllerTest with Eventually {
+
+  @Autowired
+  val notificationCounter: ReceivedEventCounter[Notification] = null
 
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -57,7 +66,6 @@ class CurationControllerTest extends AbstractSpringControllerTest {
       "curateAll" in {
         given().contentType("application/json; charset=UTF-8").when().get("/curation").then().statusCode(401)
       }
-
     }
 
 
@@ -73,13 +81,18 @@ class CurationControllerTest extends AbstractSpringControllerTest {
       "curateAll" in {
         authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation").then().statusCode(403)
       }
-
     }
 
     "these must all pass, since we are logged in " must {
       "curateByQuery" in {
+        val count: Long = notificationCounter.getEventCount
         val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData=q='name==\"ion mode\" and value==negative'").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+
         assert(result.count == 25)
+
+        eventually(timeout(10 seconds)) {
+          assert(notificationCounter.getEventCount - count == result.count)
+        }
       }
 
       "curateByIdWithWrongIdShouldReturn404" in {
@@ -87,18 +100,27 @@ class CurationControllerTest extends AbstractSpringControllerTest {
       }
 
       "curateById" in {
+        val count: Long = notificationCounter.getEventCount
         val spec: Spectrum = mongoRepository.findAll().iterator().next()
-        val result:CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/curation/${spec.id}").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/curation/${spec.id}").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
         assert(result.count == 1)
-      }
 
+        eventually(timeout(10 seconds)) {
+          assert(notificationCounter.getEventCount - count == result.count)
+        }
+      }
 
       "curateAll" in {
+        val count: Long = notificationCounter.getEventCount
         val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
-        assert(result.count == exampleRecords.length)
-      }
 
+        assert(result.count == exampleRecords.length)
+
+        eventually(timeout(10 seconds)) {
+          assert(notificationCounter.getEventCount - count == result.count)
+        }
+      }
 
       "curateSpectrum" in {
         val mapper = MonaMapper.create
@@ -106,13 +128,10 @@ class CurationControllerTest extends AbstractSpringControllerTest {
         mapper.writeValue(writer, exampleRecords.head)
         val content = writer.toString
 
-        logger.info(s"content: $content")
-        logger.info(exampleRecords.head.toString)
-
-
         val result: Spectrum = given().contentType("application/json; charset=UTF-8").body(content).when().post("/curation").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
         assert(result.score == null)
+        assert(result.metaData.exists(_.name == "Last Auto-Curation"))
       }
     }
   }

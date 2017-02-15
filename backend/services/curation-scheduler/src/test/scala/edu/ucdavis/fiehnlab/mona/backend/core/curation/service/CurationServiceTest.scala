@@ -48,14 +48,14 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
       val count = notificationCounter.getEventCount
 
       testCurationRunner.messageReceived = false
-      curationService.scheduleSpectra(exampleSpectrum)
+      curationService.scheduleSpectrum(exampleSpectrum)
 
       eventually(timeout(10 seconds)) {
         assert(testCurationRunner.messageReceived)
       }
 
       eventually(timeout(10 seconds)) {
-        assert(notificationCounter.getEventCount > count)
+        assert(notificationCounter.getEventCount == count + 1)
       }
     }
   }
@@ -77,7 +77,7 @@ class TestCurationRunner extends MessageListener {
   val queue: Queue = null
 
   @PostConstruct
-  def init = {
+  def init(): Unit = {
     rabbitAdmin.declareQueue(queue)
 
     val container = new SimpleMessageListenerContainer()
