@@ -203,8 +203,8 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         val result: ResponseEntity[QueryScheduleResult] = restOperations.postForEntity(url, QueryScheduleRequest("", structure, "STRUCTURE"), classOf[QueryScheduleResult])
 
         if (result.getStatusCode == HttpStatus.OK) {
-          compound.copy(metaData = compound.metaData
-            :+ MetaData("none", computed = false, hidden = true, "ClassyFire Query ID", null, null, null, result.getBody.id))
+          logger.info(s"$id: Scheduled with query id ${result.getBody.id}")
+          compound.copy(classification = Array(MetaData("none", computed = false, hidden = true, "ClassyFire Query ID", null, null, null, result.getBody.id)))
         } else {
           logger.info(s"$id: Received status code ${result.getStatusCode} for $structure")
           compound
