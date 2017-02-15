@@ -52,6 +52,7 @@ class BootstrapDownloaderService extends LazyLogging {
     */
   def createLibraryQueries(): Unit = {
     saveQuery("Libraries - MassBank", "MassBank Spectral Database", "tags.text==MassBank")
+    saveQuery("Libraries - MassBank - CASMI 2016", "CASMI 2016", """tags.text=="CASMI 2016"""")
     saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", "tags.text==ReSpect")
     saveQuery("Libraries - HMDB", "Human Metabolome Database", "tags.text==HMDB")
     saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", "tags.text==GNPS")
@@ -70,7 +71,7 @@ class BootstrapDownloaderService extends LazyLogging {
   def createGeneralQueries(): Unit = {
     // Create export for all spectra
     saveQuery("All Spectra", "All Spectra", "")
-//    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text=='in-silico'")
+//    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text=='In-Silico'")
 //    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", "")
 
     saveQuery("GC/MS", "GC/MS spectra", """tags.text=="GC-MS"""")
