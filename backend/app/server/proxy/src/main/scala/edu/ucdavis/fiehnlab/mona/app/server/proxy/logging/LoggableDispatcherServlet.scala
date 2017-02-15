@@ -5,6 +5,7 @@ import java.util.Date
 import java.util.stream.Collectors
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
+import com.netflix.zuul.exception.ZuulException
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.data.repository.{CrudRepository, Repository}
 import org.springframework.web.servlet.DispatcherServlet
@@ -41,7 +42,9 @@ class LoggableDispatcherServlet(val loggingService: LoggingService) extends Disp
 
     try {
       super.doDispatch(cachingRequest, cachingResponse)
-
+    } catch {
+      case e: ZuulException =>
+        logger.info("Zuul Forwarding Error - wait for Eureka to identify service")
     } finally {
       log(cachingRequest, cachingResponse, System.currentTimeMillis() - startTime)
       updateResponse(cachingResponse)
