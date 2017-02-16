@@ -132,19 +132,16 @@ case class Compound(
                      classification:Array[MetaData] = Array()
                    )
 
-case class Impacts(
-                    impactValue: Double,
+case class Impact(
+                    value: Double,
 
                     reason: String
                   )
 
 case class Score(
-                  impacts: Array[Impacts],
+                  impacts: Array[Impact],
 
-                  relativeScore: Double, //ns
-
-                  scaledScore: Double, //ns
-
+                  @(Indexed@field)
                   score: Double
                 )
 
@@ -186,15 +183,19 @@ case class Submitter(
                       id: String,
 
                       @(Indexed@field)
+                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       emailAddress: String,
 
                       @(Indexed@field)
+                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       firstName: String,
 
                       @(Indexed@field)
+                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       institution: String,
 
                       @(Indexed@field)
+                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       lastName: String
                     )
 
