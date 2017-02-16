@@ -105,9 +105,11 @@ class CompoundConversion extends LazyLogging {
     val molecule: IAtomContainer = reader.read(new AtomContainer())
 
     // Add explicit hydrogens
-    AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
-    CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
-    AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
+    if (molecule != null) {
+      AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
+      CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
+      AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
+    }
 
     molecule
   }
