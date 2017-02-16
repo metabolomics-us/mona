@@ -45,7 +45,7 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
       compound = filteredCompound,
       metaData = filteredMetaData,
       splash = null,
-      score = null,
+      score = Score(Array(), 0.0),
       tags = filteredTags
     )
   }
