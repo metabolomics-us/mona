@@ -41,7 +41,7 @@ class RestRepositoryWriterTest extends WordSpec  with Eventually{
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
   //required for spring and scala test
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a writer " when {
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
