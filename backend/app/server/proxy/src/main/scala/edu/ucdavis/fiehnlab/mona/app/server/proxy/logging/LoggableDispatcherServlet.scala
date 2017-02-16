@@ -1,13 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.app.server.proxy.logging
 
-import java.io.{BufferedReader, InputStreamReader}
-import java.util.Date
-import java.util.stream.Collectors
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import com.netflix.zuul.exception.ZuulException
-import com.typesafe.scalalogging.LazyLogging
-import org.springframework.data.repository.{CrudRepository, Repository}
 import org.springframework.web.servlet.DispatcherServlet
 import org.springframework.web.util.{ContentCachingRequestWrapper, ContentCachingResponseWrapper, WebUtils}
 
@@ -43,6 +38,7 @@ class LoggableDispatcherServlet(val loggingService: LoggingService) extends Disp
     try {
       super.doDispatch(cachingRequest, cachingResponse)
     } catch {
+      // TODO Doesn't work?
       case e: ZuulException =>
         logger.info("Zuul Forwarding Error - wait for Eureka to identify service")
     } finally {
