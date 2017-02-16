@@ -124,14 +124,13 @@ class CompoundConversion extends LazyLogging {
     val mdlWriter: MDLV2000Writer = new MDLV2000Writer(stringWriter)
 
     AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
-    val dehydrogenatedMolecule: IAtomContainer = AtomContainerManipulator.removeHydrogens(molecule)
 
     // Check connectivity
     val molSet: IAtomContainerSet = ConnectivityChecker.partitionIntoMolecules(molecule)
 
     if (molSet.getAtomContainerCount == 1) {
       val structureDiagramGenerator: StructureDiagramGenerator = new StructureDiagramGenerator()
-      structureDiagramGenerator.setMolecule(dehydrogenatedMolecule, true)
+      structureDiagramGenerator.setMolecule(molecule, true)
       structureDiagramGenerator.generateCoordinates()
       
       mdlWriter.writeMolecule(structureDiagramGenerator.getMolecule)

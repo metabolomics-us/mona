@@ -1,0 +1,243 @@
+{
+  "compound": [
+    {
+      "inchi": "InChI=1/C4H9N3O2/c1-7(4(5)6)2-3(8)9/h2H2,1H3,(H3,5,6)(H,8,9)/f/h5,8H,6H2/b5-4+",
+      "metaData": [
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "compound class",
+          "value": "CLASS1 Amino acid"
+        },
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "compound class",
+          "value": "CLASS2 Creatine"
+        },
+        {
+          "category": "external id",
+          "computed": false,
+          "hidden": false,
+          "name": "cas number",
+          "value": "57-00-1"
+        },
+        {
+          "category": "none",
+          "computed": false,
+          "hidden": false,
+          "name": "SMILES",
+          "value": "CN(CC(=O)O)C(=N)N"
+        }
+      ],
+      "names": [
+        {
+          "computed": false,
+          "name": "Creatine,anhydrous",
+          "score": 0.0
+        },
+        {
+          "computed": false,
+          "name": "N-Amidinosarcosine",
+          "score": 0.0
+        },
+        {
+          "computed": false,
+          "name": "(alpha-Methylguanido)acetic acid",
+          "score": 0.0
+        },
+        {
+          "computed": false,
+          "name": "Krebiozon",
+          "score": 0.0
+        },
+        {
+          "computed": false,
+          "name": "Methyl Glycocyamine",
+          "score": 0.0
+        },
+        {
+          "computed": false,
+          "name": "alpha-Methylguanidinoacetic Acid",
+          "score": 0.0
+        },
+        {
+          "computed": false,
+          "name": "2-(carbamimidoyl-methylamino)acetic acid",
+          "score": 0.0
+        }
+      ],
+      "computed": false
+    }
+  ],
+  "id": "PT201840",
+  "dateCreated": 1487261620674,
+  "lastUpdated": 1487261620674,
+  "metaData": [
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "accession",
+      "value": "PT201840"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "authors",
+      "value": "Matsuda F, Suzuki M, Sawada Y, Plant Science Center, RIKEN."
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "copyright",
+      "value": "Copyright(C) 2009 Plant Science Center, RIKEN"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "exact mass",
+      "value": 131.13
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "instrument",
+      "value": "Q-Tof Premier, Waters"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "ms type",
+      "value": "LC-Q-TOF/MS"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "ionization",
+      "value": "ESI"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "source temperature",
+      "value": "120 C"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "precursor selection",
+      "value": "Q"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "fragmentation equipment",
+      "value": "Q"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "fragmentation method",
+      "value": "LOW-ENERGY CID"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "collision energy",
+      "value": "Ramp 5-45 V"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "spectrum type",
+      "value": "TOF"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "dataformat",
+      "value": "Continuum"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "solvent",
+      "value": "CH3CN/H2O"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "mode",
+      "value": "NEGATIVE"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "capillary voltage",
+      "value": "3.0 kV"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "sampling cone",
+      "value": "35.0 V"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "ion type",
+      "value": "[M-H]-"
+    },
+    {
+      "category": "none",
+      "computed": false,
+      "hidden": false,
+      "name": "precursor m/z",
+      "value": 130.06167
+    }
+  ],
+  "spectrum": "88.0423:75.28 130.0617:3.819",
+  "submitter": {
+    "id": "prime-master@psc.riken.jp",
+    "emailAddress": "prime-master@psc.riken.jp",
+    "firstName": "ReSpect",
+    "institution": "RIKEN Center for Sustainable Resource Science",
+    "lastName": "Consortium"
+  },
+  "tags": [
+    {
+      "ruleBased": false,
+      "text": "ReSpect"
+    }
+  ],
+  "library": {
+    "library": "ReSpect",
+    "description": "RIKEN MS^n Spectral Database for Phytochemicals",
+    "link": "http://spectra.psc.riken.jp/menta.cgi/respect/datail/datail?accession=PT201840",
+    "tag": {
+      "ruleBased": false,
+      "text": "ReSpect"
+    }
+  }
+}
