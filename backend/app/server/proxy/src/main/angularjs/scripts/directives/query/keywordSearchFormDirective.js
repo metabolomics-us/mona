@@ -118,7 +118,6 @@
 
             // Handle all other tags
             $scope.queryTags.forEach(function(tag) {
-                console.log(tag)
                 if (tag.selected == '+') {
                     SpectraQueryBuilderService.addTagToQuery(tag.text);
                 } else if (tag.selected == '-') {
