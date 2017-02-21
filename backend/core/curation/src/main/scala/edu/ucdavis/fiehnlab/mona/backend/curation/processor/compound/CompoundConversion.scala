@@ -8,7 +8,7 @@ import org.openscience.cdk.exception.InvalidSmilesException
 import org.openscience.cdk.graph.ConnectivityChecker
 import org.openscience.cdk.inchi.{InChIGeneratorFactory, InChIToStructure}
 import org.openscience.cdk.interfaces.{IAtomContainer, IAtomContainerSet}
-import org.openscience.cdk.io.{MDLReader, MDLV2000Writer}
+import org.openscience.cdk.io.{MDLV2000Reader, MDLV2000Writer}
 import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.smiles.{SmilesGenerator, SmilesParser}
 import org.openscience.cdk.tools.CDKHydrogenAdder
@@ -101,7 +101,7 @@ class CompoundConversion extends LazyLogging {
     logger.debug(s"Receive MOL data: $molString")
 
     // Read MOL data
-    val reader = new MDLReader(new StringReader(molString))
+    val reader = new MDLV2000Reader(new StringReader(molString))
     val molecule: IAtomContainer = reader.read(new AtomContainer())
 
     // Add explicit hydrogens
