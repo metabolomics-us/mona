@@ -52,6 +52,7 @@ class BootstrapDownloaderService extends LazyLogging {
     */
   def createLibraryQueries(): Unit = {
     saveQuery("Libraries - MassBank", "MassBank Spectral Database", "tags.text==MassBank")
+    saveQuery("Libraries - MassBank - MassBank EU", "MassBank EU", """tags.text=="MassBank EU"""")
     saveQuery("Libraries - MassBank - CASMI 2016", "CASMI 2016", """tags.text=="CASMI 2016"""")
     saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", "tags.text==ReSpect")
     saveQuery("Libraries - HMDB", "Human Metabolome Database", "tags.text==HMDB")
