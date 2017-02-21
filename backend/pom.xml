@@ -249,7 +249,7 @@
             <dependency>
                 <groupId>org.openscience.cdk</groupId>
                 <artifactId>cdk-bundle</artifactId>
-                <version>1.5.12</version>
+                <version>1.5.14</version>
             </dependency>
 
             <!-- swagger documentation -->
