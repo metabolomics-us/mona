@@ -5,7 +5,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.stereotype.{Component, Service}
+import org.springframework.web.client.RestOperations
 
 /**
   * Created by sajjan on 9/27/16.
@@ -22,10 +24,14 @@ class CompoundProcessor extends LazyLogging {
   @Autowired
   val smilesProcessor: CompoundSMILESProcessor = null
 
+  @Autowired
+  val inchikeyProcessor: CompoundInChIKeyProcessor = null
+
   def process(compound: Compound, id: String): (String, IAtomContainer) = {
     val molProcessorResult = molProcessor.process(compound, id)
     val inchiProcessorResult = inchiProcessor.process(compound, id)
     val smilesProcessorResult = smilesProcessor.process(compound, id)
+    val inchikeyProcessorResult = inchikeyProcessor.process(compound, id)
 
     if (molProcessorResult._1 != null && molProcessorResult._2 != null) {
       molProcessorResult
@@ -33,7 +39,9 @@ class CompoundProcessor extends LazyLogging {
       inchiProcessorResult
     } else if (smilesProcessorResult._1 != null && smilesProcessorResult._2 != null) {
       smilesProcessorResult
-    } else {
+    } else if (inchikeyProcessorResult._1 != null && inchikeyProcessorResult._2 != null) {
+      inchikeyProcessorResult
+    }else {
       logger.warn(s"$id: Unable to generate CDK molecule")
       (null, null)
     }
@@ -124,3 +132,48 @@ class CompoundSMILESProcessor extends AbstractCompoundProcessor {
     }
   }
 }
+
+
+@Component
+class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
+
+  val URL: String = "http://cts.fiehnlab.ucdavis.edu/service/inchikeytomol/"
+
+  @Autowired
+  protected val restOperations: RestOperations = null
+
+  def process(compound: Compound, id: String): (String, IAtomContainer) = {
+    val inchikey: String =
+      if (compound.inchiKey != null)
+        compound.inchiKey
+      else
+        compound.metaData.filter(_.name.toLowerCase() == CommonMetaData.INCHI_KEY.toLowerCase()).map(_.value.toString).headOption.orNull
+
+    // Lookup InChIKey
+    if (inchikey != null && inchikey.toString != "") {
+      logger.info(s"$id: Looking up MOL definition by InChIKey on CTS, invoking url $URL$inchikey")
+
+      val response: ResponseEntity[CTSInChIKeyLookupResponse] = restOperations.getForEntity(URL + inchikey, classOf[CTSInChIKeyLookupResponse])
+
+      if (response.getStatusCode == HttpStatus.OK) {
+        val molDefinition: String = response.getBody.molecule
+
+        if (molDefinition != null && molDefinition.nonEmpty) {
+          logger.info(s"$id: Request successful, parsing MOL definition")
+          (response.getBody.molecule, compoundConversion.parseMolDefinition(molDefinition))
+        } else {
+          logger.info(s"$id: InChIKey lookup failed, ${response.getBody.message}")
+          (null, null)
+        }
+      } else {
+        logger.info(s"$id: InChIKey lookup failed")
+        (null, null)
+      }
+    } else {
+      logger.info(s"$id: No InChIKey found")
+      (null, null)
+    }
+  }
+}
+
+case class CTSInChIKeyLookupResponse(molecule: String, message: String)

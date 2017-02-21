@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import java.io.InputStreamReader
-import java.util.Collections
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
@@ -23,7 +22,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class CompoundProcessorTest extends WordSpec {
-  val reader = JSONDomainReader.create[Spectrum]
+
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   @Autowired
   val compoundProcessor: CompoundProcessor = null
@@ -71,6 +71,14 @@ class CompoundProcessorTest extends WordSpec {
         null, Array.empty[Names], Array.empty[Tags], computed = false, null)
 
       val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, "FIO00043")
+      assert(molDefinition != null)
+      assert(molecule != null)
+    }
+
+    "process HMDB00786_1122 InChIKey" in {
+      val compound: Compound = Compound(null, "LFQSCWFLJHTTHZ-UHFFFAOYSA-N", Array(), null, Array.empty[Names], Array.empty[Tags], computed = false, null)
+
+      val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, "HMDB00786_1122")
       assert(molDefinition != null)
       assert(molecule != null)
     }
