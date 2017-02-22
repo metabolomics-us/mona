@@ -1,13 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, Impact, MetaData}
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.openscience.cdk.interfaces.IAtomContainer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.stereotype.{Component, Service}
 import org.springframework.web.client.RestOperations
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by sajjan on 9/27/16.
@@ -27,11 +29,12 @@ class CompoundProcessor extends LazyLogging {
   @Autowired
   val inchikeyProcessor: CompoundInChIKeyProcessor = null
 
-  def process(compound: Compound, id: String): (String, IAtomContainer) = {
-    val molProcessorResult = molProcessor.process(compound, id)
-    val inchiProcessorResult = inchiProcessor.process(compound, id)
-    val smilesProcessorResult = smilesProcessor.process(compound, id)
-    val inchikeyProcessorResult = inchikeyProcessor.process(compound, id)
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer) = {
+
+    val molProcessorResult = molProcessor.process(compound, id, impacts)
+    val inchiProcessorResult = inchiProcessor.process(compound, id, impacts)
+    val smilesProcessorResult = smilesProcessor.process(compound, id, impacts)
+    val inchikeyProcessorResult = inchikeyProcessor.process(compound, id, impacts)
 
     if (molProcessorResult._1 != null && molProcessorResult._2 != null) {
       molProcessorResult
@@ -41,11 +44,13 @@ class CompoundProcessor extends LazyLogging {
       smilesProcessorResult
     } else if (inchikeyProcessorResult._1 != null && inchikeyProcessorResult._2 != null) {
       inchikeyProcessorResult
-    }else {
+    } else {
       logger.warn(s"$id: Unable to generate CDK molecule")
       (null, null)
     }
   }
+
+  def process(compound: Compound, id: String): (String, IAtomContainer) = process(compound, id, null)
 }
 
 @Component
@@ -54,17 +59,24 @@ trait AbstractCompoundProcessor extends LazyLogging {
   @Autowired
   val compoundConversion: CompoundConversion = null
 
-  def process(compound: Compound, id: String): (String, IAtomContainer)
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer)
 }
 
 
 @Component
 class CompoundMOLProcessor extends AbstractCompoundProcessor {
 
-  def process(compound: Compound, id: String): (String, IAtomContainer) = {
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer) = {
     if (compound.molFile != null || compound.molFile == "") {
       logger.info(s"$id: Parsing MOL definition")
-      (compound.molFile, compoundConversion.parseMolDefinition(compound.molFile))
+
+      val molecule: IAtomContainer = compoundConversion.parseMolDefinition(compound.molFile)
+
+      if (impacts != null && molecule == null) {
+        impacts.append(Impact(-1, "MOL data could not be parsed"))
+      }
+
+      (compound.molFile, molecule)
     } else {
       logger.info(s"$id: No MOL definition found")
       (null, null)
@@ -76,8 +88,8 @@ class CompoundMOLProcessor extends AbstractCompoundProcessor {
 @Component
 class CompoundInChIProcessor extends AbstractCompoundProcessor {
 
-  def process(compound: Compound, id: String): (String, IAtomContainer) = {
-    val inchiMetaData: Option[MetaData] = compound.metaData.find(_.name.toLowerCase() == CommonMetaData.INCHI_CODE.toLowerCase())
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer) = {
+    val inchiMetaData: Option[MetaData] = compound.metaData.find(_.name.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase)
 
     val inchi: String =
       if (compound.inchi != null && compound.inchi != "")
@@ -97,6 +109,11 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
         (compoundConversion.generateMolDefinition(molecule), molecule)
       } else {
         logger.warn(s"$id: InChI conversion failed")
+
+        if (impacts != null) {
+          impacts.append(Impact(-1, "InChI conversion failed"))
+        }
+
         (null, null)
       }
     } else {
@@ -110,8 +127,8 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
 @Component
 class CompoundSMILESProcessor extends AbstractCompoundProcessor {
 
-  def process(compound: Compound, id: String): (String, IAtomContainer) = {
-    val smiles: Option[MetaData] = compound.metaData.find(_.name.toLowerCase() == CommonMetaData.SMILES.toLowerCase())
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer) = {
+    val smiles: Option[MetaData] = compound.metaData.find(_.name.toLowerCase == CommonMetaData.SMILES.toLowerCase)
 
     // Parse SMILES
     if (smiles.isDefined && smiles.get.value.toString != "") {
@@ -124,6 +141,11 @@ class CompoundSMILESProcessor extends AbstractCompoundProcessor {
         (compoundConversion.generateMolDefinition(molecule), molecule)
       } else {
         logger.info(s"$id: SMILES conversion failed")
+
+        if (impacts != null) {
+          impacts.append(Impact(-1, "SMILES conversion failed"))
+        }
+
         (null, null)
       }
     } else {
@@ -142,12 +164,12 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
   @Autowired
   protected val restOperations: RestOperations = null
 
-  def process(compound: Compound, id: String): (String, IAtomContainer) = {
+  def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer) = {
     val inchikey: String =
       if (compound.inchiKey != null)
         compound.inchiKey
       else
-        compound.metaData.filter(_.name.toLowerCase() == CommonMetaData.INCHI_KEY.toLowerCase()).map(_.value.toString).headOption.orNull
+        compound.metaData.filter(_.name.toLowerCase == CommonMetaData.INCHI_KEY.toLowerCase).map(_.value.toString).headOption.orNull
 
     // Lookup InChIKey
     if (inchikey != null && inchikey.toString != "") {

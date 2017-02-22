@@ -35,12 +35,16 @@ class CalculateCompoundPropertiesTest extends WordSpec {
       val spectrum: Spectrum = reader.read(input)
 
       assert(calculateCompoundProperties != null)
-      val output: Spectrum = calculateCompoundProperties.process(spectrum)
+      val result: Spectrum = calculateCompoundProperties.process(spectrum)
 
-      output.compound.foreach { compound =>
+      result.compound.foreach { compound =>
         assert(compound.molFile != null)
         assert(compound.metaData.exists(_.computed))
       }
+
+      assert(result.score != null)
+      assert(result.score.impacts.nonEmpty)
+      assert(result.score.impacts.map(_.value).sum == 2.0)
     }
 
     "handle problematic record PT201480" in {
@@ -49,12 +53,16 @@ class CalculateCompoundPropertiesTest extends WordSpec {
       assert(spectrum.id == "PT201840")
 
       assert(calculateCompoundProperties != null)
-      val output: Spectrum = calculateCompoundProperties.process(spectrum)
+      val result: Spectrum = calculateCompoundProperties.process(spectrum)
 
-      output.compound.foreach { compound =>
+      result.compound.foreach { compound =>
         assert(compound.molFile != null)
         assert(compound.metaData.exists(_.computed))
       }
+
+      assert(result.score != null)
+      assert(result.score.impacts.nonEmpty)
+      assert(result.score.impacts.map(_.value).sum == 1.0)
     }
   }
 }

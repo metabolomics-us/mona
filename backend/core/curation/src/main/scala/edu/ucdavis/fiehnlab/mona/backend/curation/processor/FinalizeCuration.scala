@@ -28,7 +28,12 @@ class FinalizeCuration extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
         var rawScore: Double = spectrum.score.impacts.map(_.value).sum
         var totalScore: Double = spectrum.score.impacts.map(_.value.abs).sum
 
-        spectrum.score.copy(score = 2.5 * (1 + rawScore) / totalScore)
+        if (totalScore == 0) {
+          // Give a median score if no impacts are given
+          spectrum.score.copy(score = 2.5)
+        } else {
+          spectrum.score.copy(score = 2.5 * (1 + rawScore) / totalScore)
+        }
       } else {
         null
       }
