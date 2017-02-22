@@ -130,14 +130,26 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     if (classification.kingdom != null)
       buffer += MetaData("classification", computed = true, hidden = false, "kingdom", null, null, url, classification.kingdom.name)
 
+    if (classification.superclass != null)
+      buffer += MetaData("classification", computed = true, hidden = false, "superclass", null, null, url, classification.superclass.name)
+
     if (classification.`class` != null)
       buffer += MetaData("classification", computed = true, hidden = false, "class", null, null, url, classification.`class`.name)
 
     if (classification.subclass != null)
       buffer += MetaData("classification", computed = true, hidden = false, "subclass", null, null, url, classification.subclass.name)
 
-    if (classification.superclass != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "superclass", null, null, url, classification.superclass.name)
+    if (classification.intermediate_nodes != null) {
+      var level = 1
+      classification.intermediate_nodes.foreach { parent =>
+        buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level $level", null, null, url, parent.name)
+        level = level + 1
+      }
+    }
+
+    if (classification.direct_parent != null && classification.direct_parent.name != null) {
+      buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, url, classification.direct_parent.name)
+    }
 
     if (classification.alternative_parents != null) {
       classification.alternative_parents.foreach { parent =>
@@ -145,29 +157,19 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       }
     }
 
-    if (classification.intermediate_nodes != null) {
-      var level = 0
-      classification.intermediate_nodes.foreach { parent =>
-        buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level $level", null, null, url, parent.name)
-        level = level + 1
-      }
-    }
+//    Disable LipidMaps terms as they are redundant to the main classification
+//    if (classification.predicted_lipidmaps_terms != null) {
+//      classification.predicted_lipidmaps_terms.foreach { term =>
+//        buffer += MetaData("classification", computed = true, hidden = false, "predicted lipidmaps", null, null, url, term)
+//      }
+//    }
 
-    if (classification.predicted_lipidmaps_terms != null) {
-      classification.predicted_lipidmaps_terms.foreach { term =>
-        buffer += MetaData("classification", computed = true, hidden = false, "predicted lipidmaps", null, null, url, term)
-      }
-    }
-
-    if (classification.substituents != null) {
-      classification.substituents.foreach { term =>
-        buffer += MetaData("classification", computed = true, hidden = false, "substituents", null, null, url, term)
-      }
-    }
-
-    if (classification.direct_parent != null && classification.direct_parent.name != null) {
-      buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, url, classification.direct_parent.name)
-    }
+//    Disable storing of substituents
+//    if (classification.substituents != null) {
+//      classification.substituents.foreach { term =>
+//        buffer += MetaData("classification", computed = true, hidden = false, "substituents", null, null, url, term)
+//      }
+//    }
 
     if (compound.classification != null) {
       compound.classification.foreach {
