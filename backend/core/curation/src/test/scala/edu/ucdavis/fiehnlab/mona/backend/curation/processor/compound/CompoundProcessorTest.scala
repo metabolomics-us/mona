@@ -15,6 +15,8 @@ import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegra
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by sajjan on 9/26/16.
   */
@@ -55,24 +57,28 @@ class CompoundProcessorTest extends WordSpec {
       assert(molecule != null)
     }
 
-    "process FIO00043 InChI" ignore {
+    "not process FIO00043 InChI" in {
+      val impacts: ArrayBuffer[Impact] = ArrayBuffer[Impact]()
       val compound: Compound = Compound(
         "InChI=1S/C27H45NO/c1-16-5-8-23-17(2)25-24(28(23)15-16)14-22-20-7-6-18-13-19(29)9-11-26(18,3)21(20)10-12-27(22,25)4/h16-25,29H,5-15H2,1-4H4",
         null, Array.empty[MetaData], null, Array.empty[Names], Array.empty[Tags], computed = false, null)
 
-      val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, "FIO00043")
-      assert(molDefinition != null)
-      assert(molecule != null)
+      val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, "FIO00043", impacts)
+      assert(molDefinition == null)
+      assert(molecule == null)
+      assert(impacts.length == 1)
     }
 
-    "process FIO00043 SMILES" ignore {
+    "not process FIO00043 SMILES" in {
+      val impacts: ArrayBuffer[Impact] = ArrayBuffer[Impact]()
       val compound: Compound = Compound(null, null,
         Array(MetaData("none", computed = false, hidden = false, "SMILES", null, null, null, "C(C1)(C)CCC(C6C)N(C(C56)CC(C(C)54)C(C2)C(CC4)C(C)(C3)C(CC(O)C3)C2)2")),
         null, Array.empty[Names], Array.empty[Tags], computed = false, null)
 
-      val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, "FIO00043")
-      assert(molDefinition != null)
-      assert(molecule != null)
+      val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, "FIO00043", impacts)
+      assert(molDefinition == null)
+      assert(molecule == null)
+      assert(impacts.length == 1)
     }
 
     "process HMDB00786_1122 InChIKey" in {
