@@ -10,7 +10,7 @@
       .directive('spectraDownload', spectraDownload);
 
     function spectraDownload() {
-        var directive = {
+        return {
             require: "ngModel",
             restrict: "A",
             templateUrl: '/views/templates/spectra/download.html',
@@ -20,8 +20,6 @@
             },
             controller: spectraDownloadController
         };
-
-        return directive;
     }
 
     /* @ngInject */
