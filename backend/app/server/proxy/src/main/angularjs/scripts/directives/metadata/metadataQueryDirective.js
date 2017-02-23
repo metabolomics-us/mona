@@ -17,7 +17,8 @@
             transclude: true,
             scope: {
                 metaData: '=value',
-                compound: '=compound'
+                compound: '=compound',
+                classification: '=classification'
             },
             controller: metadataQueryController
         };
@@ -39,6 +40,8 @@
         $scope.addToQuery = function() {
             if (angular.isDefined($scope.compound)) {
                 SpectraQueryBuilderService.addCompoundMetaDataToQuery($scope.metaData.name, $scope.metaData.value);
+            } else if (angular.isDefined($scope.classification)) {
+                SpectraQueryBuilderService.addClassificationToQuery($scope.metaData.name, $scope.metaData.value);
             } else {
                 SpectraQueryBuilderService.addMetaDataToQuery($scope.metaData.name, $scope.metaData.value);
             }

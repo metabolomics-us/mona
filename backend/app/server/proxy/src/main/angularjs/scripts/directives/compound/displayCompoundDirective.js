@@ -5,7 +5,7 @@
 (function() {
     'use strict';
 
-    displayCompoundInfoController.$inject = ['$scope', '$log', 'dialogs', '$filter'];
+    displayCompoundInfoController.$inject = ['$scope', '$log', 'dialogs', '$filter', '$timeout'];
     angular.module('moaClientApp')
         .directive('displayCompoundInfo', displayCompoundInfo);
 
@@ -23,7 +23,7 @@
     }
 
     /* @ngInject */
-    function displayCompoundInfoController($scope, $log, dialogs, $filter) {
+    function displayCompoundInfoController($scope, $log, dialogs, $filter, $timeout) {
         //calculate some unique id for the compound picture
         $scope.pictureId = Math.floor(Math.random() * 100000);
         $scope.chemId = Math.floor(Math.random() * 100000);
@@ -69,5 +69,50 @@
         $scope.downloadAsJSON = function() {
             $scope.downloadData($filter('json')($scope.compound), 'json', 'application/json');
         };
+
+        // Build compound classification tree
+        $timeout(function() {
+            // Get high order classifications
+            var classes = ['kingdom', 'superclass', 'class', 'subclass']
+                .map(function(value) {
+                    var filteredData = $scope.compound.classification.filter(function(x) { return x.name == value; });
+                    return filteredData.length > 0? filteredData[0] : null;
+                }).filter(function(x) { return x != null; });
+
+            // Get intermediate classifications
+            var intermediate_parents = $scope.compound.classification
+                .filter(function(x) { return x.name.indexOf('direct parent level') == 0; })
+                .map(function(x, i) {
+                    x.name = 'intermediate parent '+ (i + 1);
+                    return x;
+                });
+
+            classes = classes.concat(intermediate_parents);
+
+            // Get parent classes
+            var direct_parent = $scope.compound.classification.filter(function(x) { return x.name == 'direct parent'; });
+            var alternate_parents = $scope.compound.classification.filter(function(x) { return x.name == 'alternative parent'; });
+
+            var parents = direct_parent;//.concat(alternate_parents);
+
+            if (parents) {
+                $scope.directParent = parents[0];
+            }
+
+            // Build tree
+            if (classes) {
+                var node = null;
+
+                for (var i = classes.length - 1; i >= 0; i--) {
+                    if (i == classes.length - 1) {
+                        classes[i].nodes = parents;
+                    } else {
+                        classes[i].nodes = [classes[i + 1]];
+                    }
+                }
+
+                $scope.classifications = [classes[0]];
+            }
+        })
     }
 })();
