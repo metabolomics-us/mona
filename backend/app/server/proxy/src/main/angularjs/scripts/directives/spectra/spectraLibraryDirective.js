@@ -9,7 +9,7 @@
         .directive('displayLibraryReference', displayLibraryReference);
 
     function displayLibraryReference() {
-        var directive = {
+        return {
             require: 'ngModel',
             restrict: 'A',
             template: '<span data-ng-bind-html="libraryString"></span>',
@@ -19,25 +19,21 @@
             },
             controller: displayLibraryReferenceController
         };
-
-        return directive;
     }
 
     /* @ngInject */
     function displayLibraryReferenceController($scope, $log) {
 
+        console.log($scope.spectrum.library)
+        console.log(!$scope.spectrum.library)
+        console.log(!$scope.spectrum.library.description)
+        console.log($scope.spectrum.library.description == '')
 
         // Empty string if no library object exists
-        if (!$scope.spectrum.library) {
+        if (!$scope.spectrum.library || !$scope.spectrum.library.description || $scope.spectrum.library.description == '') {
             $scope.libraryString = '';
             return;
         }
-
-        /**** debug
-        console.log($scope.spectrum.libraryIdentifier);
-        console.log(angular.isDefined($scope.spectrum.libraryIdentifier));
-        console.log($scope.spectrum.libraryIdentifier === null);
-        ****/
 
         // Base library string
         $scope.libraryString = 'Originally submitted to the ';
