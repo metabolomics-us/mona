@@ -14,7 +14,7 @@
     function spectraScoreForUser($compile, StatisticsService) {
         var directive = {
             replace: true,
-            templateUrl: '/views/templates/scoreSpectra.html',
+            template: '<span><uib-rating ng-model="score" max="5" data-readonly="true"></uib-rating></span>',
             scope: {
                 user: '=user'
             },
