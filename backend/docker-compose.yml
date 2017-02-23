@@ -294,7 +294,7 @@ services:
 
     depends_on:
       - webhooks
-    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
     ports:
     - "9999:9999"
 
