@@ -174,7 +174,7 @@
                         <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
                     </div>
                     <div>
-                        <span score-spectra ng-model="spectrum"></span>
+                        <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
                     </div>
                     <div ng-if="angular.isDefined(spectrum.similarity)">
                         Similarity: {{s.similarity * 1000 | number:0}} / 1000
