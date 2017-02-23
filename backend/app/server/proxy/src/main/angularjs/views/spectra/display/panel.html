@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <div class="panel-title">
             <span><a style="cursor: pointer" ng-href="{{viewSpectrum()}}">{{spectrum.compound[0].names[0].name}}</a></span>
-            <span class="pull-right">Score: <span score-spectra ng-model="spectrum"></span></span>
+            <span class="pull-right">Score: <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span></span>
         </div>
     </div>
 
