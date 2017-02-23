@@ -221,7 +221,7 @@ h2 {
     border-bottom: 10px solid white;
 }
 
-.navbar .navbar-right > li > .dropdown-menu:after {
+.navbar .navbar-right > li > .dropdown-menu:after, .dropdown-menu-right.dropdown-menu:after {
     left: auto;
     right: 3px;
 }
