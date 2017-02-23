@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <div class="col-md-6">
-            <h4>Chemical Names</h4>
+            <h4 ng-show="compound.names.length">Chemical Names</h4>
             <div ng-show="compound.names.length">
                 <ul>
                     <li ng-repeat="name in compound.names">{{name.name}}</li>
@@ -30,6 +30,26 @@
 
                 <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
                      id="big-{{pictureId}}-CompoundViewer_{{chemId}}" ng-model="compound"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-show="directParent || classifications">
+        <div class="col-md-12">
+            <h4>Compound Classification</h4>
+
+            <script type="text/ng-template" id="classyfireTree">
+                <span class="tree-label"><i class="icon-folder-open"></i> <span metadata-query value="node" classification="true">{{ node.name | titlecase }}</span></span> <span> {{ node.value }}</span>
+
+                <ul ng-if="node.nodes">
+                    <li class="tree-node" ng-repeat="node in node.nodes" ng-include="'classyfireTree'"></li>
+                </ul>
+            </script>
+
+            <div class="tree">
+                <ul>
+                    <li class="tree-node" ng-repeat="node in classifications" ng-include="'classyfireTree'"></li>
+                </ul>
             </div>
         </div>
     </div>

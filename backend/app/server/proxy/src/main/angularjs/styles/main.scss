@@ -361,6 +361,8 @@ input[readonly] {
 .list-group.panel-query-tree .list-group-item { border-radius: 0; border-width: 1px 0 0 0; }
 .list-group.panel-query-tree > .list-group-item:first-child { border-top-width: 0; }
 
+.panel-query-tree p.ng-scope { margin: 0 0 0 0px; }
+
 
 .table-borderless tbody>tr:nth-child(n+2)>td {
   border: none;
@@ -368,4 +370,59 @@ input[readonly] {
 
 .tooltip-inner {
   max-width: 300px;
+}
+
+/*
+ * Classification tree structure, as defined:
+ * https://jsfiddle.net/jhfrench/GpdgF/
+ */
+.tree {
+  min-height:20px;
+  margin-bottom:20px;
+}
+.tree ul {
+  padding-left: 10px;
+}
+.tree li.tree-node {
+  list-style-type:none;
+  margin:0;
+  padding:10px 5px 0 5px;
+  position:relative
+}
+.tree li.tree-node > ul {
+  padding-left: 45px;
+}
+.tree li.tree-node::before, .tree li.tree-node::after {
+  content:'';
+  left:-20px;
+  position:absolute;
+  right:auto
+}
+.tree li.tree-node::before {
+  border-left:1px solid #999;
+  bottom:50px;
+  height:100%;
+  top:0;
+  width:1px
+}
+.tree li.tree-node::after {
+  border-top:1px solid #999;
+  height:20px;
+  top:25px;
+  width:25px
+}
+.tree li span.tree-label {
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border:1px solid #999;
+  border-radius:5px;
+  display:inline-block;
+  padding:3px 8px;
+  text-decoration:none
+}
+.tree>ul>li.tree-node::before, .tree>ul>li.tree-node::after {
+  border:0
+}
+.tree li.tree-node:last-child::before {
+  height:30px
 }
