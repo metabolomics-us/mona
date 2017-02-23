@@ -10,10 +10,14 @@
                     <div class="row">
                         <div class="col-md-12" ng-init="showScore = false">
                             <span uib-tooltip-placement="right"
-                                  uib-tooltip="Please click to view how the score was calculated"
+                                  uib-tooltip="Click to see the explaination for the {{0.0 + spectrum.score.score | number:2}} / 5"
                                   uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='10'
                                   ng-click="showScore =! showScore">
-                                Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
+                                Rating:
+                                <span>
+                                    <uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating>
+                                </span>
+                                <i class="fa fa-question"></i>
                             </span>
                         </div>
                     </div>
@@ -22,31 +26,27 @@
                         <div class="col-md-12">
                             <div class="panel top17 panel-default" ng-show="spectrum.score">
                                 <div class="panel-heading">
-                                    Explanation for the score of {{spectrum.score.score | number:4}} / {{spectrum.score.scaledScore | number:1}} stars
+                                    Explaination for the {{spectrum.score.score | number:2}} / 5 star score
                                 </div>
                                 <div class="panel-body">
-                                    Green elements show that this had a positive impact, while red elements display a negative impact.
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Impact Rating</th>
+                                            <th>Reason</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'"
+                                            ng-class="impact.impactValue < 0 ? 'danger' : (impact.impactValue > 0 ? 'success' : 'warning')">
+                                            <td>{{impact.impactValue | number:2}}</td>
+                                            <td>{{impact.reason}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Impact</th>
-                                        <th>Reason</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'"
-                                        ng-class="impact.impactValue < 0 ? 'danger' : (impact.impactValue > 0 ? 'success' : 'warning')">
-                                        <td>{{impact.impactValue | number : 3}}</td>
-                                        <td>{{impact.reason}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
                             </div>
-                            <div class="panel top17" ng-hide="spectrum.score">
-                                This spectrum hasn't been score yet, we submitted a request to the system to score it
-                                for you!
-                            </div>
+                            <div class="panel top17" ng-hide="spectrum.score">This spectrum has not yet been curated.</div>
                         </div>
                     </div>
 
@@ -252,20 +252,16 @@
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>Category</th>
                                         <th>Name</th>
                                         <th>Value</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: ['category','name']">
-                                        <td class="col-lg-2 col-md-4">
-                                            {{meta.category}}
-                                        </td>
-                                        <td class="col-lg-2 col-md-4">
+                                        <td class="col-lg-4 col-md-4">
                                             <span metadata-query value="meta"> {{meta.name}}</span>
                                         </td>
-                                        <td class="col-lg-8 col-md-4">
+                                        <td class="col-lg-8 col-md-8">
                                             <span gw-value value="meta">{{meta.value | number:4 }} {{meta.unit}}</span>
                                         </td>
                                     </tr>
