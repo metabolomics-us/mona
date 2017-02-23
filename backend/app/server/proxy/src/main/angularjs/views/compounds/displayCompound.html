@@ -56,6 +56,8 @@
 
     <div class="row">
         <div class="col-md-12">
+            <h4>Compound Metadata</h4>
+
             <table class="table">
                 <thead>
                 <tr>
@@ -65,7 +67,7 @@
                 </thead>
 
                 <tbody>
-                <tr ng-repeat="meta in compound.metaData |  filter: {category: '!external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | unique:'name' | orderBy : 'name':true  ">
+                <tr ng-repeat="meta in compound.metaData |  filter: {category: '!external id'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy : 'name':true  ">
                     <td class="col-lg-4 col-md-6">
                         <span metadata-query value="meta" compound="true">{{meta.name}}</span>
                     </td>
