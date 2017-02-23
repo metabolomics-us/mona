@@ -58,11 +58,9 @@
                 function(data, origin) {
                     UploadLibraryService.processData(data, function(spectrum) {
                         $scope.$apply(function() {
-                            if ($scope.spectraCount === 0) {
-                                // Create list of ions
-                                $scope.spectrum = spectrum.spectrum;
-                                $scope.page = 2;
-                            }
+                            // Create list of ions
+                            $scope.spectrum = spectrum.spectrum;
+                            $scope.page = 2;
                         });
                     }, origin);
                 },
