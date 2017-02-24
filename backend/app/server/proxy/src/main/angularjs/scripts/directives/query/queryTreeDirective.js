@@ -11,7 +11,7 @@
 
     /* @ngInject */
     function queryTreeView($compile) {
-        var directive = {
+        return {
             restrict: 'A',
 
             link: function(scope, element, attrs) {
@@ -35,7 +35,7 @@
                     '        <a href uib-dropdown-toggle class="dropdown-toggle"><i class="fa fa-download"></i> Download</a>' +
                     '        <ul class="uib-dropdown-menu dropdown-menu-right">' +
                     '            <li ng-if="node.jsonExport !== null"><a ng-href="{{downloadJSON(node)}}" target="_self" download ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.json\']"><i class="fa fa-download"></i> JSON (Internal MoNA Format) ({{node.jsonExport.size | bytes}})</a></li>' +
-                    '            <li ng-if="node.mspExport !== null"><a ng-href="{{downloadMSP(node)}}" target="_self" download ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.msp\']"><i class="fa fa-download"></i> MSP (NIST-compatible) ({{node.mspExport.size | bytes}})</a></li>' +
+                    '            <li ng-if="node.mspExport !== null"><a ng-href="{{downloadMSP(node)}}" target="_self" download ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.msp\']"><i class="fa fa-download"></i> MSP (NIST compatible) ({{node.mspExport.size | bytes}})</a></li>' +
                     '        </ul>' +
                     '    </span>' +
                     '    <span class="pull-right" ng-if="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>' +
@@ -75,7 +75,5 @@
                 }
             }
         };
-
-        return directive;
     }
 })();
