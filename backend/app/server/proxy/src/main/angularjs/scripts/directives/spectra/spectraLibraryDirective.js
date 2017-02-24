@@ -24,11 +24,6 @@
     /* @ngInject */
     function displayLibraryReferenceController($scope, $log) {
 
-        console.log($scope.spectrum.library)
-        console.log(!$scope.spectrum.library)
-        console.log(!$scope.spectrum.library.description)
-        console.log($scope.spectrum.library.description == '')
-
         // Empty string if no library object exists
         if (!$scope.spectrum.library || !$scope.spectrum.library.description || $scope.spectrum.library.description == '') {
             $scope.libraryString = '';
