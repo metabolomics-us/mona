@@ -84,7 +84,10 @@
             chart: {
                 type: "sunburstChart",
                 height: 600,
-                duration: 500
+                duration: 500,
+                sunburst: {
+                    mode: 'size'
+                }
             }
         };
 
