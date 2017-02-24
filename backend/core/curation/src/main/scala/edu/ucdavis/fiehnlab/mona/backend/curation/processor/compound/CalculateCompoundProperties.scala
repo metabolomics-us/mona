@@ -50,12 +50,12 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
 
     // Add submitted InChI and InChIKey to metadata if we haven't already
-    if (compound.inchi != null && compound.inchi.nonEmpty && compound.metaData.forall(_.name.toLowerCase != CommonMetaData.INCHI_CODE.toLowerCase)) {
+    if (compound.inchi != null && compound.inchi != "" && compound.metaData.forall(_.name.toLowerCase != CommonMetaData.INCHI_CODE.toLowerCase)) {
       metaData.append(MetaData("none", computed = false, hidden = false, CommonMetaData.INCHI_CODE,
         null, null, null, compound.inchi))
     }
 
-    if (compound.inchiKey != null && compound.inchiKey.nonEmpty && compound.metaData.forall(_.name.toLowerCase != CommonMetaData.INCHI_KEY.toLowerCase)) {
+    if (compound.inchiKey != null && compound.inchiKey != "" && compound.metaData.forall(_.name.toLowerCase != CommonMetaData.INCHI_KEY.toLowerCase)) {
       metaData.append(MetaData("none", computed = false, hidden = false, CommonMetaData.INCHI_KEY,
         null, null, null, compound.inchiKey))
     }
