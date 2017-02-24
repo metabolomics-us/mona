@@ -130,7 +130,8 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
         val result: Spectrum = given().contentType("application/json; charset=UTF-8").body(content).when().post("/curation").then().statusCode(200).extract().body().as(classOf[Spectrum])
 
-        assert(result.score == null)
+        assert(result.score != null)
+        assert(result.score.impacts.nonEmpty)
         assert(result.metaData.exists(_.name == "Last Auto-Curation"))
       }
     }
