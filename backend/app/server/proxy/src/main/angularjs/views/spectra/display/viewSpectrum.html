@@ -35,9 +35,9 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'"
-                                            ng-class="impact.impactValue < 0 ? 'danger' : (impact.impactValue > 0 ? 'success' : 'warning')">
-                                            <td>{{impact.impactValue | number:2}}</td>
+                                        <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-value'"
+                                            ng-class="impact.value < 0 ? 'danger' : (impact.value > 0 ? 'success' : 'warning')">
+                                            <td>{{impact.value | number:2}}</td>
                                             <td>{{impact.reason}}</td>
                                         </tr>
                                         </tbody>
