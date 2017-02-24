@@ -1,8 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import java.lang
-
-import com.mongodb.{BasicDBObject, DBObject}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.TagStatistics
@@ -10,7 +7,6 @@ import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
-import org.springframework.data.mongodb.core.aggregation.{AggregationOperation, AggregationOperationContext}
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Service
 
@@ -40,7 +36,7 @@ class TagStatisticsService {
       unwind("$tags"),
       project().and("tags.text").as("text").and("tags.ruleBased").as("ruleBased"),
       group("text", "ruleBased").count().as("count"),
-      project("count").and("_id.text").as("_id").and("_id.ruleBased").as("ruleBased"),
+      project("count").and("_id.text").as("text").and("_id.ruleBased").as("ruleBased"),
       sort(Sort.Direction.DESC, "count")
     ).withOptions(newAggregationOptions().allowDiskUse(true).build())
 
@@ -66,12 +62,12 @@ class TagStatisticsService {
       .asScala
       .toArray
       .map { x =>
-        val tagStatistics: TagStatistics = tagStatisticsRepository.findOne(x._id)
+        val tagStatistics: Array[TagStatistics] = tagStatisticsRepository.findByText(x._id)
 
-        if (tagStatistics != null) {
-          tagStatisticsRepository.save(tagStatistics.copy(category = "library"))
+        if (tagStatistics.nonEmpty) {
+          tagStatisticsRepository.save(tagStatistics.head.copy(category = "library"))
         } else {
-          tagStatisticsRepository.save(TagStatistics(x._id, ruleBased = false, x.count.toInt, "library"))
+          tagStatisticsRepository.save(TagStatistics(null, x._id, ruleBased = false, x.count.toInt, "library"))
         }
       }
   }
