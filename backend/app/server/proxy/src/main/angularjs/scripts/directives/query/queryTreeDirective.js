@@ -23,7 +23,7 @@
                 var style = depth > 0 ? 'padding-left: '+ (3 * depth) +'em' : '';
 
                 var template =
-                    '<p class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +'">' +
+                    '<div class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +'">' +
                     '    <i class="fa fa-folder-o" data-ng-show="node.children.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i>' +
@@ -31,12 +31,16 @@
                     '    <span ng-if="node.query !== null"><a ng-href="{{executeQuery(node)}}"><i class="fa fa-search"></i> {{node.label}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>'+
                     '    <span ng-if="node.query === null"> {{node.label}}</span>'+
 
-                    '    <span class="pull-right">' +
-                    '        <span ng-if="node.jsonExport !== null"><a ng-href="{{downloadJSON(node)}}" target="_self" download ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.json\']"><i class="fa fa-download"></i> Download JSON</a> ({{node.jsonExport.size | bytes}})</span>&nbsp;' +
-                    '        <span ng-if="node.mspExport !== null"><a ng-href="{{downloadMSP(node)}}" target="_self" download ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.msp\']"><i class="fa fa-download"></i> Download MSP</a> ({{node.mspExport.size | bytes}})</span>  ' +
-                    '        <span ng-if="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>' +
-                    '   </span>' +
-                    '</p>'+
+                    '    <span class="pull-right" ng-show="node.jsonExport !== null || node.mspExport !== null" uib-dropdown>' +
+                    '        <a href uib-dropdown-toggle class="dropdown-toggle"><i class="fa fa-download"></i> Download</a>' +
+                    '        <ul class="uib-dropdown-menu dropdown-menu-right">' +
+                    '            <li ng-if="node.jsonExport !== null"><a ng-href="{{downloadJSON(node)}}" target="_self" download ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.json\']"><i class="fa fa-download"></i> JSON (Internal MoNA Format) ({{node.jsonExport.size | bytes}})</a></li>' +
+                    '            <li ng-if="node.mspExport !== null"><a ng-href="{{downloadMSP(node)}}" target="_self" download ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.msp\']"><i class="fa fa-download"></i> MSP (NIST-compatible) ({{node.mspExport.size | bytes}})</a></li>' +
+                    '        </ul>' +
+                    '    </span>' +
+                    '    <span class="pull-right" ng-if="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>' +
+
+                    '</div>'+
                     '<div data-ng-hide="node.collapsed" class="list-group" data-ng-repeat-end ng-if="node.children.length" data-query-tree-view data-query-tree-depth="'+ (depth + 1) +'" data-tree-id="'+ treeId +'" data-tree-model="node.children"></div>';
 
                 if(treeId && treeModel) {
