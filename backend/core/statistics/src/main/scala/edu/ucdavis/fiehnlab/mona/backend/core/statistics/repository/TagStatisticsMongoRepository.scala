@@ -9,4 +9,7 @@ import org.springframework.stereotype.Repository
   * Created by sajjan on 8/3/16.
   */
 @Repository("tagStatisticsMongoRepository")
-trait TagStatisticsMongoRepository extends PagingAndSortingRepository[TagStatistics, String]
+trait TagStatisticsMongoRepository extends PagingAndSortingRepository[TagStatistics, String] {
+
+  def findByText(text: String): Array[TagStatistics]
+}

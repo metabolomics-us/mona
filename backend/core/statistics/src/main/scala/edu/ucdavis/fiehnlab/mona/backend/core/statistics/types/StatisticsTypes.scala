@@ -31,12 +31,13 @@ case class MetaDataValueCount(
 
 @Document(collection = "STATISTICS_TAGS")
 case class TagStatistics(
-                           @(Id@field)
-                           text: String,
-                           ruleBased: Boolean,
-                           count: Int,
-                           category: String
-                         )
+                          @(Id@field)
+                          id: String,
+                          text: String,
+                          ruleBased: Boolean,
+                          count: Int,
+                          category: String
+                        )
 
 @Document(collection = "STATISTICS")
 case class GlobalStatistics(

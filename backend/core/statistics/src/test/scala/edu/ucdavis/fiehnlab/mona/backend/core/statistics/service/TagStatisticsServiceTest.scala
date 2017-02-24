@@ -83,7 +83,10 @@ class TagStatisticsServiceTest extends WordSpec with LazyLogging{
       val result: Array[TagStatistics] = tagStatisticsService.libraryTagsAggregation()
 
       assert(result.length == 1)
-      assert(result.head == TagStatistics("massbank", ruleBased = false, 58, "library"))
+      assert(result.head.text == "massbank")
+      assert(!result.head.ruleBased)
+      assert(result.head.count == 58)
+      assert(result.head.category == "library")
     }
   }
 }
