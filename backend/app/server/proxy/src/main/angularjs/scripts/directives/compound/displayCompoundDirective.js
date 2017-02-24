@@ -72,6 +72,8 @@
 
         // Build compound classification tree
         $timeout(function() {
+            $scope.classifications = [];
+
             // Get high order classifications
             var classes = ['kingdom', 'superclass', 'class', 'subclass']
                 .map(function(value) {
@@ -95,12 +97,8 @@
 
             var parents = direct_parent;//.concat(alternate_parents);
 
-            if (parents) {
-                $scope.directParent = parents[0];
-            }
-
             // Build tree
-            if (classes) {
+            if (classes.length > 0) {
                 var node = null;
 
                 for (var i = classes.length - 1; i >= 0; i--) {
@@ -111,7 +109,7 @@
                     }
                 }
 
-                $scope.classifications = [classes[0]];
+                $scope.classifications.push(classes[0]);
             }
         })
     }

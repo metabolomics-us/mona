@@ -34,9 +34,9 @@
         </div>
     </div>
 
-    <div class="row" ng-show="directParent || classifications">
+    <div class="row" ng-if="classifications.length > 0">
         <div class="col-md-12">
-            <h4>Compound Classification</h4>
+            <h4>Compound Classification (provided by <a href="http://classyfire.wishartlab.com" target="_blank">ClassyFire</a>)</h4>
 
             <script type="text/ng-template" id="classyfireTree">
                 <span class="tree-label"><i class="icon-folder-open"></i> <span metadata-query value="node" classification="true">{{ node.name | titlecase }}</span></span> <span> {{ node.value }}</span>
