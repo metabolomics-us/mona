@@ -129,7 +129,7 @@ case class Compound(
                      kind: String = "biological",
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     classification:Array[MetaData] = Array()
+                     classification: Array[MetaData] = Array()
                    )
 
 case class Impact(
