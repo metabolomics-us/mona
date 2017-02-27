@@ -9,7 +9,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.WordSpec
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.repository.CrudRepository
-import org.springframework.test.context.TestContextManager
 
 import scala.reflect.ClassTag
 import scala.util.Properties
@@ -19,11 +18,10 @@ import scala.util.Properties
   */
 abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with LazyLogging {
 
-  val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
+  val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 
-
-  //58 spectra for us to work with
   val exampleRecords: Array[T] = JSONDomainReader.create[Array[T]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+  val curatedRecords: Array[T] = JSONDomainReader.create[Array[T]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
   s"a repository is loaded with ${exampleRecords.length} compounds" when {
 
@@ -36,9 +34,9 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
       List(1, 2, 3).foreach { iteration =>
 
-        s"we must be able to support doing several iterations of the process, this is iteration ${iteration} " must {
-          s"we should be able to store our data" in {
+        s"we must be able to support doing several iterations of the process, this is iteration $iteration" must {
 
+          s"we should be able to store our data" in {
             for (spectrum <- exampleRecords) {
               val size = getRepository.count()
               val result = getRepository.save(spectrum) //saveOrUpdate
@@ -59,7 +57,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
           }
 
           "we should be able to execute RSQL queries like compound.names.name=='META-HYDROXYBENZOIC ACID'" in {
-            val result = getRepository.rsqlQuery(s""" compound=q='names.name=="META-HYDROXYBENZOIC ACID" ' """)
+            val result = getRepository.rsqlQuery(s"""compound=q='names.name=="META-HYDROXYBENZOIC ACID"'""")
             assert(result.size() == 1)
           }
 
@@ -74,7 +72,6 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.getTotalPages == 6)
           }
 
-
           "we should be able query by id==\"3488925\"" in {
             val result = getRepository.rsqlQuery(s"id==3488925")
             assert(result.size() == 1)
@@ -85,14 +82,14 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size() == 58)
           }
 
-
           "we should be able to execute RSQL queries like compound=q=\'metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'\'" in {
             val result = getRepository.rsqlQuery("compound.metaData=q='name==\"total exact mass\" and value=gt=306 and value=lt=307'")
             assert(result.size == 2)
           }
 
           "we should be able to support subqueries in sub queries for compound" in {
-            val result = getRepository.rsqlQuery("""compound=q='names.name=="META-HYDROXYBENZOIC ACID" and kind==biological and metaData=q="(name==\'total exact mass\')" '""")
+            val result = getRepository.rsqlQuery("""compound=q='names.name=="META-HYDROXYBENZOIC ACID" and kind==biological and metaData=q="(name==\'total exact mass\')"'""")
+            assert(result.size == 1)
           }
 
           "we should be able to execute RSQL queries like compound.metaData=q='name==\"total exact mass\" and value=gt=306.07 and value=lt=306.08'" in {
@@ -100,17 +97,17 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 2)
           }
 
-          "we should be able to execute RSQL queries like metaData=q='name=\"ion mode\" and value=negative' in " in {
+          "we should be able to execute RSQL queries like metaData=q='name=\"ion mode\" and value=negative' in" in {
             val result = getRepository.rsqlQuery("metaData=q='name==\"ion mode\" and value==negative'")
             assert(result.size == 25)
           }
 
-          "we should be able to execute RSQL queries like metaData=q='name=match=\"ion.mode\" and value=negative' in " in {
+          "we should be able to execute RSQL queries like metaData=q='name=match=\"ion.mode\" and value=negative' in" in {
             val result = getRepository.rsqlQuery("metaData=q='name=match=\"ion.mode\" and value==negative'")
             assert(result.size == 25)
           }
 
-          "we should be able to execute RSQL queries like metaData=q='name=\"ion mode\" and value=match=negativ[ewq]' in " in {
+          "we should be able to execute RSQL queries like metaData=q='name=\"ion mode\" and value=match=negativ[ewq]' in" in {
             val result = getRepository.rsqlQuery("metaData=q='name==\"ion mode\" and value=match=negativ[ewq]'")
             assert(result.size == 25)
           }
@@ -120,12 +117,12 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 58)
           }
 
-          "we should be able to execute RSQL queries like tags=q='text=match=\"[(LCMS)(lcms)]+\"' in " in {
+          "we should be able to execute RSQL queries like tags=q='text=match=\"[(LCMS)(lcms)]+\"' in" in {
             val result = getRepository.rsqlQuery("tags=q='text=match=\"[(LCMS)(lcms)]+\"'")
             assert(result.size == 58)
           }
 
-          "readding the same events should be an update" in {
+          "reading the same events should be an update" in {
             val it = getRepository.findAll().iterator()
 
             while (it.hasNext) {
@@ -147,23 +144,63 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
           "possible to execute the same query several times and receive always the same result" must {
 
             "support pageable sizes of 1" in {
-              var last: Spectrum = null;
+              var last: Spectrum = null
               val page = new PageRequest(0, 1)
 
-              for (i <- 1 to 250) {
+              for (_ <- 1 to 250) {
                 val current: Spectrum = getRepository.rsqlQuery("tags=q='text=match=\"[(LCMS)(lcms)]+\"'", page).iterator().next().asInstanceOf[Spectrum]
+
                 if (last == null) {
                   last = current
                 }
 
                 logger.info(s"received spectrum is ${current.id}")
                 assert(last.id == current.id)
-
               }
             }
-
           }
 
+          "we should be able to store additional, curated records" in {
+            curatedRecords.foreach { spectrum =>
+              val size = getRepository.count()
+              val result = getRepository.save(spectrum)
+              assert(result.isInstanceOf[T])
+
+              val newSize = getRepository.count()
+              assert(newSize == size + 1)
+            }
+          }
+
+          s"we should have ${curatedRecords.length + exampleRecords.length} records in the repository now" in {
+            assert(getRepository.count() == curatedRecords.length + exampleRecords.length)
+          }
+
+          "we should be able to execute RSQL queries like compound.classification=q='name==class and value==Benzenoids' in" in {
+            val result = getRepository.rsqlQuery("compound.classification=q='name==class and value==Benzenoids'")
+            assert(result.size == 41)
+          }
+
+          "we should be able to execute RSQL queries like compound.classification=q='value==Benzenoids' in" in {
+            val result = getRepository.rsqlQuery("compound.classification=q='value==Benzenoids'")
+            assert(result.size == 45)
+          }
+
+          "we should be able to execute RSQL queries like annotations=q='name==\"C4H5+\"' in" in {
+            val result = getRepository.rsqlQuery("annotations=q='name==\"C4H5+\"'")
+            assert(result.size == 13)
+          }
+
+          "we should be able to execute RSQL queries like annotations=q='name==\"C4H5+\" and value==53.0386' in" in {
+            val result = getRepository.rsqlQuery("annotations=q='name==\"C4H5+\" and value==53.0386'")
+            assert(result.size == 3)
+          }
+
+          "we should be able to execute RSQL queries like submitter.emailAddress==\"ML@MassBank.jp\" in" in {
+            exampleRecords.map(_.asInstanceOf[Spectrum].submitter.emailAddress).toSet.foreach { emailAddress: String =>
+              val result = getRepository.rsqlQuery(s"""submitter.emailAddress=="$emailAddress"""")
+              assert(!result.isEmpty)
+            }
+          }
 
           "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
             if (keepRunning) {
@@ -175,15 +212,15 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
           }
 
           "possible to delete one object" in {
-            assert(getRepository.count() == exampleRecords.length)
+            assert(getRepository.count() == curatedRecords.length + exampleRecords.length)
             val one = getRepository.findAll().iterator().next()
             getRepository.delete(one)
-            assert(exampleRecords.length - 1 == getRepository.count())
+            assert(curatedRecords.length + exampleRecords.length - 1 == getRepository.count())
           }
 
           "possible to delete all data" in {
             getRepository.deleteAll()
-            assert(0 == getRepository.count())
+            assert(getRepository.count() == 0)
           }
         }
       }

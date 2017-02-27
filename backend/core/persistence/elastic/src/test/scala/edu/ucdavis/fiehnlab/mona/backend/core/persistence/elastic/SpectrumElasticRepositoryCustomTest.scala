@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.{TestConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.config.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.elasticsearch.index.query.QueryBuilder
@@ -28,7 +28,7 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
   val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
 
   //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   override def getRepository: RSQLRepositoryCustom[Spectrum,QueryBuilder] with CrudRepository[Spectrum, String] = spectrumElasticRepository
 
