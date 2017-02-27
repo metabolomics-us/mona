@@ -4,7 +4,7 @@ import java.io.InputStreamReader
 import java.util.Date
 import java.util.concurrent.CountDownLatch
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{BusConfig, MonaEventBusConfiguration, MonaNotificationBusConfiguration}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
@@ -19,6 +19,7 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.reflect.ClassTag
 
 /**
@@ -28,7 +29,7 @@ import scala.reflect.ClassTag
 @SpringApplicationConfiguration(classes = Array(classOf[StringTestConfig],classOf[MonaNotificationBusConfiguration], classOf[MonaEventBusConfiguration]))
 class EventBusListenerTest extends WordSpec with Eventually {
 
-  val reader = JSONDomainReader.create[Spectrum]
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
 
@@ -43,15 +44,14 @@ class EventBusListenerTest extends WordSpec with Eventually {
   @Autowired
   val eventCounter: ReceivedEventCounter[Spectrum] = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "EventBusListenerTest" should {
-
     "assure we have several event listeners" in {
       assert(eventListener.size == 5)
     }
-    "received event" in {
 
+    "received event" in {
       //each listener should have initially 2 events
       eventListener.foreach { x => assert(x.events.getCount == 2) }
 
@@ -66,9 +66,10 @@ class EventBusListenerTest extends WordSpec with Eventually {
     }
 
     "ensure that the total send events match the internal counter" in {
-      assert(eventCounter.getEventCount == 2)
+      eventually(timeout(3 seconds)) {
+        assert(eventCounter.getEventCount == 2)
+      }
     }
-
   }
 }
 
@@ -115,8 +116,6 @@ class StringTestConfig {
     */
   @Bean
   def eventCounter(eventBus: EventBus[Spectrum]): ReceivedEventCounter[Spectrum] = new ReceivedEventCounter[Spectrum](eventBus)
-
-
 }
 
 class EventBusTestListener[T : ClassTag](override val eventBus: EventBus[T]) extends EventBusListener[T](eventBus) {
