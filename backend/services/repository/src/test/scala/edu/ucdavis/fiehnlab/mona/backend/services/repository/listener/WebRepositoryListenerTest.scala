@@ -13,9 +13,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.WebRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.utility.FindDirectory
+import org.apache.commons.io.FileUtils
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -37,12 +38,13 @@ class WebRepositoryListenerTest extends WordSpec with LazyLogging {
   val repositoryListener: RepositoryListener = null
 
   @Autowired
-  val locator:FindDirectory = null
+  val locator: FindDirectory = null
 
-  val reader = JSONDomainReader.create[Spectrum]
-  val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
+
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "RepositoryListenerTest" must {
 
@@ -50,13 +52,12 @@ class WebRepositoryListenerTest extends WordSpec with LazyLogging {
       override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
     }))
 
-    RestAssured.baseURI = s"http://localhost:${port}/"
+    RestAssured.baseURI = s"http://localhost:$port/"
 
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
     val spectrum: Spectrum = reader.read(input)
 
     "be able to receive data and " should {
-
       "create a file on an add event" in {
         repositoryListener.received(Event(spectrum, eventType = Event.ADD))
       }
@@ -89,7 +90,6 @@ class WebRepositoryListenerTest extends WordSpec with LazyLogging {
         given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(404)
       }
 
-
       "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
         if (keepRunning) {
           while (keepRunning) {
@@ -97,6 +97,16 @@ class WebRepositoryListenerTest extends WordSpec with LazyLogging {
             Thread.sleep(300000); // Every 5 minutes
           }
         }
+      }
+
+      "clear the git reposisoty data" in {
+        val repositoryDirectory: File = new File(locator.dir)
+
+        if (repositoryDirectory.exists()) {
+          FileUtils.deleteDirectory(repositoryDirectory)
+        }
+
+        assert(!repositoryDirectory.exists())
       }
     }
   }
