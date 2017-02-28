@@ -31,7 +31,7 @@ class Bootstrap extends ApplicationRunner with LazyLogging {
     // Configure downloader
     downloaderService.createPredefinedQueries()
 
-    // Synchronize ElaticSearch index
+    // Synchronize ElasticSearch index
     persistenceService.synchronizeDatabases()
   }
 }

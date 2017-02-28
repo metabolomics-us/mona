@@ -36,6 +36,7 @@ class LoggableDispatcherServlet(val loggingService: LoggingService) extends Disp
     val startTime: Long = System.currentTimeMillis()
 
     try {
+      logger.info("Running logging servlet")
       super.doDispatch(cachingRequest, cachingResponse)
     } catch {
       // TODO Doesn't work?
