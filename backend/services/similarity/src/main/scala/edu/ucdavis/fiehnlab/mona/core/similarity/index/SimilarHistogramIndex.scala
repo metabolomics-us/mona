@@ -16,7 +16,6 @@ class SimilarHistogramIndex(binningMethod: BinningMethod, cache: SpectrumCache, 
 
   def this() = this(new NoBinningMethod, SpectrumCache.create(), Histogram.create(), 0.9)
 
-
   /**
     * Searches against this index, using the provided similarity measure and tolerance setting
     * @param spectrum
@@ -24,12 +23,9 @@ class SimilarHistogramIndex(binningMethod: BinningMethod, cache: SpectrumCache, 
     * @return
     */
   override def searchIndex(spectrum: SimpleSpectrum, internalKey: String): Iterable[SimpleSpectrum] = {
-
     val keys = indexMap.keySet.filter(s => isSimilar(spectrum.histogram, s))
 
-    logger.info("keys: (" + indexMap.size() + ") " + indexMap.keySet())
-    logger.info("keys were reduced by " + (100 - keys.size.toDouble / indexMap.size().toDouble * 100) + "%")
-    logger.info("kept keys: (" + keys.size + ") " + keys)
+    logger.info(s"Keys were reduced by ${100 - keys.size / indexMap.size() * 100}% from ${indexMap.size()} to ${keys.size}")
 
     keys.par.collect {
       case key: String => indexMap.get(key)

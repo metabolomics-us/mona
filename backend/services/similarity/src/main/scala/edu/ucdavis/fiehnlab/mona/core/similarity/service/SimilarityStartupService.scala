@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.service
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service
   * Created by sajjan on 1/3/17.
   */
 @Service
-class SimilarityServiceStartup extends ApplicationListener[ApplicationReadyEvent] with LazyLogging {
+class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent] with LazyLogging {
 
   @Autowired
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -24,8 +25,11 @@ class SimilarityServiceStartup extends ApplicationListener[ApplicationReadyEvent
   @Autowired
   val indexUtils: IndexUtils = null
 
-  override def onApplicationEvent(e: ApplicationReadyEvent): Unit = {
 
+  override def onApplicationEvent(e: ApplicationReadyEvent): Unit = populateIndices()
+
+
+  def populateIndices(): Unit = {
     logger.info("Populating indices...")
 
     val it = new DynamicIterable[Spectrum, String](null, 10) {
@@ -38,15 +42,31 @@ class SimilarityServiceStartup extends ApplicationListener[ApplicationReadyEvent
 
     while(it.hasNext) {
       val spectrum: Spectrum = it.next()
-      val indexSize: Int = indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum))
+      val precursorMZ: Option[MetaData] = spectrum.metaData.find(_.name == CommonMetaData.PRECURSOR_MASS)
+
+      // Add precursor information if available
+      val indexSize: Int =
+        if (precursorMZ.isDefined) {
+          val precursorString: String = precursorMZ.get.value.toString
+
+          try {
+            indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble))
+          } catch {
+            case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum))
+          }
+        } else {
+          indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum))
+        }
 
       counter += 1
 
       if (counter % 10000 == 0) {
         logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, index size = $indexSize")
       } else {
-        logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.id}, index size = $indexSize")
+        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, index size = $indexSize")
       }
     }
+
+    logger.info(s"\tFinished indexing $counter spectrum, index size = ${indexUtils.getIndexSize}")
   }
 }
