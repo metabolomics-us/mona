@@ -26,6 +26,6 @@ class BinByRoundingMethod extends BinningMethod {
     // Collect bins as ions
     val ions: Array[Ion] = binnedIons.keys.map(x => Ion(x, binnedIons(x))).toArray.sortBy(_.mz)
 
-    new SimpleSpectrum(spectrum.id, ions, spectrum.chromatography, spectrum.public) with BinnedSimpleSpectrum
+    new SimpleSpectrum(spectrum.id, ions, spectrum.precursorMZ, spectrum.public) with BinnedSimpleSpectrum
   }
 }
