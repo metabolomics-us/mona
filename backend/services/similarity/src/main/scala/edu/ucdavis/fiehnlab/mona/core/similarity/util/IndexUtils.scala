@@ -73,6 +73,12 @@ class IndexUtils extends LazyLogging {
     indexRegistry.getIndex(indexType, indexName).size
   }
 
+  /**
+    * Get size of the default index
+    * @return
+    */
+  def getIndexSize: Int = getIndexSize(null, null)
+
 
   /**
     * Perform a blocking search

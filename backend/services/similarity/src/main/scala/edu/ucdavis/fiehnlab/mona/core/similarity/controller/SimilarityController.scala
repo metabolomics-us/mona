@@ -34,17 +34,18 @@ class SimilarityController {
 
     val minSimilarity: Double =
       if (message.minSimilarity > 0 && message.minSimilarity <= 1) {
-        minSimilarity
+        message.minSimilarity
       } else if (message.minSimilarity > 100 && message.minSimilarity <= 1000) {
         message.minSimilarity / 1000
       } else {
         0.5
       }
 
+    // Perform similarity search, order by score and return a maximum of 50 or a default 25 hits
     indexUtilities.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity)
       .toArray
       .sortBy(-_.score)
-      .take(if (size != null) size else 25)
+      .take(if (size != null) Math.min(size, 50) else 25)
       .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
   }
 
