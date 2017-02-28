@@ -32,7 +32,16 @@ class SimilarityController {
 
     val spectrum: SimpleSpectrum = new SimpleSpectrum(null, message.spectrum)
 
-    indexUtilities.search(spectrum, AlgorithmTypes.DEFAULT, 0.5)
+    val minSimilarity: Double =
+      if (message.minSimilarity > 0 && message.minSimilarity <= 1) {
+        minSimilarity
+      } else if (message.minSimilarity > 100 && message.minSimilarity <= 1000) {
+        message.minSimilarity / 1000
+      } else {
+        0.5
+      }
+
+    indexUtilities.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity)
       .toArray
       .sortBy(-_.score)
       .take(if (size != null) size else 25)
