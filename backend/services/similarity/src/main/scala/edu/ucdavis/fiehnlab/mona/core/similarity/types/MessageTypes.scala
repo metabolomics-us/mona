@@ -9,4 +9,15 @@ case class IndexSummary(indexType: IndexType, indexName: String, indexSize: Int)
 
 case class IndexSummaryRequest()
 
-case class SimilaritySearchRequest(spectrum: String, minSimilarity: Double, precursorMZ: Double)
+case class SimilaritySearchRequest(
+                                    spectrum: String,
+                                    minSimilarity: Double,
+                                    precursorMZ: Double,
+                                    precursorToleranceDa: Double,
+                                    precursorTolerancePPM: Double
+                                  )
+
+object SimilaritySearchRequest {
+
+  def apply(spectrum: String, minSimilarity: Double): SimilaritySearchRequest = SimilaritySearchRequest(spectrum, minSimilarity, 0.0, 0.0, 0.0)
+}

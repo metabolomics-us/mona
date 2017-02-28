@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.core.similarity.controller
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.core.similarity.service.SimilaritySearchService
 import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.AlgorithmTypes.AlgorithmType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.IndexType.IndexType
@@ -25,26 +26,16 @@ class SimilarityController {
   @Autowired
   val indexUtilities: IndexUtils = null
 
+  @Autowired
+  val similaritySearchService: SimilaritySearchService = null
+
 
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.POST))
   @ResponseBody
   def similaritySearch(@RequestBody message: SimilaritySearchRequest, @RequestParam(value = "size", required = false) size: Integer): Array[SearchResult] = {
 
-    val spectrum: SimpleSpectrum = new SimpleSpectrum(null, message.spectrum)
-
-    val minSimilarity: Double =
-      if (message.minSimilarity > 0 && message.minSimilarity <= 1) {
-        message.minSimilarity
-      } else if (message.minSimilarity > 100 && message.minSimilarity <= 1000) {
-        message.minSimilarity / 1000
-      } else {
-        0.5
-      }
-
     // Perform similarity search, order by score and return a maximum of 50 or a default 25 hits
-    indexUtilities.search(spectrum, AlgorithmTypes.DEFAULT, minSimilarity)
-      .toArray
-      .sortBy(-_.score)
+    similaritySearchService.search(message)
       .take(if (size != null) Math.min(size, 50) else 25)
       .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
   }

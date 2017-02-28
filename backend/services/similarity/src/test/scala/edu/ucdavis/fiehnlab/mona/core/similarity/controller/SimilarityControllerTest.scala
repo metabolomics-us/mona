@@ -76,8 +76,9 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
     }
 
     "perform a simple similarity query" in {
-      val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.99, -1)
+      val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.99)
       val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
       assert(result.length == 1)
       assert(result.head.score > 0.99)
     }
@@ -85,16 +86,50 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
     "perform a similarity query with a JSON string body with only the spectrum" in {
       val request: String = """{"spectrum": "108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100"}"""
       val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
       assert(result.length == 1)
       assert(result.head.score > 0.99)
     }
 
     "perform a more lax similarity query to retrieve more results" in {
-      val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, -1)
+      val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25)
       val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
       assert(result.length == 2)
       assert(result.exists(_.score > 0.99))
       assert(result.forall(_.score > 0.25))
+    }
+
+    "perform similarity queries with precursor filtering" should {
+      "use absolute tolerance" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0)
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.length == 1)
+        assert(result.head.score > 0.99)
+      }
+
+      "use tolerance in ppm" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.0, 1)
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.length == 1)
+        assert(result.head.score > 0.99)
+      }
+
+      "fail if no match exists for absolute tolerance" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0221, 0.01, 0)
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.isEmpty)
+      }
+
+      "fail if no match exists for ppm tolerance" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0221, 0.0, 1)
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.isEmpty)
+      }
     }
   }
 }
