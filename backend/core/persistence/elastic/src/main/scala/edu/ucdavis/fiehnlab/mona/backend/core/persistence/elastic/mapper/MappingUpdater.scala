@@ -99,6 +99,7 @@ class MappingUpdater extends LazyLogging {
       .startObject("properties")
       .startObject("value_text_analyzed")
       .field("type", "string")
+      .field("index", "analyzed")
       .endObject()
       .startObject("value_text")
       .field("type", "string")
