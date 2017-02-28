@@ -16,12 +16,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
   */
 @SpringBootApplication
 @EnableDiscoveryClient
-@Import(Array(classOf[WebHookSecurity],classOf[JWTAuthenticationConfig],classOf[SwaggerConfig],classOf[RestClientConfig],classOf[PersistenceServiceConfig]))
+@Import(Array(classOf[WebHookSecurity], classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[RestClientConfig], classOf[PersistenceServiceConfig]))
 @EnableSwagger2
-class WebHookServer{
-}
+class WebHookServer
+
 
 object WebHookServer extends App{
   new SpringApplication(classOf[WebHookServer]).run()
-
 }
