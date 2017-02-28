@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpec
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.data.domain.{Page, Pageable}
@@ -25,8 +25,15 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
   @Autowired
   val indexUtils: IndexUtils = null
 
+  @Value("${mona.similarity.autopopulate:true}")
+  private val autoPopulate: Boolean = true
 
-  override def onApplicationEvent(e: ApplicationReadyEvent): Unit = populateIndices()
+  override def onApplicationEvent(e: ApplicationReadyEvent): Unit = {
+    if (autoPopulate) {
+      logger.info("Starting auto-population of indices")
+      populateIndices()
+    }
+  }
 
 
   def populateIndices(): Unit = {
