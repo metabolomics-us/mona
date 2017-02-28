@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-parent</artifactId>
-                <version>brixton.m3</version>
+                <version>Brixton.M3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
