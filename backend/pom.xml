@@ -127,12 +127,12 @@
                 <artifactId>core</artifactId>
                 <version>1.8</version>
             </dependency>
+
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
 
 
             <dependency>
@@ -192,7 +192,7 @@
             <dependency>
                 <groupId>com.github.rutledgepaulv</groupId>
                 <artifactId>q-builders</artifactId>
-                <version>1.4-SNAPSHOT</version>
+                <version>1.4</version>
             </dependency>
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
