@@ -28,12 +28,14 @@ case class Ion(mz: Double, intensity: Double) {
   * @param ions
   * @param public
   */
-class SimpleSpectrum(val id: String, val ions: Array[Ion], val chromatography: String, val public: Boolean) {
-  def this(id: String, ions: Array[Ion]) = this(id, ions, null, true)
+class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Double, val public: Boolean) {
+  def this(id: String, ions: Array[Ion]) = this(id, ions, -1, true)
 
-  def this(id: String, spectrumString: String, public: Boolean) = this(id, SpectrumUtils.stringToIons(spectrumString), null, public)
+  def this(id: String, spectrumString: String) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, true)
 
-  def this(id: String, spectrumString: String) = this(id, SpectrumUtils.stringToIons(spectrumString), null, true)
+  def this(id: String, spectrumString: String, precursorMZ: Double) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, true)
+
+  def this(id: String, spectrumString: String, public: Boolean) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, public)
 
 
   lazy val fragments: Map[Double, Ion] = ions.sortBy(_.mz).map(ion => (ion.mz, ion)).toMap
