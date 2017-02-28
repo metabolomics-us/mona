@@ -363,6 +363,11 @@ input[readonly] {
 
 .panel-query-tree p.ng-scope { margin: 0 0 0 0px; }
 
+.panel-query-tree .fa-folder-o, .panel-query-tree .fa-folder-open-o {
+  cursor: pointer;
+}
+
+
 
 .table-borderless tbody>tr:nth-child(n+2)>td {
   border: none;

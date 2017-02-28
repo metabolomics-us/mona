@@ -67,6 +67,21 @@
                             }
                         }
                     }
+
+                    // Sort query tree
+                    $scope.queryTree.sort(function(a, b) {
+                        if (a.label === "All Spectra") {
+                            return -1;
+                        } else if (b.label == "All Spectra") {
+                            return 1;
+                        } else if (a.label === "Libraries") {
+                            return (b == "All Spectra" ? 1 : -1)
+                        } else if (b.label === "Libraries") {
+                            return (a == "All Spectra" ? 1 : -1)
+                        }else {
+                            return 0;
+                        }
+                    });
                 },
                 function(error) {
                     $log.error('query tree failed: ' + error);
