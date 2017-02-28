@@ -20,6 +20,7 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by wohlgemuth on 4/8/16.
@@ -39,12 +40,12 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
   @Autowired
   val eventBus: EventBus[Spectrum] = null
 
-  //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  //required for spring and scala test
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
 
-  val reader = JSONDomainReader.create[Spectrum]
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   val spectrum: Spectrum = reader.read(input)
 
@@ -52,12 +53,13 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
 
     "create a webhook" in {
       webHookRepository.deleteAll()
-      webHookRepository.save(WebHook("test", s"http://localhost:${port}/info?id=", "none provided"))
+      webHookRepository.save(WebHook("test", s"http://localhost:$port/info?id=", "none provided"))
     }
 
     "event bus needs to be of type Spectrum" in {
       assert(eventBus.isInstanceOf[EventBus[Spectrum]])
     }
+
     "and trigger it on sending an update event" in {
       val notificationCount = notificationCounter.getEventCount
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.UPDATE))
@@ -66,11 +68,9 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
       eventually(timeout(10 seconds)) {
         assert(notificationCounter.getEventCount == notificationCount +  1)
       }
-
     }
 
     "and trigger it on sending an delete event" in {
-
       val notificationCount = notificationCounter.getEventCount
       eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.DELETE))
 
@@ -78,7 +78,6 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
       eventually(timeout(100 seconds)) {
         assert(notificationCounter.getEventCount == notificationCount +  1)
       }
-
     }
 
     "and trigger it on sending an insert  event" in {
@@ -89,10 +88,6 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
       eventually(timeout(10 seconds)) {
         assert(notificationCounter.getEventCount == notificationCount +  1)
       }
-
     }
-
   }
-
-
 }
