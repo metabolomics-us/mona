@@ -27,9 +27,7 @@ class SimilarHistogramIndex(binningMethod: BinningMethod, cache: SpectrumCache, 
 
     logger.info(s"Keys were reduced by ${100 - keys.size / indexMap.size() * 100}% from ${indexMap.size()} to ${keys.size}")
 
-    keys.par.collect {
-      case key: String => indexMap.get(key)
-    }.flatten.seq
+    keys.flatMap(indexMap.get(_))
   }
 
   /**

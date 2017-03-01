@@ -1,14 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.run
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.core.similarity.index.Index
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
-import edu.ucdavis.fiehnlab.mona.core.similarity.types.{ResultHandler, SimpleSpectrum}
+import edu.ucdavis.fiehnlab.mona.core.similarity.types.{ComputationalResult, SimpleSpectrum}
 
 /**
-  * provides us with simple standardized ways to calculated spectra against eachother and ensure that
+  * provides us with simple standardized ways to calculated spectra against each other and ensure that
   * everything is up to code
   */
-trait Calculate {
+trait Calculate extends LazyLogging {
 
   /**
     *
@@ -16,7 +17,7 @@ trait Calculate {
     * @param library
     * @return
     */
-  protected def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], threshold: Double, algorithm: Similarity, resultHandler: ResultHandler): Unit
+  protected def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], threshold: Double, algorithm: Similarity): Iterable[ComputationalResult]
 
   /**
     *
@@ -25,10 +26,10 @@ trait Calculate {
     * @param threshold
     * @return
     */
-  final def calculate(unknown: SimpleSpectrum, index: Index, threshold: Double, algorithm: Similarity, resultHandler: ResultHandler): Unit = {
+  final def calculate(unknown: SimpleSpectrum, index: Index, threshold: Double, algorithm: Similarity): Iterable[ComputationalResult] = {
 
     // Utilize the internal index
-    calculate(index.binningMethod.binSpectrum(unknown), index.get(unknown), threshold, algorithm, resultHandler)
+    calculate(index.binningMethod.binSpectrum(unknown), index.get(unknown), threshold, algorithm)
   }
 }
 

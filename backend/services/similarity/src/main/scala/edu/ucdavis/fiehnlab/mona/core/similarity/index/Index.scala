@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.index.cache.SpectrumCache
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.binning.BinningMethod
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.mona.core.similarity.run.Calculate
-import edu.ucdavis.fiehnlab.mona.core.similarity.types.{BinnedSimpleSpectrum, ComputationalResult, ResultHandler, SimpleSpectrum}
+import edu.ucdavis.fiehnlab.mona.core.similarity.types.{BinnedSimpleSpectrum, ComputationalResult, SimpleSpectrum}
 
 import scala.collection.mutable
 
@@ -86,15 +86,8 @@ abstract class Index(val binningMethod: BinningMethod, val cache: SpectrumCache)
     * @return
     */
   final def search(spectrum: SimpleSpectrum, similarity: Similarity, threshold: Double = 0.5): Iterable[ComputationalResult] = {
-    val runner = Calculate.create
 
-    val data = mutable.Set[ComputationalResult]()
-
-    runner.calculate(spectrum, this, threshold, similarity, new ResultHandler {
-      override def handleResult(result: ComputationalResult): Unit = data += result
-    })
-
-    data
+    Calculate.create.calculate(spectrum, this, threshold, similarity)
   }
 
   /**
