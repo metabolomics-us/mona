@@ -171,8 +171,8 @@ case class Splash(
   * @param id an internal id
   * @param emailAddress
   * @param firstName
-  * @param institution
   * @param lastName
+  * @param institution
   */
 @Document(collection = "SUBMITTER")
 case class Submitter(
@@ -192,11 +192,11 @@ case class Submitter(
 
                       @(Indexed@field)
                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                      institution: String,
+                      lastName: String,
 
                       @(Indexed@field)
                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
-                      lastName: String
+                      institution: String
                     )
 
 /**

@@ -1,11 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
-import java.util.Collections
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -40,17 +38,22 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
   @Async
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   @ResponseBody
-  override def save(@RequestBody submitter: Submitter): AsyncResult[Submitter] = {
+  override def save(@RequestBody submitter: Submitter): Future[ResponseEntity[Submitter]] = {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
     if(loginInfo.roles.contains("ADMIN")) {
       super.save(submitter)
     } else {
-      super.save(submitter.copy(emailAddress = loginInfo.username))
+      val existingUser: Submitter = submitterMongoRepository.findByEmailAddress(submitter.emailAddress)
+
+      if (existingUser == null || existingUser.emailAddress == loginInfo.username) {
+        super.save(submitter.copy(emailAddress = loginInfo.username))
+      } else {
+        new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.FORBIDDEN))
+      }
     }
   }
-
 
   /**
     * saves the provided submitter at the given path
@@ -69,7 +72,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     if (loginInfo.roles.contains("ADMIN")) {
       super.put(id, submitter)
     } else {
-      val existingUser: Submitter = submitterMongoRepository.findOne(id)
+      val existingUser: Submitter = submitterMongoRepository.findByEmailAddress(id)
 
       if (loginInfo.username == existingUser.emailAddress) {
         super.put(id, submitter)

@@ -47,7 +47,6 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
       override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
     }))
 
-
     RestAssured.baseURI = s"http://localhost:$port/rest"
 
     "when connected we should be able to" should {

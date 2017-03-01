@@ -8,16 +8,14 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, Log
 trait LoginService {
 
   /**
-    * does a login for the current user
-    * and returns a response or throws a related exception
+    * does a login for the current user and returns a response or throws a related exception
     *
     * @return
     */
-  def login(request: LoginRequest) : LoginResponse
+  def login(request: LoginRequest): LoginResponse
 
   /**
-    * does a login for the current user
-    * and returns a response or throws a related exception
+    * does a login for the current user and returns a response or throws a related exception
     *
     * @return
     */
@@ -28,13 +26,13 @@ trait LoginService {
     * @param token
     * @return
     */
-  def info(token:String) : LoginInfo
+  def info(token: String): LoginInfo
 
   /**
-    * etends the given token, to create a token which doesn't expire
+    * extends the given token to create a token which doesn't expire
     * @param token
     * @return
     */
-  def extend(token:String) : LoginResponse
+  def extend(token: String): LoginResponse
 }
 
