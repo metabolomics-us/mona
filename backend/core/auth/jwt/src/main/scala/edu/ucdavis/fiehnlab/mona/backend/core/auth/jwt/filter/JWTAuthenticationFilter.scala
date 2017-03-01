@@ -39,13 +39,13 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
       val authHeader = request.getHeaderNames.asScala.filter( _.toLowerCase() == "authorization").toList
 
       if(authHeader.isEmpty){
-        throw new AuthenticationServiceException(s"no authorization header provided! Request was ${request.getRequestURL} and method was ${request.getMethod}")
+        throw new AuthenticationServiceException(s"No authorization header provided! Request was ${request.getRequestURI} and method was ${request.getMethod}")
       }
 
       val headerValue = request.getHeader(authHeader.head)
 
       if(!headerValue.trim.toLowerCase.startsWith("bearer")){
-        throw new AuthenticationServiceException(s"authorization header was not of type bearer, header was ${authHeader.head}")
+        throw new AuthenticationServiceException(s"Authorization header was not of type bearer, header was ${authHeader.head}")
       }
 
       val token = headerValue.trim.substring(7); // The part after "Bearer "
@@ -58,7 +58,7 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
         filterChain.doFilter(servletRequest, servletResponse)
       } catch {
         case e: AuthenticationException => throw e
-        case e: Exception => throw new AuthenticationServiceException(s"sorry an unexpected error happened: ${e.getMessage}", e)
+        case e: Exception => throw new AuthenticationServiceException(s"Sorry an unexpected error occurred: ${e.getMessage}", e)
       }
     } catch {
       case e: AuthenticationException =>

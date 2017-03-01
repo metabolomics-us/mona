@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation._
 
@@ -46,8 +45,15 @@ class UserController extends GenericRESTController[User] {
   @Async
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   @ResponseBody
-  override def save(@RequestBody user: User): AsyncResult[User] = {
-    super.save(user.copy(roles = Collections.emptyList()))
+  override def save(@RequestBody user: User): Future[ResponseEntity[User]] = {
+    // Users cannot update existing accounts
+    val existingUser: User = userRepository.findOne(user.username)
+
+    if (existingUser == null) {
+      super.save(user.copy(roles = Collections.emptyList()))
+    } else {
+      new AsyncResult[ResponseEntity[User]](new ResponseEntity[User](HttpStatus.CONFLICT))
+    }
   }
 
   /**

@@ -1,15 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.scalatest.{BeforeAndAfterAll, WordSpec}
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.test.context.TestContextManager
+import org.scalatest.WordSpec
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.specification.RequestSpecification
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
@@ -20,7 +16,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.http.MediaType
-import org.springframework.test.annotation.DirtiesContext
 
 import scala.collection.JavaConverters._
 
@@ -55,43 +50,43 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
     "A Rest Controller" should {
       "save may require authentication" in {
         if(saveRequiresAuthentication) {
-          given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(401)
-          authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(200)
+          given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").`then`().statusCode(401)
+          authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").`then`().statusCode(200)
         } else {
-          given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").then().statusCode(200)
+          given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").`then`().statusCode(200)
         }
       }
 
       "searchCount" in {
         if(requiresAuthForAllRequests) {
-          given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").then().statusCode(401)
-          authenticate().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").then().statusCode(200)
+          given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").`then`().statusCode(401)
+          authenticate().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").`then`().statusCode(200)
         } else {
-          given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").then().statusCode(200)
+          given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").`then`().statusCode(200)
         }
       }
 
       "get" in {
         if(requiresAuthForAllRequests) {
-          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").then().statusCode(401)
-          authenticate().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").then().statusCode(200)
+          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(401)
+          authenticate().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(200)
         } else{
-          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").then().statusCode(200)
+          given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(200)
         }
       }
 
       "put requires authorization" in {
-        given().log().all(true).contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").then().statusCode(401)
+        given().log().all(true).contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").`then`().statusCode(401)
 
-        authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").then().statusCode(200)
+        authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").`then`().statusCode(200)
       }
 
       "delete requires admin authorization" in {
-        given().contentType("application/json; charset=UTF-8").delete(s"$endpoint/$getId").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").delete(s"$endpoint/$getId").`then`().statusCode(401)
 
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").then().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").`then`().statusCode(403)
 
-        authenticate().contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").then().statusCode(200)
+        authenticate().contentType("application/json; charset=UTF-8").when().delete(s"$endpoint/$getId").`then`().statusCode(200)
       }
     }
   }
@@ -120,7 +115,7 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
     * @return
     */
   def authenticate(user: String = "admin", password: String = "secret"): RequestSpecification = {
-    val response = loginService.login(new LoginRequest(user, password))
+    val response = loginService.login(LoginRequest(user, password))
 
     assert(response.token != null)
     logger.debug(s"generated token is ${response.token}")
@@ -140,6 +135,7 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
       userRepository.deleteAll()
       userRepository.save(User("admin", "secret", Array(Role("ADMIN")).toList.asJava))
       userRepository.save(User("test", "test-secret"))
+      userRepository.save(User("test2", "test-secret"))
     }
   }
 }

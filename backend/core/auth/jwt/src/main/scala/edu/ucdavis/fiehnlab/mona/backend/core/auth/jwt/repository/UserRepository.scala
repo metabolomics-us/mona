@@ -60,9 +60,8 @@ class UserRepository extends PagingAndSortingRepository[User, String] with LazyL
     if (s.password.matches("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}")) {
       userRepository.save(s)
     } else {
-      val passwd = new BCryptPasswordEncoder().encode(s.password)
-      logger.warn(s"SAVING PASSWORD: ${s.password} -> $passwd")
-      userRepository.save(s.copy(password = passwd).asInstanceOf[S])
+      val hashedPassword = new BCryptPasswordEncoder().encode(s.password)
+      userRepository.save(s.copy(password = hashedPassword).asInstanceOf[S])
     }
   }
 
