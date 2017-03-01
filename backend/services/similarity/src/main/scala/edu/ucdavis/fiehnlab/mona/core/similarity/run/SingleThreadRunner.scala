@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.run
 
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
-import edu.ucdavis.fiehnlab.mona.core.similarity.types.{ComputationalResult, ResultHandler, SimpleSpectrum}
+import edu.ucdavis.fiehnlab.mona.core.similarity.types.{ComputationalResult, SimpleSpectrum}
 
 /**
   * Created by sajjan on 12/13/16.
@@ -14,13 +14,9 @@ class SingleThreadRunner extends Calculate {
     * @param library
     * @return
     */
-  override def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], tolerance: Double, algorithm: Similarity, resultHandler: ResultHandler) {
-    library.foreach { spectrum =>
-      val score = algorithm.compute(unknown, spectrum)
-
-      if (score >= tolerance) {
-        resultHandler.handleResult(ComputationalResult(unknown, spectrum, score))
-      }
-    }
+  override def calculate(unknown: SimpleSpectrum, library: Iterable[SimpleSpectrum], threshold: Double, algorithm: Similarity): Iterable[ComputationalResult] = {
+    library
+      .map(spectrum => ComputationalResult(unknown, spectrum, algorithm.compute(unknown, spectrum)))
+      .filter(_.score >= threshold)
   }
 }

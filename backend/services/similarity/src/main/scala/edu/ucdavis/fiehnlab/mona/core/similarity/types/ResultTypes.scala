@@ -5,14 +5,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 /**
   * Created by sajjan on 12/28/16.
   */
-trait ResultHandler {
-
-  /**
-    *
-    * @param result
-    */
-  def handleResult(result: ComputationalResult)
-}
 
 /**
   *
@@ -27,6 +19,11 @@ case class ComputationalResult(unknown: SimpleSpectrum, hit: SimpleSpectrum, sco
   override def toString: String = s"${unknown.splash} vs ${hit.splash} = $score"
 }
 
+/**
+  *
+  * @param hit
+  * @param score
+  */
 case class SearchResult(hit: Spectrum, score: Double) extends Ordered[SearchResult] {
 
   override def compare(that: SearchResult): Int = this.score.compareTo(that.score)

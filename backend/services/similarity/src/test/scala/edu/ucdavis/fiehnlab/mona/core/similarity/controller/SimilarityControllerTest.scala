@@ -92,12 +92,18 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
     }
 
     "perform a more lax similarity query to retrieve more results" in {
-      val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25)
-      val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+      (1 to 10).foreach { i =>
+        logger.info(s"Iteration $i")
 
-      assert(result.length == 2)
-      assert(result.exists(_.score > 0.99))
-      assert(result.forall(_.score > 0.25))
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25)
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").then().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        result.foreach(println)
+
+        assert(result.length == 2)
+        assert(result.exists(_.score > 0.99))
+        assert(result.forall(_.score > 0.25))
+      }
     }
 
     "perform similarity queries with precursor filtering" should {
