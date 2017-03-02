@@ -5,7 +5,7 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona</groupId>
         <artifactId>services</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -39,7 +39,6 @@
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
             <artifactId>api</artifactId>
         </dependency>
-
 
         <!-- test dependencies -->
         <dependency>
