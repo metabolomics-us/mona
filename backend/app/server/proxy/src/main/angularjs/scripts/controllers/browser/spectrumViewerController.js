@@ -42,8 +42,7 @@
 
         if (angular.isDefined($scope.spectrum.compound)) {
             for (var i = 0; i < $scope.spectrum.compound.length; i++) {
-                var name = 'DisplayCompound' + i;
-                $scope.accordionStatus.isCompoundOpen.push(CookieService.getBooleanValue(name, false));
+                $scope.accordionStatus.isCompoundOpen.push(i == 0);
             }
         }
 
