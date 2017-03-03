@@ -95,7 +95,7 @@
             var direct_parent = $scope.compound.classification.filter(function(x) { return x.name == 'direct parent'; });
             var alternate_parents = $scope.compound.classification.filter(function(x) { return x.name == 'alternative parent'; });
 
-            var parents = direct_parent;//.concat(alternate_parents);
+            // var parents = direct_parent.concat(alternate_parents);
 
             // Build tree
             if (classes.length > 0) {
@@ -103,7 +103,7 @@
 
                 for (var i = classes.length - 1; i >= 0; i--) {
                     if (i == classes.length - 1) {
-                        classes[i].nodes = parents;
+                        classes[i].nodes = direct_parent;
                     } else {
                         classes[i].nodes = [classes[i + 1]];
                     }
