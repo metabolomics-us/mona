@@ -73,7 +73,13 @@ class MSPWriter extends DomainWriter {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
     if (compound != null) {
-      s"InChIKey: ${compound.inchiKey}"
+      if (compound.inchiKey != null && compound.inchiKey != "") {
+        s"InChIKey: ${compound.inchiKey}"
+      } else if (compound.metaData.exists(_.name == "InChIKey")) {
+        s"InChIKey: ${compound.metaData.filter(_.name == "InChIKey").head.value.toString}"
+      } else {
+        s"InChIKey: None"
+      }
     } else {
       s"InChIKey: None"
     }
