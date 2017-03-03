@@ -1,18 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 
-import com.jayway.restassured.RestAssured._
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
+import com.jayway.restassured.RestAssured._
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
-import com.typesafe.scalalogging.LazyLogging
-import org.scalatest.WordSpec
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.specification.RequestSpecification
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
+import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.http.MediaType
@@ -20,7 +20,7 @@ import org.springframework.http.MediaType
 import scala.collection.JavaConverters._
 
 /**
-  * an abstract test to provides us with a simple way to test complex controllers
+  * An abstract test to provides us with a simple way to test complex controllers
   * and all their operation including authorization
   */
 abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends AbstractSpringControllerTest {

@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.Sp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{PageRequest, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
-import org.springframework.http.{HttpHeaders, HttpStatus, MediaType, ResponseEntity}
+import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestMapping, _}
 
@@ -21,20 +21,18 @@ import scala.collection.JavaConverters._
 @RequestMapping(Array("/rest/spectra"))
 class SpectrumRestController extends GenericRESTController[Spectrum] {
 
-  /**
-    * this is the utilized repository, doing all the heavy lifting
-    */
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
+
   /**
-    * this executes a search against the repository and can cause out of memory errors. We recommend to utilize this method with
-    * pagination as well
+    * Executes a search against the repository and can cause out of memory errors.  It is recommended to utilize this
+    * method with pagination
     *
     * @param query
     * @return
     */
-  @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET), produces = Array("application/json","text/msp"))
+  @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp"))
   @Async
   @ResponseBody
   def searchRSQL(@RequestParam(value = "page", required = false) page: Integer,
@@ -67,7 +65,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   }
 
   /**
-    * this method returns the counts of objects, which would be received by the given query
+    * Returns the counts of objects, which would be received by the given query
     *
     * @return
     */
@@ -84,22 +82,17 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
 
   /**
-    * saves the provided spectrum at the given path
+    * Saves the provided spectrum at the given path
     *
     * @param id
     * @param spectrum
     * @return
     */
-  @Async
-  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
-  @ResponseBody
-  override def put(@PathVariable("id") id: String, @RequestBody spectrum: Spectrum): Future[ResponseEntity[Spectrum]] = {
+  override def doPut(id: String, spectrum: Spectrum): Future[ResponseEntity[Spectrum]] = {
+    // TODO Add user-level security
     if (id == spectrum.id) {
       new AsyncResult(
-        new ResponseEntity[Spectrum](
-          spectrumPersistenceService.update(spectrum.copy(id = id)),
-          HttpStatus.OK
-        )
+        new ResponseEntity[Spectrum](spectrumPersistenceService.update(spectrum.copy(id = id)), HttpStatus.OK)
       )
     } else {
       getRepository.delete(spectrum.id)
@@ -107,17 +100,12 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
       val newSpectrum = spectrum.copy(id = id)
       val result = getRepository.save(newSpectrum)
 
-      new AsyncResult(
-        new ResponseEntity(
-          result,
-          HttpStatus.OK
-        )
-      )
+      new AsyncResult(new ResponseEntity[Spectrum](result, HttpStatus.OK))
     }
   }
 
   /**
-    * utilized repository
+    * Utilized repository
     *
     * @return
     */
