@@ -223,9 +223,9 @@
                         <div class="col-md-12">
                             <h4>Compound Information</h4>
 
-                            <uib-accordion close-others="false">
+                            <uib-accordion>
                                 <uib-accordion-group ng-repeat="compound in spectrum.compound track by $index"
-                                                     is-open="accordionStatus.isCompoundOpen[$index]" >
+                                                     is-open="accordionStatus.isCompoundOpen[$index]">
                                     <uib-accordion-heading>
                                         <div>
                                             <span ng-if="compound.kind !== null">{{compound.kind | ucfirst}}</span>
