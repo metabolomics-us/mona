@@ -84,7 +84,6 @@ class WebHookService extends LazyLogging {
 
             result
         }
-
       }.toArray
     }
   }
@@ -111,6 +110,7 @@ class WebHookService extends LazyLogging {
 
           logger.info(s"internal spectra is: $result")
           new ResponseEntity[Any](result, HttpStatus.OK)
+
         case Event.DELETE =>
           logger.info("deleting spectra")
 
@@ -120,8 +120,7 @@ class WebHookService extends LazyLogging {
 
             //throw an error, since we can't delete a spectra which officially exists on the remote server side
             new ResponseEntity[Any](s"sorry this spectra ($id) does still exist on the remote server", HttpStatus.NOT_FOUND)
-          }
-          catch {
+          } catch {
             case e: HttpClientErrorException =>
               if (e.getMessage == "404 Not Found") {
                 //spectra does not exit, now we can delete it safely
@@ -130,20 +129,18 @@ class WebHookService extends LazyLogging {
                 if (spectrum != null) {
                   spectrumPersistenceService.delete(id)
                   new ResponseEntity[Any](HttpStatus.OK)
-                }
-                else {
+                } else {
                   new ResponseEntity[Any](s"sorry this spectra ($id) did not exist on the local server", HttpStatus.NOT_FOUND)
                 }
-              }
-              else {
+              } else {
                 new ResponseEntity[Any](e.getMessage, HttpStatus.BAD_REQUEST)
               }
           }
 
         case Event.UPDATE =>
           logger.info("updating spectra")
-
           logger.info(s"fetching spectrum from remote mona server for id: $id")
+
           val spectrum: Spectrum = monaSpectrumRestClient.get(id)
           val result = spectrumPersistenceService.update(spectrum)
 
@@ -151,8 +148,7 @@ class WebHookService extends LazyLogging {
         case _ =>
           new ResponseEntity[Any](s"invalid request, event must match ${Event.ADD}/${Event.DELETE}/${Event.UPDATE}", HttpStatus.BAD_REQUEST)
       }
-    }
-    catch {
+    } catch {
       case e: HttpClientErrorException =>
         new ResponseEntity[Any](s"spectrum with $id was not found on origin server: ${e.getMessage}", HttpStatus.NOT_FOUND)
     }

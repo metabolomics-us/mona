@@ -53,7 +53,7 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
 
     "create a webhook" in {
       webHookRepository.deleteAll()
-      webHookRepository.save(WebHook("test", s"http://localhost:$port/info?id=", "none provided"))
+      webHookRepository.save(WebHook("test", s"http://localhost:$port/info?id=", "none provided", "test"))
     }
 
     "event bus needs to be of type Spectrum" in {
