@@ -13,7 +13,7 @@ import org.springframework.context.annotation.{Bean, Import, Primary}
   * Created by wohlg on 4/11/2016.
   */
 @SpringBootApplication
-@Import(Array(classOf[MongoConfig], classOf[JWTAuthenticationConfig],classOf[WebHookServer]))
+@Import(Array(classOf[MongoConfig], classOf[JWTAuthenticationConfig], classOf[WebHookServer]))
 class TestConfig {
 
   /**
@@ -33,5 +33,4 @@ class TestConfig {
     */
   @Bean
   def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
-
 }

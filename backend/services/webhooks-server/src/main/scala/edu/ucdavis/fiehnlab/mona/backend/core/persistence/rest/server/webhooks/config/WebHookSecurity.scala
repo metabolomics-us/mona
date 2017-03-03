@@ -37,18 +37,21 @@ class WebHookSecurity extends WebSecurityConfigurerAdapter {
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
       .authorizeRequests()
-      //saves need to be authenticated
 
+      // listing webhooks is limited to authenticated users
+      .antMatchers(HttpMethod.GET, "/rest/webhooks").authenticated()
+
+      // manual triggering need to be authenticated as admin
       .antMatchers(HttpMethod.POST, "/rest/webhooks/push").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/webhooks/pull").hasAuthority("ADMIN")
       .antMatchers(HttpMethod.POST, "/rest/webhooks/trigger/**").hasAuthority("ADMIN")
-      .antMatchers(HttpMethod.POST, "/rest/webhooks/**").authenticated()
 
-      //updates needs authentication
+      // saves and updates needs authentication
+      .antMatchers(HttpMethod.POST, "/rest/webhooks/**").authenticated()
       .antMatchers(HttpMethod.PUT).authenticated()
+
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
-
   }
 
   /**
@@ -59,9 +62,10 @@ class WebHookSecurity extends WebSecurityConfigurerAdapter {
     */
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
-      //get is always available
-      .antMatchers(HttpMethod.GET)
+      // sync should be publicly accessible
+      .antMatchers(HttpMethod.GET, "/rest/webhooks/sync/**")
 
+      // the test webhook should be publicly accessible
+      .antMatchers(HttpMethod.GET, "/info/**")
   }
-
 }

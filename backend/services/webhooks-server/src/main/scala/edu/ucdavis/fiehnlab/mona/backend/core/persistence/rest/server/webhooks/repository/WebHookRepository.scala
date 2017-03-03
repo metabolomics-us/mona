@@ -10,4 +10,10 @@ import org.springframework.stereotype.Repository
 @Repository
 trait WebHookRepository extends PagingAndSortingRepository[WebHook, String]{
 
+  /**
+    * returns the webhooks associated with the given account
+    * @param username
+    * @return
+    */
+  def findByUsername(username: String): Array[WebHook]
 }
