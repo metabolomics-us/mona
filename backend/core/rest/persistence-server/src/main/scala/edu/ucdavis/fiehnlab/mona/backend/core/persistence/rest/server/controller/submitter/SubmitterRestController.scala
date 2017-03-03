@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
-import javax.validation.Valid
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
@@ -12,7 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{ResponseEntity, HttpStatus}
-import org.springframework.scheduling.annotation.{AsyncResult, Async}
+import org.springframework.scheduling.annotation.AsyncResult
 import org.springframework.web.bind.annotation._
 
 /**
@@ -30,25 +29,23 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
   val loginService: LoginService = null
 
   /**
-    * saves a spectra or updates it. This will depend on the utilized repository
+    * saves a submitter or updates it. This will depend on the utilized repository
     *
     * @param submitter
     * @return
     */
-  @Async
-  @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
-  @ResponseBody
-  override def save(@RequestBody submitter: Submitter): Future[ResponseEntity[Submitter]] = {
+  override def doSave(submitter: Submitter): Future[ResponseEntity[Submitter]] = {
+
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
     if(loginInfo.roles.contains("ADMIN")) {
-      super.save(submitter)
+      super.doSave(submitter)
     } else {
       val existingUser: Submitter = submitterMongoRepository.findByEmailAddress(submitter.emailAddress)
 
       if (existingUser == null || existingUser.emailAddress == loginInfo.username) {
-        super.save(submitter.copy(emailAddress = loginInfo.username))
+        super.doSave(submitter.copy(emailAddress = loginInfo.username))
       } else {
         new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.FORBIDDEN))
       }
@@ -62,20 +59,18 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     * @param submitter
     * @return
     */
-  @Async
-  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
-  @ResponseBody
-  override def put(@PathVariable("id") id: String, @Valid @RequestBody submitter: Submitter): Future[ResponseEntity[Submitter]] = {
+  override def doPut(id: String, submitter: Submitter): Future[ResponseEntity[Submitter]] = {
+
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
     if (loginInfo.roles.contains("ADMIN")) {
-      super.put(id, submitter)
+      super.doPut(id, submitter)
     } else {
       val existingUser: Submitter = submitterMongoRepository.findByEmailAddress(id)
 
       if (loginInfo.username == existingUser.emailAddress) {
-        super.put(id, submitter)
+        super.doPut(id, submitter)
       } else {
         new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.FORBIDDEN))
       }
