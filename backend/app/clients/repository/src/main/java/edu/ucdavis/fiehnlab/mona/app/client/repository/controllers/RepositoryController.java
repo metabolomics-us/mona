@@ -27,7 +27,7 @@ public class RepositoryController {
         InputStream is = p.getInputStream();
 
         FileOutputStream outputStream = new FileOutputStream(
-                "spectrum.txt");
+                id+".txt");
 
         String line;
         BufferedInputStream bis = new BufferedInputStream(is);
