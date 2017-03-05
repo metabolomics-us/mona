@@ -37,12 +37,16 @@ class CompoundProcessor extends LazyLogging {
     val inchikeyProcessorResult = inchikeyProcessor.process(compound, id, impacts)
 
     if (molProcessorResult._1 != null && molProcessorResult._2 != null) {
+      logger.info(s"$id: Using provided MOL definition")
       molProcessorResult
     } else if (inchiProcessorResult._1 != null && inchiProcessorResult._2 != null) {
+      logger.info(s"$id: Using provided InChI")
       inchiProcessorResult
     } else if (smilesProcessorResult._1 != null && smilesProcessorResult._2 != null) {
+      logger.info(s"$id: Using provided SMILES")
       smilesProcessorResult
     } else if (inchikeyProcessorResult._1 != null && inchikeyProcessorResult._2 != null) {
+      logger.info(s"$id: Using provided InChIKey")
       inchikeyProcessorResult
     } else {
       logger.warn(s"$id: Unable to generate CDK molecule")

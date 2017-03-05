@@ -12,24 +12,20 @@ import org.scalatest.WordSpec
   */
 class NormalizeIonizationModeValueTest extends WordSpec {
 
-  val reader = JSONDomainReader.create[Spectrum]
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   "this processor" when {
 
     val processor = new NormalizeIonizationModeValue
 
-    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-    val spectrumGiven: Spectrum = reader.read(input)
-
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
-
     "given a spectra" must {
-
       exampleRecords.foreach { spectrum: Spectrum =>
         val processedSpectrum = processor.process(spectrum)
 
         assert(processedSpectrum.metaData.exists(_.name == CommonMetaData.IONIZATION_MODE))
+        assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("ionization mode/type")))
       }
     }
   }

@@ -10,8 +10,8 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.processor.{FinalizeCuration, R
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata.{NormalizeIonizationModeValue, NormalizeMSLevelValue, NormalizeMetaDataNames}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateSplash, NormalizeSpectrum}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata.{IdentifyMetaDataFields, NormalizeIonizationModeValue, NormalizeMSLevelValue, NormalizeMetaDataNames}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateMassAccuracy, CalculateSplash, NormalizeSpectrum}
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONFileSpectraReader, JSONLegacyFileSpectraReader}
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.amqp.core._
@@ -93,16 +93,17 @@ class CurationConfig extends LazyLogging {
           calculateCompoundProperties,
           classifierProcessor,
 
-          // Spectrum-level curaiton
+          // Spectrum-level curation
           new NormalizeSpectrum,
           new CalculateSplash,
+          new CalculateMassAccuracy,
 
           // Metadata curation
           new NormalizeMetaDataNames,
-
           new IdentifyChromatography,
           new NormalizeIonizationModeValue,
           new NormalizeMSLevelValue,
+          new IdentifyMetaDataFields,
 
           // Add validation metadata
           new FinalizeCuration

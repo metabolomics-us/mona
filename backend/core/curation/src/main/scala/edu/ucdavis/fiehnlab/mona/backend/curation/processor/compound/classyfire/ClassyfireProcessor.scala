@@ -33,7 +33,14 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   override def process(spectrum: Spectrum): Spectrum = {
     logger.info(s"${spectrum.id}: Retrieving classification data from ClassyFire")
 
-    val compounds = spectrum.compound.map(classify(_, spectrum.id))
+    val compounds = spectrum.compound.map(compound =>
+      if (compound.classification == null) {
+        classify(compound.copy(classification = Array[MetaData]()), spectrum.id)
+      } else {
+        classify(compound, spectrum.id)
+      }
+    )
+
     spectrum.copy(compound = compounds)
   }
 
@@ -45,7 +52,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     */
   def classify(compound: Compound, id: String): Compound = {
     // Look for a ClassyFire query id
-    val classyfireQueryId: Array[MetaData] = compound.metaData.filter(_.name == "ClassyFire Query ID")
+    val classyfireQueryId: Array[MetaData] = compound.classification.filter(_.name == "ClassyFire Query ID")
 
     // Find provided or calculated InChIKey
     val inchiKey: String =
@@ -55,7 +62,12 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
         compound.metaData.filter(_.name == CommonMetaData.INCHI_KEY).map(_.value.toString).headOption.orNull
 
     // Retrieve classyfire query
-    if (classyfireQueryId.nonEmpty) {
+    if (compound.classification.length > classyfireQueryId.length) {
+      logger.info(s"$id: Already have ClassyFire data, skipping...")
+      compound
+    }
+
+    else if (classyfireQueryId.nonEmpty) {
       val url = s"http://classyfire.wishartlab.com/queries/${classyfireQueryId.head.value.toString}.json"
       logger.info(s"$id: Invoking url: $url")
 
