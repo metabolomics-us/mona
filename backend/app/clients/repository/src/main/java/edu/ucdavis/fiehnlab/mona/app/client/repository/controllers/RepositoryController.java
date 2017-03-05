@@ -14,7 +14,7 @@ import java.util.Arrays;
 @RestController
 public class RepositoryController {
 
-    @RequestMapping("/webhook")
+    @RequestMapping("/sync")
     public String hook(@RequestParam(value="id") String id,
                        @RequestParam(value="type") String event) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(
