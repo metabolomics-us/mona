@@ -54,9 +54,6 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    logger.info("EXECUTING")
-    println(loginInfo)
-
     if(loginInfo.roles.contains("ADMIN")) {
       super.doList(page, size)
     } else {

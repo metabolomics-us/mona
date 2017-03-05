@@ -41,9 +41,6 @@ class MetaDataRestController {
     if (partialMetaDataName == null || partialMetaDataName.isEmpty) {
       new AsyncResult[Array[MetaDataStatisticsSummary]](metaDataStatisticsService.getMetaDataNames)
     } else {
-
-      metaDataStatisticsService
-        .getMetaDataNames.foreach(println)
       new AsyncResult[Array[MetaDataStatisticsSummary]](
         metaDataStatisticsService
           .getMetaDataNames.filter(_.name.toLowerCase.contains(partialMetaDataName.toLowerCase)))
@@ -63,7 +60,6 @@ class MetaDataRestController {
     val metaDataStatistics: MetaDataStatistics = metaDataStatisticsService.getMetaDataStatistics(metaDataName)
 
     if (partialMetaDataValue == null || partialMetaDataValue.isEmpty) {
-      println(metaDataStatistics)
       new AsyncResult[MetaDataStatistics](metaDataStatistics)
     } else {
       // Filter the metadata values and take the top 25

@@ -88,7 +88,6 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
       "another user should be able to list webhooks but see nothing" in {
         val result: Array[WebHook] = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/webhooks").`then`().statusCode(200).extract().body().as(classOf[Array[WebHook]])
-        result.foreach(println)
         assert(result.isEmpty)
       }
     }
