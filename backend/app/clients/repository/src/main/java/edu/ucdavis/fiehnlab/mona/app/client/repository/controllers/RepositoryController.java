@@ -15,8 +15,9 @@ import java.util.Arrays;
 public class RepositoryController {
 
     @RequestMapping("/sync")
-    public String hook(@RequestParam(value="id") String id,
-                       @RequestParam(value="type") String event) throws IOException {
+    public String hook(@RequestParam(value = "id") String id,
+                       @RequestParam(value = "type") String event) throws IOException {
+
         ProcessBuilder pb = new ProcessBuilder(
                 "curl",
                 "-s",
