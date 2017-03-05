@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Score, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
 
 /**
@@ -18,9 +18,18 @@ class NormalizeMSLevelValue extends ItemProcessor[Spectrum,Spectrum] with LazyLo
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    //assemble updated spectrum
+    val updatedMetaData: Array[MetaData] = spectrum.metaData.map(normalizeMSLevelData).filter(_ != null)
+
+    val updatedScore: Score =
+      if (updatedMetaData.exists(x => x.name == CommonMetaData.MS_LEVEL && x.value.toString.matches("^MS[1-9]$"))) {
+        CurationUtilities.addImpact(spectrum.score, 1, "MS type/level identified")
+      } else {
+        CurationUtilities.addImpact(spectrum.score, -1, "No MS type/level provided")
+      }
+
     spectrum.copy(
-      metaData = spectrum.metaData.map(normalizeMSLevelData).filter(_!= null)
+      metaData = updatedMetaData,
+      score = updatedScore
     )
   }
 
@@ -30,7 +39,7 @@ class NormalizeMSLevelValue extends ItemProcessor[Spectrum,Spectrum] with LazyLo
     * @param metaData
     * @return
     */
-  def normalizeMSLevelData(metaData: MetaData) : MetaData = {
+  def normalizeMSLevelData(metaData: MetaData): MetaData = {
     if (metaData.name == CommonMetaData.MS_LEVEL) {
       val value: String = metaData.value.toString.trim
 
@@ -42,8 +51,13 @@ class NormalizeMSLevelValue extends ItemProcessor[Spectrum,Spectrum] with LazyLo
       }
 
       else if ("^MS[1-9]$".r.findFirstIn(value).isDefined) {
-        logger.debug(s"MS level with value '$value' requires no modifications")
+        logger.info(s"MS level with value '$value' requires no modifications")
         metaData
+      }
+
+      else if ("^ms[1-9]$".r.findFirstIn(value.toLowerCase()).isDefined) {
+        logger.info(s"Identified MS level value '$value' as ${value.toUpperCase}")
+        metaData.copy(value = value.toUpperCase)
       }
 
       else if (value.toLowerCase == "ms") {

@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum, Tags}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Impact, MetaData, Spectrum, Tags}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonTags, CommonMetaData}
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CommonTags, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
 
 /**
@@ -70,17 +70,18 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
 
       if (isGCMS && isLCMS) {
         logger.warn(s"${spectrum.id}: Identified as both GC/MS and LC/MS!")
-        spectrum
+        spectrum.copy(score = spectrum.score.copy(impacts = spectrum.score.impacts :+ Impact(-1, "Identified as both GC/MS and LC/MS")))
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Identified as both GC/MS and LE/MS"))
       }
 
       else if (isGCMS && isCEMS) {
         logger.warn(s"${spectrum.id}: Identified as both GC/MS and CE/MS!")
-        spectrum
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Identified as both GC/MS and CE/MS"))
       }
 
       else if (isLCMS && isCEMS) {
         logger.warn(s"${spectrum.id}: Identified as both LC/MS and CE/MS!")
-        spectrum
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Identified as both LC/MS and CE/MS"))
       }
 
       else if (isGCMS) {
@@ -93,7 +94,10 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
           else
             spectrum.tags :+ Tags(ruleBased = true, CommonTags.GCMS_SPECTRUM)
 
-         spectrum.copy(tags = updatedTags)
+         spectrum.copy(
+           tags = updatedTags,
+           score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified")
+         )
       }
 
       else if (isLCMS) {
@@ -106,7 +110,10 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
           else
             spectrum.tags :+ Tags(ruleBased = true, CommonTags.LCMS_SPECTRUM)
 
-        spectrum.copy(tags = updatedTags)
+        spectrum.copy(
+          tags = updatedTags,
+          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified")
+        )
       }
 
       else if (isCEMS) {
@@ -119,12 +126,16 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
         else
           spectrum.tags :+ Tags(ruleBased = true, CommonTags.CEMS_SPECTRUM)
 
-        spectrum.copy(tags = updatedTags)
+        spectrum.copy(
+          tags = updatedTags,
+          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified")
+
+        )
       }
 
       else {
         logger.warn(s"${spectrum.id}: Unidentifiable chromotography")
-        spectrum
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Unidentifiable chromotography"))
       }
     }
   }

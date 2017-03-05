@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class CalculateCompoundPropertiesTest extends WordSpec {
+
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   @Autowired
@@ -42,9 +43,10 @@ class CalculateCompoundPropertiesTest extends WordSpec {
         assert(compound.metaData.exists(_.computed))
       }
 
+      result.score.impacts.foreach(println)
       assert(result.score != null)
       assert(result.score.impacts.nonEmpty)
-      assert(result.score.impacts.map(_.value).sum == 2.0)
+      assert(result.score.impacts.map(_.value).sum == 4.0)
     }
 
     "handle problematic record PT201480" in {
@@ -62,7 +64,7 @@ class CalculateCompoundPropertiesTest extends WordSpec {
 
       assert(result.score != null)
       assert(result.score.impacts.nonEmpty)
-      assert(result.score.impacts.map(_.value).sum == 1.0)
+      assert(result.score.impacts.map(_.value).sum == 2.0)
     }
   }
 }

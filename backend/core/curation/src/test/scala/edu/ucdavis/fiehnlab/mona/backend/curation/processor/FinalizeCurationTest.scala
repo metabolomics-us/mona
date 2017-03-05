@@ -14,14 +14,12 @@ class FinalizeCurationTest extends WordSpec {
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   "this processor" when {
-
     val processor = new FinalizeCuration
 
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
     val spectrumGiven: Spectrum = reader.read(input)
 
     "given a spectra" must {
-
       val processedSpectrum = processor.process(spectrumGiven)
 
       "remove the computed metadata for the spectrum" in {

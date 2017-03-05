@@ -10,18 +10,16 @@ import org.scalatest.WordSpec
   * Created by wohlgemuth on 3/11/16.
   */
 class RemoveComputedDataTest extends WordSpec {
-  val reader = JSONDomainReader.create[Spectrum]
+
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   "this processor" when {
-
     val processor = new RemoveComputedData
 
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-
     val spectrumGiven: Spectrum = reader.read(input)
 
     "given a spectra" must {
-
       val processedSpectrum = processor.process(spectrumGiven)
 
       "remove the computed metadata for the spectrum" in {

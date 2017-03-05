@@ -44,6 +44,8 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
 
   def calculateCompoundProperties(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): Compound = {
+    logger.info(s"$id: Processing compound: ${compound.kind}'")
+
     // Updated metadata to add to this compound
     val metaData: ArrayBuffer[MetaData] = new ArrayBuffer[MetaData]()
     compound.metaData.foreach(x => metaData.append(x))
@@ -67,13 +69,13 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
     if (molDefinition == null) {
       logger.warn(s"$id: No MOL definition found!")
-      impacts.append(Impact(-1, "Unable to read or generate MOL data"))
+      impacts.append(Impact(-2, "Unable to read or generate MOL data"))
       compound
     }
 
     else if (molecule == null) {
       logger.warn(s"$id: Unable to load provided structure information with CDK")
-      impacts.append(Impact(-1, "Unable to generate a molecular structure from provided compound data"))
+      impacts.append(Impact(-2, "Unable to generate a molecular structure from provided compound data"))
       compound
     }
 
@@ -88,31 +90,40 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
       metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.TOTAL_EXACT_MASS,
         null, null, null, compoundConversion.moleculeToTotalExactMass(molecule)))
 
-      // Calculate InChI
-      metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.INCHI_CODE,
-        null, null, null, compoundConversion.moleculeToInChI(molecule)))
-
-      val computedInChIKey: String = compoundConversion.moleculeToInChIKey(molecule)
-
-      metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.INCHI_KEY,
-        null, null, null, computedInChIKey))
-
       // Calculate SMILES
       metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.SMILES,
         null, null, null, compoundConversion.moleculeToSMILES(molecule)))
 
 
-      // Add positive score impact
-      impacts.append(Impact(1, "Valid molecular structure(s) provided"))
+      // Calculate InChI and InChIKey and only add them to the record if they differ from provided values
+      val computedInChI: String = compoundConversion.moleculeToInChI(molecule)
+      val computedInChIKey: String = compoundConversion.moleculeToInChIKey(molecule)
+
+      val providedInChI: Option[MetaData] = compound.metaData
+        .find(x => x.name.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase && !x.computed)
+      val providedInChIKey: Option[MetaData] = compound.metaData
+        .find(x => x.name.toLowerCase == CommonMetaData.INCHI_KEY.toLowerCase && !x.computed)
+
+      if (providedInChI.isEmpty || providedInChI.get.value.toString != computedInChI) {
+        metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.INCHI_CODE,
+          null, null, null, computedInChI))
+      }
+
+      if (providedInChIKey.isEmpty || providedInChIKey.get.value.toString != computedInChIKey) {
+        metaData.append(MetaData("computed", computed = true, hidden = false, CommonMetaData.INCHI_KEY,
+          null, null, null, computedInChIKey))
+      }
+
 
       // Check whether computed InChIKey matches the one given
-      val providedInChIKey: Option[MetaData] = compound.metaData
-        .find(x => x.name.toLowerCase == CommonMetaData.INCHI_KEY.toLowerCase && ! x.computed)
-
       if (providedInChIKey.isDefined && providedInChIKey.get.value.toString.split('-')(0) != computedInChIKey.split('-')(0)) {
         logger.info(s"$id: Discrepancy between provided and computed InChIKeys (${providedInChIKey.get.value}, $computedInChIKey)")
         impacts.append(Impact(-1, "Discrepancy between first blocks of the provided and computed InChIKeys"))
       }
+
+
+      // Add positive score impact
+      impacts.append(Impact(2, s"Valid molecular structure(s) provided for ${compound.kind} compound"))
 
       // Return compound with update metadata
       compound.copy(

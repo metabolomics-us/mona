@@ -10,16 +10,15 @@ import org.scalatest.WordSpec
   * Created by sajjan on 4/21/16.
   */
 class CalculateSpectralQualityTest extends WordSpec {
-  val reader = JSONDomainReader.create[Spectrum]
+
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   "this processor" when {
     val processor = new CalculateSpectralQuality
 
-    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-    val spectrumGiven: Spectrum = reader.read(input)
+    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "given a spectra" must {
-      val processedSpectrum = processor.process(spectrumGiven)
 
     }
   }
