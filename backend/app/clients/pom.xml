@@ -15,5 +15,6 @@
 
     <modules>
         <module>uploader</module>
+        <module>repository</module>
     </modules>
 </project>
