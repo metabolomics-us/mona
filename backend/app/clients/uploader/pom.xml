@@ -12,9 +12,7 @@
     <artifactId>uploader</artifactId>
 	<packaging>jar</packaging>
 
-    <description>this project provides a simple client to upload data to the server using a mona json input file. It will also allow to run all the curation rules locally, if so desired
-    </description>
-
+    <description>this project provides a simple client to upload data to the server using a mona json input file. It will also allow to run all the curation rules locally, if so desired</description>
 
     <dependencies>
         <dependency>
@@ -26,7 +24,5 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-batch</artifactId>
         </dependency>
-
     </dependencies>
-
 </project>
