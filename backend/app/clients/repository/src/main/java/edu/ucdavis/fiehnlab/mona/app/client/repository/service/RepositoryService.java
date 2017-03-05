@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.app.client.repository.service;
 
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum;
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper;
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService;
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -50,9 +53,13 @@ public class RepositoryService {
     private String localPort;
 
 
+    private File getDownloadDirectory() {
+        return new File("./webook_repository");
+    }
+
     private void initializeDownloadDirectory() {
         try {
-            File downloadDir = new File("./webook_repository");
+            File downloadDir = getDownloadDirectory();
 
             if (downloadDir.exists()) {
                 if (!downloadDir.isDirectory()) {
@@ -101,8 +108,19 @@ public class RepositoryService {
         createWebHook(username, token);
     }
 
-    public void handleWebHook() {
+    public void handleWebHook(String id, String eventType) {
+        try {
+            if (eventType.equals("add") || Objects.equals(eventType, "update")) {
+                logger.info("Saving spectrum with id: "+ id);
+                Spectrum spectrum = monaSpectrumRestClient.get(id);
 
+                File spectrumFile = new File(getDownloadDirectory(), id + ".json");
+                MonaMapper.create().writeValue(spectrumFile, spectrum);
+                logger.info("Wrote spectrum "+ id +" to: "+ spectrumFile.getPath());
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void shutdownApp(int returnCode){
