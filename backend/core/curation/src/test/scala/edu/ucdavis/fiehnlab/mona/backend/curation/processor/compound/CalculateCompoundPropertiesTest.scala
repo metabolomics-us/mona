@@ -43,7 +43,6 @@ class CalculateCompoundPropertiesTest extends WordSpec {
         assert(compound.metaData.exists(_.computed))
       }
 
-      result.score.impacts.foreach(println)
       assert(result.score != null)
       assert(result.score.impacts.nonEmpty)
       assert(result.score.impacts.map(_.value).sum == 4.0)
