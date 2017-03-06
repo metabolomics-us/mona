@@ -70,7 +70,7 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
       if (counter % 10000 == 0) {
         logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, index size = $indexSize")
       } else {
-        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, index size = $indexSize")
+        logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.id}, index size = $indexSize")
       }
     }
 
