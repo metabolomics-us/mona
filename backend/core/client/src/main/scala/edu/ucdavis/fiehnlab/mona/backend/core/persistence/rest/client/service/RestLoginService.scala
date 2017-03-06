@@ -17,7 +17,7 @@ import scala.reflect._
 class RestLoginService(val remoteServer: String, val remotePort: Int, val protocol: String = "http") extends LoginService with LazyLogging{
 
   @Autowired
-  val restOperations:RestOperations = null
+  val restOperations: RestOperations = null
 
   /**
     * does a login for the current user
@@ -45,7 +45,7 @@ class RestLoginService(val remoteServer: String, val remotePort: Int, val protoc
   }
 
   /**
-    * etends the given token, to create a token which doesn't expire
+    * extends the given token, to create a token which doesn't expire
     *
     * @param token
     * @return

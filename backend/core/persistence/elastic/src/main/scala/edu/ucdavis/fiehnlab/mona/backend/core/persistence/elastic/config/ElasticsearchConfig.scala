@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config
 
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.MetaData
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Names}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{ElasticMetaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
