@@ -178,16 +178,6 @@
             // Regular expression to extract ions
             var ionRegex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
 
-            // Assemble our annotation matrix
-            var meta = [];
-
-            if (angular.isDefined(delayedSpectrum.metaData)) {
-                for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
-                    if (delayedSpectrum.metaData[i].category === 'annotation') {
-                        meta.push(delayedSpectrum.metaData[i]);
-                    }
-                }
-            }
 
             // Parse spectrum string to generate ion list
             var match;
@@ -197,10 +187,10 @@
                 var annotation = '';
                 var computed = false;
 
-                for (var i = 0; i < meta.length; i++) {
-                    if (meta[i].value === match[1]) {
-                        annotation = meta[i].name;
-                        computed = meta[i].computed;
+                for (var i = 0; i < delayedSpectrum.annotations.length; i++) {
+                    if (delayedSpectrum.annotations[i].value === parseFloat(match[1])) {
+                        annotation = delayedSpectrum.annotations[i].name;
+                        computed = delayedSpectrum.annotations[i].computed;
                     }
                 }
 
