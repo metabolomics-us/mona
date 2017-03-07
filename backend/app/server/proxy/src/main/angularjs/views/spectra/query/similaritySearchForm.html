@@ -54,7 +54,7 @@
             </div>
 
             <!-- Viewer + submit page -->
-            <div ng-if="page == 2">
+            <div ng-if="page == 2" ng-init="precursorToleranceUnit = 'PPM'">
                 <p class="lead">
                     <small>
                         Please verify your mass spectrum and set your search parameters.  Note that this search returns
@@ -74,10 +74,37 @@
                            class="form-control"
                            placeholder="500">
                 </div>
+
+
+                <label class="control-label">Precursor m/z (optional):</label>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <input type="text" ng-model="precursorMZ" class="form-control" placeholder="Precursor m/z">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">&pm;</div>
+                            <input type="number" ng-model="precursorMZTolerance" class="form-control">
+
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    {{precursorToleranceUnit}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu pull-right">
+                                    <li><a href="#" data-ng-click="precursorToleranceUnit = 'PPM'">PPM</a></li>
+                                    <li><a href="#" data-ng-click="precursorToleranceUnit = 'Da'">Da</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <br />
 
                 <button class="btn btn-warning" data-ng-click="page = 0">Reset</button>
-                <button class="btn btn-primary" data-ng-click="search(minSimilarity)">Search for Similar Spectra</button>
+                <button class="btn btn-primary" data-ng-click="search(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit)">
+                    Search for Similar Spectra
+                </button>
             </div>
         </div>
     </div>

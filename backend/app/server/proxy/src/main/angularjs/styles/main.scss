@@ -431,3 +431,15 @@ input[readonly] {
 .tree li.tree-node:last-child::before {
   height:30px
 }
+
+
+/**
+ * Dropdown for input group
+ */
+.input-group-btn select {
+  border-color: #ccc;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}

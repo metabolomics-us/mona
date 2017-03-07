@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    SpectraSimilarityQueryController.$inject = ['$scope', '$location', 'UploadLibraryService', 'SpectraQueryBuilderService'];
+    SpectraSimilarityQueryController.$inject = ['$scope', '$location', '$log', 'UploadLibraryService', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
         .directive('similaritySearchForm', similaritySearchForm);
 
@@ -14,7 +14,7 @@
     }
 
     /* @ngInject */
-    function SpectraSimilarityQueryController($scope, $location, UploadLibraryService, SpectraQueryBuilderService) {
+    function SpectraSimilarityQueryController($scope, $location, $log, UploadLibraryService, SpectraQueryBuilderService) {
         $scope.page = 0;
 
         $scope.parsePastedSpectrum = function(spectrum) {
@@ -82,12 +82,34 @@
         /**
          * Execute similarity search
          * @param minSimilarity
+         * @param precursorMZ
+         * @param precursorMZTolerance
+         * @param precursorToleranceUnit
          */
-        $scope.search = function(minSimilarity) {
-            SpectraQueryBuilderService.setSimilarityQuery({
-                spectrum: $scope.spectrum,
-                minSimilarity: minSimilarity != null && minSimilarity != '' ? minSimilarity / 1000.0 : 0.5
-            });
+        $scope.search = function(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit) {
+            var request = {spectrum: $scope.spectrum};
+
+            if (minSimilarity != null && angular.isNumber(+minSimilarity)) {
+                request.minSimilarity = parseFloat(minSimilarity);
+            }
+
+            if (precursorMZ != null && angular.isNumber(+precursorMZ)) {
+                request.precursorMZ = parseFloat(precursorMZ);
+            }
+
+            if (precursorMZTolerance != null && angular.isNumber(+precursorMZTolerance)) {
+                if (angular.isUndefined(precursorToleranceUnit) || precursorToleranceUnit == null || precursorMZTolerance == 'PPM') {
+                    request.precursorTolerancePPM = parseFloat(precursorMZTolerance);
+                }
+
+                if (precursorToleranceUnit == 'Da') {
+                    request.precursorToleranceDa = parseFloat(precursorMZTolerance);
+                }
+            }
+
+            $log.info("Submitting similarity request: "+ JSON.stringify(request));
+
+            SpectraQueryBuilderService.setSimilarityQuery(request);
             $location.path('/spectra/similaritySearch');
         };
     }
