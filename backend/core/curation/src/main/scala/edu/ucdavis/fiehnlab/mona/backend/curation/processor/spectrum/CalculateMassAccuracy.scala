@@ -39,15 +39,39 @@ class CalculateMassAccuracy extends ItemProcessor[Spectrum, Spectrum] with LazyL
       val theoreticalMass: String = findMetaDataValue(biologicalCompound.metaData, CommonMetaData.TOTAL_EXACT_MASS)
 
       // Get precursor mass and type from the spectrum if it exists
-      val precursorMass: String = findMetaDataValue(spectrum.metaData, CommonMetaData.PRECURSOR_MASS)
-      val precursorType: String = findMetaDataValue(spectrum.metaData, CommonMetaData.PRECURSOR_TYPE)
+      val precursorMass: Double = {
+        val x: String = findMetaDataValue(spectrum.metaData, CommonMetaData.PRECURSOR_MASS)
+
+        if (x == null) {
+          -1
+        } else {
+          try {
+            x.split('/').last.toDouble
+          } catch {
+            case e: Throwable =>
+              logger.warn(s"${spectrum.id}: Invalid precursor m/z: '$x'")
+              -1
+          }
+        }
+      }
+
+      // Handle the case where multiple precursor types are given separated by slashes
+      val precursorType: String = {
+        val x: String = findMetaDataValue(spectrum.metaData, CommonMetaData.PRECURSOR_TYPE)
+
+        if (x == null) {
+          x
+        } else {
+          x.split('/').last
+        }
+      }
 
       if (theoreticalMass == null) {
         logger.info(s"${spectrum.id}: Computed exact mass was not found in spectrum ${spectrum.id}")
         spectrum
       }
 
-      else if (precursorMass == null) {
+      else if (precursorMass < 0) {
         logger.info(s"${spectrum.id}: Precursor mass was not found in spectrum ${spectrum.id}")
         spectrum
       }
@@ -72,8 +96,8 @@ class CalculateMassAccuracy extends ItemProcessor[Spectrum, Spectrum] with LazyL
             AdductBuilder.LCMS_NEGATIVE_ADDUCTS(precursorType)(theoreticalMass.toDouble)
           }
 
-        val massError: Double = precursorMass.toDouble - computedMass
-        val massAccuracy: Double = Math.abs(massError) / precursorMass.toDouble * 1000000
+        val massError: Double = precursorMass - computedMass
+        val massAccuracy: Double = Math.abs(massError) / precursorMass * 1000000
 
         logger.info(s"${spectrum.id}: Calculated mass accuracy $massAccuracy and mass error ${massError * 1000} mDa")
 
