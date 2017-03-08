@@ -179,21 +179,27 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
     if (inchikey != null && inchikey.toString != "") {
       logger.info(s"$id: Looking up MOL definition by InChIKey on CTS, invoking url $URL$inchikey")
 
-      val response: ResponseEntity[CTSInChIKeyLookupResponse] = restOperations.getForEntity(URL + inchikey, classOf[CTSInChIKeyLookupResponse])
+      try {
+        val response: ResponseEntity[CTSInChIKeyLookupResponse] = restOperations.getForEntity(URL + inchikey, classOf[CTSInChIKeyLookupResponse])
 
-      if (response.getStatusCode == HttpStatus.OK) {
-        val molDefinition: String = response.getBody.molecule
+        if (response.getStatusCode == HttpStatus.OK) {
+          val molDefinition: String = response.getBody.molecule
 
-        if (molDefinition != null && molDefinition.nonEmpty) {
-          logger.info(s"$id: Request successful, parsing MOL definition")
-          (response.getBody.molecule, compoundConversion.parseMolDefinition(molDefinition))
+          if (molDefinition != null && molDefinition.nonEmpty) {
+            logger.info(s"$id: Request successful, parsing MOL definition")
+            (response.getBody.molecule, compoundConversion.parseMolDefinition(molDefinition))
+          } else {
+            logger.info(s"$id: InChIKey lookup failed, ${response.getBody.message}")
+            (null, null)
+          }
         } else {
-          logger.info(s"$id: InChIKey lookup failed, ${response.getBody.message}")
+          logger.info(s"$id: InChIKey lookup failed with status code ${response.getStatusCode}")
           (null, null)
         }
-      } else {
-        logger.info(s"$id: InChIKey lookup failed")
-        (null, null)
+      } catch {
+        case e: Throwable =>
+          logger.error(s"$id: Error during InChIKey lookup: ${e.getMessage}")
+          (null, null)
       }
     } else {
       logger.info(s"$id: No InChIKey found")

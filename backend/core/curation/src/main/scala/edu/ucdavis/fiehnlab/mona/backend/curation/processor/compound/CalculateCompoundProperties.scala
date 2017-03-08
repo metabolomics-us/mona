@@ -44,7 +44,7 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
 
   def calculateCompoundProperties(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): Compound = {
-    logger.info(s"$id: Processing compound: ${compound.kind}'")
+    logger.info(s"$id: Processing compound: ${compound.kind}")
 
     // Updated metadata to add to this compound
     val metaData: ArrayBuffer[MetaData] = new ArrayBuffer[MetaData]()
