@@ -18,7 +18,7 @@ class NormalizeMSLevelValue extends ItemProcessor[Spectrum,Spectrum] with LazyLo
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val updatedMetaData: Array[MetaData] = spectrum.metaData.map(normalizeMSLevelData).filter(_ != null)
+    val updatedMetaData: Array[MetaData] = spectrum.metaData.map(normalizeMSLevelData(_, spectrum.id)).filter(_ != null)
 
     val updatedScore: Score =
       if (updatedMetaData.exists(x => x.name == CommonMetaData.MS_LEVEL && x.value.toString.matches("^MS[1-9]$"))) {
@@ -39,44 +39,44 @@ class NormalizeMSLevelValue extends ItemProcessor[Spectrum,Spectrum] with LazyLo
     * @param metaData
     * @return
     */
-  def normalizeMSLevelData(metaData: MetaData): MetaData = {
+  def normalizeMSLevelData(metaData: MetaData, id: String): MetaData = {
     if (metaData.name == CommonMetaData.MS_LEVEL) {
       val value: String = metaData.value.toString.trim
 
-      logger.debug(s"Found MS level metadata with value: $value")
+      logger.debug(s"$id: Found MS level metadata with value: $value")
 
       if (value == "n/a") {
-        logger.warn(s"MS level with value '$value' deemed invalid - removing metadata value")
+        logger.warn(s"$id: MS level with value '$value' deemed invalid - removing metadata value")
         null
       }
 
       else if ("^MS[1-9]$".r.findFirstIn(value).isDefined) {
-        logger.info(s"MS level with value '$value' requires no modifications")
+        logger.info(s"$id: MS level with value '$value' requires no modifications")
         metaData
       }
 
       else if ("^ms[1-9]$".r.findFirstIn(value.toLowerCase()).isDefined) {
-        logger.info(s"Identified MS level value '$value' as ${value.toUpperCase}")
+        logger.info(s"$id: Identified MS level value '$value' as ${value.toUpperCase}")
         metaData.copy(value = value.toUpperCase)
       }
 
       else if (value.toLowerCase == "ms") {
-        logger.info(s"Identified MS level value '$value' as MS1")
+        logger.info(s"$id: Identified MS level value '$value' as MS1")
         metaData.copy(value = "MS1")
       }
 
       else if (value.toLowerCase == "msms" || value.toLowerCase == "ms/ms") {
-        logger.info(s"Identified MS level value '$value' as MS2")
+        logger.info(s"$id: Identified MS level value '$value' as MS2")
         metaData.copy(value = "MS2")
       }
 
       else if ("^[1-9]$".r.findFirstIn(value).isDefined) {
-        logger.info(s"Identified MS level value '$value' as MS$value")
+        logger.info(s"$id: Identified MS level value '$value' as MS$value")
         metaData.copy(value = s"MS$value")
       }
 
       else {
-        logger.warn(s"MS level value '$value' was unidentifiable - keeping metadata value")
+        logger.warn(s"$id: MS level value '$value' was unidentifiable - keeping metadata value")
         metaData
       }
     } else {

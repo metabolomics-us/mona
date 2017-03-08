@@ -53,19 +53,19 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     val tags: Array[Tags] = spectrum.tags.filter(x => x.text == CommonTags.GCMS_SPECTRUM || x.text == CommonTags.LCMS_SPECTRUM)
 
     if (tags.length == 1) {
-      logger.info(s"Spectrum ${spectrum.id} already has identified chromotography: ${tags(0).text}")
+      logger.info(s"${spectrum.id}: Spectrum already has identified chromotography: ${tags(0).text}")
       spectrum
     }
 
     else if (tags.length > 1) {
-      logger.warn(s"Spectrum ${spectrum.id} has multiple chromotography tags!")
+      logger.warn(s"${spectrum.id}: Spectrum has multiple chromotography tags!")
       spectrum
     }
 
     else {
-      val isGCMS = spectrum.metaData.exists(validateMetaData(_, GCMS_METADATA_CRITERIA))
-      val isLCMS = spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA))
-      val isCEMS = spectrum.metaData.exists(validateMetaData(_, CEMS_METADATA_CRITERIA))
+      val isGCMS = spectrum.metaData.exists(validateMetaData(_, GCMS_METADATA_CRITERIA, spectrum.id))
+      val isLCMS = spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA, spectrum.id))
+      val isCEMS = spectrum.metaData.exists(validateMetaData(_, CEMS_METADATA_CRITERIA, spectrum.id))
 
 
       if (isGCMS && isLCMS) {
@@ -146,27 +146,27 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @param metaData
     * @return
     */
-  def validateMetaData(metaData: MetaData, criteria: Map[String, Array[String]]): Boolean = {
+  def validateMetaData(metaData: MetaData, criteria: Map[String, Array[String]], id: String): Boolean = {
     criteria.exists {
       case (name: String, terms: Array[String]) =>
         // Check that the metadata name matches the name criterion
         if (name == "*" || metaData.name.toLowerCase == name.toLowerCase) {
-          logger.debug(s"MetaData name ${metaData.name} matches criterion $name")
+          logger.debug(s"$id: MetaData name ${metaData.name} matches criterion $name")
 
           // Check that the metadata value matches the value criteria
           terms.exists(term =>
             if (metaData.value.toString.toLowerCase == term.toLowerCase) {
-              logger.info(s"MetaData value ${metaData.value} matches value criterion $term")
+              logger.info(s"$id: MetaData value ${metaData.value} matches value criterion $term")
               true
             }
 
             else if (metaData.unit != null && metaData.unit.toLowerCase == term.toLowerCase) {
-              logger.info(s"MetaData value ${metaData.value} matches unit criterion $term")
+              logger.info(s"$id: MetaData value ${metaData.value} matches unit criterion $term")
               true
             }
 
             else if (metaData.value.toString.toLowerCase.matches(term)) {
-              logger.info(s"MetaData value ${metaData.value} matches regex criterion $term")
+              logger.info(s"$id: MetaData value ${metaData.value} matches regex criterion $term")
               true
             }
 
