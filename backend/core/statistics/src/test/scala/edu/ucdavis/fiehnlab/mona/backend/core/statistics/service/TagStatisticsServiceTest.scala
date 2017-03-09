@@ -22,7 +22,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
-class TagStatisticsServiceTest extends WordSpec with LazyLogging{
+class TagStatisticsServiceTest extends WordSpec with LazyLogging {
 
   @Autowired
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
