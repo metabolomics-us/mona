@@ -60,3 +60,14 @@ case class CompoundClassStatistics(
                                    spectrumCount: Int,
                                    compoundCount: Int
                                   )
+
+@Document(collection = "STATISTICS_SUBMITTER")
+case class SubmitterStatistics(
+                                @(Id@field)
+                                id: String,
+                                firstName: String,
+                                lastName: String,
+                                institution: String,
+                                count: Int,
+                                score: Double
+                              )
