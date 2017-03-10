@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.repository.Predefin
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.types.{PredefinedQuery, QueryExport}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
@@ -52,9 +53,9 @@ class DownloadSchedulerService extends LazyLogging {
   }
 
   /**
-    * Schedules the download of all export formats for each predefined query download
+    * Generates the downloads of all export formats for each predefined query download
     */
-  def schedulePredefinedDownloads(): Array[QueryExport] = {
+  def generatePredefinedDownloads(): Array[QueryExport] = {
     val downloads: ArrayBuffer[QueryExport] = ArrayBuffer()
 
     predefinedQueryRepository.findAll().asScala.foreach { predefinedQuery: PredefinedQuery =>
@@ -78,5 +79,13 @@ class DownloadSchedulerService extends LazyLogging {
     }
 
     downloads.toArray
+  }
+
+  /**
+    * Schedules the generation of predefined downloads once a day
+    */
+  @Scheduled(cron = "0 0 0 * * *")
+  private def schedulePredefinedDownloads(): Unit = {
+    generatePredefinedDownloads()
   }
 }

@@ -99,20 +99,15 @@ class DownloadSchedulerController extends LazyLogging {
   @RequestMapping(path = Array("/predefined"), method = Array(RequestMethod.GET))
   @Async
   def listPredefinedDownloads(): Future[Array[PredefinedQuery]] = {
-    val data = predefinedQueryRepository.findAll().asScala.toArray
-
-    new AsyncResult[Array[PredefinedQuery]](data)
+    new AsyncResult[Array[PredefinedQuery]](predefinedQueryRepository.findAll().asScala.toArray)
   }
 
   /**
     * schedules the re-generation of predefined downloads
     */
-  @RequestMapping(path = Array("/schedulePredefined"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/generatePredefined"), method = Array(RequestMethod.GET))
   @Async
-  def schedulePredefinedDownloads(): Future[Array[QueryExport]] = {
-    // Schedule download
-    val downloadObjects: Array[QueryExport] = downloadSchedulerService.schedulePredefinedDownloads()
-
-    new AsyncResult[Array[QueryExport]](downloadObjects)
+  def generatePredefinedDownloads(): Future[Array[QueryExport]] = {
+    new AsyncResult[Array[QueryExport]](downloadSchedulerService.generatePredefinedDownloads())
   }
 }
