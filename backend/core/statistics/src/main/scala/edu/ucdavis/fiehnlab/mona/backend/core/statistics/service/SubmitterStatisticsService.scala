@@ -60,6 +60,14 @@ class SubmitterStatisticsService {
       .asScala.toArray
   }
 
+
+  /**
+    * Get all data in the submitter statistics repository
+    * @return
+    */
+  def getSubmitterStatistics: Iterable[SubmitterStatistics] = submitterStatisticsRepository.findAll().asScala
+
+
   /**
     * Update the data in the submitter statistics repository
     * @return

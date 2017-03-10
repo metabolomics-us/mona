@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 
 import java.util.concurrent.Future
 
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.{CompoundClassStatisticsService, MetaDataStatisticsService, StatisticsService, TagStatisticsService}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{CompoundClassStatistics, GlobalStatistics, MetaDataStatistics, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service._
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
@@ -29,6 +29,9 @@ class StatisticsRestController {
 
   @Autowired
   val tagStatisticsService: TagStatisticsService = null
+
+  @Autowired
+  val submitterStatisticsService: SubmitterStatisticsService = null
 
 
   /**
@@ -70,7 +73,16 @@ class StatisticsRestController {
   @RequestMapping(path = Array("/statistics/compoundClasses"), method = Array(RequestMethod.GET))
   @Async
   def getCompoundClassStatistics: Future[Iterable[CompoundClassStatistics]] =
-    new AsyncResult[Iterable[CompoundClassStatistics]](compoundClassStatisticsService.getCompoundClassStatistics.asScala)
+    new AsyncResult[Iterable[CompoundClassStatistics]](compoundClassStatisticsService.getCompoundClassStatistics)
+
+  /**
+    * Get all submitter statistics
+    * @return
+    */
+  @RequestMapping(path = Array("/statistics/submitters"), method = Array(RequestMethod.GET))
+  @Async
+  def getSubmitterStatistics: Future[Iterable[SubmitterStatistics]] =
+    new AsyncResult[Iterable[SubmitterStatistics]](submitterStatisticsService.getSubmitterStatistics)
 
 
 
