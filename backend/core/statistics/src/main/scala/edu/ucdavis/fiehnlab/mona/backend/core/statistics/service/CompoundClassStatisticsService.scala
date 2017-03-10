@@ -1,7 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import java.lang
-
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.CompoundClassStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.CompoundClassStatistics
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -29,7 +27,7 @@ class CompoundClassStatisticsService {
     * Get all data in the compound class statistics repository
     * @return
     */
-  def getCompoundClassStatistics: lang.Iterable[CompoundClassStatistics] = compoundClassStatisticsRepository.findAll
+  def getCompoundClassStatistics: Iterable[CompoundClassStatistics] = compoundClassStatisticsRepository.findAll().asScala
 
   /**
     * Get data for the given compound class from the metadata statistics repository
