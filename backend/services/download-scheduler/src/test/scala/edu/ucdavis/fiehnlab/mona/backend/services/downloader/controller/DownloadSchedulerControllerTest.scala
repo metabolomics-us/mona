@@ -98,17 +98,17 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
     }
 
     // Test scheduling of predefined downloads
-    "schedule predefined downloads " must {
+    "generate predefined downloads " must {
       "fail if not authenticated" in {
-        given().contentType("application/json; charset=UTF-8").when().get("/schedulePredefined").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").then().statusCode(401)
       }
 
       "fail if authenticated as a user" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/schedulePredefined").then().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/generatePredefined").then().statusCode(403)
       }
 
       "succeed if authenticated as an admin" in {
-        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/schedulePredefined").then().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
+        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").then().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
 
         assert(result.length == 2)
         assert(result.forall(x => x.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))

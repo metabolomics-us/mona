@@ -14,6 +14,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.Import
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -26,6 +27,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableDiscoveryClient
 @EnableWebSecurity
 @EnableSwagger2
+@EnableScheduling
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
   classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[DownloadConfig]))
@@ -49,7 +51,7 @@ class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
       .antMatchers(HttpMethod.GET, "/rest/downloads/schedule/*").hasAuthority("USER")
 
       // must be an admin to schedule re-generation of predefined downloads
-      .antMatchers(HttpMethod.GET, "/rest/downloads/schedulePredefined").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.GET, "/rest/downloads/generatePredefined").hasAuthority("ADMIN")
   }
 
   override def configure(web: WebSecurity): Unit = {

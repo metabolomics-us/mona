@@ -21,6 +21,7 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by sajjan on 5/26/2016.
@@ -64,11 +65,11 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       }
     }
 
-    "schedulePredefinedDownloads" in {
+    "generatePredefinedDownloads" in {
       val count = notificationCounter.getEventCount
 
       testRunner.messageReceived = false
-      downloadSchedulerService.schedulePredefinedDownloads()
+      downloadSchedulerService.generatePredefinedDownloads()
 
       eventually(timeout(10 seconds)) {
         assert(testRunner.messageReceived)
@@ -97,7 +98,7 @@ class TestDownloader extends MessageListener {
   val downloadQueue: Queue = null
 
   @PostConstruct
-  def init() = {
+  def init(): Unit = {
     rabbitAdmin.declareQueue(downloadQueue)
 
     val container = new SimpleMessageListenerContainer()
