@@ -41,6 +41,9 @@ class StatisticsService extends LazyLogging {
   private val tagStatisticsService: TagStatisticsService = null
 
   @Autowired
+  val submitterStatisticsService: SubmitterStatisticsService = null
+
+  @Autowired
   val compoundClassStatisticsService: CompoundClassStatisticsService = null
 
 
@@ -171,6 +174,7 @@ class StatisticsService extends LazyLogging {
   def updateStatistics(): GlobalStatistics = {
     metaDataStatisticsService.updateMetaDataStatistics()
     tagStatisticsService.updateTagStatistics()
+    submitterStatisticsService.updateSubmitterStatistics()
     compoundClassStatisticsService.updateCompoundClassStatistics()
     updateGlobalStatistics()
   }
