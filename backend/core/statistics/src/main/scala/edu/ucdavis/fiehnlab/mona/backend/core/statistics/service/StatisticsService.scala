@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.data.mongodb.core.aggregation.{AggregationOperation, AggregationOperationContext}
 import org.springframework.data.mongodb.core.query.Criteria
-import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
@@ -171,7 +171,8 @@ class StatisticsService extends LazyLogging {
     * Update all statistics
     */
   @Async
-  def updateStatistics(): GlobalStatistics = {
+  @Scheduled(cron = "0 0 0 * * *")
+  def updateStatistics(): Unit = {
     metaDataStatisticsService.updateMetaDataStatistics()
     tagStatisticsService.updateTagStatistics()
     submitterStatisticsService.updateSubmitterStatistics()
