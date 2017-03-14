@@ -260,7 +260,11 @@
                                             <span metadata-query value="meta"> {{meta.name}}</span>
                                         </td>
                                         <td class="col-lg-8 col-md-8">
-                                            <span gw-value value="meta">{{meta.value | number:4 }} {{meta.unit}}</span>
+                                            <span ng-if="angular.isNumber(meta.value)">{{meta.value | number:4}} {{meta.unit}}</span>
+                                            <span ng-if="!angular.isNumber(meta.value)">{{meta.value}} {{meta.unit}}</span>
+
+                                            <i ng-show="meta.computed == true" class="fa fa-flask" tooltip-placement="top"
+                                               uib-tooltip="Calculated by MoNA Auto Curation"></i>
                                         </td>
                                     </tr>
                                     </tbody>
