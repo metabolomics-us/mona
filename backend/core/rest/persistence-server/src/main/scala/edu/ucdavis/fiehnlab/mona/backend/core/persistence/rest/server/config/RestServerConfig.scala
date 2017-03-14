@@ -48,6 +48,9 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .and()
       .authorizeRequests()
 
+      //get on submitters is restricted
+      .antMatchers(HttpMethod.GET, "/rest/submitters/**").authenticated()
+
       //saves need to be authenticated
       .antMatchers(HttpMethod.POST, "/rest/spectra/**").authenticated()
       .antMatchers(HttpMethod.POST, "/rest/submitters").authenticated()
@@ -70,13 +73,16 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
     */
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
-      //get is always available
-      .antMatchers(HttpMethod.GET)
+      //get is available for most endpoints
+      .antMatchers(HttpMethod.GET, "/rest/spectra/**")
+      .antMatchers(HttpMethod.GET, "/rest/metaData/**")
+      .antMatchers(HttpMethod.GET, "/rest/tags/**")
+      .antMatchers(HttpMethod.GET, "/rest/statistics/**")
+
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")
 
       //no authentication for metadata
       .antMatchers(HttpMethod.POST, "/rest/metaData/**")
-      .antMatchers(HttpMethod.GET, "/*")
   }
 }
 
