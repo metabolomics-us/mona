@@ -6,17 +6,14 @@
     'use strict';
 
     angular.module('moaClientApp')
-        .directive('typeaheadFocus', typeaheadFocus)
+        .directive('typeaheadFocus', typeaheadFocus);
 
     function typeaheadFocus() {
-        var directive = {
+        return {
             require: 'ngModel',
             link: linkFunc
         };
-
-        return directive;
     }
-
 
     function linkFunc(scope, element, attr, ngModel) {
 

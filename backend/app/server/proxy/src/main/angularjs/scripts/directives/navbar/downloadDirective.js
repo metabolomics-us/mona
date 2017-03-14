@@ -6,14 +6,13 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('downloadButton', downloadButton);
+        .directive('downloadButton', downloadButton);
 
     function downloadButton() {
-        var directive = {
+        return {
             restrict: 'E',
             replace: true,
             templateUrl: '/views/navbar/download.html'
         };
-        return directive;
     }
 })();

@@ -8,11 +8,11 @@
     spectraTopScoresForUsers.$inject = ['$compile', 'StatisticsService', 'Submitter'];
     spectraTopScoresForUsersController.$inject = ['$scope'];
     angular.module('moaClientApp')
-      .directive('spectraTopScoresForUsers', spectraTopScoresForUsers);
+        .directive('spectraTopScoresForUsers', spectraTopScoresForUsers);
 
     /* @ngInject */
     function spectraTopScoresForUsers($compile, StatisticsService, Submitter) {
-        var directive = {
+        return {
             replace: true,
             templateUrl: '/views/templates/scores/hallOfFame.html',
             scope: {
@@ -33,8 +33,6 @@
             },
             controller: spectraTopScoresForUsersController
         };
-
-        return directive;
     }
 
     /* @ngInject */

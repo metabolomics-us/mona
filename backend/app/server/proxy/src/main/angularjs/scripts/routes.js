@@ -124,10 +124,6 @@
                 templateUrl: 'views/documentation/license.html'
             })
 
-            .when('/news', {
-                templateUrl: 'views/news/news.html'
-            })
-
             .when('/documentation/query', {
                 templateUrl: 'views/documentation/query.html'
             })

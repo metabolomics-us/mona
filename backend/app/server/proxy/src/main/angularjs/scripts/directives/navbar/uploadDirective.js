@@ -6,14 +6,13 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('uploadButton', uploadButton);
+        .directive('uploadButton', uploadButton);
 
     function uploadButton() {
-        var directive = {
+        return {
             restrict: 'E',
             replace: true,
             templateUrl: '/views/navbar/upload.html'
         };
-        return directive;
     }
 })();

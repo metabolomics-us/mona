@@ -8,24 +8,23 @@
 
     spectraUploadProgressBarController.$inject = ['$scope', 'UploadLibraryService'];
     angular.module('moaClientApp')
-      .directive('spectraUploadProgressBar', spectraUploadProgressBar);
+        .directive('spectraUploadProgressBar', spectraUploadProgressBar);
 
     function spectraUploadProgressBar() {
-        var directive = {
+        return {
             restrict: 'AE',
             replace: false,
-            template: '<div ng-if="spectraUploadProgress != -1">' +
-            '    <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} spectra.</i></div>' +
-            '    <progressbar ng-class="{active: spectraUploadProgress < 100, \'progress-striped\': spectraUploadProgress < 100, \'progress-bar-success\': spectraUploadProgress == 100}" max="100" value="spectraUploadProgress">' +
-            '        <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" ng-bind="spectraUploadProgressString"></span>' +
-            '    </progressbar>' +
-            '    <div class="text-center">{{etaString}}</div>' +
-            '</div>' +
-            '<div ng-if="spectraUploadProgress == -1"><i>No Upload Started</i></div>',
+            template:
+                '<div data-ng-if="spectraUploadProgress != -1">' +
+                '    <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} spectra.</i></div>' +
+                '    <progressbar ng-class="{active: spectraUploadProgress < 100, \'progress-striped\': spectraUploadProgress < 100, \'progress-bar-success\': spectraUploadProgress == 100}" max="100" value="spectraUploadProgress">' +
+                '        <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" data-ng-bind="spectraUploadProgressString"></span>' +
+                '    </progressbar>' +
+                '    <div class="text-center">{{etaString}}</div>' +
+                '</div>' +
+                '<div data-ng-if="spectraUploadProgress == -1"><i>No Upload Started</i></div>',
             controller: spectraUploadProgressBarController
         };
-
-        return directive;
     }
 
     /**
