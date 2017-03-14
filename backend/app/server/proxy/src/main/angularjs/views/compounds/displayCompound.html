@@ -109,7 +109,7 @@
                         <td class="col-lg-8 col-md-6">
                             <span ng-if="meta.url === ''">{{meta.value}}</span>
 
-                            <a ng-if="meta.url !== ''"  href="{{meta.url}}" target="_blank">
+                            <a ng-if="meta.url !== ''"  ng-href="{{meta.url}}" target="_blank">
                                 {{meta.value}}
                             </a>
 
