@@ -57,7 +57,7 @@ abstract class GenericRESTController[T] {
           getRepository.findAll(new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
         }
       } else {
-        new DynamicIterable[T,String]("", fetchSize) {
+        new DynamicIterable[T, String]("", fetchSize) {
           // loads more data from the server for the given query
           override def fetchMoreData(query: String, pageable: Pageable): Page[T] = getRepository.findAll(pageable)
         }.asScala
