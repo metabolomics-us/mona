@@ -40,9 +40,8 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
   @Autowired
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
-
-  //required for spring and scala tes
   new TestContextManager(this.getClass).prepareTestInstance(this)
+
 
   "we will be connecting to the REST controller" when {
 
@@ -166,6 +165,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         }
       }
 
+
       "we need to be authenticated to delete spectra " in {
         given().when().delete(s"/spectra/111").then().statusCode(401)
       }
@@ -173,7 +173,6 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       "we need to be an admin to delete spectra " in {
         authenticate("test", "test-secret").when().delete(s"/spectra/111").then().statusCode(403)
       }
-
 
       "we should be able to delete a spectra using DELETE at /rest/spectra" in {
         val firstRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
@@ -225,7 +224,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
             val result: Array[Spectrum] = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?size=1&page=2&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
-            assert(result.size == 1)
+            assert(result.length == 1)
 
             val current = result(0)
 
