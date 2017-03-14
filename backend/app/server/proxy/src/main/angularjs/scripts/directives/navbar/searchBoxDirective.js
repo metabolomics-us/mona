@@ -6,15 +6,13 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('searchBox', searchBox);
+        .directive('searchBox', searchBox);
 
     function searchBox() {
-        var directive = {
+        return {
             restrict: 'E',
             replace: true,
             templateUrl: '/views/navbar/searchBox.html'
         };
-
-        return directive;
     }
 })();

@@ -6,15 +6,13 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('adminDropDown', adminDropDown);
+        .directive('adminDropDown', adminDropDown);
 
     function adminDropDown() {
-        var directive = {
+        return {
             restrict: 'E',
             replace: true,
             templateUrl: '/views/navbar/adminDropdown.html'
         };
-
-        return directive;
     }
 })();

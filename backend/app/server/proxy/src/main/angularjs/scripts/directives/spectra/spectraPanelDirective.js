@@ -4,12 +4,12 @@
 (function() {
     'use strict';
 
-    displaySpectraPanelController.$inject = ['$scope', '$location', 'SpectrumCache', '$log'];
+    displaySpectraPanelController.$inject = ['$scope', 'SpectrumCache'];
     angular.module('moaClientApp')
         .directive('displaySpectraPanel', displaySpectraPanel);
 
     function displaySpectraPanel() {
-        var directive = {
+        return {
             require: "ngModel",
             restrict: "A",
             templateUrl: '/views/spectra/display/panel.html',
@@ -19,28 +19,23 @@
             },
             controller: displaySpectraPanelController
         };
-
-        return directive;
     }
 
     /* @ngInject */
-    function displaySpectraPanelController($scope, $location, SpectrumCache, $log) {
+    function displaySpectraPanelController($scope, SpectrumCache) {
 
         var truncateDecimal = function(s, length) {
             return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
         };
 
         angular.forEach($scope.spectrum.metaData, function(meta, index) {
-            if (meta.category !== 'annotation' && meta.deleted !== 'true'
-              && meta.hidden !== 'true' && meta.computed !== 'true') {
+            if (meta.category !== 'annotation' && meta.deleted !== 'true' && meta.hidden !== 'true' && meta.computed !== 'true') {
                 meta.value = truncateDecimal(meta.value, 4);
             }
         });
 
         /**
          * displays the spectrum for the given index
-         * @param id
-         * @param index
          */
         $scope.viewSpectrum = function() {
             // SpectrumCache.setBrowserSpectra($scope.spectrum);

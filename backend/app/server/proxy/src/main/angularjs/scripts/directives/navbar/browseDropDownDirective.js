@@ -5,26 +5,25 @@
 (function() {
     'use strict';
 
+    browseController.$inject = ['$scope', 'SpectraQueryBuilderService'];
     angular.module('moaClientApp')
-      .directive('browseDropDown', browseDropDown);
+        .directive('browseDropDown', browseDropDown);
 
     function browseDropDown() {
-        browseController.$inject = ['$scope', 'SpectraQueryBuilderService'];
-        var directive = {
+        return {
             restrict: 'E',
             replace: true,
             templateUrl: '/views/navbar/browseDropdown.html',
             controller: browseController
         };
+    }
 
-        return directive;
-        /* @ngInject */
-        function browseController($scope, SpectraQueryBuilderService) {
-
-            // reset query when user click browse
-            $scope.resetQuery = function() {
-                SpectraQueryBuilderService.prepareQuery();
-            }
+    /* @ngInject */
+    function browseController($scope, SpectraQueryBuilderService) {
+        
+        // Reset query when user click browse
+        $scope.resetQuery = function() {
+            SpectraQueryBuilderService.prepareQuery();
         }
     }
 })();
