@@ -29,7 +29,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
   val loginService: LoginService = null
 
   /**
-    * saves a submitter or updates it. This will depend on the utilized repository
+    * Saves a submitter or updates it.  This will depend on the utilized repository
     *
     * @param submitter
     * @return
@@ -42,10 +42,10 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     if(loginInfo.roles.contains("ADMIN")) {
       super.doSave(submitter)
     } else {
-      val existingUser: Submitter = submitterMongoRepository.findByEmailAddress(submitter.emailAddress)
+      val existingUser: Submitter = submitterMongoRepository.findOne(loginInfo.username)
 
-      if (existingUser == null || existingUser.emailAddress == loginInfo.username) {
-        super.doSave(submitter.copy(emailAddress = loginInfo.username))
+      if (existingUser == null || existingUser.id == loginInfo.username) {
+        super.doSave(submitter.copy(id = loginInfo.username))
       } else {
         new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.FORBIDDEN))
       }
@@ -53,7 +53,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
   }
 
   /**
-    * saves the provided submitter at the given path
+    * Saves the provided submitter at the given path
     *
     * @param id
     * @param submitter
@@ -69,7 +69,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     } else {
       val existingUser: Submitter = submitterMongoRepository.findByEmailAddress(id)
 
-      if (loginInfo.username == existingUser.emailAddress) {
+      if (loginInfo.username == existingUser.id) {
         super.doPut(id, submitter)
       } else {
         new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.FORBIDDEN))
