@@ -99,11 +99,11 @@ class CalculateMassAccuracy extends ItemProcessor[Spectrum, Spectrum] with LazyL
         val massError: Double = precursorMass - computedMass
         val massAccuracy: Double = Math.abs(massError) / precursorMass * 1000000
 
-        logger.info(s"${spectrum.id}: Calculated mass accuracy $massAccuracy and mass error ${massError * 1000} mDa")
+        logger.info(s"${spectrum.id}: Calculated mass accuracy $massAccuracy and mass error $massError Da")
 
         val updatedMetaData: Array[MetaData] = spectrum.metaData :+
           MetaData("mass spectrometry", computed = true, hidden = false, CommonMetaData.MASS_ACCURACY, null, "ppm", null, massAccuracy) :+
-          MetaData("mass spectrometry", computed = true, hidden = false, CommonMetaData.MASS_ERROR, null, "mDa", null, 1000 * massAccuracy)
+          MetaData("mass spectrometry", computed = true, hidden = false, CommonMetaData.MASS_ERROR, null, "Da", null, massError)
 
         spectrum.copy(metaData = updatedMetaData)
       }

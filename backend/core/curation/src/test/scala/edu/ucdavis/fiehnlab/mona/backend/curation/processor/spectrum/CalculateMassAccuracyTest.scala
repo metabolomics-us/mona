@@ -18,19 +18,19 @@ class CalculateMassAccuracyTest extends WordSpec with Matchers {
   "this processor" when {
     val processor = new CalculateMassAccuracy
 
-    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+    val exampleRecord: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
 
     "given a spectra" must {
       "correctly calculate the mass accuracy" in {
-        val processedSpectrum = processor.process(exampleRecords.head)
+        val processedSpectrum = processor.process(exampleRecord.copy(metaData = exampleRecord.metaData.filter(!_.computed)))
 
         val massAccuracy: Option[MetaData] = processedSpectrum.metaData.find(_.name == CommonMetaData.MASS_ACCURACY)
         massAccuracy.isDefined shouldBe true
-        massAccuracy.get.value.toString.toDouble shouldBe 0.076 +- 1.0e-4
+        massAccuracy.get.value.toString.toDouble shouldBe 50.9472 +- 1.0e-4
 
         val massError: Option[MetaData] = processedSpectrum.metaData.find(_.name == CommonMetaData.MASS_ERROR)
         massError.isDefined shouldBe true
-        massError.get.value.toString.toDouble shouldBe 0.0232 +- 1.0e-3
+        massError.get.value.toString.toDouble shouldBe -0.021 +- 1.0e-4
       }
     }
   }
