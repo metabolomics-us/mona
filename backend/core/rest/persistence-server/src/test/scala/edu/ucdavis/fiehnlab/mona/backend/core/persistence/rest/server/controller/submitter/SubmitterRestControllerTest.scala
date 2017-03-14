@@ -4,6 +4,7 @@ import java.io.InputStreamReader
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.restassured.RestAssured
+import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
@@ -15,6 +16,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.http.MediaType
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
@@ -45,7 +47,7 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
     */
   override def getId: String = getValue.id
 
-  override val requiresAuthForAllRequests: Boolean = false
+  override val requiresAuthForAllRequests: Boolean = true
 
   "we will be connecting to the REST controller" when {
 
@@ -60,9 +62,11 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
 
       "create a test submitter" in {
         submitterRepository.deleteAll()
+        assert(submitterRepository.count() == 0)
 
         authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(submitter).when().post(s"/submitters").`then`().statusCode(200)
 
+        assert(submitterRepository.count() == 1)
         assert(submitterRepository.findByEmailAddress("test") != null)
       }
 
@@ -85,6 +89,43 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
 
         val result: Submitter = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get(s"/submitters/test").`then`().statusCode(200).extract().as(classOf[Submitter])
         assert(result == newSubmitter)
+      }
+
+      "cannot PUT to an id that does not match username" in {
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(submitter).when().put(s"/submitters/new").`then`().statusCode(403)
+      }
+
+      "cannot view all submitters when not authenticated" in {
+        given().when().contentType("application/json; charset=UTF-8").get(s"/submitters").then().statusCode(401)
+      }
+
+      "can list ones own submitter when authenticated" in {
+        val result: Array[Submitter] = authenticate("test", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters").`then`().statusCode(200).extract().as(classOf[Array[Submitter]])
+        assert(result.length == 1)
+        assert(result.head.id == "test")
+        assert(result.head.institution == "UCSD")
+      }
+
+      "can view ones own submitter when authenticated" in {
+        val result: Submitter = authenticate("test", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters/test").`then`().statusCode(200).extract().as(classOf[Submitter])
+        assert(result.id == "test")
+        assert(result.institution == "UCSD")
+      }
+
+      "cannot list other's submitters when authenticated" in {
+        val result: Array[Submitter] = authenticate("test2", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters").`then`().statusCode(200).extract().as(classOf[Array[Submitter]])
+        assert(result.isEmpty)
+
+        authenticate("test2", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters/test").`then`().statusCode(403)
+      }
+
+      "can list and view all submitters as admin" in {
+        val result: Array[Submitter] = authenticate().when().contentType("application/json; charset=UTF-8").get(s"/submitters").`then`().statusCode(200).extract().as(classOf[Array[Submitter]])
+        assert(result.length == 1)
+        assert(result.head.id == "test")
+        assert(result.head.institution == "UCSD")
+
+        authenticate().when().contentType("application/json; charset=UTF-8").get(s"/submitters/test").`then`().statusCode(200).extract().as(classOf[Submitter])
       }
     }
   }

@@ -40,14 +40,16 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
   @Autowired
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
-  new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  //required for spring and scala tes
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "we will be connecting to the REST controller" when {
 
     "while working in it" should {
 
       val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+      val curatedRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
       "have a working validation system" must {
         val mapper = MonaMapper.create
@@ -142,6 +144,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           assert(countAfter - exampleRecords.length == countBefore)
         }
       }
+
 
       "we should be able to query all the spectra using GET at /rest/spectra" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])

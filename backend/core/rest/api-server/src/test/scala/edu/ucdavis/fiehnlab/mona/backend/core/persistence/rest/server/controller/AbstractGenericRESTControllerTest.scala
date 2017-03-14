@@ -118,7 +118,7 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
     val response = loginService.login(LoginRequest(user, password))
 
     assert(response.token != null)
-    logger.debug(s"generated token is ${response.token}")
+    logger.debug(s"generated token for user $user is ${response.token}")
     given().contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", s"Bearer ${response.token}")
   }
 
