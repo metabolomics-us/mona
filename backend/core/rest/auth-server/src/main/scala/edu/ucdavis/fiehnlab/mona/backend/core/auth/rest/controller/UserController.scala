@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
 import java.util.Collections
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
-import javax.validation.Valid
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
@@ -13,12 +12,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.validation.annotation.Validated
+import org.springframework.scheduling.annotation.AsyncResult
 import org.springframework.web.bind.annotation._
-
-import scala.collection.JavaConverters
-import JavaConverters._
 
 /**
   * Created by wohlgemuth on 4/4/16.

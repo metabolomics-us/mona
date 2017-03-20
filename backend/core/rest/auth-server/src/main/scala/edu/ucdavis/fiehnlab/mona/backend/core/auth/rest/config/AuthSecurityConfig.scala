@@ -16,11 +16,11 @@ import org.springframework.security.config.http.SessionCreationPolicy
   */
 @Order(2)
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[LoginController],classOf[DomainConfig]))
+@ComponentScan(basePackageClasses = Array(classOf[LoginController], classOf[DomainConfig]))
 class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
-  val restSecurityService:RestSecurityService = null
+  val restSecurityService: RestSecurityService = null
 
   /**
     * this method configures authorized access to the system
@@ -47,6 +47,7 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
   }
+
   /**
     * ignore post requests to the auth url
     *
