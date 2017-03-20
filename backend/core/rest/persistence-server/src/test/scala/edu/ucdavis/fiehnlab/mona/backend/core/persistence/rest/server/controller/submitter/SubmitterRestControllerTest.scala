@@ -8,6 +8,7 @@ import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.config.ObjectMapperConfig
 import com.jayway.restassured.mapper.factory.Jackson2ObjectMapperFactory
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubmitterMongoRepository
@@ -16,7 +17,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.http.MediaType
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
@@ -96,7 +96,7 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
       }
 
       "cannot view all submitters when not authenticated" in {
-        given().when().contentType("application/json; charset=UTF-8").get(s"/submitters").then().statusCode(401)
+        given().when().contentType("application/json; charset=UTF-8").get(s"/submitters").`then`().statusCode(401)
       }
 
       "can list ones own submitter when authenticated" in {
@@ -126,6 +126,26 @@ class SubmitterRestControllerTest extends AbstractGenericRESTControllerTest[Subm
         assert(result.head.institution == "UCSD")
 
         authenticate().when().contentType("application/json; charset=UTF-8").get(s"/submitters/test").`then`().statusCode(200).extract().as(classOf[Submitter])
+      }
+
+      "handle full email addresses" should {
+        "can create a test user with a full email address" in {
+          userRepository.save(User("test@test.com", "test-secret"))
+          submitterRepository.save(Submitter("test@test.com", "test@test.com", "Test", "User", "UC Davis"))
+
+          assert(userRepository.exists("test@test.com"))
+          assert(submitterRepository.exists("test@test.com"))
+        }
+
+        "can access submitter information with full email address if logged in as that user" in {
+          val result: Submitter = authenticate("test@test.com", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters/test@test.com").`then`().statusCode(200).extract().as(classOf[Submitter])
+          assert(result.id == "test@test.com")
+          assert(result.institution == "UC Davis")
+
+          given().when().contentType("application/json; charset=UTF-8").get(s"/submitters/test@test.com").`then`().statusCode(401)
+          authenticate("test", "test-secret").when().contentType("application/json; charset=UTF-8").get(s"/submitters/test@test.com").`then`().statusCode(403)
+          authenticate().when().contentType("application/json; charset=UTF-8").get(s"/submitters/test@test.com").`then`().statusCode(200)
+        }
       }
     }
   }

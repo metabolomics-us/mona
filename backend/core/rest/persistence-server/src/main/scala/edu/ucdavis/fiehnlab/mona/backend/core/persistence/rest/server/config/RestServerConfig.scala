@@ -19,7 +19,7 @@ import org.springframework.http.converter.{AbstractHttpMessageConverter, HttpMes
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, WebMvcConfigurerAdapter}
+import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurerAdapter}
 
 import scala.collection.JavaConverters._
 import scala.collection.convert.Wrappers
@@ -91,6 +91,10 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
 
   override def extendMessageConverters(converters: util.List[HttpMessageConverter[_]]): Unit = {
     converters.add(new MSPConverter())
+  }
+
+  override def configurePathMatch(configurer: PathMatchConfigurer): Unit = {
+    configurer.setUseRegisteredSuffixPatternMatch(true)
   }
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
