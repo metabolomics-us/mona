@@ -64,7 +64,7 @@ class LoggingService extends LazyLogging {
     */
   private def getLocation(ipAddress: String): CityResponse = {
     try {
-      geoLiteDb.city(InetAddress.getByName(ipAddress))
+      geoLiteDb.city(InetAddress.getByName(ipAddress.split(',')(0)))
     } catch {
       case e: AddressNotFoundException =>
         logger.debug(s"IP Address $ipAddress not in GeoLite2 database")
