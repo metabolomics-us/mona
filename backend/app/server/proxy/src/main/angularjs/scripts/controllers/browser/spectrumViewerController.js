@@ -187,10 +187,12 @@
                 var annotation = '';
                 var computed = false;
 
-                for (var i = 0; i < delayedSpectrum.annotations.length; i++) {
-                    if (delayedSpectrum.annotations[i].value === parseFloat(match[1])) {
-                        annotation = delayedSpectrum.annotations[i].name;
-                        computed = delayedSpectrum.annotations[i].computed;
+                if (angular.isDefined(delayedSpectrum.annotations)) {
+                    for (var i = 0; i < delayedSpectrum.annotations.length; i++) {
+                        if (delayedSpectrum.annotations[i].value === parseFloat(match[1])) {
+                            annotation = delayedSpectrum.annotations[i].name;
+                            computed = delayedSpectrum.annotations[i].computed;
+                        }
                     }
                 }
 
