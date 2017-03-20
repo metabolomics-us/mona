@@ -188,8 +188,8 @@
             }
         };
 
-        this.addUserToQuery = function(emailAddress) {
-            this.query.push('submitter.emailAddress=="'+ emailAddress +'"');
+        this.addUserToQuery = function(username) {
+            this.query.push('submitter.id=="'+ username +'"');
         };
     }
 })();

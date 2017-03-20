@@ -83,7 +83,7 @@
 
             AuthenticationService.getCurrentUser().then(function(data) {
                 console.log(JSON.stringify(data));
-                self.welcomeMessage = 'Welcome, ' + data.username + '!';
+                self.welcomeMessage = 'Welcome, ' + data.firstName + '!';
             });
         });
 

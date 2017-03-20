@@ -472,7 +472,7 @@
 						url: REST_BACKEND_SERVER + '/rest/spectra',
 						headers: {
 							'Content-Type': 'application/json',
-							'Authorization': 'bearer ' + spectrum.submitter.access_token
+							'Authorization': 'Bearer ' + spectrum.submitter.access_token
 						},
 						data: JSON.stringify(spectrum)
 					};

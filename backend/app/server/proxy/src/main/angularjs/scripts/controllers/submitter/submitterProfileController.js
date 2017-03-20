@@ -10,21 +10,23 @@
 
     /* @ngInject */
     function SubmitterProfileController($scope, AuthenticationService, SpectraQueryBuilderService) {
-        $scope.$on('auth:login-success', function(event, data, status, headers, config) {
+
+        function setUserData() {
             AuthenticationService.getCurrentUser().then(function(data) {
                 $scope.user = data;
             });
-        });
+        }
 
-        (function() {
-            AuthenticationService.getCurrentUser().then(function(data) {
-                $scope.user = data;
-            });
-        })();
+        $scope.$on('auth:login-success', setUserData);
+        $scope.$on('auth:user-update', setUserData);
+        setUserData();
 
+        /**
+         * Executes a new query based on username
+         */
         $scope.queryUserSpectra = function() {
             SpectraQueryBuilderService.prepareQuery();
-            SpectraQueryBuilderService.addUserToQuery($scope.user.emailAddress);
+            SpectraQueryBuilderService.addUserToQuery($scope.user.username);
             SpectraQueryBuilderService.executeQuery();
         };
     }
