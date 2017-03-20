@@ -386,9 +386,8 @@
         };
 
         /**
-         * @param files
+         * @param spectra
          * @param saveSpectrumCallback
-         * @param wizardData
          */
         self.uploadSpectra = function(spectra, saveSpectrumCallback) {
             for (var i = 0; i < spectra.length; i++) {
@@ -400,6 +399,7 @@
          *
          * @param wizardData
          * @param saveSpectrumCallback
+         * @param additionalData
          */
         self.uploadSpectrum = function(wizardData, saveSpectrumCallback, additionalData) {
             AuthenticationService.getCurrentUser().then(function(submitter) {
