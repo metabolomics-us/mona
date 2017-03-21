@@ -32,7 +32,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
         assert(getRepository.count() == 0)
       }
 
-      List(1, 2, 3).foreach { iteration =>
+      List(1).foreach { iteration =>
 
         s"we must be able to support doing several iterations of the process, this is iteration $iteration" must {
 
@@ -56,7 +56,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size() == 1)
           }
 
-          "we should be able to execute RSQL queries like compound.names.name=='META-HYDROXYBENZOIC ACID'" in {
+          "we should be able to execute RSQL queries like compound=q='names.name==\"'META-HYDROXYBENZOIC ACID\"'" in {
             val result = getRepository.rsqlQuery(s"""compound=q='names.name=="META-HYDROXYBENZOIC ACID"'""")
             assert(result.size() == 1)
           }
@@ -143,7 +143,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
           "possible to execute the same query several times and receive always the same result" must {
 
-            "support pageable sizes of 1" in {
+            "support pageable sizes of 1" ignore {
               var last: Spectrum = null
               val page = new PageRequest(0, 1)
 
@@ -201,6 +201,47 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
               assert(!result.isEmpty)
             }
           }
+
+
+          // Ensure that =like= queries work
+          "we should be able to execute RSQL queries like metaData=q='name=like=mode and value==negative' in " in {
+            val result = getRepository.rsqlQuery("metaData=q='name=like=mode and value==negative'")
+            assert(result.size == 28)
+          }
+
+          "we should be able to execute RSQL queries like metaData=q='name=\"ion mode\" and value=like=negative' in " in {
+            val result = getRepository.rsqlQuery("metaData=q='name==\"ion mode\" and value=like=negative'")
+            assert(result.size == 25)
+          }
+
+          "we should be able to execute RSQL queries like compounds=q='names.name=like=hydroxybenzoic' in " in {
+            val result = getRepository.rsqlQuery(s"""compound=q='names.name=like=hydroxybenzoic'""")
+            assert(result.size == 4)
+          }
+
+          "we should be able to execute RSQL queries like compounds=q='names.name=like=HYDROXYBENZOIC' in " in {
+            val result = getRepository.rsqlQuery(s"""compound=q='names.name=like=HYDROXYBENZOIC'""")
+            result.toArray.foreach(println)
+            assert(result.size == 4)
+          }
+
+          "we should be able to execute RSQL queries like compounds.names=q='name=like=HYDROXYBENZOIC' in " in {
+            val result = getRepository.rsqlQuery(s"""compound.names=q='name=like=HYDROXYBENZOIC'""")
+            result.toArray.foreach(println)
+            assert(result.size == 4)
+          }
+
+          "we should be able to execute RSQL queries like compound.classification=q='name==class and value=like=Benzenoids' in" in {
+            val result = getRepository.rsqlQuery("compound.classification=q='name==class and value=like=Benzenoids'")
+            assert(result.size == 41)
+          }
+
+          "we should be able to execute RSQL queries like compound.classification=q='value=like=Benzenoids' in" in {
+            val result = getRepository.rsqlQuery("compound.classification=q='value=like=Benzenoids'")
+            assert(result.size == 45)
+          }
+
+
 
           "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
             if (keepRunning) {

@@ -72,6 +72,7 @@ class MappingUpdater extends LazyLogging {
     build = build.startObject("properties")
     build = buildMetaData(build, "metaData")
     build = buildMetaData(build, "classification")
+
     build = build.endObject()
     build = build.endObject()
 
@@ -87,7 +88,7 @@ class MappingUpdater extends LazyLogging {
   }
 
   /**
-    * builds the metadata envelope for us
+    * builds a metadata envelope
     *
     * @param builder
     * @return

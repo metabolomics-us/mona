@@ -92,6 +92,5 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
       assert(spectrum3.splash.splash == spectrum2.splash.splash)
       assert(countBefore == spectrumMongoRepository.count())
     }
-
   }
 }

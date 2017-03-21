@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain
 import java.util.Date
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.TupleSerialize
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{AnalyzedStringSerialize, TupleSerialize}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
@@ -32,6 +32,7 @@ case class MetaData(
                      hidden: Boolean,
 
                      @(Indexed@field)
+                     @(AnalyzedStringSerialize@field)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      name: String,
 
@@ -64,6 +65,7 @@ case class Names(
                   computed: Boolean,
 
                   @(Indexed@field)
+                  @(AnalyzedStringSerialize@field)
                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                   name: String,
 
@@ -79,6 +81,7 @@ case class Tags(
                  ruleBased: Boolean,
 
                  @(Indexed@field)
+                 @(AnalyzedStringSerialize@field)
                  @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                  text: String
                )
@@ -180,6 +183,7 @@ case class Submitter(
                         * primary id for the user, can be any string
                         */
                       @(Id@field)
+                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       id: String,
 
                       @(Indexed@field)
