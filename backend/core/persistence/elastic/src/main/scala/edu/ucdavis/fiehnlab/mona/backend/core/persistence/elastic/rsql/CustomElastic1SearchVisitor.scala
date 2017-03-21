@@ -1,11 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql
 
-import java.util.stream.Collectors
-
 import com.github.rutledgepaulv.qbuilders.nodes.ComparisonNode
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.rqe.regex.RegexStringFieldImpl
-import org.elasticsearch.index.query.{QueryBuilder, RegexpQueryBuilder}
+import edu.ucdavis.fiehnlab.rqe.like.LikeStringFieldImpl
 
 /**
   * Created by wohlg on 3/13/2016.
@@ -24,12 +21,26 @@ class CustomElastic1SearchVisitor extends ElasticSearchVisitor with LazyLogging 
       single(node.getValues) match {
         case x: Number =>
           "value_number"
+
         case x: java.lang.Boolean =>
           "value_boolean"
+
         case _ =>
-          "value_text"
+          // For like searches, use the analyzed field
+          if (node.getOperator == LikeStringFieldImpl.LIKE)
+            "value_text_analyzed"
+          else
+            "value_text"
       }
 
-    case _ => super.modifyFieldName(field,node,context)
+    case "name" | "names.name" | "metaData.name" | "text" | "tags.text" =>
+      // For like searches, use the analyzed field
+      if (node.getOperator == LikeStringFieldImpl.LIKE)
+        s"${field}_analyzed"
+      else
+        field
+
+    case _ =>
+      super.modifyFieldName(field, node, context)
   }
 }
