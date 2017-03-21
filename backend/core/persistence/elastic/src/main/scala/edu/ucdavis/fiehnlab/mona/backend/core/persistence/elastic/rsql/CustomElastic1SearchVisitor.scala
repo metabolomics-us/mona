@@ -17,7 +17,9 @@ class CustomElastic1SearchVisitor extends ElasticSearchVisitor with LazyLogging 
     * @param context
     *     */
   override protected def modifyFieldName(field: String, node: ComparisonNode, context: Context): String = field match {
-    case "value" =>
+    case "value" | "metaData.value" | "annotations.value" | "compound.metaData.value" | "compound.classification.value" =>
+      println("Field: value")
+      println(node)
       single(node.getValues) match {
         case x: Number =>
           "value_number"
@@ -33,14 +35,18 @@ class CustomElastic1SearchVisitor extends ElasticSearchVisitor with LazyLogging 
             "value_text"
       }
 
-    case "name" | "names.name" | "metaData.name" | "text" | "tags.text" =>
+    case "name" | "names.name" | "metaData.name" | "annotations.name" | "compound.metaData.name" | "compound.classification.name" | "text" | "tags.text" =>
+      println("Field: name | text")
+      println(node)
       // For like searches, use the analyzed field
       if (node.getOperator == LikeStringFieldImpl.LIKE)
         s"${field}_analyzed"
       else
-        field
+        super.modifyFieldName(field, node, context)
 
     case _ =>
+      println("Field: "+ field)
+      println(node)
       super.modifyFieldName(field, node, context)
   }
 }
