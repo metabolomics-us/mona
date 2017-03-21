@@ -32,7 +32,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
         assert(getRepository.count() == 0)
       }
 
-      List(1).foreach { iteration =>
+      List(1, 2, 3).foreach { iteration =>
 
         s"we must be able to support doing several iterations of the process, this is iteration $iteration" must {
 
@@ -143,7 +143,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
           "possible to execute the same query several times and receive always the same result" must {
 
-            "support pageable sizes of 1" ignore {
+            "support pageable sizes of 1" in {
               var last: Spectrum = null
               val page = new PageRequest(0, 1)
 
@@ -185,6 +185,11 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 45)
           }
 
+          "we should be able to execute RSQL queries like compound.classification.value==Benzenoids in" ignore {
+            val result = getRepository.rsqlQuery("compound.classification.value==Benzenoids")
+            assert(result.size == 45)
+          }
+
           "we should be able to execute RSQL queries like annotations=q='name==\"C4H5+\"' in" in {
             val result = getRepository.rsqlQuery("annotations=q='name==\"C4H5+\"'")
             assert(result.size == 13)
@@ -221,13 +226,11 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
           "we should be able to execute RSQL queries like compounds=q='names.name=like=HYDROXYBENZOIC' in " in {
             val result = getRepository.rsqlQuery(s"""compound=q='names.name=like=HYDROXYBENZOIC'""")
-            result.toArray.foreach(println)
             assert(result.size == 4)
           }
 
           "we should be able to execute RSQL queries like compounds.names=q='name=like=HYDROXYBENZOIC' in " in {
             val result = getRepository.rsqlQuery(s"""compound.names=q='name=like=HYDROXYBENZOIC'""")
-            result.toArray.foreach(println)
             assert(result.size == 4)
           }
 
@@ -240,6 +243,27 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             val result = getRepository.rsqlQuery("compound.classification=q='value=like=Benzenoids'")
             assert(result.size == 45)
           }
+
+          "we should be able to execute RSQL queries like compound.classification.value=like=Benzenoids in" ignore {
+            val result = getRepository.rsqlQuery("compound.classification.value=like=Benzenoids")
+            assert(result.size == 45)
+          }
+
+          "we should be able to execute RSQL queries like tags.text=like=LCMS in" in {
+            val result = getRepository.rsqlQuery("tags.text=like=lcms")
+            assert(result.size == 58)
+          }
+
+          "we should be able to execute RSQL queries like tags.text=like=lcms in" in {
+            val result = getRepository.rsqlQuery("tags.text=like=LCMS")
+            assert(result.size == 58)
+          }
+
+          "we should be able to execute RSQL queries like tags.text=like=LC in" in {
+            val result = getRepository.rsqlQuery("tags.text=like=LC")
+            assert(result.size == 50)
+          }
+
 
 
 
