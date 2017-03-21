@@ -394,17 +394,11 @@ module.exports = function (grunt) {
      * which server do we want to use for our application
      */
     grunt.registerTask('setServer', function (target) {
-
         if (target === 'dist') {
             grunt.file.copy('serverDeploy.js', 'src/main/angularjs/scripts/server.js');
-        }
-        else if (target === 'local') {
+        } else {
             grunt.file.copy('serverLocal.js', 'src/main/angularjs/scripts/server.js');
         }
-        else {
-            //
-        }
-
     });
 
     grunt.registerTask('serve', function (target) {
