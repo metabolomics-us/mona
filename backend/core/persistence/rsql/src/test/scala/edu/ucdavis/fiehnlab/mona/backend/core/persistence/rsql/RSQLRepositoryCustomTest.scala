@@ -259,13 +259,10 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 58)
           }
 
-          "we should be able to execute RSQL queries like tags.text=like=LC in" in {
-            val result = getRepository.rsqlQuery("tags.text=like=LC")
+          "we should be able to execute RSQL queries like tags.text=like=\"lc-ms\"' in" in {
+            val result = getRepository.rsqlQuery("""tags.text=like="lc-ms"""")
             assert(result.size == 50)
           }
-
-
-
 
           "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
             if (keepRunning) {
