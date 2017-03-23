@@ -68,36 +68,64 @@
         };
 
 
-        $scope.parsePastedSpectrum = function(pastedSpectrum) {
-            $log.info("Parsing "+ pastedSpectrum);
-
+        $scope.parsePastedSpectrum = function(spectrum) {
+            $scope.pasteError = null;
             var spectrumString = '';
+            var ions = [];
 
-            var ions = pastedSpectrum.split('\n').map(function(x) {
-                x = x.split(' ');
-                var annotation = '';
+            if (spectrum == null || spectrum == "") {
+                $scope.pasteError = 'Please input a valid spectrum!';
+            } else if (spectrum.match(/([0-9]*\.?[0-9]+)\s*:\s*([0-9]*\.?[0-9]+)/g)) {
+                spectrumString = spectrum;
 
-                if(spectrumString != '')
-                    spectrumString += ' ';
-                spectrumString += x[0] +':'+ x[1];
+                ions = spectrum.split(' ').forEach(function(x) {
+                    x = x.split(':');
 
-                return {
-                    ion: parseFloat(x[0]),
-                    intensity: parseFloat(x[1]),
-                    ionStr: x[0],
-                    intensityStr: x[1],
-                    annotation: annotation,
-                    selected: true
+                    return {
+                        ion: parseFloat(x[0]),
+                        intensity: parseFloat(x[1]),
+                        ionStr: x[0],
+                        intensityStr: x[1],
+                        annotation: '',
+                        selected: true
+                    }
+                });
+            } else if (spectrum.match(/([0-9]+\.?[0-9]*)[ \t]+([0-9]*\.?[0-9]+)(?:\s*(?:[;\n])|(?:"?(.+)"?\n?))?/g)) {
+                spectrum = spectrum.split(/[\n\s]+/);
+
+                if (spectrum.length % 2 == 0) {
+                    $scope.spectrum = [];
+
+                    for (var i = 0; i < spectrum.length / 2; i++) {
+                        if(spectrumString != '')
+                            spectrumString += ' ';
+                        spectrumString += spectrum[2 * i] +':'+ spectrum[2 * i + 1];
+
+                        ions.push({
+                            ion: parseFloat(spectrum[2 * i]),
+                            intensity: parseFloat(spectrum[2 * i + 1]),
+                            ionStr: spectrum[2 * i],
+                            intensityStr: spectrum[2 * i + 1],
+                            annotation: '',
+                            selected: true
+                        });
+                    }
+                } else {
+                    $scope.pasteError = 'Spectrum does not have complete ion/intensity pairs!'
                 }
-            });
+            } else {
+                $scope.pasteError = 'Unrecognized spectrum format!'
+            }
 
-            $scope.showIonTable = (ions.length < 500);
-            $scope.queryState = 2;
-            $scope.spectraCount = 1;
-            $scope.page = 2;
 
-            $scope.currentSpectrum = {names: [''], meta: [{}], ions: ions, spectrum: spectrumString};
-            $scope.showIonTable = $scope.currentSpectrum.ions.length < 500;
+            if ($scope.pasteError === null) {
+                $scope.queryState = 2;
+                $scope.spectraCount = 1;
+                $scope.page = 2;
+
+                $scope.currentSpectrum = {names: [''], meta: [{}], ions: ions, spectrum: spectrumString};
+                $scope.showIonTable = $scope.currentSpectrum.ions.length < 500;
+            }
         };
 
 
@@ -197,6 +225,7 @@
          */
         $scope.parseFiles = function (files) {
             $scope.page = 1;
+            $scope.uploadError = null;
 
             UploadLibraryService.loadSpectraFile(files[0],
                 function (data, origin) {
@@ -275,7 +304,12 @@
                 function (progress) {
                     if (progress == 100) {
                         $scope.$apply(function() {
-                            $scope.page = 2;
+                            if ($scope.spectrum == null) {
+                                $scope.page = 0;
+                                $scope.uploadError = 'Unable to load spectra!';
+                            } else {
+                                $scope.page = 2;
+                            }
                         });
                     }
                 }
