@@ -30,20 +30,23 @@ class SequenceServiceTest extends WordSpec with LazyLogging {
 
     counterRepository.deleteAll()
 
-    "create a new counter" in {
-      val result = counterService.getNextSequenceValue("spectrumID")
+    "create another counter" in {
+      val result = counterService.getNextSequenceValue("counter")
       assert(result != null)
       assert(result.value == 1)
     }
 
     "increment the counter" in {
-      (2 to 10).foreach(i => assert(counterService.getNextSequenceValue("spectrumID").value == i))
+      (2 to 10).foreach(i => assert(counterService.getNextSequenceValue("counter").value == i))
     }
 
-    "create another counter" in {
-      val result = counterService.getNextSequenceValue("otherCounter")
-      assert(result != null)
-      assert(result.value == 1)
+    "create a new MoNA ID counter" in {
+      val result: String = counterService.getNextMoNAID
+      assert(result == "MoNA000001")
+    }
+
+    "create a news ID counter" in {
+      (1 to 10).foreach(i => assert(counterService.getNextNewsID == i.toString))
     }
   }
 }

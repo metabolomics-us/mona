@@ -25,9 +25,11 @@ import scala.collection.JavaConverters._
   */
 abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends AbstractSpringControllerTest {
 
-  val requiresAuthForAllRequests: Boolean
+  val requiresAuthForAllRequests: Boolean = false
 
   val saveRequiresAuthentication: Boolean = true
+
+  val requiredAdminForWriting: Boolean = true
 
   /**
     * object to use for gets
@@ -43,6 +45,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
     */
   def getId: String
 
+
   "after initializing the environment" when {
 
     RestAssured.baseURI = s"http://localhost:$port/rest"
@@ -51,6 +54,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
       "save may require authentication" in {
         if(saveRequiresAuthentication) {
           given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").`then`().statusCode(401)
+
           authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").`then`().statusCode(200)
         } else {
           given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").`then`().statusCode(200)
@@ -60,6 +64,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
       "searchCount" in {
         if(requiresAuthForAllRequests) {
           given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").`then`().statusCode(401)
+
           authenticate().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").`then`().statusCode(200)
         } else {
           given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").`then`().statusCode(200)
@@ -69,6 +74,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
       "get" in {
         if(requiresAuthForAllRequests) {
           given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(401)
+
           authenticate().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(200)
         } else{
           given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(200)
@@ -79,6 +85,10 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
         given().log().all(true).contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").`then`().statusCode(401)
 
         authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").`then`().statusCode(200)
+
+        if(requiredAdminForWriting) {
+          authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").`then`().statusCode(403)
+        }
       }
 
       "delete requires admin authorization" in {

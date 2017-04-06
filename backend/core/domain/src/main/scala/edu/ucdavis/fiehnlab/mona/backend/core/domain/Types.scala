@@ -422,3 +422,12 @@ case class Sequence(
                      id: String,
                      value: Long
                    )
+
+@Document(collection = "NEWS")
+case class NewsEntry(
+                      @(Id@field)
+                      id: String,
+                      date: Date,
+                      title: String,
+                      content: String
+                    )

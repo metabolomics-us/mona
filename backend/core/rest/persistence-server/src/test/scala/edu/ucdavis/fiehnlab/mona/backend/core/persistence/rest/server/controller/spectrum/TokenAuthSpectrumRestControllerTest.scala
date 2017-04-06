@@ -41,7 +41,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
 
-  //required for spring and scala tes
+  //required for spring and scala tests
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "we will be connecting to the REST controller" when {
