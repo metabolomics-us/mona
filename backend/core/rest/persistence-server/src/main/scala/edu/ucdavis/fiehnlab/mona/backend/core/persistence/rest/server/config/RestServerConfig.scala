@@ -56,7 +56,12 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.POST, "/rest/submitters").authenticated()
 
       //updates needs authentication
-      .antMatchers(HttpMethod.PUT).authenticated()
+      .antMatchers(HttpMethod.PUT, "/rest/spectra/**").authenticated()
+      .antMatchers(HttpMethod.PUT, "/rest/submitters").authenticated()
+
+      //news can only be added or updated by admins
+      .antMatchers(HttpMethod.PUT, "/rest/news/**").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/news/**").hasAuthority("ADMIN")
 
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
@@ -78,6 +83,7 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.GET, "/rest/metaData/**")
       .antMatchers(HttpMethod.GET, "/rest/tags/**")
       .antMatchers(HttpMethod.GET, "/rest/statistics/**")
+      .antMatchers(HttpMethod.GET, "/rest/news/**")
 
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")
 

@@ -45,4 +45,10 @@ class SequenceService {
     * @return
     */
   def getNextMoNAID: String = "MoNA%06d".format(getNextSequenceValue("spectrumID").value)
+
+  /**
+    * Generate the next unique news ID
+    * @return
+    */
+  def getNextNewsID: String = getNextSequenceValue("newsID").value.toString
 }
