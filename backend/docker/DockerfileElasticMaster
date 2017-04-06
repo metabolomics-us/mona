@@ -1,2 +1,5 @@
 FROM elasticsearch:1.7.5
-RUN /usr/share/elasticsearch/bin/plugin install royrusso/elasticsearch-HQ/v1.0.0
+RUN /usr/share/elasticsearch/bin/plugin install royrusso/elasticsearch-HQ
+RUN /usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head/1.x
+RUN /usr/share/elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/v1.6.1
+RUN /usr/share/elasticsearch/bin/plugin install jettro/elasticsearch-gui
