@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
   * Created by wohlg_000 on 3/9/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[MongoConfig],classOf[Config]))
+@ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[Config]))
 @TestPropertySource(locations=Array("classpath:application.properties"))
 class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,Query] {
 

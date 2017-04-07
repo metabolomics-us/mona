@@ -264,6 +264,22 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 50)
           }
 
+
+          "support full text search for names" in {
+            val result = getRepository.fullTextQuery("HYDROXYBENZOIC")
+            assert(result.size == 4)
+          }
+
+          "support case insensitive full text search for names" in {
+            val result = getRepository.fullTextQuery("hydroxybenzoic")
+            assert(result.size == 4)
+          }
+
+          "support full text search for metadata values" in {
+            val result = getRepository.fullTextQuery("negative")
+            assert(result.size == 28)
+          }
+
           "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
             if (keepRunning) {
               while (keepRunning) {
