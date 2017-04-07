@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
+import java.util
+
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
 import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.{Query, TextCriteria, TextQuery}
 import org.springframework.stereotype.Repository
 import rsql.CustomMongoVisitor
 
@@ -73,7 +75,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
   }
 
   /**
-    * saves our updaes a given element
+    * saves our updates a given element
     * implementation can be slow but should not cause
     * duplicated saves
     *
@@ -82,4 +84,11 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
     */
   override def saveOrUpdate(value: Spectrum): Unit = mongoOperations.save(value)
 
+  /**
+    * converts the query string to a Query Object
+    *
+    * @param query
+    * @return
+    */
+  def buildFullTextQuery(query: String): Query = TextQuery.queryText(TextCriteria.forDefaultLanguage.matching(query))
 }

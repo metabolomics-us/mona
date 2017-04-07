@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{AnalyzedStringS
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
-import org.springframework.data.mongodb.core.index.Indexed
+import org.springframework.data.mongodb.core.index.{Indexed, TextIndexed}
 import org.springframework.data.mongodb.core.mapping.Document
 import javax.validation.constraints._
 
@@ -32,6 +32,7 @@ case class MetaData(
                      hidden: Boolean,
 
                      @(Indexed@field)
+                     @(TextIndexed@field)
                      @(AnalyzedStringSerialize@field)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      name: String,
@@ -52,9 +53,9 @@ case class MetaData(
                        * Integer
                        * Double
                        * Boolean
-                       *
                        */
                      @(TupleSerialize@field)
+                     @(TextIndexed@field)
                      @(JsonDeserialize@field)(using = classOf[NumberDeserializer])
                      value: Any
                    )
@@ -65,6 +66,7 @@ case class Names(
                   computed: Boolean,
 
                   @(Indexed@field)
+                  @(TextIndexed@field)
                   @(AnalyzedStringSerialize@field)
                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                   name: String,
@@ -81,6 +83,7 @@ case class Tags(
                  ruleBased: Boolean,
 
                  @(Indexed@field)
+                 @(TextIndexed@field)
                  @(AnalyzedStringSerialize@field)
                  @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                  text: String
@@ -108,6 +111,7 @@ case class Compound(
 
                      @Deprecated //might be better to be removed
                      @(Indexed@field)
+                     @(TextIndexed@field)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchiKey: String,
 
@@ -163,6 +167,7 @@ case class Splash(
 
                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                    @(Indexed@field)
+                   @(TextIndexed@field)
                    splash: String
                  )
 
@@ -183,22 +188,28 @@ case class Submitter(
                         * primary id for the user, can be any string
                         */
                       @(Id@field)
+                      @(Indexed@field)
+                      @(TextIndexed@field)
                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       id: String,
 
                       @(Indexed@field)
+                      @(TextIndexed@field)
                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       emailAddress: String,
 
                       @(Indexed@field)
+                      @(TextIndexed@field)
                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       firstName: String,
 
                       @(Indexed@field)
+                      @(TextIndexed@field)
                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       lastName: String,
 
                       @(Indexed@field)
+                      @(TextIndexed@field)
                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       institution: String
                     )
@@ -213,15 +224,19 @@ case class Submitter(
   */
 case class Author(
                    @(Indexed@field)
+                   @(TextIndexed@field)
                    emailAddress: String,
 
                    @(Indexed@field)
+                   @(TextIndexed@field)
                    firstName: String,
 
                    @(Indexed@field)
+                   @(TextIndexed@field)
                    institution: String,
 
                    @(Indexed@field)
+                   @(TextIndexed@field)
                    lastName: String
                  )
 
@@ -247,6 +262,7 @@ case class Spectrum(
                      compound: Array[Compound],
 
                      @(Id@field)
+                     @(TextIndexed@field)
                      @(Size@field)(min = 1)
                      @BeanProperty
                      id: String,
@@ -362,7 +378,7 @@ case class LegacySpectrum(
 }
 
 /**
-  * this is anm optional defined library, which declares from which source the spectrum is coming
+  * this is an optional defined library, which declares from which source the spectrum is coming
   *
   * @param id
   * @param description
@@ -370,10 +386,21 @@ case class LegacySpectrum(
   * @param tag
   */
 case class Library(
+                    @(Indexed@field)
+                    @(TextIndexed@field)
+                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                     id: String,
+
+                    @(Indexed@field)
+                    @(TextIndexed@field)
+                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                     library: String,
+
                     description: String,
+
                     link: String,
+
+                    @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                     tag: Tags
                   )
 

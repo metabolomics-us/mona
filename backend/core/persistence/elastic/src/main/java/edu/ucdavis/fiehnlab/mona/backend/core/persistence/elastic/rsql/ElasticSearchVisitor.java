@@ -44,12 +44,16 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
         return parent;
     }
 
+
+
     /**
      * modifies the field, in case it should be overwritten for specific types
      * @param field
+     * @param node
+     * @param context
      * @return
      */
-    protected String modifyFieldName(String field, ComparisonNode node, Context context){
+    protected String modifyFieldName(String field, ComparisonNode node, Context context) {
         return field;
     }
 
@@ -59,9 +63,9 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
 
         Collection<?> values = node.getValues().stream().map(normalizer).collect(Collectors.toList());
 
-        String field = modifyFieldName(node.getField().asKey(),node,context);
+        String field = modifyFieldName(node.getField().asKey(), node, context);
 
-        if(context.getParent() != null){
+        if(context.getParent() != null) {
             field = context.buildNestedPath() + "." + field;
         }
 

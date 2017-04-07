@@ -18,8 +18,9 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[TestConfig]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
-class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,QueryBuilder] with BeforeAndAfterEach  {
+@TestPropertySource(locations = Array("classpath:application.properties"))
+class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum, QueryBuilder] with BeforeAndAfterEach {
+
   @Autowired
   val elasticsearchTemplate: ElasticsearchTemplate = null
 
@@ -27,9 +28,22 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
   @Qualifier("spectrumElasticRepository")
   val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
 
-  //required for spring and scala tes
+  // required for spring and scala test
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  override def getRepository: RSQLRepositoryCustom[Spectrum,QueryBuilder] with CrudRepository[Spectrum, String] = spectrumElasticRepository
+  override def getRepository: RSQLRepositoryCustom[Spectrum, QueryBuilder] with CrudRepository[Spectrum, String] = spectrumElasticRepository
 
+  "elastic specific queries " should {
+
+    s"we should be able to reload our data" in {
+      for (spectrum <- exampleRecords) {
+        val size = getRepository.count()
+
+        getRepository.save(spectrum)
+        val newSize = getRepository.count()
+
+        assert(newSize == size + 1)
+      }
+    }
+  }
 }
