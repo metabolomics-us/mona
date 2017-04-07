@@ -5,7 +5,7 @@ import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.exception.{NameAlreadyRegisteredException, ParentAndParentClassSpecifiedException, RefrenceBeanHasNotBeenAnnotatedException}
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph.{AbstractEdge, _}
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph._
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.listener.WorkflowListener
 import org.springframework.batch.item.ItemProcessor
 
@@ -55,8 +55,7 @@ class WorkflowBuilder[TYPE: ClassTag] {
 
     if (graph.size == 0) {
       graph.addNode(node)
-    }
-    else {
+    } else {
       if(graph.tails.size > 1){
         throw new RuntimeException("sorry we are not able to determine the end of the workflow, please utilize manual linking!")
       }
@@ -91,12 +90,10 @@ class WorkflowBuilder[TYPE: ClassTag] {
           case None =>
             graph.addNode(connectivity._1)
         }
-      }
-      else {
+      } else {
         add(connectivity._1.step)
       }
-    }
-    else {
+    } else {
       graph.addNode(connectivity._1)
       graph.addEdge(Edge(connectedTo, connectivity._1.id))
     }
@@ -117,7 +114,6 @@ class WorkflowBuilder[TYPE: ClassTag] {
         add(processor)
       }
     } else {
-
       processors.foreach { processor =>
         val processingStep: ProcessingStep[TYPE, TYPE] = helper.generateProcessingStepFromAnnotation(processor, processor.getClass.getAnnotation(classOf[Step]), graph)
         add(processingStep)
@@ -178,7 +174,7 @@ class WorkflowBuilder[TYPE: ClassTag] {
     * @param listener
     * @return
     */
-  def +(listener:WorkflowListener[TYPE]) = {
+  def +(listener:WorkflowListener[TYPE]): WorkflowBuilder[TYPE] = {
     add(listener)
   }
 
@@ -190,18 +186,14 @@ class WorkflowBuilder[TYPE: ClassTag] {
   def build(): Workflow[TYPE] = {
     if(alreadyBuild){
       throw new RuntimeException("we are sorry, you need to create a new builder, this one is exhausted!")
-    }
-    else {
+    } else {
       alreadyBuild = true
       val workflow = new Workflow[TYPE](graph, !linearOnly)
 
-      listeners.asScala.foreach{
-        workflow.addListener(_)
-      }
+      listeners.asScala.foreach(workflow.addListener)
       workflow
     }
   }
-
 }
 
 /**
@@ -210,12 +202,11 @@ class WorkflowBuilder[TYPE: ClassTag] {
   */
 class AnnotationHelper[TYPE] extends LazyLogging {
 
-
   def generateProcessingStepFromAnnotation(itemProcessor: ItemProcessor[TYPE, TYPE], step: Step, graph: Graph[String, Node[TYPE, TYPE], Edge]): ProcessingStep[TYPE, TYPE] = {
-    val name = generateNodeIdentifier(step, itemProcessor, false, graph)
+    val name = generateNodeIdentifier(step, itemProcessor, parentScan = false, graph)
+
     //build the new processing step
     ProcessingStep(name, itemProcessor, step.description())
-
   }
 
   /**
@@ -226,23 +217,20 @@ class AnnotationHelper[TYPE] extends LazyLogging {
     */
   def buildNodeAndEdge(itemProcessor: ItemProcessor[TYPE, TYPE], step: Step, graph: Graph[String, Node[TYPE, TYPE], Edge]): (Node[TYPE, TYPE], Option[Edge]) = {
 
-    val proccessingStep = generateProcessingStepFromAnnotation(itemProcessor, step, graph)
+    val processingStep = generateProcessingStepFromAnnotation(itemProcessor, step, graph)
     val parent = getPreviousStepId(step, graph)
 
     //create a new node
-    val node = Node[TYPE, TYPE](proccessingStep.name, proccessingStep, step.description())
+    val node = Node[TYPE, TYPE](processingStep.name, processingStep, step.description())
 
-
-    logger.info(s"previous step name: ${parent}")
-
+    logger.info(s"previous step name: $parent")
 
     if (parent == "None") {
       logger.info("this is the root node")
       (node, None)
-    }
-    else {
-      logger.info(s"step is mapped from ${parent} to ${proccessingStep.name}")
-      (node, Option(Edge(parent, proccessingStep.name)))
+    } else {
+      logger.info(s"step is mapped from $parent to ${processingStep.name}")
+      (node, Option(Edge(parent, processingStep.name)))
     }
   }
 
@@ -259,22 +247,19 @@ class AnnotationHelper[TYPE] extends LazyLogging {
       logger.info(s"custom class name specified for previous step: ${step.previousClass()}")
       if (step.previous() != "None") {
         throw new ParentAndParentClassSpecifiedException
-      }
-      else {
+      } else {
         logger.info(s"looking up referenced bean: ${step.previousClass()}")
         val parentBean = step.previousClass()
         val referenceId = parentBean.getAnnotation(classOf[Step])
 
         if (referenceId == null) {
-          throw new RefrenceBeanHasNotBeenAnnotatedException(s"need @Step annotation ${parentBean}")
-        }
-        else {
+          throw new RefrenceBeanHasNotBeenAnnotatedException(s"need @Step annotation $parentBean")
+        } else {
           logger.info("generating identifier information for the previous step")
-          generateNodeIdentifier(referenceId, parentBean, true, graph)
+          generateNodeIdentifier(referenceId, parentBean, parentScan = true, graph)
         }
       }
-    }
-    else {
+    } else {
       logger.info(s"using defined name for the previous step of: ${step.previous()}")
       step.previous()
     }
@@ -295,11 +280,11 @@ class AnnotationHelper[TYPE] extends LazyLogging {
     //check if this id was already registered
     graph.getNode(name) match {
       case None =>
-        logger.debug(s"node name is unique ${name}")
+        logger.debug(s"node name is unique $name")
         name
       case _ =>
         if (!parentScan)
-          throw new NameAlreadyRegisteredException(s"a node with the name '${name}' was already registered, please use unique names")
+          throw new NameAlreadyRegisteredException(s"a node with the name '$name' was already registered, please use unique names")
         else
           name
     }

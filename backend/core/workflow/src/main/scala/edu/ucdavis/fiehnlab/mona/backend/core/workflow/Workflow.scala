@@ -25,11 +25,11 @@ import scala.reflect._
 class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] = new Graph[String, Node[TYPE, TYPE], Edge], val permitsTree: Boolean = false) extends ItemProcessor[TYPE, List[TYPE]] with LazyLogging {
 
   /**
-    * mow many steps do we need to execute
+    * how many steps do we need to execute
     *
     * @return
     */
-  def stepSize = graph.size
+  def stepSize: Int = graph.size
 
   /**
     * associated listener
@@ -43,7 +43,8 @@ class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] 
     * @param listener
     * @return
     */
-  def addListener(listener:WorkflowListener[TYPE]) = listeners.add(listener)
+  def addListener(listener: WorkflowListener[TYPE]): Boolean = listeners.add(listener)
+
   /**
     * processes the given item for us
     *
@@ -53,8 +54,7 @@ class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] 
   def process(item: TYPE): List[TYPE] = {
     if(graph.size > 0) {
       process(item, graph.heads.head)
-    }
-    else{
+    } else{
       throw new RuntimeException("please provide at least 1 task to be executed!")
     }
   }
@@ -78,30 +78,30 @@ class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] 
 
     val children = graph.getChildren(node)
 
-    //if we got no relements, we just return a list with our data
+    //if we got no elements, we just return a list with our data
     if (children.isEmpty) {
       result :: List.empty
     }
+
+    //if we got 1 element, we return the processed result
     else if (children.size == 1) {
-      //if we got 1 element, we return the processed result
 
       process(result, children.head)
     }
+
     //we got a graph structure
     else {
       //we allow trees
       if (permitsTree) {
-        //process every chield in the tree
+        //process every child in the tree
         children.collect {
           case child: Node[TYPE, TYPE] => process(result, child)
         }.flatten.toList
-      }
-      else {
-        throw new WorkflowDoesntSupportMoreThanOneChieldExcpetion(s"defined workflow had several children: ${children}")
+      } else {
+        throw new WorkflowDoesntSupportMoreThanOneChieldExcpetion(s"defined workflow had several children: $children")
       }
     }
   }
-
 
   /**
     * fires a finishing event
@@ -126,18 +126,17 @@ class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] 
       listeners.asScala.foreach(_.startedProcessing(toProcess, step.processor.getClass.getAnnotation(classOf[Step])))
     }
   }
-
 }
 
 /**
   * defines a standard processing workflow
   */
-class AnnotationWorkflow[TYPE: ClassTag](val name: String, permitsTree:Boolean = false) extends Workflow(new Graph[String, Node[TYPE, TYPE], Edge],permitsTree) with ApplicationListener[ContextRefreshedEvent] {
+class AnnotationWorkflow[TYPE: ClassTag](val name: String, permitsTree: Boolean = false) extends Workflow(new Graph[String, Node[TYPE, TYPE], Edge], permitsTree) with ApplicationListener[ContextRefreshedEvent] {
 
   @Autowired
   val applicationContext: ApplicationContext = null
 
-  val helper:AnnotationHelper[TYPE] = new AnnotationHelper[TYPE]()
+  val helper: AnnotationHelper[TYPE] = new AnnotationHelper[TYPE]()
 
   /**
     * attempts to find our required annotations
@@ -146,19 +145,18 @@ class AnnotationWorkflow[TYPE: ClassTag](val name: String, permitsTree:Boolean =
     * @param bean
     */
   def scanBeanForAnnotations(bean: Any, name: String): Unit = {
-    logger.info(s"searching for annotations: ${bean}")
+    logger.info(s"searching for annotations: $bean")
+
     bean match {
-
       case processor: ItemProcessor[TYPE, TYPE] =>
-
-
         logger.info("found processor...")
+
         val step: Step = bean.getClass.getAnnotation(classOf[Step])
 
         if (step.workflow() == this.name) {
           logger.info("\t => with the correct annotation")
 
-          val connectivity = helper.buildNodeAndEdge(processor,step,graph)
+          val connectivity = helper.buildNodeAndEdge(processor, step, graph)
 
           connectivity._2 match {
             case Some(x) =>
@@ -168,8 +166,7 @@ class AnnotationWorkflow[TYPE: ClassTag](val name: String, permitsTree:Boolean =
               graph.addNode(connectivity._1)
               logger.info("this is the root node")
           }
-        }
-        else {
+        } else {
           logger.debug(s"skipping step $step since it belongs to a different workflow")
         }
       case _ =>
@@ -186,19 +183,18 @@ class AnnotationWorkflow[TYPE: ClassTag](val name: String, permitsTree:Boolean =
   override def onApplicationEvent(event: ContextRefreshedEvent): Unit = {
     val steps: util.Map[String, AnyRef] = applicationContext.getBeansWithAnnotation(classOf[Step])
 
-    logger.debug(s"found ${steps} steps to process")
+    logger.debug(s"found $steps steps to process")
     steps.asScala.keys.foreach { key =>
-      logger.debug(s"scanning properties for ${key}")
+      logger.debug(s"scanning properties for $key")
       scanBeanForAnnotations(steps.get(key), key)
     }
 
-
     if (graph.heads.isEmpty) {
       throw new WorkflowException(s"you need to annotate at least 1 workflow step with @Step and ensure it's of the type ${classTag[TYPE].runtimeClass}")
-    }
-    else if (graph.heads.size != 1) {
+    } else if (graph.heads.size != 1) {
       throw new WorkflowException(s"the defined workflow results in more than 1 beginning, please ensure you define a directional graph. Heads were ${graph.heads}")
     }
+
     logger.debug("all steps are processed")
   }
 }

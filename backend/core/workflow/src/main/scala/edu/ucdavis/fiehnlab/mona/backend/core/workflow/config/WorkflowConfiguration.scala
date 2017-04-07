@@ -7,6 +7,4 @@ import org.springframework.context.annotation.{ComponentScan, Configuration}
   */
 @Configuration
 @ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.mona.backend.core.workflow"))
-class WorkflowConfiguration {
-
-}
+class WorkflowConfiguration
