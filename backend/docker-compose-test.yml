@@ -20,10 +20,13 @@ services:
 
   #mona only supports 1.7.5 at this point in time
   elasticsearch:
-     image: elasticsearch:1.7.5
-     ports:
+    build:
+        context: ./docker
+        dockerfile: DockerfileElasticMaster
+    ports:
        - "9200:9200"
        - "9300:9300"
+    entrypoint: ./bin/elasticsearch
 
   #rabbitmq
   rabbitmq:
