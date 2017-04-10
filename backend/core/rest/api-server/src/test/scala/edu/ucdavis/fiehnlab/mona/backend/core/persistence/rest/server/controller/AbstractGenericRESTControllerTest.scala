@@ -29,7 +29,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 
   val saveRequiresAuthentication: Boolean = true
 
-  val requiredAdminForWriting: Boolean = true
+  val requiredAdminForWriting: Boolean = false
 
   /**
     * object to use for gets
