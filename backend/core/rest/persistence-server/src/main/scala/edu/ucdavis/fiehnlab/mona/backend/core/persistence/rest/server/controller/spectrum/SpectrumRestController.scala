@@ -4,8 +4,8 @@ import java.util.concurrent.Future
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, WrappedString}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubmitterMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
@@ -48,30 +48,39 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @ResponseBody
   def searchRSQL(@RequestParam(value = "page", required = false) page: Integer,
                  @RequestParam(value = "size", required = false) size: Integer,
-                 @RequestParam(value = "query", required = true) query: WrappedString,
+                 @RequestParam(value = "query", required = false) query: WrappedString,
+                 @RequestParam(value = "text", required = false) text: WrappedString,
                  request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
 
-    if (query == null || query.string == "") {
-      list(page, size)
-    } else {
-      val data: Iterable[Spectrum] = {
-        if (size != null) {
-          if (page != null) {
-            spectrumPersistenceService.findAll(query.string, new PageRequest(page, size,Sort.Direction.ASC,"id")).getContent.asScala
-          }
-          else {
-            spectrumPersistenceService.findAll(query.string, new PageRequest(0, size,Sort.Direction.ASC,"id")).getContent.asScala
-          }
+    def sendQuery(query: String, page: Integer, size: Integer, rsqlQuery: Boolean): Iterable[Spectrum] = {
+      if (size != null) {
+        if (page != null) {
+          spectrumPersistenceService.findAll(query, rsqlQuery, new PageRequest(page, size, Sort.Direction.ASC, "id")).getContent.asScala
         } else {
-          spectrumPersistenceService.findAll(query.string).asScala
+          spectrumPersistenceService.findAll(query, rsqlQuery, new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
         }
+      } else {
+        spectrumPersistenceService.findAll(query, rsqlQuery).asScala
       }
+    }
 
+    // Handle RSQL query
+    if (query != null && query.string != "") {
       new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
-        new ResponseEntity(
-          data, HttpStatus.OK
-        )
+        new ResponseEntity(sendQuery(query.string, page, size, rsqlQuery = true), HttpStatus.OK)
       )
+    }
+
+    // Handle full text query
+    else if (text != null && text.string != "") {
+      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
+        new ResponseEntity(sendQuery(text.string, page, size, rsqlQuery = false), HttpStatus.OK)
+      )
+    }
+
+    // Otherwse, 400 error
+    else {
+      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](new ResponseEntity(HttpStatus.BAD_REQUEST))
     }
   }
 
@@ -83,11 +92,15 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @RequestMapping(path = Array("/search/count"), method = Array(RequestMethod.GET))
   @Async
   @ResponseBody
-  def searchCount(@RequestParam(value = "query", required = false) query: WrappedString): Future[Long] = {
-    if (query == null || query.string.isEmpty) {
-      new AsyncResult[Long](spectrumPersistenceService.count())
-    } else {
+  def searchCount(@RequestParam(value = "query", required = false) query: WrappedString,
+                  @RequestParam(value = "text", required = false) text: WrappedString): Future[Long] = {
+
+    if (query != null && query.string != "") {
       new AsyncResult[Long](spectrumPersistenceService.count(query.string))
+    } else if (text != null && text.string != "") {
+      new AsyncResult[Long](spectrumPersistenceService.count(query.string, isRSQLQuery = false))
+    } else {
+      new AsyncResult[Long](spectrumPersistenceService.count())
     }
   }
 

@@ -104,27 +104,27 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "query data with the query tags=q='text==LCMS'" in {
-          val result = spectrumPersistenceService.findAll("tags=q='text==LCMS'")
+          val result = spectrumPersistenceService.findAll("tags=q='text==LCMS'", isRSQLQuery = true)
           assert(result.asScala.size == exampleRecords.length)
         }
 
         "query data with the query tags.text==LCMS" in {
-          val result = spectrumPersistenceService.findAll("tags.text==LCMS")
+          val result = spectrumPersistenceService.findAll("tags.text==LCMS", isRSQLQuery = true)
           assert(result.asScala.size == exampleRecords.length)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==positive'" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""")
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""", isRSQLQuery = true)
           assert(result.asScala.size == 33)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==negative'" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""")
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", isRSQLQuery = true)
           assert(result.asScala.size == 25)
         }
 
         "query data with pagination" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", new PageRequest(0, 10))
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", isRSQLQuery = true, new PageRequest(0, 10))
           assert(result.getTotalPages == 3)
           assert(result.getContent.size() == 10)
         }
@@ -152,12 +152,12 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "we should be able to execute custom queries like compound.names.name=='META-HYDROXYBENZOIC ACID'" ignore {
-          val exampleRecords = spectrumPersistenceService.findAll("""compound.names.name=='META-HYDROXYBENZOIC ACID'""")
+          val exampleRecords = spectrumPersistenceService.findAll("""compound.names.name=='META-HYDROXYBENZOIC ACID'""", isRSQLQuery = true)
           assert(exampleRecords.asScala.toList.size == 1)
         }
 
         "we should be able to execute custom subqueries like compound names.name=='META-HYDROXYBENZOIC ACID'" in {
-          val exampleRecords = spectrumPersistenceService.findAll("""compound=q="names.name=='META-HYDROXYBENZOIC ACID'"""")
+          val exampleRecords = spectrumPersistenceService.findAll("""compound=q="names.name=='META-HYDROXYBENZOIC ACID'"""", isRSQLQuery = true)
           assert(exampleRecords.asScala.toList.size == 1)
         }
 
