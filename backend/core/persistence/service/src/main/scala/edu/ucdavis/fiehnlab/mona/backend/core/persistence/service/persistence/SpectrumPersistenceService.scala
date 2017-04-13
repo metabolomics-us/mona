@@ -157,16 +157,18 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param request
     * @return
     */
-  private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[Spectrum] = {
-    logger.debug(s"executing query: \n$rsqlQuery\n")
+  private def findDataForQuery(query: String, isRSQLQuery: Boolean, request: Pageable): Page[Spectrum] = {
+    logger.debug(s"executing query: \n$query\n")
 
-    // No need to hit elastic here, since no query is executed
-    if (rsqlQuery == "") {
+    if (query == null || query == "") {
+      // No need to hit elastic here, since no query is executed
       spectrumMongoRepository.findAll(request)
-    }
-    // Let elastic deal with the request
-    else {
-      spectrumElasticRepository.rsqlQuery(rsqlQuery, request)
+    } else if (isRSQLQuery) {
+      // Perform RSQL query in elastic
+      spectrumElasticRepository.rsqlQuery(query, request)
+    } else {
+      // Perform full text query in elastic
+      spectrumElasticRepository.fullTextQuery(query, request)
     }
   }
 
@@ -175,7 +177,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @return
     */
-  def findAll(): lang.Iterable[Spectrum] = findAll("")
+  def findAll(): lang.Iterable[Spectrum] = findAll("", isRSQLQuery = true)
 
   /**
     * fires a synchronization event, so that system updates all it's clients. Be aware that this is very expensive!
@@ -188,10 +190,11 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * queries for all the spectra matching this RSQL query
     *
     * @param rsqlQuery
+    * @param isRSQLQuery specifies query type
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def findAll(rsqlQuery: String): lang.Iterable[Spectrum] = {
+  def findAll(rsqlQuery: String, isRSQLQuery: Boolean): lang.Iterable[Spectrum] = {
 
     /**
       * generates a new dynamic fetchable
@@ -201,18 +204,19 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
       /**
         * loads more data from the server for the given query
         */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, pageable)
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, isRSQLQuery, pageable)
     }
   }
 
   /**
     * does a paginating request to the repository and should be the preferred way to interact with it
     *
-    * @param rsqlQuery a well defined RSQL query to be executed
+    * @param query a RSQL or text query to be executed
+    * @param isRSQLQuery specifies query type
     * @param pageable
     * @return
     */
-  def findAll(rsqlQuery: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(rsqlQuery, pageable)
+  def findAll(query: String, isRSQLQuery: Boolean, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, isRSQLQuery, pageable)
 
   /**
     * returns the count of all spectra
@@ -228,7 +232,15 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def count(rsqlQuery: String): Long = spectrumElasticRepository.rsqlQueryCount(rsqlQuery)
+  def count(query: String, isRSQLQuery: Boolean = true): Long = {
+    if (query == null || query == "") {
+      spectrumElasticRepository.count()
+    } else if (isRSQLQuery) {
+      spectrumElasticRepository.rsqlQueryCount(query)
+    } else {
+      spectrumElasticRepository.fullTextQueryCount(query)
+    }
+  }
 
   /**
     * delete all objects in the system
@@ -299,5 +311,5 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param pageable
     * @return
     */
-  override def findAll(pageable: Pageable): Page[Spectrum] = findAll("", pageable)
+  override def findAll(pageable: Pageable): Page[Spectrum] = findAll("", isRSQLQuery = true, pageable)
 }
