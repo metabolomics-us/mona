@@ -104,7 +104,9 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
         } else if(RegexStringFieldImpl.REGEX.equals(node.getOperator())){
             return new RegexpQueryBuilder(field, single(values).toString());
         } else if (LikeStringFieldImpl.LIKE.equals(node.getOperator())) {
-            return queryStringQuery(single(values).toString()).defaultField(field);
+            return boolQuery()
+                    .should(queryStringQuery(single(values).toString()).defaultField(field).boost(10))
+                    .should(queryStringQuery("*"+ single(values).toString() +"*").defaultField(field).rewrite("scoring_boolean"));
         } else {
             throw new UnsupportedOperationException("This visitor does not support the operator " + operator + ".");
         }

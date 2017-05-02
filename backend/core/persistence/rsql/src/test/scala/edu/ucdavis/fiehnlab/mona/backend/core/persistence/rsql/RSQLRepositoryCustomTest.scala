@@ -234,6 +234,11 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 4)
           }
 
+          "we should be able to execute RSQL queries like compounds.names=q='name=like=HYDROXYBE' in " in {
+            val result = getRepository.rsqlQuery(s"""compound.names=q='name=like=HYDROXYBEN'""")
+            assert(result.size == 5)
+          }
+
           "we should be able to execute RSQL queries like compound.classification=q='name==class and value=like=Benzenoids' in" in {
             val result = getRepository.rsqlQuery("compound.classification=q='name==class and value=like=Benzenoids'")
             assert(result.size == 41)
