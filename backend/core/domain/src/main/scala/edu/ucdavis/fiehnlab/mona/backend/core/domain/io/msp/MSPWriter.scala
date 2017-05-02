@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 class MSPWriter extends DomainWriter {
 
   /**
-    * uses the first compound, sorting the names by score and return the highest scored name
+    * Uses the biological or first compound, sorting the names by score and return the highest scored name
     *
     * @param spectrum
     * @return
@@ -22,7 +22,7 @@ class MSPWriter extends DomainWriter {
     if (compound != null) {
       // TODO Re-enable sorting by score when implemented
       // val names = compound.head.names.sortBy(_.score).headOption.orNull
-      val names = compound.names.filter(!_.computed).headOption.orNull
+      val names = compound.names.find(!_.computed).orNull
 
       if (names == null) {
         "None"
@@ -41,8 +41,7 @@ class MSPWriter extends DomainWriter {
       compound.names.filter(!_.computed).map { name =>
         s"Synonym: ${name.name}"
       }
-    }
-    else {
+    } else {
       Seq.empty[String]
     }
   }
@@ -78,10 +77,10 @@ class MSPWriter extends DomainWriter {
       } else if (compound.metaData.exists(_.name == "InChIKey")) {
         s"InChIKey: ${compound.metaData.filter(_.name == "InChIKey").head.value.toString}"
       } else {
-        s"InChIKey: None"
+        ""
       }
     } else {
-      s"InChIKey: None"
+      ""
     }
   }
 
@@ -92,18 +91,11 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def buildComments(spectrum: Spectrum): String = {
-
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
-    val observed: Compound = spectrum.compound.find(_.kind == "observed").getOrElse(spectrum.compound.head)
-
-    val spectra = spectrum.metaData.collect {
-      case value: MetaData =>
-        s""""${value.name}=${value.value}""""
-    }.mkString(" ")
-
-    s"""${spectra} "InChI Code=${compound.inchi}" "Observed InChI Code=${observed.inchi}"""".stripMargin
-
+    (spectrum.metaData ++ compound.metaData).map(
+      value => s""""${value.name}=${value.value.toString.replaceAll("\"", "")}""""
+    ).mkString(" ")
   }
 
   /**
@@ -144,12 +136,15 @@ class MSPWriter extends DomainWriter {
 
     p.println(s"Name: ${buildName(spectrum)}")
 
-    buildSynonyms(spectrum).foreach{
-      p.println
-    }
+    buildSynonyms(spectrum).foreach(p.println)
 
     p.println(s"DB#: ${spectrum.id}")
-    p.println(buildCompoundInchiKey(spectrum))
+
+    val inchikey: String = buildCompoundInchiKey(spectrum)
+
+    if (inchikey.nonEmpty) {
+      p.println(inchikey)
+    }
 
     p.println(s"MW: ${buildCompoundMetaData(spectrum, "total exact mass")}")
 
@@ -157,12 +152,10 @@ class MSPWriter extends DomainWriter {
     p.println(s"PrecursorMZ: ${buildMetaDateField(spectrum, "precursor m/z")}")
     p.println(s"Comments: ${buildComments(spectrum)}")
 
-    val spectra = buildSpectraString(spectrum)
-    p.println(s"Num Peaks: ${spectra.length}")
+    val spectrumString = buildSpectraString(spectrum)
 
-    spectra.foreach { value =>
-      p.println(s"$value")
-    }
+    p.println(s"Num Peaks: ${spectrumString.length}")
+    spectrumString.foreach(value => p.println(s"$value"))
 
     p.println()
     p.flush()
