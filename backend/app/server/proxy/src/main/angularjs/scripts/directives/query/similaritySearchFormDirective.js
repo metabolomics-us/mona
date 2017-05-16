@@ -87,7 +87,7 @@
          * @param precursorToleranceUnit
          */
         $scope.search = function(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit) {
-            var request = {spectrum: $scope.spectrum};
+            var request = {spectrum: $scope.spectrum, minSimilarity: 500};
 
             if (minSimilarity != null && angular.isNumber(+minSimilarity)) {
                 request.minSimilarity = parseFloat(minSimilarity);

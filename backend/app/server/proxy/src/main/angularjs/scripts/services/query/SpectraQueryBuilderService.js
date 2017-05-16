@@ -62,16 +62,23 @@
 
         this.executeQuery = function() {
             var query = this.getRSQLQuery();
-            $log.info('Executing query: '+ query);
-            
-            $location.path('/spectra/browse').search({query: (query == '') ? null : query});
+
+            if (query != '') {
+                $log.info('Executing query: '+ query);
+                $location.path('/spectra/browse').search({query: query});
+            } else if (this.textSearch != '') {
+                $log.info('Executing text search: '+ this.textSearch);
+                $location.path('/spectra/browse').search({text: this.textSearch});
+            } else {
+                $location.path('/spectra/browse').search();
+            }
         };
 
 
         /**
          * Stored similarity query
          */
-        this.similarityQuery = {spectrum: '58.943437:0.504423 102.934132:100.000000 130.914854:0.588876', minSimilarity: 500};
+        this.similarityQuery = null;
 
         this.setSimilarityQuery = function(query) {
             this.similarityQuery = query;
