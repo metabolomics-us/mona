@@ -257,7 +257,7 @@
                 if (SpectraQueryBuilderService.hasSimilarityQuery()) {
                     $scope.submitSimilarityQuery();
                 } else {
-                    $location.path('/spectra/search?type=similarity')
+                    $location.path('/spectra/search').search({type: 'similarity'});
                 }
             }
 
