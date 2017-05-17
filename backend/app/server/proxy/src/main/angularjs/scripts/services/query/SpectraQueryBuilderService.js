@@ -23,6 +23,11 @@
          */
         this.queryString = '';
 
+        /**
+         * Stored text search
+         */
+        this.textSearch = '';
+
 
         this.getQuery = function() {
             if (this.query == null) {
@@ -42,9 +47,18 @@
             this.queryString = queryString;
         };
 
+        this.getTextSearch = function() {
+            return this.textSearch;
+        };
+
+        this.setTextSearch = function(textSearch) {
+            this.textSearch = textSearch;
+        };
+
         this.prepareQuery = function() {
             this.query = [];
             this.queryString = '';
+            this.textSearch = '';
         };
 
         /**
@@ -152,7 +166,7 @@
         };
 
         this.addNameToQuery = function(name) {
-            this.query.push('compound.names=q=\'name=match=".*'+ name +'.*"\'');
+            this.query.push('compound.names=q=\'name=like="'+ name +'"\'');
         };
 
         var buildTagQuery = function(value, collection, queryType) {
