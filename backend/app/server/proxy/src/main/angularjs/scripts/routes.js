@@ -92,7 +92,8 @@
             //database index and statistics
             .when('/spectra/statistics', {
                 templateUrl: 'views/spectra/dbindex/dbindex.html',
-                controller: 'SpectraDatabaseIndexController'
+                controller: 'SpectraDatabaseIndexController',
+                reloadOnSearch: false
             })
 
             .when('/spectra/querytree', {

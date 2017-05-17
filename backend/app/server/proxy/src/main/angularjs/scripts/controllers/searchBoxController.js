@@ -36,7 +36,7 @@
                 SpectraQueryBuilderService.addSplashToQuery(searchBoxQuery);
             }
 
-            // Handle name query
+            // Handle full text search
             else {
                 SpectraQueryBuilderService.addNameToQuery(searchBoxQuery);
             }
