@@ -102,10 +102,47 @@ trait RSQLRepositoryCustom[T, Q] {
   def fullTextQueryCount(query: String): Long = nativeQueryCount(buildFullTextQuery(query))
 
   /**
-    * converts the query string to a Query Object
+    * converts the text query to a Query Object
     *
     * @param query
     * @return
     */
   def buildFullTextQuery(query: String): Q
+
+  /**
+    * build a combined RSQL + full text query
+    * @param rsqlQueryString
+    * @param textQueryString
+    * @return
+    */
+  def buildQuery(rsqlQueryString: String, textQueryString: String): Q
+
+  /**
+    * executes an combined RSQL + text query
+    *
+    * @param rsqlQuery
+    * @param textQuery
+    * @return
+    */
+  def query(rsqlQuery: String, textQuery: String): java.util.List[T] = nativeQuery(buildQuery(rsqlQuery, textQuery))
+
+
+  /**
+    * executes an combined RSQL + text query
+    *
+    * @param rsqlQuery
+    * @param textQuery
+    * @return
+    */
+  def query(rsqlQuery: String, textQuery: String, pageable: Pageable): Page[T] = nativeQuery(buildQuery(rsqlQuery, textQuery), pageable)
+
+
+  /**
+    * executes the given RSQL + text query and returns its count
+    *
+    * @param rsqlQuery
+    * @param textQuery
+    * @return
+    */
+  def queryCount(rsqlQuery: String, textQuery: String): Long = nativeQueryCount(buildQuery(rsqlQuery, textQuery))
 }

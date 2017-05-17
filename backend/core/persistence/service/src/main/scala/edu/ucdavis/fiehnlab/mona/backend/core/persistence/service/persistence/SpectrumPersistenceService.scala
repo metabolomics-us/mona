@@ -157,18 +157,15 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param request
     * @return
     */
-  private def findDataForQuery(query: String, isRSQLQuery: Boolean, request: Pageable): Page[Spectrum] = {
-    logger.debug(s"executing query: \n$query\n")
+  private def findDataForQuery(rsqlQuery: String, textQuery: String, request: Pageable): Page[Spectrum] = {
+    logger.debug(s"executing query: \n$rsqlQuery\n")
 
-    if (query == null || query == "") {
+    if ((rsqlQuery == null || rsqlQuery == "") && (textQuery == null || textQuery == "")) {
       // No need to hit elastic here, since no query is executed
       spectrumMongoRepository.findAll(request)
-    } else if (isRSQLQuery) {
-      // Perform RSQL query in elastic
-      spectrumElasticRepository.rsqlQuery(query, request)
     } else {
-      // Perform full text query in elastic
-      spectrumElasticRepository.fullTextQuery(query, request)
+      // Perform RSQL query in elastic
+      spectrumElasticRepository.query(rsqlQuery, textQuery, request)
     }
   }
 
@@ -177,7 +174,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @return
     */
-  def findAll(): lang.Iterable[Spectrum] = findAll("", isRSQLQuery = true)
+  def findAll(): lang.Iterable[Spectrum] = findAll("", "")
 
   /**
     * fires a synchronization event, so that system updates all it's clients. Be aware that this is very expensive!
@@ -187,14 +184,14 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   }
 
   /**
-    * queries for all the spectra matching this RSQL query
+    * queries for all the spectra matching this query
     *
     * @param rsqlQuery
-    * @param isRSQLQuery specifies query type
+    * @param textQuery
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def findAll(rsqlQuery: String, isRSQLQuery: Boolean): lang.Iterable[Spectrum] = {
+  def findAll(rsqlQuery: String, textQuery: String): lang.Iterable[Spectrum] = {
 
     /**
       * generates a new dynamic fetchable
@@ -204,19 +201,19 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
       /**
         * loads more data from the server for the given query
         */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, isRSQLQuery, pageable)
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, textQuery, pageable)
     }
   }
 
   /**
     * does a paginating request to the repository and should be the preferred way to interact with it
     *
-    * @param query a RSQL or text query to be executed
-    * @param isRSQLQuery specifies query type
+    * @param query a RSQL or text query
+    * @param textQuery a full text query
     * @param pageable
     * @return
     */
-  def findAll(query: String, isRSQLQuery: Boolean, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, isRSQLQuery, pageable)
+  def findAll(query: String, textQuery: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, textQuery, pageable)
 
   /**
     * returns the count of all spectra
@@ -232,14 +229,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def count(query: String, isRSQLQuery: Boolean = true): Long = {
-    if (query == null || query == "") {
-      spectrumElasticRepository.count()
-    } else if (isRSQLQuery) {
-      spectrumElasticRepository.rsqlQueryCount(query)
-    } else {
-      spectrumElasticRepository.fullTextQueryCount(query)
-    }
+  def count(query: String, textQuery: String): Long = {
+    spectrumElasticRepository.queryCount(query, textQuery)
   }
 
   /**
@@ -311,5 +302,5 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param pageable
     * @return
     */
-  override def findAll(pageable: Pageable): Page[Spectrum] = findAll("", isRSQLQuery = true, pageable)
+  override def findAll(pageable: Pageable): Page[Spectrum] = findAll("", "", pageable)
 }
