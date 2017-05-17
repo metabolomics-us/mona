@@ -65,7 +65,12 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   def getSearch(queryBuilder: QueryBuilder): SearchQuery = {
     //uggly but best solution I found so far. If we do it without pagination request, spring will always limit it to 10 results.
     //TODO obviously onces the delete bug doesnt happen anymore we should get rid of the aggregations
-    val query = new NativeSearchQueryBuilder().withQuery(queryBuilder).withPageable(new PageRequest(0, 1000000)).addAggregation(AggregationBuilders.terms("by_id").field("id")).build()
+    val query = new NativeSearchQueryBuilder()
+      .withQuery(queryBuilder)
+      .withPageable(new PageRequest(0, 1000000))
+      .addAggregation(AggregationBuilders.terms("by_id").field("id"))
+      .build()
+
     logger.info(s"query: ${query.getQuery}")
     query
   }
@@ -85,7 +90,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   }
 
   /**
-    * converts the query string to a Query Object
+    * converts the text query string to a Query Object
     *
     * @param query
     * @return
@@ -119,5 +124,25 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     boolQuery()
       .should(queryStringQuery(query).defaultField("_all").boost(10))
       .should(queryStringQuery(s"*$query*").defaultField("_all").rewrite("scoring_boolean"))
+  }
+
+  /**
+    * build a combined RSQL + full text query
+    * @param rsqlQueryString
+    * @param textQueryString
+    * @return
+    */
+  def buildQuery(rsqlQueryString: String, textQueryString: String): QueryBuilder = {
+    if (textQueryString != null && textQueryString.nonEmpty) {
+      if (rsqlQueryString != null && rsqlQueryString.nonEmpty) {
+        boolQuery()
+          .must(buildRSQLQuery(rsqlQueryString))
+          .must(buildFullTextQuery(textQueryString))
+      } else {
+        buildFullTextQuery(textQueryString)
+      }
+    } else {
+      buildRSQLQuery(rsqlQueryString)
+    }
   }
 }

@@ -34,7 +34,7 @@ class TestConfig
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig],classOf[TestConfig]))
 class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLogging with Eventually {
-  val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
+  val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
@@ -104,27 +104,27 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "query data with the query tags=q='text==LCMS'" in {
-          val result = spectrumPersistenceService.findAll("tags=q='text==LCMS'", isRSQLQuery = true)
+          val result = spectrumPersistenceService.findAll("tags=q='text==LCMS'", "")
           assert(result.asScala.size == exampleRecords.length)
         }
 
         "query data with the query tags.text==LCMS" in {
-          val result = spectrumPersistenceService.findAll("tags.text==LCMS", isRSQLQuery = true)
+          val result = spectrumPersistenceService.findAll("tags.text==LCMS", "")
           assert(result.asScala.size == exampleRecords.length)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==positive'" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""", isRSQLQuery = true)
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""", "")
           assert(result.asScala.size == 33)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==negative'" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", isRSQLQuery = true)
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", "")
           assert(result.asScala.size == 25)
         }
 
         "query data with pagination" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", isRSQLQuery = true, new PageRequest(0, 10))
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", "", new PageRequest(0, 10))
           assert(result.getTotalPages == 3)
           assert(result.getContent.size() == 10)
         }
@@ -148,22 +148,22 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "present us with a count for specific queries" in {
-          assert(spectrumPersistenceService.count("metaData=q='name==\"ion mode\" and value==negative'") == 25)
+          assert(spectrumPersistenceService.count("metaData=q='name==\"ion mode\" and value==negative'", "") == 25)
         }
 
         "we should be able to execute custom queries like compound.names.name=='META-HYDROXYBENZOIC ACID'" ignore {
-          val exampleRecords = spectrumPersistenceService.findAll("""compound.names.name=='META-HYDROXYBENZOIC ACID'""", isRSQLQuery = true)
+          val exampleRecords = spectrumPersistenceService.findAll("""compound.names.name=='META-HYDROXYBENZOIC ACID'""", "")
           assert(exampleRecords.asScala.toList.size == 1)
         }
 
         "we should be able to execute custom subqueries like compound names.name=='META-HYDROXYBENZOIC ACID'" in {
-          val exampleRecords = spectrumPersistenceService.findAll("""compound=q="names.name=='META-HYDROXYBENZOIC ACID'"""", isRSQLQuery = true)
+          val exampleRecords = spectrumPersistenceService.findAll("""compound=q="names.name=='META-HYDROXYBENZOIC ACID'"""", "")
           assert(exampleRecords.asScala.toList.size == 1)
         }
 
         "delete 1 spectra in the repository" in {
           assert(spectrumPersistenceService.count() == exampleRecords.length)
-          val spectra: Spectrum = spectrumPersistenceService.findAll(new PageRequest(1, 10)).getContent.get((5))
+          val spectra: Spectrum = spectrumPersistenceService.findAll(new PageRequest(1, 10)).getContent.get(5)
           val count = spectrumPersistenceService.count()
           spectrumPersistenceService.delete(spectra)
 

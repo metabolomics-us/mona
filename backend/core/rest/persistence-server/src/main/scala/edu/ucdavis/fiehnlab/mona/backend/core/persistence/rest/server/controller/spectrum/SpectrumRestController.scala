@@ -40,7 +40,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     * Executes a search against the repository and can cause out of memory errors.  It is recommended to utilize this
     * method with pagination
     *
-    * @param query
+    * @param rsqlQuery
     * @return
     */
   @RequestMapping(path = Array("/search"), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp"))
@@ -48,38 +48,30 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @ResponseBody
   def searchRSQL(@RequestParam(value = "page", required = false) page: Integer,
                  @RequestParam(value = "size", required = false) size: Integer,
-                 @RequestParam(value = "query", required = false) query: WrappedString,
-                 @RequestParam(value = "text", required = false) text: WrappedString,
+                 @RequestParam(value = "query", required = false) rsqlQuery: WrappedString,
+                 @RequestParam(value = "text", required = false) textQuery: WrappedString,
                  request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
 
-    def sendQuery(query: String, page: Integer, size: Integer, rsqlQuery: Boolean): Iterable[Spectrum] = {
+    def sendQuery(rsqlQuery: String, textQuery: String, page: Integer, size: Integer): Iterable[Spectrum] = {
       if (size != null) {
         if (page != null) {
-          spectrumPersistenceService.findAll(query, rsqlQuery, new PageRequest(page, size, Sort.Direction.ASC, "id")).getContent.asScala
+          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(page, size, Sort.Direction.ASC, "id")).getContent.asScala
         } else {
-          spectrumPersistenceService.findAll(query, rsqlQuery, new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
+          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
         }
       } else {
-        spectrumPersistenceService.findAll(query, rsqlQuery).asScala
+        spectrumPersistenceService.findAll(rsqlQuery, textQuery).asScala
       }
     }
 
-    // Handle RSQL query
-    if (query != null && query.string != "") {
-      new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
-        new ResponseEntity(sendQuery(query.string, page, size, rsqlQuery = true), HttpStatus.OK)
-      )
-    }
+    if (rsqlQuery != null || textQuery != null) {
+      val rsqlQueryString = if (rsqlQuery != null) rsqlQuery.string else ""
+      val textQueryString = if (textQuery != null) textQuery.string else ""
 
-    // Handle full text query
-    else if (text != null && text.string != "") {
       new AsyncResult[ResponseEntity[Iterable[Spectrum]]](
-        new ResponseEntity(sendQuery(text.string, page, size, rsqlQuery = false), HttpStatus.OK)
+        new ResponseEntity(sendQuery(rsqlQueryString, textQueryString, page, size), HttpStatus.OK)
       )
-    }
-
-    // Otherwse, 400 error
-    else {
+    } else {
       new AsyncResult[ResponseEntity[Iterable[Spectrum]]](new ResponseEntity(HttpStatus.BAD_REQUEST))
     }
   }
@@ -92,13 +84,14 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   @RequestMapping(path = Array("/search/count"), method = Array(RequestMethod.GET))
   @Async
   @ResponseBody
-  def searchCount(@RequestParam(value = "query", required = false) query: WrappedString,
-                  @RequestParam(value = "text", required = false) text: WrappedString): Future[Long] = {
+  def searchCount(@RequestParam(value = "query", required = false) rsqlQuery: WrappedString,
+                  @RequestParam(value = "text", required = false) textQuery: WrappedString): Future[Long] = {
 
-    if (query != null && query.string != "") {
-      new AsyncResult[Long](spectrumPersistenceService.count(query.string))
-    } else if (text != null && text.string != "") {
-      new AsyncResult[Long](spectrumPersistenceService.count(query.string, isRSQLQuery = false))
+    if ((rsqlQuery != null && rsqlQuery.string.nonEmpty) || (textQuery != null && textQuery.string.nonEmpty)) {
+      val rsqlQueryString = if (rsqlQuery != null) rsqlQuery.string else ""
+      val textQueryString = if (textQuery != null) textQuery.string else ""
+
+      new AsyncResult[Long](spectrumPersistenceService.count(rsqlQueryString, textQueryString))
     } else {
       new AsyncResult[Long](spectrumPersistenceService.count())
     }
