@@ -38,7 +38,7 @@
 
             // Handle full text search
             else {
-                SpectraQueryBuilderService.addNameToQuery(searchBoxQuery);
+                SpectraQueryBuilderService.setTextSearch(searchBoxQuery);
             }
 
             SpectraQueryBuilderService.executeQuery();
