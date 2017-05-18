@@ -10,11 +10,16 @@
 
     /* @ngInject */
     function SpectraDatabaseIndexController($scope, $http, $location, $window, $timeout, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
-        $scope.tabIndex = 0;
         $scope.api = {};
 
         $scope.selectTab = function(idx) {
-            $scope.tabIndex = idx;
+            // Set tab
+            if (angular.isUndefined($scope.tabIndex) && $location.search().hasOwnProperty('tab')) {
+                $scope.tabIndex = parseInt($location.search().tab);
+            } else {
+                $scope.tabIndex = idx;
+                $location.search('tab', idx);
+            }
 
             // Refresh the charts
             $timeout(function() {
@@ -54,8 +59,6 @@
                 pie: {
                     dispatch: {
                         elementClick: function (e) {
-                            console.log($scope.selectedMetadataField)
-                            console.log(e);
                             $scope.executeQuery($scope.selectedMetadataField.name, e.data.key);
                             $scope.$apply();
                         }
@@ -86,7 +89,15 @@
                 height: 600,
                 duration: 500,
                 sunburst: {
-                    mode: 'size'
+                    mode: 'size',
+                    dispatch: {
+                        chartClick: function(e) {
+                            var data = e.pos.target.__data__;
+                            $scope.currentPage = 1;
+                            $scope.activeTableData = data.children;
+                            $scope.$apply();
+                        }
+                    }
                 }
             }
         };
@@ -94,7 +105,6 @@
 
         /**
          * Query all metadata values for a given metadata name
-         * @param id
          */
         var getMetadataValues = function() {
             $scope.metadataFields.forEach(function(field) {
@@ -139,12 +149,56 @@
             return $http.get(REST_BACKEND_SERVER + '/rest/statistics/compoundClasses')
                 .then(
                     function(response) {
-                        $scope.compoundClassData = [buildHierarchy(response.data.map(function(x) {
+                        var transformedData = response.data.map(function(x) {
                             return [x.name, x.spectrumCount, x.compoundCount];
-                        }))];
+                        });
+                        
+                        $scope.compoundClassData = {
+                            'spectrum': [buildHierarchy(transformedData, 1)],
+                            'compound': [buildHierarchy(transformedData, 2)]
+                        };
+
+                        $scope.changeSunburstDataMode('spectrum');
                     },
                     function(response) {}
                 );
+        };
+
+        $scope.tableDataPage = 1;
+        $scope.tableSort = '-spectra';
+
+        $scope.changeSunburstDataMode = function(sunburstDataMode) {
+            $scope.sunburstDataMode = sunburstDataMode;
+            $scope.activeCompoundClassData = $scope.compoundClassData[$scope.sunburstDataMode];
+            $scope.activeTableData = $scope.compoundClassData[$scope.sunburstDataMode][0].children;
+            $scope.tableDataPage = 1;
+
+            $timeout(function () {
+                $scope.api.compoundClassChart.refresh();
+            }, 50);
+        };
+
+        $scope.tableDataSort = function(key) {
+            if ($scope.tableSort.substring(1) == key) {
+                $scope.tableSort = ($scope.tableSort.charAt(0) == '+' ? '-' : '+') + key;
+            } else {
+                $scope.tableSort = '-'+ key;
+            }
+        };
+
+        $scope.tableDataClick = function(node) {
+            $scope.activeCompoundClassData = [node];
+            $scope.activeTableData = node.children;
+
+            $timeout(function () {
+                $scope.api.compoundClassChart.refresh();
+            }, 50);
+        };
+
+        $scope.tableDataExecuteQuery = function(node) {
+            SpectraQueryBuilderService.prepareQuery();
+            SpectraQueryBuilderService.addGeneralClassificationToQuery(node.name);
+            SpectraQueryBuilderService.executeQuery();
         };
 
 
@@ -160,7 +214,7 @@
         };
 
 
-        var buildHierarchy = function(csv) {
+        var buildHierarchy = function(csv, index) {
             var root = {
                 "name": "Chemical Compounds",
                 "children": []
@@ -168,7 +222,7 @@
 
             for (var i = 0; i < csv.length; i++) {
                 var sequence = csv[i][0];
-                var size = csv[i][1];
+                var size = csv[i][index];
 
                 if (isNaN(size)) { // e.g. if this is a header row
                     continue;
@@ -209,7 +263,7 @@
                         if(!foundChild) {
                             childNode = {
                                 "name": nodeName,
-                                "size": parseInt(csv[i][1]),
+                                "size": parseInt(csv[i][index]),
                                 "spectra": parseInt(csv[i][1]),
                                 "compounds": parseInt(csv[i][2]),
                                 "children": []
@@ -235,7 +289,6 @@
 
             return root;
         };
-
 
 
         (function() {
