@@ -34,9 +34,9 @@
     "angular-filter": "~0.5.8",
     "angularjs-viewhead": "~0.0.1",
     "AngularJS-Toaster": "angularjs-toaster#^2.0.0",
-    "d3": "3.5.3",
-    "nvd3": "1.8.2",
-    "angular-nvd3": "latest",
+    "d3": "3.5.17",
+    "nvd3": "1.8.5",
+    "angular-nvd3": "1.0.9",
     "angular-google-analytics": "latest"
   },
   "devDependencies": {
