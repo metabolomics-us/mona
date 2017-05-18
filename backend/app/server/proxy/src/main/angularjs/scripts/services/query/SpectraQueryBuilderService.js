@@ -77,12 +77,9 @@
         this.executeQuery = function() {
             var query = this.getRSQLQuery();
 
-            if (query != '') {
-                $log.info('Executing query: '+ query);
-                $location.path('/spectra/browse').search({query: query});
-            } else if (this.textSearch != '') {
-                $log.info('Executing text search: '+ this.textSearch);
-                $location.path('/spectra/browse').search({text: this.textSearch});
+            if (query !== '' || this.textSearch !== '') {
+                $log.info('Executing RSQL query: "'+ query + '", and text search: "'+ this.textSearch +'"');
+                $location.path('/spectra/browse').search({query: query, text: this.textSearch});
             } else {
                 $location.path('/spectra/browse').search();
             }

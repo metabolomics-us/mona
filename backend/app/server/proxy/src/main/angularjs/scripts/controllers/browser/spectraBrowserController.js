@@ -27,12 +27,6 @@
         var page = 0;
 
         /**
-         * Executed query
-         * @type {string}
-         */
-        $scope.query = '';
-
-        /**
          * load more spectra
          */
         $scope.spectraLoadLength = -1;
@@ -122,7 +116,8 @@
 
             Spectrum.searchSpectraCount({
                 endpoint: 'count',
-                query: $scope.query
+                query: $scope.query,
+                text: $scope.textQuery
             }, function (data) {
                 $scope.queryResultCount = data.count;
             });
@@ -191,10 +186,10 @@
                 // Log query with google analytics
                 Analytics.trackEvent('query', 'execute', $scope.query, page);
 
-                if ($scope.query === '') {
+                if ($scope.query === undefined && $scope.textQuery === undefined) {
                     Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);
                 } else {
-                    Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, page: page, size: MAX_SPECTRA}, searchSuccess, searchError);
+                    Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, text: $scope.textQuery, page: page, size: MAX_SPECTRA}, searchSuccess, searchError);
                 }
             }
         };
@@ -267,7 +262,7 @@
 
                 // Handle InChIKey queries
                 if ($location.search().hasOwnProperty('inchikey')) {
-                    $log.debug('Accepting InChIKey query from URL: ' + $location.search().inchikey);
+                    $log.info('Accepting InChIKey query from URL: ' + $location.search().inchikey);
 
                     if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($location.search().inchikey)) {
                         SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey);
@@ -280,16 +275,18 @@
 
                 // Handle SPLASH queries
                 if ($location.search().hasOwnProperty('splash')) {
-                    $log.debug('Accepting SPLASH query from URL: ' + $location.search().splash);
+                    $log.info('Accepting SPLASH query from URL: ' + $location.search().splash);
 
                     SpectraQueryBuilderService.addSplashToQuery($location.search().splash);
                     SpectraQueryBuilderService.executeQuery();
                 }
-
+                
                 // Handle general queries
-                if ($location.search().hasOwnProperty('query')) {
-                    $log.debug('Accepting query from URL: ' + $location.search().query);
+                if ($location.search().hasOwnProperty('query') || $location.search().hasOwnProperty('text')) {
+                    $log.info('Accepting RSQL query from URL: "' + $location.search().query + '", and text search: "'+ $location.search().text + '"');
+
                     $scope.query = $location.search().query;
+                    $scope.textQuery = $location.search().text;
                 }
 
                 $scope.submitQuery();
