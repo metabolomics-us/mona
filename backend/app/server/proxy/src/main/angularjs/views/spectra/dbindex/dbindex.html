@@ -3,10 +3,10 @@
         <h3><i class="fa fa-database"></i> Database Index &amp; Statistics</h3>
 
         <uib-tabset active="activeJustified">
-            <uib-tab index="0" select="selectTab(0)">
+            <uib-tab index="0" select="selectTab(0)" active="activeTab[0]">
                 <uib-tab-heading class="search-heading">Database Content</uib-tab-heading>
 
-                <h5><b>Database Information:</b></h5>
+                <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
 
                 <table class="table">
                     <tbody>
@@ -42,7 +42,7 @@
                 </table>
             </uib-tab>
 
-            <uib-tab index="1" select="selectTab(1)">
+            <uib-tab index="1" select="selectTab(1)" active="activeTab[1]">
                 <uib-tab-heading class="search-heading">MetaData</uib-tab-heading>
 
                 <div class="h5">
@@ -66,7 +66,7 @@
                       api="api.metadataChart"></nvd3>
             </uib-tab>
 
-            <uib-tab index="2" select="selectTab(2)">
+            <uib-tab index="2" select="selectTab(2)" active="activeTab[2]">
                 <uib-tab-heading class="search-heading">Compound Classes</uib-tab-heading>
 
                 <div class="h5">
