@@ -11,6 +11,7 @@
     /* @ngInject */
     function SpectraDatabaseIndexController($scope, $http, $location, $window, $timeout, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
         $scope.api = {};
+        $scope.activeTab = [false, false, false];
 
         $scope.selectTab = function(idx) {
             // Set tab
@@ -21,12 +22,18 @@
                 $location.search('tab', idx);
             }
 
+            for (var i = 0; i < $scope.activeTab.length; i++) {
+                $scope.activeTab[i] = (i == $scope.tabIndex);
+            }
+
             // Refresh the charts
             $timeout(function() {
                 window.dispatchEvent(new Event('resize'));
 
                 for (var k in $scope.api) {
-                    $scope.api[k].refresh();
+                    if ($scope.api.hasOwnProperty(k)) {
+                        $scope.api[k].refresh();
+                    }
                 }
             }, 50);
         };
@@ -292,6 +299,8 @@
 
 
         (function() {
+            $scope.selectTab(0);
+
             getGlobalStatistics();
             getCompoundClassStatistics();
             getMetadataValues();
