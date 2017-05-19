@@ -18,6 +18,7 @@ services:
     ports:
       - "27017:27017"
 
+
   #mona only supports 1.7.5 at this point in time
   elasticsearch:
     build:
@@ -27,6 +28,7 @@ services:
        - "9200:9200"
        - "9300:9300"
     entrypoint: ./bin/elasticsearch
+
 
   #rabbitmq
   rabbitmq:
