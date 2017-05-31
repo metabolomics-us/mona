@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 /**
-  * listens to the event bus and everytime it finds a matching message it will forward it to the
+  * listens to the event bus and every time it finds a matching message it will forward it to the
   * dedicated queue for curation tasks
   */
 @Component
-class CurationEventBusListener @Autowired()(val bus:EventBus[Spectrum]) extends EventBusListener[Spectrum](bus) {
+class CurationEventBusListener @Autowired()(val bus: EventBus[Spectrum]) extends EventBusListener[Spectrum](bus) {
 
   @Autowired
   val curationService: CurationService = null

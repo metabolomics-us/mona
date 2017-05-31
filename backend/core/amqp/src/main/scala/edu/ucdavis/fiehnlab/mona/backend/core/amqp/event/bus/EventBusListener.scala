@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 
-import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicLong
 import javax.annotation.PostConstruct
 
@@ -8,12 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.springframework.amqp.core.AnonymousQueue.{Base64UrlNamingStrategy, NamingStrategy}
+import org.springframework.amqp.core.AnonymousQueue.Base64UrlNamingStrategy
 import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.amqp.support.converter.{Jackson2JsonMessageConverter, MessageConverter}
+import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 import scala.reflect._
@@ -23,9 +22,9 @@ import scala.reflect._
   * as constructor argument and allows this client to send messages back to it as well. But please be aware that this can easily end in
   * endless loops and should be carefully considered
   */
-abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends MessageListener with LazyLogging {
+abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends MessageListener with LazyLogging {
 
-  val objectMapper:ObjectMapper = MonaMapper.create
+  val objectMapper: ObjectMapper = MonaMapper.create
 
   @Autowired
   private val connectionFactory: ConnectionFactory = null
@@ -34,30 +33,29 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
   private val messageConverter: MessageConverter = null
 
   @Autowired
-  private val rabbitAdmin:RabbitAdmin = null
+  private val rabbitAdmin: RabbitAdmin = null
 
   @Value("${spring.application.name:unknown}")
   private var queueName = "unknown"
 
-
   @Value("${mona.bus.exclusive:false}")
   private val exclusive:Boolean = false
+
   /**
     * he we define the anonymous temp queue and the fan exchange
     * system for all the applications to communicate with
     */
   @PostConstruct
-  def init = {
+  def init(): Unit = {
     logger.info("configuring queue connection")
 
-    if(queueName == "unknown"){
+    if(queueName == "unknown") {
       queueName = new Base64UrlNamingStrategy().generateName()
-    }
-    else{
-      queueName = s"${eventBus.busName}-${queueName}"
+    } else {
+      queueName = s"${eventBus.busName}-$queueName"
     }
 
-    val queue = new Queue(queueName,false,false,true)
+    val queue = new Queue(queueName, false, false, true)
 
     val exchange = new FanoutExchange(eventBus.busName, false, true)
 
@@ -77,7 +75,6 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
 
     logger.info("starting container")
     container.start()
-
   }
 
   /**
@@ -111,7 +108,7 @@ abstract class EventBusListener[T : ClassTag](val eventBus: EventBus[T]) extends
 /**
   * This class counts all the received events on the subscribed event bus
   */
-class ReceivedEventCounter[T : ClassTag](override val eventBus: EventBus[T]) extends EventBusListener[T](eventBus) with LazyLogging {
+class ReceivedEventCounter[T: ClassTag](override val eventBus: EventBus[T]) extends EventBusListener[T](eventBus) with LazyLogging {
 
   /**
     * atomic counter to keep track of all events
