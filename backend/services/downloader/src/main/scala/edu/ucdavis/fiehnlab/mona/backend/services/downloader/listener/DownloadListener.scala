@@ -24,7 +24,7 @@ class DownloadListener extends GenericMessageListener[QueryExport] with LazyLogg
   val predefinedQueryRepository: PredefinedQueryMongoRepository = null
 
 
-  override def handleMessage(export: QueryExport) = {
+  override def handleMessage(export: QueryExport): Unit = {
     try {
       logger.info(s"Received download request: ${export.label}")
 
@@ -52,7 +52,6 @@ class DownloadListener extends GenericMessageListener[QueryExport] with LazyLogg
           predefinedQueryRepository.save(updatedPredefinedQuery)
         }
       }
-
 
       logger.info(s"Finished downloading ${result.label}, exported ${result.count} spectra")
 

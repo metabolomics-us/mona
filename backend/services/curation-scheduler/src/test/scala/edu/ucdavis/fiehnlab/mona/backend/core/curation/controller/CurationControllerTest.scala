@@ -8,21 +8,20 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounte
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
-import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.TestCurationRunner
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
-
-import scala.concurrent.duration._
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+
+import scala.concurrent.duration._
 
 
 /**
@@ -56,37 +55,37 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
     "these must all fail, since we require to be logged in " must {
       "curateByQuery" in {
-        given().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData=q='name==\"ion mode\" and value==negative'").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData=q='name==\"ion mode\" and value==negative'").`then`().statusCode(401)
       }
 
       "curateById" in {
-        given().contentType("application/json; charset=UTF-8").when().get("/curation/252").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get("/curation/252").`then`().statusCode(401)
       }
 
       "curateAll" in {
-        given().contentType("application/json; charset=UTF-8").when().get("/curation").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get("/curation").`then`().statusCode(401)
       }
     }
 
 
     "these must all fail, since we require to be an admin " must {
       "curateByQuery" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData=q='name==\"ion mode\" and value==negative'").then().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData=q='name==\"ion mode\" and value==negative'").`then`().statusCode(403)
       }
 
       "curateById" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation/252").then().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation/252").`then`().statusCode(403)
       }
 
       "curateAll" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation").then().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/curation").`then`().statusCode(403)
       }
     }
 
     "these must all pass, since we are logged in " must {
       "curateByQuery" in {
         val count: Long = notificationCounter.getEventCount
-        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData=q='name==\"ion mode\" and value==negative'").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation?query=metaData=q='name==\"ion mode\" and value==negative'").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
         assert(result.count == 25)
 
@@ -96,13 +95,13 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
       }
 
       "curateByIdWithWrongIdShouldReturn404" in {
-        authenticate().contentType("application/json; charset=UTF-8").when().get("/curation/IDONOTEXIST").then().statusCode(404)
+        authenticate().contentType("application/json; charset=UTF-8").when().get("/curation/IDONOTEXIST").`then`().statusCode(404)
       }
 
       "curateById" in {
         val count: Long = notificationCounter.getEventCount
         val spec: Spectrum = mongoRepository.findAll().iterator().next()
-        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/curation/${spec.id}").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/curation/${spec.id}").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
         assert(result.count == 1)
 
@@ -113,7 +112,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
       "curateAll" in {
         val count: Long = notificationCounter.getEventCount
-        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").then().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
+        val result: CurationJobScheduled = authenticate().contentType("application/json; charset=UTF-8").when().get("/curation").`then`().statusCode(200).extract().body().as(classOf[CurationJobScheduled])
 
         assert(result.count == exampleRecords.length)
 
@@ -128,7 +127,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
         mapper.writeValue(writer, exampleRecords.head)
         val content = writer.toString
 
-        val result: Spectrum = given().contentType("application/json; charset=UTF-8").body(content).when().post("/curation").then().statusCode(200).extract().body().as(classOf[Spectrum])
+        val result: Spectrum = given().contentType("application/json; charset=UTF-8").body(content).when().post("/curation").`then`().statusCode(200).extract().body().as(classOf[Spectrum])
 
         assert(result.score != null)
         assert(result.score.impacts.nonEmpty)

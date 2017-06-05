@@ -70,16 +70,16 @@ object CurationRunner extends App {
   */
 class CurationListener(workflow: ItemProcessor[Spectrum, Spectrum], writer: RestRepositoryWriter) extends GenericMessageListener[Spectrum] with LazyLogging {
 
-  override def handleMessage(spectra: Spectrum): Unit = {
+  override def handleMessage(spectrum: Spectrum): Unit = {
     try {
-      logger.info(s"Received spectrum: ${spectra.id}")
-      val result: Spectrum = workflow.process(spectra)
-      logger.info(s"Finished curating spectrum: ${spectra.id}")
+      logger.info(s"Received spectrum: ${spectrum.id}")
+      val result: Spectrum = workflow.process(spectrum)
+      logger.info(s"Finished curating spectrum: ${spectrum.id}")
       writer.write(result)
-      logger.info(s"Saved spectrum ${spectra.id} to system")
+      logger.info(s"Saved spectrum ${spectrum.id} to system")
     } catch {
       case e: Exception =>
-        logger.info(s"Exception occured during curation of spectrum ${spectra.id}, fail silently: ${e.getMessage}")
+        logger.info(s"Exception occurred during curation of spectrum ${spectrum.id}, fail silently: ${e.getMessage}")
         logger.info(ExceptionUtils.getStackTrace(e))
     }
   }
