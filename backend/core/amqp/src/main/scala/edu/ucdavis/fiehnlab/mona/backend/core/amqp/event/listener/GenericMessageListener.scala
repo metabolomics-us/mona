@@ -11,7 +11,7 @@ import scala.reflect._
   */
 abstract class GenericMessageListener[T: ClassTag] extends MessageListener {
 
-  val objectMapper:ObjectMapper = MonaMapper.create
+  val objectMapper: ObjectMapper = MonaMapper.create
 
   /**
     * converts messages for us from json to our actual content
