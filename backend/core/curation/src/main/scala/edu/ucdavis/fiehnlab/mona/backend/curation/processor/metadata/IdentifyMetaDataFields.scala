@@ -61,13 +61,13 @@ class IdentifyMetaDataFields extends ItemProcessor[Spectrum,Spectrum] with LazyL
       if (metaDataNames.contains(CommonMetaData.PRECURSOR_TYPE.toLowerCase)) {
         impacts.append(Impact(1, "Precursor type provided"))
       } else {
-        impacts.append(Impact(1, "No precursor type provided"))
+        impacts.append(Impact(-1, "No precursor type provided"))
       }
 
       if (metaDataNames.contains(CommonMetaData.PRECURSOR_MASS.toLowerCase)) {
         impacts.append(Impact(1, "Precursor m/z provided"))
       } else {
-        impacts.append(Impact(1, "No precursor m/z provided"))
+        impacts.append(Impact(-1, "No precursor m/z provided"))
       }
     }
 
