@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp
 
-import java.io.{StringReader, StringWriter, InputStreamReader}
+import java.io.{InputStreamReader, StringWriter}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainWriter, JSONDomainReader}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.WordSpec
 
 /**
@@ -12,26 +12,25 @@ import org.scalatest.WordSpec
 class MSPWriterTest extends WordSpec {
 
   "we should be able to create an instance of the writer" when {
-    val reader = JSONDomainReader.create[Spectrum]
-    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
+    val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
+    val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
     val spectrum: Spectrum = reader.read(input)
 
-    val writer = new MSPWriter
+    val writer: MSPWriter = new MSPWriter
 
     "a writer" should {
 
       val out = new StringWriter()
 
       "write a spectrum out" in {
-
-        writer.write(spectrum,out)
+        writer.write(spectrum, out)
       }
 
       "result is" in {
         println(out.toString)
       }
 
-      "result must contain"  must {
+      "result must contain" must {
         "inchi key" in {
           assert(out.toString.contains("InChIKey: QASFUMOKHFSJGL-LAFRSMQTSA-N"))
         }
@@ -41,9 +40,8 @@ class MSPWriterTest extends WordSpec {
         }
 
         "has synonyms" in {
-          assert(out.toString.contains("Synonym: 11-deoxojervine"))
+          assert(out.toString.contains("Synon: (3beta,22S,23R)-17,23-Epoxyveratraman-3-ol"))
         }
-
       }
     }
   }

@@ -11,106 +11,120 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 class MSPWriter extends DomainWriter {
 
   /**
-    * Uses the biological or first compound, sorting the names by score and return the highest scored name
+    * Uses the biological or first compound, sorting the names by score and writes the highest scored name
     *
     * @param spectrum
+    * @param writer
     * @return
     */
-  def buildName(spectrum: Spectrum): String = {
+  def buildName(spectrum: Spectrum, writer: PrintWriter): Unit = {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
     if (compound != null) {
       // TODO Re-enable sorting by score when implemented
       // val names = compound.head.names.sortBy(_.score).headOption.orNull
-      val names = compound.names.find(!_.computed).orNull
+      val name = compound.names.find(!_.computed).orNull
 
-      if (names == null) {
-        "None"
+      if (name == null) {
+        writer.println("Name: None")
       } else {
-        names.name
+        writer.println(s"Name: ${name.name}")
       }
     } else {
-      "No name provided"
-    }
-  }
-
-  def buildSynonyms(spectrum: Spectrum): Seq[String] = {
-    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
-
-    if (compound != null) {
-      compound.names.filter(!_.computed).map { name =>
-        s"Synonym: ${name.name}"
-      }
-    } else {
-      Seq.empty[String]
+      writer.println("Name: No name provided")
     }
   }
 
   /**
-    * finding the mol weight for the biological compound
-    *
+    * Writes the list of synonyms for the biological or first compound
     * @param spectrum
-    * @return
+    * @param writer
     */
-  def buildCompoundMetaData(spectrum: Spectrum, value: String): String = {
+  def buildSynonyms(spectrum: Spectrum, writer: PrintWriter): Unit = {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
     if (compound != null) {
-      val meta = compound.metaData.find(_.name == value).orNull
-
-      if (meta == null) {
-        "0"
-      } else {
-        meta.value.toString
+      // Exclude the first name which is used in the buildName method
+      compound.names.filter(!_.computed).tail.foreach { name =>
+        writer.println(s"Synon: ${name.name}")
       }
-    } else {
-      "0"
-    }
-  }
-
-  def buildCompoundInchiKey(spectrum: Spectrum): String = {
-    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
-
-    if (compound != null) {
-      if (compound.inchiKey != null && compound.inchiKey != "") {
-        s"InChIKey: ${compound.inchiKey}"
-      } else if (compound.metaData.exists(_.name == "InChIKey")) {
-        s"InChIKey: ${compound.metaData.filter(_.name == "InChIKey").head.value.toString}"
-      } else {
-        ""
-      }
-    } else {
-      ""
     }
   }
 
   /**
-    * builds teh comment string in the format "name=value"
+    * Writes a given metadata value by name from the biological or first compound
     *
     * @param spectrum
+    * @param name
+    * @param fieldName
+    * @param writer
     * @return
     */
-  def buildComments(spectrum: Spectrum): String = {
+  def buildCompoundMetaData(spectrum: Spectrum, name: String, fieldName: String, writer: PrintWriter): Unit = {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
-    (spectrum.metaData ++ compound.metaData).map(
-      value => s""""${value.name}=${value.value.toString.replaceAll("\"", "")}""""
-    ).mkString(" ")
+    if (compound != null) {
+      val metaData: Option[MetaData] = compound.metaData.find(_.name == fieldName)
+
+      // Write a value only if the metadata field is defined
+      if (metaData.isDefined) {
+        writer.println(s"$name: ${metaData.get.value}")
+      }
+    }
   }
 
   /**
-    * generates an aray of string ion intensity
+    * Writes InChIKey metadata string if one is present exists
+    * @param spectrum
+    * @param writer
+    */
+  def buildCompoundInchiKey(spectrum: Spectrum, writer: PrintWriter): Unit = {
+    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+
+    if (compound != null) {
+      if (compound.inchiKey != null && compound.inchiKey.nonEmpty) {
+        writer.println(s"InChIKey: ${compound.inchiKey}")
+      }
+
+      else {
+        val metaData: Option[MetaData] = compound.metaData.find(_.name == "InChIKey")
+
+        if (metaData.isDefined) {
+          writer.println(s"InChIKey: ${metaData.get.value}")
+        }
+      }
+    }
+  }
+
+  /**
+    * Writes the comment string containing all available metadata in the format "name=value"
     *
     * @param spectrum
+    * @param writer
     * @return
     */
-  def buildSpectraString(spectrum: Spectrum): Array[String] = spectrum.spectrum.split(" ").collect {
-    case ionIntensity: String =>
-      val pair = ionIntensity.split(":")
-      val ion = pair(0)
-      val intensity = pair(1)
+  def buildComments(spectrum: Spectrum, writer: PrintWriter): Unit = {
+    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
-      s"$ion $intensity"
+    val comments = (spectrum.metaData ++ compound.metaData).map(
+        value => s""""${value.name}=${value.value.toString.replaceAll("\"", "")}""""
+      ).mkString(" ")
+
+    writer.println(s"Comments: $comments")
+  }
+
+  /**
+    * generates an array of string ion intensity
+    *
+    * @param spectrum
+    * @param writer
+    * @return
+    */
+  def buildSpectraString(spectrum: Spectrum, writer: PrintWriter): Unit = {
+    val ions: Array[String] = spectrum.spectrum.split(" ").map(_.split(":").mkString(" "))
+
+    writer.println(s"Num Peaks: ${ions.length}")
+    ions.foreach(writer.println)
   }
 
   def buildMetaDateField(spectrum: Spectrum, field: String): String = {
@@ -134,28 +148,32 @@ class MSPWriter extends DomainWriter {
   def write(spectrum: Spectrum, writer: Writer): Unit = {
     val p = new PrintWriter(writer)
 
-    p.println(s"Name: ${buildName(spectrum)}")
+    // Name and synonyms, including NIST-specific fields
+    buildName(spectrum, p)
+    buildSynonyms(spectrum, p)
+    p.println("SYNON: $:00in-source")
 
-    buildSynonyms(spectrum).foreach(p.println)
+    // TODO properly handle additional NIST fields:
+    //   $:04 - blank
+    //   $:05 - ??
+    //   $:06 - MS type/instrument type
+    //   $:07 - instrument make/model
+    //   $:09 - chromatogram make/model
+    //   $:10 - ionization method (EI, ESI, etc)
+    //   $:11 - ionization mode (P or N)
+    //   $:12 - collision gas
+    //   $:14 - MS scan range
+    //   $:16 - voltage
+    // https://github.com/cbroeckl/RAMClustR/blob/master/R/ramclustR2.R
 
+    // MetaData
     p.println(s"DB#: ${spectrum.id}")
-
-    val inchikey: String = buildCompoundInchiKey(spectrum)
-
-    if (inchikey.nonEmpty) {
-      p.println(inchikey)
-    }
-
-    p.println(s"MW: ${buildCompoundMetaData(spectrum, "total exact mass")}")
-
-    p.println(s"Formula: ${buildCompoundMetaData(spectrum, "molecular formula")}")
-    p.println(s"PrecursorMZ: ${buildMetaDateField(spectrum, "precursor m/z")}")
-    p.println(s"Comments: ${buildComments(spectrum)}")
-
-    val spectrumString = buildSpectraString(spectrum)
-
-    p.println(s"Num Peaks: ${spectrumString.length}")
-    spectrumString.foreach(value => p.println(s"$value"))
+    buildCompoundInchiKey(spectrum, p)
+    buildCompoundMetaData(spectrum, "MW", "total exact mass", p)
+    buildCompoundMetaData(spectrum, "Formula", "molecular formula", p)
+    buildCompoundMetaData(spectrum, "PrecursorMZ", "precursor m/z", p)
+    buildComments(spectrum, p)
+    buildSpectraString(spectrum, p)
 
     p.println()
     p.flush()
