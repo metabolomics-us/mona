@@ -52,7 +52,7 @@ class EventBusListenerTest extends WordSpec with Eventually {
     }
 
     "received event" in {
-      //each listener should have initially 2 events
+      //each listener should have initially N events
       eventListener.foreach { x => assert(x.events.getCount == 2) }
 
       //send 2 events to the bus

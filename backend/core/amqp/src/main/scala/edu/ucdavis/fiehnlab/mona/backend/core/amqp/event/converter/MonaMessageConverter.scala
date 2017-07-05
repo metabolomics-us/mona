@@ -7,8 +7,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.springframework.amqp.core.{Message, MessageProperties}
 import org.springframework.amqp.support.converter.AbstractMessageConverter
 
-import scala.reflect._
-
 /**
   * a simple generic message converter
   */
@@ -27,6 +25,4 @@ class MonaMessageConverter extends AbstractMessageConverter {
 
     new Message(stream.toByteArray, new MessageProperties)
   }
-
-
 }

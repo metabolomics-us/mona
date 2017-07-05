@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import scala.reflect._
 
 /**
-  * any instance of this class automatically receive events from the subscribed event bus. The eventbus needs to be provided
+  * any instance of this class automatically receive events from the subscribed event bus. The event bus needs to be provided
   * as constructor argument and allows this client to send messages back to it as well. But please be aware that this can easily end in
   * endless loops and should be carefully considered
   */
@@ -39,7 +39,7 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
   private var queueName = "unknown"
 
   @Value("${mona.bus.exclusive:false}")
-  private val exclusive:Boolean = false
+  private val exclusive: Boolean = false
 
   /**
     * he we define the anonymous temp queue and the fan exchange

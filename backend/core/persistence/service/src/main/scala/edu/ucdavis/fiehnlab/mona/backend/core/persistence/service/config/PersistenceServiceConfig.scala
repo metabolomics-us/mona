@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, ReceivedEventCounter}
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{BusConfig, MonaEventBusConfiguration, MonaNotificationBusConfiguration}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.EventScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.config.ElasticsearchConfig
@@ -17,11 +16,11 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
   */
 @ComponentScan(basePackageClasses = Array(classOf[SpectrumPersistenceService], classOf[SpectrumElasticEventListener], classOf[EventScheduler[Spectrum]], classOf[SequenceService]))
 @Configuration
-@Import(Array(classOf[ElasticsearchConfig], classOf[MongoConfig], classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration]))
+@Import(Array(classOf[ElasticsearchConfig], classOf[MongoConfig], classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
 class PersistenceServiceConfig {
 
   @Bean
-  def eventScheduler:AkkaEventScheduler[Spectrum] = {
+  def eventScheduler: AkkaEventScheduler[Spectrum] = {
     new AkkaEventScheduler[Spectrum]
   }
 }
