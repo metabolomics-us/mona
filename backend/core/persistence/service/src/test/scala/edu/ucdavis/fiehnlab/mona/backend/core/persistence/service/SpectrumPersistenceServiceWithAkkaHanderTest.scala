@@ -32,8 +32,9 @@ class TestConfig
   * Created by wohlg on 3/15/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig],classOf[TestConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig], classOf[TestConfig]))
 class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLogging with Eventually {
+
   val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 
   @Autowired
@@ -61,7 +62,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
       spectrumMongoRepository.deleteAll()
     }
 
-    "shceduler must be of type AkkaEventScheduler" in {
+    "scheduler must be of type AkkaEventScheduler" in {
       assert(spectrumPersistenceService.eventScheduler.isInstanceOf[AkkaEventScheduler[Spectrum]])
     }
 

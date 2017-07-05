@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component
 import scala.collection.JavaConverters._
 
 /**
-  * handles the execution and processing of event for our services. This is the simples possible implementation
+  * handles the execution and processing of event for our services. This is the simplest possible implementation
   * and should be replaced with an Actor or Message drives one for production use
   */
 @Component
 class EventScheduler[T] {
 
   /**
-    * contains all listeneres in the system to tell subscripers that something with the backend happend
+    * contains all listeners in the system to tell subscribers that something with the backend happened
     */
   @Autowired(required = false)
   val persistenceEventListeners: java.util.List[PersistenceEventListener[T]] = null
@@ -23,6 +23,6 @@ class EventScheduler[T] {
     *
     * @param event
     */
-  def scheduleEventProcessing(event: Event[T]) = persistenceEventListeners.asScala.sortBy(_.priority).reverse.foreach(_.handleEvent(event))
+  def scheduleEventProcessing(event: Event[T]): Unit = persistenceEventListeners.asScala.sortBy(_.priority).reverse.foreach(_.handleEvent(event))
 }
 
