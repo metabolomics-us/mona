@@ -28,4 +28,6 @@ class BinByRoundingMethod extends BinningMethod {
 
     new SimpleSpectrum(spectrum.id, ions, spectrum.precursorMZ, spectrum.public) with BinnedSimpleSpectrum
   }
+
+  override def binIon(ion: Ion): Ion = SpectrumUtils.roundMZ(ion)
 }
