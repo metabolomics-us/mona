@@ -10,7 +10,7 @@ class CompositeSimilarity extends Similarity {
   /**
     * Computes the composite similarity between two mass spectra
     *
-    * http://ac.els-cdn.com/1044030594850224/1-s2.0-1044030594850224-main.pdf?_tid=4c05468e-c550-11e5-9321-00000aab0f02&acdnat=1453938616_682e264082fe2b8b1b7ef53d90e46a6b
+    * https://www.sciencedirect.com/science/article/pii/1044030594870098
     *
     * @param unknown
     * @param reference
@@ -32,7 +32,7 @@ class CompositeSimilarity extends Similarity {
       val combinedRatios: Iterator[Double] = unknownRatios.zip(libraryRatios).map { case (x, y) => 1.0 * x / y }
 
       // Ensure each term is less than 1 and then sum
-      val intensitySimilarity: Double = 1 + combinedRatios.map { x => if (x < 1) x else 1 / x }.sum
+      val intensitySimilarity: Double = 1 + combinedRatios.map { x => Math.min(x, 1 / x) }.sum
 
       // Compute the composite similarity
       (unknown.fragments.size * cosineSimilarity + intensitySimilarity) / (unknown.fragments.size + sharedIons.length)

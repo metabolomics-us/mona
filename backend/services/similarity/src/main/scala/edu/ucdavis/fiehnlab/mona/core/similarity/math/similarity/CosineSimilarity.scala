@@ -10,7 +10,7 @@ class CosineSimilarity extends Similarity {
   /**
     * Computes the cosine similarity between two mass spectra
     *
-    * http://ac.els-cdn.com/1044030594870098/1-s2.0-1044030594870098-main.pdf?_tid=143d0622-c54d-11e5-af32-00000aab0f26&acdnat=1453937234_932c2334be5baa8bddfb4d7fe64e5580
+    * https://www.sciencedirect.com/science/article/pii/1044030594870098
     *
     * @param unknown
     * @param reference
