@@ -37,6 +37,7 @@ class IndexRegistry extends LazyLogging {
     getIndex(IndexType.HISTOGRAM, "default")
     getIndex(IndexType.SIMILAR_HISTOGRAM, "default")
     getIndex(IndexType.DEFAULT, "default")
+    getIndex(IndexType.PEAK, "default")
   }
 
 
@@ -87,6 +88,9 @@ class IndexRegistry extends LazyLogging {
 
           case IndexType.SIMILAR_HISTOGRAM =>
             names.put(name, new SimilarHistogramIndex(binningMethod, spectrumCache, SplashHistogram.create(), 0.8))
+
+          case IndexType.PEAK =>
+            names.put(name, new PeakIndex)
 
           case IndexType.DEFAULT =>
             names.put(name, new SimilarHistogramIndex(binningMethod, spectrumCache, SplashHistogram.create(), 0.8))

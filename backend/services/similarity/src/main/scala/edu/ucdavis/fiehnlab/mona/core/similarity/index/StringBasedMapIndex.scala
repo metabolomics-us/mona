@@ -92,7 +92,7 @@ abstract class StringBasedMapIndex(binningMethod: BinningMethod, cache: Spectrum
     */
   override def get(key: Any): Iterable[SimpleSpectrum] = key match {
     case a: SimpleSpectrum =>
-      val internalKey:String = buildKey(key)
+      val internalKey: String = buildKey(key)
       searchIndex(a, internalKey)
 
     case _ =>

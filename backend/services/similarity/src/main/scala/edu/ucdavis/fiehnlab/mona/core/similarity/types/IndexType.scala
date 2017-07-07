@@ -5,5 +5,5 @@ package edu.ucdavis.fiehnlab.mona.core.similarity.types
   */
 object IndexType extends Enumeration {
   type IndexType = Value
-  val HISTOGRAM, SIMILAR_HISTOGRAM, DEFAULT = Value
+  val HISTOGRAM, SIMILAR_HISTOGRAM, PEAK, DEFAULT = Value
 }
