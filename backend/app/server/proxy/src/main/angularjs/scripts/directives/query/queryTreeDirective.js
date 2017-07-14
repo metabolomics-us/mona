@@ -37,8 +37,8 @@
                     '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i>' +
 
-                    '    <span data-ng-if="node.query !== null"><a data-ng-href="{{executeQuery(node)}}"><i class="fa fa-search"></i> {{node.label}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>'+
-                    '    <span data-ng-if="node.query === null"> {{node.label}}</span>'+
+                    '    <span data-ng-if="node.query !== null"><a data-ng-href="{{executeQuery(node)}}"><i class="fa fa-search"></i> {{node.singleLabel}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>'+
+                    '    <span data-ng-if="node.query === null"> {{node.singleLabel}}</span>'+
 
                     '    <span class="pull-right" data-ng-show="node.jsonExport !== null || node.mspExport !== null" data-uib-dropdown>' +
                     '        <a href data-uib-dropdown-toggle class="dropdown-toggle"><i class="fa fa-download"></i> Download</a>' +

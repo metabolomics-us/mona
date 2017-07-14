@@ -454,7 +454,6 @@
          * Performs initialization and acquisition of data
          */
         (function () {
-
             // Get metadata names
             $http.get(REST_BACKEND_SERVER + '/rest/metaData/names').then(function(data) {
                 $scope.metadataNames = data.data;
