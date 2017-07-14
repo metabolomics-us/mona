@@ -6,9 +6,11 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, WrappedString}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubmitterMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{BlacklistedSplashMongoRepository, ISubmitterMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
+import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{PageRequest, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
@@ -33,7 +35,22 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   val submitterMongoRepository: ISubmitterMongoRepository = null
 
   @Autowired
+  val blacklistedSplashRepository: BlacklistedSplashMongoRepository = null
+
+  @Autowired
   val loginService: LoginService = null
+
+
+  /**
+    * Validate the given spectrum by verifying that its SPLASH is not blacklisted
+    * @param spectrum
+    * @return
+    */
+  private def validateSpectrum(spectrum: String): Boolean = {
+    val splash: String = SplashUtil.splash(spectrum, SpectraType.MS)
+
+    !blacklistedSplashRepository.exists(splash)
+  }
 
 
   /**
@@ -111,8 +128,13 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
     val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username)
 
+    // Return a 422 Unprocessable Entity error if the spectrum is not valid
+    if (!validateSpectrum(spectrum.spectrum)) {
+      new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.UNPROCESSABLE_ENTITY))
+    }
+
     // Admins can save anything
-    if(loginInfo.roles.contains("ADMIN")) {
+    else if(loginInfo.roles.contains("ADMIN")) {
       super.doSave(spectrum)
     }
 
@@ -154,8 +176,13 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
     val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username)
 
+    // Return a 422 Unprocessable Entity error if the spectrum is not valid
+    if (!validateSpectrum(spectrum.spectrum)) {
+      new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.UNPROCESSABLE_ENTITY))
+    }
+
     // Admins can save anything
-    if (loginInfo.roles.contains("ADMIN")) {
+    else if(loginInfo.roles.contains("ADMIN")) {
       if (spectrum.id == null || spectrum.id == "" || spectrum.id == id) {
         super.doSave(spectrum.copy(id = id))
       } else {

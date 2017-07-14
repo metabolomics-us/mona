@@ -49,6 +49,11 @@
             <artifactId>statistics</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.splash</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+
         <!-- test dependencies -->
 
         <dependency>
