@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp
 
 import java.io.{PrintWriter, Writer}
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 /**
   * Created by wohlgemuth on 5/27/16.
@@ -17,39 +17,23 @@ class MSPWriter extends DomainWriter {
     * @param writer
     * @return
     */
-  def buildName(spectrum: Spectrum, writer: PrintWriter): Unit = {
+  def buildNames(spectrum: Spectrum, synonyms: Boolean, writer: PrintWriter): Unit = {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
-    if (compound != null) {
+    if (compound != null && compound.names.nonEmpty) {
       // TODO Re-enable sorting by score when implemented
       // val names = compound.head.names.sortBy(_.score).headOption.orNull
-      val name = compound.names.find(!_.computed).orNull
 
-      if (name == null) {
-        writer.println("Name: None")
-      } else {
-        writer.println(s"Name: ${name.name}")
+      writer.println(s"Name: ${compound.names.head.name}")
+
+      if (synonyms) {
+        compound.names.tail.foreach(name => writer.println(s"Synon: ${name.name}"))
       }
     } else {
-      writer.println("Name: No name provided")
+      writer.println("Name: None")
     }
   }
 
-  /**
-    * Writes the list of synonyms for the biological or first compound
-    * @param spectrum
-    * @param writer
-    */
-  def buildSynonyms(spectrum: Spectrum, writer: PrintWriter): Unit = {
-    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
-
-    if (compound != null) {
-      // Exclude the first name which is used in the buildName method
-      compound.names.filter(!_.computed).tail.foreach { name =>
-        writer.println(s"Synon: ${name.name}")
-      }
-    }
-  }
 
   /**
     * Writes a given metadata value by name from the biological or first compound
@@ -75,6 +59,7 @@ class MSPWriter extends DomainWriter {
 
   /**
     * Writes InChIKey metadata string if one is present exists
+    *
     * @param spectrum
     * @param writer
     */
@@ -107,8 +92,8 @@ class MSPWriter extends DomainWriter {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
     val comments = (spectrum.metaData ++ compound.metaData).map(
-        value => s""""${value.name}=${value.value.toString.replaceAll("\"", "")}""""
-      ).mkString(" ")
+      value => s""""${value.name}=${value.value.toString.replaceAll("\"", "")}""""
+    ).mkString(" ")
 
     writer.println(s"Comments: $comments")
   }
@@ -149,11 +134,10 @@ class MSPWriter extends DomainWriter {
     val p = new PrintWriter(writer)
 
     // Name and synonyms, including NIST-specific fields
-    buildName(spectrum, p)
-    buildSynonyms(spectrum, p)
+    buildNames(spectrum, synonyms = true, p)
     p.println("SYNON: $:00in-source")
 
-    // TODO properly handle additional NIST fields:
+    // TODO properly handle additional NIST fields
     //   $:04 - blank
     //   $:05 - ??
     //   $:06 - MS type/instrument type
