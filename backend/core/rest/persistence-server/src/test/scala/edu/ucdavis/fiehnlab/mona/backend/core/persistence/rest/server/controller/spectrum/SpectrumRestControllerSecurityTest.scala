@@ -6,12 +6,14 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{ISubmitterMongoRepository, SequenceMongoRepository}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{BlacklistedSplash, Spectrum, Submitter}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{BlacklistedSplashMongoRepository, ISubmitterMongoRepository, SequenceMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
+import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +23,7 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by sajjan on 3/13/17.
@@ -44,6 +47,10 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
   @Autowired
   private val sequenceRepository: SequenceMongoRepository = null
 
+  @Autowired
+  val blacklistedSplashRepository: BlacklistedSplashMongoRepository = null
+
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
@@ -60,6 +67,7 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       spectrumElasticRepository.deleteAll()
       submitterRepository.deleteAll()
       sequenceRepository.deleteAll()
+      blacklistedSplashRepository.deleteAll()
 
       eventually(timeout(10 seconds)) {
         assert(spectrumRepository.count() == 0)
@@ -67,7 +75,14 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
         assert(spectrumElasticRepository.count() == 0)
         assert(submitterRepository.count() == 0)
         assert(sequenceRepository.count() == 0)
+        assert(blacklistedSplashRepository.count() == 0)
       }
+    }
+
+    "add a blacklisted spectrum" in {
+      val splash: String = SplashUtil.splash(curatedRecords.last.spectrum, SpectraType.MS)
+      blacklistedSplashRepository.save(BlacklistedSplash(splash))
+      assert(blacklistedSplashRepository.count() == 1)
     }
 
     "we expect POST requests" should {
@@ -101,9 +116,13 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       }
 
       "assign a MoNA id if one is not provided" in {
-        val result: Spectrum = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.last.copy(id = null)).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[Spectrum])
+        val result: Spectrum = authenticate("test2", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head.copy(id = null)).when().post("/spectra").`then`().statusCode(200).extract().as(classOf[Spectrum])
         assert(result.id.startsWith("MoNA000001"))
         assert(spectrumRepository.count() == 2)
+      }
+
+      "fail if a blacklisted spectrum is submitted" in {
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.last).when().post(s"/spectra").`then`().statusCode(422)
       }
     }
 
@@ -131,6 +150,10 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
         assert(result.id == "test")
 
         given().contentType("application/json; charset=UTF-8").when().get("/spectra/test").`then`().statusCode(200)
+      }
+
+      "fail if a blacklisted spectrum is submitted" in {
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.last).when().put(s"/spectra/${curatedRecords.last.id}").`then`().statusCode(422)
       }
     }
   }

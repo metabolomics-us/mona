@@ -458,3 +458,6 @@ case class NewsEntry(
                       title: String,
                       content: String
                     )
+
+@Document(collection = "SPLASH_BLACKLIST")
+case class BlacklistedSplash(@(Id@field) splash: String)
