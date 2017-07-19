@@ -72,14 +72,16 @@
             $scope.pasteError = null;
             var spectrumString = '';
             var ions = [];
+            var basePeakIntensity = 0;
 
             if (spectrum == null || spectrum == "") {
                 $scope.pasteError = 'Please input a valid spectrum!';
             } else if (spectrum.match(/([0-9]*\.?[0-9]+)\s*:\s*([0-9]*\.?[0-9]+)/g)) {
                 spectrumString = spectrum;
 
-                ions = spectrum.split(' ').forEach(function(x) {
+                ions = spectrum.split(' ').map(function(x) {
                     x = x.split(':');
+                    basePeakIntensity = Math.max(basePeakIntensity, parseFloat(x[1]));
 
                     return {
                         ion: parseFloat(x[0]),
@@ -101,6 +103,8 @@
                             spectrumString += ' ';
                         spectrumString += spectrum[2 * i] +':'+ spectrum[2 * i + 1];
 
+                        basePeakIntensity = Math.max(basePeakIntensity, parseFloat(spectrum[2 * i + 1]));
+
                         ions.push({
                             ion: parseFloat(spectrum[2 * i]),
                             intensity: parseFloat(spectrum[2 * i + 1]),
@@ -119,6 +123,10 @@
 
 
             if ($scope.pasteError === null) {
+                ions.forEach(function(x) {
+                    x.relativeIntensity = 999 * x.intensity / basePeakIntensity;
+                });
+
                 $scope.queryState = 2;
                 $scope.spectraCount = 1;
                 $scope.page = 2;

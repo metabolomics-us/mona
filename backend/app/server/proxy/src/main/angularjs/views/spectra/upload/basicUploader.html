@@ -122,9 +122,9 @@
                         <tbody>
                         <tr ng-repeat="ion in currentSpectrum.ions | orderBy:ionTableSort:ionTableSortReverse">
                             <td><input type="checkbox" ng-model="ion.selected" /></td>
-                            <td>{{ion.ion | number : 4}}</td>
-                            <td>{{ion.intensity | number : 4}}</td>
-                            <td>{{ion.relativeIntensity | number : 4}}</td>
+                            <td>{{ion.ion}}</td>
+                            <td>{{ion.intensity}}</td>
+                            <td>{{ion.relativeIntensity | number:0}}</td>
                             <td>
                                 <input type="text" ng-model="ion.annotation" placeholder="Annotation" class="form-control" />
                             </td>
