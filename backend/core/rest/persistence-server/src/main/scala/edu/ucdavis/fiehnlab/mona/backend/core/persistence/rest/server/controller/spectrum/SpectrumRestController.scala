@@ -12,7 +12,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.Sp
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{PageRequest, Sort}
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
@@ -72,9 +72,9 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     def sendQuery(rsqlQuery: String, textQuery: String, page: Integer, size: Integer): Iterable[Spectrum] = {
       if (size != null) {
         if (page != null) {
-          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(page, size, Sort.Direction.ASC, "id")).getContent.asScala
+          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(page, size)).getContent.asScala
         } else {
-          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
+          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(0, size)).getContent.asScala
         }
       } else {
         spectrumPersistenceService.findAll(rsqlQuery, textQuery).asScala
