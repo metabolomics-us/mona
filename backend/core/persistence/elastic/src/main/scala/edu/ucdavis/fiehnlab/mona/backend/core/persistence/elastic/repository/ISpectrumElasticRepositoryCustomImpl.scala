@@ -6,13 +6,12 @@ import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.{Context, CustomElastic1SearchVisitor}
+import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.index.query._
-import org.elasticsearch.search.aggregations.AggregationBuilders
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.elasticsearch.core.query._
-import org.elasticsearch.index.query.QueryBuilders._
 
 /**
   * Created by wohlg_000 on 3/3/2016.
@@ -68,7 +67,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     val query = new NativeSearchQueryBuilder()
       .withQuery(queryBuilder)
       .withPageable(new PageRequest(0, 1000000))
-      .addAggregation(AggregationBuilders.terms("by_id").field("id"))
+      //.addAggregation(AggregationBuilders.terms("by_id").field("id"))
       .build()
 
     logger.info(s"query: ${query.getQuery}")
