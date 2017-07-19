@@ -64,7 +64,7 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
 
     "list available indices" in {
       val result: Array[RestIndexDefinition] = given().contentType("application/json; charset=UTF-8").when().get("/indices").then().statusCode(200).extract().body().as(classOf[Array[RestIndexDefinition]])
-      assert(result.length == 3)
+      assert(result.length == 4)
       assert(result.exists(_.indexName == "default"))
       assert(result.filter(_.indexType.value == "DEFAULT").head.indexSize == 58)
     }
