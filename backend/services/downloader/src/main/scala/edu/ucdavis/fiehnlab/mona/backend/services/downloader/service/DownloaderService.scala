@@ -32,7 +32,7 @@ class DownloaderService extends LazyLogging {
     * @return
     */
   def buildExportBasename(label: String, emailAddress: String): String = {
-    val sanitizedLabel: String = label.replaceAll(" ", "_").replaceAll("/", "-")
+    val sanitizedLabel: String = label.split(" - ").last.replaceAll(" ", "_").replaceAll("/", "-")
 
     if (emailAddress == null || emailAddress.isEmpty) {
       sanitizedLabel
