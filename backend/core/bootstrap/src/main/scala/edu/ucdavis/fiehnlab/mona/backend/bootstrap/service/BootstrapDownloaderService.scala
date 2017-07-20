@@ -30,6 +30,8 @@ class BootstrapDownloaderService extends LazyLogging {
     }
   }
 
+  def saveQuery(label: String, query: String): Unit = saveQuery(label, label, query)
+
 
   /**
     * Create all predefined queries to become available for download
@@ -51,6 +53,8 @@ class BootstrapDownloaderService extends LazyLogging {
     * @return
     */
   def createLibraryQueries(): Unit = {
+    logger.info("Creating library queries")
+
     saveQuery("Libraries - MassBank", "MassBank Spectral Database", "tags.text==MassBank")
     saveQuery("Libraries - MassBank - MassBank EU", "MassBank EU", """tags.text=="MassBank EU"""")
     saveQuery("Libraries - MassBank - CASMI 2016", "CASMI 2016", """tags.text=="CASMI 2016"""")
@@ -70,17 +74,42 @@ class BootstrapDownloaderService extends LazyLogging {
     * @return
     */
   def createGeneralQueries(): Unit = {
+    logger.info("Creating general queries")
+
     // Create export for all spectra
     saveQuery("All Spectra", "All Spectra", "")
-//    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text=='In-Silico'")
+    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text=='In-Silico'")
 //    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", "")
 
-    saveQuery("GC/MS", "GC/MS spectra", """tags.text=="GC-MS"""")
-    saveQuery("LC/MS", "LC/MS spectra", """tags.text=="LC-MS"""")
-    saveQuery("LC/MS - MS/MS", "LC/MS spectra", """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"'""")
-    saveQuery("LC/MS - MS/MS - Positive Mode", "LC/MS spectra",
-      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"' and metaData=q='name=="ionization mode" and value=="positive"'""")
-    saveQuery("LC/MS - MS/MS - Negative Mode", "LC/MS spectra",
-      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"' and metaData=q='name=="ionization mode" and value=="negative"'""")
+    saveQuery(
+      "GC-MS Spectra",
+      """tags.text=="GC-MS""""
+    )
+    saveQuery(
+      "GC-MS Spectra - GC-MS Positive Mode",
+      """tags.text=="GC-MS" and metaData=q='name=="ionization mode" and value=="positive"'"""
+    )
+    saveQuery(
+      "GC-MS Spectra - GC-MS Negative Mode",
+      """tags.text=="GC-MS" and metaData=q='name=="ionization mode" and value=="negative"'"""
+    )
+
+
+    saveQuery(
+      "LC-MS Spectra",
+      """tags.text=="LC-MS""""
+    )
+    saveQuery(
+      "LC-MS Spectra - LC-MS/MS Spectra",
+      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"'"""
+    )
+    saveQuery(
+      "LC-MS Spectra - LC-MS/MS Spectra - LC-MS/MS Positive Mode",
+      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"' and metaData=q='name=="ionization mode" and value=="positive"'"""
+    )
+    saveQuery(
+      "LC-MS Spectra - LC-MS/MS Spectra - LC-MS/MS Negative Mode",
+      """tags.text=="LC-MS" and metaData=q='name=="ms level" and value=="MS2"' and metaData=q='name=="ionization mode" and value=="negative"'"""
+    )
   }
 }
