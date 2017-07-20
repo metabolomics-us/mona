@@ -38,10 +38,9 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
 
 
   private def addToIndex(spectrum: Spectrum, precursorMZ: Option[MetaData], indexName: String, indexType: IndexType): Int = {
-    val precursorString: String = precursorMZ.get.value.toString
-
     if (precursorMZ.isDefined) {
       try {
+        val precursorString: String = precursorMZ.get.value.toString
         indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble))
       } catch {
         case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum))
@@ -69,14 +68,13 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
 
       // Add precursor information if available
       val mainIndexSize: Int = addToIndex(spectrum, precursorMZ, "default", IndexType.SIMILAR_HISTOGRAM)
-      val peakIndexSize: Int =  addToIndex(spectrum, precursorMZ, "default", IndexType.PEAK)
 
       counter += 1
 
       if (counter % 10000 == 0) {
-        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
+        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize")
       } else {
-        logger.trace(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
+        logger.trace(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize")
       }
     }
 
