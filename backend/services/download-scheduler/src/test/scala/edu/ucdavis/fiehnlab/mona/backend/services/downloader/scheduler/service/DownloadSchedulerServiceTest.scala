@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessage
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.config.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
@@ -30,7 +31,7 @@ import scala.language.postfixOps
   * Created by sajjan on 5/26/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TestConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[DownloadScheduler]))
 class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eventually {
 
   @Autowired

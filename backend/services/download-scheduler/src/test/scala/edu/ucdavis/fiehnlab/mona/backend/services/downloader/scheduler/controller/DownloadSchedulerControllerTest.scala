@@ -60,13 +60,13 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
     // Test download of a spectrum
     "download" must {
       "return an error if the download does not exist" in {
-        given().contentType("application/json; charset=UTF-8").when().get("/retrieve/doesnotexist").then().statusCode(404)
+        given().contentType("application/json; charset=UTF-8").when().get("/retrieve/doesnotexist").`then`().statusCode(404)
       }
     }
 
     // List predefined downloads
     "list predefined downloads" in {
-      val result = given().contentType("application/json; charset=UTF-8").when().get("/predefined").then().statusCode(200).extract().body().as(classOf[Array[PredefinedQuery]])
+      val result = given().contentType("application/json; charset=UTF-8").when().get("/predefined").`then`().statusCode(200).extract().body().as(classOf[Array[PredefinedQuery]])
 
       assert(result.length == 1)
       assert(result.head.label == "All Spectra")
@@ -75,44 +75,44 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
     // Test scheduling of query
     "schedule a download " must {
       "fail if not authenticated" in {
-        given().contentType("application/json; charset=UTF-8").when().get("/schedule?query=metaData=q='name==\"ion mode\" and value==negative'").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get("/schedule?query=metaData=q='name==\"ion mode\" and value==negative'").`then`().statusCode(401)
       }
 
       "fail if authenticated but do not provide a query" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/schedule").then().statusCode(400)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/schedule").`then`().statusCode(400)
       }
 
       "fail if authenticated as an admin but do not provide a query" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/schedule").then().statusCode(400)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/schedule").`then`().statusCode(400)
       }
 
       "succeed if authenticated" in {
-        val result = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/schedule?query=metaData=q='name==\"ion mode\" and value==negative'").then().statusCode(200).extract().body().as(classOf[QueryExport])
+        val result = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/schedule?query=metaData=q='name==\"ion mode\" and value==negative'").`then`().statusCode(200).extract().body().as(classOf[QueryExport])
         assert(result.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$"))
       }
 
       "succeed if authenticated as an admin" in {
-        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/schedule?query=metaData=q='name==\"ion mode\" and value==negative'").then().statusCode(200).extract().body().as(classOf[QueryExport])
+        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/schedule?query=metaData=q='name==\"ion mode\" and value==negative'").`then`().statusCode(200).extract().body().as(classOf[QueryExport])
         assert(result.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$"))
       }
 
       "reschedule download" in {
-        authenticate().contentType("application/json; charset=UTF-8").when().get("/schedule/test").then().statusCode(200)
+        authenticate().contentType("application/json; charset=UTF-8").when().get("/schedule/test").`then`().statusCode(200)
       }
     }
 
     // Test scheduling of predefined downloads
     "generate predefined downloads " must {
       "fail if not authenticated" in {
-        given().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").`then`().statusCode(401)
       }
 
       "fail if authenticated as a user" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/generatePredefined").then().statusCode(403)
+        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").when().get("/generatePredefined").`then`().statusCode(403)
       }
 
       "succeed if authenticated as an admin" in {
-        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").then().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
+        val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").`then`().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
 
         assert(result.length == 2)
         assert(result.forall(x => x.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))
