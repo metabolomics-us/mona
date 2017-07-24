@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.bootstrap.service.{BootstrapDownloaderService, BootstrapPersistenceService}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.PersistenceServiceConfig
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.config.DownloadConfig
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.config.DownloadConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.{ApplicationArguments, ApplicationRunner, SpringApplication}
 import org.springframework.boot.autoconfigure.SpringBootApplication
