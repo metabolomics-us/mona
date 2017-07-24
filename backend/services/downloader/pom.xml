@@ -32,17 +32,17 @@
             <artifactId>mongo</artifactId>
         </dependency>
 
+        <dependency>
+            <artifactId>amqp</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
-        </dependency>
-
-        <dependency>
-            <artifactId>amqp</artifactId>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         </dependency>
 
         <dependency>
