@@ -34,7 +34,7 @@
         $scope.downloadData = function(data, filename, mimetype) {
             var hiddenElement = document.createElement('a');
 
-            hiddenElement.href = 'data:'+ mimetype +',' + encodeURI(data);
+            hiddenElement.href = 'data:'+ mimetype +',' + encodeURIComponent(data);
             hiddenElement.target = '_blank';
             hiddenElement.download = filename;
 
