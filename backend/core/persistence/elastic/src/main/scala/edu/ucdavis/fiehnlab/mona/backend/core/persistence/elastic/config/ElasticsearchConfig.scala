@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Names, Submitter, Tags}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.mapper.{AnalyzedStringSerializer, ElasticMetaDataDeserializer, ElasticMetaDataSerializer, MappingUpdater}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.repository.ISpectrumElasticRepositoryCustom
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql.CustomElasticsearchTemplate
 import org.elasticsearch.client.Client
 import org.springframework.context.annotation._
 import org.springframework.data.elasticsearch.core.{ElasticsearchTemplate, EntityMapper}
@@ -28,7 +29,7 @@ class ElasticsearchConfig extends LazyLogging {
     */
   @Bean
   def elasticsearchTemplate(elasticClient: Client): ElasticsearchTemplate = {
-    new ElasticsearchTemplate(elasticClient, new EntityMapper with LazyLogging {
+    new CustomElasticsearchTemplate(elasticClient, new EntityMapper with LazyLogging {
       val mapper: ObjectMapper = MonaMapper.create
       val module: SimpleModule = new SimpleModule()
 
