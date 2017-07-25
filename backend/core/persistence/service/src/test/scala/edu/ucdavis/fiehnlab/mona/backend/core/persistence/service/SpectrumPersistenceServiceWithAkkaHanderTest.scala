@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.Properties
 
 @SpringBootApplication
@@ -52,10 +53,10 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-
-
   "a spectrum persistence service " must {
+
+    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+    val curatedRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
     "delete everything" in {
       spectrumElasticRepository.deleteAll()
@@ -105,23 +106,27 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "query data with the query tags=q='text==LCMS'" in {
-          val result = spectrumPersistenceService.findAll("tags=q='text==LCMS'", "")
-          assert(result.asScala.size == exampleRecords.length)
+          val result: Array[Spectrum] = spectrumPersistenceService.findAll("""tags=q='text==LCMS'""", "").asScala.toArray
+          assert(result.map(_.id).toSet.size == exampleRecords.length)
+          assert(result.length == exampleRecords.length)
         }
 
         "query data with the query tags.text==LCMS" in {
-          val result = spectrumPersistenceService.findAll("tags.text==LCMS", "")
-          assert(result.asScala.size == exampleRecords.length)
+          val result: Array[Spectrum] = spectrumPersistenceService.findAll("""tags.text==LCMS""", "").asScala.toArray
+          assert(result.map(_.id).toSet.size == exampleRecords.length)
+          assert(result.length == exampleRecords.length)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==positive'" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""", "")
-          assert(result.asScala.size == 33)
+          val result: Array[Spectrum] = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==positive'""", "").asScala.toArray
+          assert(result.map(_.id).toSet.size == 33)
+          assert(result.length == 33)
         }
 
         "query data with the query metaData=q='name==\"ion mode\" and value==negative'" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", "")
-          assert(result.asScala.size == 25)
+          val result: Array[Spectrum] = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", "").asScala.toArray
+          assert(result.map(_.id).toSet.size == 25)
+          assert(result.length == 25)
         }
 
         "query data with pagination" in {
