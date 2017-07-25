@@ -97,14 +97,15 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
         assert(count == 58)
       }
 
-
+      "it should be possible to stream all values with no duplicate ids" in {
+        val count = spectrumRestClient.stream(None).map(_.id).toSet.size
+        assert(count == 58)
+      }
 
       "it should be possible to paginate" in {
-
         val count = spectrumRestClient.list(pageSize = Some(10)).foldLeft(0)((sum, _) => sum + 1)
         assert(count == 10)
       }
-
 
       "possible to execute the same query several times and receive always the same result" must {
         for( x <- 1 to 10) {
