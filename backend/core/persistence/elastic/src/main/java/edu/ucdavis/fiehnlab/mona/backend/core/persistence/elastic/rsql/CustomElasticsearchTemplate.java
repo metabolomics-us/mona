@@ -138,6 +138,9 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
         Assert.notNull(query.getIndices(), "No index defined for Query");
         Assert.notNull(query.getTypes(), "No type defined for Query");
 
+        // Add a custom preference key to force queries to execute on the same shards, preventing
+        // duplication issues during pagination
+        // This is the ONLY reason for this terrible hack of a file
         int startRecord = 0;
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch(toArray(query.getIndices()))
                 .setSearchType(query.getSearchType()).setTypes(toArray(query.getTypes()))
