@@ -42,6 +42,11 @@ class MSPWriterTest extends WordSpec {
         "has synonyms" in {
           assert(out.toString.contains("Synon: (3beta,22S,23R)-17,23-Epoxyveratraman-3-ol"))
         }
+
+        "have precursor m/z" in {
+          assert(out.toString.contains("PrecursorMZ"))
+          assert(out.toString.contains("PrecursorMZ: 412.3"))
+        }
       }
     }
   }
