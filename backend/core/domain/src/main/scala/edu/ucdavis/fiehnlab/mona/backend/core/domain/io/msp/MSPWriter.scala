@@ -48,14 +48,27 @@ class MSPWriter extends DomainWriter {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
     if (compound != null) {
-      val metaData: Option[MetaData] = compound.metaData.find(_.name == fieldName)
-
-      // Write a value only if the metadata field is defined
-      if (metaData.isDefined) {
-        writer.println(s"$name: ${metaData.get.value}")
-      }
+      buildMetaData(compound.metaData, name, fieldName, writer)
     }
   }
+
+
+  /**
+    * Writes a given metadata value by name from given metadata array
+    *
+    * @param name
+    * @param fieldName
+    * @param writer
+    * @return
+    */
+  def buildMetaData(metaData: Array[MetaData], name: String, fieldName: String, writer: PrintWriter): Unit = {
+    val metaDataValue: Option[MetaData] = metaData.find(_.name == fieldName)
+
+    // Write a value only if the metadata field is defined
+    if (metaDataValue.isDefined) {
+      writer.println(s"$name: ${metaDataValue.get.value}")
+    }
+}
 
   /**
     * Writes InChIKey metadata string if one is present exists
@@ -112,14 +125,6 @@ class MSPWriter extends DomainWriter {
     ions.foreach(writer.println)
   }
 
-  def buildMetaDateField(spectrum: Spectrum, field: String): String = {
-    val meta = spectrum.metaData.find(_.name == field).orNull
-    if (meta == null) {
-      "0"
-    } else {
-      meta.value.toString
-    }
-  }
 
   /**
     * write the output as a valid NISTMS msp file
@@ -155,7 +160,7 @@ class MSPWriter extends DomainWriter {
     buildCompoundInchiKey(spectrum, p)
     buildCompoundMetaData(spectrum, "MW", "total exact mass", p)
     buildCompoundMetaData(spectrum, "Formula", "molecular formula", p)
-    buildCompoundMetaData(spectrum, "PrecursorMZ", "precursor m/z", p)
+    buildMetaData(spectrum.metaData, "PrecursorMZ", "precursor m/z", p)
     buildComments(spectrum, p)
     buildSpectraString(spectrum, p)
 
