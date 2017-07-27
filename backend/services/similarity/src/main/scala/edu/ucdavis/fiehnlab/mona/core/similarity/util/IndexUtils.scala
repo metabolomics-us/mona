@@ -24,6 +24,14 @@ class IndexUtils extends LazyLogging {
 
   /**
     *
+    * @param indexName
+    * @param indexType
+    * @return
+    */
+  def getIndex(indexName: String, indexType: IndexType): Index = indexRegistry.getIndex(indexType, indexName)
+
+  /**
+    *
     * @param spectrum
     * @param indexName
     * @param indexType
@@ -41,6 +49,7 @@ class IndexUtils extends LazyLogging {
 
   /**
     * Add spectrum to the default index
+    *
     * @param spectrum
     * @return
     */
@@ -68,13 +77,14 @@ class IndexUtils extends LazyLogging {
     * @param indexName
     * @return
     */
-  def getIndexSize(indexType: IndexType, indexName: String): Int = {
+  def getIndexSize(indexName: String, indexType: IndexType): Int = {
     logger.info(s"Requesting size for index: $indexName - $indexType")
     indexRegistry.getIndex(indexType, indexName).size
   }
 
   /**
     * Get size of the default index
+    *
     * @return
     */
   def getIndexSize: Int = getIndexSize(null, null)
@@ -82,6 +92,7 @@ class IndexUtils extends LazyLogging {
 
   /**
     * Perform a blocking search
+    *
     * @param spectrum
     * @param indexName
     * @param indexType
@@ -120,6 +131,7 @@ class IndexUtils extends LazyLogging {
 
   /**
     * Perform a blocking search in the default index
+    *
     * @param spectrum
     * @return
     */

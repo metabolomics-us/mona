@@ -29,7 +29,7 @@ class PeakIndexTest extends WordSpec with Matchers with LazyLogging {
       // Populate the database
       records.foreach(index.doIndex)
 
-      index.size shouldEqual 166
+      index.size shouldEqual 162
     }
 
     "have a decent lookup time of the head record" in {

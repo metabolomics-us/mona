@@ -41,12 +41,12 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
     if (precursorMZ.isDefined) {
       try {
         val precursorString: String = precursorMZ.get.value.toString
-        indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble))
+        indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble), indexName, indexType)
       } catch {
-        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum))
+        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum), indexName, indexType)
       }
     } else {
-      indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum))
+      indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum), indexName, indexType)
     }
   }
 
@@ -67,14 +67,15 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
       val precursorMZ: Option[MetaData] = spectrum.metaData.find(_.name == CommonMetaData.PRECURSOR_MASS)
 
       // Add precursor information if available
-      val mainIndexSize: Int = addToIndex(spectrum, precursorMZ, "default", IndexType.SIMILAR_HISTOGRAM)
+      val mainIndexSize: Int = addToIndex(spectrum, precursorMZ, "default", IndexType.DEFAULT)
+      val peakIndexSize: Int = addToIndex(spectrum, precursorMZ, "default", IndexType.PEAK)
 
       counter += 1
 
       if (counter % 10000 == 0) {
-        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize")
+        logger.info(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
       } else {
-        logger.trace(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize")
+        logger.debug(s"\tIndexed spectrum #$counter with id ${spectrum.id}, main index size = $mainIndexSize, peak index size = $peakIndexSize")
       }
     }
 

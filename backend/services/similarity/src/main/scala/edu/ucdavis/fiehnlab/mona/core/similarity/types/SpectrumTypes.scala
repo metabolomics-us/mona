@@ -37,6 +37,8 @@ class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Doub
 
   def this(id: String, spectrumString: String, public: Boolean) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, public)
 
+  def this(spectrum: StoredSpectrum) = this(spectrum.id, spectrum.spectrum)
+
 
   lazy val fragments: Map[Double, Ion] = ions.sortBy(_.mz).map(ion => (ion.mz, ion)).toMap
 
