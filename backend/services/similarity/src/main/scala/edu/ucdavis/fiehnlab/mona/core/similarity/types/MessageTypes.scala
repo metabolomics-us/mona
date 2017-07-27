@@ -18,6 +18,8 @@ case class SimilaritySearchRequest(
                                   )
 
 object SimilaritySearchRequest {
-
   def apply(spectrum: String, minSimilarity: Double): SimilaritySearchRequest = SimilaritySearchRequest(spectrum, minSimilarity, 0.0, 0.0, 0.0)
 }
+
+
+case class PeakSearchRequest(peaks: Array[Double], tolerance: Double)
