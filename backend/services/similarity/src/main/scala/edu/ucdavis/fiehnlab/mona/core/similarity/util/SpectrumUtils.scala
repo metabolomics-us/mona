@@ -28,7 +28,7 @@ object SpectrumUtils {
     * @param mz
     * @return
     */
-  def roundMZ(mz: Double): Int = scala.math.round(mz + 0.2 + EPS_CORRECTION).toInt
+  def roundMZ(mz: Double): Int = scala.math.floor(mz + EPS_CORRECTION).toInt
 
 
   /**
