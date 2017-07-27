@@ -32,15 +32,21 @@
          * @param mimetype
          */
         $scope.downloadData = function(data, filename, mimetype) {
-            var hiddenElement = document.createElement('a');
+            var blob = new Blob([data], {type: mimetype});
 
-            hiddenElement.href = 'data:'+ mimetype +',' + encodeURIComponent(data);
-            hiddenElement.target = '_blank';
-            hiddenElement.download = filename;
+            if (window.navigator.msSaveOrOpenBlob) {
+                // IE 10 Hack
+                window.navigator.msSaveBlob(blob, filename);
+            } else {
+                var hiddenElement = document.createElement('a');
+                hiddenElement.href = (window.URL || window.webkitURL).createObjectURL(blob);
+                // hiddenElement.target = '_blank';
+                hiddenElement.download = filename;
 
-            document.body.appendChild(hiddenElement);
-            hiddenElement.click();
-            document.body.removeChild(hiddenElement);
+                document.body.appendChild(hiddenElement);
+                hiddenElement.click();
+                document.body.removeChild(hiddenElement);
+            }
         };
 
         /**
