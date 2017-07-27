@@ -42,7 +42,7 @@ class CompositeSimilarityTest extends FlatSpec with Matchers {
     library.ions.length shouldEqual 3
 
     val similarity = new CompositeSimilarity().compute(unknown, library)
-    similarity shouldBe 0.9488 +- EPSILON
+    similarity shouldBe 0.9476 +- EPSILON
   }
 
   it should "be zero for orthogonal spectra" in {
@@ -54,6 +54,4 @@ class CompositeSimilarityTest extends FlatSpec with Matchers {
     val similarity = new CompositeSimilarity().compute(unknown, library)
     similarity shouldBe 0.0 +- EPSILON
   }
-
-
 }

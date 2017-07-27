@@ -42,7 +42,7 @@ class CosineSimilarityTest extends FlatSpec with Matchers {
     library.ions.length shouldEqual 3
 
     val similarity = new CosineSimilarity().compute(unknown, library)
-    similarity shouldBe 0.9977 +- EPSILON
+    similarity shouldBe 0.9953 +- EPSILON
   }
 
   it should "be zero for orthogonal spectra" in {

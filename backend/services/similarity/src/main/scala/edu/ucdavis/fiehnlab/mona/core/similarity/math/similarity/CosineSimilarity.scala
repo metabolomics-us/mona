@@ -33,6 +33,6 @@ class CosineSimilarity extends Similarity {
 
     val product: Double = sharedIons.toArray.map(k => reference.fragments(k).intensity * unknown.fragments(k).intensity).sum
 
-    product / reference.norm / unknown.norm
+    math.pow(product / reference.norm / unknown.norm, 2)
   }
 }
