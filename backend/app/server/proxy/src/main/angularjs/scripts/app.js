@@ -11,11 +11,9 @@
         'ngResource',
         'ngCookies',
         'ngAnimate',
-        'ngSanitize',
         'ui.bootstrap',
         'angular.filter',
         'dialogs.main',
-        'dialogs.default-translations',
         'ngTagsInput',
         'wohlgemuth.msp.parser',
         'wohlgemuth.mgf.parser',
@@ -25,7 +23,6 @@
         'angularMasspecPlotter',
         'infinite-scroll',
         'mgcrea.bootstrap.affix',
-        'pascalprecht.translate',
         'toaster',
         'nvd3',
         'angular-google-analytics'
@@ -62,11 +59,11 @@
         /**
          * Set translator language for dialog service
          */
-        /* @ngInject */
-        .config(['$translateProvider', function($translateProvider) {
-            $translateProvider.preferredLanguage('en-US');
-            $translateProvider.useSanitizeValueStrategy('sanitize');
-        }])
+        // /* @ngInject */
+        // .config(['$translateProvider', function($translateProvider) {
+        //     $translateProvider.preferredLanguage('en-US');
+        //     $translateProvider.useSanitizeValueStrategy('sanitize');
+        // }])
 
         /**
          * Configure Google Analytics
