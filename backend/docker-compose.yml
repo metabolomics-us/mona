@@ -96,7 +96,7 @@ services:
       - mongodb
       - rabbitmq
       - redis
-    entrypoint: ./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
 
     environment:
       - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
@@ -123,7 +123,7 @@ services:
     #we will be waiting 5 minutes for the discovery service to start up an than start any jar file.
     #java opts can be overriden in the container
     #the configuration points the task as the right ip address for the discovery server
-    entrypoint: ./wait-for-it.sh discovery:8761 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
 
     environment:
       - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
@@ -133,7 +133,7 @@ services:
   proxy:
     image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
     ports:
-      - "8080:8080"
+      - "80:8080"
     depends_on:
       - config
     environment:
@@ -143,7 +143,7 @@ services:
     #java opts can be overriden in the container
     #the configuration points the task as the right ip address for the discovery server
     #we also define the url for our configuration server here
-    entrypoint: ./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xss4m -Xmx1g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
 
   # bootstrapper
@@ -152,7 +152,7 @@ services:
 
     depends_on:
       - config
-    entrypoint: ./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx2G -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx2G -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
 
 ################################################################################################################
@@ -167,7 +167,7 @@ services:
     depends_on:
       - proxy
       - mongodb
-    entrypoint: ./wait-for-it.sh proxy:8080 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh proxy:8080 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
     ports:
     - "4440:4444"
 
@@ -180,7 +180,7 @@ services:
 
     depends_on:
       - webhooks
-    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
     ports:
     - "5555:5555"
 
@@ -192,7 +192,7 @@ services:
 
     depends_on:
       - webhooks
-    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
     ports:
     - "7777:7777"
 
@@ -206,7 +206,7 @@ services:
 
     depends_on:
       - webhooks
-    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
     ports:
     - "8888:8888"
 
@@ -220,7 +220,7 @@ services:
 
     depends_on:
       - webhooks
-    entrypoint: ./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
     ports:
     - "9999:9999"
 
@@ -235,7 +235,7 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-auth-server:latest
     depends_on:
       - curationScheduler
-    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
 
   #persistences and query interface
@@ -244,7 +244,7 @@ services:
 
     depends_on:
       - curationScheduler
-    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
 
   #curation runner is utilized to actually curate spectra
@@ -253,4 +253,5 @@ services:
 
     depends_on:
       - curationScheduler
-    entrypoint: ./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    
