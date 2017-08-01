@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.config.DownloadConfig
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.config.DownloadListenerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -30,7 +31,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableScheduling
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
-  classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[DownloadConfig]))
+  classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[DownloadConfig], classOf[DownloadListenerConfig]))
 class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired
