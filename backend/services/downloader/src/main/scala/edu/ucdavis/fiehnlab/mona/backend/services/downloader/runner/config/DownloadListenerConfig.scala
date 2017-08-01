@@ -5,12 +5,13 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.MessageConverter
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 
 /**
   * Created by sajjan on 7/21/17.
   */
 @Configuration
+@ComponentScan(value = Array("edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner"))
 class DownloadListenerConfig {
 
   @Autowired
