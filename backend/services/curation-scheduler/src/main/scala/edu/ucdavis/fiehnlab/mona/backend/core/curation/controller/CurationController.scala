@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
@@ -26,7 +27,7 @@ import scala.collection.JavaConverters._
   */
 @RestController
 @RequestMapping(value = Array("/rest/curation"))
-class CurationController {
+class CurationController extends LazyLogging {
 
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -84,8 +85,13 @@ class CurationController {
       val spectrum = it.next()
       curationService.scheduleSpectrum(spectrum)
       count += 1
+
+      if (count % 10000 == 0) {
+        logger.info(s"Scheduled $count spectra...")
+      }
     }
 
+    logger.info(s"Finished scheduling $count spectra")
     new AsyncResult[CurationJobScheduled](CurationJobScheduled(count))
   }
 
