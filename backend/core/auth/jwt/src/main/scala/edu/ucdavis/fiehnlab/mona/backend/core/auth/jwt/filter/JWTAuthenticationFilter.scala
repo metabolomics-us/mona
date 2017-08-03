@@ -48,9 +48,10 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
         throw new AuthenticationServiceException(s"Authorization header was not of type bearer, header was ${authHeader.head}")
       }
 
-      val token = headerValue.trim.substring(7); // The part after "Bearer "
 
       try {
+        val token = headerValue.trim.substring(7); // The part after "Bearer "
+
         val auth = authenticationService.authenticate(token)
         SecurityContextHolder.getContext.setAuthentication(auth)
 
