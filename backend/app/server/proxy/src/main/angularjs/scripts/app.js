@@ -22,7 +22,6 @@
         'angularFileUpload',
         'angularMasspecPlotter',
         'infinite-scroll',
-        'mgcrea.bootstrap.affix',
         'toaster',
         'nvd3',
         'angular-google-analytics'
@@ -55,15 +54,6 @@
             delete $httpProvider.defaults.headers.common['X-Requested-With'];
             $httpProvider.interceptors.push('httpInterceptor');
         }])
-
-        /**
-         * Set translator language for dialog service
-         */
-        // /* @ngInject */
-        // .config(['$translateProvider', function($translateProvider) {
-        //     $translateProvider.preferredLanguage('en-US');
-        //     $translateProvider.useSanitizeValueStrategy('sanitize');
-        // }])
 
         /**
          * Configure Google Analytics
