@@ -73,7 +73,7 @@
         .run(['$rootScope', function($rootScope) {
             $rootScope.APP_NAME = 'MassBank of North America';
             $rootScope.APP_NAME_ABBR = 'MoNA';
-            $rootScope.APP_VERSION = 'beta-2';
+            $rootScope.APP_VERSION = 'v1.0';
         }])
 
         /**
