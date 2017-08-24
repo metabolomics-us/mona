@@ -29,7 +29,7 @@ services:
 
   #just fixing the version to avoid surprises
   mongodb:
-    image: mongo:3.2.4
+    image: mongo:3.5.12
     volumes_from:
       - data_container
     ports:
