@@ -46,10 +46,14 @@ class SimilaritySearchService extends LazyLogging {
 
     // Filter by precursor m/z if available, sort by score and return SearchResult objects
     if (request.precursorMZ > 0.0) {
-      filterSimilaritySearchResults(request, results).sortBy(-_.score)
+      filterSimilaritySearchResults(request, results)
+        .sortBy(-_.score)
+        .take(size)
         .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
     } else {
-      results.sortBy(-_.score)
+      results
+        .sortBy(-_.score)
+        .take(size)
         .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
     }
   }
