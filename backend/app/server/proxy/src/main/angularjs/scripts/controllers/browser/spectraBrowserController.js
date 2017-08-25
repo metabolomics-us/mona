@@ -6,12 +6,12 @@
 
 (function() {
     'use strict';
-    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', '$timeout', '$log', 'MAX_SPECTRA', 'toaster', 'Analytics'];
+    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', '$timeout', '$log', 'toaster', 'Analytics'];
     angular.module('moaClientApp')
       .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, $timeout, $log, MAX_SPECTRA, toaster, Analytics) {
+    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, $timeout, $log, toaster, Analytics) {
 
         $scope.table = false;
 
@@ -26,7 +26,7 @@
          */
         $scope.pagination = {
             currentPage: 1,
-            itemsPerPage: MAX_SPECTRA,
+            itemsPerPage: 10,
             maxSize: 10,
             totalSize: -1,
             loading: true
@@ -169,9 +169,9 @@
             Analytics.trackEvent('query', 'execute', $scope.query, currentPage);
 
             if ($scope.query === undefined && $scope.textQuery === undefined) {
-                Spectrum.searchSpectra({size: MAX_SPECTRA, page: currentPage}, searchSuccess, searchError);
+                Spectrum.searchSpectra({size: $scope.pagination.itemsPerPage, page: currentPage}, searchSuccess, searchError);
             } else {
-                Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, text: $scope.textQuery, page: currentPage, size: MAX_SPECTRA}, searchSuccess, searchError);
+                Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, text: $scope.textQuery, page: currentPage, size: $scope.pagination.itemsPerPage}, searchSuccess, searchError);
             }
         };
 
