@@ -6,12 +6,12 @@
 
 (function() {
     'use strict';
-    SpectraQueryBuilderService.$inject = ['$log', '$location'];
+    SpectraQueryBuilderService.$inject = ['$log', '$location', '$route'];
     angular.module('moaClientApp')
         .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
     /* @ngInject */
-    function SpectraQueryBuilderService($log, $location) {
+    function SpectraQueryBuilderService($log, $location, $route) {
 
         /**
          * Stored query
@@ -56,6 +56,8 @@
         };
 
         this.prepareQuery = function() {
+            $log.debug('Resetting query');
+
             this.query = [];
             this.queryString = '';
             this.textSearch = '';
@@ -81,7 +83,13 @@
                 $log.info('Executing RSQL query: "'+ query + '", and text search: "'+ this.textSearch +'"');
                 $location.path('/spectra/browse').search({query: query, text: this.textSearch});
             } else {
-                $location.path('/spectra/browse').search();
+                if ($location.path() === '/spectra/browse' && angular.equals($location.search(), {})) {
+                    $log.debug('Reloading route');
+                    $route.reload();
+                } else {
+                    $log.debug('Executing empty query');
+                    $location.path('/spectra/browse').search({});
+                }
             }
         };
 

@@ -21,7 +21,6 @@
         'wohlgemuth.cts',
         'angularFileUpload',
         'angularMasspecPlotter',
-        'infinite-scroll',
         'toaster',
         'nvd3',
         'angular-google-analytics'

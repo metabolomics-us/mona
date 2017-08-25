@@ -24,29 +24,13 @@
         /**
          * loads more spectra into the given view
          */
-        var page = 0;
-
-        /**
-         * load more spectra
-         */
-        $scope.spectraLoadLength = -1;
-
-        /**
-         * loads more spectra into the view using our query object
-         */
-        $scope.loadingMore = false;
-
-        /**
-         * Tells whether we are have loaded all available data
-         */
-        $scope.dataAvailable = true;
-
-        /**
-         * how many results are loaded
-         * @type {number}
-         */
-        $scope.queryResultCount = 0;
-
+        $scope.pagination = {
+            currentPage: 1,
+            itemsPerPage: MAX_SPECTRA,
+            maxSize: 10,
+            totalSize: -1,
+            loading: true
+        };
 
         /**
          * Handle search splash
@@ -79,16 +63,9 @@
          * Submits our query to the server
          */
         $scope.submitQuery = function() {
-            $scope.dataAvailable = true;
-
-            // Reset spectra
-            $scope.spectraLoadLength = -1;
-            $scope.spectra = [];
-
+            $scope.pagination.currentPage = 1;
             $scope.calculateResultCount();
-
-            // Load our data
-            $scope.loadMoreSpectra();
+            $scope.loadSpectra();
         };
 
         /**
@@ -101,8 +78,8 @@
                 SpectraQueryBuilderService.getSimilarityQuery(),
                 function(data) {
                     searchSuccess(data);
-                    $scope.queryResultCount = data.length;
-                    $scope.dataAvailable = false;
+                    $scope.pagination.itemsPerPage = data.length;
+                    $scope.pagination.totalSize = data.length;
                 },
                 searchError
             );
@@ -112,14 +89,12 @@
          * Calculates the number of results for the given query
          */
         $scope.calculateResultCount = function() {
-            $scope.queryResultCount = "Loading...";
-
             Spectrum.searchSpectraCount({
                 endpoint: 'count',
                 query: $scope.query,
                 text: $scope.textQuery
             }, function (data) {
-                $scope.queryResultCount = data.count;
+                $scope.pagination.totalSize = data.count;
             });
         };
 
@@ -172,59 +147,56 @@
         /**
          * Execute query
          */
-        $scope.loadMoreSpectra = function() {
-            if (!$scope.loadingMore && $scope.spectraLoadLength !== $scope.spectra.length && $scope.dataAvailable) {
-                //search utilizing our compiled query so that it can be easily refined over time
-                $scope.loadingMore = true;
-                $scope.spectraLoadLength = $scope.spectra.length;
+        $scope.loadPage = function() {
+            $location.search('page', $scope.pagination.currentPage);
+        };
 
-                // Note the start time for timing the spectrum search
-                $scope.startTime = Date.now();
+        $scope.loadSpectra = function() {
+            //search utilizing our compiled query so that it can be easily refined over time
+            $scope.pagination.loading = true;
+            $scope.spectra = [];
 
-                $log.debug('Submitted query: '+ $scope.query);
+            $(window).scrollTop(0);
 
-                // Log query with google analytics
-                Analytics.trackEvent('query', 'execute', $scope.query, page);
+            // Note the start time for timing the spectrum search
+            $scope.startTime = Date.now();
 
-                if ($scope.query === undefined && $scope.textQuery === undefined) {
-                    Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);
-                } else {
-                    Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, text: $scope.textQuery, page: page, size: MAX_SPECTRA}, searchSuccess, searchError);
-                }
+            var currentPage = $scope.pagination.currentPage - 1;
+
+            $log.debug('Submitted query (page '+ currentPage +'): '+ $scope.query);
+
+            // Log query with google analytics
+            Analytics.trackEvent('query', 'execute', $scope.query, currentPage);
+
+            if ($scope.query === undefined && $scope.textQuery === undefined) {
+                Spectrum.searchSpectra({size: MAX_SPECTRA, page: currentPage}, searchSuccess, searchError);
+            } else {
+                Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, text: $scope.textQuery, page: currentPage, size: MAX_SPECTRA}, searchSuccess, searchError);
             }
         };
 
         function searchSuccess(data) {
             $scope.duration = (Date.now() - $scope.startTime) / 1000;
 
-            if (data.length === 0) {
-                $scope.dataAvailable = false;
-            } else {
+            if (data.length > 0) {
                 // Add data to spectra object
-                $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+                $scope.spectra = $scope.addAccurateMass(data);
             }
 
             hideSplash();
-            $scope.loadingMore = false;
-            page += 1;
+            $scope.pagination.loading = false;
         }
 
         function searchError(error) {
             hideSplash();
-            $scope.loadingMore = false;
-            
+            $scope.pagination.loading = false;
+
             toaster.pop({
                 type: 'error',
                 title: 'Unable to complete request',
                 body: 'Please try again later.'
             });
         }
-
-        $scope.$on('$viewContentLoaded', function() {
-            $timeout(function() {
-                $(window).scrollTop($scope.spectraScrollStartLocation);
-            }, 1);
-        });
 
 
         /**
@@ -238,7 +210,6 @@
 
 
         (function() {
-            $scope.spectraScrollStartLocation = 0;
             $scope.spectra = [];
 
             // Display splash overlay
@@ -247,7 +218,7 @@
             // Handle similarity search
             if ($location.path() === '/spectra/similaritySearch') {
                 $log.debug('Executing similarity search...');
-                $scope.loadingMore = true;
+                $scope.pagination.loading = true;
 
                 if (SpectraQueryBuilderService.hasSimilarityQuery()) {
                     $scope.submitSimilarityQuery();
@@ -287,6 +258,16 @@
 
                     $scope.query = $location.search().query;
                     $scope.textQuery = $location.search().text;
+                }
+
+                // Handle page number
+                if ($location.search().hasOwnProperty('page')) {
+                    var page = parseInt($location.search().page);
+
+                    if (!Number.isNaN(page)) {
+                        $log.debug('Setting current page to '+ $location.search().page);
+                        $scope.pagination.currentPage = page;
+                    }
                 }
 
                 $scope.submitQuery();

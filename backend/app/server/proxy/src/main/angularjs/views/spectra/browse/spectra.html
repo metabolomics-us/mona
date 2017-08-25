@@ -124,7 +124,7 @@
             <button class="btn btn-primary" ng-click="queryOpen = queryOpen ? false : true" uib-tooltip-placement="left"
                     uib-tooltip="Number of spectra retrieved in this query, click to see additional details">
 
-                <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{queryResultCount}}
+                <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{pagination.totalSize > -1 ? pagination.totalSize : "Loading..."}}
                 <span ng-show="auth.isAdmin() && duration !== undefined"> ({{duration | number: 2}} s)</span>
             </button>
         </div>
@@ -133,8 +133,7 @@
 
 <br />
 
-<div class="row" infinite-scroll="loadMoreSpectra()" infinite-scroll-distance="1"
-     infinite-scroll-use-document-bottom="true">
+<div class="row">
     <!-- display spectra as list -->
     <div class="col-md-12" ng-show="table == false">
         <div ng-repeat="spectrum in spectra">
@@ -191,17 +190,56 @@
         </table>
     </div>
 
+    <!-- display spectral record metadata as table-->
+    <div class="col-md-12" ng-show="table == 'test'">
+        <table class="table table-hover table-striped" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th class="text-center">Accurate Mass</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-show="spectra.length == 0">
+            </tr>
+            <tr ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
+                <td>
+                    <a href="">{{spectrum.id}}</a>
+                </td>
+                <td>
+                    <ul class="list-unstyled">
+                        <li ng-repeat="name in spectrum.compound[0].names | limitTo:3">{{name.name}}</li>
+                    </ul>
+                </td>
+                <td>
+                    <p class="text-center">{{spectrum.accurateMass}}</p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
     <!-- loading information -->
-    <div class="text-center" ng-show="loadingMore && !searchSplash">
+    <div class="text-center" ng-show="pagination.loading && !searchSplash">
         <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</h4>
     </div>
 
-    <div class="text-center" ng-show="spectra.length > 0 && !dataAvailable">
-        <h4>All results loaded</h4>
+    <div class="text-center" ng-show="!pagination.loading && spectra.length == 0">
+        <h4>No results found!</h4>
     </div>
 
-    <div class="text-center" ng-show="spectra.length == 0 && !dataAvailable">
-        <h4>No results found!</h4>
+    <!-- pagination -->
+    <div ng-if="!pagination.loading && pagination.totalSize > -1" class="text-center">
+        <ul uib-pagination
+            total-items="pagination.totalSize"
+            max-size="pagination.maxSize"
+            items-per-page="pagination.itemsPerPage"
+            ng-model="pagination.currentPage"
+            boundary-links="true"
+            ng-change="loadPage()"></ul>
     </div>
 
     <!-- spacer -->
