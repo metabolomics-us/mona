@@ -9,31 +9,30 @@ module.exports = function(config) {
 
         files: [
             // development dependencies
-            'bower_components/angular/angular.js',
-            'bower_components/angular-jquery/dist/angular-jquery.js',
             'bower_components/jquery/dist/jquery.js',
+            'bower_components/angular/angular.js',
 
             // moaClientApp vendor dependencies
             'bower_components/angular-route/angular-route.js',
             'bower_components/angular-resource/angular-resource.js',
             'bower_components/angular-cookies/angular-cookies.js',
-            'bower_components/angular-animate/angular-animate.js',
             'bower_components/angular-sanitize/angular-sanitize.js',
-            'bower_components/angular-bootstrap/ui-bootstrap.js',
-            'bower_components/angular-filter/dist/angular-filter.js',
+            'bower_components/angular-animate/angular-animate.js',
+            'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
             'bower_components/angular-dialog-service/dist/dialogs.js',
-            'bower_components/angular-dialog-service/dist/dialogs-default-translations.js',
             'bower_components/ng-tags-input/ng-tags-input.js',
+            'bower_components/angular-cts-service/service.js',
             'bower_components/angular-msp-parser/service.js',
             'bower_components/angular-mgf-parser/service.js',
             'bower_components/angular-massbank-parser/service.js',
-            'bower_components/angular-cts-service/service.js',
-            'bower_components/ng-file-upload/angular-file-upload.js',
             'bower_components/angular-masspec-plotter/angular-masspec-plotter.js',
-            'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
-            'bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js',
-            'bower_components/angular-translate/angular-translate.js',
+            'bower_components/ng-file-upload/angular-file-upload.js',
+            'bower_components/paralleljs/lib/parallel.js',
+            'bower_components/angular-filter/dist/angular-filter.js',
             'bower_components/AngularJS-Toaster/toaster.js',
+            'bower_components/angular-nvd3/dist/angular-nvd3.js',
+            'bower_components/angular-google-analytics/dist/angular-google-analytics.js',
+
             'bower_components/angular-mocks/angular-mocks.js',
 
 
@@ -46,14 +45,11 @@ module.exports = function(config) {
             //'test/spec/controllers/**/*.js',
             //'test/spec/services/**/*.js',
             //'test/spec/directives/**/*.js'
-            'test/spec/services/query/*.js',
-            'test/spec/controllers/query/*.js'
+            //'test/spec/services/query/*.js',
             //'test/spec/controllers/query/*.js'
-
-
+            //'test/spec/controllers/query/*.js'
+            'test/spec/app-spec.js'
         ],
-
-        exclude: ['scripts/theme.js'],
 
         // plugin to load our html templates as modules
         ngHtml2JsPreprocessor: {
