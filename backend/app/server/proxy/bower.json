@@ -7,8 +7,9 @@
     "angular-route": "1.4.8",
     "angular-resource": "1.4.8",
     "angular-cookies": "1.4.8",
-    "angular-bootstrap": "0.14.3",
     "angular-animate": "1.4.8",
+    "angular-sanitize": "1.4.8",
+    "angular-bootstrap": "0.14.3",
     "angular-dialog-service": "5.2.9",
     "bootstrap": "3.3.1",
     "bootstrap-sass-official": "3.3.1",
@@ -25,7 +26,6 @@
     "angular-massbank-parser": "http://bitbucket.org/fiehnlab/angular-massbank-parser.git#latest",
     "angular-masspec-plotter": "http://bitbucket.org/fiehnlab/angular-masspec-plotter.git#0.1.5",
     "ng-file-upload": "~1.4.0",
-    "ng-file-upload-shim": "~1.4.0",
     "paralleljs": "*",
     "angular-filter": "~0.5.8",
     "AngularJS-Toaster": "angularjs-toaster#^2.0.0",
@@ -38,8 +38,6 @@
     "protractor": "~2.5.1",
     "karma-jasmine": "~0.3.6",
     "jasmine-core": "jasmine#~2.3.4",
-    "purescript-webdriver": "~0.14.0",
-    "ngSanitize": "~0.0.2",
     "angular-mocks": "1.4.8"
   },
   "resolutions": {
