@@ -204,28 +204,6 @@ body {
   margin-left: 30px;
 }
 
-/**
- * affix management
- */
-.affix-top, .affix {
-  position: static;
-}
-
-/**
- * configure our affix properties
- */
-@media (min-width: 992px) {
-
-  #filterBar.affix-top {
-    position: static;
-  }
-
-  #filterBar.affix {
-    position: fixed;
-    top: 100px;
-  }
-
-}
 
 /**
  * override the web component and disable the border
