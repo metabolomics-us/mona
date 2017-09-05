@@ -44,11 +44,11 @@ class MSPWriter extends DomainWriter {
     * @param writer
     * @return
     */
-  def buildCompoundMetaData(spectrum: Spectrum, name: String, fieldName: String, writer: PrintWriter): Unit = {
+  def buildCompoundMetaData(spectrum: Spectrum, name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
     if (compound != null) {
-      buildMetaData(compound.metaData, name, fieldName, writer)
+      buildMetaData(compound.metaData, name, fieldName, writer, transform)
     }
   }
 
@@ -61,12 +61,12 @@ class MSPWriter extends DomainWriter {
     * @param writer
     * @return
     */
-  def buildMetaData(metaData: Array[MetaData], name: String, fieldName: String, writer: PrintWriter): Unit = {
+  def buildMetaData(metaData: Array[MetaData], name: String, fieldName: String, writer: PrintWriter, transform: String => String = identity): Unit = {
     val metaDataValue: Option[MetaData] = metaData.find(_.name == fieldName)
 
     // Write a value only if the metadata field is defined
     if (metaDataValue.isDefined) {
-      writer.println(s"$name: ${metaDataValue.get.value}")
+      writer.println(s"$name: ${transform(metaDataValue.get.value.toString)}")
     }
 }
 
@@ -158,9 +158,18 @@ class MSPWriter extends DomainWriter {
     // MetaData
     p.println(s"DB#: ${spectrum.id}")
     buildCompoundInchiKey(spectrum, p)
-    buildCompoundMetaData(spectrum, "MW", "total exact mass", p)
-    buildCompoundMetaData(spectrum, "Formula", "molecular formula", p)
+    buildMetaData(spectrum.metaData, "Precursor_type", "precursor type", p)
+    buildMetaData(spectrum.metaData, "Spectrum_type", "ms level", p)
     buildMetaData(spectrum.metaData, "PrecursorMZ", "precursor m/z", p)
+    buildMetaData(spectrum.metaData, "Instrument_type", "instrument type", p)
+    buildMetaData(spectrum.metaData, "Instrument", "instrument", p)
+    buildMetaData(spectrum.metaData, "Ionization", "ionization mode", p, x => x.charAt(0).toUpper.toString)
+    buildMetaData(spectrum.metaData, "Collision_energy", "collision energy", p)
+    buildCompoundMetaData(spectrum, "InChIKey", "InChIKey", p)
+    buildCompoundMetaData(spectrum, "Retention_index", "retention index", p)
+    buildCompoundMetaData(spectrum, "Formula", "molecular formula", p)
+    buildCompoundMetaData(spectrum, "MW", "total exact mass", p, x => (x.toDouble + 0.2).toInt.toString)
+    buildCompoundMetaData(spectrum, "ExactMass", "total exact mass", p)
     buildComments(spectrum, p)
     buildSpectraString(spectrum, p)
 
