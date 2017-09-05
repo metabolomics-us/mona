@@ -14,7 +14,7 @@ services:
 
   #just fixing the version to avoid surprises
   mongodb:
-    image: mongo:3.5.12
+    image: mongo:3.2.4
     ports:
       - "27017:27017"
 
