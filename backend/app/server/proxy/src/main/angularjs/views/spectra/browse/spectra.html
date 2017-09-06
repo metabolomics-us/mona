@@ -89,7 +89,7 @@
     <div class="col-md-12">
         <div class="pull-left">
             <button class="btn btn-primary"
-                    ng-show="table == false" ng-click="table = true"
+                    ng-show="pagination.table == false" ng-click="pagination.table = true"
                     uib-tooltip-placement="right"
                     uib-tooltip="Display Spectra in Tabular Mode"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
@@ -97,7 +97,7 @@
             </button>
 
             <button class="btn btn-primary"
-                    ng-show="table == true" ng-click="table = false"
+                    ng-show="pagination.table == true" ng-click="pagination.table = false"
                     uib-tooltip-placement="right"
                     uib-tooltip="Display Spectra in Panel Mode"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
@@ -131,90 +131,84 @@
     </div>
 </div>
 
-<br />
+<div class="row top7">
+    <div class="col-md-12">
+        <select data-multi-select
+                data-ng-model="pagination.itemsPerPageSelection"
+                data-buttonClass="btn btn-primary"
+                data-ng-options="option.toString() as option + ' records/page' for option in pagination.itemsPerPageOptions">
+        </select>
 
-<div class="row">
+        <select data-multi-select
+                multiple
+                data-ng-if="pagination.table == true"
+                data-ng-model="pagination.tableColumnSelected"
+                data-buttonClass="btn btn-primary"
+                data-buttonText="Select Columns"
+                data-enableFiltering="true"
+                data-ng-options="option for option in pagination.tableColumnOptions">
+        </select>
+    </div>
+</div>
+
+<div class="row top17">
     <!-- display spectra as list -->
-    <div class="col-md-12" ng-show="table == false">
+    <div class="col-md-12" ng-show="pagination.table == false">
         <div ng-repeat="spectrum in spectra">
             <div display-spectra-panel spectrum="spectrum"></div>
         </div>
     </div>
 
     <!-- display spectra as table-->
-    <div class="col-md-12" ng-show="table == true">
+    <div class="col-md-12" ng-show="pagination.table == true">
         <table class="table table-hover table-striped" style="table-layout: fixed;">
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th class="text-center" style="width: 160px">Structure</th>
-                <th class="text-center" style="width: 200px">Mass Spectrum</th>
-                <th class="text-center">Accurate Mass</th>
+                <th data-ng-repeat="column in pagination.tableColumnSelected"
+                    data-ng-class="{'text-center': column != 'ID' && column != 'Name'}">{{column}}</th>
             </tr>
             </thead>
 
             <tbody>
-            <tr ng-show="spectra.length == 0">
-            </tr>
-            <tr ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
-                <td>
-                    <a href="">{{spectrum.id}}</a>
-                </td>
-                <td>
-                    <ul class="list-unstyled">
-                        <li ng-repeat="name in spectrum.compound[0].names | limitTo:3">{{name.name}}</li>
-                    </ul>
-                </td>
-                <td class="text-center">
-                    <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
-                         id="bioSketch_{{spectrum.id}}_true"
-                         ng-model="spectrum.compound"></div>
-                </td>
-                <td class="text-center">
-                    <div class="masspec-mini">
-                        <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
-                    </div>
-                    <div>
-                        <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
-                    </div>
-                    <div ng-if="angular.isDefined(spectrum.similarity)">
-                        Similarity: {{s.similarity * 1000 | number:0}} / 1000
-                    </div>
-                </td>
-                <td>
-                    <p class="text-center">{{spectrum.accurateMass}}</p>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+            <tr ng-show="spectra.length == 0"></tr>
 
-    <!-- display spectral record metadata as table-->
-    <div class="col-md-12" ng-show="table == 'test'">
-        <table class="table table-hover table-striped" style="table-layout: fixed;">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th class="text-center">Accurate Mass</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr ng-show="spectra.length == 0">
-            </tr>
             <tr ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
-                <td>
-                    <a href="">{{spectrum.id}}</a>
-                </td>
-                <td>
-                    <ul class="list-unstyled">
-                        <li ng-repeat="name in spectrum.compound[0].names | limitTo:3">{{name.name}}</li>
-                    </ul>
-                </td>
-                <td>
-                    <p class="text-center">{{spectrum.accurateMass}}</p>
+                <td data-ng-repeat="column in pagination.tableColumnSelected" data-ng-switch data-on="column">
+                    <div data-ng-switch-when="ID">
+                        <div><a href="">{{spectrum.id}}</a></div>
+                        <div>
+                            <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
+                        </div>
+                    </div>
+
+                    <div data-ng-switch-when="Name">
+                        <ul class="list-unstyled">
+                            <li ng-repeat="name in spectrum.compound[0].names | limitTo:3">{{name.name}}</li>
+                        </ul>
+                    </div>
+
+                    <div data-ng-switch-when="Structure" class="text-center">
+                        <div class="center-block" chemical-sketcher readonly="true" width="150" height="150"
+                             id="bioSketch_{{spectrum.id}}_true"
+                             ng-model="spectrum.compound"></div>
+                    </div>
+
+                    <div data-ng-switch-when="Mass Spectrum" class="text-center">
+                        <div class="masspec-mini">
+                            <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
+                        </div>
+                        <div ng-if="angular.isDefined(spectrum.similarity)">
+                            Similarity: {{s.similarity * 1000 | number:0}} / 1000
+                        </div>
+                    </div>
+
+                    <div data-ng-switch-when="Accurate Mass">
+                        <p class="text-center">{{spectrum.metaDataMap['total exact mass']}}</p>
+                    </div>
+
+                    <div data-ng-switch-default>
+                        <p class="text-center">{{spectrum.metaDataMap[column]}}</p>
+                    </div>
                 </td>
             </tr>
             </tbody>
