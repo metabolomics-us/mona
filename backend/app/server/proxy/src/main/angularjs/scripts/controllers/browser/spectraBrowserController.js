@@ -146,6 +146,10 @@
                             } else {
                                 metaDataMap[metaData.name] = metaData.value;
                             }
+
+                            if (metaData.unit) {
+                                metaDataMap[metaData.name] += ' '+ metaData.unit;
+                            }
                         });
 
                         if(spectra[i].compound.kind === 'biological')
@@ -154,7 +158,15 @@
                 }
 
                 spectra[i].metaData.forEach(function(metaData) {
-                    metaDataMap[metaData.name] = metaData.value;
+                    if (metaData.name == 'mass accuracy' || metaData.name == "mass error") {
+                        metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
+                    } else {
+                        metaDataMap[metaData.name] = metaData.value;
+                    }
+
+                    if (metaData.unit) {
+                        metaDataMap[metaData.name] += ' '+ metaData.unit;
+                    }
                 });
 
                 spectra[i].metaDataMap = metaDataMap;
