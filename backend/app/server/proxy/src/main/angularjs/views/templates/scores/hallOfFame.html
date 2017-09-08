@@ -10,7 +10,7 @@
     </thead>
 
     <tbody>
-        <tr ng-if="scores.length == 0">
+        <tr ng-if="angular.isUndefined(scores)">
             <td colspan="4" class="text-center">
                 <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
             </td>
@@ -24,7 +24,7 @@
             </td>
             <td><span submitter-query submitter="score">{{score.firstName}} {{score.lastName}}</span></td>
             <td><uib-rating ng-model="score.score" max="5" data-readonly="true"></uib-rating></td>
-            <td>{{score.count}}</td>
+            <td>{{score.count | number:0}}</td>
         </tr>
     </tbody>
 </table>
