@@ -6,12 +6,12 @@
 
 (function() {
     'use strict';
-    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', 'MetadataService', '$timeout', '$log', 'toaster', 'Analytics'];
+    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', 'MetadataService', 'CookieService', '$timeout', '$log', 'toaster', 'Analytics'];
     angular.module('moaClientApp')
       .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, MetadataService, $timeout, $log, toaster, Analytics) {
+    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, MetadataService, CookieService, $timeout, $log, toaster, Analytics) {
 
         /**
          * contains all local objects and is our model
@@ -220,17 +220,57 @@
         }
 
 
-        (function() {
-            // Watch itemsPerPage pagination option
-            $scope.$watch('pagination.itemsPerPageSelection', function () {
-                var size = parseInt($scope.pagination.itemsPerPageSelection);
 
-                if (!Number.isNaN(size)) {
-                    $log.info('Updating search to use page size to '+ size);
-                    $location.search('size', size);
+        var setPageSize = function(pageSize) {
+            var size = parseInt(pageSize);
+
+            if (!Number.isNaN(size)) {
+                $log.debug('Setting current page size to '+ $location.search().size);
+                $scope.pagination.itemsPerPage = size;
+                $scope.pagination.itemsPerPageSelection = size.toString();
+
+                if ($scope.pagination.itemsPerPageOptions.indexOf(size) == -1) {
+                    $scope.pagination.itemsPerPageOptions.push(size);
+                    $scope.pagination.itemsPerPageOptions.sort(function(a, b) {
+                        return parseInt(a) - parseInt(b);
+                    });
                 }
+
+                CookieService.update('spectraBrowser-pagination-itemsPerPage', $scope.pagination.itemsPerPageSelection);
+            }
+        };
+
+        var setAndWatchPaginationOptions = function() {
+            // Load cookies
+            var itemsPerPage = CookieService.get('spectraBrowser-pagination-itemsPerPage');
+            var tableView = CookieService.getBooleanValue('spectraBrowser-pagination-table', false);
+            var tableColumnsSelected = CookieService.get('spectraBrowser-pagination-tableColumnsSelected');
+
+            if (angular.isDefined(itemsPerPage) && itemsPerPage !== $scope.pagination.itemsPerPage) {
+                setPageSize(itemsPerPage);
+            }
+
+            if (tableView) {
+                $scope.pagination.table = tableView;
+            }
+
+            if (angular.isDefined(tableColumnsSelected)) {
+                $scope.pagination.tableColumnSelected = JSON.parse(tableColumnsSelected);
+            }
+
+
+            // Watch pagination options
+            $scope.$watch('pagination.table', function () {
+                CookieService.update('spectraBrowser-pagination-table', $scope.pagination.table.toString());
             });
 
+            $scope.$watch('pagination.tableColumnSelected', function () {
+                CookieService.update('spectraBrowser-pagination-tableColumnsSelected', JSON.stringify($scope.pagination.tableColumnSelected));
+            });
+        };
+
+
+        (function() {
             // Get unique metadata values for dropdown
             MetadataService.metaDataNames({},
                 function (data) {
@@ -301,24 +341,15 @@
 
                 // Handle page size
                 if ($location.search().hasOwnProperty('size')) {
-                    var size = parseInt($location.search().size);
-
-                    if (!Number.isNaN(page)) {
-                        $log.debug('Setting current page size to '+ $location.search().size);
-                        $scope.pagination.itemsPerPage = size;
-                        $scope.pagination.itemsPerPageSelection = size.toString();
-
-                        if ($scope.pagination.itemsPerPageOptions.indexOf(size) == -1) {
-                            $scope.pagination.itemsPerPageOptions.push(size);
-                            $scope.pagination.itemsPerPageOptions.sort(function(a, b) {
-                                return parseInt(a) - parseInt(b);
-                            });
-                        }
-                    }
+                    setPageSize($location.search().size);
                 }
 
                 $scope.submitQuery();
             }
+
+
+            // Watch for changing in pagination options
+            setAndWatchPaginationOptions();
         })();
     }
 })();
