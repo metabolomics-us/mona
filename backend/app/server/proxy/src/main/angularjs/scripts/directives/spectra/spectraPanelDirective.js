@@ -60,9 +60,7 @@
             importantMetadata = importantMetadata.sort(function(a, b) {
                 return IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) < IMPORTANT_METADATA.indexOf(a.name.toLowerCase());
             });
-
-            console.log(importantMetadata)
-
+            
             $scope.spectrum.metaData = importantMetadata.concat(secondaryMetadata).slice(0, 10);
         })();
     }
