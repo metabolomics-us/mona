@@ -83,7 +83,6 @@
          * Submits our query to the server
          */
         $scope.submitQuery = function() {
-            $scope.pagination.currentPage = 1;
             $scope.calculateResultCount();
             $scope.loadSpectra();
         };
@@ -246,10 +245,6 @@
             var tableView = CookieService.getBooleanValue('spectraBrowser-pagination-table', false);
             var tableColumnsSelected = CookieService.get('spectraBrowser-pagination-tableColumnsSelected');
 
-            if (angular.isDefined(itemsPerPage) && itemsPerPage !== $scope.pagination.itemsPerPage) {
-                setPageSize(itemsPerPage);
-            }
-
             if (tableView) {
                 $scope.pagination.table = tableView;
             }
@@ -342,6 +337,12 @@
                 // Handle page size
                 if ($location.search().hasOwnProperty('size')) {
                     setPageSize($location.search().size);
+                } else {
+                    var itemsPerPage = CookieService.get('spectraBrowser-pagination-itemsPerPage');
+
+                    if (angular.isDefined(itemsPerPage) && itemsPerPage !== $scope.pagination.itemsPerPage) {
+                        setPageSize(itemsPerPage);
+                    }
                 }
 
                 $scope.submitQuery();
