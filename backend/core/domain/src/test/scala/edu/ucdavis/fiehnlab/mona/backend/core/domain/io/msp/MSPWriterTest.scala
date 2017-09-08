@@ -134,7 +134,7 @@ class MSPWriterTest extends WordSpec {
           }
 
           "ionization mode" in {
-            assert(out.toString.contains("Ionization: P"))
+            assert(out.toString.contains("Ion_mode: P"))
           }
 
           "collision energy" in {
