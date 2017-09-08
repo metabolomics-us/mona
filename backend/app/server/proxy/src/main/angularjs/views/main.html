@@ -24,25 +24,13 @@
                 <a href="http://bitbucket.org/fiehnlab/mona/issues" class="btn btn-warning btn-lg"><i class="fa fa-exclamation-triangle"></i> Issue Tracker</a>
             </p>
         </div>
-
-        <div class="bor-bot"></div>
-    </div>
-    <br /><br />
-
-    <div class="row">
-        <div class="col-md-12">
-            <uib-carousel interval="7000" no-wrap="noWrapSlides">
-                <uib-slide ng-repeat="slide in slides">
-                    <a ng-href="spectra/display/{{slide.id}}"><img ng-src="{{slide.image}}" style="margin:auto"/></a>
-                </uib-slide>
-            </uib-carousel>
-        </div>
     </div>
 
-    <!--
+    <div class="bor-bot"></div><br />
+
     <div class="row">
         <div class="col-md-6">
-            <h2>News</h2>
+            <h3>News</h3>
             <table class="table">
                 <tbody>
                 <tr>
@@ -95,10 +83,30 @@
         </div>
 
         <div class="col-md-6">
-            <h2>Submitter Ratings</h2>
+            <h3>Submitter High Scores</h3>
 
             <div spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</div>
         </div>
     </div>
-    -->
+
+    <div class="bor-bot"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Top Rated Spectral Records</h3>
+            <br />
+
+            <uib-carousel interval="7000">
+                <uib-slide ng-repeat="spectrum in showcaseSpectra">
+                    <div class="text-left" display-spectra-panel spectrum="spectrum"></div>
+                </uib-slide>
+
+                <uib-slide ng-if="showcaseSpectra.length === 0">
+                    <div class="text-center">
+                        <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
+                    </div>
+                </uib-slide>
+            </uib-carousel>
+        </div>
+    </div>
 </div>

@@ -18,8 +18,6 @@
                 limit: '@'
             },
             link: function($scope, element, attrs, ngModel) {
-                $scope.scores = [];
-                
                 StatisticsService.spectraTopScores({},
                     function(data) {
                         $scope.scores = data;

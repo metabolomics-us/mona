@@ -215,7 +215,7 @@
         };
 
         this.addUserToQuery = function(username) {
-            this.query.push('submitter.id=="'+ username +'"');
+            this.query.push('submitter.emailAddress=="'+ username +'"');
         };
     }
 })();
