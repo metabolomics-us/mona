@@ -8,7 +8,7 @@
 
     <div class="panel-body">
         <div class="row">
-            <div class="col-lg-6 col-md-5 col-sm-5">
+            <div class="col-lg-6 col-md-7 col-sm-6">
                 <div class="row" ng-if="spectrum.similarity !== undefined">
                     <div class="col-md-12">
                         <ul class="list-inline">
@@ -24,14 +24,14 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-6 col-md-12 col-sm-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="masspec-medium">
                             <mass-spec id="massSpec_{{spectrum.id}}" mini
                                        ng-model="spectrum.spectrum"></mass-spec>
                         </div>
                     </div>
 
-                    <div class="col-lg-6 col-md-12 col-sm-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
                         <div chemical-sketcher readonly="true" width="200"
                              height="200"
                              id="bioSketch_{{spectrum.id}}_false"
@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6 col-md-7 col-sm-7">
+            <div class="col-lg-6 col-md-5 col-sm-6">
                 <div class="row top5"
                      ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'}">
 
