@@ -267,6 +267,15 @@
 
 
             // Watch pagination options
+            $scope.$watch('pagination.itemsPerPageSelection', function () {
+                var size = parseInt($scope.pagination.itemsPerPageSelection);
+
+                if (!Number.isNaN(size)) {
+                    $log.info('Updating search to use page size to '+ size);
+                    $location.search('size', size);
+                }
+            });
+            
             $scope.$watch('pagination.table', function () {
                 CookieService.update('spectraBrowser-pagination-table', $scope.pagination.table.toString());
             });
