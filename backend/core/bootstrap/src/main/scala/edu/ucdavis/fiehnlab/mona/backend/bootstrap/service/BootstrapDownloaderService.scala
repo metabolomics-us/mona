@@ -85,14 +85,6 @@ class BootstrapDownloaderService extends LazyLogging {
       "GC-MS Spectra",
       """tags.text=="GC-MS""""
     )
-    saveQuery(
-      "GC-MS Spectra - GC-MS Positive Mode",
-      """tags.text=="GC-MS" and metaData=q='name=="ionization mode" and value=="positive"'"""
-    )
-    saveQuery(
-      "GC-MS Spectra - GC-MS Negative Mode",
-      """tags.text=="GC-MS" and metaData=q='name=="ionization mode" and value=="negative"'"""
-    )
 
 
     saveQuery(
