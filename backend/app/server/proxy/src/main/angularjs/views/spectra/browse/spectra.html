@@ -175,7 +175,7 @@
             <tr ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
                 <td data-ng-repeat="column in pagination.tableColumnSelected" data-ng-switch data-on="column">
                     <div data-ng-switch-when="ID">
-                        <div><a href="">{{spectrum.id}}</a></div>
+                        <div><a style="cursor: pointer" ng-href="{{viewSpectrum(spectrum.id)}}">{{spectrum.id}}</a></div>
                         <div>
                             <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
                         </div>

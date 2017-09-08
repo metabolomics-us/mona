@@ -118,14 +118,13 @@
         };
 
         /**
-         * @Deprecated
-         * displays the spectrum for the given index
+         * returns the display url for the spectrum for the given index
          * @param id
          * @param index
          */
         $scope.viewSpectrum = function(id, index) {
-            SpectrumCache.setBrowserSpectra($scope.spectra);
-            SpectrumCache.setSpectrum($scope.spectra[index]);
+            // SpectrumCache.setBrowserSpectra($scope.spectra);
+            // SpectrumCache.setSpectrum($scope.spectra[index]);
 
             return '/spectra/display/' + id;
         };
