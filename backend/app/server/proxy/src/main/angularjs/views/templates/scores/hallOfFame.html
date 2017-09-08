@@ -2,25 +2,28 @@
 <table class="table">
     <thead>
     <tr>
-        <th>Rank</th>
+        <th>&nbsp;</th>
         <th>Name</th>
-        <th>Institution</th>
-        <th>Average Score</th>
-        <th>Submitted Spectra</th>
+        <th>Avg. Score</th>
+        <th>Spectra</th>
     </tr>
     </thead>
 
     <tbody>
-        <tr ng-repeat="score in scores | orderBy:'-score' | limitTo:limit">
+        <tr ng-if="scores.length == 0">
+            <td colspan="4" class="text-center">
+                <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
+            </td>
+        </tr>
+        <tr ng-repeat="score in scores | limitTo:limit">
             <td>
                 <i class="fa fa-trophy" ng-show="$index == 0"  style="color:#ffd700"></i>
                 <i class="fa fa-trophy" ng-show="$index == 1"  style="color:#C0C0C0"></i>
                 <i class="fa fa-trophy" ng-show="$index == 2"  style="color:#CD7F32"></i>
                 <span ng-hide="$index < 3">{{$index + 1}}</span>
             </td>
-            <td><span submitter-query submitter="score.submitter">{{score.submitter.firstName}} {{score.submitter.lastName}}</span></td>
-            <td>{{score.submitter.institution}}</td>
-            <td><uib-rating ng-model="score.score" max="10" data-readonly="true"></uib-rating></td>
+            <td><span submitter-query submitter="score">{{score.firstName}} {{score.lastName}}</span></td>
+            <td><uib-rating ng-model="score.score" max="5" data-readonly="true"></uib-rating></td>
             <td>{{score.count}}</td>
         </tr>
     </tbody>

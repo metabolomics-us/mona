@@ -6,6 +6,7 @@
 
 (function() {
     'use strict';
+
     statisticsService.$inject = ['$resource', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
         .factory('StatisticsService', statisticsService);
@@ -43,7 +44,7 @@
                     
                 },
                 'spectraTopScores': {
-                    url: REST_BACKEND_SERVER + '/rest/statistics/submitters/scores?max=:max',
+                    url: REST_BACKEND_SERVER + '/rest/statistics/submitters',
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

@@ -5,13 +5,12 @@
 (function() {
     'use strict';
 
-    spectraTopScoresForUsers.$inject = ['$compile', 'StatisticsService', 'Submitter'];
-    spectraTopScoresForUsersController.$inject = ['$scope'];
+    spectraTopScoresForUsers.$inject = ['StatisticsService'];
     angular.module('moaClientApp')
         .directive('spectraTopScoresForUsers', spectraTopScoresForUsers);
 
     /* @ngInject */
-    function spectraTopScoresForUsers($compile, StatisticsService, Submitter) {
+    function spectraTopScoresForUsers(StatisticsService) {
         return {
             replace: true,
             templateUrl: '/views/templates/scores/hallOfFame.html',
@@ -19,24 +18,18 @@
                 limit: '@'
             },
             link: function($scope, element, attrs, ngModel) {
-                StatisticsService.spectraTopScores({max: $scope.limit},
+                $scope.scores = [];
+                
+                StatisticsService.spectraTopScores({},
                     function(data) {
-                        var scores = data;
+                        $scope.scores = data;
 
-                        angular.forEach(scores, function(score) {
-                            score.submitter = Submitter.get({id: score.submitter});
+                        $scope.scores.forEach(function(x) {
+                            x.score -= 0.45;
                         });
-                        $scope.scores = scores;
-
                     }
                 );
-            },
-            controller: spectraTopScoresForUsersController
+            }
         };
-    }
-
-    /* @ngInject */
-    function spectraTopScoresForUsersController($scope) {
-
     }
 })();
