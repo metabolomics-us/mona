@@ -3,16 +3,13 @@
 
 module.exports = function(config) {
     config.set({
-
         basePath: 'src/main/angularjs',
         frameworks: ['jasmine'],
 
         files: [
-            // development dependencies
+            // MoNA app dependencies
             'bower_components/jquery/dist/jquery.js',
             'bower_components/angular/angular.js',
-
-            // moaClientApp vendor dependencies
             'bower_components/angular-route/angular-route.js',
             'bower_components/angular-resource/angular-resource.js',
             'bower_components/angular-cookies/angular-cookies.js',
@@ -33,27 +30,30 @@ module.exports = function(config) {
             'bower_components/angular-nvd3/dist/angular-nvd3.js',
             'bower_components/angular-google-analytics/dist/angular-google-analytics.js',
 
+            // test dependencies
             'bower_components/angular-mocks/angular-mocks.js',
-
-
-            //'views/!**!/!*.html',
 
             // source scripts
             'scripts/**/*.js',
 
-            /** test scripts **/
+            // html templates
+            'views/**/*.html',
+
+            // test scripts
             //'test/spec/controllers/**/*.js',
             //'test/spec/services/**/*.js',
-            //'test/spec/directives/**/*.js'
+            'test/spec/directives/**/*.js',
             //'test/spec/services/query/*.js',
             //'test/spec/controllers/query/*.js'
             //'test/spec/controllers/query/*.js'
+
+            'test/spec/services/cookie/*.js',
+            'test/spec/services/optimization/*.js',
             'test/spec/app-spec.js'
         ],
 
         // plugin to load our html templates as modules
         ngHtml2JsPreprocessor: {
-          stripPrefix: '',
             moduleName: 'templates'
         },
 
@@ -63,9 +63,8 @@ module.exports = function(config) {
             '**/scripts/controllers/**/*.js': 'coverage',
             '**/scripts/services/**/*.js': 'coverage',
             '**/scripts/directives/**/*.js': 'coverage',
-            '**/*.html': ['ng-html2js']
+            'views/**/*.html': ['ng-html2js']
         },
-
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
@@ -81,14 +80,11 @@ module.exports = function(config) {
         // web server port
         port: 9876,
 
-
         // enable / disable colors in the output (reporters and logs)
         colors: false,
 
-
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
-
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
