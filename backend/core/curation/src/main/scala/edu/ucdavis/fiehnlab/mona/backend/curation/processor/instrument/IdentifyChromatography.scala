@@ -50,16 +50,19 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val tags: Array[Tags] = spectrum.tags.filter(x => x.text == CommonTags.GCMS_SPECTRUM || x.text == CommonTags.LCMS_SPECTRUM)
+    val tags: Array[Tags] = spectrum.tags.filter(x => Array(CommonTags.GCMS_SPECTRUM, CommonTags.LCMS_SPECTRUM, CommonTags.CEMS_SPECTRUM).contains(x.text))
 
     if (tags.length == 1) {
-      logger.info(s"${spectrum.id}: Spectrum already has identified chromotography: ${tags(0).text}")
-      spectrum
+      logger.info(s"${spectrum.id}: Spectrum already has identified chromatography: ${tags(0).text}")
+
+
+      spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, s"Chromatography identified as ${tags(0).text}"))
     }
 
     else if (tags.length > 1) {
-      logger.warn(s"${spectrum.id}: Spectrum has multiple chromotography tags!")
-      spectrum
+      logger.warn(s"${spectrum.id}: Spectrum has multiple chromatography tags!")
+
+      spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, s"Chromatography identified with multiple tags: ${tags.map(_.text).mkString(", ")}"))
     }
 
     else {
@@ -71,17 +74,17 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
       if (isGCMS && isLCMS) {
         logger.warn(s"${spectrum.id}: Identified as both GC/MS and LC/MS!")
         spectrum.copy(score = spectrum.score.copy(impacts = spectrum.score.impacts :+ Impact(-1, "Identified as both GC/MS and LC/MS")))
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Identified as both GC/MS and LE/MS"))
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both GC/MS and LE/MS"))
       }
 
       else if (isGCMS && isCEMS) {
         logger.warn(s"${spectrum.id}: Identified as both GC/MS and CE/MS!")
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Identified as both GC/MS and CE/MS"))
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both GC/MS and CE/MS"))
       }
 
       else if (isLCMS && isCEMS) {
         logger.warn(s"${spectrum.id}: Identified as both LC/MS and CE/MS!")
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Identified as both LC/MS and CE/MS"))
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both LC/MS and CE/MS"))
       }
 
       else if (isGCMS) {
@@ -96,7 +99,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
 
          spectrum.copy(
            tags = updatedTags,
-           score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified")
+           score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as GC-MS")
          )
       }
 
@@ -112,7 +115,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
 
         spectrum.copy(
           tags = updatedTags,
-          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified")
+          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as LC-MS")
         )
       }
 
@@ -128,14 +131,14 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
 
         spectrum.copy(
           tags = updatedTags,
-          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified")
+          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as CD-MS")
 
         )
       }
 
       else {
-        logger.warn(s"${spectrum.id}: Unidentifiable chromotography")
-        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Unidentifiable chromotography"))
+        logger.warn(s"${spectrum.id}: Unidentifiable chromatography")
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Unidentifiable chromatography"))
       }
     }
   }
