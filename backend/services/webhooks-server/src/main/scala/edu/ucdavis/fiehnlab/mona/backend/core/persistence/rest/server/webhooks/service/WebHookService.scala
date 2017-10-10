@@ -41,7 +41,6 @@ class WebHookService extends LazyLogging {
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
-
   /**
     * our remote connection to the main mona server, as configured in our application properties
     */
