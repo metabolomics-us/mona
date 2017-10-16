@@ -64,6 +64,15 @@
                         'Content-Type': 'application/json'
                     },
                     params: {query: '@query'}
+                },
+                metaDataNames: {
+                    url: REST_BACKEND_SERVER +'/rest/metaData/names',
+                    method: 'GET',
+                    isArray: true,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    cache: true
                 }
             }
         );

@@ -24,7 +24,6 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
       if (spectrum.compound != null) {
         spectrum.compound.map(compound =>
           compound.copy(
-            classification = filterMetaData(compound.classification),
             metaData = filterMetaData(compound.metaData),
             names = filterNames(compound.names),
             tags = filterTags(compound.tags)
@@ -45,7 +44,7 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
       compound = filteredCompound,
       metaData = filteredMetaData,
       splash = null,
-      score = null,
+      score = Score(Array(), 0.0),
       tags = filteredTags
     )
   }

@@ -15,7 +15,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpec
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{CompoundClassStatistics, GlobalStatistics, MetaDataStatistics, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types._
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
@@ -46,7 +46,6 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
     RestAssured.config = RestAssured.config().objectMapperConfig(ObjectMapperConfig.objectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory {
       override def create(aClass: Class[_], s: String): ObjectMapper = MonaMapper.create
     }))
-
 
     RestAssured.baseURI = s"http://localhost:$port/rest"
 
@@ -81,6 +80,11 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
         assert(result.length == 2)
       }
 
+      "get library tag statistics" in {
+        val result: Array[TagStatistics] = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/tags/library").then().log().all(true).statusCode(200).extract().as(classOf[Array[TagStatistics]])
+        assert(result.length == 1)
+      }
+
       "get global statistics" in {
         val result: GlobalStatistics = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/statistics/global").then().log().all(true).statusCode(200).extract().as(classOf[GlobalStatistics])
 
@@ -100,6 +104,11 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
         assert(organicCompounds.nonEmpty)
         assert(organicCompounds.head.spectrumCount == 50)
         assert(organicCompounds.head.compoundCount == 21)
+      }
+
+      "get submitter statistics" in {
+        val result: Array[SubmitterStatistics] = given().contentType("application/json; charset=UTF-8").log().all(true).when().get("/statistics/submitters").then().log().all(true).statusCode(200).extract().as(classOf[Array[SubmitterStatistics]])
+        assert(result.length == 1)
       }
     }
   }

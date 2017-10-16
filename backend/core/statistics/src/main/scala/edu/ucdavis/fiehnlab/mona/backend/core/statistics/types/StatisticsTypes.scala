@@ -14,8 +14,15 @@ import scala.annotation.meta.field
 case class MetaDataStatistics(
                                @(Id@field)
                                name: String,
+                               count: Int,
                                values: Array[MetaDataValueCount]
                              )
+
+case class MetaDataStatisticsSummary(
+                                      @(Id@field)
+                                      name: String,
+                                      count: Int
+                                    )
 
 case class MetaDataValueCount(
                         value: String,
@@ -24,10 +31,13 @@ case class MetaDataValueCount(
 
 @Document(collection = "STATISTICS_TAGS")
 case class TagStatistics(
-                           @(Id@field)
-                           text: String,
-                           count: Int
-                         )
+                          @(Id@field)
+                          id: String,
+                          text: String,
+                          ruleBased: Boolean,
+                          count: Int,
+                          category: String
+                        )
 
 @Document(collection = "STATISTICS")
 case class GlobalStatistics(
@@ -50,3 +60,14 @@ case class CompoundClassStatistics(
                                    spectrumCount: Int,
                                    compoundCount: Int
                                   )
+
+@Document(collection = "STATISTICS_SUBMITTER")
+case class SubmitterStatistics(
+                                @(Id@field)
+                                id: String,
+                                firstName: String,
+                                lastName: String,
+                                institution: String,
+                                count: Int,
+                                score: Double
+                              )

@@ -10,10 +10,12 @@
                     <div class="row">
                         <div class="col-md-12" ng-init="showScore = false">
                             <span uib-tooltip-placement="right"
-                                  uib-tooltip="Please click to view how the score was calculated"
+                                  uib-tooltip="Click to see the explaination for the {{0.0 + spectrum.score.score | number:2}} / 5 score"
                                   uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='10'
                                   ng-click="showScore =! showScore">
-                                Rating: <span score-spectra ng-model="spectrum"></span><i class="fa fa-question"></i>
+                                Rating:
+                                <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
+                                <i class="fa fa-question"></i>
                             </span>
                         </div>
                     </div>
@@ -22,33 +24,27 @@
                         <div class="col-md-12">
                             <div class="panel top17 panel-default" ng-show="spectrum.score">
                                 <div class="panel-heading">
-                                    Explanation for the score of {{spectrum.score.score | number
-                                    :4}}/{{spectrum.score.scaledScore | number :1}} stars
+                                    Explanation for the {{spectrum.score.score | number:2}} / 5 star score
                                 </div>
                                 <div class="panel-body">
-                                    Green elements show that this had a positive impact, while red elements display a
-                                    negative impact.
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Impact Rating</th>
+                                            <th>Reason</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-value'"
+                                            ng-class="impact.value < 0 ? 'danger' : (impact.value > 0 ? 'success' : 'warning')">
+                                            <td>{{impact.value | number:2}}</td>
+                                            <td>{{impact.reason}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Impact</th>
-                                        <th>Reason</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-impactValue'"
-                                        ng-class="impact.impactValue < 0 ? 'danger' : (impact.impactValue > 0 ? 'success' : 'warning')">
-                                        <td>{{impact.impactValue | number : 3}}</td>
-                                        <td>{{impact.reason}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
                             </div>
-                            <div class="panel top17" ng-hide="spectrum.score">
-                                This spectrum hasn't been score yet, we submitted a request to the system to score it
-                                for you!
-                            </div>
+                            <div class="panel top17" ng-hide="spectrum.score">This spectrum has not yet been curated.</div>
                         </div>
                     </div>
 
@@ -56,7 +52,8 @@
                         <div class="col-md-12">
                             <ul class="list-unstyled">
                                 <li>
-                                    <div class="h5"><span data-display-library-reference spectrum="spectrum"></span>
+                                    <div class="h5">
+                                        <span data-display-library-reference spectrum="spectrum"></span>
                                     </div>
                                 </li>
                             </ul>
@@ -151,32 +148,33 @@
                                     </div>
                                 </uib-accordion-group>
 
-                                <!--
                                 <uib-accordion-group is-open="accordionStatus.isSimilarSpectraOpen">
                                     <uib-accordion-heading>
                                         <div ng-click="loadSimilarSpectra()">
-                                            Similar Spectra<i class="pull-right glyphicon"
-                                                              ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
-                                                       'glyphicon-chevron-right': !accordionStatus.isSimilarSpectraOpen}"></i>
+                                            Similar Spectra
+                                            <i class="pull-right glyphicon"
+                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
+                                                          'glyphicon-chevron-right': !accordionStatus.isSimilarSpectraOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
 
                                     <div class="text-center" ng-show="loadingSimilarSpectra">
-                                        <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span>
-                                        </p>
+                                        <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span></p>
 
                                         <p>Please wait - this can take some time depending on server load.</p>
                                     </div>
 
                                     <div class="text-center" ng-show="!loadingSimilarSpectra && !similarSpectra.length">
-                                        <h4>No similar spectra found.</h4>
+                                        <h4>No spectra found with similarity > 500.</h4>
                                     </div>
 
-                                    <div class="text-center" ng-show="!loadingSimilarSpectra && similarSpectra.length">
+                                    <div class="text-center" ng-show="!loadingSimilarSpectra && similarSpectra.length"
+                                         style="height: 400px; overflow: auto; margin-top: 10px;">
+
                                         <table class="table table-hover table-striped" style="table-layout: fixed;">
                                             <thead>
                                             <tr>
-                                                <th></th>
+                                                <th>ID</th>
                                                 <th class="text-center">Name</th>
                                                 <th class="text-right" style="width: 110px">Structure</th>
                                                 <th class="text-right" style="width: 110px">Spectrum</th>
@@ -184,14 +182,13 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr ng-show="spectra.length == 0">
-                                            </tr>
-                                            <tr ng-repeat="s in similarSpectra | orderBy:'-similarity'"
+                                            <tr ng-repeat="s in similarSpectra | filter"
+                                                ng-if="s.id != spectrum.id"
                                                 ng-click="viewSpectrum(s.id)">
                                                 <td>{{s.id}}</td>
                                                 <td>
                                                     <ul class="list-unstyled">
-                                                        <li ng-repeat="name in s.biologicalCompound.names | limitTo:3">
+                                                        <li ng-repeat="name in s.compound[0].names | limitTo:3">
                                                             {{name.name}}
                                                         </li>
                                                     </ul>
@@ -201,23 +198,22 @@
                                                          width="100"
                                                          height="100"
                                                          id="bioSketch_{{s.id}}"
-                                                         ng-model="spectrum.biologicalCompound"></div>
+                                                         ng-model="s.compound[0]"></div>
                                                 </td>
                                                 <td>
                                                     <div class="masspec-mini">
                                                         <mass-spec id="massSpec_{{s.id}}" mini
-                                                                   ng-model="spectrum.spectrum"></mass-spec>
+                                                                   ng-model="s.spectrum"></mass-spec>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <p class="text-center">{{s.similarity | number:0}} / 1000</p>
+                                                    <p class="text-center">{{s.similarity * 1000 | number:0}} / 1000</p>
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </uib-accordion-group>
-                                -->
                             </uib-accordion>
                         </div>
                     </div>
@@ -227,9 +223,9 @@
                         <div class="col-md-12">
                             <h4>Compound Information</h4>
 
-                            <uib-accordion close-others="false">
+                            <uib-accordion>
                                 <uib-accordion-group ng-repeat="compound in spectrum.compound track by $index"
-                                                     is-open="accordionStatus.isCompoundOpen[$index]" >
+                                                     is-open="accordionStatus.isCompoundOpen[$index]">
                                     <uib-accordion-heading>
                                         <div>
                                             <span ng-if="compound.kind !== null">{{compound.kind | ucfirst}}</span>
@@ -254,28 +250,27 @@
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>Category</th>
                                         <th>Name</th>
                                         <th>Value</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: ['category','name']">
-                                        <td class="col-lg-2 col-md-4">
-                                            {{meta.category}}
-                                        </td>
-                                        <td class="col-lg-2 col-md-4">
+                                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: 'name'">
+                                        <td class="col-lg-4 col-md-4">
                                             <span metadata-query value="meta"> {{meta.name}}</span>
                                         </td>
-                                        <td class="col-lg-8 col-md-4">
-                                            <span gw-value value="meta">{{meta.value | number:4 }} {{meta.unit}}</span>
+                                        <td class="col-lg-8 col-md-8">
+                                            <span ng-if="angular.isNumber(meta.value)">{{meta.value | number:4}} {{meta.unit}}</span>
+                                            <span ng-if="!angular.isNumber(meta.value)">{{meta.value}} {{meta.unit}}</span>
+
+                                            <i ng-show="meta.computed == true" class="fa fa-flask" tooltip-placement="top"
+                                               uib-tooltip="Calculated by MoNA Auto Curation"></i>
                                         </td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <br/>
-
                         </div>
                     </div>
                 </div>

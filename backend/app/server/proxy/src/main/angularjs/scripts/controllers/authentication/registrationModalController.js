@@ -47,8 +47,8 @@
                         method: 'POST',
                         url: REST_BACKEND_SERVER + '/rest/auth/login',
                         data: {
-                            username: response.data.username,
-                            password: response.data.password
+                            username: $scope.newSubmitter.emailAddress,
+                            password: $scope.newSubmitter.password
                         },
                         headers: {
                             'Content-Type': 'application/json'

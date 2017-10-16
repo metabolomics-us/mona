@@ -7,6 +7,4 @@ import org.elasticsearch.index.query.QueryBuilder
 /**
   * Created by wohlg_000 on 3/3/2016.
   */
-trait SpectrumElasticRepositoryCustom  extends RSQLRepositoryCustom[Spectrum,QueryBuilder]  {
-
-}
+trait SpectrumElasticRepositoryCustom extends RSQLRepositoryCustom[Spectrum, QueryBuilder]

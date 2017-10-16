@@ -4,13 +4,13 @@
 
 (function () {
 	'use strict';
-    AdvancedUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TaggingService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
+    AdvancedUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TagService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
 	angular.module('moaClientApp')
 		.controller('AdvancedUploaderController', AdvancedUploaderController);
 
 	/* @ngInject */
 	function AdvancedUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService,
-	                                    TaggingService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
+                                        TagService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
 		// Loaded spectra data/status
 		$scope.spectraLoaded = 0;
 		$scope.currentSpectrum;
@@ -472,7 +472,7 @@
 						url: REST_BACKEND_SERVER + '/rest/spectra',
 						headers: {
 							'Content-Type': 'application/json',
-							'Authorization': 'bearer ' + spectrum.submitter.access_token
+							'Authorization': 'Bearer ' + spectrum.submitter.access_token
 						},
 						data: JSON.stringify(spectrum)
 					};
@@ -532,7 +532,7 @@
 		 */
 		(function () {
 			// Get tags
-			TaggingService.query(
+            TagService.query(
 				function (data) {
 					$scope.tags = data;
 				},

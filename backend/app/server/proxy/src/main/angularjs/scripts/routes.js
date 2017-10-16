@@ -48,6 +48,11 @@
                 controller: 'SpectraBrowserController'
             })
 
+            .when('/spectra/similaritySearch', {
+                templateUrl: 'views/spectra/browse/spectra.html',
+                controller: 'SpectraBrowserController'
+            })
+
             //view individual spectrum
             .when('/spectra/display/:id', {
                 templateUrl: 'views/spectra/display/viewSpectrum.html',
@@ -87,7 +92,8 @@
             //database index and statistics
             .when('/spectra/statistics', {
                 templateUrl: 'views/spectra/dbindex/dbindex.html',
-                controller: 'SpectraDatabaseIndexController'
+                controller: 'SpectraDatabaseIndexController',
+                reloadOnSearch: false
             })
 
             .when('/spectra/querytree', {
@@ -100,14 +106,7 @@
             })
 
             .when('/spectra/search', {
-                templateUrl: 'views/spectra/query/search.html',
-                controller: 'KeywordSearchController'
-            })
-
-            //query by similarity
-            .when('/spectra/similarity', {
-                templateUrl: 'views/spectra/query/similarityQuery.html',
-                controller: 'SpectraSimilarityQueryController'
+                templateUrl: 'views/spectra/query/search.html'
             })
 
             //user profile page
@@ -124,10 +123,6 @@
 
             .when('/documentation/license', {
                 templateUrl: 'views/documentation/license.html'
-            })
-
-            .when('/news', {
-                templateUrl: 'views/news/news.html'
             })
 
             .when('/documentation/query', {

@@ -6,12 +6,12 @@
 
 (function() {
     'use strict';
-    SpectraQueryBuilderService.$inject = ['$log', '$location'];
+    SpectraQueryBuilderService.$inject = ['$log', '$location', '$route'];
     angular.module('moaClientApp')
         .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
 
     /* @ngInject */
-    function SpectraQueryBuilderService($log, $location) {
+    function SpectraQueryBuilderService($log, $location, $route) {
 
         /**
          * Stored query
@@ -22,6 +22,11 @@
          * Stored RSQL query string, only used when the query is set from outside this query builder
          */
         this.queryString = '';
+
+        /**
+         * Stored text search
+         */
+        this.textSearch = '';
 
 
         this.getQuery = function() {
@@ -42,9 +47,20 @@
             this.queryString = queryString;
         };
 
+        this.getTextSearch = function() {
+            return this.textSearch;
+        };
+
+        this.setTextSearch = function(textSearch) {
+            this.textSearch = textSearch;
+        };
+
         this.prepareQuery = function() {
+            $log.debug('Resetting query');
+
             this.query = [];
             this.queryString = '';
+            this.textSearch = '';
         };
 
         /**
@@ -62,9 +78,37 @@
 
         this.executeQuery = function() {
             var query = this.getRSQLQuery();
-            $log.info('Executing query: '+ query);
-            
-            $location.path('/spectra/browse').search({query: (query == '') ? null : query});
+
+            if (query !== '' || this.textSearch !== '') {
+                $log.info('Executing RSQL query: "'+ query + '", and text search: "'+ this.textSearch +'"');
+                $location.path('/spectra/browse').search({query: query, text: this.textSearch});
+            } else {
+                if ($location.path() === '/spectra/browse' && angular.equals($location.search(), {})) {
+                    $log.debug('Reloading route');
+                    $route.reload();
+                } else {
+                    $log.debug('Executing empty query');
+                    $location.path('/spectra/browse').search({});
+                }
+            }
+        };
+
+
+        /**
+         * Stored similarity query
+         */
+        this.similarityQuery = null;
+
+        this.setSimilarityQuery = function(query) {
+            this.similarityQuery = query;
+        };
+
+        this.hasSimilarityQuery = function() {
+            return this.similarityQuery != null;
+        };
+
+        this.getSimilarityQuery = function() {
+            return this.similarityQuery;
         };
 
 
@@ -127,14 +171,14 @@
         };
 
         this.addNameToQuery = function(name) {
-            this.query.push('compound.names=q=\'name=match=".*'+ name +'.*"\'');
+            this.query.push('compound.names=q=\'name=like="'+ name +'"\'');
         };
 
-        var buildTagQuery = function(value, collection, partialQuery) {
+        var buildTagQuery = function(value, collection, queryType) {
             // Handle array of values
             if (Array.isArray(value)) {
                 var subqueries = value.map(function(x) {
-                    return buildTagQuery(x, collection, partialQuery);
+                    return buildTagQuery(x, collection, queryType);
                 });
 
                 return '('+ subqueries.join(' or ') + ')';
@@ -142,20 +186,22 @@
 
             // Handle individual values
             else {
-                if (typeof partialQuery !== 'undefined') {
+                if (typeof queryType !== 'undefined' && queryType == 'match') {
                     return collection + '.text=match=".*'+ value +'.*"';
+                } else if (typeof queryType !== 'undefined' && queryType == 'ne') {
+                    return collection +'.text!="'+ value +'"';
                 } else {
                     return collection +'.text=="'+ value +'"';
                 }
             }
         };
 
-        this.addTagToQuery = function(query, partialQuery) {
-            this.query.push(buildTagQuery(query, 'tags', partialQuery));
+        this.addTagToQuery = function(query, queryType) {
+            this.query.push(buildTagQuery(query, 'tags', queryType));
         };
 
-        this.addCompoundTagToQuery = function(query, partialQuery) {
-            this.query.push(buildTagQuery(query, 'compound.tags', partialQuery));
+        this.addCompoundTagToQuery = function(query, queryType) {
+            this.query.push(buildTagQuery(query, 'compound.tags', queryType));
         };
 
         this.addSplashToQuery = function(query) {
@@ -168,8 +214,8 @@
             }
         };
 
-        this.addUserToQuery = function(emailAddress) {
-            this.query.push('submitter.emailAddress=="'+ emailAddress +'"');
+        this.addUserToQuery = function(username) {
+            this.query.push('submitter.emailAddress=="'+ username +'"');
         };
     }
 })();

@@ -13,11 +13,10 @@ import org.scalatest.FunSuite
 class ElasticMetaDataDeserializerTest extends FunSuite {
 
   def getJson(metaData: MetaData): String = {
-
     val serializer = new ElasticMetaDataSerializer
-
     val factory = new JsonFactory()
     val content = new StringWriter()
+
     val generator = factory.createGenerator(content)
     generator.setPrettyPrinter(new DefaultPrettyPrinter())
 
@@ -35,12 +34,9 @@ class ElasticMetaDataDeserializerTest extends FunSuite {
   }
 
   test("testDeserializeString") {
-    val data = MetaData("none", false,  false, "test", null, null, null, "test")
-
+    val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, "test")
     val json = getJson(data)
-
     val deserializer = new ElasticMetaDataDeserializer
-
     val copy = deserializer.deserialize(getParser(json),null)
 
     assert(copy.value.isInstanceOf[String])
@@ -49,12 +45,9 @@ class ElasticMetaDataDeserializerTest extends FunSuite {
   }
 
   test("testDeserializeInt") {
-    val data = MetaData("none", false, false, "test", null, null, null, 123)
-
+    val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, 123)
     val json = getJson(data)
-
     val deserializer = new ElasticMetaDataDeserializer
-
     val copy = deserializer.deserialize(getParser(json),null)
 
     assert(copy.value.isInstanceOf[Int])
@@ -63,17 +56,12 @@ class ElasticMetaDataDeserializerTest extends FunSuite {
   }
 
   test("testDeserializeDouble") {
-    val data = MetaData("none", false, false, "test", null, null, null, 12.21)
-
+    val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, 12.21)
     val json = getJson(data)
-
     val deserializer = new ElasticMetaDataDeserializer
-
     val copy = deserializer.deserialize(getParser(json),null)
 
     assert(copy.value.isInstanceOf[Double])
     assert(copy.value == 12.21)
-
   }
-
 }

@@ -5,9 +5,7 @@
 
             <p>
                 MassBank of North America (MoNA) is a metadata-centric, auto-curating repository designed for efficient storage and querying of mass spectral records.
-
                 It intends to serve as a the framework for a centralized, collaborative database of metabolite mass spectra, metadata and associated compounds.
-
                 MoNA currently contains over 200,000 mass spectral records from experimental and in-silico libraries as well as from user contributions.
             </p>
 
@@ -19,86 +17,79 @@
             <br />
 
             <p style="text-align: center">
-                <a href="/spectra/search" class="btn btn-info btn-lg"><i class="fa fa-search"></i> Search Spectra</a>
-                <a href="/spectra/browse" class="btn btn-info btn-lg"><i class="fa fa-bar-chart"></i> Browse Spectra</a>
+                <a href="spectra/search" class="btn btn-info btn-lg"><i class="fa fa-search"></i> Search Spectra</a>
+                <a href="spectra/browse" class="btn btn-info btn-lg"><i class="fa fa-bar-chart"></i> Browse Spectra</a>
                 <a href="http://bitbucket.org/fiehnlab/mona/issues" class="btn btn-warning btn-lg"><i class="fa fa-exclamation-triangle"></i> Issue Tracker</a>
             </p>
         </div>
-
-        <div class="bor-bot"></div>
-    </div>
-    <br /><br />
-
-    <div class="row">
-        <div class="col-md-12">
-            <uib-carousel interval="7000" no-wrap="noWrapSlides">
-                <uib-slide ng-repeat="slide in slides">
-                    <a ng-href="spectra/display/{{slide.id}}"><img ng-src="{{slide.image}}" style="margin:auto"/></a>
-                </uib-slide>
-            </uib-carousel>
-        </div>
     </div>
 
-    <!--
+    <div class="bor-bot"></div><br />
+
     <div class="row">
         <div class="col-md-6">
-            <h2>News</h2>
-            <table class="table">
-                <tbody>
-                <tr>
-                    <td class="news-cell">
-                        <span class="news-title"><a href="news"><h4>Redesign of Mona website!</h4></a></span>
+            <h3>News</h3>
 
-                        <div class="news-date">November 20, 2015</div>
-                        <div class="content">
-                            We've redesigned the Mona website to be more user friendly,
-                            please enjoy they new layout! We have more features that will be implemented, including
-                            a user's guide and help section.
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="news-cell">
-                        <span class="news-title">
-                            <a href="spectra/querytree">
-                                <h4>New Query Tree feature!</h4>
-                            </a>
-                        </span>
+            <div class="news-cell">
+                <span class="news-title"><h4>Improved Spectrum Browser</h4></span>
+                <div class="news-date">September 8, 2017</div>
+                <div class="content">
+                    The spectrum browser has been updated with improved panel and table views.
+                    The infinite scroll has been replaced with pagination to make browsing spectra easier,
+                    the panel view now displays the most valuable metadata first, and the table view has fully
+                    customizable columns.
+                </div>
+            </div>
+            <hr />
 
-                        <div class="news-date">November 20, 2015</div>
-                        <div class="content">
-                            We have added the query tree functionality, which allows users to quickly search for
-                            or download practical subsets of the MoNA database
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="news-cell">
-                        <span class="news-title">
-                            <a href="https://www.dagstuhl.de/en/program/calendar/semhp/?semnr=15492">
-                                <h4>Computational Metabolomics</h4>
-                            </a>
-                        </span>
+            <div class="news-cell">
+                <span class="news-title"><h4>MSP Exports Updated</h4></span>
+                <div class="news-date">August 31, 2017</div>
+                <div class="content">
+                    The MSP exports on the <a href="downloads">downloads</a> page have been
+                    restructured to include as much metadata as possible while remaining fully compliant with
+                    NIST MS Search format, and is now compatible with
+                    <a href="http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/index.html">MS-DIAL v2.70</a>.
+                </div>
+            </div>
+            <hr />
 
-                        <div class="news-date">November 20, 2015</div>
-                        <div class="content">
-                            Upcoming seminar - The key goal of this Dagstuhl seminar is to foster the exchange of ideas
-                            between the experimental
-                            (analytical chemistry and biology) and computational (computer science and bioinformatics)
-                            communities. <br/>
-                            <time>November 9th - December 4th, 2015</time>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="news-cell">
+                <span class="news-title"><h4>Search Improvements</h4></span>
+                <div class="news-date">July 20, 2017</div>
+                <div class="content">
+                    Full text search has been added in addition to our dynamic RSQL query system.  The quick search
+                    box in the site header will now query the MoNA database by term, making finding spectra by
+                    simple keyword much more efficient.
+                </div>
+            </div>
         </div>
 
         <div class="col-md-6">
-            <h2>Submitter Ratings</h2>
+            <h3>Submitter High Scores</h3>
 
             <div spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</div>
         </div>
     </div>
-    -->
+
+    <div class="bor-bot"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Top Rated Spectral Records</h3>
+            <br />
+
+            <uib-carousel interval="7000">
+                <uib-slide ng-repeat="spectrum in showcaseSpectra">
+                    <div class="text-left" display-spectra-panel spectrum="spectrum"></div>
+                </uib-slide>
+
+                <uib-slide ng-if="showcaseSpectra.length === 0">
+                    <div class="text-center">
+                        <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
+                    </div>
+                </uib-slide>
+            </uib-carousel>
+        </div>
+    </div>
 </div>

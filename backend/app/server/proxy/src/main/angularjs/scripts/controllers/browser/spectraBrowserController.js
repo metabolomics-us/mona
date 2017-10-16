@@ -6,14 +6,12 @@
 
 (function() {
     'use strict';
-    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', '$timeout', '$log', 'MAX_SPECTRA', 'toaster', 'Analytics'];
+    SpectraBrowserController.$inject = ['$scope', 'Spectrum', 'SpectraQueryBuilderService', '$location', 'SpectrumCache', 'MetadataService', 'CookieService', '$timeout', '$log', 'toaster', 'Analytics'];
     angular.module('moaClientApp')
       .controller('SpectraBrowserController', SpectraBrowserController);
 
     /* @ngInject */
-    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, $timeout, $log, MAX_SPECTRA, toaster, Analytics) {
-
-        $scope.table = false;
+    function SpectraBrowserController($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, MetadataService, CookieService, $timeout, $log, toaster, Analytics) {
 
         /**
          * contains all local objects and is our model
@@ -24,45 +22,45 @@
         /**
          * loads more spectra into the given view
          */
-        var page = 0;
+        $scope.pagination = {
+            loading: true,
 
-        /**
-         * Executed query
-         * @type {string}
-         */
-        $scope.query = '';
+            // Pagination parameters
+            currentPage: 1,
+            itemsPerPage: 10,
+            maxSize: 10,
+            totalSize: -1,
 
-        /**
-         * load more spectra
-         */
-        $scope.spectraLoadLength = -1;
+            // Page size parameters
+            itemsPerPageSelection: '10',
+            itemsPerPageOptions: [10, 25, 50],
 
-        /**
-         * loads more spectra into the view using our query object
-         */
-        $scope.loadingMore = false;
-
-        /**
-         * Tells whether we are have loaded all available data
-         */
-        $scope.dataAvailable = true;
-
-        /**
-         * how many results are loaded
-         * @type {number}
-         */
-        $scope.queryResultCount = 0;
-
+            // Table view parameters
+            table: false,
+            tableColumnOptions: ["ID", "Name", "Structure", "Mass Spectrum", "Accurate Mass"],
+            tableColumnSelected: ["ID", "Name", "Structure", "Mass Spectrum", "Accurate Mass"]
+        };
+        
 
         /**
          * Handle search splash
          */
-        $scope.searchSplash = false;
+        $scope.searchSplash = true;
 
         var hideSplash = function() {
             $timeout(function () {
                 $scope.searchSplash = false;
             }, 50)
+        };
+
+
+        /**
+         * Query dropdown and editor
+         */
+        $scope.editQuery = false;
+
+        $scope.updateQuery = function(query) {
+            $location.search('query', query);
         };
 
 
@@ -85,41 +83,48 @@
          * Submits our query to the server
          */
         $scope.submitQuery = function() {
-            $scope.dataAvailable = true;
-
-            // Reset spectra
-            $scope.spectraLoadLength = -1;
-            $scope.spectra = [];
-
             $scope.calculateResultCount();
+            $scope.loadSpectra();
+        };
 
-            // Load our data
-            $scope.loadMoreSpectra();
+        /**
+         * Submits similarity query to the server
+         */
+        $scope.submitSimilarityQuery = function() {
+            $scope.startTime = Date.now();
+
+            Spectrum.searchSimilarSpectra(
+                SpectraQueryBuilderService.getSimilarityQuery(),
+                function(data) {
+                    searchSuccess(data);
+                    $scope.pagination.itemsPerPage = data.length;
+                    $scope.pagination.totalSize = data.length;
+                },
+                searchError
+            );
         };
 
         /**
          * Calculates the number of results for the given query
          */
         $scope.calculateResultCount = function() {
-            $scope.queryResultCount = "Loading...";
-
             Spectrum.searchSpectraCount({
                 endpoint: 'count',
-                query: $scope.query
+                query: $scope.query,
+                text: $scope.textQuery
             }, function (data) {
-                $scope.queryResultCount = data.count;
+                $scope.pagination.totalSize = data.count;
             });
         };
 
         /**
-         * @Deprecated
-         * displays the spectrum for the given index
+         * returns the display url for the spectrum for the given index
          * @param id
          * @param index
          */
         $scope.viewSpectrum = function(id, index) {
-            SpectrumCache.setBrowserSpectra($scope.spectra);
-            SpectrumCache.setSpectrum($scope.spectra[index]);
+            // SpectrumCache.setBrowserSpectra($scope.spectra);
+            // SpectrumCache.setSpectrum($scope.spectra[index]);
 
             return '/spectra/display/' + id;
         };
@@ -128,75 +133,95 @@
         /**
          * Get total exact mass as accurate mass of spectrum
          */
-        $scope.addAccurateMass = function(spectra) {
+        var addMetadataMap = function(spectra) {
             for (var i = 0; i < spectra.length; i++) {
-                var mass = '';
-                var spectrum = spectra[i];
+                var metaDataMap = {};
 
-                if (angular.isDefined(spectrum.compound)) {
-                    for (var j = 0, m = spectrum.compound.length; j < m; j++) {
-                        var compound = spectrum.compound[j];
-
-                        for(var k = 0, n = compound.metaData.length; k < n; k++) {
-                            var meta = compound.metaData[k];
-                            if(meta.name === 'total exact mass') {
-                                mass = parseFloat(meta.value).toFixed(3);
-                                break;
+                if (angular.isDefined(spectra[i].compound)) {
+                    for (var j = 0; j < spectra[i].compound.length; j++) {
+                        spectra[i].compound[j].metaData.forEach(function(metaData) {
+                            if(metaData.name === 'total exact mass') {
+                                metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
+                            } else {
+                                metaDataMap[metaData.name] = metaData.value;
                             }
-                        }
 
-                        if(compound.kind === 'biological') {
+                            if (metaData.unit) {
+                                metaDataMap[metaData.name] += ' '+ metaData.unit;
+                            }
+                        });
+
+                        if(spectra[i].compound.kind === 'biological')
                             break;
-                        }
                     }
                 }
-                spectrum.accurateMass = mass;
+
+                spectra[i].metaData.forEach(function(metaData) {
+                    if (metaData.name == 'mass accuracy' || metaData.name == "mass error") {
+                        metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
+                    } else {
+                        metaDataMap[metaData.name] = metaData.value;
+                    }
+
+                    if (metaData.unit) {
+                        metaDataMap[metaData.name] += ' '+ metaData.unit;
+                    }
+                });
+
+                spectra[i].metaDataMap = metaDataMap;
             }
 
-            return spectra;
+            return spectra
         };
 
-        $scope.loadMoreSpectra = function() {
-            if (!$scope.loadingMore && $scope.spectraLoadLength !== $scope.spectra.length && $scope.dataAvailable) {
-                //search utilizing our compiled query so that it can be easily refined over time
-                $scope.loadingMore = true;
-                $scope.spectraLoadLength = $scope.spectra.length;
 
-                // Note the start time for timing the spectrum search
-                $scope.startTime = Date.now();
+        /**
+         * Execute query
+         */
+        $scope.loadPage = function() {
+            $location.search('page', $scope.pagination.currentPage);
+        };
 
-                $log.debug('Submitted query: '+ $scope.query);
+        $scope.loadSpectra = function() {
+            //search utilizing our compiled query so that it can be easily refined over time
+            $scope.pagination.loading = true;
+            $scope.spectra = [];
 
-                // Log query with google analytics
-                Analytics.trackEvent('query', 'execute', $scope.query, page);
+            $(window).scrollTop(0);
 
-                if ($scope.query === '') {
-                    Spectrum.searchSpectra({size: MAX_SPECTRA, page: page}, searchSuccess, searchError);
-                } else {
-                    Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, page: page, size: MAX_SPECTRA}, searchSuccess, searchError);
-                }
+            // Note the start time for timing the spectrum search
+            $scope.startTime = Date.now();
+
+            var currentPage = $scope.pagination.currentPage - 1;
+
+            $log.debug('Submitted query (page '+ currentPage +'): '+ $scope.query);
+
+            // Log query with google analytics
+            Analytics.trackEvent('query', 'execute', $scope.query, currentPage);
+
+            if ($scope.query === undefined && $scope.textQuery === undefined) {
+                Spectrum.searchSpectra({size: $scope.pagination.itemsPerPage, page: currentPage}, searchSuccess, searchError);
+            } else {
+                Spectrum.searchSpectra({endpoint: 'search', query: $scope.query, text: $scope.textQuery, page: currentPage, size: $scope.pagination.itemsPerPage}, searchSuccess, searchError);
             }
         };
 
         function searchSuccess(data) {
             $scope.duration = (Date.now() - $scope.startTime) / 1000;
 
-            if (data.length === 0) {
-                $scope.dataAvailable = false;
-            } else {
+            if (data.length > 0) {
                 // Add data to spectra object
-                $scope.spectra.push.apply($scope.spectra, $scope.addAccurateMass(data));
+                $scope.spectra = addMetadataMap(data);
             }
 
             hideSplash();
-            $scope.loadingMore = false;
-            page += 1;
+            $scope.pagination.loading = false;
         }
 
         function searchError(error) {
             hideSplash();
-            $scope.loadingMore = false;
-            
+            $scope.pagination.loading = false;
+
             toaster.pop({
                 type: 'error',
                 title: 'Unable to complete request',
@@ -204,48 +229,148 @@
             });
         }
 
-        $scope.$on('$viewContentLoaded', function() {
-            $timeout(function() {
-                $(window).scrollTop($scope.spectraScrollStartLocation);
-            }, 1);
-        });
+
+
+        var setPageSize = function(pageSize) {
+            var size = parseInt(pageSize);
+
+            if (!Number.isNaN(size)) {
+                $log.debug('Setting current page size to '+ $location.search().size);
+                $scope.pagination.itemsPerPage = size;
+                $scope.pagination.itemsPerPageSelection = size.toString();
+
+                if ($scope.pagination.itemsPerPageOptions.indexOf(size) == -1) {
+                    $scope.pagination.itemsPerPageOptions.push(size);
+                    $scope.pagination.itemsPerPageOptions.sort(function(a, b) {
+                        return parseInt(a) - parseInt(b);
+                    });
+                }
+
+                CookieService.update('spectraBrowser-pagination-itemsPerPage', $scope.pagination.itemsPerPageSelection);
+            }
+        };
+
+        var setAndWatchPaginationOptions = function() {
+            // Load cookies
+            var itemsPerPage = CookieService.get('spectraBrowser-pagination-itemsPerPage');
+            var tableView = CookieService.getBooleanValue('spectraBrowser-pagination-table', false);
+            var tableColumnsSelected = CookieService.get('spectraBrowser-pagination-tableColumnsSelected');
+
+            if (tableView) {
+                $scope.pagination.table = tableView;
+            }
+
+            if (angular.isDefined(tableColumnsSelected)) {
+                $scope.pagination.tableColumnSelected = JSON.parse(tableColumnsSelected);
+            }
+
+
+            // Watch pagination options
+            $scope.$watch('pagination.itemsPerPageSelection', function () {
+                var size = parseInt($scope.pagination.itemsPerPageSelection);
+
+                if (!Number.isNaN(size)) {
+                    $log.info('Updating search to use page size to '+ size);
+                    $location.search('size', size);
+                }
+            });
+            
+            $scope.$watch('pagination.table', function () {
+                CookieService.update('spectraBrowser-pagination-table', $scope.pagination.table.toString());
+            });
+
+            $scope.$watch('pagination.tableColumnSelected', function () {
+                CookieService.update('spectraBrowser-pagination-tableColumnsSelected', JSON.stringify($scope.pagination.tableColumnSelected));
+            });
+        };
 
 
         (function() {
-            $scope.spectraScrollStartLocation = 0;
-            $scope.spectra = [];
+            // Get unique metadata values for dropdown
+            MetadataService.metaDataNames({},
+                function (data) {
+                    data.sort(function(a, b) {
+                        return parseInt(b.count) - parseInt(a.count);
+                    }).filter(function(x) {
+                        return x.name !== 'Last Auto-Curation';
+                    }).map(function(x) {
+                        $scope.pagination.tableColumnOptions.push(x.name);
+                    })
+                }
+            );
 
-            // Display splash overlay
-            $scope.searchSplash = true;
+            // Handle similarity search
+            if ($location.path() === '/spectra/similaritySearch') {
+                $log.debug('Executing similarity search...');
+                $scope.pagination.loading = true;
 
-            // Handle InChIKey queries
-            if($location.search().hasOwnProperty('inchikey')) {
-                $log.debug('Accepting InChIKey query from URL: '+ $location.search().inchikey);
-
-                if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($location.search().inchikey)) {
-                    SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey);
+                if (SpectraQueryBuilderService.hasSimilarityQuery()) {
+                    $scope.submitSimilarityQuery();
                 } else {
-                    SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey, true);
+                    $location.path('/spectra/search').search({type: 'similarity'});
+                }
+            }
+
+            // Handle all other queries
+            else {
+                $log.debug('Executing spectrum query...');
+
+                // Handle InChIKey queries
+                if ($location.search().hasOwnProperty('inchikey')) {
+                    $log.info('Accepting InChIKey query from URL: ' + $location.search().inchikey);
+
+                    if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test($location.search().inchikey)) {
+                        SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey);
+                    } else {
+                        SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey, true);
+                    }
+
+                    SpectraQueryBuilderService.executeQuery();
                 }
 
-                SpectraQueryBuilderService.executeQuery();
+                // Handle SPLASH queries
+                if ($location.search().hasOwnProperty('splash')) {
+                    $log.info('Accepting SPLASH query from URL: ' + $location.search().splash);
+
+                    SpectraQueryBuilderService.addSplashToQuery($location.search().splash);
+                    SpectraQueryBuilderService.executeQuery();
+                }
+                
+                // Handle general queries
+                if ($location.search().hasOwnProperty('query') || $location.search().hasOwnProperty('text')) {
+                    $log.info('Accepting RSQL query from URL: "' + $location.search().query + '", and text search: "'+ $location.search().text + '"');
+
+                    $scope.query = $location.search().query;
+                    $scope.textQuery = $location.search().text;
+                }
+
+                // Handle page number
+                if ($location.search().hasOwnProperty('page')) {
+                    var page = parseInt($location.search().page);
+
+                    if (!Number.isNaN(page)) {
+                        $log.debug('Setting current page to '+ $location.search().page);
+                        $scope.pagination.currentPage = page;
+                    }
+                }
+
+                // Handle page size
+                if ($location.search().hasOwnProperty('size')) {
+                    setPageSize($location.search().size);
+                } else {
+                    var itemsPerPage = CookieService.get('spectraBrowser-pagination-itemsPerPage');
+
+                    if (angular.isDefined(itemsPerPage) && itemsPerPage !== $scope.pagination.itemsPerPage) {
+                        setPageSize(itemsPerPage);
+                    }
+                }
+
+                $scope.submitQuery();
             }
 
-            // Handle SPLASH queries
-            if($location.search().hasOwnProperty('splash')) {
-                $log.debug('Accepting SPLASH query from URL: '+ $location.search().splash);
 
-                SpectraQueryBuilderService.addSplashToQuery($location.search().splash);
-                SpectraQueryBuilderService.executeQuery();
-            }
-
-            // Handle general queries
-            if($location.search().hasOwnProperty('query')) {
-                $log.debug('Accepting query from URL: '+ $location.search().query);
-                $scope.query = $location.search().query;
-            }
-
-            $scope.submitQuery();
+            // Watch for changing in pagination options
+            setAndWatchPaginationOptions();
         })();
     }
 })();

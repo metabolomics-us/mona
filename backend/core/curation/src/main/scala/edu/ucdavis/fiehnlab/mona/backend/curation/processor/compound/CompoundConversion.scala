@@ -3,19 +3,20 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 import java.io.{StringReader, StringWriter}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData}
 import net.sf.jniinchi.INCHI_RET
-import org.openscience.cdk.exception.{CDKException, InvalidSmilesException}
+import org.openscience.cdk.exception.InvalidSmilesException
 import org.openscience.cdk.graph.ConnectivityChecker
 import org.openscience.cdk.inchi.{InChIGeneratorFactory, InChIToStructure}
 import org.openscience.cdk.interfaces.{IAtomContainer, IAtomContainerSet}
-import org.openscience.cdk.io.{MDLReader, MDLV2000Writer}
+import org.openscience.cdk.io.{MDLV2000Reader, MDLV2000Writer}
 import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.smiles.{SmilesGenerator, SmilesParser}
 import org.openscience.cdk.tools.CDKHydrogenAdder
 import org.openscience.cdk.tools.manipulator.{AtomContainerManipulator, MolecularFormulaManipulator}
 import org.openscience.cdk.{AtomContainer, DefaultChemObjectBuilder}
-import org.springframework.stereotype.{Component, Service}
+import org.springframework.stereotype.Service
+
+import scala.collection.JavaConverters._
 
 /**
   * Created by sajjan on 8/31/16.
@@ -100,13 +101,15 @@ class CompoundConversion extends LazyLogging {
     logger.debug(s"Receive MOL data: $molString")
 
     // Read MOL data
-    val reader = new MDLReader(new StringReader(molString))
+    val reader = new MDLV2000Reader(new StringReader(molString))
     val molecule: IAtomContainer = reader.read(new AtomContainer())
 
     // Add explicit hydrogens
-    AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
-    CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
-    AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
+    if (molecule != null) {
+      AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
+      CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
+      AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
+    }
 
     molecule
   }
@@ -120,20 +123,37 @@ class CompoundConversion extends LazyLogging {
     val stringWriter: StringWriter = new StringWriter()
     val mdlWriter: MDLV2000Writer = new MDLV2000Writer(stringWriter)
 
+    AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
+
+    // Check connectivity
     val molSet: IAtomContainerSet = ConnectivityChecker.partitionIntoMolecules(molecule)
 
-    if (molSet.getAtomContainerCount > 1) {
-      logger.warn("Generating MOL definition of disconnected molecules")
+    if (molSet.getAtomContainerCount == 1) {
+      val structureDiagramGenerator: StructureDiagramGenerator = new StructureDiagramGenerator()
+      structureDiagramGenerator.setMolecule(molecule, true)
+      structureDiagramGenerator.generateCoordinates()
+      
+      mdlWriter.writeMolecule(structureDiagramGenerator.getMolecule)
     }
 
-    // Generate 2D structure
-    // TODO Handle disconnected structures
-    val structureDiagramGenerator: StructureDiagramGenerator = new StructureDiagramGenerator(molecule)
-    structureDiagramGenerator.generateCoordinates()
+    else {
+      // TODO Improve handling disconnected structures
+      logger.warn("Generating MOL definition of disconnected molecules")
 
-    mdlWriter.writeMolecule(structureDiagramGenerator.getMolecule)
+      val result: IAtomContainer = new AtomContainer
+
+      molSet.atomContainers().asScala.foreach { x =>
+        val structureDiagramGenerator: StructureDiagramGenerator = new StructureDiagramGenerator()
+        structureDiagramGenerator.setMolecule(x, true)
+        structureDiagramGenerator.generateCoordinates()
+        
+        result.add(structureDiagramGenerator.getMolecule)
+      }
+
+      mdlWriter.writeMolecule(result)
+    }
+
     mdlWriter.close()
-
     stringWriter.toString
   }
 

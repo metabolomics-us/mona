@@ -12,13 +12,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
-import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.validation.annotation.Validated
+import org.springframework.scheduling.annotation.AsyncResult
 import org.springframework.web.bind.annotation._
-
-import scala.collection.JavaConverters
-import JavaConverters._
 
 /**
   * Created by wohlgemuth on 4/4/16.
@@ -38,41 +33,43 @@ class UserController extends GenericRESTController[User] {
   val loginService: LoginService = null
 
   /**
-    * saves a spectra or updates it. This will depend on the utilized repository
+    * Saves a user or updates it
     *
     * @param user
     * @return
     */
-  @Async
-  @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
-  @ResponseBody
-  override def save(@RequestBody user: User): AsyncResult[User] = {
-    super.save(user.copy(roles = Collections.emptyList()))
+  override def doSave(user: User): Future[ResponseEntity[User]] = {
+    // Users cannot update existing accounts
+    val existingUser: User = userRepository.findOne(user.username)
+
+    if (existingUser == null) {
+      super.doSave(user.copy(roles = Collections.emptyList()))
+    } else {
+      new AsyncResult[ResponseEntity[User]](new ResponseEntity[User](HttpStatus.CONFLICT))
+    }
   }
 
   /**
-    * saves the provided user at the given path
+    * Saves the provided user at the given path
     *
     * @param id
     * @param user
     * @return
     */
-  @Async
-  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
-  @ResponseBody
-  override def put(@PathVariable("id") id: String, @Validated @RequestBody user: User): Future[ResponseEntity[User]] = {
+  override def doPut(id: String, user: User): Future[ResponseEntity[User]] = {
+
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
     if (loginInfo.roles.contains("ADMIN")) {
       // Admins can update any user
-      super.put(id, user)
+      super.doPut(id, user)
     } else {
       // Users can only update their own accounts
       val existingUser: User = userRepository.findOne(id)
 
       if (loginInfo.username == existingUser.username) {
-        super.put(id, user.copy(roles = Collections.emptyList()))
+        super.doPut(id, user.copy(roles = Collections.emptyList()))
       } else {
         new AsyncResult[ResponseEntity[User]](new ResponseEntity[User](HttpStatus.FORBIDDEN))
       }

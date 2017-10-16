@@ -11,35 +11,30 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 @Inherited
-public @interface Step{
+public @interface Step {
 
     /**
      * defines the previous for this step, or is empty if there is no previous
-     *
-     * @return
      */
     String previous() default "None";
 
     /**
      * an unique name over all steps
-     * @return
      */
     String name() default "None";
 
     /**
      * a simple description was this step does
-     * @return
      */
     String description() default "";
+
     /**
      * optional class value for the step, if you don't want to use names.
-     * @return
      */
     Class previousClass() default Void.class;
 
     /**
      * which workflow does this step belong to
-     * @return
      */
     String workflow() default "default";
 }

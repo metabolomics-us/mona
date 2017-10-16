@@ -20,7 +20,8 @@ case class WebHook(
                     @(Id@field)
                     name: String,
                     url: String,
-                    description: String = "None provided"
+                    description: String = "None provided",
+                    username: String
                   )
 
 /**

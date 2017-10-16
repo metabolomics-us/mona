@@ -53,7 +53,7 @@ trait RSQLRepositoryCustom[T, Q] {
 
 
   /**
-    * executes the given query and returns it's count
+    * executes the given query and returns its count
     *
     * @param query
     * @return
@@ -69,7 +69,7 @@ trait RSQLRepositoryCustom[T, Q] {
   def buildRSQLQuery(query: String): Q
 
   /**
-    * saves our updaes a given element
+    * saves our updates a given element
     * implementation can be slow but should not cause
     * duplicated saves
     *
@@ -77,4 +77,72 @@ trait RSQLRepositoryCustom[T, Q] {
     * @return
     */
   def saveOrUpdate(value: T): Unit
+
+  /**
+    * executes a full text query
+    * @param query
+    * @return
+    */
+  def fullTextQuery(query: String): util.List[T] = nativeQuery(buildFullTextQuery(query))
+
+  /**
+    * executes a full text query
+    * @param query
+    * @return
+    */
+  def fullTextQuery(query: String, pageable: Pageable): Page[T] = nativeQuery(buildFullTextQuery(query), pageable)
+
+
+  /**
+    * executes the given full text query and returns its count
+    *
+    * @param query
+    * @return
+    */
+  def fullTextQueryCount(query: String): Long = nativeQueryCount(buildFullTextQuery(query))
+
+  /**
+    * converts the text query to a Query Object
+    *
+    * @param query
+    * @return
+    */
+  def buildFullTextQuery(query: String): Q
+
+  /**
+    * build a combined RSQL + full text query
+    * @param rsqlQueryString
+    * @param textQueryString
+    * @return
+    */
+  def buildQuery(rsqlQueryString: String, textQueryString: String): Q
+
+  /**
+    * executes an combined RSQL + text query
+    *
+    * @param rsqlQuery
+    * @param textQuery
+    * @return
+    */
+  def query(rsqlQuery: String, textQuery: String): java.util.List[T] = nativeQuery(buildQuery(rsqlQuery, textQuery))
+
+
+  /**
+    * executes an combined RSQL + text query
+    *
+    * @param rsqlQuery
+    * @param textQuery
+    * @return
+    */
+  def query(rsqlQuery: String, textQuery: String, pageable: Pageable): Page[T] = nativeQuery(buildQuery(rsqlQuery, textQuery), pageable)
+
+
+  /**
+    * executes the given RSQL + text query and returns its count
+    *
+    * @param rsqlQuery
+    * @param textQuery
+    * @return
+    */
+  def queryCount(rsqlQuery: String, textQuery: String): Long = nativeQueryCount(buildQuery(rsqlQuery, textQuery))
 }

@@ -4,7 +4,6 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Names, Compound, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier.Classifier
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired

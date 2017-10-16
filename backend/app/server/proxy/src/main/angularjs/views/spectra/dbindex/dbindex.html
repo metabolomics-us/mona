@@ -1,12 +1,12 @@
 <div class="row">
-    <div class="col-md-12" id="search-box">
+    <div class="col-md-12">
         <h3><i class="fa fa-database"></i> Database Index &amp; Statistics</h3>
 
         <uib-tabset active="activeJustified">
-            <uib-tab index="0" select="selectTab(0)">
+            <uib-tab index="0" select="selectTab(0)" active="activeTab[0]">
                 <uib-tab-heading class="search-heading">Database Content</uib-tab-heading>
 
-                <h5><b>Database Information:</b></h5>
+                <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
 
                 <table class="table">
                     <tbody>
@@ -42,7 +42,7 @@
                 </table>
             </uib-tab>
 
-            <uib-tab index="1" select="selectTab(1)">
+            <uib-tab index="1" select="selectTab(1)" active="activeTab[1]">
                 <uib-tab-heading class="search-heading">MetaData</uib-tab-heading>
 
                 <div class="h5">
@@ -50,6 +50,7 @@
                     Clicking on the elements in the legend will show/hide chart sections, and clicking on a section in
                     the pie chart will execute a query for the selected value.
                 </div>
+                <br />
 
                 <div>
                     <select data-ng-options="f.title for f in metadataFields"
@@ -65,20 +66,52 @@
                       api="api.metadataChart"></nvd3>
             </uib-tab>
 
-            <uib-tab index="2" select="selectTab(2)">
+            <uib-tab index="2" select="selectTab(2)" active="activeTab[2]">
                 <uib-tab-heading class="search-heading">Compound Classes</uib-tab-heading>
 
                 <div class="h5">
                     This sunburst chart displays the breakdown of compound classifications, which were obtained using
-                    <a href="http://classyfire.wishartlab.com/">ClassyFire</a>.  Clicking on a partition will zoom into it
-                    and display a finer-grained view of its child partitions.  Clicking on the center circle will zoom out
-                    to the parent partition.
+                    <a href="http://classyfire.wishartlab.com/">ClassyFire</a> by Wishart Lab.  Clicking on a partition
+                    will zoom into it and display a finer-grained view of its child partitions.  Clicking on the center
+                    circle will zoom out to the parent partition.
+                </div>
+
+                <div class="btn-group">
+                    <label class="btn btn-primary" ng-model="sunburstDataMode" uib-btn-radio="'spectrum'" ng-click="changeSunburstDataMode('spectrum')">Spectrum Count</label>
+                    <label class="btn btn-primary" ng-model="sunburstDataMode" uib-btn-radio="'compound'" ng-click="changeSunburstDataMode('compound')">Compound Count</label>
                 </div>
 
                 <nvd3 options="sunburstOptions"
-                      data="compoundClassData"
+                      data="activeCompoundClassData"
                       class="with-3d-shadow with-transitions"
                       api="api.compoundClassChart"></nvd3>
+
+                <br />
+
+                <h3>
+                    Sub-Classifications <br />
+                    <small>Please click on the sunburst to refine your queries</small>
+                </h3>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th style="width: 35%;"><a href data-ng-click="tableDataSort('name')">Classification</a></th>
+                        <th style="width: 25%;"><a href data-ng-click="tableDataSort('spectra')">Spectra</a></th>
+                        <th style="width: 25%;"><a href data-ng-click="tableDataSort('compounds')">Compounds</a></th>
+                        <th style="width: 15%;">&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr data-ng-repeat="node in activeTableData | orderBy: tableSort | limitTo: 10:10*(tableDataPage-1)">
+                        <td>{{node.name}}</td>
+                        <td>{{node.spectra | number:0}}</td>
+                        <td>{{node.compounds | number:0}}</td>
+                        <td><button class="btn btn-primary" data-ng-click="tableDataExecuteQuery(node)"><i class="fa fa-search"></i> Query</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <ul uib-pagination total-items="activeTableData.length" ng-model="tableDataPage" max-size="5" class="pagination-sm" boundary-links="true" num-pages="numPages"></ul>
             </uib-tab>
         </uib-tabset>
     </div>

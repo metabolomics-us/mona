@@ -7,19 +7,16 @@
 
     submitterFormController.$inject = ['$scope'];
     angular.module('moaClientApp')
-      .directive('submitterForm', submitterForm);
+        .directive('submitterForm', submitterForm);
 
     function submitterForm() {
-        var directive = {
+        return {
             restrict: "A",
             replace: true,
             templateUrl: '/views/submitters/template/createUpdateForm.html',
             controller: submitterFormController
         };
-
-        return directive;
     }
-
 
     /* @ngInject */
     function submitterFormController($scope) {

@@ -13,150 +13,153 @@ import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpHeaders, HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation._
 
 import scala.collection.JavaConverters._
 
 /**
-  * This is the main spectrum related REST controller and should be utilized for most operations
+  * This is the main abstract REST controller and should be utilized for most operations
   * interacting with the system.
   *
-  * It allows you to perform the standard operations, you would like todo on a spectrum
-  *
+  * It allows you to perform the standard operations you would like to do on any resource
   */
 abstract class GenericRESTController[T] {
 
-  var fetchSize:Int=50
+  var fetchSize: Int = 50
 
-    /**
-    * utilized repository
+  /**
+    * Utilized repository
     *
     * @return
     */
   def getRepository: PagingAndSortingRepository[T, String]
 
+
   /**
-    * this will return all the specified data in the system
-    * please be aware that this can cause out of memory issues
-    * and should be always utilized with pagination
+    * Returns all the specified data in the system.  Should be utilized with pagination to avoid
+    * out of memory issues
     *
     * @return
     */
-
-  @RequestMapping(path = Array(""), method = Array(RequestMethod.GET),produces = Array("application/json","text/msp"))
+  @RequestMapping(path = Array(""), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp"))
   @Async
   @ResponseBody
-  def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[ResponseEntity[Iterable[T]]] = {
+  final def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[ResponseEntity[Iterable[T]]] = {
+    doList(page, size)
+  }
 
+  def doList(page: Integer, size: Integer): Future[ResponseEntity[Iterable[T]]] = {
     val data: Iterable[T] = {
       if (size != null) {
         if (page != null) {
-          getRepository.findAll(new PageRequest(page, size,Sort.Direction.ASC,"id")).getContent.asScala
+          getRepository.findAll(new PageRequest(page, size, Sort.Direction.ASC, "id")).getContent.asScala
+        } else {
+          getRepository.findAll(new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
         }
-        else {
-          getRepository.findAll(new PageRequest(0, size,Sort.Direction.ASC,"id")).getContent.asScala
-        }
-      }
-      else {
-        new DynamicIterable[T,String]("",fetchSize) {
-          /**
-            * loads more data from the server for the given query
-            */
+      } else {
+        new DynamicIterable[T, String]("", fetchSize) {
+          // loads more data from the server for the given query
           override def fetchMoreData(query: String, pageable: Pageable): Page[T] = getRepository.findAll(pageable)
         }.asScala
       }
     }
 
     val headers = new HttpHeaders()
-  //  headers.add("Content-Type",servletRequest.getContentType)
-
-    val entity = new ResponseEntity(data, headers,HttpStatus.OK)
+    // headers.add("Content-Type", servletRequest.getContentType)
 
     new AsyncResult[ResponseEntity[Iterable[T]]](
-      entity
+      new ResponseEntity(data, headers, HttpStatus.OK)
     )
   }
 
 
   /**
-    * this method returns the complete count of spectra in the system
+    * Returns the complete count of resources in the system
     *
     * @return
     */
   @RequestMapping(path = Array("/count"), method = Array(RequestMethod.GET))
   @Async
   @ResponseBody
-  def searchCount: Future[Long] = {
+  final def searchCount: Future[Long] = {
     new AsyncResult[Long](getRepository.count())
   }
 
 
   /**
-    * saves a spectra or updates it. This will depend on the utilized repository
+    * Saves a resource or updates it
     *
-    * @param spectrum
+    * @param resource
     * @return
     */
   @Async
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   @ResponseBody
-  def save(@RequestBody @Valid spectrum: T) = new AsyncResult[T](
-    getRepository.save(spectrum)
-  )
+  final def save(@Valid @RequestBody resource: T): Future[ResponseEntity[T]] = doSave(resource)
+
+  def doSave(resource: T): Future[ResponseEntity[T]] = {
+    new AsyncResult[ResponseEntity[T]](
+      new ResponseEntity[T](getRepository.save(resource), HttpStatus.OK)
+    )
+  }
+
 
   /**
-    * looks for the exact spectra
+    * Returns the specified resource
     *
-    * @param spectrum
+    * @param id
     * @return
     */
   @Async
-  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET),produces = Array("application/json","text/msp"))
+  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp"))
   @ResponseBody
-  def get(@PathVariable("id") spectrum: String,servletRequest: ServletRequest,servletResponse: ServletResponse): Future[ResponseEntity[T]] = {
+  final def get(@PathVariable("id") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[T]] = {
+    doGet(id, servletRequest, servletResponse)
+  }
+
+  def doGet(id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[T]] = {
     val headers = new HttpHeaders()
-  //  headers.add("Content-Type",servletRequest.getContentType)
+    // headers.add("Content-Type", servletRequest.getContentType)
 
-    if (getRepository.exists(spectrum)) {
-      new AsyncResult[ResponseEntity[T]](
-        new ResponseEntity[T](getRepository.findOne(spectrum),headers, HttpStatus.OK)
-
-      )
-    }
-    else {
-      new AsyncResult[ResponseEntity[T]](
-        new ResponseEntity[T](HttpStatus.NOT_FOUND)
-      )
+    if (getRepository.exists(id)) {
+      new AsyncResult[ResponseEntity[T]](new ResponseEntity[T](getRepository.findOne(id), headers, HttpStatus.OK))
+    } else {
+      new AsyncResult[ResponseEntity[T]](new ResponseEntity[T](HttpStatus.NOT_FOUND))
     }
   }
 
 
   /**
-    * this methods removes the specified method from the system
+    * Removes the specified resource from the system
     *
-    * @param spectrum
+    * @param id
     * @return
     */
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.DELETE))
   @ResponseBody
-  def delete(@PathVariable("id") spectrum: String) = getRepository.delete(spectrum)
+  final def delete(@PathVariable("id") id: String): Unit = doDelete(id)
+
+  def doDelete(id: String): Unit = getRepository.delete(id)
 
 
   /**
-    * saves the provided spectrum at the given path
+    * Saves the provided resource at the given path
     *
     * @param id
-    * @param spectrum
+    * @param resource
     * @return
     */
   @Async
   @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.PUT))
   @ResponseBody
-  def put(@PathVariable("id") id: String, @Valid @RequestBody spectrum: T): Future[ResponseEntity[T]] = {
+  final def put(@PathVariable("id") id: String, @Valid @RequestBody resource: T): Future[ResponseEntity[T]] = {
+    doPut(id, resource)
+  }
+
+  def doPut(id: String, resource: T): Future[ResponseEntity[T]] = {
     new AsyncResult[ResponseEntity[T]](
-      new ResponseEntity(getRepository.save(spectrum), HttpStatus.OK)
+      new ResponseEntity(getRepository.save(resource), HttpStatus.OK)
     )
   }
 }

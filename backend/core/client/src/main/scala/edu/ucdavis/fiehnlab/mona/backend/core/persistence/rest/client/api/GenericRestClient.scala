@@ -95,7 +95,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @return
     */
   def update(dao: T, id: ID): T = {
-    restOperations.exchange(s"$requestPath/${id}", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
+    restOperations.exchange(s"$requestPath/$id", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
     get(id)
   }
 
@@ -126,34 +126,32 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
       /**
         * required for the pagination
         */
-      val internalCount = count(query)
+      val internalCount: Long = count(query)
 
-      logger.info(s"total count of data to receive: ${internalCount}")
+      logger.info(s"total count of data to receive: $internalCount")
       /**
         * loads more data from the server for the given query
         */
       override def fetchMoreData(query: Option[String], pageable: Pageable): Page[T] = {
 
-        var path: String = s"${requestPath}"
+        var path: String = s"$requestPath"
 
         query match {
           case Some(x) =>
-            path = s"${path}/search?size=${pageable.getPageSize}&page=${pageable.getPageNumber}&query=${x}"
+            path = s"$path/search?size=${pageable.getPageSize}&page=${pageable.getPageNumber}&query=$x"
           case _ =>
-            path = s"${path}?size=${pageable.getPageSize}&page=${pageable.getPageNumber}"
+            path = s"$path?size=${pageable.getPageSize}&page=${pageable.getPageNumber}"
         }
 
-        logger.info(s"calling path: ${path}")
+        logger.info(s"calling path: $path")
         val result = restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
 
-
-        logger.info(s"received: ${result.size}, page: ${pageable.getPageNumber} size: ${pageable.getPageSize}")
-        result.foreach{s => logger.info(s"\tspectra: ${s}")}
+        logger.info(s"received: ${result.length}, page: ${pageable.getPageNumber} size: ${pageable.getPageSize}")
+        result.foreach{s => logger.info(s"\tspectra: $s")}
 
         new PageImpl[T](result.toList.asJava, pageable, internalCount)
       }
     }.asScala
-
   }
 
   /**
@@ -225,7 +223,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     *
     * @return
     */
-  private def buildHeaders: HttpHeaders = {
+  protected def buildHeaders: HttpHeaders = {
     val header = new HttpHeaders()
     header.set("Authorization", s"Bearer $token")
     header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON));

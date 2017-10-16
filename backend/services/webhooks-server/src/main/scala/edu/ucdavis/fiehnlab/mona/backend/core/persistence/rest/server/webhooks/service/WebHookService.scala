@@ -54,20 +54,19 @@ class WebHookService extends LazyLogging {
     */
   def trigger(id: String, eventType: String): Array[WebHookResult] = {
 
-    logger.debug(s"triggering all event hooks for id: ${id}")
+    logger.debug(s"triggering all event hooks for id: $id")
 
     val hooks = webhookRepository.findAll().asScala
 
     if (hooks.isEmpty) {
       logger.debug("no event hooks provided in the system!")
       Array[WebHookResult]()
-    }
-    else {
+    } else {
       hooks.map { hook: WebHook =>
 
-        val url = s"${hook.url}?id=${id}&type=${eventType}"
+        val url = s"${hook.url}?id=$id&type=$eventType"
 
-        logger.debug(s"triggering event: ${url}")
+        logger.debug(s"triggering event: $url")
 
         try {
           restTemplate.getForObject(url, classOf[String])
@@ -76,17 +75,14 @@ class WebHookService extends LazyLogging {
           notifications.sendEvent(Event(Notification(result, getClass.getName)))
 
           result
-        }
-        catch {
+        } catch {
           case x: Throwable =>
             logger.debug(x.getMessage, x)
             val result = webHookResultRepository.save(WebHookResult(ObjectId.get().toHexString, hook.name, url, success = false, x.getMessage))
             notifications.sendEvent(Event(Notification(result, getClass.getName)))
 
             result
-          case _ => throw new RuntimeException("this should never have happened, something is odd in the webhook service!")
         }
-
       }.toArray
     }
   }
@@ -106,13 +102,14 @@ class WebHookService extends LazyLogging {
         case Event.ADD =>
           logger.info("adding spectra")
 
-          logger.info(s"fetching spectrum from remote mona server for id: ${id}")
+          logger.info(s"fetching spectrum from remote mona server for id: $id")
           val spectrum: Spectrum = monaSpectrumRestClient.get(id)
 
           val result = spectrumPersistenceService.save(spectrum)
 
-          logger.info(s"internal spectra is: ${result}")
+          logger.info(s"internal spectra is: $result")
           new ResponseEntity[Any](result, HttpStatus.OK)
+
         case Event.DELETE =>
           logger.info("deleting spectra")
 
@@ -121,9 +118,8 @@ class WebHookService extends LazyLogging {
             monaSpectrumRestClient.get(id)
 
             //throw an error, since we can't delete a spectra which officially exists on the remote server side
-            new ResponseEntity[Any](s"sorry this spectra (${id}) does still exist on the remote server", HttpStatus.NOT_FOUND)
-          }
-          catch {
+            new ResponseEntity[Any](s"sorry this spectra ($id) does still exist on the remote server", HttpStatus.NOT_FOUND)
+          } catch {
             case e: HttpClientErrorException =>
               if (e.getMessage == "404 Not Found") {
                 //spectra does not exit, now we can delete it safely
@@ -132,20 +128,18 @@ class WebHookService extends LazyLogging {
                 if (spectrum != null) {
                   spectrumPersistenceService.delete(id)
                   new ResponseEntity[Any](HttpStatus.OK)
+                } else {
+                  new ResponseEntity[Any](s"sorry this spectra ($id) did not exist on the local server", HttpStatus.NOT_FOUND)
                 }
-                else {
-                  new ResponseEntity[Any](s"sorry this spectra (${id}) did not exist on the local server", HttpStatus.NOT_FOUND)
-                }
-              }
-              else {
+              } else {
                 new ResponseEntity[Any](e.getMessage, HttpStatus.BAD_REQUEST)
               }
           }
 
         case Event.UPDATE =>
           logger.info("updating spectra")
+          logger.info(s"fetching spectrum from remote mona server for id: $id")
 
-          logger.info(s"fetching spectrum from remote mona server for id: ${id}")
           val spectrum: Spectrum = monaSpectrumRestClient.get(id)
           val result = spectrumPersistenceService.update(spectrum)
 
@@ -153,10 +147,9 @@ class WebHookService extends LazyLogging {
         case _ =>
           new ResponseEntity[Any](s"invalid request, event must match ${Event.ADD}/${Event.DELETE}/${Event.UPDATE}", HttpStatus.BAD_REQUEST)
       }
-    }
-    catch {
+    } catch {
       case e: HttpClientErrorException =>
-        new ResponseEntity[Any](s"spectrum with ${id} was not found on origin server: ${e.getMessage}", HttpStatus.NOT_FOUND)
+        new ResponseEntity[Any](s"spectrum with $id was not found on origin server: ${e.getMessage}", HttpStatus.NOT_FOUND)
     }
   }
 
@@ -164,7 +157,7 @@ class WebHookService extends LazyLogging {
     * pulls a copy from the remote mona service. Optionally allows you to specify a query
     */
   @Async
-  def pull(query: Option[String] = None) = {
+  def pull(query: Option[String] = None): Unit = {
     val count = monaSpectrumRestClient.count(query)
     logger.info(s"expected spectra to pull: $count")
     var counter = 0
@@ -175,7 +168,7 @@ class WebHookService extends LazyLogging {
       spectrumPersistenceService.save(spectrum)
     }
 
-    logger.info(s"retrieved ${counter} spectra from master")
+    logger.info(s"retrieved $counter spectra from master")
   }
 
   /**
@@ -184,12 +177,10 @@ class WebHookService extends LazyLogging {
     * @param query
     */
   @Async
-  def push(query: Option[String] = None) = {
-
+  def push(query: Option[String] = None): Unit = {
     //should send it as job to the backend
     spectrumPersistenceService.findAll().asScala.foreach { spectrum =>
       trigger(spectrum.id, Event.UPDATE)
     }
   }
-
 }

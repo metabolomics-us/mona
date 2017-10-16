@@ -13,17 +13,16 @@ import org.scalatest.FunSuite
 class ElasticMetaDataSerializerTest extends FunSuite {
 
   test("testSerializeString") {
-
     val serializer = new ElasticMetaDataSerializer
-
     val factory = new JsonFactory()
     val content = new StringWriter()
+
     val generator = factory.createGenerator(content)
     generator.setPrettyPrinter(new DefaultPrettyPrinter())
 
-    val data = MetaData("none",  false, false, "test", null, null, null, "test")
+    val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, "test")
 
-    serializer.serialize(data, generator, null);
+    serializer.serialize(data, generator, null)
     generator.close()
     content.flush()
     println(s"content: \n ${content.toString}")
@@ -34,17 +33,16 @@ class ElasticMetaDataSerializerTest extends FunSuite {
   }
 
   test("testSerializeBoolean") {
-
     val serializer = new ElasticMetaDataSerializer
-
     val factory = new JsonFactory()
     val content = new StringWriter()
+
     val generator = factory.createGenerator(content)
     generator.setPrettyPrinter(new DefaultPrettyPrinter())
 
-    val data = MetaData("none", false, false, "test", null, null, null, true)
+    val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, true)
 
-    serializer.serialize(data, generator, null);
+    serializer.serialize(data, generator, null)
     generator.close()
     content.flush()
     println(s"content: \n ${content.toString}")
@@ -55,17 +53,16 @@ class ElasticMetaDataSerializerTest extends FunSuite {
   }
 
   test("testSerializeNumber") {
-
     val serializer = new ElasticMetaDataSerializer
-
     val factory = new JsonFactory()
     val content = new StringWriter()
+
     val generator = factory.createGenerator(content)
     generator.setPrettyPrinter(new DefaultPrettyPrinter())
 
-    val data = MetaData("none", false, false, "test", null, null, null, 123.23)
+    val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, 123.23)
 
-    serializer.serialize(data, generator, null);
+    serializer.serialize(data, generator, null)
     generator.close()
     content.flush()
     println(s"content: \n ${content.toString}")
@@ -74,5 +71,4 @@ class ElasticMetaDataSerializerTest extends FunSuite {
     assert(content.toString.contains("value_number") )
     assert(!content.toString.contains("value_boolean") )
   }
-
 }

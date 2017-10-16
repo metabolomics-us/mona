@@ -6,15 +6,13 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('titleHeader', titleHeader);
+        .directive('titleHeader', titleHeader);
 
     function titleHeader() {
-        var directive = {
+        return {
             restrict: 'E',
             replace: true,
             templateUrl: '/views/navbar/titleHeader.html'
         };
-
-        return directive;
     }
 })();

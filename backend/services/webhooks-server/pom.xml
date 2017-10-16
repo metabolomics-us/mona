@@ -5,7 +5,7 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona</groupId>
         <artifactId>services</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,33 +13,21 @@
     <artifactId>webhooks-server</artifactId>
     <name>webhooks-server</name>
 
-
     <description>This module provides us with webhooks to notify external resources</description>
-
 
     <properties>
         <docker.expose>4444</docker.expose>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>client</artifactId>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>mongo</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-            <artifactId>amqp</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>service</artifactId>
         </dependency>
 
         <dependency>
@@ -48,19 +36,16 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-            <artifactId>service</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+            <artifactId>api</artifactId>
         </dependency>
 
-
         <!-- test dependencies -->
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
@@ -88,13 +73,11 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
     </dependencies>
 </project>

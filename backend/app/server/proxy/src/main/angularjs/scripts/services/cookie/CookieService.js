@@ -5,22 +5,12 @@
 (function() {
     'use strict';
 
-    cookieService.$inject = ['ApplicationError', '$cookieStore', '$log'];
+    cookieService.$inject = ['$cookieStore', '$log'];
     angular.module('moaClientApp')
-      .factory('CookieService', cookieService);
+        .factory('CookieService', cookieService);
 
     /* @ngInject */
-    function cookieService(ApplicationError, $cookieStore, $log) {
-
-        var service = {
-            stringToBoolean: stringToBoolean,
-            update: update,
-            get: get,
-            remove: remove,
-            getBooleanValue: getBooleanValue
-        };
-
-        return service;
+    function cookieService($cookieStore, $log) {
 
         function stringToBoolean(string) {
             switch (string) {
@@ -69,18 +59,21 @@
          * @param defaultValueIfNotFound default value if we don't find the cookie
          */
         function getBooleanValue(cookieName, defaultValueIfNotFound) {
-            if (defaultValueIfNotFound === null) {
-                defaultValueIfNotFound = false;
-            }
-
-            var result = defaultValueIfNotFound;
+            var result = (defaultValueIfNotFound === null) ? false : defaultValueIfNotFound;
 
             if ($cookieStore.get(cookieName) !== null) {
                 result = stringToBoolean($cookieStore.get(cookieName));
             }
 
-            //return the result
             return result;
         }
+
+        return {
+            stringToBoolean: stringToBoolean,
+            update: update,
+            get: get,
+            remove: remove,
+            getBooleanValue: getBooleanValue
+        };
     }
 })();

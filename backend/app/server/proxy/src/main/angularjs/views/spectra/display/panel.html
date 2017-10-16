@@ -2,50 +2,44 @@
     <div class="panel-heading">
         <div class="panel-title">
             <span><a style="cursor: pointer" ng-href="{{viewSpectrum()}}">{{spectrum.compound[0].names[0].name}}</a></span>
-            <span class="pull-right">Score: <span score-spectra ng-model="spectrum"></span></span>
+            <span class="pull-right">Score: <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span></span>
         </div>
     </div>
 
     <div class="panel-body">
-        <div class="row" ng-if="spectrum.queryOptions !== undefined">
-            <div class="col-md-12">
-                <ul class="list-inline">
-                    <li class="pull-left" ng-if="spectrum.queryOptions.spectralSimilarity !== undefined">
-                        <h4>
-                            <span class="label label-primary" >
-                                Similarity: {{1000 * spectrum.queryOptions.spectralSimilarity | number:0}}
-                            </span>
-                        </h4>
-                    </li>
-                    <li class="pull-left" ng-if="spectrum.queryOptions.histogramSimilarity !== undefined">
-                        <h4>
-                            <span class="label label-info">
-                                Histogram Similarity: {{1000 * spectrum.queryOptions.histogramSimilarity | number:0}}
-                            </span>
-                        </h4>
-                    </li>
-                </ul>
-            </div>
-        </div>
         <div class="row">
-            <div class="col-lg-6 col-md-5 col-sm-3">
+            <div class="col-lg-6 col-md-7 col-sm-6">
+                <div class="row" ng-if="spectrum.similarity !== undefined">
+                    <div class="col-md-12">
+                        <ul class="list-inline">
+                            <li class="pull-left">
+                                <h4>
+                                    <span class="label label-primary" >
+                                        Similarity: {{1000 * spectrum.similarity | number:0}}
+                                    </span>
+                                </h4>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="row">
-                    <div class="col-lg-6 col- md-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="masspec-medium">
-                            <mass-spec id="massSpec_{{spectrum.id}}"
+                            <mass-spec id="massSpec_{{spectrum.id}}" mini
                                        ng-model="spectrum.spectrum"></mass-spec>
                         </div>
                     </div>
 
-                    <div class="col-lg-6 col-sm-12">
-                        <div chemical-sketcher readonly="true" width="250"
-                             height="250"
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div chemical-sketcher readonly="true" width="200"
+                             height="200"
                              id="bioSketch_{{spectrum.id}}_false"
                              ng-model="spectrum.compound">
                         </div>
                     </div>
                 </div>
-                <div class="row top17" ng-if="spectrum.library">
+                <div class="row" ng-if="spectrum.library">
                     <hr />
                     <div class="col-lg-12 col-md-12">
                         <ul class="list-unstyled">
@@ -55,9 +49,9 @@
                 </div>
             </div>
 
-            <div class="col-lg-6 col-md-7 col-sm-9">
+            <div class="col-lg-6 col-md-5 col-sm-6">
                 <div class="row top5"
-                     ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | filter: {category: '!computed'} | orderBy: ['name'] |  limitTo:12">
+                     ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'}">
 
                     <div class="col-lg-5 col-md-5 col-sm-6">
                         <span metadata-query value="meta">
@@ -74,7 +68,7 @@
 
     <div class="panel-footer">
         <div class="row">
-            <div ng-show="spectrum.tags.length" class="col-md-12">
+            <div class="col-md-12">
                 <ul class="list-inline">
                     <li class="pull-left" ng-repeat="tag in spectrum.tags">
                         <span tag-query rule-based="tag.ruleBased" value="tag" type="spectrum"></span>

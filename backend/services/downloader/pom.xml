@@ -5,7 +5,7 @@
     <parent>
         <artifactId>services</artifactId>
         <groupId>edu.ucdavis.fiehnlab.mona</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,17 +32,17 @@
             <artifactId>mongo</artifactId>
         </dependency>
 
+        <dependency>
+            <artifactId>amqp</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
-        </dependency>
-
-        <dependency>
-            <artifactId>amqp</artifactId>
-            <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         </dependency>
 
         <dependency>

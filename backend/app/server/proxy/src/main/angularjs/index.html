@@ -84,30 +84,22 @@
 <script src="bower_components/angular-route/angular-route.js"></script>
 <script src="bower_components/angular-resource/angular-resource.js"></script>
 <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-<script src="bower_components/angular-translate/angular-translate.js"></script>
-<script src="bower_components/angular-animate/angular-animate.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-<script src="bower_components/angular-dialog-service/dist/dialogs.min.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="bower_components/angular-dialog-service/dist/dialogs.js"></script>
-<script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.min.js"></script>
-<script src="bower_components/angular-dialog-service/dist/dialogs-default-translations.js"></script>
 <script src="bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
 <script src="bower_components/flot/jquery.flot.js"></script>
 <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
-<script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
 <script src="bower_components/angular-cts-service/service.js"></script>
 <script src="bower_components/angular-msp-parser/service.js"></script>
 <script src="bower_components/angular-mgf-parser/service.js"></script>
 <script src="bower_components/angular-massbank-parser/service.js"></script>
 <script src="bower_components/angular-masspec-plotter/angular-masspec-plotter.js"></script>
 <script src="bower_components/ng-file-upload/angular-file-upload.js"></script>
-<script src="bower_components/ng-file-upload-shim/angular-file-upload-shim.js"></script>
-<script src="bower_components/metisMenu/jquery.metisMenu.js"></script>
 <script src="bower_components/paralleljs/lib/parallel.js"></script>
 <script src="bower_components/angular-filter/dist/angular-filter.min.js"></script>
-<script src="bower_components/angularjs-viewhead/angularjs-viewhead.js"></script>
 <script src="bower_components/AngularJS-Toaster/toaster.js"></script>
 <!-- endbower -->
 
@@ -115,8 +107,6 @@
 <script src="bower_components/nvd3/build/nv.d3.js"></script>
 <script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
 
-<script src="bower_components/angular-bootstrap-affix/dist/angular-bootstrap-affix.js"></script>
-<script src="bower_components/angular-jquery/dist/angular-jquery.js"></script>
 <script src="bower_components/flot/jquery.flot.resize.js"></script>
 <script src="bower_components/flot/jquery.flot.selection.js"></script>
 <script src="bower_components/flot/jquery.flot.pie.js"></script>
@@ -130,14 +120,8 @@
 <script src="scripts/server.js"></script>
 <script src="scripts/routes.js"></script>
 
-<!-- application constants -->
-<script src="scripts/constants.js"></script>
-
 <!-- error handling -->
 <script src="scripts/errors.js"></script>
-
-<!-- theming -->
-<script src="scripts/theme.js"></script>
 
 <!-- events -->
 <script src="scripts/events.js"></script>
@@ -149,20 +133,16 @@
 <!-- services -->
 <script src="scripts/services/persistence/submitterService.js"></script>
 <script src="scripts/services/upload/asyncService.js"></script>
-<script src="scripts/services/persistence/taggingService.js"></script>
+<script src="scripts/services/persistence/tagService.js"></script>
 <script src="scripts/services/persistence/spectrumService.js"></script>
-<script src="scripts/services/persistence/compoundsService.js"></script>
 <script src="scripts/services/persistence/metadataService.js"></script>
 <script src="scripts/services/persistence/metadata.js"></script>
 <script src="scripts/services/query/SpectraQueryBuilderService.js"></script>
 <script src="scripts/services/optimization/MetaDataOptimizationService.js"></script>
 <script src="scripts/services/cookie/CookieService.js"></script>
-<script src="scripts/services/splashService.js"></script>
 <script src="scripts/services/authenticationService.js"></script>
 <script src="scripts/services/upload/uploadLibraryService.js"></script>
-<script src="scripts/services/persistence/newsService.js"></script>
 <script src="scripts/services/persistence/statisticsService.js"></script>
-<script src="scripts/services/httpResponseInterceptor.js"></script>
 
 <!-- filters -->
 <script src="scripts/filters/curlFilter.js"></script>
@@ -179,7 +159,6 @@
 <script src="scripts/controllers/browser/queryTreeController.js"></script>
 <script src="scripts/controllers/browser/spectrumViewerController.js"></script>
 <script src="scripts/controllers/query/spectraQueryModalController.js"></script>
-<script src="scripts/controllers/query/spectraSimilarityQueryController.js"></script>
 <script src="scripts/controllers/submitter/submitterController.js"></script>
 <script src="scripts/controllers/submitter/submitterModalController.js"></script>
 <script src="scripts/controllers/submitter/submitterProfileController.js"></script>
@@ -189,13 +168,11 @@
 <script src="scripts/controllers/statistics/statisticsController.js"></script>
 <script src="scripts/controllers/searchBoxController.js"></script>
 <script src="scripts/controllers/documentation/DocumentationTermController.js"></script>
-<script src="scripts/controllers/query/keywordSearchController.js"></script>
-<script src="scripts/controllers/query/advancedSearchController.js"></script>
 
 <!-- directives -->
 <script src="scripts/directives/query/keywordSearchFormDirective.js"></script>
 <script src="scripts/directives/query/advancedSearchFormDirective.js"></script>
-<script src="scripts/directives/metadata/gwClassificationQueryInputDirective.js"></script>
+<script src="scripts/directives/query/similaritySearchFormDirective.js"></script>
 
 <script src="scripts/directives/sketcherDirective.js"></script>
 <script src="scripts/directives/autocompleteDirective.js"></script>
@@ -215,18 +192,12 @@
 <script src="scripts/directives/metadata/gwMetaQueryInputDirective.js"></script>
 <script src="scripts/directives/metadata/splashQueryDirective.js"></script>
 <script src="scripts/directives/metadata/tagQueryDirective.js"></script>
-<script src="scripts/directives/metadata/gwTagDisplayDirective.js"></script>
-<script src="scripts/directives/metadata/gwValueDirective.js"></script>
+<script src="scripts/directives/metadata/tagDisplayDirective.js"></script>
 <script src="scripts/directives/metadata/typeaheadFocusDirective.js"></script>
 <script src="scripts/directives/spectra/spectraUploadProgressDirective.js"></script>
 <script src="scripts/directives/compound/displayCompoundDirective.js"></script>
 <script src="scripts/directives/passwordsMatchDirective.js"></script>
-<script src="scripts/directives/query/queryLineChartDirective.js"></script>
-<script src="scripts/directives/query/queryPieDirective.js"></script>
 <script src="scripts/directives/query/queryTreeDirective.js"></script>
-<script src="scripts/directives/news/newsDirective.js"></script>
-<script src="scripts/directives/scoring.js"></script>
-<script src="scripts/directives/statisticsDirective.js"></script>
 <script src="scripts/directives/submitter/submitterFormDirective.js"></script>
 <script src="scripts/directives/metadata/submitterQueryDirective.js"></script>
 <script src="scripts/directives/submitter/spectraCountForUserDirective.js"></script>

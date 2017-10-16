@@ -1,12 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.app.server.proxy.logging
 
-import java.io.{BufferedReader, InputStreamReader}
-import java.util.Date
-import java.util.stream.Collectors
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import com.typesafe.scalalogging.LazyLogging
-import org.springframework.data.repository.{CrudRepository, Repository}
+import com.netflix.zuul.exception.ZuulException
 import org.springframework.web.servlet.DispatcherServlet
 import org.springframework.web.util.{ContentCachingRequestWrapper, ContentCachingResponseWrapper, WebUtils}
 
@@ -24,29 +20,31 @@ class LoggableDispatcherServlet(val loggingService: LoggingService) extends Disp
   override def doDispatch(request: HttpServletRequest, response: HttpServletResponse): Unit = {
 
     // Add caching wrapper to request and response if necessary
-//    val cachingRequest: HttpServletRequest =
-//      if (!request.isInstanceOf[ContentCachingRequestWrapper])
-//        new ContentCachingRequestWrapper(request)
-//      else
-//        request
-//
-//    val cachingResponse: HttpServletResponse =
-//      if (!response.isInstanceOf[ContentCachingResponseWrapper])
-//        new ContentCachingResponseWrapper(response)
-//      else
-//        response
+    val cachingRequest: HttpServletRequest =
+      if (!request.isInstanceOf[ContentCachingRequestWrapper])
+        new ContentCachingRequestWrapper(request)
+      else
+        request
+
+    val cachingResponse: HttpServletResponse =
+      if (!response.isInstanceOf[ContentCachingResponseWrapper])
+        new ContentCachingResponseWrapper(response)
+      else
+        response
 
     // Time request
     val startTime: Long = System.currentTimeMillis()
 
     try {
-//      super.doDispatch(cachingRequest, cachingResponse)
-      super.doDispatch(request, response)
-
+      logger.debug("Running logging servlet")
+      super.doDispatch(cachingRequest, cachingResponse)
+    } catch {
+      // TODO Doesn't work?
+      case e: ZuulException =>
+        logger.info("Zuul Forwarding Error - wait for Eureka to identify service")
     } finally {
-//      log(cachingRequest, cachingResponse, System.currentTimeMillis() - startTime)
-//      updateResponse(cachingResponse)
-      log(new ContentCachingRequestWrapper(request), new ContentCachingResponseWrapper(response), System.currentTimeMillis() - startTime)
+      log(cachingRequest, cachingResponse, System.currentTimeMillis() - startTime)
+      updateResponse(cachingResponse)
     }
   }
 

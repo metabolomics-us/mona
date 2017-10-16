@@ -1,0 +1,9 @@
+mona:
+  rest:
+    server:
+      host: mona.fiehnlab.ucdavis.edu
+      port: 80
+
+server:
+  host: cream.fiehnlab.ucdavis.edu
+  port: 9292

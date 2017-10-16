@@ -4,6 +4,7 @@ import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
 import org.scalatest.WordSpec
 
 /**
@@ -11,21 +12,17 @@ import org.scalatest.WordSpec
   */
 class NormalizeMetaDataNamesTest extends WordSpec {
 
-  val reader = JSONDomainReader.create[Spectrum]
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   "this processor" when {
-
     val processor = new NormalizeMetaDataNames
-
-    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-    val spectrumGiven: Spectrum = reader.read(input)
 
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "given a spectra" must {
-
-      val processedSpectrum = processor.process(spectrumGiven)
-
+      exampleRecords.foreach { spectrum: Spectrum =>
+        val processedSpectrum = processor.process(spectrum)
+      }
     }
   }
 }

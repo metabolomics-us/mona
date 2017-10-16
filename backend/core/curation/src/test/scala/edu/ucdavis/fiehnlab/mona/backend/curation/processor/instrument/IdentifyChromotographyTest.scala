@@ -12,10 +12,9 @@ import org.scalatest.WordSpec
   */
 class IdentifyChromotographyTest extends WordSpec {
 
-  val reader = JSONDomainReader.create[Spectrum]
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   "this processor" when {
-
     val processor = new IdentifyChromatography
 
     "given an LC/MS spectrum" must {
@@ -32,7 +31,6 @@ class IdentifyChromotographyTest extends WordSpec {
         assert(processedSpectrum.tags.forall(_.text != CommonTags.CEMS_SPECTRUM))
       }
     }
-
 
     "given an GC/MS spectrum" must {
       val gcmsRecord = new InputStreamReader(getClass.getResourceAsStream("/gcmsRecord.json"))

@@ -29,7 +29,7 @@ class MappingUpdater extends LazyLogging {
     * runs after bean creation
     */
   @PostConstruct
-  def updateMappings = {
+  def updateMappings(): Unit = {
 
     logger.debug("creating index")
     //elasticsearchTemplate.deleteIndex(classOf[Spectrum])
@@ -39,26 +39,23 @@ class MappingUpdater extends LazyLogging {
     elasticsearchTemplate.refresh(classOf[Spectrum], true)
 
     logger.debug("updating mapping")
-    updateTextValueMapping
+    updateTextValueMapping()
 
     logger.debug("refreshing index")
     elasticsearchTemplate.refresh(classOf[Spectrum], true)
-
   }
 
   /**
     * generates a mapping for the text value field to ensure its not analyze
     */
-  protected def updateTextValueMapping = {
-
+  protected def updateTextValueMapping(): Unit = {
 
     val typeName = "spectrum"
     val indexName = "spectrum"
 
-    logger.debug(s"object is mapped as ${typeName}")
+    logger.debug(s"object is mapped as $typeName")
 
     var build = jsonBuilder().prettyPrint()
-
 
     build = build.startObject()
 
@@ -66,15 +63,18 @@ class MappingUpdater extends LazyLogging {
     build = build.startObject(typeName)
     build = build.startObject("properties")
 
-    build = buildMetaData(build)
+    build = buildMetaData(build, "metaData")
+    build = buildMetaData(build, "annotations")
 
     //build the compound properties
-      build = build.startObject("compound").field("type", "nested")
+    build = build.startObject("compound").field("type", "nested")
 
-      build = build.startObject("properties")
-      build = buildMetaData(build)
-      build = build.endObject()
-      build = build.endObject()
+    build = build.startObject("properties")
+    build = buildMetaData(build, "metaData")
+    build = buildMetaData(build, "classification")
+
+    build = build.endObject()
+    build = build.endObject()
 
     build = build.endObject()
     build = build.endObject()
@@ -88,16 +88,20 @@ class MappingUpdater extends LazyLogging {
   }
 
   /**
-    * builds the metadata envelope for us
+    * builds a metadata envelope
     *
     * @param builder
     * @return
     */
-  protected def buildMetaData(builder: XContentBuilder): XContentBuilder = {
+  protected def buildMetaData(builder: XContentBuilder, fieldName: String): XContentBuilder = {
     builder
-      .startObject("metaData")
+      .startObject(fieldName)
       .field("type", "nested")
       .startObject("properties")
+      .startObject("value_text_analyzed")
+      .field("type", "string")
+      .field("index", "analyzed")
+      .endObject()
       .startObject("value_text")
       .field("type", "string")
       .field("index", "not_analyzed")
