@@ -11,10 +11,11 @@ trait DomainWriter {
 
   /**
     * writes the provided spectrum to the defined writer
+    *
     * @param spectrum
     * @return
     */
-  def write(spectrum:Spectrum, writer:Writer) : Unit
+  def write(spectrum: Spectrum, writer: Writer): Unit
 
-  def write(spectrum: Spectrum, outputStream: OutputStream) : Unit = write(spectrum,new OutputStreamWriter(outputStream))
+  def write(spectrum: Spectrum, outputStream: OutputStream): Unit = write(spectrum, new OutputStreamWriter(outputStream))
 }

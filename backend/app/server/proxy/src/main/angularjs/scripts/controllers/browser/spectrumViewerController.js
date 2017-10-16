@@ -34,16 +34,15 @@
          * @type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
          */
         $scope.accordionStatus = {
-            isSpectraOpen: CookieService.getBooleanValue("DisplaySpectraisSpectraOpen", true),
-            isIonTableOpen: CookieService.getBooleanValue("DisplaySpectraisIonTableOpen", false),
+            isSpectraOpen: true,
+            isIonTableOpen: false,
             isSimilarSpectraOpen: false,
             isCompoundOpen: []
         };
 
         if (angular.isDefined($scope.spectrum.compound)) {
             for (var i = 0; i < $scope.spectrum.compound.length; i++) {
-                var name = 'DisplayCompound' + i;
-                $scope.accordionStatus.isCompoundOpen.push(CookieService.getBooleanValue(name, false));
+                $scope.accordionStatus.isCompoundOpen.push(i == 0);
             }
         }
 
@@ -91,36 +90,17 @@
          * Loading of similar spectra
          */
         $scope.loadingSimilarSpectra = true;
-        $scope.similarityResult = {};
         $scope.similarSpectra = [];
 
         $scope.loadSimilarSpectra = function() {
             if (!$scope.loadingSimilarSpectra)
                 return;
 
-
             Spectrum.searchSimilarSpectra(
-                {spectra: $scope.spectrum.id, minSimilarity: 500, maxHits: 5},
+                {spectrum: $scope.spectrum.spectrum, minSimilarity: 0.5},
                 function(data) {
-                    $scope.similarityResult = data;
-
-                    if (data.result.length === 0) {
-                        $scope.loadingSimilarSpectra = false;
-                    }
-
-                    for (var i = 0, l = data.result.length; i < l; i++) {
-                        Spectrum.get({id: data.result[i].id}, function(s) {
-                            for (var j = 0, k = $scope.similarityResult.result.length; j < k; j++) {
-                                if ($scope.similarityResult.result[j].id === s.id) {
-                                    s.similarity = $scope.similarityResult.result[j].similarity;
-                                    break;
-                                }
-                            }
-
-                            $scope.similarSpectra.push(s);
-                            $scope.loadingSimilarSpectra = false;
-                        });
-                    }
+                    $scope.similarSpectra = data;
+                    $scope.loadingSimilarSpectra = false;
                 }, function(data) {
                     $scope.loadingSimilarSpectra = false;
                 }
@@ -198,16 +178,6 @@
             // Regular expression to extract ions
             var ionRegex = /([0-9]*\.?[0-9]+)+:([0-9]*\.?[0-9]+)/g;
 
-            // Assemble our annotation matrix
-            var meta = [];
-
-            if (angular.isDefined(delayedSpectrum.metaData)) {
-                for (var i = 0, l = delayedSpectrum.metaData.length; i < l; i++) {
-                    if (delayedSpectrum.metaData[i].category === 'annotation') {
-                        meta.push(delayedSpectrum.metaData[i]);
-                    }
-                }
-            }
 
             // Parse spectrum string to generate ion list
             var match;
@@ -217,10 +187,12 @@
                 var annotation = '';
                 var computed = false;
 
-                for (var i = 0; i < meta.length; i++) {
-                    if (meta[i].value === match[1]) {
-                        annotation = meta[i].name;
-                        computed = meta[i].computed;
+                if (angular.isDefined(delayedSpectrum.annotations)) {
+                    for (var i = 0; i < delayedSpectrum.annotations.length; i++) {
+                        if (delayedSpectrum.annotations[i].value === parseFloat(match[1])) {
+                            annotation = delayedSpectrum.annotations[i].name;
+                            computed = delayedSpectrum.annotations[i].computed;
+                        }
                     }
                 }
 
@@ -237,6 +209,4 @@
             }
         })();
     }
-
-
 })();

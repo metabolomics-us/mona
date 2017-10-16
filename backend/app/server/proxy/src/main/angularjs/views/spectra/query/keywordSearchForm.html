@@ -1,3 +1,5 @@
+<h3><i class="fa fa-search"></i> Search</h3>
+
 <form>
     <div class="row">
         <div class="col-md-6">
@@ -97,6 +99,7 @@
                 </div>
             </div>
 
+            <!-- MS Type -->
             <div class="form-group row">
                 <div class="col-sm-12">
                     <div class="table-responsive">
@@ -117,6 +120,45 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Library tags -->
+            <div class="form-group row" ng-if="libraryTags && libraryTags.length > 0">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Library</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <span ng-repeat="x in libraryTags">
+                                        <input type="checkbox" ng-model="x.selected" label> {{x.text}}
+                                        <br />
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-if="queryTags.length">
+        <div class="col-md-12">
+            <uib-accordion>
+                <uib-accordion-group is-open="false">
+                    <uib-accordion-heading>
+                        <div>Add Additional Tags to Query</div>
+                    </uib-accordion-heading>
+
+                    <div tag-display tags="queryTags"></div>
+                </uib-accordion-group>
+            </uib-accordion>
         </div>
     </div>
 

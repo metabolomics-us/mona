@@ -17,7 +17,6 @@ import scala.collection.JavaConverters._
   */
 class JWTTokenService extends TokenService {
 
-
   @Autowired
   val tokenSecret: TokenSecret = null
 
@@ -33,7 +32,7 @@ class JWTTokenService extends TokenService {
     val issueDate = new Date()
     val experiationDate = DateUtils.addHours(issueDate, timeOfLife)
 
-    //associated roles
+    // associated roles
     val roles = user.roles.asScala.collect {
       case x: Role => x.name
     }.asJava
@@ -50,6 +49,6 @@ class JWTTokenService extends TokenService {
   override def info(token: String): LoginInfo = {
     val claims: Claims = Jwts.parser().setSigningKey(tokenSecret.value).parseClaimsJws(token).getBody
 
-    new LoginInfo(claims.getSubject,claims.getIssuedAt,claims.getExpiration,claims.get("roles").asInstanceOf[java.util.List[String]])
+    LoginInfo(claims.getSubject, claims.getIssuedAt, claims.getExpiration,claims.get("roles").asInstanceOf[java.util.List[String]])
   }
 }

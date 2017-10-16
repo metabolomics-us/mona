@@ -21,27 +21,49 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
 class CalculateCompoundPropertiesTest extends WordSpec {
-  val reader = JSONDomainReader.create[Spectrum]
+
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   @Autowired
   val calculateCompoundProperties: CalculateCompoundProperties = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-
   "CalculateCompoundPropertiesTest" should {
 
-    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-    val spectrum: Spectrum = reader.read(input)
-
     "process" in {
-      assert(calculateCompoundProperties != null)
-      val output = calculateCompoundProperties.process(spectrum)
+      val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
+      val spectrum: Spectrum = reader.read(input)
 
-      output.compound.foreach { compound =>
+      assert(calculateCompoundProperties != null)
+      val result: Spectrum = calculateCompoundProperties.process(spectrum)
+
+      result.compound.foreach { compound =>
         assert(compound.molFile != null)
         assert(compound.metaData.exists(_.computed))
       }
+
+      assert(result.score != null)
+      assert(result.score.impacts.nonEmpty)
+      assert(result.score.impacts.map(_.value).sum == 4.0)
+    }
+
+    "handle problematic record PT201480" in {
+      val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/PT201840.json"))
+      val spectrum: Spectrum = reader.read(input)
+      assert(spectrum.id == "PT201840")
+
+      assert(calculateCompoundProperties != null)
+      val result: Spectrum = calculateCompoundProperties.process(spectrum)
+
+      result.compound.foreach { compound =>
+        assert(compound.molFile != null)
+        assert(compound.metaData.exists(_.computed))
+      }
+
+      assert(result.score != null)
+      assert(result.score.impacts.nonEmpty)
+      assert(result.score.impacts.map(_.value).sum == 2.0)
     }
   }
 }

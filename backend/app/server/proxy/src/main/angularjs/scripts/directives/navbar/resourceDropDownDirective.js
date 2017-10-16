@@ -6,15 +6,13 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('resourceDropDown', resDropDown);
+        .directive('resourceDropDown', resDropDown);
 
     function resDropDown() {
-        var directive = {
+        return {
             restrict: 'E',
             replace: true,
             templateUrl: '/views/navbar/resDropdown.html'
         };
-
-        return directive;
     }
 })();

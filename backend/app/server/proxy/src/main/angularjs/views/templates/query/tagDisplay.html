@@ -1,0 +1,21 @@
+<div>
+    <ul class="list-inline" style="text-align: center;">
+        <li class="" ng-repeat="tag in tags">
+
+            <div class="btn-group" uib-dropdown>
+
+                <button type="button" class="btn dropdown-toggle" uib-dropdown-toggle ng-class="tagClass(tag)" ng-click="selectTag(tag)">
+                    {{tag.text}}
+                    <i class="fa fa-flask" ng-show="tag.ruleBased"></i>
+
+                    <span class="caret left30"></span>
+                </button>
+                <ul class="uib-dropdown-menu">
+                    <li><a ng-click="tag.selected = '+'">+ Has Tag</a></li>
+                    <li><a ng-click="tag.selected ='-'">- Does Not Have Tag</a></li>
+                    <li ng-if="tag.selected"><a ng-click="tag.selected = false">Remove from Query</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>

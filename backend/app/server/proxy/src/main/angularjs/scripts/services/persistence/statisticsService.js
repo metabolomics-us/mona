@@ -6,12 +6,13 @@
 
 (function() {
     'use strict';
-    statisticsService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
+
+    statisticsService.$inject = ['$resource', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
-      .factory('StatisticsService', statisticsService);
+        .factory('StatisticsService', statisticsService);
 
     /* @ngInject */
-    function statisticsService($resource, REST_BACKEND_SERVER, $http) {
+    function statisticsService($resource, REST_BACKEND_SERVER) {
 
         return $resource(
             REST_BACKEND_SERVER + '/rest/statistics/:time',
@@ -40,18 +41,10 @@
                         'Content-Type': 'application/json'
                     },
                     isArray: false
-                }
-                ,
-                'spectraScore': {
-                    url: REST_BACKEND_SERVER + '/rest/statistics/submitters/score/:id',
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    isArray: false
+                    
                 },
                 'spectraTopScores': {
-                    url: REST_BACKEND_SERVER + '/rest/statistics/submitters/scores?max=:max',
+                    url: REST_BACKEND_SERVER + '/rest/statistics/submitters',
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

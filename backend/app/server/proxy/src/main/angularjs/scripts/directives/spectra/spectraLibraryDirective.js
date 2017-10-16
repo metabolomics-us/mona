@@ -1,5 +1,5 @@
 /**
- * Created by wohlgemuth on 10/16/14.
+ * Created by sajjan on 3/2/16.
  */
 (function() {
     'use strict';
@@ -9,7 +9,7 @@
         .directive('displayLibraryReference', displayLibraryReference);
 
     function displayLibraryReference() {
-        var directive = {
+        return {
             require: 'ngModel',
             restrict: 'A',
             template: '<span data-ng-bind-html="libraryString"></span>',
@@ -19,25 +19,16 @@
             },
             controller: displayLibraryReferenceController
         };
-
-        return directive;
     }
 
     /* @ngInject */
     function displayLibraryReferenceController($scope, $log) {
 
-
         // Empty string if no library object exists
-        if (!$scope.spectrum.library) {
+        if (!$scope.spectrum.library || !$scope.spectrum.library.description || $scope.spectrum.library.description == '') {
             $scope.libraryString = '';
             return;
         }
-
-        /**** debug
-        console.log($scope.spectrum.libraryIdentifier);
-        console.log(angular.isDefined($scope.spectrum.libraryIdentifier));
-        console.log($scope.spectrum.libraryIdentifier === null);
-        ****/
 
         // Base library string
         $scope.libraryString = 'Originally submitted to the ';
@@ -45,7 +36,7 @@
         var library = $scope.spectrum.library;
 
         // Handle a provided library link
-        if (angular.isDefined(library.link)) {
+        if (angular.isDefined(library.link) && library.link != "") {
             // Link to library but no identifier
             if (!angular.isDefined(library.id)) {
                 $scope.libraryString += '<a href="'+ library.link +'" target="_blank">'+

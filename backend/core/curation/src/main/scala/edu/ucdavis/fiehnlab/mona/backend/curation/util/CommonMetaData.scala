@@ -43,6 +43,8 @@ object CommonMetaData {
 
   val IONIZATION_ENERGY: String = "ionization energy"
 
+  val COLLISION_ENERGY: String = "collision energy"
+
   val SOLVENT: String = "solvent"
 
   val COLUMN: String = "column"

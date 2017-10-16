@@ -1,17 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
-import java.lang
-
-import com.mongodb.DBObject
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{CompoundClassStatisticsMongoRepository, MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{CompoundClassStatistics, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.CompoundClassStatisticsMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.CompoundClassStatistics
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
-import org.springframework.data.mongodb.core.aggregation.Aggregation._
 import org.springframework.data.mongodb.core.mapreduce.MapReduceOptions
-import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
@@ -34,7 +27,7 @@ class CompoundClassStatisticsService {
     * Get all data in the compound class statistics repository
     * @return
     */
-  def getCompoundClassStatistics: lang.Iterable[CompoundClassStatistics] = compoundClassStatisticsRepository.findAll
+  def getCompoundClassStatistics: Iterable[CompoundClassStatistics] = compoundClassStatisticsRepository.findAll().asScala
 
   /**
     * Get data for the given compound class from the metadata statistics repository
@@ -122,7 +115,7 @@ class CompoundClassStatisticsService {
     * Collect a list of compound class groups with spectrum and compound counts
     * @return
     */
-  def updateCompoundClassStatistics() = {
+  def updateCompoundClassStatistics(): Unit = {
     mongoOperations.mapReduce("SPECTRUM", mapFunction, reduceFunction,
       new MapReduceOptions().outputCollection("STATISTICS_COMPOUNDCLASS").finalizeFunction(finalizeFunction),
       classOf[CompoundClassAggregation])

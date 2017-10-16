@@ -4,12 +4,12 @@
 
 (function () {
 	'use strict';
-	spectrum.$inject = ['$resource', 'REST_BACKEND_SERVER', 'MAX_SPECTRA'];
+	spectrum.$inject = ['$resource', 'REST_BACKEND_SERVER'];
 	angular.module('moaClientApp')
 		.factory('Spectrum', spectrum);
 
 	/* @ngInject */
-	function spectrum($resource, REST_BACKEND_SERVER, MAX_SPECTRA) {
+	function spectrum($resource, REST_BACKEND_SERVER) {
 
 		/**
 		 * creates a new resources, we can work with
@@ -36,12 +36,19 @@
 					}
 				},
 				'searchSimilarSpectra': {
-					url: REST_BACKEND_SERVER + '/rest/spectra/similarity?max=' + MAX_SPECTRA,
+					url: REST_BACKEND_SERVER + '/rest/similarity/search',
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					isArray: false
+					isArray: true,
+					transformResponse: function (data) {
+					    data = angular.fromJson(data).map(function (spectrum) {
+                            spectrum.hit.similarity = spectrum.score;
+                            return spectrum.hit;
+                        });
+						return data;
+					}
 				},
 				'batchSave': function (token) {
 					return {

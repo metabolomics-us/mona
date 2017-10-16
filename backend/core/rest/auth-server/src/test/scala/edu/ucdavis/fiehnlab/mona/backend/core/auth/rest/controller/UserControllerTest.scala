@@ -1,22 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
 
-import java.io.InputStreamReader
-import java.util.Collections
-
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISubmitterMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
@@ -55,25 +46,35 @@ class UserControllerTest extends AbstractGenericRESTControllerTest[User]("/users
     RestAssured.baseURI = s"http://localhost:$port/rest"
 
     "save does not require authentication" in {
-      given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/users").then().statusCode(200)
+      given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/users").`then`().statusCode(200)
+      userRepository.delete(getValue.username)
     }
 
     "save should not allow a user to create an admin user" in {
-      val user: User = given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/users").then().statusCode(200).extract().body().as(classOf[User])
+      val user: User = given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"/users").`then`().statusCode(200).extract().body().as(classOf[User])
 
       assert(user.roles.asScala.forall(_.name != "ADMIN"))
     }
 
     "put should not allow a non-admin to add an admin role" in {
-      val user: User = authenticate("testadmin", "admin").contentType("application/json; charset=UTF-8").body(getValue).when().put(s"/users/$getId").then().statusCode(200).extract().body().as(classOf[User])
+      val user: User = authenticate("testadmin", "admin").contentType("application/json; charset=UTF-8").body(getValue).when().put(s"/users/$getId").`then`().statusCode(200).extract().body().as(classOf[User])
 
       assert(user.roles.asScala.forall(_.name != "ADMIN"))
     }
 
     "put should be able to add admin role to a user if initiated by admin" in {
-      val user: User = authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"/users/$getId").then().statusCode(200).extract().body().as(classOf[User])
+      val user: User = authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"/users/$getId").`then`().statusCode(200).extract().body().as(classOf[User])
 
       assert(user.roles.asScala.exists(_.name == "ADMIN"))
+    }
+
+    "save should not allow user registration to overwrite an existing account" in {
+      val oldUser: User = authenticate().contentType("application/json; charset=UTF-8").when().get(s"/users/test").`then`().statusCode(200).extract().body().as(classOf[User])
+      val user: User = User("test", "test")
+
+      given().contentType("application/json; charset=UTF-8").log().all(true).body(user).when().post(s"/users").`then`().log().all(true).statusCode(409)
+
+      assert(authenticate().contentType("application/json; charset=UTF-8").when().get(s"/users/test").`then`().statusCode(200).extract().body().as(classOf[User]) == oldUser)
     }
   }
 }

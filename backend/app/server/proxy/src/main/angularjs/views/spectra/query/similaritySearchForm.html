@@ -1,0 +1,111 @@
+<form>
+    <div class="row">
+        <div class="col-md-12">
+            <h3><i class="fa fa-search"></i> Similarity Search</h3>
+            <br />
+
+            <!-- Spectrum selection page -->
+            <div ng-if="page == 0">
+                <p class="lead">
+                    <small>
+                        Please choose a mass spectrum to search.  You may upload a file, from which we load
+                        only first spectrum, or paste a mass spectrum in text format.
+                    </small>
+                </p>
+                <br />
+
+                <label>Upload a File:</label>
+                <p class="help-block" ng-show="uploadError"><strong>{{uploadError}}</strong></p>
+                <div class="input-group" data-ng-class="{'has-error': uploadError}">
+                    <span class="input-group-btn">
+                        <span class="btn btn-primary btn-file">
+                            Browse&hellip; <input type="file" ng-file-select="parseFiles($files)" />
+                        </span>
+                    </span>
+
+                    <input id="spectrumFile" type="text" class="form-control" ng-model="filenames" readonly />
+                </div>
+
+                <span class="help-block">Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files</span>
+
+                <br /><br />
+
+                <div class="input-group" data-ng-class="{'has-error': pasteError}">
+                    <label>Paste a Mass Spectrum:</label>
+                    <p class="help-block" ng-show="pasteError"><strong>{{pasteError}}</strong></p>
+                    <textarea class="form-control" rows="10" ng-model="pastedSpectrum"></textarea>
+                    <span class="help-block">
+                        Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
+                        <code>[m/z] [intensity]</code><br />
+                        <code>[m/z] [intensity]</code><br />
+                        <code>...</code>
+                    </span>
+
+                    <a class="btn btn-primary" data-ng-click="parsePastedSpectrum(pastedSpectrum)">Load Spectrum</a>
+                </div>
+            </div>
+
+            <!-- Loading page -->
+            <div ng-if="page == 1">
+                <span class="spinner">
+                    <i class="fa fa-refresh fa-spin"></i>
+                    Please wait while your file is loaded and processed...
+                </span>
+            </div>
+
+            <!-- Viewer + submit page -->
+            <div ng-if="page == 2" ng-init="precursorToleranceUnit = 'PPM'">
+                <p class="lead">
+                    <small>
+                        Please verify your mass spectrum and set your search parameters.  Note that this search returns
+                        only the 25 highest similarity matches.
+                    </small>
+                </p>
+                <br />
+
+                <div class="masspec-modal">
+                    <mass-spec ng-model="spectrum"></mass-spec>
+                </div>
+                <br />
+
+                <div class="form-group">
+                    <label class="control-label">Minimum Similarity (default: 500):</label>
+                    <input type="text" ng-model="minSimilarity"
+                           class="form-control"
+                           placeholder="500">
+                </div>
+
+
+                <label class="control-label">Precursor m/z (optional):</label>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <input type="text" ng-model="precursorMZ" class="form-control" placeholder="Precursor m/z">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">&pm;</div>
+                            <input type="number" ng-model="precursorMZTolerance" class="form-control">
+
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    {{precursorToleranceUnit}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu pull-right">
+                                    <li><a href="#" data-ng-click="precursorToleranceUnit = 'PPM'">PPM</a></li>
+                                    <li><a href="#" data-ng-click="precursorToleranceUnit = 'Da'">Da</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <button class="btn btn-warning" data-ng-click="page = 0">Reset</button>
+                <button class="btn btn-primary" data-ng-click="search(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit)">
+                    Search for Similar Spectra
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

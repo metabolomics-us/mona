@@ -4,14 +4,14 @@ import java.io.{BufferedInputStream, File, FileInputStream, FileNotFoundExceptio
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{LegacySpectrum, Spectrum}
-import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{AnnotationWorkflow, Workflow, WorkflowBuilder}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.RemoveComputedData
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.{CalculateCompoundProperties, CompoundConversion}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classifier.ClassifierProcessor
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{Workflow, WorkflowBuilder}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata.{NormalizeIonizationModeValue, NormalizeMSLevelValue, NormalizeMetaDataNames}
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateSplash, NormalizeSpectrum}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata.{IdentifyMetaDataFields, NormalizeIonizationModeValue, NormalizeMSLevelValue, NormalizeMetaDataNames}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateMassAccuracy, CalculateSplash, NormalizeSpectrum}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.{FinalizeCuration, RemoveComputedData}
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONFileSpectraReader, JSONLegacyFileSpectraReader}
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.amqp.core._
@@ -71,7 +71,7 @@ class CurationConfig extends LazyLogging {
 
 
   @Bean
-  def classifierProcessor = new ClassifierProcessor
+  def classifierProcessor = new ClassyfireProcessor
 
   /**
     * This defines the spectra curation workflow processor bean
@@ -80,12 +80,12 @@ class CurationConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def curationWorkflow(classifierProcessor: ClassifierProcessor, calculateCompoundProperties: CalculateCompoundProperties): ItemProcessor[Spectrum, Spectrum] = {
-    val flow:Workflow[Spectrum] = WorkflowBuilder.
-      create[Spectrum].
-      enableAnnotationLinking(false).
-      forceLinear(true).
-      add(
+  def curationWorkflow(classifierProcessor: ClassyfireProcessor, calculateCompoundProperties: CalculateCompoundProperties): ItemProcessor[Spectrum, Spectrum] = {
+    val flow: Workflow[Spectrum] = WorkflowBuilder
+      .create[Spectrum]
+      .enableAnnotationLinking(false)
+      .forceLinear()
+      .add(
         Array(
           new RemoveComputedData,
 
@@ -93,21 +93,25 @@ class CurationConfig extends LazyLogging {
           calculateCompoundProperties,
           classifierProcessor,
 
-          // Spectrum-level curaiton
+          // Spectrum-level curation
           new NormalizeSpectrum,
           new CalculateSplash,
+          new CalculateMassAccuracy,
 
           // Metadata curation
           new NormalizeMetaDataNames,
-
           new IdentifyChromatography,
           new NormalizeIonizationModeValue,
-          new NormalizeMSLevelValue
+          new NormalizeMSLevelValue,
+          new IdentifyMetaDataFields,
+
+          // Add validation metadata
+          new FinalizeCuration
         )
       ).build()
 
     /**
-      * uggly wrapper, but have no better alternative right now
+      * ugly wrapper, but have no better alternative right now
       */
     new ItemProcessor[Spectrum, Spectrum] {
       override def process(item: Spectrum): Spectrum = flow.process(item).head
@@ -121,9 +125,7 @@ class CurationConfig extends LazyLogging {
     */
   @Bean
   @StepScope
-  def restRepositoryWriter(@Value("#{jobParameters[loginToken]}")
-                           loginToken: String): ItemWriter[Spectrum] = {
-
+  def restRepositoryWriter(@Value("#{jobParameters[loginToken]}") loginToken: String): ItemWriter[Spectrum] = {
     new RestRepositoryWriter(loginToken)
   }
 
@@ -136,9 +138,7 @@ class CurationConfig extends LazyLogging {
     */
   @Bean
   @StepScope
-  def jsonFileReader(@Value("#{jobParameters[pathToFile]}")
-                     file: String): ItemReader[Spectrum] = {
-
+  def jsonFileReader(@Value("#{jobParameters[pathToFile]}") file: String): ItemReader[Spectrum] = {
     if (file == null) {
       throw new FileNotFoundException("you need to provide a file name, but instead the parameter was null!")
     }
@@ -149,7 +149,7 @@ class CurationConfig extends LazyLogging {
       logger.debug("a file was provided")
       reader.stream = new BufferedInputStream(new FileInputStream(file))
     } else {
-      logger.warn(s"provided file ${file} did not exist, trying to load from classpath")
+      logger.warn(s"provided file $file did not exist, trying to load from classpath")
       reader.stream = getClass.getResourceAsStream(file)
     }
 
@@ -158,8 +158,7 @@ class CurationConfig extends LazyLogging {
 
   @Bean
   @StepScope
-  def jsonLegacyFileReader(@Value("#{jobParameters[pathToFile]}")
-                     file: String): ItemReader[Spectrum] = {
+  def jsonLegacyFileReader(@Value("#{jobParameters[pathToFile]}") file: String): ItemReader[Spectrum] = {
 
     if (file == null) {
       throw new FileNotFoundException("you need to provide a file name, but instead the parameter was null!")
@@ -171,7 +170,7 @@ class CurationConfig extends LazyLogging {
       logger.debug("a file was provided")
       reader.stream = new BufferedInputStream(new FileInputStream(file))
     } else {
-      logger.warn(s"provided file ${file} did not exist, trying to load from classpath")
+      logger.warn(s"provided file $file did not exist, trying to load from classpath")
       reader.stream = getClass.getResourceAsStream(file)
     }
 

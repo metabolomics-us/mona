@@ -36,7 +36,7 @@
          * Add selected submitter to the current query
          */
         $scope.addToQuery = function() {
-            SpectraQueryBuilderService.addUserToQuery($scope.submitter.emailAddress);
+            SpectraQueryBuilderService.addUserToQuery($scope.submitter.id);
             SpectraQueryBuilderService.executeQuery();
         };
 
@@ -45,7 +45,7 @@
          */
         $scope.curateSpectra = function() {
             SpectraQueryBuilderService.prepareQuery();
-            SpectraQueryBuilderService.addUserToQuery($scope.submitter.emailAddress);
+            SpectraQueryBuilderService.addUserToQuery($scope.submitter.id);
 
             var query = SpectraQueryBuilderService.getRSQLQuery();
             // TODO Add curation functionality

@@ -4,12 +4,12 @@
 (function() {
     'use strict';
 
-    displaySpectraPanelController.$inject = ['$scope', '$location', 'SpectrumCache', '$log'];
+    displaySpectraPanelController.$inject = ['$scope', 'SpectrumCache'];
     angular.module('moaClientApp')
         .directive('displaySpectraPanel', displaySpectraPanel);
 
     function displaySpectraPanel() {
-        var directive = {
+        return {
             require: "ngModel",
             restrict: "A",
             templateUrl: '/views/spectra/display/panel.html',
@@ -19,35 +19,50 @@
             },
             controller: displaySpectraPanelController
         };
-
-        return directive;
     }
 
     /* @ngInject */
-    function displaySpectraPanelController($scope, $location, SpectrumCache, $log) {
+    function displaySpectraPanelController($scope, SpectrumCache) {
+
+        // Top 10 important metadata fields
+        var IMPORTANT_METADATA = [
+            'ms level', 'precursor type', 'precursor m/z', 'instrument', 'instrument type',
+            'ionization', 'ionization mode', 'collision energy', 'retention time', 'retention index'
+        ];
 
         var truncateDecimal = function(s, length) {
             return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
         };
 
-        angular.forEach($scope.spectrum.metaData, function(meta, index) {
-            if (meta.category !== 'annotation' && meta.deleted !== 'true'
-              && meta.hidden !== 'true' && meta.computed !== 'true') {
-                meta.value = truncateDecimal(meta.value, 4);
-            }
-        });
-
         /**
          * displays the spectrum for the given index
-         * @param id
-         * @param index
          */
         $scope.viewSpectrum = function() {
-            // SpectrumCache.setBrowserSpectra($scope.spectrum);
             SpectrumCache.setSpectrum($scope.spectrum);
 
             return '/spectra/display/' + $scope.spectrum.id;
         };
+
+        (function() {
+            var importantMetadata = [];
+            var secondaryMetadata = [];
+
+            angular.forEach($scope.spectrum.metaData, function(metaData, index) {
+                metaData.value = truncateDecimal(metaData.value, 4);
+
+                if (IMPORTANT_METADATA.indexOf(metaData.name.toLowerCase()) > -1) {
+                    importantMetadata.push(metaData);
+                } else {
+                    secondaryMetadata.push(metaData);
+                }
+            });
+
+            importantMetadata = importantMetadata.sort(function(a, b) {
+                return IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) < IMPORTANT_METADATA.indexOf(a.name.toLowerCase());
+            });
+            
+            $scope.spectrum.metaData = importantMetadata.concat(secondaryMetadata).slice(0, 10);
+        })();
     }
 })();
 

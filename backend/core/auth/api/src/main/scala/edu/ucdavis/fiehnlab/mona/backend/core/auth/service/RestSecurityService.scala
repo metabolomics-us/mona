@@ -13,5 +13,5 @@ trait RestSecurityService {
     * @param httpSecurity
     * @return
     */
-  def prepare(httpSecurity: HttpSecurity) : HttpSecurity
+  def prepare(httpSecurity: HttpSecurity): HttpSecurity
 }

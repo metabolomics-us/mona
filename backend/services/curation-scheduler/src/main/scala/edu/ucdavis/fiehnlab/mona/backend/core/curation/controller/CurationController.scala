@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.controller
 import java.util.concurrent.Future
 import javax.servlet.http.HttpServletRequest
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
@@ -26,7 +27,7 @@ import scala.collection.JavaConverters._
   */
 @RestController
 @RequestMapping(value = Array("/rest/curation"))
-class CurationController {
+class CurationController extends LazyLogging {
 
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -51,7 +52,7 @@ class CurationController {
     if (spectrum == null) {
       throw new NoSuchRequestHandlingMethodException(request)
     } else {
-      curationService.scheduleSpectra(spectrum)
+      curationService.scheduleSpectrum(spectrum)
       new AsyncResult[CurationJobScheduled](CurationJobScheduled(1))
     }
   }
@@ -64,6 +65,7 @@ class CurationController {
   @RequestMapping(path = Array(""))
   @Async
   def curateByQuery(@RequestParam(required = false, name = "query") query: String): Future[CurationJobScheduled] = {
+
     val it = new DynamicIterable[Spectrum, String](query, 10) {
       /**
         * Loads more data from the server for the given query
@@ -81,10 +83,15 @@ class CurationController {
 
     while(it.hasNext) {
       val spectrum = it.next()
-      curationService.scheduleSpectra(spectrum)
+      curationService.scheduleSpectrum(spectrum)
       count += 1
+
+      if (count % 10000 == 0) {
+        logger.info(s"Scheduled $count spectra...")
+      }
     }
 
+    logger.info(s"Finished scheduling $count spectra")
     new AsyncResult[CurationJobScheduled](CurationJobScheduled(count))
   }
 

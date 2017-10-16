@@ -7,9 +7,9 @@ import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchAutoConfiguration, ElasticsearchDataAutoConfiguration}
-import org.springframework.context.annotation.{Configuration, Import, Profile}
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 import scala.collection.JavaConverters._
 /**
@@ -17,14 +17,13 @@ import scala.collection.JavaConverters._
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[Config]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
+@TestPropertySource(locations = Array("classpath:application.properties"))
 class ISubmitterMongoRepositoryTest extends WordSpec {
 
   @Autowired
   val submitterMongoRepository:ISubmitterMongoRepository = null
 
-  //required for spring and scala tes
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "ISubmitterMongoRepositoryTest" should {
 
@@ -32,20 +31,24 @@ class ISubmitterMongoRepositoryTest extends WordSpec {
       submitterMongoRepository.deleteAll()
       assert(submitterMongoRepository.count() == 0)
     }
+
     "add submitter" in {
-      submitterMongoRepository.save(Submitter("wohlgemuth","wohlgemuth@ucdavis.edu","gert","uc davis", "wohlgemuth"))
+      submitterMongoRepository.save(Submitter(null, "test", "Test", "User", "UC Davis"))
       assert(submitterMongoRepository.count() == 1)
     }
+
     "findByFirstName" in {
-      assert(submitterMongoRepository.findByFirstName("gert").asScala.size == 1)
+      assert(submitterMongoRepository.findByFirstName("Test").asScala.size == 1)
     }
 
     "findByEmail" in {
-      assert(submitterMongoRepository.findByEmailAddress("wohlgemuth@ucdavis.edu").firstName == "gert")
+      assert(submitterMongoRepository.findByEmailAddress("test").firstName == "Test")
+      assert(submitterMongoRepository.findByEmailAddress("test").lastName == "User")
+      assert(submitterMongoRepository.findByEmailAddress("test").institution == "UC Davis")
     }
-
   }
 }
+
 @SpringBootApplication(exclude = Array(classOf[ElasticsearchAutoConfiguration],classOf[ElasticsearchDataAutoConfiguration]))
 @Import(Array(classOf[MongoConfig]))
 class Config

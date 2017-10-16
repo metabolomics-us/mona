@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum, Tags}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Impact, MetaData, Spectrum, Tags}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonTags, CommonMetaData}
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CommonTags, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
 
 /**
@@ -50,37 +50,41 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val tags: Array[Tags] = spectrum.tags.filter(x => x.text == CommonTags.GCMS_SPECTRUM || x.text == CommonTags.LCMS_SPECTRUM)
+    val tags: Array[Tags] = spectrum.tags.filter(x => Array(CommonTags.GCMS_SPECTRUM, CommonTags.LCMS_SPECTRUM, CommonTags.CEMS_SPECTRUM).contains(x.text))
 
     if (tags.length == 1) {
-      logger.info(s"Spectrum ${spectrum.id} already has identified chromotography: ${tags(0).text}")
-      spectrum
+      logger.info(s"${spectrum.id}: Spectrum already has identified chromatography: ${tags(0).text}")
+
+
+      spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, s"Chromatography identified as ${tags(0).text}"))
     }
 
     else if (tags.length > 1) {
-      logger.warn(s"Spectrum ${spectrum.id} has multiple chromotography tags!")
-      spectrum
+      logger.warn(s"${spectrum.id}: Spectrum has multiple chromatography tags!")
+
+      spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, s"Chromatography identified with multiple tags: ${tags.map(_.text).mkString(", ")}"))
     }
 
     else {
-      val isGCMS = spectrum.metaData.exists(validateMetaData(_, GCMS_METADATA_CRITERIA))
-      val isLCMS = spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA))
-      val isCEMS = spectrum.metaData.exists(validateMetaData(_, CEMS_METADATA_CRITERIA))
+      val isGCMS = spectrum.metaData.exists(validateMetaData(_, GCMS_METADATA_CRITERIA, spectrum.id))
+      val isLCMS = spectrum.metaData.exists(validateMetaData(_, LCMS_METADATA_CRITERIA, spectrum.id))
+      val isCEMS = spectrum.metaData.exists(validateMetaData(_, CEMS_METADATA_CRITERIA, spectrum.id))
 
 
       if (isGCMS && isLCMS) {
         logger.warn(s"${spectrum.id}: Identified as both GC/MS and LC/MS!")
-        spectrum
+        spectrum.copy(score = spectrum.score.copy(impacts = spectrum.score.impacts :+ Impact(-1, "Identified as both GC/MS and LC/MS")))
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both GC/MS and LE/MS"))
       }
 
       else if (isGCMS && isCEMS) {
         logger.warn(s"${spectrum.id}: Identified as both GC/MS and CE/MS!")
-        spectrum
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both GC/MS and CE/MS"))
       }
 
       else if (isLCMS && isCEMS) {
         logger.warn(s"${spectrum.id}: Identified as both LC/MS and CE/MS!")
-        spectrum
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Chromatography identified as both LC/MS and CE/MS"))
       }
 
       else if (isGCMS) {
@@ -93,7 +97,10 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
           else
             spectrum.tags :+ Tags(ruleBased = true, CommonTags.GCMS_SPECTRUM)
 
-         spectrum.copy(tags = updatedTags)
+         spectrum.copy(
+           tags = updatedTags,
+           score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as GC-MS")
+         )
       }
 
       else if (isLCMS) {
@@ -106,7 +113,10 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
           else
             spectrum.tags :+ Tags(ruleBased = true, CommonTags.LCMS_SPECTRUM)
 
-        spectrum.copy(tags = updatedTags)
+        spectrum.copy(
+          tags = updatedTags,
+          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as LC-MS")
+        )
       }
 
       else if (isCEMS) {
@@ -119,12 +129,16 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
         else
           spectrum.tags :+ Tags(ruleBased = true, CommonTags.CEMS_SPECTRUM)
 
-        spectrum.copy(tags = updatedTags)
+        spectrum.copy(
+          tags = updatedTags,
+          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as CD-MS")
+
+        )
       }
 
       else {
-        logger.warn(s"${spectrum.id}: Unidentifiable chromotography")
-        spectrum
+        logger.warn(s"${spectrum.id}: Unidentifiable chromatography")
+        spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Unidentifiable chromatography"))
       }
     }
   }
@@ -135,27 +149,27 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @param metaData
     * @return
     */
-  def validateMetaData(metaData: MetaData, criteria: Map[String, Array[String]]): Boolean = {
+  def validateMetaData(metaData: MetaData, criteria: Map[String, Array[String]], id: String): Boolean = {
     criteria.exists {
       case (name: String, terms: Array[String]) =>
         // Check that the metadata name matches the name criterion
         if (name == "*" || metaData.name.toLowerCase == name.toLowerCase) {
-          logger.debug(s"MetaData name ${metaData.name} matches criterion $name")
+          logger.debug(s"$id: MetaData name ${metaData.name} matches criterion $name")
 
           // Check that the metadata value matches the value criteria
           terms.exists(term =>
             if (metaData.value.toString.toLowerCase == term.toLowerCase) {
-              logger.info(s"MetaData value ${metaData.value} matches value criterion $term")
+              logger.info(s"$id: MetaData value ${metaData.value} matches value criterion $term")
               true
             }
 
             else if (metaData.unit != null && metaData.unit.toLowerCase == term.toLowerCase) {
-              logger.info(s"MetaData value ${metaData.value} matches unit criterion $term")
+              logger.info(s"$id: MetaData value ${metaData.value} matches unit criterion $term")
               true
             }
 
             else if (metaData.value.toString.toLowerCase.matches(term)) {
-              logger.info(s"MetaData value ${metaData.value} matches regex criterion $term")
+              logger.info(s"$id: MetaData value ${metaData.value} matches regex criterion $term")
               true
             }
 

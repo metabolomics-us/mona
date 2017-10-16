@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.{CommandLineRunner, SpringApplication}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.stereotype.Component
 import springfox.documentation.swagger2.annotations.EnableSwagger2
@@ -24,7 +23,7 @@ import scala.collection.JavaConverters._
   */
 @SpringBootApplication
 @EnableDiscoveryClient
-@Import(Array(classOf[AuthSecurityConfig], classOf[JWTAuthenticationConfig],classOf[SwaggerConfig]))
+@Import(Array(classOf[AuthSecurityConfig], classOf[JWTAuthenticationConfig], classOf[SwaggerConfig]))
 @EnableSwagger2
 class AuthServer {
 
@@ -35,7 +34,6 @@ class AuthServer {
     */
   @Bean
   def loginServiceDelegate: LoginService = new MongoLoginService
-
 }
 
 @Component
@@ -53,15 +51,13 @@ class AuthCommandRunner extends CommandLineRunner with LazyLogging {
   override def run(strings: String*): Unit = {
     if (userRepository.findByUsername(adminUser) == null) {
       val user = userRepository.save(User(adminUser, adminPassword, List(Role("ADMIN")).asJava))
-      logger.info(s"created default user: ${user} as admin, based on central credentials")
+      logger.info(s"created default user: $user as admin, based on central credentials")
     }
     else {
       logger.info("utilizing existing user account")
     }
   }
-
 }
-
 
 object AuthServer extends App {
   new SpringApplication(classOf[AuthServer]).run()

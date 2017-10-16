@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConf
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{GlobalStatisticsMongoRepository, MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataValueCount, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{GlobalStatistics, MetaDataStatistics, MetaDataValueCount, TagStatistics}
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -51,11 +51,12 @@ class StatisticsServiceTest extends WordSpec with LazyLogging {
     }
 
     "perform aggregation counts" in {
-      val result = statisticsService.updateStatistics()
+      val count: Long = globalStatisticsRepository.count()
 
-      logger.info(result.toString)
+      statisticsService.updateStatistics()
+      val result: GlobalStatistics = statisticsService.getGlobalStatistics
 
-      assert(globalStatisticsRepository.findOne(result.id) != null)
+      assert(globalStatisticsRepository.count() == count + 1)
 
       assert(result.spectrumCount == 50)
       assert(result.compoundCount == 21)

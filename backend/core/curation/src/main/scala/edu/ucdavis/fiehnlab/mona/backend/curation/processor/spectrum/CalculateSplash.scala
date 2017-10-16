@@ -12,6 +12,7 @@ import org.springframework.batch.item.ItemProcessor
   */
 @Step(description = "this step calculate the SPLASH for the given spectrum")
 class CalculateSplash extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
+
   /**
     * processes the given spectrum and
     *
@@ -22,7 +23,7 @@ class CalculateSplash extends ItemProcessor[Spectrum, Spectrum] with LazyLogging
     val splash = SplashUtil.splash(spectrum.spectrum, SpectraType.MS)
     val blocks = splash.split('-')
 
-    logger.info(s"Calculated splash ${splash} for spectrum ${spectrum.id}")
+    logger.info(s"${spectrum.id}: Calculated splash $splash")
 
     // Assembled spectrum with a new SPLASH
     spectrum.copy(

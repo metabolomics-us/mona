@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service
 import scala.collection.JavaConverters._
 
 /**
-  * this defines the MoNA persistence service for spectra and will take care of storing data in the repository
+  * Defines the MoNA persistence service for spectra and will take care of storing data in the repository
   * as well as providing users with feedback for auditing
   */
 @Service
@@ -30,7 +30,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   val fetchSize = 10
 
   /**
-    * provides us with access to all spectra in the mongo database
+    * Provides us with access to all spectra in the mongo database
     */
   @Autowired
   val spectrumMongoRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
@@ -50,7 +50,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @param spectrum
     */
-  final def fireAddEvent(spectrum: Spectrum) = {
+  final def fireAddEvent(spectrum: Spectrum): Unit = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been added")
     if (eventScheduler != null) {
       eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.ADD))
@@ -62,7 +62,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @param spectrum
     */
-  final def fireDeleteEvent(spectrum: Spectrum) = {
+  final def fireDeleteEvent(spectrum: Spectrum): Unit = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been deleted")
     if (eventScheduler != null) {
       eventScheduler.scheduleEventProcessing(Event[Spectrum](spectrum, new Date, Event.DELETE))
@@ -74,7 +74,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @param spectrum
     */
-  final def fireUpdateEvent(spectrum: Spectrum) = {
+  final def fireUpdateEvent(spectrum: Spectrum): Unit = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been updated")
 
     if (eventScheduler != null) {
@@ -82,7 +82,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     }
   }
 
-  final def fireSyncEvent(spectrum: Spectrum) = {
+  final def fireSyncEvent(spectrum: Spectrum): Unit = {
     logger.trace(s"\t=>\tnotify all listener that the spectrum ${spectrum.id} has been scheduled for synchronization")
 
     if (eventScheduler != null) {
@@ -121,6 +121,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     fireAddEvent(result)
     result
   }
+
   /**
     * updates the given spectra
     *
@@ -152,21 +153,19 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   }
 
   /**
-    * santas little helper
     *
     * @param request
     * @return
     */
-  private def findDataForQuery(rsqlQuery: String, request: Pageable): Page[Spectrum] = {
+  private def findDataForQuery(rsqlQuery: String, textQuery: String, request: Pageable): Page[Spectrum] = {
     logger.debug(s"executing query: \n$rsqlQuery\n")
 
-    //no need to hit elastic here, since no qury is executed
-    if (rsqlQuery == "") {
+    if ((rsqlQuery == null || rsqlQuery == "") && (textQuery == null || textQuery == "")) {
+      // No need to hit elastic here, since no query is executed
       spectrumMongoRepository.findAll(request)
-    }
-    //let elastic deal with the request
-    else {
-      spectrumElasticRepository.rsqlQuery(rsqlQuery, request)
+    } else {
+      // Perform RSQL query in elastic
+      spectrumElasticRepository.query(rsqlQuery, textQuery, request)
     }
   }
 
@@ -175,23 +174,24 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @return
     */
-  def findAll(): lang.Iterable[Spectrum] = findAll("")
+  def findAll(): lang.Iterable[Spectrum] = findAll("", "")
 
   /**
     * fires a synchronization event, so that system updates all it's clients. Be aware that this is very expensive!
     */
-  def forceSynchronization() = {
+  def forceSynchronization(): Unit = {
     findAll().iterator().asScala.foreach(fireSyncEvent)
   }
 
   /**
-    * queries for all the spectra matching this RSQL query
+    * queries for all the spectra matching this query
     *
     * @param rsqlQuery
+    * @param textQuery
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def findAll(rsqlQuery: String): lang.Iterable[Spectrum] = {
+  def findAll(rsqlQuery: String, textQuery: String): lang.Iterable[Spectrum] = {
 
     /**
       * generates a new dynamic fetchable
@@ -201,18 +201,19 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
       /**
         * loads more data from the server for the given query
         */
-      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, pageable)
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, textQuery, pageable)
     }
   }
 
   /**
     * does a paginating request to the repository and should be the preferred way to interact with it
     *
-    * @param rsqlQuery a well defined RSQL query to be executed
+    * @param query a RSQL or text query
+    * @param textQuery a full text query
     * @param pageable
     * @return
     */
-  def findAll(rsqlQuery: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(rsqlQuery, pageable)
+  def findAll(query: String, textQuery: String, pageable: Pageable): Page[Spectrum] = findDataForQuery(query, textQuery, pageable)
 
   /**
     * returns the count of all spectra
@@ -228,7 +229,9 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def count(rsqlQuery: String): Long = spectrumElasticRepository.rsqlQueryCount(rsqlQuery)
+  def count(query: String, textQuery: String): Long = {
+    spectrumElasticRepository.queryCount(query, textQuery)
+  }
 
   /**
     * delete all objects in the system
@@ -299,5 +302,5 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param pageable
     * @return
     */
-  override def findAll(pageable: Pageable): Page[Spectrum] = findAll("", pageable)
+  override def findAll(pageable: Pageable): Page[Spectrum] = findAll("", "", pageable)
 }

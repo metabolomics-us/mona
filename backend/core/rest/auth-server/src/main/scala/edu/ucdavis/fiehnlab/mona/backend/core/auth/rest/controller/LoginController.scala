@@ -6,11 +6,10 @@ package edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.controller
 
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, LoginResponse}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, LoginRequest, LoginResponse}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.http.{ResponseEntity, HttpStatus}
-import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation._
@@ -39,12 +38,12 @@ class LoginController extends LazyLogging {
     */
   @RequestMapping(path = Array("/login"), method = Array(RequestMethod.POST))
   def login(@RequestBody request: LoginRequest): LoginResponse = {
-    logger.debug(s"forwarding authentication request to: ${loginService}")
+    logger.debug(s"forwarding authentication request to: $loginService")
     try {
       loginService.login(request)
     } catch {
-      case ex: UsernameNotFoundException => throw new InvalidUserNameOrPasswordExecption
-      case ex: BadCredentialsException => throw new InvalidUserNameOrPasswordExecption
+      case _: UsernameNotFoundException => throw new InvalidUserNameOrPasswordExecption
+      case _: BadCredentialsException => throw new InvalidUserNameOrPasswordExecption
     }
   }
 
@@ -54,11 +53,11 @@ class LoginController extends LazyLogging {
     * @param request
     */
   @RequestMapping(path = Array("/info"), method = Array(RequestMethod.POST))
-  def tokenInfo(@RequestBody request: LoginResponse) = {
+  def tokenInfo(@RequestBody request: LoginResponse): LoginInfo = {
     loginService.info(request.token)
   }
 
-  @RequestMapping(path=Array("/extend"), method = Array(RequestMethod.POST))
+  @RequestMapping(path = Array("/extend"), method = Array(RequestMethod.POST))
   def extendToken(@RequestBody request:LoginResponse) : LoginResponse = {
     loginService.extend(request.token)
   }

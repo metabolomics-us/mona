@@ -19,7 +19,7 @@ import org.springframework.http.converter.{AbstractHttpMessageConverter, HttpMes
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, WebMvcConfigurerAdapter}
+import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurerAdapter}
 
 import scala.collection.JavaConverters._
 import scala.collection.convert.Wrappers
@@ -48,12 +48,20 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .and()
       .authorizeRequests()
 
+      //get on submitters is restricted
+      .antMatchers(HttpMethod.GET, "/rest/submitters/**").authenticated()
+
       //saves need to be authenticated
       .antMatchers(HttpMethod.POST, "/rest/spectra/**").authenticated()
       .antMatchers(HttpMethod.POST, "/rest/submitters").authenticated()
 
       //updates needs authentication
-      .antMatchers(HttpMethod.PUT).authenticated()
+      .antMatchers(HttpMethod.PUT, "/rest/spectra/**").authenticated()
+      .antMatchers(HttpMethod.PUT, "/rest/submitters").authenticated()
+
+      //news can only be added or updated by admins
+      .antMatchers(HttpMethod.PUT, "/rest/news/**").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/news/**").hasAuthority("ADMIN")
 
       //deletes need authentication
       .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
@@ -70,13 +78,17 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
     */
   override def configure(web: WebSecurity): Unit = {
     web.ignoring()
-      //get is always available
-      .antMatchers(HttpMethod.GET)
+      //get is available for most endpoints
+      .antMatchers(HttpMethod.GET, "/rest/spectra/**")
+      .antMatchers(HttpMethod.GET, "/rest/metaData/**")
+      .antMatchers(HttpMethod.GET, "/rest/tags/**")
+      .antMatchers(HttpMethod.GET, "/rest/statistics/**")
+      .antMatchers(HttpMethod.GET, "/rest/news/**")
+
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")
 
       //no authentication for metadata
       .antMatchers(HttpMethod.POST, "/rest/metaData/**")
-      .antMatchers(HttpMethod.GET, "/*")
   }
 }
 
@@ -85,6 +97,10 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
 
   override def extendMessageConverters(converters: util.List[HttpMessageConverter[_]]): Unit = {
     converters.add(new MSPConverter())
+  }
+
+  override def configurePathMatch(configurer: PathMatchConfigurer): Unit = {
+    configurer.setUseRegisteredSuffixPatternMatch(true)
   }
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
@@ -122,23 +138,20 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
     }
 
     t match {
-      case y:Spectrum =>
+      case y: Spectrum =>
         write(y)
 
       case x: Iterable[_] =>
-        x.foreach { y =>
-          write(y)
-        }
+        x.foreach(write)
 
       case x: Wrappers.JIterableWrapper[_] =>
-        x.foreach { y =>
-          write(y)
-        }
+        x.foreach(write)
+
+      case x: Wrappers.JListWrapper[_] =>
+        x.foreach(write)
 
       case x: util.Collection[_] =>
-        x.asScala.foreach { y =>
-          write(y)
-        }
+        x.asScala.foreach(write)
 
       case _ =>
         logger.info(s"what the fuck is this ${t}")
@@ -147,14 +160,13 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
 
   override def supports(clazz: Class[_]): Boolean = {
     clazz match {
-
       case q if q == classOf[Spectrum] => true
       case q if q == classOf[Iterable[_]] => true
       case q if q == classOf[Wrappers.JIterableWrapper[_]] => true
+      case q if q == classOf[Wrappers.JListWrapper[_]] => true
       case q if q == classOf[util.Collection[_]] => true
-
       case _ =>
-        //        logger.debug(s"unknown class type provided: ${clazz}")
+        logger.debug(s"Unknown class type provided to MSP converter: ${clazz}")
         false
     }
   }

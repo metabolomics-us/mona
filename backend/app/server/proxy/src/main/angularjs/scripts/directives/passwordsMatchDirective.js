@@ -6,19 +6,16 @@
     'use strict';
 
     angular.module('moaClientApp')
-      .directive('passwordMatch', passwordMatch);
+        .directive('passwordMatch', passwordMatch);
 
     function passwordMatch() {
-        var directive = {
+        return {
             restrict: 'A',
             scope: true,
             require: 'ngModel',
             link: linkFunc
         };
-
-        return directive;
     }
-
 
     function linkFunc(scope, elem, attrs, control) {
         var checker = function() {
@@ -31,5 +28,4 @@
             control.$setValidity("unique", x);
         });
     }
-
 })();

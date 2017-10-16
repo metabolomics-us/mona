@@ -110,15 +110,11 @@ h2 {
     font-weight: bold;
 }
 
-.news-title > a > h4 {
+.news-title > h4 {
     color: #4D688C;
     font-weight: bold;
     margin: 0 0 2px 0;
     font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
-}
-
-.news-title:hover {
-    text-decoration: underline;
 }
 
 .bor-bot {
@@ -221,7 +217,7 @@ h2 {
     border-bottom: 10px solid white;
 }
 
-.navbar .navbar-right > li > .dropdown-menu:after {
+.navbar .navbar-right > li > .dropdown-menu:after, .dropdown-menu-right.dropdown-menu:after {
     left: auto;
     right: 3px;
 }
@@ -240,13 +236,13 @@ h2 {
 }
 
 // search button
-.input-group-btn:last-child > .btn {
+.nav .input-group-btn:last-child > .btn {
     margin-left: -1px;
     color: #002855;
     background-color: #DEB31A;
 }
 
-//Top Right Navigation Dropdown Styles*****
+// Top Right Navigation Dropdown Styles*****
 .nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
     background-color: #335379;
     color: #DFC166;

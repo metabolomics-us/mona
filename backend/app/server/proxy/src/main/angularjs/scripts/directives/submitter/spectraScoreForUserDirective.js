@@ -12,23 +12,22 @@
 
     /* @ngInject */
     function spectraScoreForUser($compile, StatisticsService) {
-        var directive = {
+        return {
             replace: true,
-            templateUrl: '/views/templates/scoreSpectra.html',
+            template: '<span><uib-rating ng-model="score" max="5" data-readonly="true"></uib-rating></span>',
             scope: {
                 user: '=user'
             },
             link: function($scope, element, attrs, ngModel) {
-                StatisticsService.spectraScore({id: $scope.user.id},
-                  function(data) {
-                      $scope.score = data.score;
-                  }
+                StatisticsService.spectraScore(
+                    {id: $scope.user.id},
+                    function(data) {
+                        $scope.score = data.score;
+                    }
                 );
             },
             controller: spectraScoreForUserController
         };
-
-        return directive;
     }
 
     /* @ngInject */

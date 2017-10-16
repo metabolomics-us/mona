@@ -5,6 +5,7 @@ import com.github.rutledgepaulv.qbuilders.nodes.ComparisonNode;
 import com.github.rutledgepaulv.qbuilders.nodes.OrNode;
 import com.github.rutledgepaulv.qbuilders.operators.ComparisonOperator;
 import com.github.rutledgepaulv.qbuilders.visitors.ContextualNodeVisitor;
+import edu.ucdavis.fiehnlab.rqe.like.LikeStringFieldImpl;
 import edu.ucdavis.fiehnlab.rqe.regex.RegexStringFieldImpl;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -43,12 +44,16 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
         return parent;
     }
 
+
+
     /**
      * modifies the field, in case it should be overwritten for specific types
      * @param field
+     * @param node
+     * @param context
      * @return
      */
-    protected String modifyFieldName(String field, ComparisonNode node, Context context){
+    protected String modifyFieldName(String field, ComparisonNode node, Context context) {
         return field;
     }
 
@@ -58,9 +63,9 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
 
         Collection<?> values = node.getValues().stream().map(normalizer).collect(Collectors.toList());
 
-        String field = modifyFieldName(node.getField().asKey(),node,context);
+        String field = modifyFieldName(node.getField().asKey(), node, context);
 
-        if(context.getParent() != null){
+        if(context.getParent() != null) {
             field = context.buildNestedPath() + "." + field;
         }
 
@@ -98,6 +103,10 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
             return nestedQuery(field, condition(node, context.createChieldContent(node.getField().asKey())));
         } else if(RegexStringFieldImpl.REGEX.equals(node.getOperator())){
             return new RegexpQueryBuilder(field, single(values).toString());
+        } else if (LikeStringFieldImpl.LIKE.equals(node.getOperator())) {
+            return boolQuery()
+                    .should(queryStringQuery(single(values).toString()).defaultField(field).boost(10))
+                    .should(queryStringQuery("*"+ single(values).toString() +"*").defaultField(field).rewrite("scoring_boolean"));
         } else {
             throw new UnsupportedOperationException("This visitor does not support the operator " + operator + ".");
         }

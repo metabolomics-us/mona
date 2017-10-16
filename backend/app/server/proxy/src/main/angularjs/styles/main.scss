@@ -204,28 +204,6 @@ body {
   margin-left: 30px;
 }
 
-/**
- * affix management
- */
-.affix-top, .affix {
-  position: static;
-}
-
-/**
- * configure our affix properties
- */
-@media (min-width: 992px) {
-
-  #filterBar.affix-top {
-    position: static;
-  }
-
-  #filterBar.affix {
-    position: fixed;
-    top: 100px;
-  }
-
-}
 
 /**
  * override the web component and disable the border
@@ -290,12 +268,11 @@ div.chart {
 
 .masspec-medium {
   display: block;
-  width: 250px;
-  height: 250px;
+  width: 175px;
+  height: 175px;
   margin: 0 0 0 0;
   padding: 0 0 0 0;
 }
-
 
 .masspec .button {
   position: absolute;
@@ -362,7 +339,95 @@ input[readonly] {
 .list-group.panel-query-tree .list-group-item { border-radius: 0; border-width: 1px 0 0 0; }
 .list-group.panel-query-tree > .list-group-item:first-child { border-top-width: 0; }
 
+.panel-query-tree p.ng-scope { margin: 0 0 0 0px; }
+
+.panel-query-tree .fa-folder-o, .panel-query-tree .fa-folder-open-o {
+  cursor: pointer;
+}
+
+
 
 .table-borderless tbody>tr:nth-child(n+2)>td {
   border: none;
+}
+
+.tooltip-inner {
+  max-width: 300px;
+}
+
+/*
+ * Classification tree structure, as defined:
+ * https://jsfiddle.net/jhfrench/GpdgF/
+ */
+.tree {
+  min-height:20px;
+  margin-bottom:20px;
+}
+.tree ul {
+  padding-left: 10px;
+}
+.tree li.tree-node {
+  list-style-type:none;
+  margin:0;
+  padding:10px 5px 0 5px;
+  position:relative
+}
+.tree li.tree-node > ul {
+  padding-left: 45px;
+}
+.tree li.tree-node::before, .tree li.tree-node::after {
+  content:'';
+  left:-20px;
+  position:absolute;
+  right:auto
+}
+.tree li.tree-node::before {
+  border-left:1px solid #999;
+  bottom:50px;
+  height:100%;
+  top:0;
+  width:1px
+}
+.tree li.tree-node::after {
+  border-top:1px solid #999;
+  height:20px;
+  top:25px;
+  width:25px
+}
+.tree li span.tree-label {
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border:1px solid #999;
+  border-radius:5px;
+  display:inline-block;
+  padding:3px 8px;
+  text-decoration:none
+}
+.tree>ul>li.tree-node::before, .tree>ul>li.tree-node::after {
+  border:0
+}
+.tree li.tree-node:last-child::before {
+  height:30px
+}
+
+
+/**
+ * Dropdown for input group
+ */
+.input-group-btn select {
+  border-color: #ccc;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+
+/**
+ * Bootstrap multiselect dropdown with scrollbar
+ */
+.dropdown-menu {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
