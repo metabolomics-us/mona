@@ -32,7 +32,7 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
     * @return
     */
   def regenerateStatistics = {
-    restOperations.exchange(s"${this.monaRestServer}/rest/statistics/update",HttpMethod.POST,new HttpEntity[String]("",this.buildHeaders),classOf[String])
+    restOperations.postForEntity(s"${this.monaRestServer}/rest/statistics/update",new HttpEntity[String]("",this.buildHeaders),classOf[Void])
   }
 }
 
