@@ -223,7 +223,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     *
     * @return
     */
-  private def buildHeaders: HttpHeaders = {
+  protected def buildHeaders: HttpHeaders = {
     val header = new HttpHeaders()
     header.set("Authorization", s"Bearer $token")
     header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON));

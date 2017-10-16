@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import org.springframework.http.{HttpEntity, HttpMethod}
 import org.springframework.stereotype.Component
 
 /**
@@ -25,6 +25,14 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
     */
   def listMetaDataValues(name: String): Array[Any] = {
     restOperations.getForObject(s"$monaRestServer/$metaDataPath/values?name=$name", classOf[Array[Any]])
+  }
+
+  /**
+    * regenerates all the spectrum related statistics
+    * @return
+    */
+  def regenerateStatistics = {
+    restOperations.exchange(s"${this.monaRestServer}/rest/statistics/update",HttpMethod.POST,new HttpEntity[String]("",this.buildHeaders),classOf[String])
   }
 }
 
