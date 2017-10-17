@@ -73,14 +73,6 @@ services:
       - "5672:5672"
 
 
-  #used for caching and as a log buffer internally
-  redis:
-    image:  redis
-    hostname: redis
-    ports:
-      - "6379:6379"
-
-
 ################################################################################################################
 # This section defines our required services, need to connect mona apps
 # to each other
