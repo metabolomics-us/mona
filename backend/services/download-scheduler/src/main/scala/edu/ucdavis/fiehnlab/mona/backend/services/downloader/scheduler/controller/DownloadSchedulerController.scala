@@ -62,8 +62,7 @@ class DownloadSchedulerController extends LazyLogging {
 
       if (Files.exists(exportPath)) {
         new AsyncResult[ResponseEntity[InputStreamResource]](
-          ResponseEntity
-            .ok()
+          ResponseEntity.ok()
             .contentLength(Files.size(exportPath))
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header("Content-Disposition", s"attachment; filename=${exportPath.getFileName}")
