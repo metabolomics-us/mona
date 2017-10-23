@@ -11,7 +11,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.config.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.amqp.core.Queue
