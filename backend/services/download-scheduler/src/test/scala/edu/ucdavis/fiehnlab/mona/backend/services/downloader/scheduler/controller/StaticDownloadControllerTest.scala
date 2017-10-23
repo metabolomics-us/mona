@@ -29,19 +29,19 @@ class StaticDownloadControllerTest extends AbstractSpringControllerTest {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "StaticDownloadControllerTest" should {
-    RestAssured.baseURI = s"http://localhost:$port/rest/downloads/static"
+    RestAssured.baseURI = s"http://localhost:$port/rest/downloads"
 
     "recursively delete static download directory" in {
       staticDownloadService.removeStaticDownloadDirectory()
     }
 
     "return an empty array when there are no static downloads" in {
-      val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get().`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
+      val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get("/static").`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
       assert(result.length == 0)
     }
 
     "receive a 404 when trying to download a file that doesn't exist" in {
-      given().contentType("application/json; charset=UTF-8").when().get("/doesnotexist").`then`().statusCode(404)
+      given().contentType("application/json; charset=UTF-8").when().get("/static/doesnotexist").`then`().statusCode(404)
     }
 
     "upload a file with no category" in {
@@ -50,18 +50,18 @@ class StaticDownloadControllerTest extends AbstractSpringControllerTest {
         .controlName("file")
         .build()
 
-      val result = authenticate().contentType("multipart/form-data").multiPart(file).when().post().`then`().statusCode(200).extract().body().as(classOf[StaticDownload])
+      val result = authenticate().contentType("multipart/form-data").multiPart(file).when().post("/static").`then`().statusCode(200).extract().body().as(classOf[StaticDownload])
       assert(result == StaticDownload("monaRecord.json", null))
     }
 
     "there should be one static download available" in {
-      val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get().`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
+      val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get("/static").`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
       assert(result.length == 1)
       assert(result.last == StaticDownload("monaRecord.json", null))
     }
 
     "download a file without a category" in {
-      given().contentType("application/json; charset=UTF-8").when().get("/monaRecord.json").`then`().statusCode(200)
+      given().contentType("application/json; charset=UTF-8").when().get("/static/monaRecord.json").`then`().statusCode(200)
     }
 
     "upload a file with a category" in {
@@ -70,18 +70,18 @@ class StaticDownloadControllerTest extends AbstractSpringControllerTest {
         .controlName("file")
         .build()
 
-      val result = authenticate().contentType("multipart/form-data").multiPart(file).multiPart("category", "test").when().post().`then`().statusCode(200).extract().body().as(classOf[StaticDownload])
+      val result = authenticate().contentType("multipart/form-data").multiPart(file).multiPart("category", "test").when().post("/static").`then`().statusCode(200).extract().body().as(classOf[StaticDownload])
       assert(result == StaticDownload("gcmsRecord.json", "test"))
     }
 
     "there should be two static downloads available" in {
-      val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get().`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
+      val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get("/static").`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
       assert(result.length == 2)
       assert(result.last == StaticDownload("gcmsRecord.json", "test"))
     }
 
     "download a file with a category" in {
-      given().contentType("application/json; charset=UTF-8").when().get("/test/gcmsRecord.json").`then`().statusCode(200)
+      given().contentType("application/json; charset=UTF-8").when().get("/static/test/gcmsRecord.json").`then`().statusCode(200)
     }
   }
 }

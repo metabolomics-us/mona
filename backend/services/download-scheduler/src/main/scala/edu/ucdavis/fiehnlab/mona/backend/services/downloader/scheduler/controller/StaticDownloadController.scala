@@ -1,22 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.controller
 
-import java.nio.file.{Files, Path, Paths}
-import java.util.concurrent.Future
-import javax.servlet.http.HttpServletRequest
+import java.nio.file.{Files, Path}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.{DownloadSchedulerService, StaticDownloadService}
-import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.core.io.{InputStreamResource, Resource}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.StaticDownloadService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.InputStreamResource
 import org.springframework.http.{HttpStatus, MediaType, ResponseEntity}
-import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
-
-import scala.collection.JavaConverters._
 
 /**
   * Created by sajjan on 5/25/16.
@@ -61,7 +53,7 @@ class StaticDownloadController extends LazyLogging {
 
   @RequestMapping(path = Array("/static/{category:.+}/{filename:.+}"), method = Array(RequestMethod.GET))
   def getStaticDownload(@PathVariable("category") category: String, @PathVariable("filename") filename: String): ResponseEntity[InputStreamResource] = {
-    logger.info(s"$category - $filename")
+    logger.info(s"$category$filename")
 
     getStaticDownload(s"$category/$filename")
   }
