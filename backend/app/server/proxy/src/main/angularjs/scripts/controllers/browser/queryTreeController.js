@@ -4,12 +4,12 @@
 
 (function() {
     'use strict';
-    queryTreeController.$inject = ['$scope', 'Spectrum', '$log', 'REST_BACKEND_SERVER'];
+    queryTreeController.$inject = ['$scope', 'DownloadService', '$log', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
         .controller('QueryTreeController', queryTreeController);
 
     /* @ngInject */
-    function queryTreeController($scope, Spectrum, $log, REST_BACKEND_SERVER) {
+    function queryTreeController($scope, DownloadService, $log, REST_BACKEND_SERVER) {
         $scope.executeQuery = function(node) {
             return '/spectra/browse?query='+ node.query;
         };
@@ -22,20 +22,21 @@
             return REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.mspExport.id;
         };
 
-        (function() {
-            $scope.queries = {};
-            $scope.queryTree = [];
-
-            // Get predefined queries and build query tree
-            Spectrum.getPredefinedQueries(
+        /**
+         * Get predefined queries and build query tree
+         */
+        var getPredefinedQueries = function() {
+            DownloadService.getPredefinedQueries(
                 function(data) {
-                    // Entry for libraries
-                    data.unshift({
-                        label: "Libraries",
-                        query: null,
-                        jsonExport: null,
-                        mspExport: null
-                    });
+                    // Header entry for libraries if any exist
+                    if (data.some(function(x) { return x.label.indexOf('Libraries') > 0; })) {
+                        data.unshift({
+                            label: "Libraries",
+                            query: null,
+                            jsonExport: null,
+                            mspExport: null
+                        });
+                    }
 
                     // Set up all nodes
                     for (var i = 0; i < data.length; i++) {
@@ -78,7 +79,7 @@
                             return (b == "All Spectra" ? 1 : -1)
                         } else if (b.label === "Libraries") {
                             return (a == "All Spectra" ? 1 : -1)
-                        }else {
+                        } else {
                             return 0;
                         }
                     });
@@ -87,6 +88,31 @@
                     $log.error('query tree failed: ' + error);
                 }
             );
+        };
+
+        var getStaticDownloads = function() {
+            DownloadService.getStaticDownloads(
+                function(data) {
+                    $scope.static = {};
+
+                    console.log(data);
+
+                    data.forEach(function(x) {
+
+                    });
+                },
+                function(error) {
+                    $log.error('query tree failed: ' + error);
+                }
+            );
+        };
+
+        (function() {
+            $scope.queries = {};
+            $scope.queryTree = [];
+
+            getPredefinedQueries();
+            getStaticDownloads();
         })();
     }
 })();
