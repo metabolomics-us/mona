@@ -159,9 +159,13 @@
 
             <div class="panel-body">
                 <p class="lead">
-                    <small>MoNA requires that every spectrum has an associated compound.  This can be accomplished by
-                    providing an InChI, InChIKey, SMILES, Name, a MOL/SDF file, or drawing the structure yourself.  Please
-                    be aware that some names or InChIKeys may not exist in compound databases, and therefore cannot be used.</small>
+                    <small>
+                        MoNA requires that every spectrum has an associated compound.  Please enter an InChI, InChIKey,
+                        SMILES, compound name, a MOL/SDF file, or draw a structure yourself.  Then, click on
+                        "Update Compound" to automatically pull the remaining fields from the
+                        <a href="http://cts.fiehnlab.ucdavis.edu" target="_blank">Chemical Translation Service</a>.
+                        Please note that some names or InChIKeys do not exist in compound databases, and so the CTS
+                        may not find anything - in this case, using a full structure such as InChI, SMILES or MOL is preferred.</small>
                 </p>
                 <br />
 
@@ -323,6 +327,7 @@
                             <option value="" selected="selected">Select One</option>
                             <option value="Liquid Chromatography (LC)">Liquid Chromatography (LC)</option>
                             <option value="Gas Chromatography (GC)">Gas Chromatography (GC)</option>
+                            <option value="Direct Infusion (DI)">Direct Injection/Infusion (DI)</option>
                             <option value="Capillary Electrophoresis (CE)">Capillary Electrophoresis (CE)</option>
                         </select>
                     </div>
@@ -330,7 +335,7 @@
 
                     <div>
                         <label>MS Type / Level:</label> <br />
-                        <select class="form-control" name="mstype" ng-model="metadata.mstype">
+                        <select class="form-control" name="mslevel" ng-model="metadata.mslevel">
                             <option value="" selected="selected">Select One</option>
                             <option value="MS">MS</option>
                             <option value="MS2">MS2</option>
@@ -341,7 +346,7 @@
                     </div>
                     <br />
 
-                    <div ng-if="metadata.mstype && metadata.mstype != 'Select One' && metadata.mstype != 'MS'">
+                    <div ng-if="metadata.mslevel && metadata.mslevel != 'Select One' && metadata.mslevel != 'MS'">
                         <label>Precursor m/z:</label> <br />
                         <input type="text" class="form-control" name="precursormz" ng-model="metadata.precursormz" />
                         <br />
@@ -606,9 +611,9 @@
                         <td>{{metadata.chromatography}}</td>
                     </tr>
 
-                    <tr ng-if="metadata.mstype && metadata.mstype != 'Select One'">
+                    <tr ng-if="metadata.mslevel && metadata.mslevel != 'Select One'">
                         <td>MS Type / Level</td>
-                        <td>{{metadata.mstype}}</td>
+                        <td>{{metadata.mslevel}}</td>
                     </tr>
 
                     <tr ng-if="metadata.precursormz && metadata.precursormz != 'Select One'">
