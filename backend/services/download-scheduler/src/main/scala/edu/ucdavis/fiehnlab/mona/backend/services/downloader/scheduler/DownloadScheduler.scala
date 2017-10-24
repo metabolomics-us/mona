@@ -55,7 +55,7 @@ class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
       .antMatchers(HttpMethod.GET, "/rest/downloads/generatePredefined").hasAuthority("ADMIN")
 
       // must be an admin to upload static files
-      .antMatchers(HttpMethod.GET, "/rest/downloads/static").hasAuthority("ADMIN")
+      .antMatchers(HttpMethod.POST, "/rest/downloads/static").hasAuthority("ADMIN")
   }
 
   override def configure(web: WebSecurity): Unit = {
