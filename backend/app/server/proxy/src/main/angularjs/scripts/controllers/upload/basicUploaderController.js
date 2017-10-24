@@ -376,6 +376,10 @@
                 $scope.currentSpectrum.metaData.push({name: "sample introduction", value: $scope.metadata.chromatography});
             }
 
+            if (angular.isDefined($scope.metadata.derivatization) && $scope.metadata.derivatization != "") {
+                $scope.currentSpectrum.metaData.push({name: "derivatization", value: $scope.metadata.derivatization});
+            }
+
             if (angular.isDefined($scope.metadata.mslevel) && $scope.metadata.mslevel != "") {
                 $scope.currentSpectrum.metaData.push({name: "ms level", value: $scope.metadata.mslevel});
             }
