@@ -333,6 +333,12 @@
                     </div>
                     <br />
 
+                    <div ng-if="metadata.chromatography && metadata.chromatography != 'Select One' && metadata.chromatography != 'Gas Chromatography (GC)'">
+                        <label>Derivatization:</label> <br />
+                        <input type="text" class="form-control" name="derivatization" ng-model="metadata.derivatization" />
+                        <br />
+                    </div>
+
                     <div>
                         <label>MS Type / Level:</label> <br />
                         <select class="form-control" name="mslevel" ng-model="metadata.mslevel">
