@@ -204,6 +204,8 @@
                 }
 
                 s.biologicalCompound.metaData = [];
+                s.biologicalCompound.kind = 'biological';
+
                 s.compound = [s.biologicalCompound];
                 s.spectrum = spectra.spectrum;
 
