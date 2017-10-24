@@ -9,7 +9,7 @@
 
 
         <!-- Select files to upload -->
-        <div ng-if="page == 0" class="panel panel-default">
+        <div data-ng-if="page == 0" class="panel panel-default">
             <div class="panel-heading"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
 
             <div class="panel-body">
@@ -21,15 +21,15 @@
                 <br />
 
                 <label>Upload a File:</label>
-                <p class="help-block" ng-show="uploadError"><strong>{{uploadError}}</strong></p>
+                <p class="help-block" data-ng-show="uploadError" data-ng-class="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
                 <div class="input-group" data-ng-class="{'has-error': uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" ng-file-select="parseFiles($files)" />
+                            Browse&hellip; <input type="file" data-ng-file-select="parseFiles($files)" />
                         </span>
                     </span>
 
-                    <input id="spectrumFile" type="text" class="form-control" ng-model="filenames" readonly />
+                    <input id="spectrumFile" type="text" class="form-control" data-ng-model="filenames" readonly />
                 </div>
 
                 <span class="help-block">Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files</span>
@@ -38,8 +38,8 @@
 
                 <div class="input-group" data-ng-class="{'has-error': pasteError}">
                     <label>Paste a Mass Spectrum:</label>
-                    <p class="help-block" ng-show="pasteError"><strong>{{pasteError}}</strong></p>
-                    <textarea class="form-control" rows="10" ng-model="pastedSpectrum"></textarea>
+                    <p class="help-block" data-ng-show="pasteError"><strong>{{pasteError}}</strong></p>
+                    <textarea class="form-control" rows="10" data-ng-model="pastedSpectrum"></textarea>
                     <span class="help-block">
                         Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
                         <code>[m/z] [intensity]</code><br />
