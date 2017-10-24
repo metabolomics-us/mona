@@ -312,7 +312,7 @@
                 function (progress) {
                     if (progress == 100) {
                         $scope.$apply(function() {
-                            if ($scope.spectrum == null) {
+                            if ($scope.currentSpectrum == null) {
                                 $scope.page = 0;
                                 $scope.uploadError = 'Unable to load spectra!';
                             } else {
@@ -370,12 +370,42 @@
         };
 
 
-        function validateSpectra() {
+        function finalizeAndValidateSpectra() {
+            // Add additional components to spectrum object
+            if (angular.isDefined($scope.metadata.chromatography) && $scope.metadata.chromatography != "") {
+                $scope.currentSpectrum.metaData.push({name: "sample introduction", value: $scope.metadata.chromatography});
+            }
+
+            if (angular.isDefined($scope.metadata.mslevel) && $scope.metadata.mslevel != "") {
+                $scope.currentSpectrum.metaData.push({name: "ms level", value: $scope.metadata.mslevel});
+            }
+
+            if (angular.isDefined($scope.metadata.precursormz) && $scope.metadata.precursormz != "") {
+                $scope.currentSpectrum.metaData.push({name: "precursor m/z", value: $scope.metadata.precursormz});
+            }
+
+            if (angular.isDefined($scope.metadata.precursortype) && $scope.metadata.precursortype != "") {
+                $scope.currentSpectrum.metaData.push({name: "precursor type", value: $scope.metadata.precursortype});
+            }
+
+            if (angular.isDefined($scope.metadata.ionization) && $scope.metadata.ionization != "") {
+                $scope.currentSpectrum.metaData.push({name: "ionization", value: $scope.metadata.ionization});
+            }
+
+            if (angular.isDefined($scope.metadata.ionmode) && $scope.metadata.ionmode != "") {
+                $scope.currentSpectrum.metaData.push({name: "ionization mode", value: $scope.metadata.ionmode});
+            }
+
+            if (angular.isDefined($scope.metadata.authors) && $scope.metadata.authors != "") {
+                $scope.currentSpectrum.metaData.push({name: "authors", value: $scope.metadata.authors});
+            }
+
+            // Validate spectrum object
             return true;
         }
 
         $scope.uploadFile = function () {
-            if (validateSpectra()) {
+            if (finalizeAndValidateSpectra()) {
                 // Reset the spectrum count if necessary
                 if (!UploadLibraryService.isUploading()) {
                     UploadLibraryService.completedSpectraCount = 0;
@@ -384,12 +414,9 @@
                     UploadLibraryService.uploadStartTime = new Date().getTime();
                 }
 
-                console.log("Uploading");
-                console.log($scope.currentSpectrum);
-
                 UploadLibraryService.uploadSpectra([$scope.currentSpectrum], function (spectrum) {
                     $log.info("submitting spectrum");
-                    console.log(spectrum);
+                    $log.info(spectrum);
 
                     var req = {
                         method: 'POST',
