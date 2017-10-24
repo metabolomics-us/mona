@@ -141,7 +141,7 @@
             $scope.currentSpectrum.molFile = '';
             $scope.currentSpectrum.inchi = '';
             $scope.currentSpectrum.inchiKey = '';
-            $scope.names = [];
+            $scope.currentSpectrum.names = [''];
         };
 
 
