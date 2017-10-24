@@ -6,14 +6,15 @@
 
 (function() {
     'use strict';
-    uploadLibraryService.$inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'gwMgfService', 'gwChemifyService', 'AuthenticationService', 'gwCtsService', '$log', '$q', '$timeout', 'gwMassbankService', '$filter', 'AsyncService', 'MetaDataOptimizationService'];
+    uploadLibraryService.$inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'gwMgfService', 'gwChemifyService', 'AuthenticationService', 'gwCtsService', '$log', '$q', 'gwMassbankService', '$filter', 'AsyncService', 'MetaDataOptimizationService'];
     angular.module('moaClientApp')
-      .service('UploadLibraryService', uploadLibraryService);
+        .service('UploadLibraryService', uploadLibraryService);
 
     /* @ngInject */
     function uploadLibraryService($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService,
-                                  gwChemifyService, AuthenticationService, gwCtsService, $log, $q, $timeout,
+                                  gwChemifyService, AuthenticationService, gwCtsService, $log, $q,
                                   gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
+
         // Representing this service
         var self = this;
 
@@ -22,7 +23,6 @@
         self.failedSpectraCount = 0;
         self.uploadedSpectraCount = 0;
         self.uploadStartTime = -1;
-
 
         /**
          * obtains a promise for us to get to the an inchi key for a spectra object
@@ -62,6 +62,7 @@
                         }
                     });
                 }
+
                 //we got nothing so we give up
                 else {
                     deferred.reject("sorry given object was invalid, we need a name, or an InChI code, InChI Key or an array with names for this to work!")
@@ -74,6 +75,7 @@
                 deferred.resolve(spectra);
 
             }
+
             //in case we got a smiles
             else if (spectra.smiles) {
                 gwCtsService.convertSmileToInChICode(spectra.smiles, function(data) {
@@ -83,6 +85,7 @@
                     deferred.resolve(spectra);
                 });
             }
+
             //in case we got an inchi
             else if (spectra.inchiKey) {
                 gwCtsService.convertInchiKeyToMol(spectra.inchiKey, function(molecule) {
@@ -99,6 +102,7 @@
                     }
                 });
             }
+
             else {
                 resolveByName(spectra);
             }
@@ -117,7 +121,6 @@
 
             var defer = $q.defer();
 
-
             //if we have  a key or an inchi
             if (spectrumObject.inchiKey !== null && spectrumObject.inchi !== null) {
                 self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData).then(function(submittedSpectra) {
@@ -134,9 +137,7 @@
                     if (spectrumWithKey.inchi !== null || spectrumWithKey.molFile !== null) {
                         //$log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
                         self.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData).then(function(submittedSpectra) {
-
                             defer.resolve(submittedSpectra);
-
                         });
                     }
 
@@ -145,7 +146,6 @@
                         defer.reject(new Error('dropped object from submission, since it was declared invalid, it had neither an InChI or a Molfile, which means the provide InChI key most likely was not found!'));
                     }
                 }).catch(function(error) {
-
                     $log.warn(error + '\n' + $filter('json')(spectrumObject));
                     defer.reject(error);
                 });
@@ -204,9 +204,7 @@
                 }
 
                 s.biologicalCompound.metaData = [];
-
-                s.compound = [s.biologicalCompound]
-
+                s.compound = [s.biologicalCompound];
                 s.spectrum = spectra.spectrum;
 
                 if (angular.isDefined(spectra.tags)) {
