@@ -5,6 +5,7 @@ column name	column
 precursortype	precursor type
 mslevel	ms level
 ms type	ms level
+spectrum type	ms level
 authors	author
 spectrumid	accession
 adductionname	adduct
