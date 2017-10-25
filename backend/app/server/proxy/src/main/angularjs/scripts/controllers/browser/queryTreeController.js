@@ -28,8 +28,11 @@
         var getPredefinedQueries = function() {
             DownloadService.getPredefinedQueries(
                 function(data) {
+                    // Filter out downloads with 0 records
+                    data = data.filter(function(x) { return x.queryCount > 0; });
+
                     // Header entry for libraries if any exist
-                    if (data.some(function(x) { return x.label.indexOf('Libraries') > 0; })) {
+                    if (data.some(function(x) { return x.label.indexOf('Libraries') > -1; })) {
                         data.unshift({
                             label: "Libraries",
                             query: null,
