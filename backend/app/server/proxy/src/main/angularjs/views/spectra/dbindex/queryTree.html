@@ -9,5 +9,17 @@
         </div>
 
         <div data-query-tree-view data-tree-id="tree" data-tree-model="queryTree"></div>
+
+
+        <h3 ng-if="angular.equals(static, {})"><i class="fa fa-table"></i> Additional Downloads</h3>
+
+        <div class="list-group panel-query-tree well" ng-if="angular.equals(static, {})">
+            <div class="list-group-item" data-ng-repeat-start="(category, files) in static">
+                <b>{{category}}</b>
+            </div>
+            <div class="list-group-item" style="padding-left: 3em;" data-ng-repeat-end data-ng-repeat="file in files">
+                <a ng-href="{{file.path}}">{{file.fileName}}</a>
+            </div>
+        </div>
     </div>
 </div>
