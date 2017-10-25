@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import org.springframework.http.{HttpEntity, HttpMethod}
+import org.springframework.http.{HttpEntity, HttpMethod, RequestEntity}
 import org.springframework.stereotype.Component
 
 /**
@@ -33,6 +33,15 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
     */
   def regenerateStatistics = {
     restOperations.postForEntity(s"${this.monaRestServer}/rest/statistics/update",new HttpEntity[String]("",this.buildHeaders),classOf[Void])
+  }
+
+  def regenerateDownloads = {
+    val url = s"${this.monaRestServer}/rest/downloads/generatePredefined"
+
+    logger.info(s"invoking: ${url}")
+    logger.info(s"headers: ${buildHeaders}")
+
+    restOperations.exchange(url,HttpMethod.GET,new HttpEntity[String]("parameters",this.buildHeaders),classOf[Array[Any]])
   }
 }
 
