@@ -94,15 +94,33 @@
         };
 
         var getStaticDownloads = function() {
+            $scope.static = {};
+
             DownloadService.getStaticDownloads(
                 function(data) {
-                    $scope.static = {};
-
                     console.log(data);
 
                     data.forEach(function(x) {
+                        if (angular.isDefined(x.category)) {
+                            var categoryName = x.category[0].toUpperCase() + x.category.substr(1);
 
+                            if (!$scope.static.hasOwnProperty(categoryName)) {
+                                $scope.static[categoryName] = [];
+                            }
+
+                            x.path = REST_BACKEND_SERVER +'/rest/downloads/static/'+ x.category +'/'+ x.fileName;
+                            $scope.static[categoryName].push(x);
+                        } else {
+                            if (!$scope.static.hasOwnProperty(categoryName)) {
+                                $scope.static['General'] = [];
+                            }
+
+                            x.path = REST_BACKEND_SERVER +'/rest/downloads/static/'+ x.fileName;
+                            $scope.static['General'].push(x);
+                        }
                     });
+
+                    console.log($scope.static)
                 },
                 function(error) {
                     $log.error('query tree failed: ' + error);
