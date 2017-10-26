@@ -133,7 +133,7 @@ class DownloadSchedulerService extends LazyLogging {
   /**
     * Schedules the generation of predefined downloads once a day
     */
-  @Scheduled(cron = "0 0 0 * * *")
+  @Scheduled(cron = "0 0 1 * * *")
   private def schedulePredefinedDownloads(): Unit = {
     generatePredefinedDownloads()
   }
