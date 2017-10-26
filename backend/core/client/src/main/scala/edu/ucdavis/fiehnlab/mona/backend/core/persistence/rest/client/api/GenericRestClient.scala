@@ -4,12 +4,12 @@ import java.util
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginRequest, WrappedString}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginRequest
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.{Page, PageImpl, Pageable}
-import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
+import org.springframework.http._
 import org.springframework.web.client.RestOperations
 
 import scala.collection.JavaConverters._
@@ -26,7 +26,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * authorization token
     * which should be kept secret
     */
-  private var token: String = null
+  private var token: String = _
 
   @Autowired
   @Qualifier("monaRestServer")
@@ -42,9 +42,8 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
   def requestPath = s"$monaRestServer/$basePath"
 
   @PostConstruct
-  def init = {
-    logger.info(s"utilizing base path for queries: ${requestPath}, host is ${monaRestServer}" )
-
+  def init(): Unit = {
+    logger.info(s"utilizing base path for queries: $requestPath, host is $monaRestServer")
   }
 
   /**
@@ -85,7 +84,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param dao
     * @param id
     */
-  def updateAsync(dao: T, id: ID): Unit = restOperations.exchange(s"$requestPath/${id}", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
+  def updateAsync(dao: T, id: ID): Unit = restOperations.exchange(s"$requestPath/$id", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
 
 
   /**
@@ -182,15 +181,15 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
         val path = s"$requestPath/search$utilizedPageSize$pageToLookAt"
 
         if (path.contains("?")) {
-          s"$path&query=${a}"
+          s"$path&query=$a"
         }
         else {
-          s"$path?query=${a}"
+          s"$path?query=$a"
         }
       case _ =>
         s"$requestPath$utilizedPageSize$pageToLookAt"
     }
-    logger.info(s"path to invoke: ${pathToInvoke}")
+    logger.info(s"path to invoke: $pathToInvoke")
     restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
   }
 
@@ -201,8 +200,8 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param password
     */
   final def login(username: String, password: String): GenericRestClient[T, ID] = {
-    logger.debug(s"logging in using service: ${loginService}")
-    val token = loginService.login(new LoginRequest(username, password)).token
+    logger.debug(s"logging in using service: $loginService")
+    val token = loginService.login(LoginRequest(username, password)).token
     login(token)
 
   }
@@ -226,7 +225,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
   protected def buildHeaders: HttpHeaders = {
     val header = new HttpHeaders()
     header.set("Authorization", s"Bearer $token")
-    header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON));
+    header.setAccept(util.Arrays.asList(MediaType.APPLICATION_JSON))
     header
   }
 }

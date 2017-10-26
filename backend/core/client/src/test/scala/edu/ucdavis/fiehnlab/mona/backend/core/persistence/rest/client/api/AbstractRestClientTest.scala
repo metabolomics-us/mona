@@ -1,5 +1,4 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
-import scala.concurrent.duration._
 import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
@@ -7,14 +6,15 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.{ShouldMatchers, WordSpec}
 import org.scalatest.concurrent.Eventually
+import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.TestContextManager
 import org.springframework.web.client.HttpClientErrorException
 
 import scala.collection.JavaConverters._
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by wohlgemuth on 3/2/16.
