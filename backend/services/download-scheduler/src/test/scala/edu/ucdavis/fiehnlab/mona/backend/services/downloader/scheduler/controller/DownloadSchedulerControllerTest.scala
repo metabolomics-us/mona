@@ -37,7 +37,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "DownloadControllerTest" should {
+  "DownloadSchedulerControllerTest" should {
     RestAssured.baseURI = s"http://localhost:$port/rest/downloads"
 
     // Populate the database
@@ -45,15 +45,14 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
 
     "load some data" in {
       mongoRepository.deleteAll()
+      queryExportRepository.deleteAll()
+      predefinedQueryRepository.deleteAll()
 
       for (spectrum <- exampleRecords) {
         mongoRepository.save(spectrum)
       }
 
-      queryExportRepository.deleteAll()
       queryExportRepository.save(QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", "test", new Date, 0, 0, null, null))
-
-      predefinedQueryRepository.deleteAll()
     }
 
     // Test download of a spectrum
@@ -124,14 +123,9 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       "succeed if authenticated as an admin" in {
         val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").`then`().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
 
-        result.foreach(println)
-
-        assert(result.length == 8)
+        assert(result.length == 2)
         assert(result.forall(_.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))
         assert(result.exists(_.label == "All Spectra"))
-        assert(result.exists(_.label == "Libraries - 1"))
-        assert(result.exists(_.label == "Libraries - 1 - 2"))
-        assert(result.exists(_.label == "Libraries - 1 - 2 - 3"))
       }
     }
   }
