@@ -1,249 +1,179 @@
-version: '2'
+version: "3"
+
+volumes:
+  mongo-data:
+  repository-data:
+  downloader-data:
 
 services:
+  #
+  # Databases & Messaging
+  #
 
-################################################################################################################
-# This section provides us with our persistent data layer. And should define all the different
-# images we consider for persistent storage
-################################################################################################################
-
-  #contains all the data for mongo between restarts
-  data_container:
-    build: ./docker
-    command: echo 'Data Container for our images'
-    volumes:
-     - /data/db
-     - /data/mona
-
-  #contains all the different configuration files for the services
-  config_container:
-    build: ./docker
-    command: echo 'Data Container for our images'
-    volumes:
-     - /usr/share/elasticsearch/config
-
-################################################################################################################
-#This section provides us with the required databases and should be changed later
-#to define a cluster setup for production user as well as referencing shared storage
-################################################################################################################
-
-  #just fixing the version to avoid surprises
   mongodb:
     image: mongo:3.2.4
-    volumes_from:
-      - data_container
     ports:
-      - "27017:27017"
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - default
 
-################################################################################################################
-# This section defines our elastic search cluster and one master node, which is publically exposed
-# clients need to register against each
-################################################################################################################
-
-  #defines a node, which can be scaled on the fly
-  elasticsearch_node:
-    image: elasticsearch:1.7.5
-    volumes_from:
-      - config_container:ro
-    entrypoint: ./bin/elasticsearch -Xmx4g
-
-  #defines the master node and should not be scaled
+  # Elasticsearch master and entrypoint
   elasticsearch_master:
     build:
       context: ./docker
-      dockerfile: DockerfileElasticMaster
-    volumes_from:
-       - config_container:ro
+      dockerfile: Dockerfile
     ports:
-       - "9500:9200"
-       - "9300:9300"
+      - 9500:9200
+      - 9300:9300
     entrypoint: ./bin/elasticsearch -Xmx4g
 
-################################################################################################################
-# This section provides us with access to the required messaging queues and services for caching application
-# this would be mainly rabbitmq at this stage and redis.
-################################################################################################################
+  # Elasticsearch node, which may be scaled
+  elasticsearch_node:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    entrypoint: ./bin/elasticsearch -Xmx4g
 
-  #used for message and event handling accress mona
   rabbitmq:
-    image:  rabbitmq:3-management
+    image: rabbitmq:3-management
     hostname: rabbitmq
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - 15672:15672
+      - 5672:5672
 
 
-################################################################################################################
-# This section defines our required services, need to connect mona apps
-# to each other
-################################################################################################################
+  #
+  # MoNA base services
+  #
 
-# The discovery service provided us with a local overview of our services
-# and allows for easy scaling and load balancing using our proxy at a later stage
+  # The discovery service provided us with a local overview of our services
+  # and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
     image: eros.fiehnlab.ucdavis.edu/mona-discovery:latest
     ports:
-      - "8761:8761"
+      - 8761:8761
     depends_on:
       - mongodb
       - rabbitmq
-      - redis
     entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
-
     environment:
       - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
 
-
-# The configuration service, provides to every client his required configuration
-# the client needs to have a bootstrap.yml to register against it
-
+  # The configuration service provides the required configuration to each service that has
+  # a bootstrap.yml registered against it
   config:
     image: eros.fiehnlab.ucdavis.edu/mona-configuration:latest
     ports:
-      - "1111:1111"
-
-    #####
-    # define that the required discovery service needs to be named 'discovery'
+      - 1111:1111
     links:
       - discovery
-
-    ####
-    # the list of our dependend services
     depends_on:
       - discovery
-
-    #we will be waiting 5 minutes for the discovery service to start up an than start any jar file.
-    #java opts can be overriden in the container
-    #the configuration points the task as the right ip address for the discovery server
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
-
     environment:
       - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
 
 
-  # this proxy server is the main entry point for mona and should be preferable always be used
-  proxy:
-    image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
-    ports:
-      - "80:8080"
-    depends_on:
-      - config
-    environment:
-      - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
+  #
+  # Initial services to start up
+  #
 
-    #we will be waiting 5 minutes for the discovery service to start up an than start any jar file.
-    #java opts can be overriden in the container
-    #the configuration points the task as the right ip address for the discovery server
-    #we also define the url for our configuration server here
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
-
-
-  # bootstrapper
+  # Bootstrap service which pre-populated and synchronizes the databases
   bootstrap:
     image: eros.fiehnlab.ucdavis.edu/mona-bootstrap:latest
-
     depends_on:
       - config
     entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx2G -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
-
-################################################################################################################
-# This section defines our required services, need to connect mona apps
-# to each other
-################################################################################################################
-
-  #webhook support to notify external apis
+  # Webhook support to notify external apis
   webhooks:
     image: eros.fiehnlab.ucdavis.edu/mona-webhooks-server:latest
-
-    depends_on:
-      - proxy
-      - mongodb
-    entrypoint: bash -c "./wait-for-it.sh proxy:8080 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
     ports:
-    - "4440:4444"
+      - 4444:4444
+    depends_on:
+      - config
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
-
-  #curation scheduler to notify rabbit queue, if any messages are send down the bus
-  #it also exposes a couple of rest enpoints to manually schedule curation tasks
-  #to the system
+  # Scheduler for curation jobs
   curationScheduler:
     image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler:latest
-
-    depends_on:
-      - webhooks
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
     ports:
-    - "5555:5555"
-
-
-  # download scheduler to queue download jobs from users or for predefined downloads
-  # exposes endpoints to schedule, list and initiate downloads
-  downloader:
-    image: eros.fiehnlab.ucdavis.edu/mona-download-scheduler:latest
-
+      - 5555:5555
     depends_on:
-      - webhooks
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
-    ports:
-    - "7777:7777"
+      - config
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
-    volumes_from:
-      - data_container
-
-
-  #provides us with a presentation of the content of mona as form of repository
+  # Serves the content of MoNA as a repository
   repository:
     image: eros.fiehnlab.ucdavis.edu/mona-repository
-
-    depends_on:
-      - webhooks
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
     ports:
-    - "8888:8888"
-
-    volumes_from:
-      - data_container
-
-
-  #provides us with the mona similarity service
-  similarity:
-    image: eros.fiehnlab.ucdavis.edu/mona-similarity
-
+      - 8888:8888
     depends_on:
-      - webhooks
-    entrypoint: bash -c "./wait-for-it.sh webhooks:4444 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
-    ports:
-    - "9999:9999"
+      - config
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    volumes:
+      - repository-data:/data
 
 
-################################################################################################################
-# This section defines services, which can be scaled from 1-n times and should be started last
-# just to keep the logfile nice and tidy
-################################################################################################################
+  #
+  # Persistence server, which utilizes above services, and other dependent services
+  #
 
-  #this is our main authenticaiton service for the use in mona
+  # Persistence service with qery interface
+  persistence:
+    image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:latest
+    depends_on:
+      - curationScheduler
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+
+  # Main authentication service
   auth:
     image: eros.fiehnlab.ucdavis.edu/mona-auth-server:latest
     depends_on:
       - curationScheduler
     entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
-
-  #persistences and query interface
-  persistence:
-    image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:latest
-
+  # MoNA similarity service
+  similarity:
+    image: eros.fiehnlab.ucdavis.edu/mona-similarity
+    ports:
+    - 9999:9999
     depends_on:
       - curationScheduler
     entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
 
 
-  #curation runner is utilized to actually curate spectra
+  #
+  # Proxy and additional standalone services
+  #
+
+  # The main entrypoint for MoNA
+  proxy:
+    image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
+    ports:
+      - 80:8080
+    depends_on:
+      - persistence
+    environment:
+      - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+
+  # Download service for scheduling and running download jobs
+  downloader:
+    image: eros.fiehnlab.ucdavis.edu/mona-download-scheduler:latest
+    ports:
+      - 7777:7777
+    depends_on:
+      - persistence
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    volumes:
+      - downloader-data:/data
+
+  # Run scheduled curation tasks
   curationRunner:
     image: eros.fiehnlab.ucdavis.edu/mona-curation-runner:latest
-
     depends_on:
-      - curationScheduler
+      - persistence
     entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
-    
