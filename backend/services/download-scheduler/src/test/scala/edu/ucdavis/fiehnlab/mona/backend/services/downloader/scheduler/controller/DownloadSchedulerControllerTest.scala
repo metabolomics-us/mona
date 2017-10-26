@@ -54,7 +54,6 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       queryExportRepository.save(QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", "test", new Date, 0, 0, null, null))
 
       predefinedQueryRepository.deleteAll()
-      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
     }
 
     // Test download of a spectrum
@@ -62,6 +61,17 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       "return an error if the download does not exist" in {
         given().contentType("application/json; charset=UTF-8").when().get("/retrieve/doesnotexist").`then`().statusCode(404)
       }
+    }
+
+    // Add new predefined download
+    "add predefined download" in {
+      val query: PredefinedQuery = predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
+
+      given().contentType("application/json; charset=UTF-8").when().body(query).post("/predefined").`then`().statusCode(401)
+
+      val result = authenticate().contentType("application/json; charset=UTF-8").when().body(query).post("/predefined").`then`().statusCode(200).extract().body().as(classOf[PredefinedQuery])
+
+      assert(query == result)
     }
 
     // List predefined downloads
@@ -114,9 +124,14 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       "succeed if authenticated as an admin" in {
         val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").`then`().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
 
-        assert(result.length == 2)
-        assert(result.forall(x => x.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))
-        assert(result.forall(x => x.label == "All Spectra"))
+        result.foreach(println)
+
+        assert(result.length == 8)
+        assert(result.forall(_.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))
+        assert(result.exists(_.label == "All Spectra"))
+        assert(result.exists(_.label == "Libraries - 1"))
+        assert(result.exists(_.label == "Libraries - 1 - 2"))
+        assert(result.exists(_.label == "Libraries - 1 - 2 - 3"))
       }
     }
   }

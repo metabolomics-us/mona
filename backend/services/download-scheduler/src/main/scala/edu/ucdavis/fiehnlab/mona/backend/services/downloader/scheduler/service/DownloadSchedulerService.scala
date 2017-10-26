@@ -98,7 +98,7 @@ class DownloadSchedulerService extends LazyLogging {
           val tag: String = tagComponents.slice(0, i).mkString(" - ")
 
           if (!predefinedQueryRepository.exists(tag)) {
-            predefinedQueryRepository.save(PredefinedQuery(s"Libraries - $tag", tag, s"tags.text=='$tag'", 0, null, null))
+            predefinedQueryRepository.save(PredefinedQuery(s"Libraries - $tag", tag, s"""tags.text=="$tag"""", 0, null, null))
           }
         }
       }
