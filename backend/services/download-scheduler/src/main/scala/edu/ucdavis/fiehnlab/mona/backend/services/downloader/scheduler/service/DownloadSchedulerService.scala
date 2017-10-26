@@ -6,6 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -32,6 +33,10 @@ class DownloadSchedulerService extends LazyLogging {
 
   @Autowired
   val predefinedQueryRepository: PredefinedQueryMongoRepository = null
+
+  @Autowired
+  @Qualifier("tagStatisticsMongoRepository")
+  private val tagStatisticsRepository: TagStatisticsMongoRepository = null
 
   @Autowired
   val rabbitTemplate: RabbitTemplate = null
@@ -78,6 +83,28 @@ class DownloadSchedulerService extends LazyLogging {
     * Generates the downloads of all export formats for each predefined query download
     */
   def generatePredefinedDownloads(): Array[QueryExport] = {
+
+    // Update the list of pre-generated downloads based on libraries present in the database
+    tagStatisticsRepository.findAll().asScala
+      .filter(_.category == "library")
+      .filter(tag => !predefinedQueryRepository.exists(s"Libraries - ${tag.text}"))
+      .foreach { tag =>
+        logger.info(s"Creating new predefined download for ${tag.text}")
+
+        val tagComponents: Array[String] = tag.text.split(" - ")
+
+        // Create each level of the tag if it contains separators
+        (1 to tagComponents.length).foreach { i =>
+          val tag: String = tagComponents.slice(0, i).mkString(" - ")
+
+          if (!predefinedQueryRepository.exists(tag)) {
+            predefinedQueryRepository.save(PredefinedQuery(s"Libraries - $tag", tag, s"tags.text=='$tag'", 0, null, null))
+          }
+        }
+      }
+
+
+    // Compile a list of downloads to schedule
     val downloads: ArrayBuffer[QueryExport] = ArrayBuffer()
 
     predefinedQueryRepository.findAll().asScala.foreach { predefinedQuery: PredefinedQuery =>

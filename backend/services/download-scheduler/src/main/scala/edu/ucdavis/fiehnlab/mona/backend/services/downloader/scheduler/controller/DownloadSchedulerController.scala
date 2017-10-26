@@ -128,6 +128,8 @@ class DownloadSchedulerController extends LazyLogging {
   @RequestMapping(path = Array("/generatePredefined"), method = Array(RequestMethod.GET))
   @Async
   def generatePredefinedDownloads(): Future[ResponseEntity[Array[QueryExport]]] = {
-    new AsyncResult[ResponseEntity[Array[QueryExport]]](new ResponseEntity(downloadSchedulerService.generatePredefinedDownloads(), HttpStatus.OK))
+    new AsyncResult[ResponseEntity[Array[QueryExport]]](
+      new ResponseEntity(downloadSchedulerService.generatePredefinedDownloads(), HttpStatus.OK)
+    )
   }
 }
