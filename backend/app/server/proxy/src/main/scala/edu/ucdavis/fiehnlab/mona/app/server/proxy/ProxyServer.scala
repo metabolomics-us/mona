@@ -46,10 +46,10 @@ class ProxyServer {
     new SwaggerRedirectFilter()
   }
 
-  @Value("${spring.http.multipart:max-file-size}")
+  @Value("${spring.http.multipart.max-file-size}")
   val multipartMaxFileSize: String = null
 
-  @Value("${spring.http.multipart:max-request-size}")
+  @Value("${spring.http.multipart.max-request-size}")
   val multipartMaxRequestSize: String = null
 
   @Bean(name = Array("multipartConfigElement"))
