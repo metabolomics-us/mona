@@ -57,6 +57,11 @@ class TagStatisticsService {
       group("library.tag.text").count().as("count")
     )
 
+    //clear out old libraries
+    getLibraryTagStatistics.foreach{x:TagStatistics =>
+      tagStatisticsRepository.delete(x.id)
+    }
+
     mongoOperations
       .aggregate(aggregationQuery, "SPECTRUM", classOf[AggregationResult])
       .asScala
@@ -81,7 +86,7 @@ class TagStatisticsService {
   /**
     * Get all library tags in the tag statistics repository
     */
-  def getLibraryTagStatistics: Iterable[TagStatistics] = getTagStatistics.filter(_.category == "library")
+  def getLibraryTagStatistics: Iterable[TagStatistics] = tagStatisticsRepository.findAllByCategory("library")
 
   /**
     * Count the data in the tag statistics repository

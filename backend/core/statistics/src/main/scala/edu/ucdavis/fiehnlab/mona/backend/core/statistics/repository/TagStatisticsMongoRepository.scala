@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository
 trait TagStatisticsMongoRepository extends PagingAndSortingRepository[TagStatistics, String] {
 
   def findByText(text: String): Array[TagStatistics]
+
+  def findAllByCategory(category:String): Array[TagStatistics]
 }
