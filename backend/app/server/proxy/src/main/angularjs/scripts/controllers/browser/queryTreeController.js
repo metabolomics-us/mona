@@ -4,12 +4,12 @@
 
 (function() {
     'use strict';
-    queryTreeController.$inject = ['$scope', 'Spectrum', '$log', 'REST_BACKEND_SERVER'];
+    queryTreeController.$inject = ['$scope', 'DownloadService', '$log', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
         .controller('QueryTreeController', queryTreeController);
 
     /* @ngInject */
-    function queryTreeController($scope, Spectrum, $log, REST_BACKEND_SERVER) {
+    function queryTreeController($scope, DownloadService, $log, REST_BACKEND_SERVER) {
         $scope.executeQuery = function(node) {
             return '/spectra/browse?query='+ node.query;
         };
@@ -22,20 +22,24 @@
             return REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.mspExport.id;
         };
 
-        (function() {
-            $scope.queries = {};
-            $scope.queryTree = [];
-
-            // Get predefined queries and build query tree
-            Spectrum.getPredefinedQueries(
+        /**
+         * Get predefined queries and build query tree
+         */
+        var getPredefinedQueries = function() {
+            DownloadService.getPredefinedQueries(
                 function(data) {
-                    // Entry for libraries
-                    data.unshift({
-                        label: "Libraries",
-                        query: null,
-                        jsonExport: null,
-                        mspExport: null
-                    });
+                    // Filter out downloads with 0 records
+                    data = data.filter(function(x) { return x.queryCount > 0; });
+
+                    // Header entry for libraries if any exist
+                    if (data.some(function(x) { return x.label.indexOf('Libraries') > -1; })) {
+                        data.unshift({
+                            label: "Libraries",
+                            query: null,
+                            jsonExport: null,
+                            mspExport: null
+                        });
+                    }
 
                     // Set up all nodes
                     for (var i = 0; i < data.length; i++) {
@@ -78,7 +82,7 @@
                             return (b == "All Spectra" ? 1 : -1)
                         } else if (b.label === "Libraries") {
                             return (a == "All Spectra" ? 1 : -1)
-                        }else {
+                        } else {
                             return 0;
                         }
                     });
@@ -87,6 +91,49 @@
                     $log.error('query tree failed: ' + error);
                 }
             );
+        };
+
+        var getStaticDownloads = function() {
+            $scope.static = {};
+
+            DownloadService.getStaticDownloads(
+                function(data) {
+                    console.log(data);
+
+                    data.forEach(function(x) {
+                        if (angular.isDefined(x.category)) {
+                            var categoryName = x.category[0].toUpperCase() + x.category.substr(1);
+
+                            if (!$scope.static.hasOwnProperty(categoryName)) {
+                                $scope.static[categoryName] = [];
+                            }
+
+                            x.path = REST_BACKEND_SERVER +'/rest/downloads/static/'+ x.category +'/'+ x.fileName;
+                            $scope.static[categoryName].push(x);
+                        } else {
+                            if (!$scope.static.hasOwnProperty(categoryName)) {
+                                $scope.static['General'] = [];
+                            }
+
+                            x.path = REST_BACKEND_SERVER +'/rest/downloads/static/'+ x.fileName;
+                            $scope.static['General'].push(x);
+                        }
+                    });
+
+                    console.log($scope.static)
+                },
+                function(error) {
+                    $log.error('query tree failed: ' + error);
+                }
+            );
+        };
+
+        (function() {
+            $scope.queries = {};
+            $scope.queryTree = [];
+
+            getPredefinedQueries();
+            getStaticDownloads();
         })();
     }
 })();

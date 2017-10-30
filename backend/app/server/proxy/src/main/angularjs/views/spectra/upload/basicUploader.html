@@ -9,7 +9,7 @@
 
 
         <!-- Select files to upload -->
-        <div ng-if="page == 0" class="panel panel-default">
+        <div data-ng-if="page == 0" class="panel panel-default">
             <div class="panel-heading"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
 
             <div class="panel-body">
@@ -21,15 +21,15 @@
                 <br />
 
                 <label>Upload a File:</label>
-                <p class="help-block" ng-show="uploadError"><strong>{{uploadError}}</strong></p>
+                <p class="help-block" data-ng-show="uploadError" data-ng-class="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
                 <div class="input-group" data-ng-class="{'has-error': uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" ng-file-select="parseFiles($files)" />
+                            Browse&hellip; <input type="file" data-ng-file-select="parseFiles($files)" />
                         </span>
                     </span>
 
-                    <input id="spectrumFile" type="text" class="form-control" ng-model="filenames" readonly />
+                    <input id="spectrumFile" type="text" class="form-control" data-ng-model="filenames" readonly />
                 </div>
 
                 <span class="help-block">Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files</span>
@@ -38,8 +38,8 @@
 
                 <div class="input-group" data-ng-class="{'has-error': pasteError}">
                     <label>Paste a Mass Spectrum:</label>
-                    <p class="help-block" ng-show="pasteError"><strong>{{pasteError}}</strong></p>
-                    <textarea class="form-control" rows="10" ng-model="pastedSpectrum"></textarea>
+                    <p class="help-block" data-ng-show="pasteError"><strong>{{pasteError}}</strong></p>
+                    <textarea class="form-control" rows="10" data-ng-model="pastedSpectrum"></textarea>
                     <span class="help-block">
                         Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
                         <code>[m/z] [intensity]</code><br />
@@ -159,9 +159,13 @@
 
             <div class="panel-body">
                 <p class="lead">
-                    <small>MoNA requires that every spectrum has an associated compound.  This can be accomplished by
-                    providing an InChI, InChIKey, SMILES, Name, a MOL/SDF file, or drawing the structure yourself.  Please
-                    be aware that some names or InChIKeys may not exist in compound databases, and therefore cannot be used.</small>
+                    <small>
+                        MoNA requires that every spectrum has an associated compound.  Please enter an InChI, InChIKey,
+                        SMILES, compound name, a MOL/SDF file, or draw a structure yourself.  Then, click on
+                        "Update Compound" to automatically pull the remaining fields from the
+                        <a href="http://cts.fiehnlab.ucdavis.edu" target="_blank">Chemical Translation Service</a>.
+                        Please note that some names or InChIKeys do not exist in compound databases, and so the CTS
+                        may not find anything - in this case, using a full structure such as InChI, SMILES or MOL is preferred.</small>
                 </p>
                 <br />
 
@@ -323,14 +327,21 @@
                             <option value="" selected="selected">Select One</option>
                             <option value="Liquid Chromatography (LC)">Liquid Chromatography (LC)</option>
                             <option value="Gas Chromatography (GC)">Gas Chromatography (GC)</option>
+                            <option value="Direct Infusion (DI)">Direct Injection/Infusion (DI)</option>
                             <option value="Capillary Electrophoresis (CE)">Capillary Electrophoresis (CE)</option>
                         </select>
                     </div>
                     <br />
 
+                    <div ng-if="metadata.chromatography && metadata.chromatography != 'Select One' && metadata.chromatography == 'Gas Chromatography (GC)'">
+                        <label>Derivatization:</label> <br />
+                        <input type="text" class="form-control" name="derivatization" ng-model="metadata.derivatization" />
+                        <br />
+                    </div>
+
                     <div>
                         <label>MS Type / Level:</label> <br />
-                        <select class="form-control" name="mstype" ng-model="metadata.mstype">
+                        <select class="form-control" name="mslevel" ng-model="metadata.mslevel">
                             <option value="" selected="selected">Select One</option>
                             <option value="MS">MS</option>
                             <option value="MS2">MS2</option>
@@ -341,7 +352,7 @@
                     </div>
                     <br />
 
-                    <div ng-if="metadata.mstype && metadata.mstype != 'Select One' && metadata.mstype != 'MS'">
+                    <div ng-if="metadata.mslevel && metadata.mslevel != 'Select One' && metadata.mslevel != 'MS'">
                         <label>Precursor m/z:</label> <br />
                         <input type="text" class="form-control" name="precursormz" ng-model="metadata.precursormz" />
                         <br />
@@ -606,9 +617,9 @@
                         <td>{{metadata.chromatography}}</td>
                     </tr>
 
-                    <tr ng-if="metadata.mstype && metadata.mstype != 'Select One'">
+                    <tr ng-if="metadata.mslevel && metadata.mslevel != 'Select One'">
                         <td>MS Type / Level</td>
-                        <td>{{metadata.mstype}}</td>
+                        <td>{{metadata.mslevel}}</td>
                     </tr>
 
                     <tr ng-if="metadata.precursormz && metadata.precursormz != 'Select One'">

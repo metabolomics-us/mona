@@ -37,7 +37,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "DownloadControllerTest" should {
+  "DownloadSchedulerControllerTest" should {
     RestAssured.baseURI = s"http://localhost:$port/rest/downloads"
 
     // Populate the database
@@ -45,16 +45,14 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
 
     "load some data" in {
       mongoRepository.deleteAll()
+      queryExportRepository.deleteAll()
+      predefinedQueryRepository.deleteAll()
 
       for (spectrum <- exampleRecords) {
         mongoRepository.save(spectrum)
       }
 
-      queryExportRepository.deleteAll()
       queryExportRepository.save(QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", "test", new Date, 0, 0, null, null))
-
-      predefinedQueryRepository.deleteAll()
-      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
     }
 
     // Test download of a spectrum
@@ -62,6 +60,17 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       "return an error if the download does not exist" in {
         given().contentType("application/json; charset=UTF-8").when().get("/retrieve/doesnotexist").`then`().statusCode(404)
       }
+    }
+
+    // Add new predefined download
+    "add predefined download" in {
+      val query: PredefinedQuery = predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
+
+      given().contentType("application/json; charset=UTF-8").when().body(query).post("/predefined").`then`().statusCode(401)
+
+      val result = authenticate().contentType("application/json; charset=UTF-8").when().body(query).post("/predefined").`then`().statusCode(200).extract().body().as(classOf[PredefinedQuery])
+
+      assert(query == result)
     }
 
     // List predefined downloads
@@ -115,8 +124,8 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
         val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").`then`().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
 
         assert(result.length == 2)
-        assert(result.forall(x => x.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))
-        assert(result.forall(x => x.label == "All Spectra"))
+        assert(result.forall(_.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))
+        assert(result.exists(_.label == "All Spectra"))
       }
     }
   }

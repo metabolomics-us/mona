@@ -16,14 +16,6 @@
 
     <description>This project provides the REST persistence interface</description>
     <dependencies>
-
-        <!-- redis based cache implementation
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
--->
-
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>service</artifactId>

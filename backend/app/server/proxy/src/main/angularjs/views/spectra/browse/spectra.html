@@ -179,6 +179,9 @@
                         <div>
                             <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
                         </div>
+                        <div ng-if="spectrum.similarity !== undefined">
+                            <h4><span class="label label-primary" >Similarity: {{spectrum.similarity * 1000 | number:0}}</span></h4>
+                        </div>
                     </div>
 
                     <div data-ng-switch-when="Name">
@@ -196,9 +199,6 @@
                     <div data-ng-switch-when="Mass Spectrum" class="text-center">
                         <div class="masspec-mini">
                             <mass-spec id="massSpec_{{spectrum.id}}" mini ng-model="spectrum.spectrum"></mass-spec>
-                        </div>
-                        <div ng-if="angular.isDefined(spectrum.similarity)">
-                            Similarity: {{s.similarity * 1000 | number:0}} / 1000
                         </div>
                     </div>
 

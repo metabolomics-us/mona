@@ -8,17 +8,18 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounte
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.TagStatistics
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.config.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
@@ -49,10 +50,16 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
   @Autowired
   val predefinedQueryRepository: PredefinedQueryMongoRepository = null
 
+  @Autowired
+  @Qualifier("tagStatisticsMongoRepository")
+  val tagStatisticsRepository: TagStatisticsMongoRepository = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
   "DownloadSchedulerServiceTest" should {
+    tagStatisticsRepository.deleteAll()
+
     "load some data" in {
       queryExportRepository.deleteAll()
       queryExportRepository.save(QueryExport("test", "test", "", "json", "test@localhost", new Date, 0, 0, null, null))
@@ -104,6 +111,27 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       eventually(timeout(10 seconds)) {
         assert(notificationCounter.getEventCount == count + 2)
       }
+    }
+
+    "test that library tags are translated to pregenerated downloads" in {
+      tagStatisticsRepository.save(TagStatistics(null, "1 - 2 - 3", ruleBased = false, 0, "library"))
+
+      val count = notificationCounter.getEventCount
+
+      testRunner.messageReceived = false
+      downloadSchedulerService.generatePredefinedDownloads()
+
+      eventually(timeout(10 seconds)) {
+        assert(testRunner.messageReceived)
+      }
+
+      eventually(timeout(10 seconds)) {
+        assert(notificationCounter.getEventCount == count + 8)
+      }
+
+      assert(predefinedQueryRepository.exists("Libraries - 1"))
+      assert(predefinedQueryRepository.exists("Libraries - 1 - 2"))
+      assert(predefinedQueryRepository.exists("Libraries - 1 - 2 - 3"))
     }
   }
 }
