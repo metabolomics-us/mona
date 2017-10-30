@@ -38,9 +38,6 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
   def regenerateDownloads = {
     val url = s"${this.monaRestServer}/rest/downloads/generatePredefined"
 
-    logger.info(s"invoking: ${url}")
-    logger.info(s"headers: ${buildHeaders}")
-
     restOperations.exchange(url,HttpMethod.GET,new HttpEntity[String]("parameters",this.buildHeaders),classOf[Array[Any]])
   }
 }

@@ -44,6 +44,7 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
 
       val headerValue = request.getHeader(authHeader.head)
 
+      logger.info(s"received header: ${headerValue}")
       if(!headerValue.trim.toLowerCase.startsWith("bearer")){
         throw new AuthenticationServiceException(s"Authorization header was not of type bearer, header was ${authHeader.head}")
       }
@@ -52,14 +53,19 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
       try {
         val token = headerValue.trim.substring(7); // The part after "Bearer "
 
+        assert(token != null)
         val auth = authenticationService.authenticate(token)
         SecurityContextHolder.getContext.setAuthentication(auth)
 
         logger.debug("continue down the chain...")
         filterChain.doFilter(servletRequest, servletResponse)
       } catch {
-        case e: AuthenticationException => throw e
-        case e: Exception => throw new AuthenticationServiceException(s"Sorry an unexpected error occurred: ${e.getMessage}", e)
+        case e: AuthenticationException =>
+          logger.error(e.getMessage,e)
+          throw e
+        case e: Exception =>
+          logger.error(e.getMessage,e)
+          throw new AuthenticationServiceException(s"Sorry an unexpected error occurred: ${e.getMessage}", e)
       }
     } catch {
       case e: AuthenticationException =>
