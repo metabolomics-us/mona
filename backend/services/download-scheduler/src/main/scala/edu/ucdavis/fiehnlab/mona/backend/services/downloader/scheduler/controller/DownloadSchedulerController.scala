@@ -62,8 +62,7 @@ class DownloadSchedulerController extends LazyLogging {
 
       if (Files.exists(exportPath)) {
         new AsyncResult[ResponseEntity[InputStreamResource]](
-          ResponseEntity
-            .ok()
+          ResponseEntity.ok()
             .contentLength(Files.size(exportPath))
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header("Content-Disposition", s"attachment; filename=${exportPath.getFileName}")
@@ -124,11 +123,26 @@ class DownloadSchedulerController extends LazyLogging {
   }
 
   /**
+    * Add a new predefined download
+    * @return
+    */
+  @RequestMapping(path = Array("/predefined"), method = Array(RequestMethod.POST))
+  @Async
+  def createPredefinedDownloads(@RequestBody query: PredefinedQuery): Future[ResponseEntity[PredefinedQuery]] = {
+
+    new AsyncResult[ResponseEntity[PredefinedQuery]](
+      new ResponseEntity(predefinedQueryRepository.save(query), HttpStatus.OK)
+    )
+  }
+
+  /**
     * Schedules the re-generation of predefined downloads
     */
   @RequestMapping(path = Array("/generatePredefined"), method = Array(RequestMethod.GET))
   @Async
   def generatePredefinedDownloads(): Future[ResponseEntity[Array[QueryExport]]] = {
-    new AsyncResult[ResponseEntity[Array[QueryExport]]](new ResponseEntity(downloadSchedulerService.generatePredefinedDownloads(), HttpStatus.OK))
+    new AsyncResult[ResponseEntity[Array[QueryExport]]](
+      new ResponseEntity(downloadSchedulerService.generatePredefinedDownloads(), HttpStatus.OK)
+    )
   }
 }
