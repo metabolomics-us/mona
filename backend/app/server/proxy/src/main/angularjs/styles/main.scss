@@ -334,10 +334,12 @@ input[readonly] {
 }
 
 /* Query tree children style */
-.panel-query-tree { padding: 0; margin: 20px; }
+.panel-query-tree { padding: 0; margin: 20px; margin-top: 0px; }
 .list-group.panel-query-tree .list-group { margin-bottom: 0; }
 .list-group.panel-query-tree .list-group-item { border-radius: 0; border-width: 1px 0 0 0; }
 .list-group.panel-query-tree > .list-group-item:first-child { border-top-width: 0; }
+
+.query-tree-display-option { margin: 20px; margin-bottom: 0px; text-align: right; }
 
 .panel-query-tree p.ng-scope { margin: 0 0 0 0px; }
 

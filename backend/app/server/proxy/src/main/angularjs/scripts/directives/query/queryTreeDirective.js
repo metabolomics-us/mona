@@ -32,7 +32,7 @@
                 var style = depth > 0 ? 'padding-left: '+ (3 * depth) +'em' : '';
 
                 var template =
-                    '<div class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +'">' +
+                    '<div class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +'" ng-if="showHidden || node.display">' +
                     '    <i class="fa fa-folder-o" data-ng-show="node.children.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i>' +
@@ -54,7 +54,8 @@
 
                 if(treeId && treeModel) {
                     if(depth == 0) {
-                        template = '<div class="list-group panel-query-tree well">'+ template +'</div>';
+                        template = '<div class="form-group query-tree-display-option"><label><input type="checkbox" ng-model="showHidden"> Display Hidden Downloads</label></div>'+
+                                   '<div class="list-group panel-query-tree well">'+ template +'</div>';
 
                         // Create tree object if not exists
                         scope[treeId] = scope[treeId] || {};

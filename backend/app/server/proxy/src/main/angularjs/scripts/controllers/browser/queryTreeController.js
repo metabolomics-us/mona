@@ -10,6 +10,8 @@
 
     /* @ngInject */
     function queryTreeController($scope, DownloadService, $log, REST_BACKEND_SERVER) {
+        $scope.showEmptyDownloads = false;
+
         $scope.executeQuery = function(node) {
             return '/spectra/browse?query='+ node.query;
         };
@@ -28,18 +30,14 @@
         var getPredefinedQueries = function() {
             DownloadService.getPredefinedQueries(
                 function(data) {
-                    // Filter out downloads with 0 records
-                    data = data.filter(function(x) { return x.queryCount > 0; });
-
-                    // Header entry for libraries if any exist
-                    if (data.some(function(x) { return x.label.indexOf('Libraries') > -1; })) {
-                        data.unshift({
-                            label: "Libraries",
-                            query: null,
-                            jsonExport: null,
-                            mspExport: null
-                        });
-                    }
+                    // Header entry for libraries, which is displayed by default if any libraries are being displayed
+                    data.unshift({
+                        label: "Libraries",
+                        query: null,
+                        jsonExport: null,
+                        mspExport: null,
+                        display: data.some(function(x) { return x.label.indexOf('Libraries') > -1 && x.queryCount > 0; })
+                    });
 
                     // Set up all nodes
                     for (var i = 0; i < data.length; i++) {
@@ -50,6 +48,11 @@
                         data[i].depth = label.length;
                         data[i].id = i;
                         data[i].children = [];
+
+                        // Hide downloads with 0 records
+                        if (i > 0) {
+                            data[i].display = (data[i].queryCount > 0);
+                        }
                     }
 
                     // Identify node parents
