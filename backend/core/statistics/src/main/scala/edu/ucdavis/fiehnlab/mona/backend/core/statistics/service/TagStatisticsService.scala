@@ -81,7 +81,7 @@ class TagStatisticsService {
   /**
     * Get all library tags in the tag statistics repository
     */
-  def getLibraryTagStatistics: Iterable[TagStatistics] = getTagStatistics.filter(_.category == "library")
+  def getLibraryTagStatistics: Iterable[TagStatistics] = tagStatisticsRepository.findByCategory("library")
 
   /**
     * Count the data in the tag statistics repository
