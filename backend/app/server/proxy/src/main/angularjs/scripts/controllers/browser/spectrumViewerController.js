@@ -200,12 +200,16 @@
                 match[1] = truncateMass(match[1]);
 
                 // Store ion
-                $scope.massSpec.push({
-                    ion: parseFloat(match[1]),
-                    intensity: parseFloat(match[2]),
-                    annotation: annotation,
-                    computed: computed
-                });
+                var intensity = parseFloat(match[2]);
+
+                if (intensity > 0) {
+                    $scope.massSpec.push({
+                        ion: parseFloat(match[1]),
+                        intensity: intensity,
+                        annotation: annotation,
+                        computed: computed
+                    });
+                }
             }
         })();
     }
