@@ -18,6 +18,8 @@ weight	molecular weight
 transfarline temperature	transfer line temperature
 ionizationmode	ionization mode
 precursormz	precursor m/z
+precursor mass	precursor m/z
+adductionaccuratemass	precursor m/z
 precursor ion	precursor type
 m/z difference	delta m/z
 source instrument	instrument
@@ -47,6 +49,7 @@ ionization type	ionization mode
 AC$MASS_SPECTROMETRY: ION_MODE	ionization mode
 AC$ANALYTICAL_CONDITION: MODE	ionization mode
 compoundclass	compound class
+exactmass	exact mass
 mz exact	exact mass
 Magnetic Field	magnetic field strength
 precursor mz	precursor m/z
@@ -61,3 +64,7 @@ rt	retention time
 analyzer	mass analyzer
 derivative type	derivatization type
 derivative form	derivative formula
+accuratemass	exact mass
+collisionenergy	collision energy
+ce	collision energy
+ces	collision energy spread
