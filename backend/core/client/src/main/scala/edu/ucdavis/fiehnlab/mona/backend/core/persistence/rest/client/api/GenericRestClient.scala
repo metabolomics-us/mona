@@ -153,10 +153,10 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
             }"
         }
 
-        logger.info(s"calling path: $path")
+        logger.debug(s"calling path: $path")
         val result = restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
 
-        logger.info(s"received: ${
+        logger.debug(s"received: ${
           result.length
         }, page: ${
           pageable.getPageNumber
@@ -208,7 +208,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
       case _ =>
         s"$requestPath$utilizedPageSize$pageToLookAt"
     }
-    logger.info(s"path to invoke: $pathToInvoke")
+    logger.debug(s"path to invoke: $pathToInvoke")
     restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
   }
 
