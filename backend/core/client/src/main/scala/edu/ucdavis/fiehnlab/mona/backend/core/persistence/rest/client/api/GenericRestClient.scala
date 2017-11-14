@@ -111,7 +111,9 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param id
     * @return
     */
-  def get(id: ID): T = restOperations.getForObject(s"$requestPath/$id", classTag[T].runtimeClass).asInstanceOf[T]
+  def get(id: ID): T = {
+    restOperations.exchange(s"$requestPath/$id", HttpMethod.GET, new HttpEntity[T](buildHeaders), classTag[T].runtimeClass).getBody.asInstanceOf[T]
+  }
 
   /**
     * streams the results to the client
@@ -128,6 +130,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
       val internalCount: Long = count(query)
 
       logger.info(s"total count of data to receive: $internalCount")
+
       /**
         * loads more data from the server for the given query
         */
@@ -137,16 +140,32 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
 
         query match {
           case Some(x) =>
-            path = s"$path/search?size=${pageable.getPageSize}&page=${pageable.getPageNumber}&query=$x"
+            path = s"$path/search?size=${
+              pageable.getPageSize
+            }&page=${
+              pageable.getPageNumber
+            }&query=$x"
           case _ =>
-            path = s"$path?size=${pageable.getPageSize}&page=${pageable.getPageNumber}"
+            path = s"$path?size=${
+              pageable.getPageSize
+            }&page=${
+              pageable.getPageNumber
+            }"
         }
 
-        logger.info(s"calling path: $path")
+        logger.debug(s"calling path: $path")
         val result = restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
 
-        logger.info(s"received: ${result.length}, page: ${pageable.getPageNumber} size: ${pageable.getPageSize}")
-        result.foreach{s => logger.info(s"\tspectra: $s")}
+        logger.debug(s"received: ${
+          result.length
+        }, page: ${
+          pageable.getPageNumber
+        } size: ${
+          pageable.getPageSize
+        }")
+        result.foreach {
+          s => logger.info(s"\tspectra: $s")
+        }
 
         new PageImpl[T](result.toList.asJava, pageable, internalCount)
       }
@@ -189,7 +208,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
       case _ =>
         s"$requestPath$utilizedPageSize$pageToLookAt"
     }
-    logger.info(s"path to invoke: $pathToInvoke")
+    logger.debug(s"path to invoke: $pathToInvoke")
     restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
   }
 
