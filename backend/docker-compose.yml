@@ -121,7 +121,7 @@ services:
   # Persistence server, which utilizes above services, and other dependent services
   #
 
-  # Persistence service with qery interface
+  # Persistence service with query interface
   persistence:
     image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:latest
     depends_on:
