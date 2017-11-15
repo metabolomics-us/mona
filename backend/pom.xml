@@ -311,7 +311,7 @@
         <profile>
             <id>docker</id>
 
-            <!-- will activate if you have a .docker file in your project directoy-->
+            <!-- will activate if you have a .docker file in your project directory-->
             <activation>
                 <file>
                     <exists>.docker</exists>
@@ -373,6 +373,7 @@
                             <exposes>
                                 <expose>${docker.expose}</expose>
                             </exposes>
+
                             <!-- copy the service's jar file from target into the root directory of the image -->
                             <resources>
                                 <resource>
@@ -412,6 +413,7 @@
                                     <imageName>${docker.registry}/${docker.imageName}:${project.version}</imageName>
                                 </configuration>
                             </execution>
+
                             <execution>
                                 <id>push-image-latest</id>
                                 <phase>deploy</phase>
@@ -422,7 +424,6 @@
                                     <imageName>${docker.registry}/${docker.imageName}:latest</imageName>
                                 </configuration>
                             </execution>
-
                         </executions>
                     </plugin>
                 </plugins>
