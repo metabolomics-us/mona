@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.MetaDataSynonyms
 import org.springframework.batch.item.ItemProcessor
@@ -9,8 +9,9 @@ import org.springframework.batch.item.ItemProcessor
   * Created by wohlgemuth on 3/11/16.
   */
 @Step(description = "this step will update metadata names to conform to a set of standards")
-class NormalizeMetaDataNames extends ItemProcessor[Spectrum,Spectrum] {
-  val SYNONYMS = MetaDataSynonyms.ALL_SYNONYMS
+class NormalizeMetaDataNames extends ItemProcessor[Spectrum, Spectrum] {
+
+  val SYNONYMS: Map[String, String] = MetaDataSynonyms.ALL_SYNONYMS
 
   /**
     * processes the given spectrum and removes all it's computed meta data
@@ -32,12 +33,13 @@ class NormalizeMetaDataNames extends ItemProcessor[Spectrum,Spectrum] {
     * @param metaData
     * @return
     */
-  def renameMetaData(metaData:Array[MetaData]) : Array[MetaData] = {
+  def renameMetaData(metaData:Array[MetaData]): Array[MetaData] = {
     metaData.map(x =>
-      if (SYNONYMS.contains(x.name.toLowerCase))
+      if (SYNONYMS.contains(x.name.toLowerCase)) {
         x.copy(name = SYNONYMS(x.name.toLowerCase))
-      else
+      } else {
         x
+      }
     )
   }
 }

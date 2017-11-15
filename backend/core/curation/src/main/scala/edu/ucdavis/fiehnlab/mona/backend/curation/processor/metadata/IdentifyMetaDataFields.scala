@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Impact, MetaData, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Impact, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CommonTags}
 import org.springframework.batch.item.ItemProcessor
@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
   * Created by sajjan on 3/3/17.
   */
 @Step(description = "this step will identify required metadata fields and add impact values accordingly")
-class IdentifyMetaDataFields extends ItemProcessor[Spectrum,Spectrum] with LazyLogging {
+class IdentifyMetaDataFields extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   /**
     * processes the given spectrum and removes all it's computed meta data
