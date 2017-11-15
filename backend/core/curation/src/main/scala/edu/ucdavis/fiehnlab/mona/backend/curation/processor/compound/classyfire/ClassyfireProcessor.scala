@@ -140,46 +140,46 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     val buffer: ArrayBuffer[MetaData] = ArrayBuffer()
 
     if (classification.kingdom != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "kingdom", null, null, url, classification.kingdom.name)
+      buffer += MetaData("classification", computed = true, hidden = false, "kingdom", null, null, null, classification.kingdom.name)
 
     if (classification.superclass != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "superclass", null, null, url, classification.superclass.name)
+      buffer += MetaData("classification", computed = true, hidden = false, "superclass", null, null, null, classification.superclass.name)
 
     if (classification.`class` != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "class", null, null, url, classification.`class`.name)
+      buffer += MetaData("classification", computed = true, hidden = false, "class", null, null, null, classification.`class`.name)
 
     if (classification.subclass != null)
-      buffer += MetaData("classification", computed = true, hidden = false, "subclass", null, null, url, classification.subclass.name)
+      buffer += MetaData("classification", computed = true, hidden = false, "subclass", null, null, null, classification.subclass.name)
 
     if (classification.intermediate_nodes != null) {
       var level = 1
       classification.intermediate_nodes.foreach { parent =>
-        buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level $level", null, null, url, parent.name)
+        buffer += MetaData("classification", computed = true, hidden = false, s"direct parent level $level", null, null, null, parent.name)
         level = level + 1
       }
     }
 
     if (classification.direct_parent != null && classification.direct_parent.name != null) {
-      buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, url, classification.direct_parent.name)
+      buffer += MetaData("classification", computed = true, hidden = false, "direct parent", null, null, null, classification.direct_parent.name)
     }
 
     if (classification.alternative_parents != null) {
       classification.alternative_parents.foreach { parent =>
-        buffer += MetaData("classification", computed = true, hidden = false, "alternative parent", null, null, url, parent.name)
+        buffer += MetaData("classification", computed = true, hidden = false, "alternative parent", null, null, null, parent.name)
       }
     }
 
 //    Disable LipidMaps terms as they are redundant to the main classification
 //    if (classification.predicted_lipidmaps_terms != null) {
 //      classification.predicted_lipidmaps_terms.foreach { term =>
-//        buffer += MetaData("classification", computed = true, hidden = false, "predicted lipidmaps", null, null, url, term)
+//        buffer += MetaData("classification", computed = true, hidden = false, "predicted lipidmaps", null, null, null, term)
 //      }
 //    }
 
 //    Disable storing of substituents
 //    if (classification.substituents != null) {
 //      classification.substituents.foreach { term =>
-//        buffer += MetaData("classification", computed = true, hidden = false, "substituents", null, null, url, term)
+//        buffer += MetaData("classification", computed = true, hidden = false, "substituents", null, null, null, term)
 //      }
 //    }
 
@@ -210,7 +210,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       else ""
 
     if (structure != null) {
-      val url = s"http://classyfire.wishartlab.com/query"
+      val url = s"http://classyfire.wishartlab.com/queries"
       logger.info(s"$id: Invoking url: $url")
 
       try {
