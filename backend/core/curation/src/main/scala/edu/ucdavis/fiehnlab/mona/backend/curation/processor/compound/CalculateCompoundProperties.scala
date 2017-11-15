@@ -75,7 +75,7 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
     else if (molecule == null) {
       logger.warn(s"$id: Unable to load provided structure information with CDK")
-      impacts.append(Impact(-2, "Unable to generate a molecular structure from provided compound data"))
+      impacts.append(Impact(-10, "Unable to generate a molecular structure from provided compound data"))
       compound
     }
 
