@@ -29,6 +29,7 @@ class CalculateCompoundPropertiesTest extends WordSpec {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+
   "CalculateCompoundPropertiesTest" should {
 
     "process" in {

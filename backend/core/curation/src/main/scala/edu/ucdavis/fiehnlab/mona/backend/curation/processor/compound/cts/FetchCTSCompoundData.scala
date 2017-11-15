@@ -43,9 +43,6 @@ class FetchCTSCompoundData extends ItemProcessor[Spectrum, Spectrum] with LazyLo
 
       logger.info(s"Requesting data for compound ${compound.inchiKey} at url $requestURL")
 
-      val url = s"http://classyfire.wishartlab.com/entities/${compound.inchiKey}.json"
-      logger.info(s"invoking url ${url}")
-
       val response: ResponseEntity[CTSResponse] = restOperations.getForEntity(requestURL, classOf[CTSResponse])
 
       if (response.getStatusCode == HttpStatus.OK) {

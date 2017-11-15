@@ -26,19 +26,34 @@ class CompoundConversion extends LazyLogging {
 
   /**
     *
+    * @param molecule
+    * @return
+    */
+  def addExplicitHydrogens(molecule: IAtomContainer): IAtomContainer = {
+    if (molecule != null) {
+      val newMolecule: IAtomContainer = molecule
+
+      AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(newMolecule)
+      CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(newMolecule)
+      AtomContainerManipulator.convertImplicitToExplicitHydrogens(newMolecule)
+
+      newMolecule
+    } else {
+      molecule
+    }
+  }
+
+
+  /**
+    *
     * @param smiles
     * @return
     */
   def smilesToMolecule(smiles: String): IAtomContainer = {
     try {
       val smilesParser: SmilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance())
-      val molecule: IAtomContainer = smilesParser.parseSmiles(smiles)
-
-      AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
-      CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
-      AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
-
-      molecule
+      smilesParser.kekulise(false)
+      smilesParser.parseSmiles(smiles)
     } catch {
       case e: InvalidSmilesException =>
         logger.error("Invalid SMILES Code")
@@ -51,44 +66,32 @@ class CompoundConversion extends LazyLogging {
     }
   }
 
-  /**
-    *
-    * @param smiles
-    * @return
-    */
   def smilesToMolDefinition(smiles: String): String = generateMolDefinition(smilesToMolecule(smiles))
 
-
-  def inchiToMolecule(inchi: String): IAtomContainer = {
-    val inchiGeneratorFactory: InChIGeneratorFactory = InChIGeneratorFactory.getInstance()
-    val inchiToStructure: InChIToStructure = inchiGeneratorFactory.getInChIToStructure(inchi, DefaultChemObjectBuilder.getInstance())
-
-    val molecule: IAtomContainer = inchiToStructure.getAtomContainer
-
-    AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
-    CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
-    AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
-
-    val returnStatus = inchiToStructure.getReturnStatus
-
-    if (returnStatus != INCHI_RET.OKAY && returnStatus != INCHI_RET.WARNING) {
-      logger.error(s"Structure generation failed: ${returnStatus.toString}\n[${inchiToStructure.getMessage}]\n[${inchiToStructure.getWarningFlags}]")
-
-      null
-    } else {
-      if (returnStatus == INCHI_RET.WARNING) {
-        logger.warn(s"InChI warning: ${inchiToStructure.getMessage}")
-      }
-
-      molecule
-    }
-  }
 
   /**
     *
     * @param inchi
     * @return
     */
+  def inchiToMolecule(inchi: String): IAtomContainer = {
+    val inchiGeneratorFactory: InChIGeneratorFactory = InChIGeneratorFactory.getInstance()
+    val inchiToStructure: InChIToStructure = inchiGeneratorFactory.getInChIToStructure(inchi, DefaultChemObjectBuilder.getInstance())
+
+    val molecule: IAtomContainer = inchiToStructure.getAtomContainer
+    val returnStatus = inchiToStructure.getReturnStatus
+
+    if (returnStatus != INCHI_RET.OKAY && returnStatus != INCHI_RET.WARNING) {
+      logger.error(s"Structure generation failed: ${returnStatus.toString}\n[${inchiToStructure.getMessage}]\n[${inchiToStructure.getWarningFlags}]")
+      null
+    } else {
+      if (returnStatus == INCHI_RET.WARNING) {
+        logger.warn(s"InChI warning: ${inchiToStructure.getMessage}")
+      }
+      molecule
+    }
+  }
+
   def inchiToMolDefinition(inchi: String): String = generateMolDefinition(inchiToMolecule(inchi))
 
 
@@ -101,17 +104,7 @@ class CompoundConversion extends LazyLogging {
     logger.debug(s"Receive MOL data: $molString")
 
     // Read MOL data
-    val reader = new MDLV2000Reader(new StringReader(molString))
-    val molecule: IAtomContainer = reader.read(new AtomContainer())
-
-    // Add explicit hydrogens
-    if (molecule != null) {
-      AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
-      CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(molecule)
-      AtomContainerManipulator.convertImplicitToExplicitHydrogens(molecule)
-    }
-
-    molecule
+    new MDLV2000Reader(new StringReader(molString)).read(new AtomContainer())
   }
 
   /**
@@ -203,5 +196,5 @@ class CompoundConversion extends LazyLogging {
     * @param molecule
     * @return
     */
-  def moleculeToSMILES(molecule: IAtomContainer): String = SmilesGenerator.unique().create(molecule)
+  def moleculeToSMILES(molecule: IAtomContainer): String = SmilesGenerator.generic().create(molecule)
 }

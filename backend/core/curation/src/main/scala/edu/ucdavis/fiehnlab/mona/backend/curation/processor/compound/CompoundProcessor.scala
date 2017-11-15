@@ -29,6 +29,7 @@ class CompoundProcessor extends LazyLogging {
   @Autowired
   val inchikeyProcessor: CompoundInChIKeyProcessor = null
 
+
   def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer) = {
 
     val molProcessorResult = molProcessor.process(compound, id, impacts)

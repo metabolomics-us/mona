@@ -33,7 +33,7 @@ class CompoundProcessorTest extends WordSpec {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
-  "CalculateCompoundPropertiesTest" should {
+  "CalculateProcessorTest" should {
 
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
     val spectrum: Spectrum = reader.read(input)
