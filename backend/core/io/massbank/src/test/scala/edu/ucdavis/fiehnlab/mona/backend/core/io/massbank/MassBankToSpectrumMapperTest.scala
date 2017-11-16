@@ -11,7 +11,7 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
 
   "The MassBank record parser" when {
     "given a complete record file" should {
-      val src: Source = Source.fromURL(getClass.getResource(s"${rootPath}/singleRecord.txt"))
+      val src: Source = Source.fromURL(getClass.getResource(s"$rootPath/singleRecord.txt"))
       val result: Try[Spectrum] = MassBankToSpectrumMapper.parse(src)
 
       "successfully parse the file" in {
@@ -33,27 +33,28 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
 
       "extract CH$NAME information into the biological compound metadata group" in {
         val expected = List("L-Glutamic acid",
-                            "Glu",
-                            "L-Glutamate",
-                            "alpha-Glutamic acid",
-                            "L-alpha-Aminoglutaric Acid",
-                            "(S)-2-Aminopentanedioic acid",
-                            "L-1-Aminopropane-1,3-dicarboxylic Acid",
-                            "1-Aminopropane-1,3-dicarboxylic acid",
-                            "Aciglut",
-                            "Glusate",
-                            "Glutacid",
-                            "Glutaminol",
-                            "Glutaton")
+          "Glu",
+          "L-Glutamate",
+          "alpha-Glutamic acid",
+          "L-alpha-Aminoglutaric Acid",
+          "(S)-2-Aminopentanedioic acid",
+          "L-1-Aminopropane-1,3-dicarboxylic Acid",
+          "1-Aminopropane-1,3-dicarboxylic acid",
+          "Aciglut",
+          "Glusate",
+          "Glutacid",
+          "Glutaminol",
+          "Glutaton")
+
         val names = result.get.compound.head.names.map(_.name)
         names shouldBe expected
       }
     }
 
     "given a batch of valid record files" should {
-      val root: Source = Source.fromURL(getClass.getResource(s"${rootPath}/batch"))
+      val root: Source = Source.fromURL(getClass.getResource(s"$rootPath/batch"))
       val results: Iterator[Try[Spectrum]] = root.getLines.map { file =>
-        val src = Source.fromURL(getClass.getResource(s"${rootPath}/batch/${file}"))
+        val src = Source.fromURL(getClass.getResource(s"$rootPath/batch/$file"))
         MassBankToSpectrumMapper.parse(src)
       }
 

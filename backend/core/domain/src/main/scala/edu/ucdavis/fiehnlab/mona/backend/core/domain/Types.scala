@@ -105,11 +105,11 @@ case class Tags(
   * @param classification
   */
 case class Compound(
-                     @Deprecated //might be better to be removed
+                     @Deprecated
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                      inchi: String,
 
-                     @Deprecated //might be better to be removed
+                     @Deprecated
                      @(Indexed@field)
                      @(TextIndexed@field)
                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
@@ -139,11 +139,7 @@ case class Compound(
                      classification: Array[MetaData] = Array()
                    )
 
-case class Impact(
-                    value: Double,
-
-                    reason: String
-                  )
+case class Impact(value: Double, reason: String)
 
 case class Score(
                   impacts: Array[Impact],

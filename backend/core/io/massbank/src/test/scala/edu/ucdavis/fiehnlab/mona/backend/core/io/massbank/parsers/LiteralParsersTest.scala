@@ -14,7 +14,9 @@ class LiteralParsersTest extends WordSpec with GeneratorDrivenPropertyChecks wit
       forAll(Generators.validDouble) { d => parseAll(double, d.toString) shouldBe a[Success[_]] }
     }
 
-    "reject non-empty strings" in { parseAll(anyString, "") shouldBe a[Failure] }
+    "reject non-empty strings" in {
+      parseAll(anyString, "") shouldBe a[Failure]
+    }
   }
 
   "`integer` literal parser" must {

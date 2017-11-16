@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain.config
 
-import javax.validation.Validator
+import javax.validation.{Validation, Validator}
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
@@ -8,15 +8,12 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import org.springframework.context.annotation.{Bean, Configuration, Primary}
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+
 /**
   * Created by wohlgemuth on 3/10/16.
   */
-
 @Configuration
-class DomainConfig{
+class DomainConfig {
 
   @Bean
   def validator: Validator = {
@@ -25,13 +22,13 @@ class DomainConfig{
 
   @Bean
   @Primary
-  def objectMapper : ObjectMapper = {
+  def objectMapper: ObjectMapper = {
     MonaMapper.create
   }
 
   @Bean
   @Primary
-  def objectMapperBuilder:Jackson2ObjectMapperBuilder = {
+  def objectMapperBuilder: Jackson2ObjectMapperBuilder = {
     val builder = new Jackson2ObjectMapperBuilder()
     builder.serializationInclusion(JsonInclude.Include.NON_NULL)
     builder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

@@ -13,19 +13,14 @@ class JSONDomainReaderTest extends WordSpec {
   "we should be able to create an instance of the reader" when {
     val reader = JSONDomainReader.create[Spectrum]
 
-
     "which should be of the tpye spectrum" should {
-
       "check type" in {
         assert(reader.isInstanceOf[JSONDomainReader[Spectrum]])
       }
-
     }
 
     "it should be able to read a spectrum" should {
-
       val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-
       val spectrum: Spectrum = reader.read(input)
 
       "its splash key should equal the exspectations" in {
@@ -43,51 +38,38 @@ class JSONDomainReaderTest extends WordSpec {
 
       "we should be able to access it's compounds metadata" in {
         assert(spectrum.compound(0).metaData != null)
-        assert(spectrum.compound(0).metaData.size > 0)
+        assert(spectrum.compound(0).metaData.length > 0)
       }
 
-        val metaDatas = spectrum.compound(0).metaData
+      spectrum.compound(0).metaData.foreach { metaData =>
 
-        metaDatas.foreach { metaData =>
+        metaData.name match {
+          case "total exact mass" =>
+            "the compounds total exact mass should be of type double" in {
+              assert(metaData.value.isInstanceOf[Double])
+              assert(metaData.value.asInstanceOf[Double] === 411.31372955200004)
+            }
 
-          metaData.name match {
-            case "total exact mass" =>
+          case "molecule formula" =>
+            "the compounds molecule formula should be of type String" in {
+              assert(metaData.value.isInstanceOf[String])
+              assert(metaData.value.asInstanceOf[String] ==="C27H41NO2")
+            }
 
-              "the compounds total exact mass should be of type double" in {
+          case "Tocris Bioscience" =>
+            "the Tocris Bioscience should be of type Integer" in {
+              assert(metaData.value.isInstanceOf[Int])
+              assert(metaData.value.asInstanceOf[Int] === 1623)
+            }
 
-                assert(metaData.value.isInstanceOf[Double])
-                assert(metaData.value.asInstanceOf[Double] === 411.31372955200004)
-              }
-
-            case "molecule formula" =>
-
-              "the compounds molecule formula should be of type String" in {
-                assert(metaData.value.isInstanceOf[String])
-                assert(metaData.value.asInstanceOf[String] ==="C27H41NO2")
-
-              }
-
-            case "Tocris Bioscience" =>
-
-              "the Tocris Bioscience should be of type Integer" in {
-                assert(metaData.value.isInstanceOf[Int])
-                assert(metaData.value.asInstanceOf[Int] === 1623)
-
-              }
-            case _ => //nada
-
-          }
+          case _ => //nada
         }
       }
-
-
     }
-
+  }
 
   "we should be able to read an array of spectrum as well" when {
-
     val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
-
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json"))
 
     "it should cause no erros" should {
@@ -98,5 +80,4 @@ class JSONDomainReaderTest extends WordSpec {
       }
     }
   }
-
 }

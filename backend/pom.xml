@@ -2,16 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>backend</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <name>backend</name>
-    <url>http://maven.apache.org</url>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
-        <artifactId>fiehnlab-pom</artifactId>
-        <version>1.0.11-SNAPSHOT</version>
+        <artifactId>wcmc</artifactId>
+        <version>1.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -23,20 +23,66 @@
         <module>app</module>
     </modules>
 
+    <properties>
+        <docker.imagePrefix>mona</docker.imagePrefix>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
-                <artifactId>api-server</artifactId>
-                <version>${project.version}</version>
+                <groupId>edu.ucdavis.fiehnlab.splash</groupId>
+                <artifactId>core</artifactId>
+                <version>1.8</version>
             </dependency>
 
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.io</groupId>
-                <artifactId>massbank</artifactId>
-                <version>${project.version}</version>
+                <groupId>org.openscience.cdk</groupId>
+                <artifactId>cdk-bundle</artifactId>
+                <version>2.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-actor_${scala.version}</artifactId>
+                <version>2.4.2</version>
+            </dependency>
+
+            <!-- RSQL dependencies -->
+            <dependency>
+                <groupId>com.github.rutledgepaulv</groupId>
+                <artifactId>rest-query-engine</artifactId>
+                <version>0.6.3-SNAPSHOT-GERT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.rutledgepaulv</groupId>
+                <artifactId>q-builders</artifactId>
+                <version>1.4</version>
+            </dependency>
+
+            <!-- Swagger documentation dependencies -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+
+            <!-- Spring Cloud -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Dalston.SR4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- MoNA modules -->
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>amqp</artifactId>
@@ -44,44 +90,8 @@
             </dependency>
 
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
-                <artifactId>api-server</artifactId>
-                <scope>test</scope>
-                <type>test-jar</type>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.typesafe.akka</groupId>
-                <artifactId>akka-actor_2.11</artifactId>
-                <version>2.4.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-parent</artifactId>
-                <version>Brixton.M3</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
-                <artifactId>auth-server</artifactId>
-                <version>${project.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>client</artifactId>
-                <type>test-jar</type>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
-                <artifactId>jwt</artifactId>
+                <artifactId>auth</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -99,8 +109,21 @@
             </dependency>
 
             <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
+                <artifactId>jwt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>auth</artifactId>
+                <artifactId>client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>client</artifactId>
+                <type>test-jar</type>
                 <version>${project.version}</version>
             </dependency>
 
@@ -112,8 +135,110 @@
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>workflow</artifactId>
+                <artifactId>domain</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>domain</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+                <type>test-jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.io</groupId>
+                <artifactId>massbank</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+                <artifactId>persistence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+                <artifactId>elastic</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+                <artifactId>elastic</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+                <artifactId>mongo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+                <artifactId>mongo</artifactId>
+                <type>test-jar</type>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+                <artifactId>rsql</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+                <artifactId>rsql</artifactId>
+                <scope>test</scope>
+                <type>test-jar</type>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
+                <artifactId>service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>api-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>api-server</artifactId>
+                <scope>test</scope>
+                <type>test-jar</type>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>auth-server</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>persistence-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
+                <artifactId>persistence-server</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -123,113 +248,9 @@
             </dependency>
 
             <dependency>
-                <groupId>edu.ucdavis.fiehnlab.splash</groupId>
-                <artifactId>core</artifactId>
-                <version>1.8</version>
-            </dependency>
-
-            <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>domain</artifactId>
+                <artifactId>workflow</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>domain</artifactId>
-                <version>${project.version}</version>
-                <scope>test</scope>
-                <type>test-jar</type>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>persistence</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
-                <artifactId>persistence-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-scala_2.11</artifactId>
-                <version>2.6.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.typesafe.scala-logging</groupId>
-                <artifactId>scala-logging_2.11</artifactId>
-                <version>3.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>mongo</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>mongo</artifactId>
-                <type>test-jar</type>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>rsql</artifactId>
-                <scope>test</scope>
-                <type>test-jar</type>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.rutledgepaulv</groupId>
-                <artifactId>rest-query-engine</artifactId>
-                <version>0.6.3-SNAPSHOT-GERT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.rutledgepaulv</groupId>
-                <artifactId>q-builders</artifactId>
-                <version>1.4</version>
-            </dependency>
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>rsql</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-                <artifactId>client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>elastic</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
-                <artifactId>elastic</artifactId>
-                <version>${project.version}</version>
-                <type>test-jar</type>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
-                <artifactId>persistence-server</artifactId>
-                <version>${project.version}</version>
-                <type>test-jar</type>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -243,38 +264,8 @@
                 <artifactId>webhooks-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- cdk dependencies -->
-            <dependency>
-                <groupId>org.openscience.cdk</groupId>
-                <artifactId>cdk-bundle</artifactId>
-                <version>2.0</version>
-            </dependency>
-
-            <!-- swagger documentation -->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>2.4.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>2.4.0</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>ossrh</id>
-            <name>Repository for snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
@@ -293,11 +284,12 @@
 
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>com.spotify</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>0.4.5</version>
-                </plugin>
+                <!--<plugin>-->
+                <!--<groupId>com.spotify</groupId>-->
+                <!--<artifactId>docker-maven-plugin</artifactId>-->
+                <!--<version>0.4.5</version>-->
+                <!--</plugin>-->
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -306,128 +298,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <profile>
-            <id>docker</id>
-
-            <!-- will activate if you have a .docker file in your project directory-->
-            <activation>
-                <file>
-                    <exists>.docker</exists>
-                </file>
-            </activation>
-
-            <properties>
-                <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
-                <docker.baseImage>java</docker.baseImage>
-                <docker.imagePrefix>mona</docker.imagePrefix>
-                <docker.imageName>${docker.imagePrefix}-${project.name}</docker.imageName>
-                <docker.imagePath>${docker.registry}/${docker.imageName}</docker.imagePath>
-                <docker.expose>8080</docker.expose>
-                <docker.jvm>-Xmx2048m</docker.jvm>
-            </properties>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <phase>compile</phase>
-                                <id>download-remote-resources</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <get src="https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh"
-                                             dest="${project.build.directory}"/>
-                                        <chmod file="${project.build.directory}/wait-for-it.sh" perm="777"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>repackage</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.4.13</version>
-                        <configuration>
-                            <imageName>${docker.registry}/${docker.imageName}</imageName>
-                            <baseImage>${docker.baseImage}</baseImage>
-                            <entryPoint>["java","${docker.jvm}", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-                            <exposes>
-                                <expose>${docker.expose}</expose>
-                            </exposes>
-
-                            <!-- copy the service's jar file from target into the root directory of the image -->
-                            <resources>
-                                <resource>
-                                    <targetPath>/</targetPath>
-                                    <directory>${project.build.directory}</directory>
-                                    <include>${project.build.finalName}.jar</include>
-                                    <include>wait-for-it.sh</include>
-                                </resource>
-                            </resources>
-                            <forceTags>true</forceTags>
-
-                            <imageTags>
-                                <imageTag>${project.version}</imageTag>
-                                <imageTag>latest</imageTag>
-                            </imageTags>
-
-                            <runs>
-                                <run>chmod 777 /wait-for-it.sh</run>
-                            </runs>
-                        </configuration>
-
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                            </execution>
-
-                            <execution>
-                                <id>push-image-version</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>push</goal>
-                                </goals>
-                                <configuration>
-                                    <imageName>${docker.registry}/${docker.imageName}:${project.version}</imageName>
-                                </configuration>
-                            </execution>
-
-                            <execution>
-                                <id>push-image-latest</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>push</goal>
-                                </goals>
-                                <configuration>
-                                    <imageName>${docker.registry}/${docker.imageName}:latest</imageName>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

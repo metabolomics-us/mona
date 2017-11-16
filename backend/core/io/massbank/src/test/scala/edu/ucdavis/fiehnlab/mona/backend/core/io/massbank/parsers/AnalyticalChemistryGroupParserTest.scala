@@ -6,13 +6,14 @@ import org.scalatest._
 class AnalyticalChemistryGroupParserTest extends WordSpec with Matchers with AnalyticalChemistryGroupParser {
   "An `AnalyticalChemistryGroupParser`" should {
     "correctly parse complete base metadata" in {
-      val input = """AC$INSTRUMENT: Pegasus III TOF-MS system, Leco; GC 6890, Agilent Technologies
-                    |AC$INSTRUMENT_TYPE: GC-EI-TOF
-                    |AC$MASS_SPECTROMETRY: MS_TYPE MS
-                    |AC$MASS_SPECTROMETRY: ION_MODE POSITIVE
-                    |AC$CHROMATOGRAPHY: COLUMN_NAME DB-17MS
-                    |AC$CHROMATOGRAPHY: RETENTION_INDEX 1851.4
-                    |AC$CHROMATOGRAPHY: RETENTION_TIME 858.163 sec""".stripMargin
+      val input =
+        """AC$INSTRUMENT: Pegasus III TOF-MS system, Leco; GC 6890, Agilent Technologies
+          |AC$INSTRUMENT_TYPE: GC-EI-TOF
+          |AC$MASS_SPECTROMETRY: MS_TYPE MS
+          |AC$MASS_SPECTROMETRY: ION_MODE POSITIVE
+          |AC$CHROMATOGRAPHY: COLUMN_NAME DB-17MS
+          |AC$CHROMATOGRAPHY: RETENTION_INDEX 1851.4
+          |AC$CHROMATOGRAPHY: RETENTION_TIME 858.163 sec""".stripMargin
 
       val expected = AnalyticalChemistryGroup(
         Some("Pegasus III TOF-MS system, Leco; GC 6890, Agilent Technologies"),
@@ -36,8 +37,9 @@ class AnalyticalChemistryGroupParserTest extends WordSpec with Matchers with Ana
     }
 
     "accept iterative lines on the 'SOLVENT' field as a map" in {
-      val input = """AC$CHROMATOGRAPHY: SOLVENT A acetonitrile-methanol-water (19:19:2) with 0.1% acetic acid and 0.1% ammonium hydroxide (28%)
-                    |AC$CHROMATOGRAPHY: SOLVENT B 2-propanol with 0.1% acetic acid and 0.1% ammonium hydroxide (28%)""".stripMargin
+      val input =
+        """AC$CHROMATOGRAPHY: SOLVENT A acetonitrile-methanol-water (19:19:2) with 0.1% acetic acid and 0.1% ammonium hydroxide (28%)
+          |AC$CHROMATOGRAPHY: SOLVENT B 2-propanol with 0.1% acetic acid and 0.1% ammonium hydroxide (28%)""".stripMargin
 
       val expected = AnalyticalChemistryGroup(
         None, None, Map.empty,
@@ -51,5 +53,4 @@ class AnalyticalChemistryGroupParserTest extends WordSpec with Matchers with Ana
       result.get shouldBe expected
     }
   }
-
 }

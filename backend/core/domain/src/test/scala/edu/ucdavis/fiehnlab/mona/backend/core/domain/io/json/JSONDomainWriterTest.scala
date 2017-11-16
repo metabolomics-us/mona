@@ -4,7 +4,7 @@ import java.io.{InputStreamReader, StringReader, StringWriter}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import org.scalatest.{FunSuite, WordSpec}
+import org.scalatest.WordSpec
 
 /**
   * Created by wohlgemuth on 5/27/16.
@@ -19,17 +19,14 @@ class JSONDomainWriterTest extends WordSpec with LazyLogging {
     val writer = new JSONDomainWriter
 
     "a writer" should {
-
       val out = new StringWriter()
 
       "write a spectrum out" in {
-
-        writer.write(spectrum,out)
+        writer.write(spectrum, out)
       }
 
       "and we must be able to read it again" in {
-        val spectrumReRead:Spectrum = reader.read(new StringReader(out.toString))
-
+        val spectrumReRead: Spectrum = reader.read(new StringReader(out.toString))
 
         //stupid arrays break simple equality check....
         assert(spectrumReRead.id == spectrum.id)

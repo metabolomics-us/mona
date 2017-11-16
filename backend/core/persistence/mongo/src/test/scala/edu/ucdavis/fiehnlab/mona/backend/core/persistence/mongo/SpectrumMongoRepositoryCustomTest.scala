@@ -6,22 +6,21 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{Conf
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.{RSQLRepositoryCustom, RSQLRepositoryCustomTest}
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.mongodb.core.query.{BasicQuery, Query}
 import org.springframework.data.repository.CrudRepository
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager, TestPropertySource}
+import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 import scala.collection.JavaConverters._
 
 /**
   * Created by wohlg_000 on 3/9/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[Config]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
-class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum,Query] {
+@TestPropertySource(locations = Array("classpath:application.properties"))
+class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum, Query] {
 
   @Autowired
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -29,9 +28,9 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
   // required for spring and scala test
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  override def getRepository: RSQLRepositoryCustom[Spectrum,Query] with CrudRepository[Spectrum, String] = spectrumMongoRepository
+  override def getRepository: RSQLRepositoryCustom[Spectrum, Query] with CrudRepository[Spectrum, String] = spectrumMongoRepository
 
-  "mongo specific queries " should {
+  "MongoDB specific queries " should {
 
     s"we should be able to reload our data" in {
       for (spectrum <- exampleRecords) {
@@ -82,7 +81,7 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
     "we should be able to update a spectra with new properties" in {
       val spectrum = spectrumMongoRepository.findAll().asScala.head
 
-      val splash: Splash = spectrum.splash.copy(splash = "tada")
+      val splash: Splash = spectrum.splash.copy(splash = "splash")
       val spectrum2: Spectrum = spectrum.copy(splash = splash)
       val countBefore = spectrumMongoRepository.count()
 

@@ -12,8 +12,6 @@ import org.scalatest.WordSpec
 class MSPWriterTest extends WordSpec {
 
   "we should be able to create an instance of the writer" when {
-
-
     val writer: MSPWriter = new MSPWriter
 
     "a writer" should {
@@ -24,7 +22,6 @@ class MSPWriterTest extends WordSpec {
 
         val out: StringWriter = new StringWriter()
         writer.write(spectrum, out)
-        println(out.toString)
 
         "result must contain" must {
           "Name" in {
@@ -94,7 +91,6 @@ class MSPWriterTest extends WordSpec {
 
         val out: StringWriter = new StringWriter()
         writer.write(spectrum, out)
-        println(out.toString)
 
         "result must contain" must {
           "Name" in {

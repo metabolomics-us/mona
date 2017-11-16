@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.CascadeSave
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.mapping.DBRef
-import org.springframework.util.ReflectionUtils;
+import org.springframework.util.ReflectionUtils
 
 /**
   * Created by wohlgemuth on 3/7/16.
@@ -16,7 +16,6 @@ class CascadeCallback(val source: Any, val mongoOperations: MongoOperations) ext
     ReflectionUtils.makeAccessible(field)
 
     if (field.isAnnotationPresent(classOf[DBRef]) && field.isAnnotationPresent(classOf[CascadeSave])) {
-
       val fieldValue: Any = field.get(source)
 
       if (fieldValue != null) {
@@ -25,7 +24,6 @@ class CascadeCallback(val source: Any, val mongoOperations: MongoOperations) ext
         logger.debug(s"updating references for field: $fieldValue")
 
         ReflectionUtils.doWithFields(fieldValue.getClass, callback)
-
         mongoOperations.save(fieldValue)
       }
     }
