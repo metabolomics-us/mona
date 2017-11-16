@@ -28,18 +28,8 @@ class MongoConfig {
   def mongoOperations(mongoDbFactory: MongoDbFactory, context: MongoMappingContext): MongoOperations = {
     val converter: MappingMongoConverter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory), context)
     converter.setTypeMapper(new DefaultMongoTypeMapper(null))
-    converter.setCustomConversions(new CustomConversions(
-      util.Arrays.asList(new TagReadConverter())
-    ))
     converter.afterPropertiesSet()
 
     new MongoTemplate(mongoDbFactory, converter)
-  }
-}
-
-
-class TagReadConverter extends Converter[String, Array[Tags]] {
-  override def convert(s: String): Array[Tags] = {
-    Array()
   }
 }
