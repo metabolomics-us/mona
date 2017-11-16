@@ -31,20 +31,19 @@ class JSONDomainReader[T: ClassTag](mapper: ObjectMapper) extends DomainReader[T
 }
 
 /**
-  * default mapper for everything mona used
+  * Default mapper for everything mona used
   */
 object MonaMapper {
+
   def create: ObjectMapper = {
-
     val mapper = new ObjectMapper() with ScalaObjectMapper
-
     mapper.registerModule(DefaultScalaModule)
 
-    //required, in case we are provided with a list of value
+    // Required in case we are provided with a list of value
     mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.setSerializationInclusion(Include.NON_NULL)
-    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS,true)
+    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
 
     mapper
   }
@@ -55,17 +54,13 @@ object MonaMapper {
   */
 object JSONDomainReader {
 
-  def create[T: ClassTag] = {
-
-    new JSONDomainReader[T](MonaMapper.create)
-
-  }
+  def create[T: ClassTag]: JSONDomainReader[T] = new JSONDomainReader[T](MonaMapper.create)
 }
 
 /**
   * tries to convert a number or boolean object from a string
   */
-class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging{
+class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging {
 
   /**
     * tries to convert a value to a number/boolean/text on the fly
@@ -80,34 +75,33 @@ class NumberDeserializer extends JsonDeserializer[Any] with LazyLogging{
     if (jsonNode.isNumber) {
       jsonNode.numberValue()
     }
-    else if(jsonNode.isBoolean){
+
+    else if (jsonNode.isBoolean) {
       jsonNode.booleanValue()
     }
+
     else {
       val content = jsonNode.textValue()
 
       if (content != null) {
         if (content.toLowerCase.equals("true")) {
-           true
-        }
-        else if (content.toLowerCase().equals("false")) {
-           false
-        }
-        else {
+          true
+        } else if (content.toLowerCase().equals("false")) {
+          false
+        } else {
           try {
             content.toInt
           } catch {
             case e: NumberFormatException => try {
-               content.toDouble
+              content.toDouble
             }
             catch {
-              case e2: NumberFormatException =>  content
+              case e2: NumberFormatException => content
             }
           }
         }
-      }
-      else {
-         content
+      } else {
+        content
       }
     }
   }

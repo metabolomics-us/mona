@@ -9,7 +9,7 @@ import org.springframework.util.ReflectionUtils
 /**
   * Created by wohlgemuth on 3/7/16.
   */
-class CascadeSaveMongoEventListener extends AbstractMongoEventListener[Any] with LazyLogging{
+class CascadeSaveMongoEventListener extends AbstractMongoEventListener[Any] with LazyLogging {
 
   @Autowired
   val mongoOperations: MongoOperations = null

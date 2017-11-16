@@ -3,36 +3,38 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-        <artifactId>persistence</artifactId>
-        <version>1.4-SNAPSHOT</version>
-    </parent>
+
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
     <artifactId>mongo</artifactId>
     <name>mongo</name>
-    <url>http://maven.apache.org</url>
 
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        <artifactId>persistence</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_2.11</artifactId>
+            <artifactId>scala-logging_${scala.version}</artifactId>
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>org.mongodb</groupId>-->
+            <!--<artifactId>mongo-java-driver</artifactId>-->
+        <!--</dependency>-->
+
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>rsql</artifactId>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
@@ -63,12 +65,12 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
     </dependencies>
 </project>

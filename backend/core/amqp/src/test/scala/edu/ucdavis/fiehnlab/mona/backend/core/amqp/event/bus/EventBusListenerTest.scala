@@ -13,10 +13,10 @@ import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -25,8 +25,8 @@ import scala.reflect.ClassTag
 /**
   * Created by wohlg on 4/6/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[StringTestConfig],classOf[MonaNotificationBusConfiguration], classOf[MonaEventBusConfiguration]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[StringTestConfig], classOf[MonaNotificationBusConfiguration], classOf[MonaEventBusConfiguration]))
 class EventBusListenerTest extends WordSpec with Eventually {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]

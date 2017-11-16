@@ -2,17 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+    <artifactId>amqp</artifactId>
+    <name>massbank</name>
+
     <parent>
         <artifactId>core</artifactId>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.5-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>amqp</artifactId>
-    <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+    <description>This module provides a shared event bus implementation to which clients can easily join and subscribe</description>
 
-    <description>This module provides a shared event bus implementation, which clients can easily join and subscribe too</description>
     <dependencies>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
@@ -30,18 +33,18 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
     </dependencies>
-
 </project>

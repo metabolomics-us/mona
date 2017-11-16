@@ -8,20 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchAutoConfiguration, ElasticsearchDataAutoConfiguration}
 import org.springframework.context.annotation.Import
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 import scala.collection.JavaConverters._
+
 /**
   * Created by wohlgemuth on 3/23/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[Config]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class ISubmitterMongoRepositoryTest extends WordSpec {
 
   @Autowired
-  val submitterMongoRepository:ISubmitterMongoRepository = null
+  val submitterMongoRepository: ISubmitterMongoRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -49,6 +50,6 @@ class ISubmitterMongoRepositoryTest extends WordSpec {
   }
 }
 
-@SpringBootApplication(exclude = Array(classOf[ElasticsearchAutoConfiguration],classOf[ElasticsearchDataAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[ElasticsearchAutoConfiguration], classOf[ElasticsearchDataAutoConfiguration]))
 @Import(Array(classOf[MongoConfig]))
 class Config

@@ -2,21 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>persistence</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-        <version>1.4-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
     <artifactId>rsql</artifactId>
+    <name>rsql</name>
+
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        <artifactId>persistence</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.github.rutledgepaulv</groupId>
             <artifactId>rest-query-engine</artifactId>
         </dependency>
+
         <dependency>
             <groupId>cz.jirutka.rsql</groupId>
             <artifactId>rsql-parser</artifactId>
@@ -27,10 +30,12 @@
             <groupId>com.github.rutledgepaulv</groupId>
             <artifactId>q-builders</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_2.11</artifactId>
+            <artifactId>scala-logging_${scala.version}</artifactId>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
@@ -43,13 +48,12 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
     </dependencies>
-
 </project>

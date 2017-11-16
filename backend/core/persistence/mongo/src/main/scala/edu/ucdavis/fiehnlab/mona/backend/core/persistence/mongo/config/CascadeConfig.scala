@@ -10,7 +10,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
 class CascadeConfig {
 
   @Bean
-  def cascadingMongoEventListener:CascadeSaveMongoEventListener = {
+  def cascadingMongoEventListener: CascadeSaveMongoEventListener = {
     new CascadeSaveMongoEventListener()
   }
 }

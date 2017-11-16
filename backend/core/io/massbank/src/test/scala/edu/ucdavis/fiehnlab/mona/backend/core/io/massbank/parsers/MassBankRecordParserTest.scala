@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.parsers
 
-import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.{ MassBankRecordParsingException, MassBankRecordReader }
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types.MassBankRecord
+import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.{MassBankRecordParsingException, MassBankRecordReader}
 import org.scalatest._
 
 import scala.io.Source
@@ -30,7 +30,9 @@ class MassBankRecordParserTest extends WordSpec with Matchers with MassBankRecor
     "reject empty input" in {
       val result = MassBankRecordReader.read("")
       result shouldBe a[util.Failure[_]]
-      intercept[MassBankRecordParsingException] { result.get }
+      intercept[MassBankRecordParsingException] {
+        result.get
+      }
     }
   }
 }

@@ -10,11 +10,8 @@ import org.scalatest.FunSuite
 class JSONDomainReader$Test extends FunSuite {
 
   test("testCreate") {
-
-    val reader:DomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
+    val reader: DomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
     assert(reader.isInstanceOf[JSONDomainReader[Spectrum]])
-
   }
-
 }

@@ -8,13 +8,13 @@ object Generators {
 
   def chars: Gen[Char] = Gen.oneOf(Gen.alphaNumChar, Gen.oneOf(" -!\"#$%&'()-^\\@[;:,./=~|`{+*<>?_"))
 
-  val validString = for (cs <- Gen.listOfN(length, chars)) yield cs.mkString
+  val validString: Gen[String] = for (cs <- Gen.listOfN(length, chars)) yield cs.mkString
 
-  val validInt = Gen.chooseNum(Int.MinValue, Int.MaxValue)
+  val validInt: Gen[Int] = Gen.chooseNum(Int.MinValue, Int.MaxValue)
 
-  val validDouble = Gen.chooseNum(Double.MinValue, Double.MaxValue)
+  val validDouble: Gen[Double] = Gen.chooseNum(Double.MinValue, Double.MaxValue)
 
-  val validDate = for {
+  val validDate: Gen[String] = for {
     year <- Gen.chooseNum(1900, 9999)
     month <- Gen.chooseNum(1, 12)
     day <- {
@@ -24,16 +24,15 @@ object Generators {
     }
   } yield s"$year.$month.$day"
 
-  val validTag = for {
+  val validTag: Gen[String] = for {
     start <- Gen.alphaChar
     subtag <- Gen.listOfN(length, Gen.oneOf(Gen.alphaNumChar, Gen.oneOf("-_/")))
     value <- validString
   } yield start + subtag.mkString + " " + value
 
-  val completePeak = for {
+  val completePeak: Gen[String] = for {
     mz <- Gen.posNum[Double]
     int <- Gen.posNum[Double]
     relInt <- Gen.posNum[Double]
   } yield s"$mz $int $relInt"
-
 }
