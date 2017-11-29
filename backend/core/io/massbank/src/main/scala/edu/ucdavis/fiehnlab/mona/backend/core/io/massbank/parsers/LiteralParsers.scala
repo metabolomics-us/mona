@@ -1,7 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.parsers
 
-import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types._
 import java.time.LocalDate
+
+import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types._
+
 import scala.util.parsing.combinator.JavaTokenParsers
 
 /** Parsers for additional literals in MassBank */
@@ -22,7 +24,7 @@ trait LiteralParsers extends JavaTokenParsers {
 
   def peakTriple: Parser[Option[PeakTriple]] =
     (double ~ double ~ double ^^ { case a ~ b ~ c => Some(PeakTriple(a, b, c)) }) |
-      "N/A" ^^ { case _ => None }
+      "N/A" ^^ (_ => None)
 }
 
 object LiteralParsers extends LiteralParsers

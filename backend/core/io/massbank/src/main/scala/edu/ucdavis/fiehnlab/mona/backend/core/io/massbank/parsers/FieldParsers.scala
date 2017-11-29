@@ -5,9 +5,7 @@ import scala.util.Try
 trait FieldParsers extends LiteralParsers {
 
   /** Special field for PK$NUM_PEAK to handle non-integral (e.g. N/A) values */
-  def numPeakField(name: String): Parser[Option[Int]] = name ~> ":" ~> anyString ^^ {
-    case value => Try(value.toInt).toOption
-  }
+  def numPeakField(name: String): Parser[Option[Int]] = name ~> ":" ~> anyString ^^ (value => Try(value.toInt).toOption)
 
   /** Take all fields where the field tag starts with a string and satisfies a given predicate */
   def fieldStartingWith(prefix: String, predicate: String => Boolean): Parser[(String, String)] =
@@ -40,9 +38,9 @@ trait FieldParsers extends LiteralParsers {
     def getSubtagList(key: String): Map[String, List[String]] = {
       val subtags = fields.getOrElse(key, List.empty)
       val results = subtags.map(f => parse(subtag, f)).filter(_.successful).map(_.get)
-      results.groupBy(_._1).map { case (k, v) => (k -> v.map(_._2)) }
+      results.groupBy(_._1).map { case (k, v) => k -> v.map(_._2) }
     }
-
   }
 }
+
 object FieldParsers extends FieldParsers

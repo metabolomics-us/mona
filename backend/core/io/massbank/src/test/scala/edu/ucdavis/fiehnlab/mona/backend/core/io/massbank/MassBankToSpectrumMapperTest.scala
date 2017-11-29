@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import org.scalatest._
 
+import scala.collection.JavaConverters._
 import scala.io.Source
 import scala.util.{Success, Try}
 
@@ -20,7 +21,7 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
 
       "assign ACCESSION as both spectrum ID and as base metadata" in {
         result.get.id shouldBe "PR100162"
-        result.get.metaData.filter(m => m.name == "ACCESSION" && m.value == "PR100162") should not be empty
+        result.get.metaData.asScala.filter(m => m.name == "ACCESSION" && m.value == "PR100162") should not be empty
       }
 
       "format spectrum into string correctly" in {
@@ -28,7 +29,7 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
       }
 
       "extract CH$INCHI information into the biological compound metadata group" in {
-        result.get.compound.head.inchi shouldBe "InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1"
+        result.get.compound.asScala.head.inchi shouldBe "InChI=1S/C5H9NO4/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H,7,8)(H,9,10)/t3-/m0/s1"
       }
 
       "extract CH$NAME information into the biological compound metadata group" in {
@@ -46,7 +47,7 @@ class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
           "Glutaminol",
           "Glutaton")
 
-        val names = result.get.compound.head.names.map(_.name)
+        val names = result.get.compound.asScala.head.names.asScala.map(_.name)
         names shouldBe expected
       }
     }

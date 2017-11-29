@@ -1,20 +1,21 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
-import java.util.Date
+
+import java.util.{Collections, Date}
+import javax.validation.constraints._
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{AnalyzedStringSerialize, TupleSerialize}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
+import org.hibernate.validator.constraints.NotEmpty
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
 import org.springframework.data.mongodb.core.index.{Indexed, TextIndexed}
 import org.springframework.data.mongodb.core.mapping.Document
-import javax.validation.constraints._
-
-import org.hibernate.validator.constraints.NotEmpty
 
 import scala.annotation.meta.field
 import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 /**
   * definition of the MoNA domain classes and accepts arbitrary values, which needs to be supported by different
@@ -116,15 +117,15 @@ case class Compound(
                      inchiKey: String,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     metaData: Array[MetaData],
+                     metaData: java.util.List[MetaData],
 
                      molFile: String,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     names: Array[Names],
+                     names: java.util.List[Names],
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     tags: Array[Tags],
+                     tags: java.util.List[Tags],
 
                      @(Indexed@field)
                      computed: Boolean = false,
@@ -136,13 +137,13 @@ case class Compound(
                      kind: String = "biological",
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     classification: Array[MetaData] = Array()
+                     classification: java.util.List[MetaData] = Collections.emptyList()
                    )
 
 case class Impact(value: Double, reason: String)
 
 case class Score(
-                  impacts: Array[Impact],
+                  impacts: java.util.List[Impact],
 
                   @(Indexed@field)
                   score: Double
@@ -252,25 +253,25 @@ case class Author(
 @Document(collection = "SPECTRUM")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "spectrum", `type` = "spectrum", shards = 15)
 case class Spectrum(
-                     @(NotNull@field)
-                     @(Size@field)(min = 1)
-                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     compound: Array[Compound],
-
                      @(Id@field)
                      @(TextIndexed@field)
                      @(Size@field)(min = 1)
                      @BeanProperty
                      id: String,
 
+                     @(NotNull@field)
+                     @(Size@field)(min = 1)
+                     @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
+                     compound: java.util.List[Compound],
+
                      dateCreated: Date,
                      lastUpdated: Date,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     metaData: Array[MetaData],
+                     metaData: java.util.List[MetaData],
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     annotations: Array[MetaData],
+                     annotations: java.util.List[MetaData],
 
                      @(Field@field)(`type` = FieldType.Object)
                      score: Score,
@@ -288,10 +289,10 @@ case class Spectrum(
                      submitter: Submitter,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     tags: Array[Tags],
+                     tags: java.util.List[Tags],
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
-                     authors: Array[Author],
+                     authors: java.util.List[Author],
 
                      @(Field@field)(`type` = FieldType.Object)
                      library: Library
@@ -307,14 +308,14 @@ object Spectrum {
     */
   def apply(spectrum: LegacySpectrum): Spectrum = {
 
-    var compounds = List[Compound]()
+    var compounds: java.util.List[Compound] = Collections.emptyList()
 
     if (spectrum.biologicalCompound != null) {
-      compounds = spectrum.biologicalCompound.copy(kind = "biological") :: compounds
+      compounds.add(spectrum.biologicalCompound.copy(kind = "biological"))
     }
 
     if (spectrum.chemicalCompound != null) {
-      compounds = spectrum.chemicalCompound.copy(kind = "observed") :: compounds
+      compounds.add(spectrum.chemicalCompound.copy(kind = "observed"))
     }
 
     new Spectrum(
@@ -323,13 +324,13 @@ object Spectrum {
       id = spectrum.id,
       dateCreated = spectrum.dateCreated,
       lastUpdated = spectrum.lastUpdated,
-      metaData = spectrum.metaData.filter(_.category != "annotation"),
-      annotations = spectrum.metaData.filter(_.category == "annotation"),
+      metaData = spectrum.metaData.asScala.filter(_.category != "annotation").asJava,
+      annotations = spectrum.metaData.asScala.filter(_.category == "annotation").asJava,
       submitter = spectrum.submitter,
       tags = spectrum.tags,
       library = spectrum.library,
       authors = spectrum.authors,
-      compound = compounds.toArray,
+      compound = compounds,
       splash = spectrum.splash
     )
   }
@@ -356,13 +357,13 @@ case class LegacySpectrum(
                            id: String,
                            dateCreated: Date,
                            lastUpdated: Date,
-                           metaData: Array[MetaData],
+                           metaData: java.util.List[MetaData],
                            score: Score,
                            spectrum: String,
                            splash: Splash,
                            submitter: Submitter,
-                           tags: Array[Tags],
-                           authors: Array[Author],
+                           tags: java.util.List[Tags],
+                           authors: java.util.List[Author],
                            library: Library
                          ) {
   /**

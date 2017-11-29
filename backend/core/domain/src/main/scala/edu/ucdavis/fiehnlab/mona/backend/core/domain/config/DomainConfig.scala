@@ -16,15 +16,11 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 class DomainConfig {
 
   @Bean
-  def validator: Validator = {
-    Validation.buildDefaultValidatorFactory().getValidator
-  }
+  def validator: Validator = Validation.buildDefaultValidatorFactory().getValidator
 
   @Bean
   @Primary
-  def objectMapper: ObjectMapper = {
-    MonaMapper.create
-  }
+  def objectMapper: ObjectMapper = MonaMapper.create
 
   @Bean
   @Primary

@@ -85,7 +85,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   override def saveOrUpdate(value: Spectrum): Unit = {
     assert(value.id != null)
     elasticsearchTemplate.index(new IndexQueryBuilder().withId(value.id).withObject(value).build())
-    elasticsearchTemplate.refresh(classOf[Spectrum], true)
+    elasticsearchTemplate.refresh(classOf[Spectrum])
   }
 
   /**
@@ -119,10 +119,20 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     //        }
     //      }
     //    }
+    // However, short queries can cause a "Too_many_clauses: maxClauseCount is set to 1024"
+    // error from the recursive expansion of the regular expression in the second subquery.
+    // For this reason, we do not perform the regex query for short query strings
 
-    boolQuery()
-      .should(queryStringQuery(query).defaultField("_all").boost(10))
-      .should(queryStringQuery(s"*$query*").defaultField("_all").rewrite("scoring_boolean"))
+    val baseQuery: BoolQueryBuilder = boolQuery().should(queryStringQuery(query).defaultField("_all").boost(10))
+
+    // Add regex query only if query string is large enough to avoid subclause issues
+    if (query.length > 2) {
+      logger.info("LONG QUERY ABCD")
+      baseQuery.should(queryStringQuery(s"*$query*").defaultField("_all").rewrite("scoring_boolean"))
+    } else {
+      logger.info("SHORT QUERY ABCD")
+      baseQuery
+    }
   }
 
   /**

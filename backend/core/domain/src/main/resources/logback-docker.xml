@@ -5,8 +5,8 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <root level="INFO">
-        <appender-ref ref="STASH" />
-        <appender-ref ref="LOGSTASH" />
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="STASH"/>
+        <appender-ref ref="LOGSTASH"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

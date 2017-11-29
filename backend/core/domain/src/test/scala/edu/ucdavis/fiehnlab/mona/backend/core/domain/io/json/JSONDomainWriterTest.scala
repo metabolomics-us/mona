@@ -30,7 +30,7 @@ class JSONDomainWriterTest extends WordSpec with LazyLogging {
 
         //stupid arrays break simple equality check....
         assert(spectrumReRead.id == spectrum.id)
-        assert(spectrumReRead.metaData.length == spectrum.metaData.length)
+        assert(spectrumReRead.metaData.size() == spectrum.metaData.size())
       }
     }
   }

@@ -9,17 +9,16 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.stereotype.Component
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 
 /**
   * Created by wohlgemuth on 3/14/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TestWorkflowConfig]))
+@RunWith(classOf[SpringRunner])
+@ContextConfiguration(classes = Array(classOf[TestWorkflowConfig]))
 class WorkflowTest extends WordSpec {
 
 

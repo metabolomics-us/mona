@@ -39,4 +39,5 @@ trait TagNames {
   val `PK:NUM_PEAK` = "PK$NUM_PEAK"
   val `PK:PEAK` = "PK$PEAK"
 }
+
 object TagNames extends TagNames

@@ -73,8 +73,8 @@ class SpectrumValidationTest extends WordSpec with LazyLogging {
     }
 
     "compound must be specified" in {
-      val failing = spectrum.copy(compound = Array())
-      assert(failing.compound.length == 0)
+      val failing = spectrum.copy(compound = java.util.Collections.emptyList())
+      assert(failing.compound.size() == 0)
 
       val constraints = validator.validate[Spectrum](failing).asScala
       logger.info(s"$constraints")

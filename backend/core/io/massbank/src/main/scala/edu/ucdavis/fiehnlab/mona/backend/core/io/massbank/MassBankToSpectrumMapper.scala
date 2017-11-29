@@ -1,14 +1,19 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank
 
+import java.util
+
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.TagNames._
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types.{MassBankRecord, PeakData}
+
+import scala.collection.JavaConverters._
 import scala.io.Source
+import scala.util.Try
 
 trait MassBankToSpectrumMapper {
-  def parse(src: Source) = MassBankRecordReader.read(src).map(record => recordToSpectrum(record))
+  def parse(src: Source): Try[Spectrum] = MassBankRecordReader.read(src).map(record => recordToSpectrum(record))
 
-  def parse(str: String) = MassBankRecordReader.read(str).map(record => recordToSpectrum(record))
+  def parse(str: String): Try[Spectrum] = MassBankRecordReader.read(str).map(record => recordToSpectrum(record))
 
   /** One-to-one mapping of MassBank record fields to base metadata fields */
   def recordToSpectrum(record: MassBankRecord): Spectrum = {
@@ -18,9 +23,9 @@ trait MassBankToSpectrumMapper {
       lastUpdated = null,
       score = null,
 
-      metaData = extractMetadata(record),
-      annotations = Array(),
-      compound = Array(extractBiologicalCompound(record)),
+      metaData = extractMetadata(record).asJava,
+      annotations = util.Collections.emptyList(),
+      compound = util.Arrays.asList(extractBiologicalCompound(record)),
 
       spectrum = formatPeaks(record.massSpectraPeakDataGroup.peak),
       splash = null,
@@ -37,15 +42,15 @@ trait MassBankToSpectrumMapper {
 
   /** Helper function to decrease verbosity of creating metadata */
   private def meta[T](
-    name: String,
-    value: T,
-    category: Option[String] = None,
-    computed: Boolean = false,
-    hidden: Boolean = false,
-    score: Score = null,
-    unit: String = null,
-    url: String = null
-  ): MetaData =
+                       name: String,
+                       value: T,
+                       category: Option[String] = None,
+                       computed: Boolean = false,
+                       hidden: Boolean = false,
+                       score: Score = null,
+                       unit: String = null,
+                       url: String = null
+                     ): MetaData =
     MetaData(category.map(simplifyTag) getOrElse "none", computed, hidden, simplifyTag(name), score, unit, url, value)
 
   /** Helper function to extract optional metadata fields from MassBankRecord parse tree */
@@ -53,7 +58,7 @@ trait MassBankToSpectrumMapper {
 
   /** Helper function to convert parse tree `Map[String, String]` to metadata */
   private def mapToMetaList(map: Map[String, String], category: Option[String] = None): List[MetaData] =
-    map.map({ case (key, value) => meta(key, value , category) }).toList
+    map.map({ case (key, value) => meta(key, value, category) }).toList
 
   /** Helper function to convert parse tree `List[String]` to metadata */
   private def listToMetaList(name: String, list: List[String], category: Option[String] = None): List[MetaData] =
@@ -64,8 +69,8 @@ trait MassBankToSpectrumMapper {
     mapList.flatMap({ case (key, list) => listToMetaList(key, list, category) }).toList
 
   /** Simple conversion of MassBank record fields into metadata */
-  private def extractMetadata(r: MassBankRecord): Array[MetaData] = {
-    val base: Iterable[MetaData] = List(
+  private def extractMetadata(r: MassBankRecord): Seq[MetaData] = {
+    val base: Seq[MetaData] = List(
       ifExists(ACCESSION, r.recordSpecificGroup.accession),
       ifExists(RECORD_TITLE, r.recordSpecificGroup.recordTitle),
       ifExists(DATE, r.recordSpecificGroup.date),
@@ -78,12 +83,12 @@ trait MassBankToSpectrumMapper {
       mapListToMetaList(r.recordSpecificGroup.other)
 
     val CH: Iterable[MetaData] =
-        List(
-          ifExists(`CH:COMPOUND_CLASS`, r.chemicalGroup.compoundClass),
-          ifExists(`CH:FORMULA`, r.chemicalGroup.formula),
-          ifExists(`CH:EXACT_MASS`, r.chemicalGroup.exactMass),
-          ifExists(`CH:SMILES`, r.chemicalGroup.smiles)
-        ).flatten ++
+      List(
+        ifExists(`CH:COMPOUND_CLASS`, r.chemicalGroup.compoundClass),
+        ifExists(`CH:FORMULA`, r.chemicalGroup.formula),
+        ifExists(`CH:EXACT_MASS`, r.chemicalGroup.exactMass),
+        ifExists(`CH:SMILES`, r.chemicalGroup.smiles)
+      ).flatten ++
         mapToMetaList(map = r.chemicalGroup.link, Some(`CH:LINK`)) ++
         mapListToMetaList(r.chemicalGroup.other)
 
@@ -108,7 +113,7 @@ trait MassBankToSpectrumMapper {
         mapToMetaList(r.massSpectralDataGroup.dataProcessing, Some(`MS:DATA_PROCESSING`)) ++
         mapListToMetaList(r.massSpectralDataGroup.other)
 
-    (base ++ CH ++ SP ++ AC ++ MS).toArray
+    base ++ CH ++ SP ++ AC ++ MS
   }
 
   /** Convert peaks into space-delimited "m/z:absolute intensity" pairs */
@@ -119,12 +124,12 @@ trait MassBankToSpectrumMapper {
 
   /** Generate biological compound information */
   private def extractBiologicalCompound(r: MassBankRecord): Compound = {
-    def asName(n: String) = Names(false, n, 0.0, "user-provided")
+    def asName(n: String) = Names(computed = false, n, 0.0, "user-provided")
 
-    val names = r.chemicalGroup.name.map(asName).toArray
-    val inchi = r.chemicalGroup.iupac orNull
+    val names = r.chemicalGroup.name.map(asName)
+    val inchi = r.chemicalGroup.iupac.orNull
 
-    Compound(inchi, null, null, null, names, null, false, null, "biological")
+    Compound(inchi, null, null, null, names.asJava, null, computed = false, null, "biological")
   }
 }
 

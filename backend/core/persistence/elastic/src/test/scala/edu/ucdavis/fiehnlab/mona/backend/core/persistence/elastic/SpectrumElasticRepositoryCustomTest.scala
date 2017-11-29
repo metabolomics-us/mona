@@ -35,7 +35,7 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
 
   "elastic specific queries " should {
 
-    s"we should be able to reload our data" in {
+    "we should be able to reload our data" in {
       for (spectrum <- exampleRecords) {
         val size = getRepository.count()
 
@@ -44,6 +44,11 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
 
         assert(newSize == size + 1)
       }
+    }
+
+    "should not fail with Too_many_clauses issue" in {
+      val result: java.util.List[Spectrum] = spectrumElasticRepository.fullTextQuery("m")
+      assert(result.size() == 1)
     }
   }
 }

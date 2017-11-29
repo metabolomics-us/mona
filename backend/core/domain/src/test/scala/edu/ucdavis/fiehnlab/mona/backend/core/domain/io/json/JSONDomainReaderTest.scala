@@ -2,13 +2,16 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json
 
 import java.io.InputStreamReader
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.scalatest.WordSpec
+
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 2/25/16.
   */
-class JSONDomainReaderTest extends WordSpec {
+class JSONDomainReaderTest extends WordSpec with LazyLogging {
 
   "we should be able to create an instance of the reader" when {
     val reader = JSONDomainReader.create[Spectrum]
@@ -28,21 +31,20 @@ class JSONDomainReaderTest extends WordSpec {
       }
 
       "its compounds inchi key should be also equal the exspectations" in {
-        assert(spectrum.compound(1).inchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
+        assert(spectrum.compound.get(1).inchiKey == "QASFUMOKHFSJGL-LAFRSMQTSA-N")
       }
 
       "it should be possible to access it's metatadata" in {
         assert(spectrum.metaData != null)
-        assert(spectrum.metaData.length > 0)
+        assert(spectrum.metaData.size() > 0)
       }
 
       "we should be able to access it's compounds metadata" in {
-        assert(spectrum.compound(0).metaData != null)
-        assert(spectrum.compound(0).metaData.length > 0)
+        assert(spectrum.compound.get(0).metaData != null)
+        assert(spectrum.compound.get(0).metaData.size() > 0)
       }
 
-      spectrum.compound(0).metaData.foreach { metaData =>
-
+      spectrum.compound.get(0).metaData.asScala.foreach { metaData =>
         metaData.name match {
           case "total exact mass" =>
             "the compounds total exact mass should be of type double" in {
@@ -53,7 +55,7 @@ class JSONDomainReaderTest extends WordSpec {
           case "molecule formula" =>
             "the compounds molecule formula should be of type String" in {
               assert(metaData.value.isInstanceOf[String])
-              assert(metaData.value.asInstanceOf[String] ==="C27H41NO2")
+              assert(metaData.value.asInstanceOf[String] === "C27H41NO2")
             }
 
           case "Tocris Bioscience" =>
@@ -72,10 +74,10 @@ class JSONDomainReaderTest extends WordSpec {
     val reader: JSONDomainReader[Array[Spectrum]] = JSONDomainReader.create[Array[Spectrum]]
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json"))
 
-    "it should cause no erros" should {
+    "it should cause no errors" should {
       val result: Array[Spectrum] = reader.read(input)
 
-      "it's lenght of reqd objects should fit the expsectations" in {
+      "it's length of read objects should fit the expsectations" in {
         assert(result.length == 58)
       }
     }

@@ -1,11 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.facet.FacetBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -14,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.core.*;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 import org.springframework.data.elasticsearch.core.facet.FacetRequest;
 import org.springframework.data.elasticsearch.core.mapping.ElasticsearchPersistentEntity;
@@ -64,13 +64,19 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
             searchRequest.setPostFilter(searchQuery.getFilter());
         }
 
-        if (CollectionUtils.isNotEmpty(searchQuery.getElasticsearchSorts())) {
+        if (!searchQuery.getElasticsearchSorts().isEmpty()) {
             for (SortBuilder sort : searchQuery.getElasticsearchSorts()) {
                 searchRequest.addSort(sort);
             }
         }
 
-        if (CollectionUtils.isNotEmpty(searchQuery.getFacets())) {
+        if (!searchQuery.getAggregations().isEmpty()) {
+            for (AbstractAggregationBuilder aggregationBuilder : searchQuery.getAggregations()) {
+                searchRequest.addAggregation()
+            }
+        }
+
+        if (!searchQuery.getFacets().isEmpty()) {
             for (FacetRequest facetRequest : searchQuery.getFacets()) {
                 FacetBuilder facet = facetRequest.getFacet();
                 if (facetRequest.applyQueryFilter() && searchQuery.getFilter() != null) {
@@ -86,7 +92,7 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
             }
         }
 
-        if (CollectionUtils.isNotEmpty(searchQuery.getAggregations())) {
+        if (!searchQuery.getAggregations().isEmpty()) {
             for (AbstractAggregationBuilder aggregationBuilder : searchQuery.getAggregations()) {
                 searchRequest.addAggregation(aggregationBuilder);
             }
@@ -170,7 +176,7 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
     }
 
     @Override
-    public <T> FacetedPage<T> queryForPage(SearchQuery query, Class<T> clazz, SearchResultMapper mapper) {
+    public <T> AggregatedPage<T> queryForPage(SearchQuery query, Class<T> clazz, SearchResultMapper mapper) {
         SearchResponse response = doSearch(prepareSearch(query, clazz), query);
         return mapper.mapResults(response, clazz, query.getPageable());
     }
