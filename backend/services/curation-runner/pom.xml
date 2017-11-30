@@ -12,8 +12,10 @@
     <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
     <artifactId>curation-runner</artifactId>
 
-    <description>This module provides us with a simple runner to execute curation tasks. It can be deployed and easily scaled and is supposed to
-    run on a different server than the MoNA rest services to reduced the cpu and memory load</description>
+    <description>This module provides us with a simple runner to execute curation tasks. It can be deployed and easily
+        scaled and is supposed to
+        run on a different server than the MoNA rest services to reduced the cpu and memory load
+    </description>
 
 
     <dependencies>

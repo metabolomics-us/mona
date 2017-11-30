@@ -23,7 +23,7 @@ class AkkaEventScheduler[T] extends EventScheduler[T] {
     */
   override def scheduleEventProcessing(event: Event[T]): Unit = {
     val actor = system.actorOf(Props[SchedulingActor[T]])
-    actor !(persistenceEventListeners, event)
+    actor ! (persistenceEventListeners, event)
   }
 }
 

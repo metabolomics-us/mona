@@ -55,6 +55,7 @@ class JWTAuthenticationService extends AuthenticationService {
     }
   }
 }
+
 /**
   * our custom token based authentication
   *

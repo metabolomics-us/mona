@@ -45,9 +45,9 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
     }
 
 
-
     /**
      * modifies the field, in case it should be overwritten for specific types
+     *
      * @param field
      * @param node
      * @param context
@@ -65,7 +65,7 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
 
         String field = modifyFieldName(node.getField().asKey(), node, context);
 
-        if(context.getParent() != null) {
+        if (context.getParent() != null) {
             field = context.buildNestedPath() + "." + field;
         }
 
@@ -101,12 +101,12 @@ public class ElasticSearchVisitor extends ContextualNodeVisitor<QueryBuilder, Co
             // create a new context to pass to the children so we don't modify the one
             // that may get reused from "above"
             return nestedQuery(field, condition(node, context.createChieldContent(node.getField().asKey())));
-        } else if(RegexStringFieldImpl.REGEX.equals(node.getOperator())){
+        } else if (RegexStringFieldImpl.REGEX.equals(node.getOperator())) {
             return new RegexpQueryBuilder(field, single(values).toString());
         } else if (LikeStringFieldImpl.LIKE.equals(node.getOperator())) {
             return boolQuery()
                     .should(queryStringQuery(single(values).toString()).defaultField(field).boost(10))
-                    .should(queryStringQuery("*"+ single(values).toString() +"*").defaultField(field).rewrite("scoring_boolean"));
+                    .should(queryStringQuery("*" + single(values).toString() + "*").defaultField(field).rewrite("scoring_boolean"));
         } else {
             throw new UnsupportedOperationException("This visitor does not support the operator " + operator + ".");
         }

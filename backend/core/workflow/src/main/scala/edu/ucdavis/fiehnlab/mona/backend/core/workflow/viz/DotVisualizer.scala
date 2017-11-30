@@ -9,19 +9,19 @@ import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph.{AbstractEdge, Abst
   */
 class DotVisualizer {
 
-  def visualize[ID](graph:Graph[ ID, _ <: AbstractVertex[ID], _ <: AbstractEdge[ID]], outputStream: OutputStream): Unit = {
-   val writer = new PrintStream(outputStream)
+  def visualize[ID](graph: Graph[ID, _ <: AbstractVertex[ID], _ <: AbstractEdge[ID]], outputStream: OutputStream): Unit = {
+    val writer = new PrintStream(outputStream)
 
     writer.println("digraph graphname {")
 
-    graph.nodes.foreach{ x:AbstractVertex[ID] =>
+    graph.nodes.foreach { x: AbstractVertex[ID] =>
       writer.print(x.id)
       writer.println(s""" [ label = "${x.toString}" ]""")
     }
 
     writer.println()
 
-    graph.getEdges.foreach{x:AbstractEdge[ID] =>
+    graph.getEdges.foreach { x: AbstractEdge[ID] =>
       writer.print(x.from)
       writer.print(" -> ")
       writer.println(x.to)

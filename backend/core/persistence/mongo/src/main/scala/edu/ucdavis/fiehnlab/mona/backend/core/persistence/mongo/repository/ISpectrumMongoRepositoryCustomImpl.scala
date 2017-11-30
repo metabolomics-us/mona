@@ -1,9 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
-import java.util
-
 import com.github.rutledgepaulv.rqe.pipes.QueryConversionPipeline
-import com.mongodb.QueryBuilder
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import org.springframework.beans.factory.annotation.Autowired
@@ -60,6 +57,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
 
   /**
     * constructs MongoDB Criteria from RSQL query
+    *
     * @param query
     * @return
     */
@@ -97,6 +95,7 @@ class ISpectrumMongoRepositoryCustomImpl extends SpectrumMongoRepositoryCustom w
 
   /**
     * build a combined RSQL + full text query
+    *
     * @param rsqlQueryString
     * @param textQueryString
     * @return

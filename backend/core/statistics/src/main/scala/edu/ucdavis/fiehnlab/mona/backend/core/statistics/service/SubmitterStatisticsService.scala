@@ -63,6 +63,7 @@ class SubmitterStatisticsService {
 
   /**
     * Get all data in the submitter statistics repository
+    *
     * @return
     */
   def getSubmitterStatistics: Iterable[SubmitterStatistics] = submitterStatisticsRepository.findAll().asScala
@@ -70,6 +71,7 @@ class SubmitterStatisticsService {
 
   /**
     * Update the data in the submitter statistics repository
+    *
     * @return
     */
   def updateSubmitterStatistics(): Unit = {

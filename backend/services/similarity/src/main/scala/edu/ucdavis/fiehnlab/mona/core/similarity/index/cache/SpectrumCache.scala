@@ -12,6 +12,7 @@ trait SpectrumCache {
 
   /**
     * adds a spectrum to the cache
+    *
     * @param spectrum
     * @return
     */
@@ -19,6 +20,7 @@ trait SpectrumCache {
 
   /**
     * does the cache already contains the spectrum
+    *
     * @param spectrum
     * @return
     */
@@ -26,6 +28,7 @@ trait SpectrumCache {
 
   /**
     * fetches a spectrum from the cache
+    *
     * @param spectrum
     * @return
     */

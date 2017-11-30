@@ -1,17 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.domain
 
 import java.util.Date
+import javax.validation.constraints._
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{AnalyzedStringSerialize, TupleSerialize}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
+import org.hibernate.validator.constraints.NotEmpty
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
 import org.springframework.data.mongodb.core.index.{Indexed, TextIndexed}
 import org.springframework.data.mongodb.core.mapping.Document
-import javax.validation.constraints._
-
-import org.hibernate.validator.constraints.NotEmpty
 
 import scala.annotation.meta.field
 import scala.beans.BeanProperty

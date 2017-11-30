@@ -16,7 +16,7 @@ import org.springframework.context.annotation._
 @Import(Array(classOf[RestClientConfig], classOf[WorkflowConfiguration], classOf[CurationConfig]))
 @ImportResource(Array("classpath:uploadJob.xml"))
 @ComponentScan(Array("edu.ucdavis.fiehnlab.mona.backend.curation"))
-class UploaderJobConfig extends LazyLogging{
+class UploaderJobConfig extends LazyLogging {
 
 
 }

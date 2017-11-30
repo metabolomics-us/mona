@@ -55,8 +55,8 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @param metaData
     * @return
     */
-  def filterMetaData(metaData: Array[MetaData]) : Array[MetaData] = {
-    if(metaData != null) {
+  def filterMetaData(metaData: Array[MetaData]): Array[MetaData] = {
+    if (metaData != null) {
       metaData.filter(!_.computed)
     } else {
       Array()
@@ -69,8 +69,8 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @param names
     * @return
     */
-  def filterNames(names: Array[Names]) : Array[Names] = {
-    if(names != null) {
+  def filterNames(names: Array[Names]): Array[Names] = {
+    if (names != null) {
       names.filter(!_.computed)
     } else {
       Array()
@@ -83,8 +83,8 @@ class RemoveComputedData extends ItemProcessor[Spectrum, Spectrum] with LazyLogg
     * @param tags
     * @return
     */
-  def filterTags(tags: Array[Tags]) : Array[Tags] = {
-    if(tags != null) {
+  def filterTags(tags: Array[Tags]): Array[Tags] = {
+    if (tags != null) {
       tags.filter(!_.ruleBased)
     } else {
       Array()

@@ -29,20 +29,23 @@ class JWTAuthenticationConfig {
 
   /**
     * this services defines how we would like to have our tokens generated
+    *
     * @return
     */
   @Bean
-  def tokenService:JWTTokenService = new JWTTokenService
+  def tokenService: JWTTokenService = new JWTTokenService
 
   /**
     * the service defines how we authenticate the requests
+    *
     * @return
     */
   @Bean
-  def authenticationService:JWTAuthenticationService = new JWTAuthenticationService
+  def authenticationService: JWTAuthenticationService = new JWTAuthenticationService
 
   /**
     * this configures our filters and services to the http security object
+    *
     * @return
     */
   @Bean

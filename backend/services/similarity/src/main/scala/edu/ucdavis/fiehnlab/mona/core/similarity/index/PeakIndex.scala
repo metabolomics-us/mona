@@ -65,17 +65,17 @@ class PeakIndex(override val binningMethod: BinningMethod, override val cache: S
     spectrum.ions
       //.filter(_.intensity >= 0.05 * spectrum.maximumIon.intensity) // Optional filter, excluding for indexing
       .foreach { x =>
-        val key: Int = SpectrumUtils.roundMZ(x.mz)
+      val key: Int = SpectrumUtils.roundMZ(x.mz)
 
-        if (!indexMap.containsKey(key)) {
-          indexMap.put(key, createAssociationBacking())
-        }
-
-        indexMap.get(key).add(spectrum)
-
-        // Track it in the internal index
-        internalIndex.index(spectrum)
+      if (!indexMap.containsKey(key)) {
+        indexMap.put(key, createAssociationBacking())
       }
+
+      indexMap.get(key).add(spectrum)
+
+      // Track it in the internal index
+      internalIndex.index(spectrum)
+    }
 
     this
   }
@@ -118,7 +118,7 @@ class PeakIndex(override val binningMethod: BinningMethod, override val cache: S
     // Create a spectrum object from a list of peaks and assign the same intensity to every ion
     case ions: Array[_] => get(ions.toSeq)
 
-    case Seq(mz, tail @ _*) =>
+    case Seq(mz, tail@_*) =>
       logger.trace("Looking up Seq of m/z values")
 
       if (tail.isEmpty) {

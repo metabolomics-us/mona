@@ -12,6 +12,7 @@ trait ISubmitterMongoRepository extends PagingAndSortingRepository[Submitter, St
 
   /**
     * returns the submitter with this email address
+    *
     * @param email
     * @return
     */
@@ -19,6 +20,7 @@ trait ISubmitterMongoRepository extends PagingAndSortingRepository[Submitter, St
 
   /**
     * returns all submitters by there first name
+    *
     * @param firstName
     * @return
     */
@@ -26,6 +28,7 @@ trait ISubmitterMongoRepository extends PagingAndSortingRepository[Submitter, St
 
   /**
     * returns the submitter by it's id property
+    *
     * @param id
     * @return
     */

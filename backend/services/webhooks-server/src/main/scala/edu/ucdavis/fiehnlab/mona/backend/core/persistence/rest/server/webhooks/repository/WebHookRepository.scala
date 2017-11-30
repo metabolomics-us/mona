@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository
   * Created by wohlgemuth on 4/5/16.
   */
 @Repository
-trait WebHookRepository extends PagingAndSortingRepository[WebHook, String]{
+trait WebHookRepository extends PagingAndSortingRepository[WebHook, String] {
 
   /**
     * returns the webhooks associated with the given account
+    *
     * @param username
     * @return
     */

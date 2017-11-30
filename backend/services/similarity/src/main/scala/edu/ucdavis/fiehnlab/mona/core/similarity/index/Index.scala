@@ -7,8 +7,6 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.mona.core.similarity.run.Calculate
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{BinnedSimpleSpectrum, ComputationalResult, SimpleSpectrum}
 
-import scala.collection.mutable
-
 /**
   * The definition of a spectral index
   *
@@ -92,6 +90,7 @@ abstract class Index(val binningMethod: BinningMethod, val cache: SpectrumCache)
 
   /**
     * Size of this index
+    *
     * @return
     */
   def size: Int

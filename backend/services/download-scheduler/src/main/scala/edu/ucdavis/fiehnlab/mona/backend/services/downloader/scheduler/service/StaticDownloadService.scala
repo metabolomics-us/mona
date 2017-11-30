@@ -1,12 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service
 
-import java.io.{IOException, InputStream}
+import java.io.IOException
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
@@ -23,6 +22,7 @@ class StaticDownloadService extends LazyLogging {
 
   /**
     * Retrieves a file path relative to the static downloads folder
+    *
     * @param filePath
     * @return
     */
@@ -105,6 +105,7 @@ class StaticDownloadService extends LazyLogging {
 
   /**
     * Checks if a path (relative to the static downloads folder) exists as a file
+    *
     * @param filePath
     * @return
     */

@@ -15,7 +15,7 @@ class CustomElastic1SearchVisitor extends ElasticSearchVisitor with LazyLogging 
     * @param field
     * @param node
     * @param context
-    *     */
+    **/
   override protected def modifyFieldName(field: String, node: ComparisonNode, context: Context): String = field match {
     case "value" | "metaData.value" | "annotations.value" | "compound.metaData.value" | "compound.classification.value" =>
       single(node.getValues) match {

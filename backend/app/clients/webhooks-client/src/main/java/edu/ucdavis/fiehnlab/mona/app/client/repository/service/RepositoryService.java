@@ -10,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -76,19 +75,19 @@ public class RepositoryService {
 
     private void createWebHook(String username, String token) {
         HttpHeaders header = new HttpHeaders();
-        header.set("Authorization", "Bearer "+ token);
+        header.set("Authorization", "Bearer " + token);
         header.setContentType(MediaType.APPLICATION_JSON);
         header.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        String monaUrl = "http://"+ monaHost +":"+ monaPort +"/rest/webhooks";
+        String monaUrl = "http://" + monaHost + ":" + monaPort + "/rest/webhooks";
 
-        String localUrl = "http://"+ localHost +":"+ localPort +"/sync";
-        String webhookName = username +"_webhook-client";
+        String localUrl = "http://" + localHost + ":" + localPort + "/sync";
+        String webhookName = username + "_webhook-client";
 
-        String requestJSON = "{\"name\": \""+ webhookName +"\", \"url\": \""+ localUrl +"\"}";
+        String requestJSON = "{\"name\": \"" + webhookName + "\", \"url\": \"" + localUrl + "\"}";
         HttpEntity<String> entity = new HttpEntity<String>(requestJSON, header);
 
-        logger.info("Registering webhook at: "+ monaUrl);
+        logger.info("Registering webhook at: " + monaUrl);
         restTemplate.postForObject(monaUrl, entity, String.class);
     }
 
@@ -111,19 +110,19 @@ public class RepositoryService {
     public void handleWebHook(String id, String eventType) {
         try {
             if (eventType.equals("add") || Objects.equals(eventType, "update")) {
-                logger.info("Saving spectrum with id: "+ id);
+                logger.info("Saving spectrum with id: " + id);
                 Spectrum spectrum = monaSpectrumRestClient.get(id);
 
                 File spectrumFile = new File(getDownloadDirectory(), id + ".json");
                 MonaMapper.create().writeValue(spectrumFile, spectrum);
-                logger.info("Wrote spectrum "+ id +" to: "+ spectrumFile.getPath());
+                logger.info("Wrote spectrum " + id + " to: " + spectrumFile.getPath());
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void shutdownApp(int returnCode){
+    public void shutdownApp(int returnCode) {
         SpringApplication.exit(appContext, () -> returnCode);
     }
 }

@@ -10,6 +10,7 @@ class LegacyProcessor extends ItemProcessor[LegacySpectrum, Spectrum] {
 
   /**
     * simple wrapper
+    *
     * @param i
     * @return
     */

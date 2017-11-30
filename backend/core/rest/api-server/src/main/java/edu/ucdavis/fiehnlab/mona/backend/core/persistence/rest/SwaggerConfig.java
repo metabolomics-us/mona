@@ -9,9 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.UiConfiguration;
 
 @Configuration
 public class SwaggerConfig extends WebSecurityConfigurerAdapter {
@@ -29,10 +29,10 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
                 .build().apiInfo(apiInfo());
     }
 
-    @Bean
-    public UiConfiguration uiConfig() {
-        return UiConfiguration.DEFAULT;
-    }
+//    @Bean
+//    public UiConfiguration uiConfig() {
+//        return UiConfiguration.DEFAULT;
+//    }
 
 
     private ApiInfo apiInfo() {
@@ -41,7 +41,7 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
                 "description of the api for the " + appName,
                 "V1",
                 "Terms of service",
-                "wohlgemuth@ucdavis.edu",
+                new Contact("Gert Wohlgemuth", "http://mona.fiehnlab.ucdavis.edu", "wohlgemuth@ucdavis.edu"),
                 "GNU Lesser General Public License",
                 "http://www.gnu.org/licenses/lgpl-3.0.en.html");
         return apiInfo;

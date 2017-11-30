@@ -9,12 +9,15 @@ class NoSpectrumCache extends SpectrumCache {
 
   /**
     * adds a spectrum to the cache
+    *
     * @param spectrum
     * @return
     */
   override def add(spectrum: SimpleSpectrum): SpectrumCache = this
+
   /**
     * fetches a spectrum from the cache
+    *
     * @param spectrum
     * @return
     */
@@ -22,6 +25,7 @@ class NoSpectrumCache extends SpectrumCache {
 
   /**
     * does the cache already contains the spectrum
+    *
     * @param spectrum
     * @return
     */

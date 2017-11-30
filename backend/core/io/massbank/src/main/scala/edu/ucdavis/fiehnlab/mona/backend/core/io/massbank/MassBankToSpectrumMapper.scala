@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.TagNames._
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types.{MassBankRecord, PeakData}
+
 import scala.io.Source
 
 trait MassBankToSpectrumMapper {
@@ -37,15 +38,15 @@ trait MassBankToSpectrumMapper {
 
   /** Helper function to decrease verbosity of creating metadata */
   private def meta[T](
-    name: String,
-    value: T,
-    category: Option[String] = None,
-    computed: Boolean = false,
-    hidden: Boolean = false,
-    score: Score = null,
-    unit: String = null,
-    url: String = null
-  ): MetaData =
+                       name: String,
+                       value: T,
+                       category: Option[String] = None,
+                       computed: Boolean = false,
+                       hidden: Boolean = false,
+                       score: Score = null,
+                       unit: String = null,
+                       url: String = null
+                     ): MetaData =
     MetaData(category.map(simplifyTag) getOrElse "none", computed, hidden, simplifyTag(name), score, unit, url, value)
 
   /** Helper function to extract optional metadata fields from MassBankRecord parse tree */
@@ -53,7 +54,7 @@ trait MassBankToSpectrumMapper {
 
   /** Helper function to convert parse tree `Map[String, String]` to metadata */
   private def mapToMetaList(map: Map[String, String], category: Option[String] = None): List[MetaData] =
-    map.map({ case (key, value) => meta(key, value , category) }).toList
+    map.map({ case (key, value) => meta(key, value, category) }).toList
 
   /** Helper function to convert parse tree `List[String]` to metadata */
   private def listToMetaList(name: String, list: List[String], category: Option[String] = None): List[MetaData] =
@@ -78,12 +79,12 @@ trait MassBankToSpectrumMapper {
       mapListToMetaList(r.recordSpecificGroup.other)
 
     val CH: Iterable[MetaData] =
-        List(
-          ifExists(`CH:COMPOUND_CLASS`, r.chemicalGroup.compoundClass),
-          ifExists(`CH:FORMULA`, r.chemicalGroup.formula),
-          ifExists(`CH:EXACT_MASS`, r.chemicalGroup.exactMass),
-          ifExists(`CH:SMILES`, r.chemicalGroup.smiles)
-        ).flatten ++
+      List(
+        ifExists(`CH:COMPOUND_CLASS`, r.chemicalGroup.compoundClass),
+        ifExists(`CH:FORMULA`, r.chemicalGroup.formula),
+        ifExists(`CH:EXACT_MASS`, r.chemicalGroup.exactMass),
+        ifExists(`CH:SMILES`, r.chemicalGroup.smiles)
+      ).flatten ++
         mapToMetaList(map = r.chemicalGroup.link, Some(`CH:LINK`)) ++
         mapListToMetaList(r.chemicalGroup.other)
 

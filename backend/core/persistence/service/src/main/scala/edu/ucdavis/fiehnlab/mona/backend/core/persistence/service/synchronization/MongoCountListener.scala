@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
   * Created by wohlgemuth on 3/17/16.
   */
 @Component
-class MongoCountListener extends PersistenceEventListener[Spectrum] with LazyLogging{
+class MongoCountListener extends PersistenceEventListener[Spectrum] with LazyLogging {
   @Autowired
   val spectrumMongoRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 

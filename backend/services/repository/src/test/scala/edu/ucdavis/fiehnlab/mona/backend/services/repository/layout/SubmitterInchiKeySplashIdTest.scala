@@ -11,7 +11,7 @@ import org.scalatest.WordSpec
 /**
   * Created by wohlgemuth on 5/20/16.
   */
-class SubmitterInchiKeySplashIdTest extends WordSpec with LazyLogging{
+class SubmitterInchiKeySplashIdTest extends WordSpec with LazyLogging {
   val reader = JSONDomainReader.create[Spectrum]
 
   "SubmitterInchiKeySplashIdTest" should {

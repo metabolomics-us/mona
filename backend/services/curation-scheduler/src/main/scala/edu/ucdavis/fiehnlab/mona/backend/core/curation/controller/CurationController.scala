@@ -17,8 +17,6 @@ import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
 
-import scala.collection.JavaConverters._
-
 
 /**
   * This controller permits us to easily schedule the curation of spectra in the system
@@ -81,7 +79,7 @@ class CurationController extends LazyLogging {
 
     var count: Int = 0
 
-    while(it.hasNext) {
+    while (it.hasNext) {
       val spectrum = it.next()
       curationService.scheduleSpectrum(spectrum)
       count += 1

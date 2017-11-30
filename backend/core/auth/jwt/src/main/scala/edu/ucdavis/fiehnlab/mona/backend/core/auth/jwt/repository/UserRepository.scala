@@ -14,7 +14,7 @@ import org.springframework.stereotype.{Component, Repository}
   * allows us to work with user objects
   */
 @Repository
-trait IUserRepository extends PagingAndSortingRepository[User, String]{
+trait IUserRepository extends PagingAndSortingRepository[User, String] {
 
   /**
     * finds a given user by its username

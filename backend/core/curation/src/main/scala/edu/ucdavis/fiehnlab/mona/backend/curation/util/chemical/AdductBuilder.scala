@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical
 
-import org.openscience.cdk.interfaces.{IBond, IAtomContainer}
-import org.openscience.cdk.{Bond, Atom, AtomContainer}
+import org.openscience.cdk.interfaces.{IAtomContainer, IBond}
+import org.openscience.cdk.{Atom, AtomContainer, Bond}
 
 /**
   * Created by sajjan on 4/1/16.
@@ -13,38 +13,38 @@ object AdductBuilder {
     * http://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
     */
   final val LCMS_POSITIVE_ADDUCTS: Map[String, (Double) => Double] = Map(
-    "[M+3H]+" -> {M: Double => M / 3.0 + 1.007276},
-    "[M+2H+Na]+" -> {M: Double => M / 3.0 + 8.334590},
-    "[M+H+2Na]+" -> {M: Double => M / 3 + 15.7661904},
-    "[M+3Na]+" -> {M: Double => M / 3.0 + 22.989218},
-    "[M+2H]+" -> {M: Double => M / 2.0 + 1.007276},
-    "[M+H+NH4]+" -> {M: Double => M / 2.0 + 9.520550},
-    "[M+H+Na]+" -> {M: Double => M / 2.0 + 11.998247},
-    "[M+H+K]+" -> {M: Double => M / 2.0 + 19.985217},
-    "[M+ACN+2H]+" -> {M: Double => M / 2.0 + 21.520550},
-    "[M+2Na]+" -> {M: Double => M / 2.0 + 22.989218},
-    "[M+2ACN+2H]+" -> {M: Double => M / 2.0 + 42.033823},
-    "[M+3ACN+2H]+" -> {M: Double => M / 2.0 + 62.547097},
-    "[M+H]+" -> {M: Double => M + 1.007276},
-    "[M+NH4]+" -> {M: Double => M + 18.033823},
-    "[M+Na]+" -> {M: Double => M + 22.989218},
-    "[M+CH3OH+H]+" -> {M: Double => M + 33.033489},
-    "[M+K]+" -> {M: Double => M + 38.963158},
-    "[M+ACN+H]+" -> {M: Double => M + 42.033823},
-    "[M+2Na-H]+" -> {M: Double => M + 44.971160},
-    "[M+IsoProp+H]+" -> {M: Double => M + 61.06534},
-    "[M+ACN+Na]+" -> {M: Double => M + 64.015765},
-    "[M+2K-H]+" -> {M: Double => M + 76.919040},
-    "[M+DMSO+H]+" -> {M: Double => M + 79.02122},
-    "[M+2ACN+H]+" -> {M: Double => M + 83.060370},
-    "[M+IsoProp+Na+H]+" -> {M: Double => M + 84.05511},
-    "[2M+H]+" -> {M: Double => 2 * M + 1.007276},
-    "[2M+NH4]+" -> {M: Double => 2 * M + 18.033823},
-    "[2M+Na]+" -> {M: Double => 2 * M + 22.989218},
-    "[2M+3H2O+2H]+" -> {M: Double => 2 * M + 28.02312},
-    "[2M+K]+" -> {M: Double => 2 * M + 38.963158},
-    "[2M+ACN+H]+" -> {M: Double => 2 * M + 42.033823},
-    "[2M+ACN+Na]+" -> {M: Double => 2 * M + 64.015765}
+    "[M+3H]+" -> { M: Double => M / 3.0 + 1.007276 },
+    "[M+2H+Na]+" -> { M: Double => M / 3.0 + 8.334590 },
+    "[M+H+2Na]+" -> { M: Double => M / 3 + 15.7661904 },
+    "[M+3Na]+" -> { M: Double => M / 3.0 + 22.989218 },
+    "[M+2H]+" -> { M: Double => M / 2.0 + 1.007276 },
+    "[M+H+NH4]+" -> { M: Double => M / 2.0 + 9.520550 },
+    "[M+H+Na]+" -> { M: Double => M / 2.0 + 11.998247 },
+    "[M+H+K]+" -> { M: Double => M / 2.0 + 19.985217 },
+    "[M+ACN+2H]+" -> { M: Double => M / 2.0 + 21.520550 },
+    "[M+2Na]+" -> { M: Double => M / 2.0 + 22.989218 },
+    "[M+2ACN+2H]+" -> { M: Double => M / 2.0 + 42.033823 },
+    "[M+3ACN+2H]+" -> { M: Double => M / 2.0 + 62.547097 },
+    "[M+H]+" -> { M: Double => M + 1.007276 },
+    "[M+NH4]+" -> { M: Double => M + 18.033823 },
+    "[M+Na]+" -> { M: Double => M + 22.989218 },
+    "[M+CH3OH+H]+" -> { M: Double => M + 33.033489 },
+    "[M+K]+" -> { M: Double => M + 38.963158 },
+    "[M+ACN+H]+" -> { M: Double => M + 42.033823 },
+    "[M+2Na-H]+" -> { M: Double => M + 44.971160 },
+    "[M+IsoProp+H]+" -> { M: Double => M + 61.06534 },
+    "[M+ACN+Na]+" -> { M: Double => M + 64.015765 },
+    "[M+2K-H]+" -> { M: Double => M + 76.919040 },
+    "[M+DMSO+H]+" -> { M: Double => M + 79.02122 },
+    "[M+2ACN+H]+" -> { M: Double => M + 83.060370 },
+    "[M+IsoProp+Na+H]+" -> { M: Double => M + 84.05511 },
+    "[2M+H]+" -> { M: Double => 2 * M + 1.007276 },
+    "[2M+NH4]+" -> { M: Double => 2 * M + 18.033823 },
+    "[2M+Na]+" -> { M: Double => 2 * M + 22.989218 },
+    "[2M+3H2O+2H]+" -> { M: Double => 2 * M + 28.02312 },
+    "[2M+K]+" -> { M: Double => 2 * M + 38.963158 },
+    "[2M+ACN+H]+" -> { M: Double => 2 * M + 42.033823 },
+    "[2M+ACN+Na]+" -> { M: Double => 2 * M + 64.015765 }
   )
 
   /**
@@ -52,43 +52,44 @@ object AdductBuilder {
     * http://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
     */
   final val LCMS_NEGATIVE_ADDUCTS: Map[String, (Double) => Double] = Map(
-    "[M-3H]-" -> {M: Double => M / 3.0 - 1.007276},
-    "[M-2H]-" -> {M: Double => M / 2.0 - 1.007276},
-    "[M-H2O-H]-" -> {M: Double => M - 19.01839},
-    "[M-H]-" -> {M: Double => M - 1.007276},
-    "[M+Na-2H]-" -> {M: Double => M + 20.974666},
-    "[M+Cl]-" -> {M: Double => M + 34.969402},
-    "[M+K-2H]-" -> {M: Double => M + 36.948606},
-    "[M+FA-H]-" -> {M: Double => M + 44.998201},
-    "[M+Hac-H]-" -> {M: Double => M + 59.013851},
-    "[M+Br]-" -> {M: Double => M + 78.918885},
-    "[M+TFA-H]-" -> {M: Double => M + 112.985586},
-    "[2M-H]-" -> {M: Double => 2 * M - 1.007276},
-    "[2M+FA-H]-" -> {M: Double => 2 * M + 44.998201},
-    "[2M+Hac-H]-" -> {M: Double => 2 * M + 59.013851},
-    "[3M-H]-" -> {M: Double => 3 * M - 1.007276},
-    "[M+CH3OH+H]-" -> {M: Double => M + 33.033489},
-    "[M+K]-" -> {M: Double => M + 38.963158},
-    "[M+ACN+H]-" -> {M: Double => M + 42.033823},
-    "[M+2Na-H]-" -> {M: Double => M + 44.971160},
-    "[M+IsoProp+H]-" -> {M: Double => M + 61.06534},
-    "[M+ACN+Na]-" -> {M: Double => M + 64.015765},
-    "[M+2K-H]-" -> {M: Double => M + 76.919040},
-    "[M+DMSO+H]-" -> {M: Double => M + 79.02122},
-    "[M+2ACN+H]-" -> {M: Double => M + 83.060370},
-    "[M+IsoProp+Na+H]-" -> {M: Double => M + 84.05511},
-    "[2M+H]-" -> {M: Double => 2 * M + 1.007276},
-    "[2M+NH4]-" -> {M: Double => 2 * M + 18.033823},
-    "[2M+Na]-" -> {M: Double => 2 * M + 22.989218},
-    "[2M+3H2O+2H]-" -> {M: Double => 2 * M + 28.02312},
-    "[2M+K]-" -> {M: Double => 2 * M + 38.963158},
-    "[2M+ACN+H]-" -> {M: Double => 2 * M + 42.033823},
-    "[2M+ACN+Na]-" -> {M: Double => 2 * M + 64.015765}
+    "[M-3H]-" -> { M: Double => M / 3.0 - 1.007276 },
+    "[M-2H]-" -> { M: Double => M / 2.0 - 1.007276 },
+    "[M-H2O-H]-" -> { M: Double => M - 19.01839 },
+    "[M-H]-" -> { M: Double => M - 1.007276 },
+    "[M+Na-2H]-" -> { M: Double => M + 20.974666 },
+    "[M+Cl]-" -> { M: Double => M + 34.969402 },
+    "[M+K-2H]-" -> { M: Double => M + 36.948606 },
+    "[M+FA-H]-" -> { M: Double => M + 44.998201 },
+    "[M+Hac-H]-" -> { M: Double => M + 59.013851 },
+    "[M+Br]-" -> { M: Double => M + 78.918885 },
+    "[M+TFA-H]-" -> { M: Double => M + 112.985586 },
+    "[2M-H]-" -> { M: Double => 2 * M - 1.007276 },
+    "[2M+FA-H]-" -> { M: Double => 2 * M + 44.998201 },
+    "[2M+Hac-H]-" -> { M: Double => 2 * M + 59.013851 },
+    "[3M-H]-" -> { M: Double => 3 * M - 1.007276 },
+    "[M+CH3OH+H]-" -> { M: Double => M + 33.033489 },
+    "[M+K]-" -> { M: Double => M + 38.963158 },
+    "[M+ACN+H]-" -> { M: Double => M + 42.033823 },
+    "[M+2Na-H]-" -> { M: Double => M + 44.971160 },
+    "[M+IsoProp+H]-" -> { M: Double => M + 61.06534 },
+    "[M+ACN+Na]-" -> { M: Double => M + 64.015765 },
+    "[M+2K-H]-" -> { M: Double => M + 76.919040 },
+    "[M+DMSO+H]-" -> { M: Double => M + 79.02122 },
+    "[M+2ACN+H]-" -> { M: Double => M + 83.060370 },
+    "[M+IsoProp+Na+H]-" -> { M: Double => M + 84.05511 },
+    "[2M+H]-" -> { M: Double => 2 * M + 1.007276 },
+    "[2M+NH4]-" -> { M: Double => 2 * M + 18.033823 },
+    "[2M+Na]-" -> { M: Double => 2 * M + 22.989218 },
+    "[2M+3H2O+2H]-" -> { M: Double => 2 * M + 28.02312 },
+    "[2M+K]-" -> { M: Double => 2 * M + 38.963158 },
+    "[2M+ACN+H]-" -> { M: Double => 2 * M + 42.033823 },
+    "[2M+ACN+Na]-" -> { M: Double => 2 * M + 64.015765 }
   )
 
 
   /**
     * Make TMS group
+    *
     * @return
     */
   def makeTMS(): IAtomContainer = {
@@ -114,6 +115,7 @@ object AdductBuilder {
 
   /**
     * Make a TMS group with a bound to oxygen
+    *
     * @return
     */
   def makeTMSBoundToOxygen(): IAtomContainer = {
@@ -127,6 +129,7 @@ object AdductBuilder {
 
   /**
     * Make a TMS group with a bound to nitrogen
+    *
     * @return
     */
   def makeTMSBoundToNitrogen(): IAtomContainer = {
@@ -140,6 +143,7 @@ object AdductBuilder {
 
   /**
     * Make a TMS group with a bound to sulfur
+    *
     * @return
     */
   def makeTMSBoundToSulfur(): IAtomContainer = {
@@ -153,6 +157,7 @@ object AdductBuilder {
 
   /**
     * Make a TMS group with a bound to phosphorus
+    *
     * @return
     */
   def makeTMSBoundToPhosphorus(): IAtomContainer = {

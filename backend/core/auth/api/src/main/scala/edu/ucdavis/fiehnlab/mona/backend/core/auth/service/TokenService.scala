@@ -10,6 +10,7 @@ trait TokenService {
 
   /**
     * provide us with some information about this token
+    *
     * @param token
     * @return
     */

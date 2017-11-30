@@ -40,17 +40,17 @@ class PeakIndexTest extends WordSpec with Matchers with LazyLogging {
 
     "should be able to retrieve results given a spectrum object" in {
       index.get(spectrum).size shouldBe 1
-      index.get(spectrum) should contain (spectrum)
+      index.get(spectrum) should contain(spectrum)
     }
 
     "should be able to retrieve results given a single m/z value" in {
       index.get(spectrum.ions.head.mz).size shouldBe 3
-      index.get(spectrum) should contain (spectrum)
+      index.get(spectrum) should contain(spectrum)
     }
 
     "should be able to retrieve results given an array of m/z values" in {
       index.get(spectrum.ions.map(_.mz)).size shouldBe 1
-      index.get(spectrum) should contain (spectrum)
+      index.get(spectrum) should contain(spectrum)
     }
   }
 }

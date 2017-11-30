@@ -7,7 +7,7 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{TestPropertySource, ContextConfiguration, TestContextManager}
+import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 /**
   * defines how to use a token service and ensure
@@ -15,11 +15,11 @@ import org.springframework.test.context.{TestPropertySource, ContextConfiguratio
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
+@TestPropertySource(locations = Array("classpath:application.properties"))
 class JWTTokenServiceTest extends WordSpec {
 
   @Autowired
-  val tokenService:JWTTokenService = null
+  val tokenService: JWTTokenService = null
 
   @Autowired
   val userRepository: UserRepository = null

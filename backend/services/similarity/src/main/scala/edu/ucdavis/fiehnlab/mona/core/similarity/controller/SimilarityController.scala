@@ -1,11 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.controller
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.core.similarity.service.SimilaritySearchService
-import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.AlgorithmTypes.AlgorithmType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.IndexType.IndexType
+import edu.ucdavis.fiehnlab.mona.core.similarity.types._
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation._
@@ -29,6 +27,7 @@ class SimilarityController {
 
   /**
     * Main similarity search endpoint
+    *
     * @param message
     * @param size
     * @return
@@ -46,6 +45,7 @@ class SimilarityController {
 
   /**
     * Peak search endpoint
+    *
     * @param message
     * @param size
     * @return
@@ -62,6 +62,7 @@ class SimilarityController {
 
   /**
     * Endpoint to display a list of available search indices
+    *
     * @return
     */
   @RequestMapping(path = Array("/indices"), method = Array(RequestMethod.GET))
@@ -74,6 +75,7 @@ class SimilarityController {
 
   /**
     * Endpoint to display a list of available search algorithms
+    *
     * @return
     */
   @RequestMapping(path = Array("/algorithms"), method = Array(RequestMethod.GET))

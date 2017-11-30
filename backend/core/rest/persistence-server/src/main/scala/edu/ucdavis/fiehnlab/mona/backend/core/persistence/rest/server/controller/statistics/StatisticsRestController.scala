@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
 
-import scala.collection.JavaConverters._
-
 /**
   * Created by sajjan on 8/4/16.
   */
@@ -36,6 +34,7 @@ class StatisticsRestController {
 
   /**
     * Get a list of unique tags and their respective counts
+    *
     * @return
     */
   @RequestMapping(path = Array("/tags"), method = Array(RequestMethod.GET))
@@ -44,6 +43,7 @@ class StatisticsRestController {
 
   /**
     * Get a list of unique library tags and their respective counts
+    *
     * @return
     */
   @RequestMapping(path = Array("/tags/library"), method = Array(RequestMethod.GET))
@@ -52,6 +52,7 @@ class StatisticsRestController {
 
   /**
     * Get all metadata statistics
+    *
     * @return
     */
   @RequestMapping(path = Array("/statistics/metaData"), method = Array(RequestMethod.GET))
@@ -60,6 +61,7 @@ class StatisticsRestController {
 
   /**
     * Get all metadata statistics
+    *
     * @return
     */
   @RequestMapping(path = Array("/statistics/global"), method = Array(RequestMethod.GET))
@@ -68,6 +70,7 @@ class StatisticsRestController {
 
   /**
     * Get all compound class statistics
+    *
     * @return
     */
   @RequestMapping(path = Array("/statistics/compoundClasses"), method = Array(RequestMethod.GET))
@@ -77,6 +80,7 @@ class StatisticsRestController {
 
   /**
     * Get all submitter statistics
+    *
     * @return
     */
   @RequestMapping(path = Array("/statistics/submitters"), method = Array(RequestMethod.GET))
@@ -85,9 +89,9 @@ class StatisticsRestController {
     new AsyncResult[Iterable[SubmitterStatistics]](submitterStatisticsService.getSubmitterStatistics)
 
 
-
   /**
     * Update statistics
+    *
     * @return
     */
   @RequestMapping(path = Array("/statistics/update"), method = Array(RequestMethod.POST))

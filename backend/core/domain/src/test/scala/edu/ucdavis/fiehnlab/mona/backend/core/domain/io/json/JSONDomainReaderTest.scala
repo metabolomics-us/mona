@@ -53,7 +53,7 @@ class JSONDomainReaderTest extends WordSpec {
           case "molecule formula" =>
             "the compounds molecule formula should be of type String" in {
               assert(metaData.value.isInstanceOf[String])
-              assert(metaData.value.asInstanceOf[String] ==="C27H41NO2")
+              assert(metaData.value.asInstanceOf[String] === "C27H41NO2")
             }
 
           case "Tocris Bioscience" =>

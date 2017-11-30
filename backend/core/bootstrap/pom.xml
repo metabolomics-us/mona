@@ -12,7 +12,8 @@
     <artifactId>bootstrap</artifactId>
     <url>http://maven.apache.org</url>
 
-    <description>Configures and creates initial database entries and synchronization for a new MoNA instance</description>
+    <description>Configures and creates initial database entries and synchronization for a new MoNA instance
+    </description>
 
     <dependencies>
         <dependency>

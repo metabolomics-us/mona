@@ -8,21 +8,20 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{GlobalStatisticsMongoRepository, MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{GlobalStatistics, MetaDataStatistics, MetaDataValueCount, TagStatistics}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.GlobalStatisticsMongoRepository
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.GlobalStatistics
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.data.domain.Sort
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 /**
   * Created by sajjan on 8/4/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
+@TestPropertySource(locations = Array("classpath:application.properties"))
 class StatisticsServiceTest extends WordSpec with LazyLogging {
 
   @Autowired

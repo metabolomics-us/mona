@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import org.openscience.cdk.interfaces.IAtomContainer
-import org.openscience.cdk.smiles.SmilesGenerator
 import org.scalatest.WordSpec
 
 /**

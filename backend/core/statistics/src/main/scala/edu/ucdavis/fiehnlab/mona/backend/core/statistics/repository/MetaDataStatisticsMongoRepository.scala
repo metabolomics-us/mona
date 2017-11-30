@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository
 
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.MetaDataStatistics
-import org.springframework.data
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 

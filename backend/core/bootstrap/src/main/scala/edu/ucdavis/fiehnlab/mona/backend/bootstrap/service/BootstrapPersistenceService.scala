@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.bootstrap.service
 
 import java.util
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
@@ -23,7 +24,7 @@ class BootstrapPersistenceService extends LazyLogging {
     val it: util.Iterator[Spectrum] = spectrumPersistenceService.findAll().iterator()
     var counter: Int = 0
 
-    while(it.hasNext) {
+    while (it.hasNext) {
       val spectrum: Spectrum = it.next()
       counter += 1
 

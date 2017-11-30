@@ -10,5 +10,5 @@ object MetaDataSynonyms {
     Source.fromURL(getClass.getResource("/mona-metadata-synonyms.tsv"))
       .getLines
       .map(_.stripLineEnd.split('\t'))
-      .map(x => x(0) -> x(1)).toList : _*)
+      .map(x => x(0) -> x(1)).toList: _*)
 }

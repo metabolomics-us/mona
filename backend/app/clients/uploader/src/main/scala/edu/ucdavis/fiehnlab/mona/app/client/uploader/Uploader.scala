@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.data.elasticsearch.{ElasticsearchA
   * Created by wohlg on 3/19/2016.
   */
 
-@SpringBootApplication(exclude = Array(classOf[ElasticsearchDataAutoConfiguration],classOf[ElasticsearchAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[ElasticsearchDataAutoConfiguration], classOf[ElasticsearchAutoConfiguration]))
 class Uploader {
 
 }
@@ -16,7 +16,7 @@ class Uploader {
 /**
   * is utilized to easily batch upload existing data to the mona server
   */
-object Uploader extends App{
+object Uploader extends App {
   val app = new SpringApplication(classOf[Uploader])
   app.setWebEnvironment(false)
 

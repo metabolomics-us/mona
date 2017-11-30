@@ -1,23 +1,21 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.massbank
 
 import com.jayway.restassured.RestAssured
+import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.{AbstractGenericRESTControllerTest, AbstractSpringControllerTest}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rsql.RSQLRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import com.jayway.restassured.RestAssured._
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
 
 import scala.io.Source
 
@@ -54,7 +52,7 @@ class MassbankControllerTest extends AbstractSpringControllerTest with Eventuall
       }
 
       "upload a spectra, with authorization" in {
-        val result:Spectrum = authenticate().contentType("application/json; charset=UTF-8").body(strings).log().all(true).when().post("/upload/massbank").then().log().all(true).statusCode(200).extract().as(classOf[Spectrum])
+        val result: Spectrum = authenticate().contentType("application/json; charset=UTF-8").body(strings).log().all(true).when().post("/upload/massbank").then().log().all(true).statusCode(200).extract().as(classOf[Spectrum])
 
         assert(result.id == "PR100162")
         assert(result.compound.length == 1)

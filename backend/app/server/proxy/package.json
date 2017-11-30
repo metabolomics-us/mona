@@ -1,5 +1,5 @@
 {
-  "name": "moaclient",
+  "name": "mona-web",
   "version": "0.0.0",
   "dependencies": {
     "angular": "^1.4.8",

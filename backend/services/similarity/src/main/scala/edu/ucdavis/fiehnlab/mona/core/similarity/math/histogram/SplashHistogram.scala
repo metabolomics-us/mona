@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.types.Ion
 /**
   * Created by sajjan on 2/17/16.
   *
-  * @param base numerical range of each digit in the histogram
+  * @param base    numerical range of each digit in the histogram
   * @param length  how many characters long the histogram shall be
   * @param binSize size of the bins in nominal masses
   *

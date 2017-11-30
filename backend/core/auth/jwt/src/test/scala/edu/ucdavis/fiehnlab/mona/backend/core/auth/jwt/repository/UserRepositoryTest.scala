@@ -16,7 +16,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
+@TestPropertySource(locations = Array("classpath:application.properties"))
 class UserRepositoryTest extends WordSpec {
 
   @Autowired

@@ -1,4 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api
+
 import java.io.InputStreamReader
 
 import com.typesafe.scalalogging.LazyLogging
@@ -108,7 +109,7 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
       }
 
       "possible to execute the same query several times and receive always the same result" must {
-        for( x <- 1 to 10) {
+        for (x <- 1 to 10) {
           s"support pageable sizes of $x" in {
             var last: Iterable[Spectrum] = null
 

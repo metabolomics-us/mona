@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
   * Created by wohlgemuth on 3/17/16.
   */
 @Component
-class ElasticCountListener  extends PersistenceEventListener[Spectrum] with LazyLogging{
+class ElasticCountListener extends PersistenceEventListener[Spectrum] with LazyLogging {
   @Autowired
   val spectrumElasticRepository: ISpectrumElasticRepositoryCustom = null
 

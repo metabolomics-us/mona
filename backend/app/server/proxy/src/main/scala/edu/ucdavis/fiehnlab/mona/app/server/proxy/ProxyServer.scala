@@ -3,16 +3,14 @@ package edu.ucdavis.fiehnlab.mona.app.server.proxy
 import java.io.IOException
 import javax.servlet.MultipartConfigElement
 
-import com.netflix.zuul.ZuulFilter
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.app.server.proxy.documentation.SwaggerRedirectFilter
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.{LoggableDispatcherServlet, LoggingService}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.web.{DispatcherServletAutoConfiguration, ResourceProperties}
-import org.springframework.boot.context.embedded.{MultipartConfigFactory, ServletRegistrationBean}
+import org.springframework.boot.web.servlet.{MultipartConfigFactory, ServletRegistrationBean}
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy
@@ -41,10 +39,10 @@ class ProxyServer {
   @Autowired
   val loggingService: LoggingService = null
 
-  @Bean
-  def rewriteFilter: ZuulFilter = {
-    new SwaggerRedirectFilter()
-  }
+  //  @Bean
+  //  def rewriteFilter: ZuulFilter = {
+  //    new SwaggerRedirectFilter()
+  //  }
 
   @Value("${spring.http.multipart.max-file-size}")
   val multipartMaxFileSize: String = null
@@ -85,7 +83,7 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
   override def addResourceHandlers(registry: ResourceHandlerRegistry): Unit = {
     // Add handler for all static files and REST endpoints
     registry.addResourceHandler("/**/*.css", "/**/*.html", "/**/*.js", "/**/*.json", "/**/*.jpg", "/**/*.jpeg",
-        "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2", "/rest/**")
+      "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2", "/rest/**")
       .addResourceLocations(resourceProperties.getStaticLocations: _*)
       .setCachePeriod(resourceProperties.getCachePeriod)
 

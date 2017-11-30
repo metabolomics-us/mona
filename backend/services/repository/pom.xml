@@ -77,5 +77,8 @@
         </dependency>
     </dependencies>
 
-    <description>This module is the main REPOSITORY and should is utilized to keep track of spectra uploaded and modified by the system. It also tracks all the changes in git, which should easily allow us to see modifications over time.</description>
+    <description>This module is the main REPOSITORY and should is utilized to keep track of spectra uploaded and
+        modified by the system. It also tracks all the changes in git, which should easily allow us to see modifications
+        over time.
+    </description>
 </project>

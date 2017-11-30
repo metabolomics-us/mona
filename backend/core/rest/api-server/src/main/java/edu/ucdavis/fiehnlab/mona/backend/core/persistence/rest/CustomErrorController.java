@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,9 +38,9 @@ public class CustomErrorController implements ErrorController {
 
     private Map<String, Object> getErrorAttributes(HttpServletRequest request, boolean includeStackTrace) {
         RequestAttributes requestAttributes = new ServletRequestAttributes(request);
-        Map map =  errorAttributes.getErrorAttributes(requestAttributes, includeStackTrace);
-        map.put("uri",request.getRequestURI());
-        map.put("url",request.getRequestURL().toString());
+        Map map = errorAttributes.getErrorAttributes(requestAttributes, includeStackTrace);
+        map.put("uri", request.getRequestURI());
+        map.put("url", request.getRequestURL().toString());
 
         return map;
     }

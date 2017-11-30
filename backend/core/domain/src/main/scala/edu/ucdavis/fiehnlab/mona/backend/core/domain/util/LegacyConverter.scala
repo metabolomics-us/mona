@@ -12,6 +12,7 @@ class LegacyConverter {
 
   /**
     * little very very memory inefficient converter
+    *
     * @param inputStream
     * @return
     */
@@ -29,7 +30,7 @@ class LegacyConverter {
   */
 object LegacyConverter extends App {
 
-  MonaMapper.create.writeValue(new File("src/test/resources/monaRecord.json"),new LegacyConverter().convert(new FileInputStream("src/test/resources/legacy/monaRecord.json")).head)
+  MonaMapper.create.writeValue(new File("src/test/resources/monaRecord.json"), new LegacyConverter().convert(new FileInputStream("src/test/resources/legacy/monaRecord.json")).head)
 
-  MonaMapper.create.writeValue(new File("src/test/resources/monaRecords.json"),new LegacyConverter().convert(new FileInputStream("src/test/resources/legacy/monaRecords.json")))
+  MonaMapper.create.writeValue(new File("src/test/resources/monaRecords.json"), new LegacyConverter().convert(new FileInputStream("src/test/resources/legacy/monaRecords.json")))
 }

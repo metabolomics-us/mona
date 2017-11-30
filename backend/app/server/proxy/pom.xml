@@ -12,7 +12,9 @@
     <groupId>edu.ucdavis.fiehnlab.mona.app.server</groupId>
     <artifactId>proxy</artifactId>
 
-    <description>This module defines the proxy and entry level gateway to the mona universe. It's only purpose is to dynamically and transparently map all the internal services to an external and easy to access api.</description>
+    <description>This module defines the proxy and entry level gateway to the mona universe. It's only purpose is to
+        dynamically and transparently map all the internal services to an external and easy to access api.
+    </description>
 
     <properties>
         <docker.expose>8080</docker.expose>

@@ -148,9 +148,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def findOne(id: String): Spectrum = {
-    spectrumMongoRepository.findOne(id)
-  }
+  def findOne(id: String): Spectrum = spectrumMongoRepository.findOne(id)
 
   /**
     *
@@ -179,9 +177,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   /**
     * fires a synchronization event, so that system updates all it's clients. Be aware that this is very expensive!
     */
-  def forceSynchronization(): Unit = {
-    findAll().iterator().asScala.foreach(fireSyncEvent)
-  }
+  def forceSynchronization(): Unit = findAll().iterator().asScala.foreach(fireSyncEvent)
+
 
   /**
     * queries for all the spectra matching this query
@@ -208,7 +205,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   /**
     * does a paginating request to the repository and should be the preferred way to interact with it
     *
-    * @param query a RSQL or text query
+    * @param query     a RSQL or text query
     * @param textQuery a full text query
     * @param pageable
     * @return
@@ -275,7 +272,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
 
   override def save[S <: Spectrum](entities: lang.Iterable[S]): lang.Iterable[S] = {
     entities.asScala.collect {
-      case x: S => save(x)
+      case s: S => save(s)
     }.asJava
   }
 

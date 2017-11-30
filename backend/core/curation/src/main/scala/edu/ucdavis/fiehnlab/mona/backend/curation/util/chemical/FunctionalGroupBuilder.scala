@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical
 
-import org.openscience.cdk.interfaces.{IBond, IAtomContainer}
+import org.openscience.cdk.interfaces.{IAtomContainer, IBond}
 import org.openscience.cdk.smiles.SmilesParser
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
-import org.openscience.cdk.{Bond, DefaultChemObjectBuilder, Atom, AtomContainer}
+import org.openscience.cdk.{Atom, AtomContainer, Bond, DefaultChemObjectBuilder}
 
 /**
   * Created by sajjan on 4/1/16.

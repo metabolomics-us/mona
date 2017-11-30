@@ -14,7 +14,8 @@
         <version>1.5-SNAPSHOT</version>
     </parent>
 
-    <description>This module provides a shared event bus implementation to which clients can easily join and subscribe</description>
+    <description>This module provides a shared event bus implementation to which clients can easily join and subscribe
+    </description>
 
     <dependencies>
         <dependency>

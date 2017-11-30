@@ -28,7 +28,7 @@ import scala.language.postfixOps
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[TestConfig]))
-class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Eventually{
+class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Eventually {
 
 
   @Autowired
@@ -62,31 +62,31 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
 
     "and trigger it on sending an update event" in {
       val notificationCount = notificationCounter.getEventCount
-      eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.UPDATE))
+      eventBus.sendEvent(Event[Spectrum](spectrum, new Date(), Event.UPDATE))
 
       //we should get an information that the notification counter received an event
       eventually(timeout(10 seconds)) {
-        assert(notificationCounter.getEventCount == notificationCount +  1)
+        assert(notificationCounter.getEventCount == notificationCount + 1)
       }
     }
 
     "and trigger it on sending an delete event" in {
       val notificationCount = notificationCounter.getEventCount
-      eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.DELETE))
+      eventBus.sendEvent(Event[Spectrum](spectrum, new Date(), Event.DELETE))
 
       //we should get an information that the notification counter received an event
       eventually(timeout(100 seconds)) {
-        assert(notificationCounter.getEventCount == notificationCount +  1)
+        assert(notificationCounter.getEventCount == notificationCount + 1)
       }
     }
 
     "and trigger it on sending an insert  event" in {
       val notificationCount = notificationCounter.getEventCount
-      eventBus.sendEvent(Event[Spectrum](spectrum,new Date(),Event.ADD))
+      eventBus.sendEvent(Event[Spectrum](spectrum, new Date(), Event.ADD))
 
       //we should get an information that the notification counter received an event
       eventually(timeout(10 seconds)) {
-        assert(notificationCounter.getEventCount == notificationCount +  1)
+        assert(notificationCounter.getEventCount == notificationCount + 1)
       }
     }
   }

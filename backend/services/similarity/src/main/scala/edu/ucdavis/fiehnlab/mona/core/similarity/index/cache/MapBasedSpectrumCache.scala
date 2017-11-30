@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 class MapBasedSpectrumCache(val backing: java.util.Map[String, SimpleSpectrum]) extends SpectrumCache {
   /**
     * adds a spectrum to the cache
+    *
     * @param spectrum
     * @return
     */
@@ -21,6 +22,7 @@ class MapBasedSpectrumCache(val backing: java.util.Map[String, SimpleSpectrum]) 
 
   /**
     * fetches a spectrum from the cache
+    *
     * @param spectrum
     * @return
     */
@@ -28,6 +30,7 @@ class MapBasedSpectrumCache(val backing: java.util.Map[String, SimpleSpectrum]) 
 
   /**
     * does the cache already contains the spectrum
+    *
     * @param spectrum
     * @return
     */

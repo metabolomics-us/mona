@@ -19,7 +19,7 @@ import scala.language.postfixOps
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[TestConfig]))
-class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("/webhooks") with Eventually with ShouldMatchers with LazyLogging{
+class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("/webhooks") with Eventually with ShouldMatchers with LazyLogging {
 
   @Autowired
   val webHookRepository: WebHookRepository = null
@@ -205,7 +205,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       }
     }
 
-    "be able to push all our data to all our slaves" must  {
+    "be able to push all our data to all our slaves" must {
 
       "require authentication" in {
         given().body(getValue).when().post(s"/webhooks/push").`then`().statusCode(401)

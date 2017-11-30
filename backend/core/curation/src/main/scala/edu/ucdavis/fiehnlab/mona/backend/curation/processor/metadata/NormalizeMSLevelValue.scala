@@ -10,7 +10,7 @@ import org.springframework.batch.item.ItemProcessor
   * Created by sajjan on 4/16/16.
   */
 @Step(description = "this step will update ms level metadata values to standard values")
-class NormalizeMSLevelValue extends ItemProcessor[Spectrum,Spectrum] with LazyLogging {
+class NormalizeMSLevelValue extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
   /**
     * processes the given spectrum and removes all it's computed meta data
     *

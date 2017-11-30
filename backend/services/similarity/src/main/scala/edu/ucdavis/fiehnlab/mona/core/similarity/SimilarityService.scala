@@ -39,6 +39,7 @@ class SimilarityService extends WebSecurityConfigurerAdapter {
     restSecurityService.prepare(http)
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
   }
+
   /**
     *
     * @param web

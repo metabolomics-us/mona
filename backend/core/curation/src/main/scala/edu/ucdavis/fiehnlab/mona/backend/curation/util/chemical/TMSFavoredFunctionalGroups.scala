@@ -8,6 +8,7 @@ import org.openscience.cdk.interfaces.IAtomContainer
 object TMSFavoredFunctionalGroups {
   /**
     * Builds a list of favored groups in there order of likelihood
+    *
     * @return
     */
   def buildFavoredGroupsInOrder(): List[IAtomContainer] = {

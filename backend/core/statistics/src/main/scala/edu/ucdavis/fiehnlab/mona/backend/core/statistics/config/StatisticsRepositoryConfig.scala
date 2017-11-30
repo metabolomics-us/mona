@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.statistics.config
 
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.aggregation.IStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.StatisticsService
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.{MetaDataStatisticsMongoRepository, TagStatisticsMongoRepository}
+import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
 /**

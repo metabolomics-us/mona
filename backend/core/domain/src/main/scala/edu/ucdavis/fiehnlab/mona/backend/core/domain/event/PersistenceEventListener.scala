@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 /**
   * this listener is used to inform subscribers about changes to the mona database system. They should be annotated as @Component, which will automatically add them to the related classes
   */
-trait PersistenceEventListener[T] extends LazyLogging{
+trait PersistenceEventListener[T] extends LazyLogging {
 
   /**
     * an entry was added to the system
@@ -36,11 +36,13 @@ trait PersistenceEventListener[T] extends LazyLogging{
 
   /**
     * requesting a synchronization
+    *
     * @param event
     */
   def sync(event: Event[T]) = {
 
   }
+
   /**
     * reacts to an event
     *

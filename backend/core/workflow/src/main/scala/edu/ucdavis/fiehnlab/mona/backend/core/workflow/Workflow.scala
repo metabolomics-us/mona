@@ -52,9 +52,9 @@ class Workflow[TYPE: ClassTag](val graph: Graph[String, Node[TYPE, TYPE], Edge] 
     * @return
     */
   def process(item: TYPE): List[TYPE] = {
-    if(graph.size > 0) {
+    if (graph.size > 0) {
       process(item, graph.heads.head)
-    } else{
+    } else {
       throw new RuntimeException("please provide at least 1 task to be executed!")
     }
   }

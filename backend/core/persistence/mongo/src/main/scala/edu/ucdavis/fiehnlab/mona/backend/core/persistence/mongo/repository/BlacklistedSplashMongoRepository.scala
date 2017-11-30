@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{BlacklistedSplash, Sequence}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.BlacklistedSplash
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 

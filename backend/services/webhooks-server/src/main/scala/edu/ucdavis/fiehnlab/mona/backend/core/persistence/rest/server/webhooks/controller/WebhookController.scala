@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller
 
 import java.util.concurrent.Future
-import javax.servlet.{ServletRequest, ServletResponse}
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.{ServletRequest, ServletResponse}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
@@ -54,7 +54,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    if(loginInfo.roles.contains("ADMIN")) {
+    if (loginInfo.roles.contains("ADMIN")) {
       super.doList(page, size)
     } else {
       new AsyncResult[ResponseEntity[Iterable[WebHook]]](
@@ -74,7 +74,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    if(loginInfo.roles.contains("ADMIN")) {
+    if (loginInfo.roles.contains("ADMIN")) {
       super.doGet(id, servletRequest, servletResponse)
     } else if (webhookRepository.exists(id)) {
       val existingWebHook: WebHook = webhookRepository.findOne(id)
@@ -100,7 +100,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    if(loginInfo.roles.contains("ADMIN")) {
+    if (loginInfo.roles.contains("ADMIN")) {
       super.doSave(webHook)
     } else if (webhookRepository.exists(webHook.name)) {
       val existingWebHook: WebHook = webhookRepository.findOne(webHook.name)
@@ -158,6 +158,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
 
   /**
     * pulls all data from the master
+    *
     * @param query
     * @return
     */
@@ -173,6 +174,7 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
 
   /**
     * pushes all local data, to all it's slaves
+    *
     * @param query
     * @return
     */

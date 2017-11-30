@@ -24,6 +24,7 @@ abstract class AbstractDownloader extends LazyLogging {
 
   /**
     * Return the results of a given query as a paginated iterator
+    *
     * @param query
     */
   def executeQuery(query: String): Iterable[Spectrum] = {
@@ -44,6 +45,7 @@ abstract class AbstractDownloader extends LazyLogging {
 
   /**
     * Find the spectrum count for a given query
+    *
     * @param query
     * @return
     */
@@ -58,18 +60,21 @@ abstract class AbstractDownloader extends LazyLogging {
 
   /**
     * File format prefix
+    *
     * @return
     */
   def getFilePrefix: String
 
   /**
     * File format suffix
+    *
     * @return
     */
   def getFileSuffix: String
 
   /**
     * File format separator
+    *
     * @return
     */
   def getFileSeparator: String
@@ -94,7 +99,7 @@ abstract class AbstractDownloader extends LazyLogging {
 
     val it = executeQuery(query).iterator
 
-    while(it.hasNext) {
+    while (it.hasNext) {
       val spectrum = it.next()
 
       if (count > 0) {

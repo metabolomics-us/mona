@@ -14,6 +14,7 @@ class HistogramIndex(binningMethod: BinningMethod, cache: SpectrumCache, val his
 
   /**
     * Builds the internal key to utilize
+    *
     * @param key
     * @return
     */

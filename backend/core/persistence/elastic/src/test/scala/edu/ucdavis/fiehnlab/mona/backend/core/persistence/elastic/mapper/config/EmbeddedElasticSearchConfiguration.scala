@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Import
 
 @SpringBootApplication
 @Import(Array(classOf[ElasticsearchConfig]))
-class TestConfig{
+class TestConfig {
 
 }

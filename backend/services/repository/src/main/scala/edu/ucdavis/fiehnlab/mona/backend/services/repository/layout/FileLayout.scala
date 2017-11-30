@@ -83,7 +83,7 @@ class SubmitterInchiKeySplashId(val baseDir: File) extends FileLayout {
 
     var institution = spectrum.submitter.institution
 
-    if(institution == null){
+    if (institution == null) {
       institution = "None"
     }
 

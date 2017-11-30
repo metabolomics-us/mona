@@ -13,8 +13,8 @@ import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.SubmitterStatisti
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 /**
   * Created by sajjan on 3/9/17.

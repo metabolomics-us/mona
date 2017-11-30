@@ -127,6 +127,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
 
   /**
     * build a combined RSQL + full text query
+    *
     * @param rsqlQueryString
     * @param textQueryString
     * @return

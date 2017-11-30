@@ -32,7 +32,6 @@ class MappingUpdater extends LazyLogging {
   def updateMappings(): Unit = {
 
     logger.debug("creating index")
-    //elasticsearchTemplate.deleteIndex(classOf[Spectrum])
     elasticsearchTemplate.createIndex(classOf[Spectrum])
 
     logger.debug("refreshing index")

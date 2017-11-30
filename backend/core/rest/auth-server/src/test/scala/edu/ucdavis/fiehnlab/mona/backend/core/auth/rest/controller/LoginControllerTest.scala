@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlgemuth on 3/24/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig],classOf[AuthSecurityConfig]))
+@SpringApplicationConfiguration(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig], classOf[AuthSecurityConfig]))
 class LoginControllerTest extends AbstractSpringControllerTest {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -59,7 +59,7 @@ class LoginControllerTest extends AbstractSpringControllerTest {
           val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").`then`().statusCode(200).extract().body().as(classOf[LoginResponse])
 
 
-          val info  = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info").`then`().statusCode(200).extract().body().as(classOf[LoginInfo])
+          val info = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/info").`then`().statusCode(200).extract().body().as(classOf[LoginInfo])
 
 
           assert(info.username == "admin")
@@ -76,13 +76,13 @@ class LoginControllerTest extends AbstractSpringControllerTest {
 
         "extend a token" in {
           //the new expiration must be atlest 8 year from now
-          val expirationDate = new Date(System.currentTimeMillis() + (31556952000L * 8) )
+          val expirationDate = new Date(System.currentTimeMillis() + (31556952000L * 8))
 
           val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").`then`().statusCode(200).extract().body().as(classOf[LoginResponse])
 
           val tenYearToken = authenticate().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/extend").`then`().statusCode(200).extract().body().as(classOf[LoginResponse])
 
-          val info  = authenticate().contentType("application/json; charset=UTF-8").body(tenYearToken).when().post("/auth/info").`then`().statusCode(200).extract().body().as(classOf[LoginInfo])
+          val info = authenticate().contentType("application/json; charset=UTF-8").body(tenYearToken).when().post("/auth/info").`then`().statusCode(200).extract().body().as(classOf[LoginInfo])
 
 
           assert(info.username == "admin")
@@ -107,7 +107,7 @@ class TestConfig {
     * @return
     */
   @Bean
-  def loginServiceDelegate:LoginService = new MongoLoginService
+  def loginServiceDelegate: LoginService = new MongoLoginService
 
 
   /**
