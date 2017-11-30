@@ -8,7 +8,7 @@ import org.scalatest.WordSpec
 /**
   * Created by wohlgemuth on 3/18/16.
   */
-class JSONFileSpectraReaderTest extends WordSpec with LazyLogging{
+class JSONFileSpectraReaderTest extends WordSpec with LazyLogging {
 
   "JSONFileSpectraReaderTest" should {
 
@@ -17,10 +17,10 @@ class JSONFileSpectraReaderTest extends WordSpec with LazyLogging{
     "read" in {
       reader.stream = getClass.getResourceAsStream("/monaRecords.json")
 
-      var spectra:Spectrum = reader.read()
+      var spectra: Spectrum = reader.read()
 
       var counter = 0
-      while( spectra != null){
+      while (spectra != null) {
         counter = counter + 1
         assert(spectra.id != null)
         assert(spectra.spectrum != null)

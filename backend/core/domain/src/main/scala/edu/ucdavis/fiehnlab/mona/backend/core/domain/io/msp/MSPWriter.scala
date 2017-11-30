@@ -68,7 +68,7 @@ class MSPWriter extends DomainWriter {
     if (metaDataValue.isDefined) {
       writer.println(s"$name: ${transform(metaDataValue.get.value.toString)}")
     }
-}
+  }
 
   /**
     * Writes InChIKey metadata string if one is present exists

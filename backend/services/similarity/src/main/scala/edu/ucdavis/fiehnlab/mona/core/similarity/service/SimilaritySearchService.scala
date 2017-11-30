@@ -69,13 +69,13 @@ class SimilaritySearchService extends LazyLogging {
     // Determine tolerance value based on precursor m/z and ppm value,
     // get provided tolerance value or use default of 0.5 Da
     val tolerance: Double =
-      if (request.precursorTolerancePPM > 0.0) {
-        request.precursorMZ / 1.0e6 * request.precursorTolerancePPM
-      } else if (request.precursorToleranceDa > 0.0) {
-        request.precursorToleranceDa
-      } else {
-        0.5
-      }
+    if (request.precursorTolerancePPM > 0.0) {
+      request.precursorMZ / 1.0e6 * request.precursorTolerancePPM
+    } else if (request.precursorToleranceDa > 0.0) {
+      request.precursorToleranceDa
+    } else {
+      0.5
+    }
 
     logger.info(s"Filtering by precursor m/z ${request.precursorMZ} with tolerance +/-$tolerance Da" +
       (if (request.precursorTolerancePPM > 0.0) s" (+/- ${request.precursorTolerancePPM} ppm)" else ""))

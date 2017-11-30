@@ -15,7 +15,10 @@
     <name>auth-server</name>
     <url>http://maven.apache.org</url>
 
-    <description>This provides a simple delegate around any given login service and is mostly used for rest based application to authenticate against it</description>
+    <description>
+        This provides a simple delegate around any given login service and is mostly used for rest based
+        application to authenticate against it
+    </description>
 
     <properties>
         <docker.expose>3333</docker.expose>
@@ -39,13 +42,11 @@
 
 
         <!-- test dependencies -->
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>

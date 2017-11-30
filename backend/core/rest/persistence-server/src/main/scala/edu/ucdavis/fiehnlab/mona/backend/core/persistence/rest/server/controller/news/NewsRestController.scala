@@ -1,13 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.news
 
-import java.util.concurrent.Future
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.NewsEntry
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.NewsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.PagingAndSortingRepository
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation._
 
 /**

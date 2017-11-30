@@ -24,6 +24,7 @@ class SequenceService {
     * Gets the next value of the sequence and update the database entry.
     * Creates a new counter object for the given sequenceName if one
     * does not exist.
+    *
     * @param sequenceName
     * @return
     */
@@ -42,12 +43,14 @@ class SequenceService {
 
   /**
     * Generate the next unique MoNA ID
+    *
     * @return
     */
   def getNextMoNAID: String = "MoNA%06d".format(getNextSequenceValue("spectrumID").value)
 
   /**
     * Generate the next unique news ID
+    *
     * @return
     */
   def getNextNewsID: String = getNextSequenceValue("newsID").value.toString

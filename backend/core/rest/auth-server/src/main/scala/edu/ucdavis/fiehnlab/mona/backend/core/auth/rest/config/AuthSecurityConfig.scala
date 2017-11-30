@@ -25,6 +25,7 @@ class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
   /**
     * this method configures authorized access to the system
     * and protects the urls with the specified methods and credentials
+    *
     * @param http
     */
   override final def configure(http: HttpSecurity): Unit = {

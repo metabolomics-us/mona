@@ -46,7 +46,7 @@ class WebHookServiceTest extends AbstractSpringControllerTest with Eventually {
       assert(result.length == 1)
 
       eventually(timeout(100 seconds)) {
-        assert(notificationCounter.getEventCount == count +  1)
+        assert(notificationCounter.getEventCount == count + 1)
       }
     }
   }

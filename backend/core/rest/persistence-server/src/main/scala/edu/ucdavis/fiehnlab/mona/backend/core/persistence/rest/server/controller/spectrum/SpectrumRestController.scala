@@ -43,6 +43,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
   /**
     * Validate the given spectrum by verifying that its SPLASH is not blacklisted
+    *
     * @param spectrum
     * @return
     */
@@ -134,7 +135,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     }
 
     // Admins can save anything
-    else if(loginInfo.roles.contains("ADMIN")) {
+    else if (loginInfo.roles.contains("ADMIN")) {
       super.doSave(spectrum)
     }
 
@@ -182,7 +183,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     }
 
     // Admins can save anything
-    else if(loginInfo.roles.contains("ADMIN")) {
+    else if (loginInfo.roles.contains("ADMIN")) {
       if (spectrum.id == null || spectrum.id == "" || spectrum.id == id) {
         super.doSave(spectrum.copy(id = id))
       } else {

@@ -56,13 +56,13 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
 
     val it = new DynamicIterable[Spectrum, String](null, 10) {
       override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
-          spectrumMongoRepository.findAll(pageable)
+        spectrumMongoRepository.findAll(pageable)
       }
     }.iterator
 
     var counter: Int = 0
 
-    while(it.hasNext) {
+    while (it.hasNext) {
       val spectrum: Spectrum = it.next()
       val precursorMZ: Option[MetaData] = spectrum.metaData.find(_.name == CommonMetaData.PRECURSOR_MASS)
 

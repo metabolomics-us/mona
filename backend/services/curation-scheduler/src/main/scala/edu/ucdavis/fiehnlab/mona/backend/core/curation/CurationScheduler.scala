@@ -1,22 +1,17 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation
 
-import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
-import org.apache.http.conn.HttpClientConnectionManager
 import org.apache.http.impl.client.HttpClientBuilder
-import org.springframework.amqp.core.{Binding, BindingBuilder, Queue, TopicExchange}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
-import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
@@ -37,9 +32,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableWebSecurity
 @EnableSwagger2
 @Order(5)
-/***
-  * the server depends on these configurations to wire all it's internal components together
-  */
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
   classOf[JWTAuthenticationConfig], classOf[CurationConfig], classOf[SwaggerConfig]))
 class CurationScheduler extends WebSecurityConfigurerAdapter {
@@ -77,6 +69,7 @@ class CurationScheduler extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
       .antMatchers(HttpMethod.GET, "/rest/curation/**").hasAuthority("ADMIN")
   }
+
   /**
     * any other get request is ignored by default
     * since we have /info etc exposed

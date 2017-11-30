@@ -17,6 +17,7 @@ object SpectrumUtils {
 
   /**
     * Rounds m/z values based on the 80/20 rule
+    *
     * @param ion
     * @return
     */
@@ -25,6 +26,7 @@ object SpectrumUtils {
 
   /**
     * Rounds m/z values based on the 80/20 rule
+    *
     * @param mz
     * @return
     */
@@ -33,6 +35,7 @@ object SpectrumUtils {
 
   /**
     * Find all ions within the search accuracy window and select ion with the highest intensity
+    *
     * @param selectedIon
     * @param referenceSpectrum
     * @param accurateSearch
@@ -40,7 +43,7 @@ object SpectrumUtils {
     */
   def findIonMatch(selectedIon: Ion, referenceSpectrum: SimpleSpectrum, accurateSearch: Boolean): Ion = {
 
-    val tolerance = if(accurateSearch) ACCURATE_SEARCH_TOL else NOMINAL_SEARCH_TOL
+    val tolerance = if (accurateSearch) ACCURATE_SEARCH_TOL else NOMINAL_SEARCH_TOL
 
     referenceSpectrum.ions
       .filter(x => Math.abs(x.mz - selectedIon.mz) < tolerance)
@@ -76,9 +79,9 @@ object SpectrumUtils {
   }
 
 
-
   /**
     * SPLASH the given spectrum
+    *
     * @param spectrum
     * @return
     */
@@ -86,6 +89,7 @@ object SpectrumUtils {
 
   /**
     * SPLASH the given collection of ions
+    *
     * @param ions
     * @return
     */

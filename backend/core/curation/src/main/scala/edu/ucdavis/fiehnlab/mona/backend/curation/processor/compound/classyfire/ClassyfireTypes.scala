@@ -42,11 +42,11 @@ case class QueryScheduleRequest(
                                )
 
 case class QueryScheduleResult(
-                              id: Int,
-                              label: String,
-                              query_input: String,
-                              query_type: String,
-                              query_errors: String
+                                id: Int,
+                                label: String,
+                                query_input: String,
+                                query_type: String,
+                                query_errors: String
                               )
 
 case class QueryResult(

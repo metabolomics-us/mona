@@ -1,1285 +1,1285 @@
 [
-    {
-        "def": "A reference number relevant to the sample under study. [PSI:MS]",
-        "id": "MS:1000001",
-        "is_a": "MS:1000548",
-        "name": "sample number",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "A reference string relevant to the sample under study. [PSI:MS]",
-        "id": "MS:1000002",
-        "is_a": "MS:1000548",
-        "name": "sample name",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The chemical phase of a pure sample, or the state of a mixed sample. [PSI:MS]",
-        "id": "MS:1000003",
-        "is_a": "MS:1000548",
-        "name": "sample state",
-        "ontology": "ms"
-    },
-    {
-        "def": "Total mass of sample used. [PSI:MS]",
-        "id": "MS:1000004",
-        "is_a": "MS:1000548",
-        "name": "sample mass",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000021",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Total volume of solution used. [PSI:MS]",
-        "id": "MS:1000005",
-        "is_a": "MS:1000548",
-        "name": "sample volume",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000098",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Concentration of sample in picomol/ul, femtomol/ul or attomol/ul solution used. [PSI:MS]",
-        "id": "MS:1000006",
-        "is_a": "MS:1000548",
-        "name": "sample concentration",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000175",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The nature of the sample inlet. [PSI:MS]",
-        "id": "MS:1000007",
-        "name": "inlet type",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000458"
-    },
-    {
-        "def": "The method by which gas phase ions are generated from the sample. [PSI:MS]",
-        "id": "MS:1000008",
-        "name": "ionization type",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000458",
-        "synonym": [
-            "ionization EXACT []",
-            "ionization mode EXACT []",
-            "ionizationmode EXACT []",
-            "ion mode EXACT []",
-            "ionmode EXACT []",
-            "AC$MASS_SPECTROMETRY: ION_MODE EXACT []",
-            "scan polarity EXACT []",
-            "polarity EXACT []"
-        ]
-    },
-    {
-        "def": "Smallest mass difference between two equal magnitude peaks so that the valley between them is a specified fraction of the peak height. [PSI:MS]",
-        "id": "MS:1000011",
-        "is_a": "MS:1000503",
-        "name": "mass resolution",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Which of the available standard measures is used to define whether two peaks are separate. [PSI:MS]",
-        "id": "MS:1000012",
-        "is_a": "MS:1000596",
-        "name": "resolution measurement method",
-        "ontology": "ms"
-    },
-    {
-        "def": "Accuracy is the degree of conformity of a measured mass to its actual value. [PSI:MS]",
-        "id": "MS:1000014",
-        "is_a": "MS:1000480",
-        "name": "mass accuracy",
-        "ontology": "ms",
-        "relationship": [
-            "has_units MS:1000040",
-            "has_units UO:0000169"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Rate in Th/sec for scanning analyzers. [PSI:MS]",
-        "id": "MS:1000015",
-        "is_a": "MS:1000503",
-        "name": "scan rate",
-        "ontology": "ms",
-        "relationship": "has_units MS:1000807",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The time that an analyzer started a scan, relative to the start of the MS run. [PSI:MS]",
-        "id": "MS:1000016",
-        "is_a": [
-            "MS:1000503",
-            "MS:1001105",
-            "MS:1001405"
-        ],
-        "name": "scan start time",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000010",
-            "has_units UO:0000031"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Direction in terms of m/z of the scan for scanning analyzers (low to high, or high to low). [PSI:MS]",
-        "id": "MS:1000018",
-        "name": "scan direction",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000441"
-    },
-    {
-        "def": "Describes the function in control of the m/z scan (for scanning instruments). Commonly the scan function is linear, but in principle any function can be used. [PSI:MS]",
-        "id": "MS:1000019",
-        "name": "scan law",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000441",
-        "synonym": [
-            "scan function EXACT []"
-        ]
-    },
-    {
-        "comment": "OBSOLETE This former purgatory term was made obsolete.",
-        "def": "Describes the acquisition data type produced by a tandem mass spectrometry experiment. [PSI:MS]",
-        "id": "MS:1000020",
-        "is_obsolete": "true",
-        "name": "scanning method",
-        "ontology": "ms",
-        "synonym": [
-            "Tandem Scanning Method RELATED []"
-        ]
-    },
-    {
-        "def": "Status of the reflectron, turned on or off. [PSI:MS]",
-        "id": "MS:1000021",
-        "is_a": "MS:1000480",
-        "name": "reflectron state",
-        "ontology": "ms"
-    },
-    {
-        "def": "The length of the field free drift space in a time of flight mass spectrometer. [PSI:MS]",
-        "id": "MS:1000022",
-        "is_a": "MS:1000480",
-        "name": "TOF Total Path Length",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000008",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "comment": "This former purgatory term was made obsolete.",
-        "def": "OBSOLETE The total width (i.e. not half for plus-or-minus) of the gate applied around a selected precursor ion. [PSI:MS]",
-        "id": "MS:1000023",
-        "is_obsolete": "true",
-        "name": "isolation width",
-        "ontology": "ms",
-        "relationship": "has_units MS:1000040",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "A property of space that produces a force on a charged particle equal to qv x B where q is the particle charge and v its velocity. [PSI:MS]",
-        "id": "MS:1000025",
-        "is_a": "MS:1000480",
-        "name": "magnetic field strength",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000228",
-        "synonym": [
-            "B EXACT []",
-            "Magnetic Field RELATED []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Type of detector used in the mass spectrometer. [PSI:MS]",
-        "id": "MS:1000026",
-        "name": "detector type",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000453"
-    },
-    {
-        "def": "Method by which detector signal is acquired by the data system. [PSI:MS]",
-        "id": "MS:1000027",
-        "name": "detector acquisition mode",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000453"
-    },
-    {
-        "def": "The resolving power of the detector to detect the smallest difference between two ions so that the valley between them is a specified fraction of the peak height. [PSI:MS]",
-        "id": "MS:1000028",
-        "is_a": "MS:1000481",
-        "name": "detector resolution",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The rate of signal sampling (measurement) with respect to time. [PSI:MS]",
-        "id": "MS:1000029",
-        "is_a": "MS:1000481",
-        "name": "sampling frequency",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000106",
-        "synonym": [
-            "ADC Sampling Frequency NARROW []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "comment": "This term was made obsolete because it was replaced by instrument model (MS:1000031).",
-        "def": "OBSOLETE Name of instrument vendor. [PSI:MS]",
-        "id": "MS:1000030",
-        "is_obsolete": "true",
-        "name": "vendor",
-        "ontology": "ms"
-    },
-    {
-        "def": "Instrument model name not including the vendor's name. [PSI:MS]",
-        "id": "MS:1000031",
-        "name": "instrument model",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000463"
-    },
-    {
-        "def": "The removal of isotope peaks to represent the fragment ion as one data point and is commonly done to reduce complexity. It is done in conjunction with the charge state deconvolution. [PSI:MS]",
-        "id": "MS:1000033",
-        "is_a": "MS:1000543",
-        "name": "deisotoping",
-        "ontology": "ms"
-    },
-    {
-        "def": "The determination of the mass of an ion based on the mass spectral peaks that represent multiple-charge ions. [PSI:MS]",
-        "id": "MS:1000034",
-        "is_a": "MS:1000543",
-        "name": "charge deconvolution",
-        "ontology": "ms"
-    },
-    {
-        "def": "Spectral peak processing conducted on the acquired data to convert profile data to centroided data. [PSI:MS]",
-        "id": "MS:1000035",
-        "is_a": "MS:1000543",
-        "name": "peak picking",
-        "ontology": "ms"
-    },
-    {
-        "def": "Three-character symbol m/z is used to denote the quantity formed by dividing the mass of an ion in unified atomic mass units by its charge number (regardless of sign). The symbol is written in italicized lower case letters with no spaces. Note 1: The term mass-to-charge-ratio is deprecated. Mass-to-charge ratio has been used for the abscissa of a mass spectrum, although the quantity measured is not the quotient of the ion's mass to its electric charge. The three-character symbol m/z is recommended for the quantity that is the independent variable in a mass spectrum Note 2: The proposed unit thomson (Th) is deprecated. [PSI:MS]",
-        "id": "MS:1000040",
-        "is_a": "UO:0000000",
-        "name": "m/z",
-        "ontology": "ms",
-        "synonym": [
-            "mass-to-charge ratio EXACT []",
-            "Th EXACT []",
-            "thomson EXACT []"
-        ]
-    },
-    {
-        "def": "The charge state of the ion, single or multiple and positive or negatively charged. [PSI:MS]",
-        "id": "MS:1000041",
-        "is_a": "MS:1000455",
-        "name": "charge state",
-        "ontology": "ms",
-        "synonym": [
-            "z EXACT []",
-            "charge EXACT []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:int The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Fragmentation method used for dissociation or fragmentation. [PSI:MS]",
-        "id": "MS:1000044",
-        "name": "dissociation method",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000456",
-        "synonym": [
-            "Activation Method RELATED []"
-        ]
-    },
-    {
-        "def": "Energy for an ion experiencing collision with a stationary gas particle resulting in dissociation of the ion. [PSI:MS]",
-        "id": "MS:1000045",
-        "is_a": "MS:1000510",
-        "name": "collision energy",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000266",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "comment": "This former purgatory term was made obsolete.",
-        "def": "OBSOLETE Chromatographic conditions used to obtain the sample. [PSI:MS]",
-        "id": "MS:1000054",
-        "is_obsolete": "true",
-        "name": "chromatography",
-        "ontology": "ms"
-    },
-    {
-        "def": "Instrument setting, expressed in percent, for adjusting collisional energies of ions in an effort to provide equivalent excitation of all ions. [PSI:PI]",
-        "id": "MS:1000138",
-        "is_a": "MS:1000510",
-        "name": "normalized collision energy",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000187",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "comment": "This child of the former purgatory term ion attribute was made obsolete.",
-        "def": "OBSOLETE The mass of an ion or molecule calculated using the average mass of each element weighted for its natural isotopic abundance. [PSI:MS]",
-        "id": "MS:1000208",
-        "is_obsolete": "true",
-        "name": "average mass",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000002",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The peak in a mass spectrum that has the greatest intensity. This term may be applied to the spectra of pure substances or mixtures. [PSI:MS]",
-        "id": "MS:1000210",
-        "is_a": "MS:1000231",
-        "name": "base peak",
-        "ontology": "ms",
-        "synonym": [
-            "BP EXACT []"
-        ]
-    },
-    {
-        "comment": "This child of the former purgatory term ion attribute was made obsolete.",
-        "def": "OBSOLETE The calculated mass of an ion or molecule containing a single isotope of each atom. [PSI:MS]",
-        "id": "MS:1000215",
-        "is_obsolete": "true",
-        "name": "exact mass",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000002",
-        "synonym": [
-            "mz exact EXACT []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "comment": "This child of the former purgatory term ion attribute was made obsolete.",
-        "def": "OBSOLETE The minimum energy required to remove an electron from an atom or molecule to produce a positive ion. [PSI:MS]",
-        "id": "MS:1000219",
-        "is_obsolete": "true",
-        "name": "ionization energy",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000266",
-        "synonym": [
-            "IE EXACT []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "comment": "This child of the former purgatory term ion attribute was made obsolete.",
-        "def": "OBSOLETE The sum of the protons and neutrons in an atom, molecule or ion. [PSI:MS]",
-        "id": "MS:1000223",
-        "is_obsolete": "true",
-        "name": "mass number",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:int The allowed value-type for this CV term."
-        }
-    },
-    {
-        "comment": "This child of the former purgatory term ion attribute was made obsolete.",
-        "def": "OBSOLETE The mass of one mole of a molecular substance (6.022 1415(10) x 10^23 molecules). [PSI:MS]",
-        "id": "MS:1000224",
-        "is_obsolete": "true",
-        "name": "molecular mass",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000002",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The loss of an uncharged species during a rearrangement process. [PSI:MS]",
-        "id": "MS:1000336",
-        "is_a": "MS:1001055",
-        "name": "neutral loss",
-        "ontology": "ms"
-    },
-    {
-        "comment": "This child of the former purgatory term ion role was made obsolete.",
-        "def": "OBSOLETE An ion that reacts to form particular product ions. The reaction can be unimolecular dissociation, ion/molecule reaction, isomerization, or change in charge state. The term parent ion is deprecated. [PSI:MS]",
-        "id": "MS:1000340",
-        "is_obsolete": "true",
-        "name": "precursor type",
-        "ontology": "ms",
-        "synonym": [
-            "parent ion RELATED []",
-            "precursor ion EXACT []",
-            "precursortype EXACT []"
-        ]
-    },
-    {
-        "def": "Spectrum generated by scanning precursor m/z while monitoring a fixed product m/z. [PSI:MS]",
-        "id": "MS:1000341",
-        "is_a": [
-            "MS:1000294",
-            "MS:1000524"
-        ],
-        "name": "precursor ion spectrum",
-        "ontology": "ms"
-    },
-    {
-        "comment": "This term was made obsolete because it was merged with MSn spectrum (MS:1000580).",
-        "def": "OBSOLETE A mass spectrum recorded from any spectrometer in which the appropriate m/z separation scan function is set to record the product ion or ions of selected precursor ions. [PSI:MS]",
-        "id": "MS:1000343",
-        "is_a": [
-            "MS:1000294",
-            "MS:1000524"
-        ],
-        "is_obsolete": "true",
-        "name": "product ion spectrum",
-        "ontology": "ms"
-    },
-    {
-        "def": "An inert gas used for collisional deactivation of internally excited ions. [PSI:MS]",
-        "id": "MS:1000412",
-        "is_a": "MS:1000510",
-        "name": "buffer gas",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Terms used to describe the Analyzer. [PSI:MS]",
-        "id": "MS:1000451",
-        "name": "mass analyzer",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000463",
-        "synonym": [
-            "analyzer EXACT []"
-        ]
-    },
-    {
-        "def": "Terms used to describe types of data processing. [PSI:MS]",
-        "id": "MS:1000452",
-        "name": "data transformation",
-        "ontology": "ms",
-        "relationship": "part_of MS:1001458",
-        "synonym": [
-            "data processing EXACT []"
-        ]
-    },
-    {
-        "def": "The device that detects ions. [PSI:MS]",
-        "id": "MS:1000453",
-        "name": "detector",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000463"
-    },
-    {
-        "def": "Terms to describe the precursor activation. [PSI:MS]",
-        "id": "MS:1000456",
-        "name": "precursor activation",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000442",
-        "synonym": [
-            "activation EXACT []"
-        ]
-    },
-    {
-        "def": "Terms to describe the sample. [PSI:MS]",
-        "id": "MS:1000457",
-        "name": "sample",
-        "ontology": "ms",
-        "relationship": "part_of MS:1001458"
-    },
-    {
-        "def": "Terms to describe the source. [PSI:MS]",
-        "id": "MS:1000458",
-        "name": "source",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000463"
-    },
-    {
-        "def": "Description of the instrument or the mass spectrometer. [PSI:MS]",
-        "id": "MS:1000463",
-        "name": "instrument",
-        "ontology": "ms",
-        "relationship": "part_of MS:1001458",
-        "synonym": [
-            "instrument configuration EXACT []",
-            "source instrument EXACT []"
-        ]
-    },
-    {
-        "def": "Potential difference at the MS source in volts. [PSI:MS]",
-        "id": "MS:1000486",
-        "is_a": "MS:1000482",
-        "name": "source potential",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000218",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The time spent gathering data across a peak. [PSI:MS]",
-        "id": "MS:1000502",
-        "is_a": "MS:1000503",
-        "name": "dwell time",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000010",
-            "has_units UO:0000031"
-        ],
-        "synonym": [
-            "Scan Duration RELATED []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "M/z value of the signal of highest intensity in the mass spectrum. [PSI:MS]",
-        "id": "MS:1000504",
-        "is_a": "MS:1000499",
-        "name": "base peak m/z",
-        "ontology": "ms",
-        "relationship": "has_units MS:1000040",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The intensity of the greatest peak in the mass spectrum. [PSI:MS]",
-        "id": "MS:1000505",
-        "is_a": "MS:1000499",
-        "name": "base peak intensity",
-        "ontology": "ms",
-        "relationship": [
-            "has_units MS:1000131",
-            "has_units MS:1000132",
-            "has_units MS:1000814",
-            "has_units MS:1000905",
-            "has_units UO:0000269"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Activation Energy. [PSI:MS]",
-        "id": "MS:1000509",
-        "is_a": "MS:1000510",
-        "name": "activation energy",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000266",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Stages of ms achieved in a multi stage mass spectrometry experiment. [PSI:MS]",
-        "id": "MS:1000511",
-        "is_a": "MS:1000499",
-        "name": "ms level",
-        "ontology": "ms",
-        "synonym": [
-            "ms type EXACT []",
-            "mstype EXACT []",
-            "mslevel EXACT []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:int The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Spectrum type. [PSI:MS]",
-        "id": "MS:1000559",
-        "name": "spectrum type",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000442"
-    },
-    {
-        "def": "The electrical potential used to impart kinetic energy to ions in a mass spectrometer. [PSI:MS]",
-        "id": "MS:1000597",
-        "is_a": "MS:1000462",
-        "name": "ion optics type",
-        "ontology": "ms"
-    },
-    {
-        "def": "The correction of the spectrum scan times, as used e.g. in label-free proteomics. [PSI:MS]",
-        "id": "MS:1000745",
-        "is_a": "MS:1000543",
-        "name": "retention time alignment",
-        "ontology": "ms"
-    },
-    {
-        "def": "Properties of the preparation steps which took place before the measurement was performed. [PSI:MS]",
-        "id": "MS:1000831",
-        "is_a": "MS:1000547",
-        "name": "sample preparation",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000548"
-    },
-    {
-        "def": "Describes the chemical solution used as matrix. [PSI:MS]",
-        "id": "MS:1000834",
-        "is_a": "MS:1000832",
-        "name": "matrix solution",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Identier string that describes the sample fraction. This identifier should contain the fraction number(s) or similar information. [PSI:MS]",
-        "id": "MS:1000858",
-        "is_a": "MS:1000857",
-        "name": "fraction identifier",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "A molecules is a fundamental component of a chemical compound that is the smallest part of the compound that can participate in a chemical reaction. [PSI:MS]",
-        "id": "MS:1000859",
-        "name": "molecule",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000881"
-    },
-    {
-        "def": "A chemical formula which expresses the proportions of the elements present in a substance. [PSI:MS]",
-        "id": "MS:1000865",
-        "is_a": "MS:1000864",
-        "name": "empirical formula",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "A chemical compound formula expressing the number of atoms of each element present in a compound, without indicating how they are linked. [PSI:MS]",
-        "id": "MS:1000866",
-        "is_a": "MS:1000864",
-        "name": "molecular formula",
-        "ontology": "ms",
-        "synonym": [
-            "molecule formula EXACT []",
-            "chemical formula EXACT []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "A chemical formula showing the number of atoms of each element in a molecule, their spatial arrangement, and their linkage to each other. [PSI:MS]",
-        "id": "MS:1000867",
-        "is_a": "MS:1000864",
-        "name": "structural formula",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The simplified molecular input line entry specification or SMILES is a specification for unambiguously describing the structure of a chemical compound using a short ASCII string. [PSI:MS]",
-        "id": "MS:1000868",
-        "is_a": "MS:1000864",
-        "name": "SMILES",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The Splash, is an unique identifier for Spectra, as the InChI Key is an unique identifier for chemical compounds. [http://splash.fiehnlab.ucdavis.edu/]",
-        "id": "MS:1002599",
-        "is_a": "MS:1001405",
-        "name": "SPLASH",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "A substance formed by chemical union of two or more elements or ingredients in definite proportion by weight. [PSI:MS]",
-        "id": "MS:1000881",
-        "name": "chemical compound",
-        "ontology": "ms",
-        "relationship": "part_of MS:0000000"
-    },
-    {
-        "def": "A time interval from the start of chromatography when an analyte exits a chromatographic column. [PSI:MS]",
-        "id": "MS:1000894",
-        "is_a": "MS:1000887",
-        "name": "retention time",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000010",
-            "has_units UO:0000031"
-        ],
-        "synonym": [
-            "rt EXACT []",
-            "retentiontime EXACT []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "A time interval from the start of chromatography when an analyte exits a standardized reference chromatographic column and instrumental setup. [PSI:MS]",
-        "id": "MS:1000896",
-        "is_a": "MS:1000894",
-        "name": "normalized retention time",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000010",
-            "has_units UO:0000031"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The theoretical mass of the molecule (e.g. the peptide sequence and its modifications). [PSI:PI]",
-        "id": "MS:1001117",
-        "is_a": "MS:1001105",
-        "name": "theoretical mass",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000221",
-        "xref": {
-            "value-type": "xsd\\:double The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Absolute quantity in terms of real concentration or molecule copy number in sample. [PSI:PI]",
-        "id": "MS:1001137",
-        "is_a": "MS:1001805",
-        "name": "absolute quantity",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:double The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Error on absolute quantity. [PSI:PI]",
-        "id": "MS:1001138",
-        "is_a": "MS:1001805",
-        "name": "error on absolute quantity",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:double The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Quantitation software name. [PSI:PI]",
-        "id": "MS:1001139",
-        "is_a": [
-            "MS:1000531",
-            "MS:1001129"
-        ],
-        "name": "quantitation software name",
-        "ontology": "ms"
-    },
-    {
-        "def": "The intensity of the precursor ion. [PSI:PI]",
-        "id": "MS:1001141",
-        "is_a": "MS:1001805",
-        "name": "precursor intensity",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:double The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Acquisition software. [PSI:MS]",
-        "id": "MS:1001455",
-        "is_a": "MS:1000531",
-        "name": "acquisition software",
-        "ontology": "ms"
-    },
-    {
-        "def": "Analysis software. [PSI:MS]",
-        "id": "MS:1001456",
-        "is_a": "MS:1000531",
-        "name": "analysis software",
-        "ontology": "ms"
-    },
-    {
-        "def": "Data processing software. [PSI:MS]",
-        "id": "MS:1001457",
-        "is_a": "MS:1000531",
-        "name": "data processing software",
-        "ontology": "ms"
-    },
-    {
-        "def": "This term can describe a neutral loss m/z value that is lost from an ion. [PSI:PI]",
-        "id": "MS:1001524",
-        "is_a": "MS:1001471",
-        "name": "fragment neutral loss",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000221",
-        "xref": {
-            "value-type": "xsd\\:double The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "This term can describe a neutral loss m/z value that is lost from an ion. [PSI:PI]",
-        "id": "MS:1001525",
-        "is_a": "MS:1001471",
-        "name": "precursor neutral loss",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000221",
-        "xref": {
-            "value-type": "xsd\\:double The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The potential difference between two adjacent interface voltages affecting in-source collision induced dissociation. [PSI:MS]",
-        "id": "MS:1001879",
-        "is_a": "MS:1000482",
-        "name": "offset voltage",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000218",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Variation of a set of signal measurements calculated as the standard deviation relative to the mean. [PSI:MS]",
-        "id": "MS:1001883",
-        "is_a": "MS:1001882",
-        "name": "coefficient of variation",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Unitless number providing the ratio of the total measured intensity of a signal relative to the estimated noise level for that signal. [PSI:MS]",
-        "id": "MS:1001884",
-        "is_a": "MS:1001882",
-        "name": "signal-to-noise ratio",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Free text attribute that can enrich the information about an entity. [PSI:PI]",
-        "id": "MS:1001923",
-        "is_a": "MS:1000878",
-        "name": "external reference keyword",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Keyword present in a scientific publication. [PSI:PI]",
-        "id": "MS:1001924",
-        "is_a": "MS:1001923",
-        "name": "journal article keyword",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Keyword assigned by the data submitter. [PSI:PI]",
-        "id": "MS:1001925",
-        "is_a": "MS:1001923",
-        "name": "submitter keyword",
-        "ontology": "ms",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The source interface. [PSI:MS]",
-        "id": "MS:1001931",
-        "name": "source interface",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000458"
-    },
-    {
-        "def": "The source sprayer. [PSI:MS]",
-        "id": "MS:1001933",
-        "name": "source sprayer",
-        "ontology": "ms",
-        "relationship": "part_of MS:1000458",
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The mobility of an MS2 product ion, as measured by ion mobility mass spectrometry. [PSI:MS]",
-        "id": "MS:1001966",
-        "is_a": "MS:1001221",
-        "name": "product ion mobility",
-        "ontology": "ms"
-    },
-    {
-        "def": "The difference between a theoretically calculated m/z and the corresponding experimentally measured m/z. It can be expressed as absolute or relative value. [PSI:MS]",
-        "id": "MS:1001975",
-        "is_a": "MS:1001405",
-        "name": "delta m/z",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000166",
-            "has_units UO:0000187",
-            "has_units UO:0000221"
-        ],
-        "synonym": [
-            "m/z difference EXACT []"
-        ]
-    },
-    {
-        "def": "The difference between a theoretically calculated molecular mass M and the corresponding experimentally measured M. It can be expressed as absolute or relative value. [PSI:MS]",
-        "id": "MS:1001976",
-        "is_a": "MS:1001405",
-        "name": "delta M",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000166",
-            "has_units UO:0000187",
-            "has_units UO:0000221"
-        ],
-        "synonym": [
-            "mass difference EXACT []"
-        ]
-    },
-    {
-        "def": "Collision energy at the start of the collision energy ramp. [PSI:PI]",
-        "id": "MS:1002013",
-        "is_a": "MS:1000045",
-        "name": "collision energy ramp start",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000266",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Collision energy at the end of the collision energy ramp. [PSI:PI]",
-        "id": "MS:1002014",
-        "is_a": "MS:1000045",
-        "name": "collision energy ramp end",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000266",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Role of the contact person. [PSI:PI]",
-        "id": "MS:1002033",
-        "is_a": "MS:1000585",
-        "name": "contact role",
-        "ontology": "ms"
-    },
-    {
-        "def": "The first of a set of authors associated with a publication or release. There may be more than one first author in cases where several authors share primary attribution. [PSI:MS]",
-        "id": "MS:1002034",
-        "is_a": "MS:1002033",
-        "name": "author",
-        "ontology": "ms",
-        "synonym": [
-            "authors EXACT []"
-        ]
-    },
-    {
-        "def": "The last of a set of authors associated with a publication or release. There may be more than one senior author in cases where several authors share senior attribution. [PSI:MS]",
-        "id": "MS:1002035",
-        "is_a": "MS:1002033",
-        "name": "senior author",
-        "ontology": "ms",
-        "synonym": [
-            "pi EXACT []",
-            "principal investigator EXACT []"
-        ]
-    },
-    {
-        "def": "One of a set of authors associated with a publication or release. [PSI:MS]",
-        "id": "MS:1002036",
-        "is_a": "MS:1002033",
-        "name": "co-author",
-        "ontology": "ms"
-    },
-    {
-        "def": "A person who submits a dataset to a repository. [PSI:MS]",
-        "id": "MS:1002037",
-        "is_a": "MS:1002033",
-        "name": "submitter",
-        "ontology": "ms",
-        "synonym": [
-            "submituser EXACT []"
-        ]
-    },
-    {
-        "def": "The temperature of the inlet of a mass spectrometer. [PSI:MS]",
-        "id": "MS:1002040",
-        "is_a": [
-            "MS:1000482",
-            "MS:1002039"
-        ],
-        "name": "inlet temperature",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000012",
-            "has_units UO:0000027"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The temperature of the source of a mass spectrometer. [PSI:MS]",
-        "id": "MS:1002041",
-        "is_a": "MS:1000482",
-        "name": "source temperature",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000012",
-            "has_units UO:0000027"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The duration of a complete cycle of modulation in a comprehensive two-dimensional separation system, equals the length of a second dimension chromatogram, i.e., the time between two successive injections into the second column. [http://chromatographyonline.findanalytichem.com/lcgc/Column:+Coupling+Matters/Nomenclature-and-Conventions-in-Comprehensive-Mult/ArticleStandard/Article/detail/58429]",
-        "id": "MS:1002042",
-        "is_a": "MS:1000857",
-        "name": "modulation time",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000010",
-            "has_units UO:0000031"
-        ],
-        "xref": {
-            "value-type": "xsd\\:string The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The time of elution from the first chromatographic column in the chromatographic separation step, relative to the start of chromatography on the first column. [PSI:MS]",
-        "id": "MS:1002082",
-        "is_a": "MS:1000503",
-        "name": "first column elution time",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000010",
-            "has_units UO:0000031"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The time of elution from the second chromatographic column in the chromatographic separation step, relative to the start of the chromatography on the second column. [PSI:MS]",
-        "id": "MS:1002083",
-        "is_a": "MS:1000503",
-        "name": "second column elution time",
-        "ontology": "ms",
-        "relationship": [
-            "has_units UO:0000010",
-            "has_units UO:0000031"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "The name for identifying an experiment. [PSI:PI]",
-        "id": "MS:1002120",
-        "is_a": "MS:1001806",
-        "name": "experiment name",
-        "ontology": "ms"
-    },
-    {
-        "def": "Mass-to-charge ratio of a precursor ion selected for fragmentation. [PSI:PI]",
-        "id": "MS:1002234",
-        "is_a": "MS:1000455",
-        "name": "precursor m/z",
-        "ontology": "ms",
-        "relationship": "has_units MS:1000040",
-        "synonym": [
-            "selected ion m/z RELATED []",
-            "precursor mz EXACT []",
-            "precursormz EXACT []"
-        ],
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "A technique by which molecules are separated by chemical and physical properties such as hydrophobicity or vapour pressure. [PSI:MS]",
-        "id": "MS:1002270",
-        "is_a": "MS:1000857",
-        "name": "chromatography separation",
-        "ontology": "ms"
-    },
-    {
-        "def": "Preprocessing software. [PSI:PI]",
-        "id": "MS:1002386",
-        "is_a": "MS:1001457",
-        "name": "preprocessing software",
-        "ontology": "ms"
-    },
-    {
-        "def": "Postprocessing software. [PSI:PI]",
-        "id": "MS:1002414",
-        "is_a": "MS:1001457",
-        "name": "postprocessing software",
-        "ontology": "ms"
-    },
-    {
-        "def": "Drift time of an ion or spectrum of ions as measured in an ion mobility mass spectrometer. This time might refer to the central value of a bin into which all ions within a narrow range of drift time have been aggregated. [PSI:MS]",
-        "id": "MS:1002476",
-        "is_a": "MS:1000455",
-        "name": "ion mobility drift time",
-        "ontology": "ms",
-        "relationship": "has_units UO:0000028",
-        "xref": {
-            "value-type": "xsd\\:float The allowed value-type for this CV term."
-        }
-    },
-    {
-        "def": "Estimated statistical threshold. [PSI:MS]",
-        "id": "MS:1002482",
-        "is_a": "MS:1001060",
-        "name": "statistical threshold",
-        "ontology": "ms"
-    },
-    {
-        "def": "Details describing a special processing. [PSI:PI]",
-        "id": "MS:1002489",
-        "is_a": "MS:1001080",
-        "name": "special processing",
-        "ontology": "ms",
-        "relationship": "part_of MS:1001000"
-    },
-    {
-        "comment": "This child of the former purgatory term ion chemical type was made obsolete.",
-        "def": "OBSOLETE Ion formed by the interaction of an ion with one or more atoms or molecules to form an ion containing all the constituent atoms of the precursor ion as well as the additional atoms from the associated atoms or molecules. [PSI:MS]",
-        "id": "MS:1000353",
-        "is_obsolete": "true",
-        "name": "adduct",
-        "ontology": "ms",
-        "synonym": [
-            "adductionname EXACT []",
-            "adduct ion name EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000001",
-        "name": "retention index",
-        "ontology": "ms",
-        "synonym": [
-            "ri EXACT []",
-            "retentionindex EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000002",
-        "name": "compound class",
-        "ontology": "ms",
-        "synonym": [
-            "compoundclass EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000003",
-        "name": "column",
-        "ontology": "ms",
-        "synonym": [
-            "column name EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000004",
-        "name": "flow rate",
-        "ontology": "ms",
-        "synonym": [
-            "flowrate EXACT []",
-            "flow EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000005",
-        "name": "accession",
-        "ontology": "ms",
-        "synonym": [
-            "spectrumid EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000006",
-        "name": "transfer line temperature",
-        "ontology": "ms",
-        "synonym": [
-            "transfarline temperature EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000007",
-        "name": "data collector",
-        "ontology": "ms",
-        "synonym": [
-            "datacollector EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000008",
-        "name": "data format",
-        "ontology": "ms",
-        "synonym": [
-            "dataformat EXACT []"
-        ]
-    },
-    {
-        "id": "MS:9000009",
-        "name": "molecular weight",
-        "ontology": "ms",
-        "synonym": [
-            "weight EXACT []",
-            "mw EXACT []"
-        ]
+  {
+    "def": "A reference number relevant to the sample under study. [PSI:MS]",
+    "id": "MS:1000001",
+    "is_a": "MS:1000548",
+    "name": "sample number",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
     }
+  },
+  {
+    "def": "A reference string relevant to the sample under study. [PSI:MS]",
+    "id": "MS:1000002",
+    "is_a": "MS:1000548",
+    "name": "sample name",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The chemical phase of a pure sample, or the state of a mixed sample. [PSI:MS]",
+    "id": "MS:1000003",
+    "is_a": "MS:1000548",
+    "name": "sample state",
+    "ontology": "ms"
+  },
+  {
+    "def": "Total mass of sample used. [PSI:MS]",
+    "id": "MS:1000004",
+    "is_a": "MS:1000548",
+    "name": "sample mass",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000021",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Total volume of solution used. [PSI:MS]",
+    "id": "MS:1000005",
+    "is_a": "MS:1000548",
+    "name": "sample volume",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000098",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Concentration of sample in picomol/ul, femtomol/ul or attomol/ul solution used. [PSI:MS]",
+    "id": "MS:1000006",
+    "is_a": "MS:1000548",
+    "name": "sample concentration",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000175",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The nature of the sample inlet. [PSI:MS]",
+    "id": "MS:1000007",
+    "name": "inlet type",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000458"
+  },
+  {
+    "def": "The method by which gas phase ions are generated from the sample. [PSI:MS]",
+    "id": "MS:1000008",
+    "name": "ionization type",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000458",
+    "synonym": [
+      "ionization EXACT []",
+      "ionization mode EXACT []",
+      "ionizationmode EXACT []",
+      "ion mode EXACT []",
+      "ionmode EXACT []",
+      "AC$MASS_SPECTROMETRY: ION_MODE EXACT []",
+      "scan polarity EXACT []",
+      "polarity EXACT []"
+    ]
+  },
+  {
+    "def": "Smallest mass difference between two equal magnitude peaks so that the valley between them is a specified fraction of the peak height. [PSI:MS]",
+    "id": "MS:1000011",
+    "is_a": "MS:1000503",
+    "name": "mass resolution",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Which of the available standard measures is used to define whether two peaks are separate. [PSI:MS]",
+    "id": "MS:1000012",
+    "is_a": "MS:1000596",
+    "name": "resolution measurement method",
+    "ontology": "ms"
+  },
+  {
+    "def": "Accuracy is the degree of conformity of a measured mass to its actual value. [PSI:MS]",
+    "id": "MS:1000014",
+    "is_a": "MS:1000480",
+    "name": "mass accuracy",
+    "ontology": "ms",
+    "relationship": [
+      "has_units MS:1000040",
+      "has_units UO:0000169"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Rate in Th/sec for scanning analyzers. [PSI:MS]",
+    "id": "MS:1000015",
+    "is_a": "MS:1000503",
+    "name": "scan rate",
+    "ontology": "ms",
+    "relationship": "has_units MS:1000807",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The time that an analyzer started a scan, relative to the start of the MS run. [PSI:MS]",
+    "id": "MS:1000016",
+    "is_a": [
+      "MS:1000503",
+      "MS:1001105",
+      "MS:1001405"
+    ],
+    "name": "scan start time",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000010",
+      "has_units UO:0000031"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Direction in terms of m/z of the scan for scanning analyzers (low to high, or high to low). [PSI:MS]",
+    "id": "MS:1000018",
+    "name": "scan direction",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000441"
+  },
+  {
+    "def": "Describes the function in control of the m/z scan (for scanning instruments). Commonly the scan function is linear, but in principle any function can be used. [PSI:MS]",
+    "id": "MS:1000019",
+    "name": "scan law",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000441",
+    "synonym": [
+      "scan function EXACT []"
+    ]
+  },
+  {
+    "comment": "OBSOLETE This former purgatory term was made obsolete.",
+    "def": "Describes the acquisition data type produced by a tandem mass spectrometry experiment. [PSI:MS]",
+    "id": "MS:1000020",
+    "is_obsolete": "true",
+    "name": "scanning method",
+    "ontology": "ms",
+    "synonym": [
+      "Tandem Scanning Method RELATED []"
+    ]
+  },
+  {
+    "def": "Status of the reflectron, turned on or off. [PSI:MS]",
+    "id": "MS:1000021",
+    "is_a": "MS:1000480",
+    "name": "reflectron state",
+    "ontology": "ms"
+  },
+  {
+    "def": "The length of the field free drift space in a time of flight mass spectrometer. [PSI:MS]",
+    "id": "MS:1000022",
+    "is_a": "MS:1000480",
+    "name": "TOF Total Path Length",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000008",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "comment": "This former purgatory term was made obsolete.",
+    "def": "OBSOLETE The total width (i.e. not half for plus-or-minus) of the gate applied around a selected precursor ion. [PSI:MS]",
+    "id": "MS:1000023",
+    "is_obsolete": "true",
+    "name": "isolation width",
+    "ontology": "ms",
+    "relationship": "has_units MS:1000040",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "A property of space that produces a force on a charged particle equal to qv x B where q is the particle charge and v its velocity. [PSI:MS]",
+    "id": "MS:1000025",
+    "is_a": "MS:1000480",
+    "name": "magnetic field strength",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000228",
+    "synonym": [
+      "B EXACT []",
+      "Magnetic Field RELATED []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Type of detector used in the mass spectrometer. [PSI:MS]",
+    "id": "MS:1000026",
+    "name": "detector type",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000453"
+  },
+  {
+    "def": "Method by which detector signal is acquired by the data system. [PSI:MS]",
+    "id": "MS:1000027",
+    "name": "detector acquisition mode",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000453"
+  },
+  {
+    "def": "The resolving power of the detector to detect the smallest difference between two ions so that the valley between them is a specified fraction of the peak height. [PSI:MS]",
+    "id": "MS:1000028",
+    "is_a": "MS:1000481",
+    "name": "detector resolution",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The rate of signal sampling (measurement) with respect to time. [PSI:MS]",
+    "id": "MS:1000029",
+    "is_a": "MS:1000481",
+    "name": "sampling frequency",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000106",
+    "synonym": [
+      "ADC Sampling Frequency NARROW []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "comment": "This term was made obsolete because it was replaced by instrument model (MS:1000031).",
+    "def": "OBSOLETE Name of instrument vendor. [PSI:MS]",
+    "id": "MS:1000030",
+    "is_obsolete": "true",
+    "name": "vendor",
+    "ontology": "ms"
+  },
+  {
+    "def": "Instrument model name not including the vendor's name. [PSI:MS]",
+    "id": "MS:1000031",
+    "name": "instrument model",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000463"
+  },
+  {
+    "def": "The removal of isotope peaks to represent the fragment ion as one data point and is commonly done to reduce complexity. It is done in conjunction with the charge state deconvolution. [PSI:MS]",
+    "id": "MS:1000033",
+    "is_a": "MS:1000543",
+    "name": "deisotoping",
+    "ontology": "ms"
+  },
+  {
+    "def": "The determination of the mass of an ion based on the mass spectral peaks that represent multiple-charge ions. [PSI:MS]",
+    "id": "MS:1000034",
+    "is_a": "MS:1000543",
+    "name": "charge deconvolution",
+    "ontology": "ms"
+  },
+  {
+    "def": "Spectral peak processing conducted on the acquired data to convert profile data to centroided data. [PSI:MS]",
+    "id": "MS:1000035",
+    "is_a": "MS:1000543",
+    "name": "peak picking",
+    "ontology": "ms"
+  },
+  {
+    "def": "Three-character symbol m/z is used to denote the quantity formed by dividing the mass of an ion in unified atomic mass units by its charge number (regardless of sign). The symbol is written in italicized lower case letters with no spaces. Note 1: The term mass-to-charge-ratio is deprecated. Mass-to-charge ratio has been used for the abscissa of a mass spectrum, although the quantity measured is not the quotient of the ion's mass to its electric charge. The three-character symbol m/z is recommended for the quantity that is the independent variable in a mass spectrum Note 2: The proposed unit thomson (Th) is deprecated. [PSI:MS]",
+    "id": "MS:1000040",
+    "is_a": "UO:0000000",
+    "name": "m/z",
+    "ontology": "ms",
+    "synonym": [
+      "mass-to-charge ratio EXACT []",
+      "Th EXACT []",
+      "thomson EXACT []"
+    ]
+  },
+  {
+    "def": "The charge state of the ion, single or multiple and positive or negatively charged. [PSI:MS]",
+    "id": "MS:1000041",
+    "is_a": "MS:1000455",
+    "name": "charge state",
+    "ontology": "ms",
+    "synonym": [
+      "z EXACT []",
+      "charge EXACT []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:int The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Fragmentation method used for dissociation or fragmentation. [PSI:MS]",
+    "id": "MS:1000044",
+    "name": "dissociation method",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000456",
+    "synonym": [
+      "Activation Method RELATED []"
+    ]
+  },
+  {
+    "def": "Energy for an ion experiencing collision with a stationary gas particle resulting in dissociation of the ion. [PSI:MS]",
+    "id": "MS:1000045",
+    "is_a": "MS:1000510",
+    "name": "collision energy",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000266",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "comment": "This former purgatory term was made obsolete.",
+    "def": "OBSOLETE Chromatographic conditions used to obtain the sample. [PSI:MS]",
+    "id": "MS:1000054",
+    "is_obsolete": "true",
+    "name": "chromatography",
+    "ontology": "ms"
+  },
+  {
+    "def": "Instrument setting, expressed in percent, for adjusting collisional energies of ions in an effort to provide equivalent excitation of all ions. [PSI:PI]",
+    "id": "MS:1000138",
+    "is_a": "MS:1000510",
+    "name": "normalized collision energy",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000187",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "comment": "This child of the former purgatory term ion attribute was made obsolete.",
+    "def": "OBSOLETE The mass of an ion or molecule calculated using the average mass of each element weighted for its natural isotopic abundance. [PSI:MS]",
+    "id": "MS:1000208",
+    "is_obsolete": "true",
+    "name": "average mass",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000002",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The peak in a mass spectrum that has the greatest intensity. This term may be applied to the spectra of pure substances or mixtures. [PSI:MS]",
+    "id": "MS:1000210",
+    "is_a": "MS:1000231",
+    "name": "base peak",
+    "ontology": "ms",
+    "synonym": [
+      "BP EXACT []"
+    ]
+  },
+  {
+    "comment": "This child of the former purgatory term ion attribute was made obsolete.",
+    "def": "OBSOLETE The calculated mass of an ion or molecule containing a single isotope of each atom. [PSI:MS]",
+    "id": "MS:1000215",
+    "is_obsolete": "true",
+    "name": "exact mass",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000002",
+    "synonym": [
+      "mz exact EXACT []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "comment": "This child of the former purgatory term ion attribute was made obsolete.",
+    "def": "OBSOLETE The minimum energy required to remove an electron from an atom or molecule to produce a positive ion. [PSI:MS]",
+    "id": "MS:1000219",
+    "is_obsolete": "true",
+    "name": "ionization energy",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000266",
+    "synonym": [
+      "IE EXACT []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "comment": "This child of the former purgatory term ion attribute was made obsolete.",
+    "def": "OBSOLETE The sum of the protons and neutrons in an atom, molecule or ion. [PSI:MS]",
+    "id": "MS:1000223",
+    "is_obsolete": "true",
+    "name": "mass number",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:int The allowed value-type for this CV term."
+    }
+  },
+  {
+    "comment": "This child of the former purgatory term ion attribute was made obsolete.",
+    "def": "OBSOLETE The mass of one mole of a molecular substance (6.022 1415(10) x 10^23 molecules). [PSI:MS]",
+    "id": "MS:1000224",
+    "is_obsolete": "true",
+    "name": "molecular mass",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000002",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The loss of an uncharged species during a rearrangement process. [PSI:MS]",
+    "id": "MS:1000336",
+    "is_a": "MS:1001055",
+    "name": "neutral loss",
+    "ontology": "ms"
+  },
+  {
+    "comment": "This child of the former purgatory term ion role was made obsolete.",
+    "def": "OBSOLETE An ion that reacts to form particular product ions. The reaction can be unimolecular dissociation, ion/molecule reaction, isomerization, or change in charge state. The term parent ion is deprecated. [PSI:MS]",
+    "id": "MS:1000340",
+    "is_obsolete": "true",
+    "name": "precursor type",
+    "ontology": "ms",
+    "synonym": [
+      "parent ion RELATED []",
+      "precursor ion EXACT []",
+      "precursortype EXACT []"
+    ]
+  },
+  {
+    "def": "Spectrum generated by scanning precursor m/z while monitoring a fixed product m/z. [PSI:MS]",
+    "id": "MS:1000341",
+    "is_a": [
+      "MS:1000294",
+      "MS:1000524"
+    ],
+    "name": "precursor ion spectrum",
+    "ontology": "ms"
+  },
+  {
+    "comment": "This term was made obsolete because it was merged with MSn spectrum (MS:1000580).",
+    "def": "OBSOLETE A mass spectrum recorded from any spectrometer in which the appropriate m/z separation scan function is set to record the product ion or ions of selected precursor ions. [PSI:MS]",
+    "id": "MS:1000343",
+    "is_a": [
+      "MS:1000294",
+      "MS:1000524"
+    ],
+    "is_obsolete": "true",
+    "name": "product ion spectrum",
+    "ontology": "ms"
+  },
+  {
+    "def": "An inert gas used for collisional deactivation of internally excited ions. [PSI:MS]",
+    "id": "MS:1000412",
+    "is_a": "MS:1000510",
+    "name": "buffer gas",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Terms used to describe the Analyzer. [PSI:MS]",
+    "id": "MS:1000451",
+    "name": "mass analyzer",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000463",
+    "synonym": [
+      "analyzer EXACT []"
+    ]
+  },
+  {
+    "def": "Terms used to describe types of data processing. [PSI:MS]",
+    "id": "MS:1000452",
+    "name": "data transformation",
+    "ontology": "ms",
+    "relationship": "part_of MS:1001458",
+    "synonym": [
+      "data processing EXACT []"
+    ]
+  },
+  {
+    "def": "The device that detects ions. [PSI:MS]",
+    "id": "MS:1000453",
+    "name": "detector",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000463"
+  },
+  {
+    "def": "Terms to describe the precursor activation. [PSI:MS]",
+    "id": "MS:1000456",
+    "name": "precursor activation",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000442",
+    "synonym": [
+      "activation EXACT []"
+    ]
+  },
+  {
+    "def": "Terms to describe the sample. [PSI:MS]",
+    "id": "MS:1000457",
+    "name": "sample",
+    "ontology": "ms",
+    "relationship": "part_of MS:1001458"
+  },
+  {
+    "def": "Terms to describe the source. [PSI:MS]",
+    "id": "MS:1000458",
+    "name": "source",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000463"
+  },
+  {
+    "def": "Description of the instrument or the mass spectrometer. [PSI:MS]",
+    "id": "MS:1000463",
+    "name": "instrument",
+    "ontology": "ms",
+    "relationship": "part_of MS:1001458",
+    "synonym": [
+      "instrument configuration EXACT []",
+      "source instrument EXACT []"
+    ]
+  },
+  {
+    "def": "Potential difference at the MS source in volts. [PSI:MS]",
+    "id": "MS:1000486",
+    "is_a": "MS:1000482",
+    "name": "source potential",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000218",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The time spent gathering data across a peak. [PSI:MS]",
+    "id": "MS:1000502",
+    "is_a": "MS:1000503",
+    "name": "dwell time",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000010",
+      "has_units UO:0000031"
+    ],
+    "synonym": [
+      "Scan Duration RELATED []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "M/z value of the signal of highest intensity in the mass spectrum. [PSI:MS]",
+    "id": "MS:1000504",
+    "is_a": "MS:1000499",
+    "name": "base peak m/z",
+    "ontology": "ms",
+    "relationship": "has_units MS:1000040",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The intensity of the greatest peak in the mass spectrum. [PSI:MS]",
+    "id": "MS:1000505",
+    "is_a": "MS:1000499",
+    "name": "base peak intensity",
+    "ontology": "ms",
+    "relationship": [
+      "has_units MS:1000131",
+      "has_units MS:1000132",
+      "has_units MS:1000814",
+      "has_units MS:1000905",
+      "has_units UO:0000269"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Activation Energy. [PSI:MS]",
+    "id": "MS:1000509",
+    "is_a": "MS:1000510",
+    "name": "activation energy",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000266",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Stages of ms achieved in a multi stage mass spectrometry experiment. [PSI:MS]",
+    "id": "MS:1000511",
+    "is_a": "MS:1000499",
+    "name": "ms level",
+    "ontology": "ms",
+    "synonym": [
+      "ms type EXACT []",
+      "mstype EXACT []",
+      "mslevel EXACT []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:int The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Spectrum type. [PSI:MS]",
+    "id": "MS:1000559",
+    "name": "spectrum type",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000442"
+  },
+  {
+    "def": "The electrical potential used to impart kinetic energy to ions in a mass spectrometer. [PSI:MS]",
+    "id": "MS:1000597",
+    "is_a": "MS:1000462",
+    "name": "ion optics type",
+    "ontology": "ms"
+  },
+  {
+    "def": "The correction of the spectrum scan times, as used e.g. in label-free proteomics. [PSI:MS]",
+    "id": "MS:1000745",
+    "is_a": "MS:1000543",
+    "name": "retention time alignment",
+    "ontology": "ms"
+  },
+  {
+    "def": "Properties of the preparation steps which took place before the measurement was performed. [PSI:MS]",
+    "id": "MS:1000831",
+    "is_a": "MS:1000547",
+    "name": "sample preparation",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000548"
+  },
+  {
+    "def": "Describes the chemical solution used as matrix. [PSI:MS]",
+    "id": "MS:1000834",
+    "is_a": "MS:1000832",
+    "name": "matrix solution",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Identier string that describes the sample fraction. This identifier should contain the fraction number(s) or similar information. [PSI:MS]",
+    "id": "MS:1000858",
+    "is_a": "MS:1000857",
+    "name": "fraction identifier",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "A molecules is a fundamental component of a chemical compound that is the smallest part of the compound that can participate in a chemical reaction. [PSI:MS]",
+    "id": "MS:1000859",
+    "name": "molecule",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000881"
+  },
+  {
+    "def": "A chemical formula which expresses the proportions of the elements present in a substance. [PSI:MS]",
+    "id": "MS:1000865",
+    "is_a": "MS:1000864",
+    "name": "empirical formula",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "A chemical compound formula expressing the number of atoms of each element present in a compound, without indicating how they are linked. [PSI:MS]",
+    "id": "MS:1000866",
+    "is_a": "MS:1000864",
+    "name": "molecular formula",
+    "ontology": "ms",
+    "synonym": [
+      "molecule formula EXACT []",
+      "chemical formula EXACT []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "A chemical formula showing the number of atoms of each element in a molecule, their spatial arrangement, and their linkage to each other. [PSI:MS]",
+    "id": "MS:1000867",
+    "is_a": "MS:1000864",
+    "name": "structural formula",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The simplified molecular input line entry specification or SMILES is a specification for unambiguously describing the structure of a chemical compound using a short ASCII string. [PSI:MS]",
+    "id": "MS:1000868",
+    "is_a": "MS:1000864",
+    "name": "SMILES",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The Splash, is an unique identifier for Spectra, as the InChI Key is an unique identifier for chemical compounds. [http://splash.fiehnlab.ucdavis.edu/]",
+    "id": "MS:1002599",
+    "is_a": "MS:1001405",
+    "name": "SPLASH",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "A substance formed by chemical union of two or more elements or ingredients in definite proportion by weight. [PSI:MS]",
+    "id": "MS:1000881",
+    "name": "chemical compound",
+    "ontology": "ms",
+    "relationship": "part_of MS:0000000"
+  },
+  {
+    "def": "A time interval from the start of chromatography when an analyte exits a chromatographic column. [PSI:MS]",
+    "id": "MS:1000894",
+    "is_a": "MS:1000887",
+    "name": "retention time",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000010",
+      "has_units UO:0000031"
+    ],
+    "synonym": [
+      "rt EXACT []",
+      "retentiontime EXACT []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "A time interval from the start of chromatography when an analyte exits a standardized reference chromatographic column and instrumental setup. [PSI:MS]",
+    "id": "MS:1000896",
+    "is_a": "MS:1000894",
+    "name": "normalized retention time",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000010",
+      "has_units UO:0000031"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The theoretical mass of the molecule (e.g. the peptide sequence and its modifications). [PSI:PI]",
+    "id": "MS:1001117",
+    "is_a": "MS:1001105",
+    "name": "theoretical mass",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000221",
+    "xref": {
+      "value-type": "xsd\\:double The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Absolute quantity in terms of real concentration or molecule copy number in sample. [PSI:PI]",
+    "id": "MS:1001137",
+    "is_a": "MS:1001805",
+    "name": "absolute quantity",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:double The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Error on absolute quantity. [PSI:PI]",
+    "id": "MS:1001138",
+    "is_a": "MS:1001805",
+    "name": "error on absolute quantity",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:double The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Quantitation software name. [PSI:PI]",
+    "id": "MS:1001139",
+    "is_a": [
+      "MS:1000531",
+      "MS:1001129"
+    ],
+    "name": "quantitation software name",
+    "ontology": "ms"
+  },
+  {
+    "def": "The intensity of the precursor ion. [PSI:PI]",
+    "id": "MS:1001141",
+    "is_a": "MS:1001805",
+    "name": "precursor intensity",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:double The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Acquisition software. [PSI:MS]",
+    "id": "MS:1001455",
+    "is_a": "MS:1000531",
+    "name": "acquisition software",
+    "ontology": "ms"
+  },
+  {
+    "def": "Analysis software. [PSI:MS]",
+    "id": "MS:1001456",
+    "is_a": "MS:1000531",
+    "name": "analysis software",
+    "ontology": "ms"
+  },
+  {
+    "def": "Data processing software. [PSI:MS]",
+    "id": "MS:1001457",
+    "is_a": "MS:1000531",
+    "name": "data processing software",
+    "ontology": "ms"
+  },
+  {
+    "def": "This term can describe a neutral loss m/z value that is lost from an ion. [PSI:PI]",
+    "id": "MS:1001524",
+    "is_a": "MS:1001471",
+    "name": "fragment neutral loss",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000221",
+    "xref": {
+      "value-type": "xsd\\:double The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "This term can describe a neutral loss m/z value that is lost from an ion. [PSI:PI]",
+    "id": "MS:1001525",
+    "is_a": "MS:1001471",
+    "name": "precursor neutral loss",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000221",
+    "xref": {
+      "value-type": "xsd\\:double The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The potential difference between two adjacent interface voltages affecting in-source collision induced dissociation. [PSI:MS]",
+    "id": "MS:1001879",
+    "is_a": "MS:1000482",
+    "name": "offset voltage",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000218",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Variation of a set of signal measurements calculated as the standard deviation relative to the mean. [PSI:MS]",
+    "id": "MS:1001883",
+    "is_a": "MS:1001882",
+    "name": "coefficient of variation",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Unitless number providing the ratio of the total measured intensity of a signal relative to the estimated noise level for that signal. [PSI:MS]",
+    "id": "MS:1001884",
+    "is_a": "MS:1001882",
+    "name": "signal-to-noise ratio",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Free text attribute that can enrich the information about an entity. [PSI:PI]",
+    "id": "MS:1001923",
+    "is_a": "MS:1000878",
+    "name": "external reference keyword",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Keyword present in a scientific publication. [PSI:PI]",
+    "id": "MS:1001924",
+    "is_a": "MS:1001923",
+    "name": "journal article keyword",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Keyword assigned by the data submitter. [PSI:PI]",
+    "id": "MS:1001925",
+    "is_a": "MS:1001923",
+    "name": "submitter keyword",
+    "ontology": "ms",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The source interface. [PSI:MS]",
+    "id": "MS:1001931",
+    "name": "source interface",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000458"
+  },
+  {
+    "def": "The source sprayer. [PSI:MS]",
+    "id": "MS:1001933",
+    "name": "source sprayer",
+    "ontology": "ms",
+    "relationship": "part_of MS:1000458",
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The mobility of an MS2 product ion, as measured by ion mobility mass spectrometry. [PSI:MS]",
+    "id": "MS:1001966",
+    "is_a": "MS:1001221",
+    "name": "product ion mobility",
+    "ontology": "ms"
+  },
+  {
+    "def": "The difference between a theoretically calculated m/z and the corresponding experimentally measured m/z. It can be expressed as absolute or relative value. [PSI:MS]",
+    "id": "MS:1001975",
+    "is_a": "MS:1001405",
+    "name": "delta m/z",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000166",
+      "has_units UO:0000187",
+      "has_units UO:0000221"
+    ],
+    "synonym": [
+      "m/z difference EXACT []"
+    ]
+  },
+  {
+    "def": "The difference between a theoretically calculated molecular mass M and the corresponding experimentally measured M. It can be expressed as absolute or relative value. [PSI:MS]",
+    "id": "MS:1001976",
+    "is_a": "MS:1001405",
+    "name": "delta M",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000166",
+      "has_units UO:0000187",
+      "has_units UO:0000221"
+    ],
+    "synonym": [
+      "mass difference EXACT []"
+    ]
+  },
+  {
+    "def": "Collision energy at the start of the collision energy ramp. [PSI:PI]",
+    "id": "MS:1002013",
+    "is_a": "MS:1000045",
+    "name": "collision energy ramp start",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000266",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Collision energy at the end of the collision energy ramp. [PSI:PI]",
+    "id": "MS:1002014",
+    "is_a": "MS:1000045",
+    "name": "collision energy ramp end",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000266",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Role of the contact person. [PSI:PI]",
+    "id": "MS:1002033",
+    "is_a": "MS:1000585",
+    "name": "contact role",
+    "ontology": "ms"
+  },
+  {
+    "def": "The first of a set of authors associated with a publication or release. There may be more than one first author in cases where several authors share primary attribution. [PSI:MS]",
+    "id": "MS:1002034",
+    "is_a": "MS:1002033",
+    "name": "author",
+    "ontology": "ms",
+    "synonym": [
+      "authors EXACT []"
+    ]
+  },
+  {
+    "def": "The last of a set of authors associated with a publication or release. There may be more than one senior author in cases where several authors share senior attribution. [PSI:MS]",
+    "id": "MS:1002035",
+    "is_a": "MS:1002033",
+    "name": "senior author",
+    "ontology": "ms",
+    "synonym": [
+      "pi EXACT []",
+      "principal investigator EXACT []"
+    ]
+  },
+  {
+    "def": "One of a set of authors associated with a publication or release. [PSI:MS]",
+    "id": "MS:1002036",
+    "is_a": "MS:1002033",
+    "name": "co-author",
+    "ontology": "ms"
+  },
+  {
+    "def": "A person who submits a dataset to a repository. [PSI:MS]",
+    "id": "MS:1002037",
+    "is_a": "MS:1002033",
+    "name": "submitter",
+    "ontology": "ms",
+    "synonym": [
+      "submituser EXACT []"
+    ]
+  },
+  {
+    "def": "The temperature of the inlet of a mass spectrometer. [PSI:MS]",
+    "id": "MS:1002040",
+    "is_a": [
+      "MS:1000482",
+      "MS:1002039"
+    ],
+    "name": "inlet temperature",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000012",
+      "has_units UO:0000027"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The temperature of the source of a mass spectrometer. [PSI:MS]",
+    "id": "MS:1002041",
+    "is_a": "MS:1000482",
+    "name": "source temperature",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000012",
+      "has_units UO:0000027"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The duration of a complete cycle of modulation in a comprehensive two-dimensional separation system, equals the length of a second dimension chromatogram, i.e., the time between two successive injections into the second column. [http://chromatographyonline.findanalytichem.com/lcgc/Column:+Coupling+Matters/Nomenclature-and-Conventions-in-Comprehensive-Mult/ArticleStandard/Article/detail/58429]",
+    "id": "MS:1002042",
+    "is_a": "MS:1000857",
+    "name": "modulation time",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000010",
+      "has_units UO:0000031"
+    ],
+    "xref": {
+      "value-type": "xsd\\:string The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The time of elution from the first chromatographic column in the chromatographic separation step, relative to the start of chromatography on the first column. [PSI:MS]",
+    "id": "MS:1002082",
+    "is_a": "MS:1000503",
+    "name": "first column elution time",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000010",
+      "has_units UO:0000031"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The time of elution from the second chromatographic column in the chromatographic separation step, relative to the start of the chromatography on the second column. [PSI:MS]",
+    "id": "MS:1002083",
+    "is_a": "MS:1000503",
+    "name": "second column elution time",
+    "ontology": "ms",
+    "relationship": [
+      "has_units UO:0000010",
+      "has_units UO:0000031"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "The name for identifying an experiment. [PSI:PI]",
+    "id": "MS:1002120",
+    "is_a": "MS:1001806",
+    "name": "experiment name",
+    "ontology": "ms"
+  },
+  {
+    "def": "Mass-to-charge ratio of a precursor ion selected for fragmentation. [PSI:PI]",
+    "id": "MS:1002234",
+    "is_a": "MS:1000455",
+    "name": "precursor m/z",
+    "ontology": "ms",
+    "relationship": "has_units MS:1000040",
+    "synonym": [
+      "selected ion m/z RELATED []",
+      "precursor mz EXACT []",
+      "precursormz EXACT []"
+    ],
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "A technique by which molecules are separated by chemical and physical properties such as hydrophobicity or vapour pressure. [PSI:MS]",
+    "id": "MS:1002270",
+    "is_a": "MS:1000857",
+    "name": "chromatography separation",
+    "ontology": "ms"
+  },
+  {
+    "def": "Preprocessing software. [PSI:PI]",
+    "id": "MS:1002386",
+    "is_a": "MS:1001457",
+    "name": "preprocessing software",
+    "ontology": "ms"
+  },
+  {
+    "def": "Postprocessing software. [PSI:PI]",
+    "id": "MS:1002414",
+    "is_a": "MS:1001457",
+    "name": "postprocessing software",
+    "ontology": "ms"
+  },
+  {
+    "def": "Drift time of an ion or spectrum of ions as measured in an ion mobility mass spectrometer. This time might refer to the central value of a bin into which all ions within a narrow range of drift time have been aggregated. [PSI:MS]",
+    "id": "MS:1002476",
+    "is_a": "MS:1000455",
+    "name": "ion mobility drift time",
+    "ontology": "ms",
+    "relationship": "has_units UO:0000028",
+    "xref": {
+      "value-type": "xsd\\:float The allowed value-type for this CV term."
+    }
+  },
+  {
+    "def": "Estimated statistical threshold. [PSI:MS]",
+    "id": "MS:1002482",
+    "is_a": "MS:1001060",
+    "name": "statistical threshold",
+    "ontology": "ms"
+  },
+  {
+    "def": "Details describing a special processing. [PSI:PI]",
+    "id": "MS:1002489",
+    "is_a": "MS:1001080",
+    "name": "special processing",
+    "ontology": "ms",
+    "relationship": "part_of MS:1001000"
+  },
+  {
+    "comment": "This child of the former purgatory term ion chemical type was made obsolete.",
+    "def": "OBSOLETE Ion formed by the interaction of an ion with one or more atoms or molecules to form an ion containing all the constituent atoms of the precursor ion as well as the additional atoms from the associated atoms or molecules. [PSI:MS]",
+    "id": "MS:1000353",
+    "is_obsolete": "true",
+    "name": "adduct",
+    "ontology": "ms",
+    "synonym": [
+      "adductionname EXACT []",
+      "adduct ion name EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000001",
+    "name": "retention index",
+    "ontology": "ms",
+    "synonym": [
+      "ri EXACT []",
+      "retentionindex EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000002",
+    "name": "compound class",
+    "ontology": "ms",
+    "synonym": [
+      "compoundclass EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000003",
+    "name": "column",
+    "ontology": "ms",
+    "synonym": [
+      "column name EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000004",
+    "name": "flow rate",
+    "ontology": "ms",
+    "synonym": [
+      "flowrate EXACT []",
+      "flow EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000005",
+    "name": "accession",
+    "ontology": "ms",
+    "synonym": [
+      "spectrumid EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000006",
+    "name": "transfer line temperature",
+    "ontology": "ms",
+    "synonym": [
+      "transfarline temperature EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000007",
+    "name": "data collector",
+    "ontology": "ms",
+    "synonym": [
+      "datacollector EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000008",
+    "name": "data format",
+    "ontology": "ms",
+    "synonym": [
+      "dataformat EXACT []"
+    ]
+  },
+  {
+    "id": "MS:9000009",
+    "name": "molecular weight",
+    "ontology": "ms",
+    "synonym": [
+      "weight EXACT []",
+      "mw EXACT []"
+    ]
+  }
 ]

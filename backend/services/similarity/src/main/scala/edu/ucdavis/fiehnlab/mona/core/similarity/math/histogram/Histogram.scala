@@ -17,6 +17,7 @@ trait Histogram {
 
   /**
     * Generates a histogram based on the given spectrum
+    *
     * @param spectrum
     * @return
     */

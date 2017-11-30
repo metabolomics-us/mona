@@ -40,7 +40,7 @@ class LoggableDispatcherServlet(val loggingService: LoggingService) extends Disp
       super.doDispatch(cachingRequest, cachingResponse)
     } catch {
       // TODO Doesn't work?
-      case e: ZuulException =>
+      case _: ZuulException =>
         logger.info("Zuul Forwarding Error - wait for Eureka to identify service")
     } finally {
       log(cachingRequest, cachingResponse, System.currentTimeMillis() - startTime)

@@ -37,7 +37,7 @@ class DownloaderService extends LazyLogging {
     if (emailAddress == null || emailAddress.isEmpty) {
       sanitizedLabel
     } else {
-      emailAddress.split("@").head +'-'+ sanitizedLabel
+      emailAddress.split("@").head + '-' + sanitizedLabel
     }
   }
 
@@ -59,7 +59,7 @@ class DownloaderService extends LazyLogging {
 
     // Use the export ID as the label if one does not exist
     val label: String =
-      if(export.label == null || export.label.isEmpty)
+      if (export.label == null || export.label.isEmpty)
         export.id
       else
         export.label

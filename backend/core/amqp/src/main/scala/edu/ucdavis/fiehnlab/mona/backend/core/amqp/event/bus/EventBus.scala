@@ -20,19 +20,19 @@ import scala.reflect.ClassTag
   * Since the event bus depends on spring, you should wire it together in a simple config file, looking something like this for the bus definition
   *
   * &#64;Bean
-  *   def eventBus: EventBus[Spectrum] = new EventBus[Spectrum]
+  * def eventBus: EventBus[Spectrum] = new EventBus[Spectrum]
   *
-  *   And to react to events a listener can be defined like this in the spring config
+  * And to react to events a listener can be defined like this in the spring config
   *
   * &#64;Bean
-  *   def eventCounter: EventBusCounter[Spectrum] = new EventBusCounter[Spectrum]
+  * def eventCounter: EventBusCounter[Spectrum] = new EventBusCounter[Spectrum]
   *
-  *   This particular listener is a simple counter to see how many events have been received in this particular configuration
-  *   since the class got initialized
+  * This particular listener is a simple counter to see how many events have been received in this particular configuration
+  * since the class got initialized
   *
-  *   To send events over the bus, please utilize the sendEvent(....) method and provide an event.
+  * To send events over the bus, please utilize the sendEvent(....) method and provide an event.
   *
-  *   The default implementation, will than utilize json to send this over rabbitmq.
+  * The default implementation, will than utilize json to send this over rabbitmq.
   */
 
 class EventBus[T: ClassTag](val busName: String = "mona-event-bus") extends LazyLogging {

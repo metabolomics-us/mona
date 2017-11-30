@@ -1,19 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.app.server.proxy.logging
 
-import java.io.{File, InputStreamReader}
 import java.net.InetAddress
 import java.util.Date
 
 import com.maxmind.geoip2.DatabaseReader
 import com.maxmind.geoip2.exception.AddressNotFoundException
 import com.maxmind.geoip2.model.CityResponse
-import com.maxmind.geoip2.record.Country
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.repository.LogMessageMongoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-
-import scala.io.Source
 
 /**
   * Created by sajjan on 12/20/16.
@@ -66,7 +62,7 @@ class LoggingService extends LazyLogging {
     try {
       geoLiteDb.city(InetAddress.getByName(ipAddress.split(',')(0)))
     } catch {
-      case e: AddressNotFoundException =>
+      case _: AddressNotFoundException =>
         logger.debug(s"IP Address $ipAddress not in GeoLite2 database")
         null
 

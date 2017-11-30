@@ -60,7 +60,7 @@ class SequentialIndex(override val binningMethod: BinningMethod, override val ca
     indexes.foreach({ idx =>
       val result = idx.get(key)
 
-      if(result.nonEmpty) {
+      if (result.nonEmpty) {
         result
       }
     })

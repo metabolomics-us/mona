@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service
   * forwards events to the event bus listener
   */
 @Service
-class BusNotifier extends PersistenceEventListener[Spectrum]{
+class BusNotifier extends PersistenceEventListener[Spectrum] {
 
   @Autowired
-  private val eventBus:EventBus[Spectrum] = null
+  private val eventBus: EventBus[Spectrum] = null
 
   /**
     * an entry was added to the system

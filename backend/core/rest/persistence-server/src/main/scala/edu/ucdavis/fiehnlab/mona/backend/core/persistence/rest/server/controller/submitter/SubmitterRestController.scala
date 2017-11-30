@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
 import java.util.concurrent.Future
-import javax.servlet.{ServletRequest, ServletResponse}
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.{ServletRequest, ServletResponse}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
@@ -39,7 +39,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    if(loginInfo.roles.contains("ADMIN")) {
+    if (loginInfo.roles.contains("ADMIN")) {
       super.doList(page, size)
     } else if (submitterMongoRepository.exists(loginInfo.username)) {
       new AsyncResult[ResponseEntity[Iterable[Submitter]]](
@@ -61,7 +61,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    if(loginInfo.roles.contains("ADMIN") || id == loginInfo.username) {
+    if (loginInfo.roles.contains("ADMIN") || id == loginInfo.username) {
       super.doGet(id, servletRequest, servletResponse)
     } else {
       new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.FORBIDDEN))
@@ -79,7 +79,7 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    if(loginInfo.roles.contains("ADMIN")) {
+    if (loginInfo.roles.contains("ADMIN")) {
       super.doSave(submitter)
     } else {
       val existingUser: Submitter = submitterMongoRepository.findOne(loginInfo.username)

@@ -23,6 +23,7 @@ trait RecordSpecificGroupParser extends FieldParsers {
         )
     }
 }
+
 object RecordSpecificGroupParser extends RecordSpecificGroupParser
 
 trait ChemicalGroupParser extends FieldParsers {
@@ -41,6 +42,7 @@ trait ChemicalGroupParser extends FieldParsers {
         )
     }
 }
+
 object ChemicalGroupParser extends ChemicalGroupParser
 
 trait SampleGroupParser extends FieldParsers {
@@ -56,6 +58,7 @@ trait SampleGroupParser extends FieldParsers {
         )
     }
 }
+
 object SampleGroupParser extends SampleGroupParser
 
 trait AnalyticalChemistryGroupParser extends FieldParsers {
@@ -71,6 +74,7 @@ trait AnalyticalChemistryGroupParser extends FieldParsers {
         )
     }
 }
+
 object AnalyticalChemistryGroupParser extends AnalyticalChemistryGroupParser
 
 trait MassSpectralDataGroupParser extends FieldParsers {
@@ -84,6 +88,7 @@ trait MassSpectralDataGroupParser extends FieldParsers {
         )
     }
 }
+
 object MassSpectralDataGroupParser extends MassSpectralDataGroupParser
 
 trait MassSpectralPeakDataGroupParser extends FieldParsers {
@@ -92,24 +97,25 @@ trait MassSpectralPeakDataGroupParser extends FieldParsers {
       lineWhere(tag => tag.startsWith(`PK:ANNOTATION`) || !tag.startsWith("PK$")).* ~
       fieldsStartingWith("PK$") ~
       peakTriple.* ^^ {
-        case pk1 ~ annotation ~ pk2 ~ peaks =>
-          val fields = pk1 ++ pk2
-          val numPeak = fields.getValue(`PK:NUM_PEAK`).flatMap(s => Try(s.toInt).toOption)
-          val others = fields -- List(`PK:SPLASH`)
-          val parsedPeaks = peaks.flatten
+      case pk1 ~ annotation ~ pk2 ~ peaks =>
+        val fields = pk1 ++ pk2
+        val numPeak = fields.getValue(`PK:NUM_PEAK`).flatMap(s => Try(s.toInt).toOption)
+        val others = fields -- List(`PK:SPLASH`)
+        val parsedPeaks = peaks.flatten
 
-          require(numPeak.getOrElse(0) == parsedPeaks.length)
+        require(numPeak.getOrElse(0) == parsedPeaks.length)
 
-          // Remove tag
-          val as = annotation.map(s => s.replaceAll("""PK\$ANNOTATION:""", "").trim)
+        // Remove tag
+        val as = annotation.map(s => s.replaceAll("""PK\$ANNOTATION:""", "").trim)
 
-          MassSpectralPeakDataGroup(
-            fields.getValue(`PK:SPLASH`),
-            as,
-            numPeak.getOrElse(0),
-            PeakData(parsedPeaks),
-            others
-          )
-      }
+        MassSpectralPeakDataGroup(
+          fields.getValue(`PK:SPLASH`),
+          as,
+          numPeak.getOrElse(0),
+          PeakData(parsedPeaks),
+          others
+        )
+    }
 }
+
 object MassSpectralPeakDataGroupParser extends MassSpectralPeakDataGroupParser

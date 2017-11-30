@@ -26,21 +26,21 @@ class DotVisualizerTest extends WordSpec {
       graph.addNode(Vertex("f"))
       graph.addNode(Vertex("g"))
 
-      graph.addEdge(Edge("a","b"))
-      graph.addEdge(Edge("a","c"))
-      graph.addEdge(Edge("b","c"))
-      graph.addEdge(Edge("c","d"))
-      graph.addEdge(Edge("c","e"))
-      graph.addEdge(Edge("b","d"))
-      graph.addEdge(Edge("e","f"))
-      graph.addEdge(Edge("e","g"))
-      graph.addEdge(Edge("d","f"))
+      graph.addEdge(Edge("a", "b"))
+      graph.addEdge(Edge("a", "c"))
+      graph.addEdge(Edge("b", "c"))
+      graph.addEdge(Edge("c", "d"))
+      graph.addEdge(Edge("c", "e"))
+      graph.addEdge(Edge("b", "d"))
+      graph.addEdge(Edge("e", "f"))
+      graph.addEdge(Edge("e", "g"))
+      graph.addEdge(Edge("d", "f"))
 
 
       val viz = new DotVisualizer
 
       val out = new FileOutputStream("graph.txt")
-      viz.visualize[String](graph,out)
+      viz.visualize[String](graph, out)
       out.close()
     }
 

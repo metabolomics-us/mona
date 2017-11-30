@@ -33,10 +33,10 @@ class ElasticMetaDataSerializer extends JsonSerializer[MetaData] with LazyLoggin
             case x: java.lang.Integer => jsonGenerator.writeNumberField(s"${field.getName}_number", x.toString.toDouble)
             case x: java.lang.Float => jsonGenerator.writeNumberField(s"${field.getName}_number", x.toString.toDouble)
             case _ =>
-              if(t != null) {
+              if (t != null) {
                 jsonGenerator.writeStringField(s"${field.getName}_text", t.toString)
                 jsonGenerator.writeStringField(s"${field.getName}_text_analyzed", t.toString)
-              } else{
+              } else {
                 throw new RuntimeException(s"object was null for $metaData, which is not permitted!")
               }
           }

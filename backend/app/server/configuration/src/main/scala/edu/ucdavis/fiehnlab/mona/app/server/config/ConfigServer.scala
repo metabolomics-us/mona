@@ -17,6 +17,6 @@ class ConfigServer {
 
 }
 
-object ConfigServer extends App{
+object ConfigServer extends App {
   new SpringApplication(classOf[ConfigServer]).run()
 }

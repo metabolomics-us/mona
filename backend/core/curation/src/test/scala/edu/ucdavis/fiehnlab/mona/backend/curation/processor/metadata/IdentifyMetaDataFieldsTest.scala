@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata
 
 import java.io.InputStreamReader
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Tags}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Tags}
 import org.scalatest.WordSpec
 
 /**

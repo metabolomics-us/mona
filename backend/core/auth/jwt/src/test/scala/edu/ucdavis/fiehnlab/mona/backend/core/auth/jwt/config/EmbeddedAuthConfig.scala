@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.types.TokenSecret
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.{ MongoConfig}
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.test.context.TestPropertySource
 

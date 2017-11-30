@@ -25,18 +25,21 @@ class CompoundClassStatisticsService {
 
   /**
     * Get all data in the compound class statistics repository
+    *
     * @return
     */
   def getCompoundClassStatistics: Iterable[CompoundClassStatistics] = compoundClassStatisticsRepository.findAll().asScala
 
   /**
     * Get data for the given compound class from the metadata statistics repository
+    *
     * @return
     */
   def getCompoundClassStatistics(compoundClass: String): CompoundClassStatistics = compoundClassStatisticsRepository.findOne(compoundClass)
 
   /**
     * Count the data in the compound class statistics repository
+    *
     * @return
     */
   def countCompoundClassStatistics: Long = compoundClassStatisticsRepository.count()
@@ -113,6 +116,7 @@ class CompoundClassStatisticsService {
 
   /**
     * Collect a list of compound class groups with spectrum and compound counts
+    *
     * @return
     */
   def updateCompoundClassStatistics(): Unit = {
@@ -125,4 +129,5 @@ class CompoundClassStatisticsService {
 }
 
 private case class CompoundClassAggregation(_id: String, value: CompoundClassCount)
+
 private case class CompoundClassCount(spectra: Int, compounds: Int)

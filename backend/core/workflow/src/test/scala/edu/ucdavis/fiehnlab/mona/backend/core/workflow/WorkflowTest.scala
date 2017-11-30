@@ -28,7 +28,7 @@ class WorkflowTest extends WordSpec {
   val workflow: Workflow[LinearTest] = null
 
   @Autowired
-  val testListener:TestListener = null
+  val testListener: TestListener = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 

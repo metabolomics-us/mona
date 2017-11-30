@@ -17,14 +17,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 
 @Configuration
-@EnableMongoRepositories(basePackageClasses = Array(classOf[WebHookRepository],classOf[WebHookResultRepository]))
-@ComponentScan(basePackageClasses = Array(classOf[WebhookController],classOf[WebHookRepository],classOf[WebHookService],classOf[WebHookEventBusListener]))
-@Import(Array(classOf[MonaEventBusConfiguration],classOf[MonaNotificationBusConfiguration],classOf[SwaggerConfig]))
+@EnableMongoRepositories(basePackageClasses = Array(classOf[WebHookRepository], classOf[WebHookResultRepository]))
+@ComponentScan(basePackageClasses = Array(classOf[WebhookController], classOf[WebHookRepository], classOf[WebHookService], classOf[WebHookEventBusListener]))
+@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[SwaggerConfig]))
 @Order(1)
 class WebHookSecurity extends WebSecurityConfigurerAdapter {
 
   @Autowired
-  val restSecurityService:RestSecurityService = null
+  val restSecurityService: RestSecurityService = null
 
   /**
     * this method configures authorized access to the system

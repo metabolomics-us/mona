@@ -102,7 +102,7 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
       else if (inchiMetaData.isDefined && inchiMetaData.get.value.toString != "")
         inchiMetaData.get.value.toString
       else
-          null
+        null
 
     if (inchi != null) {
       logger.info(s"$id: Converting InChI to MOL definition...")

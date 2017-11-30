@@ -35,7 +35,7 @@ class WorkflowBuilder[TYPE: ClassTag] {
   /**
     * internal flag if this builder has been used already
     */
-  private var alreadyBuild:Boolean = false
+  private var alreadyBuild: Boolean = false
 
   /**
     * helps us with annotation related parts of the workflow
@@ -56,7 +56,7 @@ class WorkflowBuilder[TYPE: ClassTag] {
     if (graph.size == 0) {
       graph.addNode(node)
     } else {
-      if(graph.tails.size > 1){
+      if (graph.tails.size > 1) {
         throw new RuntimeException("sorry we are not able to determine the end of the workflow, please utilize manual linking!")
       }
 
@@ -164,17 +164,18 @@ class WorkflowBuilder[TYPE: ClassTag] {
     *
     * @param listener
     */
-  def add(listener: WorkflowListener[TYPE]):WorkflowBuilder[TYPE] = {
+  def add(listener: WorkflowListener[TYPE]): WorkflowBuilder[TYPE] = {
     listeners.add(listener)
     this
   }
 
   /**
     * overloaded add operator
+    *
     * @param listener
     * @return
     */
-  def +(listener:WorkflowListener[TYPE]): WorkflowBuilder[TYPE] = {
+  def +(listener: WorkflowListener[TYPE]): WorkflowBuilder[TYPE] = {
     add(listener)
   }
 
@@ -184,7 +185,7 @@ class WorkflowBuilder[TYPE: ClassTag] {
     * @return
     */
   def build(): Workflow[TYPE] = {
-    if(alreadyBuild){
+    if (alreadyBuild) {
       throw new RuntimeException("we are sorry, you need to create a new builder, this one is exhausted!")
     } else {
       alreadyBuild = true
@@ -296,5 +297,5 @@ class AnnotationHelper[TYPE] extends LazyLogging {
   */
 object WorkflowBuilder {
 
-  def create[TYPE : ClassTag]:WorkflowBuilder[TYPE] = new WorkflowBuilder[TYPE]
+  def create[TYPE: ClassTag]: WorkflowBuilder[TYPE] = new WorkflowBuilder[TYPE]
 }

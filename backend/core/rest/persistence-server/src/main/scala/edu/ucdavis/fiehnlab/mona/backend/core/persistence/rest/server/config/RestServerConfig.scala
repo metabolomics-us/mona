@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config
 
-import java.io.OutputStream
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http._
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.{AbstractHttpMessageConverter, HttpMessageConverter}
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -144,12 +142,6 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
       case x: Iterable[_] =>
         x.foreach(write)
 
-      case x: Wrappers.JIterableWrapper[_] =>
-        x.foreach(write)
-
-      case x: Wrappers.JListWrapper[_] =>
-        x.foreach(write)
-
       case x: util.Collection[_] =>
         x.asScala.foreach(write)
 
@@ -166,7 +158,7 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
       case q if q == classOf[Wrappers.JListWrapper[_]] => true
       case q if q == classOf[util.Collection[_]] => true
       case _ =>
-        logger.debug(s"Unknown class type provided to MSP converter: ${clazz}")
+        logger.debug(s"Unknown class type provided to MSP converter: $clazz")
         false
     }
   }

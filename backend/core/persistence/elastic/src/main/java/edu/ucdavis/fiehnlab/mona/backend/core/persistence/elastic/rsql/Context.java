@@ -7,15 +7,13 @@ public class Context {
     private Context parent = null;
 
     public String buildNestedPath() {
-        if(parent != null) {
-            if(parent.buildNestedPath() == ""){
+        if (parent != null) {
+            if (parent.buildNestedPath() == "") {
                 return parentPath;
-            }
-            else {
+            } else {
                 return parent.buildNestedPath() + "." + parentPath;
             }
-        }
-        else{
+        } else {
             return "";
         }
     }
@@ -41,7 +39,7 @@ public class Context {
         return context;
     }
 
-    public Context getParent(){
+    public Context getParent() {
         return parent;
     }
 

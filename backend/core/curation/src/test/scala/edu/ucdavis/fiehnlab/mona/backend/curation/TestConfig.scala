@@ -31,7 +31,7 @@ class TestConfig {
   def restRepositoryWriter(token: LoginResponse) = new RestRepositoryWriter(token.token)
 
   @Bean
-  def loginService:LoginService = new MongoLoginService
+  def loginService: LoginService = new MongoLoginService
 
   @Bean
   def loginResponse: LoginResponse = {

@@ -6,7 +6,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.service.WebHookService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 /**
   * listens to the internally defined event bus and triggers notifications of the webhooks everytime
@@ -20,7 +19,7 @@ class WebHookEventBusListener @Autowired()(val bus: EventBus[Spectrum]) extends 
 
   def received(event: Event[Spectrum]): Unit = {
     logger.debug(s"event of class: ${event.content.getClass.getName}")
-    webHookService.trigger(event.content.id,event.eventType)
+    webHookService.trigger(event.content.id, event.eventType)
   }
 
 }

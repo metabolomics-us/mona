@@ -33,7 +33,7 @@ class NormalizeMetaDataNames extends ItemProcessor[Spectrum, Spectrum] {
     * @param metaData
     * @return
     */
-  def renameMetaData(metaData:Array[MetaData]): Array[MetaData] = {
+  def renameMetaData(metaData: Array[MetaData]): Array[MetaData] = {
     metaData.map(x =>
       if (SYNONYMS.contains(x.name.toLowerCase)) {
         x.copy(name = SYNONYMS(x.name.toLowerCase))

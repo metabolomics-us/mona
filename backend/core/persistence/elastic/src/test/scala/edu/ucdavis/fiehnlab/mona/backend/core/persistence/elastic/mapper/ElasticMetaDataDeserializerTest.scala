@@ -26,7 +26,7 @@ class ElasticMetaDataDeserializerTest extends FunSuite {
     content.toString
   }
 
-  def getParser(string:String) : JsonParser = {
+  def getParser(string: String): JsonParser = {
     val factory = new JsonFactory()
     val parser = factory.createParser(string)
 
@@ -37,7 +37,7 @@ class ElasticMetaDataDeserializerTest extends FunSuite {
     val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, "test")
     val json = getJson(data)
     val deserializer = new ElasticMetaDataDeserializer
-    val copy = deserializer.deserialize(getParser(json),null)
+    val copy = deserializer.deserialize(getParser(json), null)
 
     assert(copy.value.isInstanceOf[String])
     assert(copy.value == "test")
@@ -48,7 +48,7 @@ class ElasticMetaDataDeserializerTest extends FunSuite {
     val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, 123)
     val json = getJson(data)
     val deserializer = new ElasticMetaDataDeserializer
-    val copy = deserializer.deserialize(getParser(json),null)
+    val copy = deserializer.deserialize(getParser(json), null)
 
     assert(copy.value.isInstanceOf[Int])
     assert(copy.value == 123)
@@ -59,7 +59,7 @@ class ElasticMetaDataDeserializerTest extends FunSuite {
     val data = MetaData("none", computed = false, hidden = false, "test", null, null, null, 12.21)
     val json = getJson(data)
     val deserializer = new ElasticMetaDataDeserializer
-    val copy = deserializer.deserialize(getParser(json),null)
+    val copy = deserializer.deserialize(getParser(json), null)
 
     assert(copy.value.isInstanceOf[Double])
     assert(copy.value == 12.21)

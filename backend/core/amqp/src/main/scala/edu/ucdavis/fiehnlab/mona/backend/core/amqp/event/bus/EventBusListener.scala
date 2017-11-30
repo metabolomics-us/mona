@@ -49,7 +49,7 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
   def init(): Unit = {
     logger.info("configuring queue connection")
 
-    if(queueName == "unknown") {
+    if (queueName == "unknown") {
       queueName = new Base64UrlNamingStrategy().generateName()
     } else {
       queueName = s"${eventBus.busName}-$queueName"
@@ -92,14 +92,14 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
     logger.debug(s"received event at ${getClass.getSimpleName}")
     logger.debug(s"message received: ${new String(message.getBody)}")
     logger.debug(s"type of class: ${classTag[T].runtimeClass}")
-    val content:Event[Any] = objectMapper.readValue(message.getBody,classTag[Event[T]].runtimeClass).asInstanceOf[Event[Any]]
+    val content: Event[Any] = objectMapper.readValue(message.getBody, classTag[Event[T]].runtimeClass).asInstanceOf[Event[Any]]
     logger.debug(s"type of event is ${content.getClass.getSimpleName}")
     logger.debug(s"type of event content is ${content.content.getClass.getSimpleName}")
 
-    val newContent:T = objectMapper.convertValue(content.content,classTag[T].runtimeClass).asInstanceOf[T]
+    val newContent: T = objectMapper.convertValue(content.content, classTag[T].runtimeClass).asInstanceOf[T]
     logger.debug(s"type of converted event content is ${newContent.getClass.getSimpleName}")
 
-    received(Event[T](newContent,content.dateFired,content.eventType))
+    received(Event[T](newContent, content.dateFired, content.eventType))
   }
 }
 
@@ -113,6 +113,7 @@ class ReceivedEventCounter[T: ClassTag](override val eventBus: EventBus[T]) exte
     * atomic counter to keep track of all events
     */
   private val counter: AtomicLong = new AtomicLong()
+
   /**
     * reports how many events the bus has seen
     *

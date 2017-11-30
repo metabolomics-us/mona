@@ -169,19 +169,19 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
       }
     }
 
-//    Disable LipidMaps terms as they are redundant to the main classification
-//    if (classification.predicted_lipidmaps_terms != null) {
-//      classification.predicted_lipidmaps_terms.foreach { term =>
-//        buffer += MetaData("classification", computed = true, hidden = false, "predicted lipidmaps", null, null, null, term)
-//      }
-//    }
+    //    Disable LipidMaps terms as they are redundant to the main classification
+    //    if (classification.predicted_lipidmaps_terms != null) {
+    //      classification.predicted_lipidmaps_terms.foreach { term =>
+    //        buffer += MetaData("classification", computed = true, hidden = false, "predicted lipidmaps", null, null, null, term)
+    //      }
+    //    }
 
-//    Disable storing of substituents
-//    if (classification.substituents != null) {
-//      classification.substituents.foreach { term =>
-//        buffer += MetaData("classification", computed = true, hidden = false, "substituents", null, null, null, term)
-//      }
-//    }
+    //    Disable storing of substituents
+    //    if (classification.substituents != null) {
+    //      classification.substituents.foreach { term =>
+    //        buffer += MetaData("classification", computed = true, hidden = false, "substituents", null, null, null, term)
+    //      }
+    //    }
 
     if (compound.classification != null) {
       compound.classification.foreach {
@@ -194,6 +194,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
   /**
     * Schedule the classification of this compound using available structures
+    *
     * @param compound
     */
   def scheduleClassification(compound: Compound, id: String): Compound = {

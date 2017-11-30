@@ -49,6 +49,7 @@ class StatisticsService extends LazyLogging {
 
   /**
     * Update the data in the global statistics repository
+    *
     * @return
     */
   def updateGlobalStatistics(): GlobalStatistics = {

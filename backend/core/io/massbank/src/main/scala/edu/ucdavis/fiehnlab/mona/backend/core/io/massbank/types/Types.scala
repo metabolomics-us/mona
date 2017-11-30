@@ -3,13 +3,13 @@ package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.groups._
 
 case class MassBankRecord(
-  recordSpecificGroup: RecordSpecificGroup,
-  chemicalGroup: ChemicalGroup,
-  sampleGroup: SampleGroup,
-  analyticalChemistryGroup: AnalyticalChemistryGroup,
-  massSpectralDataGroup: MassSpectralDataGroup,
-  massSpectraPeakDataGroup: MassSpectralPeakDataGroup
-)
+                           recordSpecificGroup: RecordSpecificGroup,
+                           chemicalGroup: ChemicalGroup,
+                           sampleGroup: SampleGroup,
+                           analyticalChemistryGroup: AnalyticalChemistryGroup,
+                           massSpectralDataGroup: MassSpectralDataGroup,
+                           massSpectraPeakDataGroup: MassSpectralPeakDataGroup
+                         )
 
 case class PeakTriple(mz: Double, absInt: Double, relInt: Double)
 

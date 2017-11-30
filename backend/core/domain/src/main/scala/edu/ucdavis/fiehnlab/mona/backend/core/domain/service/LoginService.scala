@@ -23,6 +23,7 @@ trait LoginService {
 
   /**
     * generates publicly interesting info about the given token
+    *
     * @param token
     * @return
     */
@@ -30,6 +31,7 @@ trait LoginService {
 
   /**
     * extends the given token to create a token which doesn't expire
+    *
     * @param token
     * @return
     */

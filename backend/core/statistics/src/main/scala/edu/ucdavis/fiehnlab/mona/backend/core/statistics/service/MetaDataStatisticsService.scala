@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 import com.mongodb.{BasicDBObject, DBObject}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary, MetaDataValueCount}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.mongodb.core.MongoOperations
@@ -31,6 +31,7 @@ class MetaDataStatisticsService {
 
   /**
     * Collect a list of unique metadata names
+    *
     * @return
     */
   def metaDataNameAggregation(): Array[MetaDataStatisticsSummary] = {
@@ -50,6 +51,7 @@ class MetaDataStatisticsService {
 
   /**
     * Collect a list of unique metadata values and their respective counts for a given metadata name
+    *
     * @param metaDataName name to query
     * @return
     */
@@ -88,12 +90,14 @@ class MetaDataStatisticsService {
 
   /**
     * Get all data in the metadata statistics repository
+    *
     * @return
     */
   def getMetaDataStatistics: Iterable[MetaDataStatistics] = metaDataStatisticsRepository.findAll().asScala
 
   /**
     * Get data for the given metadata name from the metadata statistics repository
+    *
     * @return
     */
   def getMetaDataStatistics(metaDataName: String): MetaDataStatistics = metaDataStatisticsRepository.findOne(metaDataName)
@@ -111,6 +115,7 @@ class MetaDataStatisticsService {
 
   /**
     * Count the data in the metadata statistics repository
+    *
     * @return
     */
   def countMetaDataStatistics: Long = metaDataStatisticsRepository.count()
@@ -118,6 +123,7 @@ class MetaDataStatisticsService {
 
   /**
     * Update the data in the metadata statistics repository
+    *
     * @return
     */
   def updateMetaDataStatistics(sliceCount: Int = 1000): Unit = {

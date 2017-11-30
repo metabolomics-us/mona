@@ -14,12 +14,12 @@ import org.springframework.context.annotation.{Bean, Import, Primary}
   */
 @Import(Array(classOf[RestClientConfig], classOf[EmbeddedRestServerConfig], classOf[AuthSecurityConfig], classOf[StatisticsRepositoryConfig]))
 @SpringBootApplication
-class RestClientTestConfig{
+class RestClientTestConfig {
 
   @Bean
   @Primary
-  def loginService:LoginService = new RestLoginService("localhost", 44444)
+  def loginService: LoginService = new RestLoginService("localhost", 44444)
 
   @Bean
-  def loginServiceDelegate:LoginService = new MongoLoginService
+  def loginServiceDelegate: LoginService = new MongoLoginService
 }

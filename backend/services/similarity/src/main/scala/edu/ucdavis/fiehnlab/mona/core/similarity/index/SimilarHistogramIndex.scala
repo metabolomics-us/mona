@@ -18,6 +18,7 @@ class SimilarHistogramIndex(binningMethod: BinningMethod, cache: SpectrumCache, 
 
   /**
     * Searches against this index, using the provided similarity measure and tolerance setting
+    *
     * @param spectrum
     * @param internalKey
     * @return

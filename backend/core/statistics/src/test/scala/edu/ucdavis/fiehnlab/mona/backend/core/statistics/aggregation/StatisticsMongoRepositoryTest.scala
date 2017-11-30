@@ -25,7 +25,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
+@TestPropertySource(locations = Array("classpath:application.properties"))
 class StatisticsMongoRepositoryTest extends WordSpec {
 
   @Autowired
@@ -39,7 +39,7 @@ class StatisticsMongoRepositoryTest extends WordSpec {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "Metadata aggregation queries" should  {
+  "Metadata aggregation queries" should {
 
     spectrumMongoRepository.deleteAll()
     exampleRecords.foreach(spectrumMongoRepository.save(_))

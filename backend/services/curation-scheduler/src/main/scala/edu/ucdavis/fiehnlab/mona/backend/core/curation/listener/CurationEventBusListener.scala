@@ -24,7 +24,7 @@ class CurationEventBusListener @Autowired()(val bus: EventBus[Spectrum]) extends
     */
   override def received(event: Event[Spectrum]): Unit = {
     event.eventType match {
-        //we only care about ADDs at this point in time
+      //we only care about ADDs at this point in time
       case Event.ADD =>
         curationService.scheduleSpectrum(event.content)
 

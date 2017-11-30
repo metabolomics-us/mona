@@ -31,6 +31,7 @@ abstract class StringBasedMapIndex(binningMethod: BinningMethod, cache: Spectrum
 
   /**
     * Defined the backing for the internal association with keys
+    *
     * @return
     */
   def createAssociationBacking(): util.Set[SimpleSpectrum] = new util.HashSet[SimpleSpectrum]
@@ -44,7 +45,7 @@ abstract class StringBasedMapIndex(binningMethod: BinningMethod, cache: Spectrum
   override def doIndex(spectrum: SimpleSpectrum): Index = {
     val key: String = buildKey(spectrum)
 
-    if(!indexMap.contains(key)) {
+    if (!indexMap.contains(key)) {
       indexMap.put(key, createAssociationBacking())
     }
 
@@ -70,15 +71,16 @@ abstract class StringBasedMapIndex(binningMethod: BinningMethod, cache: Spectrum
     // Find identical spectra in the associated collection
     val result = filteredData.par.find(s => s.splash == spectrum.splash)
 
-    if(result.isEmpty) {
-       internalIndex.lookup(spectrum)
+    if (result.isEmpty) {
+      internalIndex.lookup(spectrum)
     } else {
-       result
+      result
     }
   }
 
   /**
     * Builds the internal key to utilize
+    *
     * @param key
     * @return
     */
@@ -111,19 +113,21 @@ abstract class StringBasedMapIndex(binningMethod: BinningMethod, cache: Spectrum
       logger.debug(s"utilized key: $internalKey")
 
       indexMap.get(internalKey).toSet[SimpleSpectrum]
-    } else{
+    } else {
       List.empty
     }
   }
 
   /**
     * Size of this index
+    *
     * @return
     */
   override def size: Int = internalIndex.size
 
   /**
     * Returns the size of the internal map of this index
+    *
     * @return
     */
   def countOfBuckets: Int = indexMap.size()

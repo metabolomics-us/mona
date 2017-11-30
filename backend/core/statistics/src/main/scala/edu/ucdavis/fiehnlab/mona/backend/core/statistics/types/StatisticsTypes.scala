@@ -25,9 +25,9 @@ case class MetaDataStatisticsSummary(
                                     )
 
 case class MetaDataValueCount(
-                        value: String,
-                        count: Int
-                        )
+                               value: String,
+                               count: Int
+                             )
 
 @Document(collection = "STATISTICS_TAGS")
 case class TagStatistics(
@@ -41,24 +41,24 @@ case class TagStatistics(
 
 @Document(collection = "STATISTICS")
 case class GlobalStatistics(
-                            @(Id@field)
-                            id: String,
-                            date: Date,
-                            spectrumCount: Long,
-                            compoundCount: Long,
-                            metaDataCount: Long,
-                            metaDataValueCount: Long,
-                            tagCount: Long,
-                            tagValueCount: Long,
-                            submitterCount: Long
+                             @(Id@field)
+                             id: String,
+                             date: Date,
+                             spectrumCount: Long,
+                             compoundCount: Long,
+                             metaDataCount: Long,
+                             metaDataValueCount: Long,
+                             tagCount: Long,
+                             tagValueCount: Long,
+                             submitterCount: Long
                            )
 
 @Document(collection = "STATISTICS_COMPOUNDCLASS")
 case class CompoundClassStatistics(
-                                   @(Id@field)
-                                   name: String,
-                                   spectrumCount: Int,
-                                   compoundCount: Int
+                                    @(Id@field)
+                                    name: String,
+                                    spectrumCount: Int,
+                                    compoundCount: Int
                                   )
 
 @Document(collection = "STATISTICS_SUBMITTER")

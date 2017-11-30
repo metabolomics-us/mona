@@ -28,6 +28,7 @@ class TagStatisticsService {
 
   /**
     * Collect a list of unique tags with their respective counts
+    *
     * @return
     */
   def tagAggregation(): Array[TagStatistics] = {
@@ -48,6 +49,7 @@ class TagStatisticsService {
   /**
     * Collect a list of library tags from the library sub-object and update the tag statistics collection
     * by marking entries with the "library" category
+    *
     * @return
     */
   def libraryTagsAggregation(): Array[TagStatistics] = {
@@ -74,6 +76,7 @@ class TagStatisticsService {
 
   /**
     * Get all data in the tag statistics repository
+    *
     * @return
     */
   def getTagStatistics: Iterable[TagStatistics] = tagStatisticsRepository.findAll().asScala
@@ -85,12 +88,14 @@ class TagStatisticsService {
 
   /**
     * Count the data in the tag statistics repository
+    *
     * @return
     */
   def countTagStatistics: Long = tagStatisticsRepository.count()
 
   /**
     * Update the data in the tag statistics repository
+    *
     * @return
     */
   def updateTagStatistics(): Unit = {

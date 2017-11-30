@@ -27,7 +27,7 @@ class JWTTokenService extends TokenService {
     * @param user
     * @return
     */
-  override def generateToken(user: User,timeOfLife:Int = 24*7): String = {
+  override def generateToken(user: User, timeOfLife: Int = 24 * 7): String = {
 
     val issueDate = new Date()
     val experiationDate = DateUtils.addHours(issueDate, timeOfLife)
@@ -49,6 +49,6 @@ class JWTTokenService extends TokenService {
   override def info(token: String): LoginInfo = {
     val claims: Claims = Jwts.parser().setSigningKey(tokenSecret.value).parseClaimsJws(token).getBody
 
-    LoginInfo(claims.getSubject, claims.getIssuedAt, claims.getExpiration,claims.get("roles").asInstanceOf[java.util.List[String]])
+    LoginInfo(claims.getSubject, claims.getIssuedAt, claims.getExpiration, claims.get("roles").asInstanceOf[java.util.List[String]])
   }
 }

@@ -52,7 +52,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 
     "A Rest Controller" should {
       "save may require authentication" in {
-        if(saveRequiresAuthentication) {
+        if (saveRequiresAuthentication) {
           given().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").`then`().statusCode(401)
 
           authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().post(s"$endpoint").`then`().statusCode(200)
@@ -62,7 +62,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
       }
 
       "searchCount" in {
-        if(requiresAuthForAllRequests) {
+        if (requiresAuthForAllRequests) {
           given().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").`then`().statusCode(401)
 
           authenticate().contentType("application/json; charset=UTF-8").when().get(s"$endpoint/count").`then`().statusCode(200)
@@ -72,11 +72,11 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
       }
 
       "get" in {
-        if(requiresAuthForAllRequests) {
+        if (requiresAuthForAllRequests) {
           given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(401)
 
           authenticate().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(200)
-        } else{
+        } else {
           given().log().all(true).contentType("application/json; charset=UTF-8").when().get(s"$endpoint/$getId").`then`().statusCode(200)
         }
       }
@@ -86,7 +86,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 
         authenticate().contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").`then`().statusCode(200)
 
-        if(requiredAdminForWriting) {
+        if (requiredAdminForWriting) {
           authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(getValue).when().put(s"$endpoint/$getId").`then`().statusCode(403)
         }
       }
@@ -106,7 +106,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 /**
   * provides us with a simple, elegant way to refresh the application context between runs
   */
-@WebIntegrationTest(Array("server.port=9999","eureka.client.enabled:false"))
+@WebIntegrationTest(Array("server.port=9999", "eureka.client.enabled:false"))
 abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
 
   val port: Int = 9999

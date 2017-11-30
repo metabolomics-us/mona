@@ -10,6 +10,7 @@ trait Similarity extends LazyLogging {
 
   /**
     * Computes the similarity between two mass spectra
+    *
     * @param unknown
     * @param reference
     * @return
@@ -19,6 +20,7 @@ trait Similarity extends LazyLogging {
   /**
     * Computes the similarity between two SPLASH histogram blocks
     * TODO implement
+    *
     * @param unknown
     * @param reference
     * @return

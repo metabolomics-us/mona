@@ -124,6 +124,7 @@ class DownloadSchedulerController extends LazyLogging {
 
   /**
     * Add a new predefined download
+    *
     * @return
     */
   @RequestMapping(path = Array("/predefined"), method = Array(RequestMethod.POST))

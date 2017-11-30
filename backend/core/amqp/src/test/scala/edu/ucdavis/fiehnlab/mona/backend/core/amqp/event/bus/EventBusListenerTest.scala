@@ -118,7 +118,7 @@ class StringTestConfig {
   def eventCounter(eventBus: EventBus[Spectrum]): ReceivedEventCounter[Spectrum] = new ReceivedEventCounter[Spectrum](eventBus)
 }
 
-class EventBusTestListener[T : ClassTag](override val eventBus: EventBus[T]) extends EventBusListener[T](eventBus) {
+class EventBusTestListener[T: ClassTag](override val eventBus: EventBus[T]) extends EventBusListener[T](eventBus) {
   val events = new CountDownLatch(2)
 
   /**

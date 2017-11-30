@@ -63,6 +63,7 @@ class DownloadSchedulerService extends LazyLogging {
 
   /**
     * Schedules an existing query export to be re-downloaded
+    *
     * @param id
     * @return
     */

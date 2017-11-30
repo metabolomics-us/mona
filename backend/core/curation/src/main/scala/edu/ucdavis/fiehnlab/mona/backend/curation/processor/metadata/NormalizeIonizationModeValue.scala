@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
   * Created by sajjan on 4/16/16.
   */
 @Step(description = "this step will update ionization type metadata values to standard values")
-class NormalizeIonizationModeValue extends ItemProcessor[Spectrum,Spectrum] with LazyLogging {
+class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
   val POSITIVE_TERMS: Array[String] = Array("positive", "pos", "p", "+")
   val NEGATIVE_TERMS: Array[String] = Array("negative", "neg", "n", "-")
   val ALL_TERMS: Array[String] = POSITIVE_TERMS ++ NEGATIVE_TERMS
@@ -41,7 +41,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum,Spectrum] with
 
         val value: String = matches.head.value.toString.toLowerCase.trim
 
-        if(POSITIVE_TERMS.contains(value)) {
+        if (POSITIVE_TERMS.contains(value)) {
           logger.info(s"${spectrum.id}: Identified ionization type 'value' as positive mode")
 
           spectrum.copy(
@@ -50,7 +50,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum,Spectrum] with
           )
         }
 
-        else if(NEGATIVE_TERMS.contains(value)) {
+        else if (NEGATIVE_TERMS.contains(value)) {
           logger.info(s"${spectrum.id}: Identified ionization type 'value' as negative mode")
 
           spectrum.copy(
@@ -68,7 +68,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum,Spectrum] with
           )
         }
       } else {
-        matches.foreach { x => logger.warn(s"\t${x.name} = ${x.value}")}
+        matches.foreach { x => logger.warn(s"\t${x.name} = ${x.value}") }
         logger.warn(s"${spectrum.id}: Multiple ionization mode matches!")
 
         spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Multiple ionization mode/types identified"))
@@ -110,7 +110,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum,Spectrum] with
 
         spectrum.copy(score = CurationUtilities.addImpact(spectrum.score, -1, "Ionization mode/type unidentifiable"))
       } else if (foundPositive + foundNegative == 1) {
-        logger.info(s"${spectrum.id}: Identified ionization mode as "+ (if (foundPositive > 0) "positive" else "negative"))
+        logger.info(s"${spectrum.id}: Identified ionization mode as " + (if (foundPositive > 0) "positive" else "negative"))
 
         spectrum.copy(
           metaData = (updatedMetaData :+ possibleIonModeData.head).toArray,

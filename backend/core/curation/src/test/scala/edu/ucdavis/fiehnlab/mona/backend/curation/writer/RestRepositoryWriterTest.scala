@@ -26,7 +26,7 @@ import scala.concurrent.duration._
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
 @WebIntegrationTest(Array("server.port=44444"))
-class RestRepositoryWriterTest extends WordSpec  with Eventually{
+class RestRepositoryWriterTest extends WordSpec with Eventually {
 
   @Value( """${local.server.port}""")
   val port: Int = 0

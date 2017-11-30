@@ -9,15 +9,17 @@ trait WorkflowListener[T] {
 
   /**
     * started processing this step
+    *
     * @param value
     * @param step
     */
-  def startedProcessing(value:T, step:Step)
+  def startedProcessing(value: T, step: Step)
 
   /**
     * finished processing with this step
+    *
     * @param value
     * @param step
     */
-  def finishedProcessing(value:T, step:Step)
+  def finishedProcessing(value: T, step: Step)
 }

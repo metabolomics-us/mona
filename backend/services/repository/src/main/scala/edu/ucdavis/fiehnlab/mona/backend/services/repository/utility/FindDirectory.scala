@@ -14,10 +14,11 @@ class FindDirectory {
 
   /**
     * computes our corrected directory for usage
+    *
     * @return
     */
   def dir: String = {
-    if(exportDirectory.endsWith(System.getProperty("file.separator"))) {
+    if (exportDirectory.endsWith(System.getProperty("file.separator"))) {
       s"${exportDirectory}mona_repository"
     } else {
       s"${exportDirectory}${System.getProperty("file.separator")}mona_repository"

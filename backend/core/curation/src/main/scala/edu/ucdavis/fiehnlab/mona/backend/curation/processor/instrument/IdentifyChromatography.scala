@@ -97,10 +97,10 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
           else
             spectrum.tags :+ Tags(ruleBased = true, CommonTags.GCMS_SPECTRUM)
 
-         spectrum.copy(
-           tags = updatedTags,
-           score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as GC-MS")
-         )
+        spectrum.copy(
+          tags = updatedTags,
+          score = CurationUtilities.addImpact(spectrum.score, 1, "Chromatography identified as GC-MS")
+        )
       }
 
       else if (isLCMS) {
@@ -124,10 +124,10 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
 
         // Add CEMS tag
         val updatedTags: Array[Tags] =
-        if (spectrum.tags.exists(_.text == CommonTags.CEMS_SPECTRUM))
-          spectrum.tags
-        else
-          spectrum.tags :+ Tags(ruleBased = true, CommonTags.CEMS_SPECTRUM)
+          if (spectrum.tags.exists(_.text == CommonTags.CEMS_SPECTRUM))
+            spectrum.tags
+          else
+            spectrum.tags :+ Tags(ruleBased = true, CommonTags.CEMS_SPECTRUM)
 
         spectrum.copy(
           tags = updatedTags,

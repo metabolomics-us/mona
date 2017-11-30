@@ -14,7 +14,7 @@ import scala.reflect._
 /**
   * this is a simple rest based implementation of our login service
   */
-class RestLoginService(val remoteServer: String, val remotePort: Int, val protocol: String = "http") extends LoginService with LazyLogging{
+class RestLoginService(val remoteServer: String, val remotePort: Int, val protocol: String = "http") extends LoginService with LazyLogging {
 
   @Autowired
   val restOperations: RestOperations = null
@@ -41,7 +41,7 @@ class RestLoginService(val remoteServer: String, val remotePort: Int, val protoc
     val url = s"$protocol://$remoteServer:$remotePort/rest/auth/info"
     logger.info(s"invoking url: $url")
 
-    restOperations.exchange(url,HttpMethod.POST, new HttpEntity[LoginResponse](LoginResponse(token), header), classOf[LoginInfo]).getBody
+    restOperations.exchange(url, HttpMethod.POST, new HttpEntity[LoginResponse](LoginResponse(token), header), classOf[LoginInfo]).getBody
   }
 
   /**

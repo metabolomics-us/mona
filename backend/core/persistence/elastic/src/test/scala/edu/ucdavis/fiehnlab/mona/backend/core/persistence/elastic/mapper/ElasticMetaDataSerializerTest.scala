@@ -28,7 +28,7 @@ class ElasticMetaDataSerializerTest extends FunSuite {
     println(s"content: \n ${content.toString}")
 
     assert(content.toString.contains("value_text"))
-    assert(!content.toString.contains("value_number") )
+    assert(!content.toString.contains("value_number"))
     assert(!content.toString.contains("value_boolean"))
   }
 
@@ -48,8 +48,8 @@ class ElasticMetaDataSerializerTest extends FunSuite {
     println(s"content: \n ${content.toString}")
 
     assert(!content.toString.contains("value_text"))
-    assert(!content.toString.contains("value_number") )
-    assert(content.toString.contains("value_boolean") )
+    assert(!content.toString.contains("value_number"))
+    assert(content.toString.contains("value_boolean"))
   }
 
   test("testSerializeNumber") {
@@ -68,7 +68,7 @@ class ElasticMetaDataSerializerTest extends FunSuite {
     println(s"content: \n ${content.toString}")
 
     assert(!content.toString.contains("value_text"))
-    assert(content.toString.contains("value_number") )
-    assert(!content.toString.contains("value_boolean") )
+    assert(content.toString.contains("value_number"))
+    assert(!content.toString.contains("value_boolean"))
   }
 }

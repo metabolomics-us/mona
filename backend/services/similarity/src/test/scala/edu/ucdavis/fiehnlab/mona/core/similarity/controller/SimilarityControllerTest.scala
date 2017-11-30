@@ -9,7 +9,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.core.similarity.SimilarityService
-import edu.ucdavis.fiehnlab.mona.core.similarity.index.PeakIndex
 import edu.ucdavis.fiehnlab.mona.core.similarity.service.SimilarityStartupService
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.AlgorithmTypes.AlgorithmType
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{IndexType, PeakSearchRequest, SearchResult, SimilaritySearchRequest}
@@ -186,4 +185,5 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
 }
 
 case class RestIndexDefinition(indexType: RestIndexTypeDefinition, indexName: String, indexSize: Int)
+
 case class RestIndexTypeDefinition(enumClass: String, value: String)

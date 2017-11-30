@@ -10,9 +10,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.Res
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.{SpringJUnit4ClassRunner, SpringRunner}
 
 import scala.collection.JavaConverters._
 import scala.util.Properties
@@ -20,15 +22,14 @@ import scala.util.Properties
 /**
   * Created by wohlg on 3/27/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig],classOf[JWTAuthenticationConfig]))
-@WebIntegrationTest(Array("server.port=44444"))
-class RestLoginServiceTest extends WordSpec with LazyLogging{
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT, properties = Array("server.port=44444"))
+class RestLoginServiceTest extends WordSpec with LazyLogging {
 
-  val keepRunning = Properties.envOrElse("keep.server.running","false").toBoolean
+  val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
 
   @Autowired
-  val loginService:LoginService = null
+  val loginService: LoginService = null
 
   @Autowired
   val userRepo: UserRepository = null
@@ -49,12 +50,12 @@ class RestLoginServiceTest extends WordSpec with LazyLogging{
     }
 
     "login" in {
-      val token = loginService.login(LoginRequest("admin","secret"))
+      val token = loginService.login(LoginRequest("admin", "secret"))
       logger.info(s"my token is ${token.token}")
-
     }
+
     "extend" in {
-      val token = loginService.login(LoginRequest("admin","secret"))
+      val token = loginService.login(LoginRequest("admin", "secret"))
       val response = loginService.extend(token.token)
 
       assert(response.token != null)
@@ -65,7 +66,7 @@ class RestLoginServiceTest extends WordSpec with LazyLogging{
 
     //MUST BE LAST
     "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
-      if(keepRunning){
+      if (keepRunning) {
         while (keepRunning) {
           logger.warn("waiting forever till you kill me!")
           Thread.sleep(300000); // Every 5 minutes

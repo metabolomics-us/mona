@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class WriterAdapter implements ItemWriter<Spectrum> {
     @Override
     public void write(List<? extends Spectrum> list) throws Exception {
-        for(int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             write(list.get(i));
         }
     }

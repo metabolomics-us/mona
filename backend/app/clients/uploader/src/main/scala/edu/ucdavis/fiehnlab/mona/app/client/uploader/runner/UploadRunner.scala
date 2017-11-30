@@ -73,7 +73,6 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
     println("\t --legacy\t\t utilize the old MoNA format for input")
 
 
-
     System.exit(-1)
   }
 
@@ -105,8 +104,8 @@ class UploadRunner extends ApplicationRunner with LazyLogging {
         }
         catch {
 
-          case e:Exception =>
-            logger.error(s"received error: ${e.getMessage}",e)
+          case e: Exception =>
+            logger.error(s"received error: ${e.getMessage}", e)
             System.exit(-2)
 
         }

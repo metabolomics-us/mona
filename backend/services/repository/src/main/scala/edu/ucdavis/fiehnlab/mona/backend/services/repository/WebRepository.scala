@@ -80,7 +80,7 @@ class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Bean
   @DependsOn(Array("bareGitRepository"))
-  def gitRepository(bareGitRepository: Git, locator:FindDirectory): Git = {
+  def gitRepository(bareGitRepository: Git, locator: FindDirectory): Git = {
 
     if (localDirectory.exists()) {
       logger.info(s"opening checked out repository $localDirectory")
@@ -144,7 +144,7 @@ class ConfigureJetty extends LazyLogging {
     * @return
     */
   @Bean
-  def servletGit(bareGitRepository: Git,locator:FindDirectory): ServletRegistrationBean = {
+  def servletGit(bareGitRepository: Git, locator: FindDirectory): ServletRegistrationBean = {
     logger.info(s"registering our servlet and using dir: $localDirectory")
     val servlet = new GitServlet
 

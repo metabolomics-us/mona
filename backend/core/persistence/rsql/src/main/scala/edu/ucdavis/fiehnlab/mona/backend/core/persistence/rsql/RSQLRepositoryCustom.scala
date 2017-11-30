@@ -80,6 +80,7 @@ trait RSQLRepositoryCustom[T, Q] {
 
   /**
     * executes a full text query
+    *
     * @param query
     * @return
     */
@@ -87,6 +88,7 @@ trait RSQLRepositoryCustom[T, Q] {
 
   /**
     * executes a full text query
+    *
     * @param query
     * @return
     */
@@ -111,6 +113,7 @@ trait RSQLRepositoryCustom[T, Q] {
 
   /**
     * build a combined RSQL + full text query
+    *
     * @param rsqlQueryString
     * @param textQueryString
     * @return

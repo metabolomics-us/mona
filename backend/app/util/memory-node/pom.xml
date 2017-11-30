@@ -11,9 +11,12 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.app.util</groupId>
     <artifactId>memory-node</artifactId>
-	<packaging>jar</packaging>
+    <packaging>jar</packaging>
 
-    <description>This is a server node, completely running in memory and should be considered for local testing only. It obviously should not be used in a cluster environment and will go away or be moved to a dedicated module branch at a later point in time</description>
+    <description>This is a server node, completely running in memory and should be considered for local testing only. It
+        obviously should not be used in a cluster environment and will go away or be moved to a dedicated module branch
+        at a later point in time
+    </description>
 
     <dependencies>
         <dependency>

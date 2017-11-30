@@ -8,9 +8,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.{ISpe
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 import org.springframework.core.convert.converter.Converter
 import org.springframework.data.mongodb.MongoDbFactory
-import org.springframework.data.mongodb.core.{MongoOperations, MongoTemplate}
 import org.springframework.data.mongodb.core.convert.{CustomConversions, DefaultDbRefResolver, DefaultMongoTypeMapper, MappingMongoConverter}
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext
+import org.springframework.data.mongodb.core.{MongoOperations, MongoTemplate}
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
 /**

@@ -12,10 +12,11 @@ import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.web.filter.GenericFilterBean
 
 import scala.collection.JavaConverters._
+
 /**
   * this filter will ensure JWT based authentication is working as supposed
   */
-class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) extends GenericFilterBean {
+class JWTAuthenticationFilter(authenticationService: JWTAuthenticationService) extends GenericFilterBean {
 
   val entryPoint: AuthenticationEntryPoint = new Http401AuthenticationEntryPoint("authorization failed!")
 
@@ -36,16 +37,16 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
     logger.debug(s"url: ${request.getRequestURL} with ${request.getMethod}")
 
     try {
-      val authHeader = request.getHeaderNames.asScala.filter( _.toLowerCase() == "authorization").toList
+      val authHeader = request.getHeaderNames.asScala.filter(_.toLowerCase() == "authorization").toList
 
-      if(authHeader.isEmpty){
+      if (authHeader.isEmpty) {
         throw new AuthenticationServiceException(s"No authorization header provided! Request was ${request.getRequestURI} and method was ${request.getMethod}")
       }
 
       val headerValue = request.getHeader(authHeader.head)
 
       logger.info(s"received header: ${headerValue}")
-      if(!headerValue.trim.toLowerCase.startsWith("bearer")){
+      if (!headerValue.trim.toLowerCase.startsWith("bearer")) {
         throw new AuthenticationServiceException(s"Authorization header was not of type bearer, header was ${authHeader.head}")
       }
 
@@ -61,10 +62,10 @@ class JWTAuthenticationFilter(authenticationService:JWTAuthenticationService) ex
         filterChain.doFilter(servletRequest, servletResponse)
       } catch {
         case e: AuthenticationException =>
-          logger.error(e.getMessage,e)
+          logger.error(e.getMessage, e)
           throw e
         case e: Exception =>
-          logger.error(e.getMessage,e)
+          logger.error(e.getMessage, e)
           throw new AuthenticationServiceException(s"Sorry an unexpected error occurred: ${e.getMessage}", e)
       }
     } catch {

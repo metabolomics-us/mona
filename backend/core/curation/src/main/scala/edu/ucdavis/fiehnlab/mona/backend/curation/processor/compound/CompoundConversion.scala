@@ -125,7 +125,7 @@ class CompoundConversion extends LazyLogging {
       val structureDiagramGenerator: StructureDiagramGenerator = new StructureDiagramGenerator()
       structureDiagramGenerator.setMolecule(molecule, true)
       structureDiagramGenerator.generateCoordinates()
-      
+
       mdlWriter.writeMolecule(structureDiagramGenerator.getMolecule)
     }
 
@@ -139,7 +139,7 @@ class CompoundConversion extends LazyLogging {
         val structureDiagramGenerator: StructureDiagramGenerator = new StructureDiagramGenerator()
         structureDiagramGenerator.setMolecule(x, true)
         structureDiagramGenerator.generateCoordinates()
-        
+
         result.add(structureDiagramGenerator.getMolecule)
       }
 
@@ -157,6 +157,7 @@ class CompoundConversion extends LazyLogging {
     * @return
     */
   def moleculeToMolecularFormula(molecule: IAtomContainer): String = MolecularFormulaManipulator.getString(MolecularFormulaManipulator.getMolecularFormula(molecule))
+
   /**
     *
     * @param molecule

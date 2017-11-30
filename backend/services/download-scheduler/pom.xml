@@ -8,7 +8,7 @@
         <version>1.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
     <artifactId>download-scheduler</artifactId>
 

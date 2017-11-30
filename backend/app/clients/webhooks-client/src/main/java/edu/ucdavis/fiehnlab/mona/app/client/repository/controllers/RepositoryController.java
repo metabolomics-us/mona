@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.*;
-import java.util.Arrays;
+import java.io.IOException;
 
 /**
  * Created by matthewmueller on 3/2/17.
@@ -51,6 +50,6 @@ public class RepositoryController {
 
         repositoryService.handleWebHook(id, event);
 
-        return "Spectrum "+id+" : "+event;
+        return "Spectrum " + id + " : " + event;
     }
 }

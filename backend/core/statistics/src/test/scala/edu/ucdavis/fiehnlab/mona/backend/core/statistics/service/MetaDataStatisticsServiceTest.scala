@@ -15,14 +15,12 @@ import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
-import scala.collection.JavaConverters._
-
 /**
   * Created by sajjan on 8/4/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
-@TestPropertySource(locations=Array("classpath:application.properties"))
+@TestPropertySource(locations = Array("classpath:application.properties"))
 class MetaDataStatisticsServiceTest extends WordSpec {
 
   @Autowired

@@ -1,13 +1,8 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.controller
 
-import java.io.IOException
-import java.nio.file.{FileVisitResult, Files, Path, SimpleFileVisitor}
-import java.nio.file.attribute.BasicFileAttributes
-
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.builder.MultiPartSpecBuilder
-import com.jayway.restassured.http.ContentType
 import com.jayway.restassured.specification.MultiPartSpecification
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
@@ -15,7 +10,6 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.S
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 

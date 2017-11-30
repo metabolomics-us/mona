@@ -2,13 +2,13 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical
 
 import java.io.StringWriter
 
-import org.openscience.cdk.{AtomContainer, Bond, Atom}
 import org.openscience.cdk.interfaces.{IAtom, IAtomContainer, IBond}
 import org.openscience.cdk.io.MDLV2000Writer
 import org.openscience.cdk.isomorphism.UniversalIsomorphismTester
 import org.openscience.cdk.isomorphism.mcss.RMap
 import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
+import org.openscience.cdk.{AtomContainer, Bond}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
@@ -114,7 +114,7 @@ class TMSDerivatizer extends Derivatizer {
     * @return
     */
   def generateDerivatizationProduct(molecule: IAtomContainer, maxTMSCount: Integer,
-                                       functionalGroups: List[IAtomContainer] = TMSFavoredFunctionalGroups.buildFavoredGroupsInOrder()): IAtomContainer = {
+                                    functionalGroups: List[IAtomContainer] = TMSFavoredFunctionalGroups.buildFavoredGroupsInOrder()): IAtomContainer = {
 
     val result: List[IAtomContainer] = derivatize(molecule, functionalGroups, true)
 

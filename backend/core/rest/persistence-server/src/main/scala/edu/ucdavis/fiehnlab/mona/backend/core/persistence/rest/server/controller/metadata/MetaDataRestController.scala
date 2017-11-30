@@ -1,20 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.metadata
 
-import java.util
 import java.util.concurrent.Future
 
-import com.mongodb.DBObject
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.WrappedString
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.{MetaDataStatisticsService, StatisticsService}
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.service.MetaDataStatisticsService
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestParam, _}
-
-import scala.collection.JavaConverters._
 
 /**
   * Created by wohlg_000 on 3/7/2016.
@@ -33,6 +26,7 @@ class MetaDataRestController {
 
   /**
     * List unique metadata names and filter metadata names if query is given
+    *
     * @return
     */
   @RequestMapping(path = Array("/names"), method = Array(RequestMethod.GET))
@@ -49,13 +43,14 @@ class MetaDataRestController {
 
   /**
     * List unique metadata values for a given metadata name and search values if query is given
+    *
     * @param metaDataName
     * @return
     */
   @RequestMapping(path = Array("/values"), method = Array(RequestMethod.GET))
   @Async
   def listMetaDataValues(@RequestParam(value = "name", required = true) metaDataName: String,
-                        @RequestParam(value = "search", required = false) partialMetaDataValue: String): AsyncResult[MetaDataStatistics] = {
+                         @RequestParam(value = "search", required = false) partialMetaDataValue: String): AsyncResult[MetaDataStatistics] = {
 
     val metaDataStatistics: MetaDataStatistics = metaDataStatisticsService.getMetaDataStatistics(metaDataName)
 

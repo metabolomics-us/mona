@@ -21,6 +21,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 class WebHookServer
 
 
-object WebHookServer extends App{
+object WebHookServer extends App {
   new SpringApplication(classOf[WebHookServer]).run()
 }
