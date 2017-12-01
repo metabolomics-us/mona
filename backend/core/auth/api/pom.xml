@@ -2,27 +2,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>auth</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
     <artifactId>api</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>api</name>
 
-    <description>This provides a couple of interfaces to be implmented by an actual authentication provider. Any client
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        <artifactId>auth</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
+    <description>
+        This provides a couple of interfaces to be implmented by an actual authentication provider. Any client
         using this should only need to be aware of the login service, which will provide the user with a login token.
         The user shouldn't have to worry how the token is actually generated
     </description>
 
     <dependencies>
-
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>domain</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>

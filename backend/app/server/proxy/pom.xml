@@ -2,17 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>server</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.app.server</groupId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.app.server</groupId>
     <artifactId>proxy</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>proxy</name>
 
-    <description>This module defines the proxy and entry level gateway to the mona universe. It's only purpose is to
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.app</groupId>
+        <artifactId>server</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
+    <description>
+        This module defines the proxy and entry level gateway to the mona universe. It's only purpose is to
         dynamically and transparently map all the internal services to an external and easy to access api.
     </description>
 
@@ -100,10 +104,9 @@
     <build>
         <plugins>
             <plugin>
+                <!-- Use the latest released version: https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <!-- Use the latest released version:
-                https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
                 <version>1.0</version>
 
                 <configuration>
@@ -113,9 +116,11 @@
                 <executions>
                     <execution>
                         <id>install node and npm</id>
+
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
+
                         <configuration>
                             <nodeVersion>v5.3.0</nodeVersion>
                             <npmVersion>3.3.12</npmVersion>
@@ -124,9 +129,11 @@
 
                     <execution>
                         <id>npm install</id>
+
                         <goals>
                             <goal>npm</goal>
                         </goals>
+
                         <!-- Optional configuration which provides for running any npm command -->
                         <configuration>
                             <arguments>install</arguments>
@@ -135,9 +142,11 @@
 
                     <execution>
                         <id>bower install</id>
+
                         <goals>
                             <goal>bower</goal>
                         </goals>
+
                         <configuration>
                             <arguments>install</arguments>
                         </configuration>
@@ -146,9 +155,11 @@
 
                     <execution>
                         <id>grunt build</id>
+
                         <goals>
                             <goal>grunt</goal>
                         </goals>
+
                         <configuration>
                             <arguments>dist</arguments>
                         </configuration>

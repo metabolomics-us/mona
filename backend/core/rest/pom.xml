@@ -1,20 +1,22 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+    <artifactId>rest</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>rest-server</name>
+
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>core</artifactId>
         <version>1.5-SNAPSHOT</version>
     </parent>
-    <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-    <artifactId>rest</artifactId>
-    <version>1.5-SNAPSHOT</version>
-    <name>rest-server</name>
-    <url>http://maven.apache.org</url>
 
     <packaging>pom</packaging>
+
     <description>this project defines all our different core REST services</description>
 
     <modules>

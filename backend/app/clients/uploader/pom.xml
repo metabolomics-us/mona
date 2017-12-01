@@ -2,17 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>clients</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.app.clients</groupId>
     <artifactId>uploader</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>uploader</name>
+
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.app</groupId>
+        <artifactId>clients</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
     <packaging>jar</packaging>
 
-    <description>this project provides a simple client to upload data to the server using a mona json input file. It
+    <description>
+        This project provides a simple client to upload data to the server using a mona json input file. It
         will also allow to run all the curation rules locally, if so desired
     </description>
 

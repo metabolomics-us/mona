@@ -2,20 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>util</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.app.util</groupId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.app.util</groupId>
     <artifactId>memory-node</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>memory-node</name>
+
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.app</groupId>
+        <artifactId>util</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
     <packaging>jar</packaging>
 
-    <description>This is a server node, completely running in memory and should be considered for local testing only. It
-        obviously should not be used in a cluster environment and will go away or be moved to a dedicated module branch
-        at a later point in time
+    <description>
+        This is a server node, completely running in memory and should be considered for local testing only. It
+        obviously should not be used in a cluster environment and will go away or be moved to a dedicated module
+        branch at a later point in time
     </description>
 
     <dependencies>
@@ -44,8 +49,5 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
         </dependency>
-
-
     </dependencies>
-
 </project>

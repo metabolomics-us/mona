@@ -1,19 +1,21 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+    <artifactId>bootstrap</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>bootstrap</name>
+
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>core</artifactId>
         <version>1.5-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-    <artifactId>bootstrap</artifactId>
-    <url>http://maven.apache.org</url>
 
-    <description>Configures and creates initial database entries and synchronization for a new MoNA instance
-    </description>
+    <description>Configures and creates initial database entries and synchronization for a new MoNA instance</description>
 
     <dependencies>
         <dependency>
@@ -22,7 +24,7 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+            <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
             <artifactId>downloader</artifactId>
         </dependency>
 

@@ -6,6 +6,7 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
     <artifactId>rsql</artifactId>
+    <version>1.5-SNAPSHOT</version>
     <name>rsql</name>
 
     <parent>

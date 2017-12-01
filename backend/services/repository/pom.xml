@@ -2,15 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>services</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona</groupId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
     <artifactId>repository</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>repository</name>
+
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
+        <artifactId>services</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
+    <description>
+        This module is the main REPOSITORY and should is utilized to keep track of spectra uploaded and
+        modified by the system. It also tracks all the changes in git, which should easily allow us to see
+        modifications over time.
+    </description>
+
     <properties>
         <docker.expose>8888</docker.expose>
     </properties>
@@ -48,7 +58,6 @@
             <version>4.3.1.201605051710-r</version>
         </dependency>
 
-
         <!-- test dependencies -->
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
@@ -76,9 +85,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <description>This module is the main REPOSITORY and should is utilized to keep track of spectra uploaded and
-        modified by the system. It also tracks all the changes in git, which should easily allow us to see modifications
-        over time.
-    </description>
 </project>

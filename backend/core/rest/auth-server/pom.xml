@@ -2,18 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
-        <artifactId>rest</artifactId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
     <artifactId>auth-server</artifactId>
     <version>1.5-SNAPSHOT</version>
     <name>auth-server</name>
-    <url>http://maven.apache.org</url>
+
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
+        <artifactId>rest</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
 
     <description>
         This provides a simple delegate around any given login service and is mostly used for rest based
@@ -39,7 +39,6 @@
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
             <artifactId>mongo</artifactId>
         </dependency>
-
 
         <!-- test dependencies -->
         <dependency>
@@ -67,5 +66,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

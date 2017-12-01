@@ -2,15 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>services</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona</groupId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
     <artifactId>downloader</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>downloader</name>
+
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
+        <artifactId>services</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
 
     <description>
         This module handles query exporting for the pre-defined downloads and custom query download features

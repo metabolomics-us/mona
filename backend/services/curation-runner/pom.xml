@@ -2,21 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>services</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona</groupId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.services</groupId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
     <artifactId>curation-runner</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>curation-runner</name>
 
-    <description>This module provides us with a simple runner to execute curation tasks. It can be deployed and easily
-        scaled and is supposed to
-        run on a different server than the MoNA rest services to reduced the cpu and memory load
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
+        <artifactId>services</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
+    <description>
+        This module provides us with a simple runner to execute curation tasks. It can be deployed and easily scaled
+        and is supposed to run on a different server than the MoNA rest services to reduced the cpu and memory load
     </description>
-
 
     <dependencies>
         <dependency>
