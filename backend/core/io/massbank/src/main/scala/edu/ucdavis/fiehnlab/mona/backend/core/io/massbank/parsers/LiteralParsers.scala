@@ -24,7 +24,7 @@ trait LiteralParsers extends JavaTokenParsers {
 
   def peakTriple: Parser[Option[PeakTriple]] =
     (double ~ double ~ double ^^ { case a ~ b ~ c => Some(PeakTriple(a, b, c)) }) |
-      "N/A" ^^ { case _ => None }
+      "N/A" ^^ (_ => None)
 }
 
 object LiteralParsers extends LiteralParsers

@@ -2,27 +2,22 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import java.io.InputStreamReader
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
-import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by sajjan on 9/26/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
-@WebIntegrationTest(Array("server.port=44444"))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[CompoundTestConfig], classOf[RestClientConfig]))
 class CalculateCompoundPropertiesTest extends WordSpec {
-
-  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   @Autowired
   val calculateCompoundProperties: CalculateCompoundProperties = null
@@ -31,6 +26,8 @@ class CalculateCompoundPropertiesTest extends WordSpec {
 
 
   "CalculateCompoundPropertiesTest" should {
+
+    val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
     "process" in {
       val input: InputStreamReader = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))

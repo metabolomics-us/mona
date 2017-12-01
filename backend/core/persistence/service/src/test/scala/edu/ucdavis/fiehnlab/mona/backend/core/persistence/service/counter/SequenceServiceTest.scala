@@ -7,15 +7,15 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by sajjan on 11/23/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig], classOf[TestConfig]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[EmbeddedServiceConfig], classOf[TestConfig]))
 class SequenceServiceTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -41,8 +41,7 @@ class SequenceServiceTest extends WordSpec with LazyLogging {
     }
 
     "create a new MoNA ID counter" in {
-      val result: String = counterService.getNextMoNAID
-      assert(result == "MoNA000001")
+      (1 to 5).foreach(i => assert(counterService.getNextMoNAID == s"MoNA00000$i"))
     }
 
     "create a news ID counter" in {

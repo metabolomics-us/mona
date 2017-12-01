@@ -11,7 +11,7 @@ class MassBankRecordParsingException(val message: String) extends IllegalArgumen
 object MassBankRecordReader extends MassBankRecordParser {
   def read(input: String): Try[MassBankRecord] = parseAll(massBankRecord, input) match {
     case Success(record, _) => util.Success(record)
-    case NoSuccess(error, input) => util.Failure(new MassBankRecordParsingException(error + " " + input.toString))
+    case NoSuccess(error, x) => util.Failure(new MassBankRecordParsingException(error + " " + x.toString))
   }
 
   def read(src: Source): Try[MassBankRecord] = {

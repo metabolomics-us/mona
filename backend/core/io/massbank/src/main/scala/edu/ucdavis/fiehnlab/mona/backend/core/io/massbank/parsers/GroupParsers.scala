@@ -7,10 +7,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types._
 import scala.util.Try
 
 trait RecordSpecificGroupParser extends FieldParsers {
-  def recordSpecificGroup =
+  def recordSpecificGroup: Parser[RecordSpecificGroup] =
     fieldsStartingWith("", tag => !tag.contains("$")) ^^ {
-      case fields =>
-        RecordSpecificGroup(
+      fields => RecordSpecificGroup(
           fields.getValue(`ACCESSION`),
           fields.getValue(`RECORD_TITLE`),
           fields.getValue(`DATE`),
@@ -27,10 +26,9 @@ trait RecordSpecificGroupParser extends FieldParsers {
 object RecordSpecificGroupParser extends RecordSpecificGroupParser
 
 trait ChemicalGroupParser extends FieldParsers {
-  def chemicalGroup =
+  def chemicalGroup: Parser[ChemicalGroup] =
     fieldsStartingWith("CH$") ^^ {
-      case fields =>
-        ChemicalGroup(
+      fields => ChemicalGroup(
           fields.getIterative(`CH:NAME`),
           fields.getValue(`CH:COMPOUND_CLASS`),
           fields.getValue(`CH:FORMULA`),
@@ -46,10 +44,9 @@ trait ChemicalGroupParser extends FieldParsers {
 object ChemicalGroupParser extends ChemicalGroupParser
 
 trait SampleGroupParser extends FieldParsers {
-  def sampleGroup =
+  def sampleGroup: Parser[SampleGroup] =
     fieldsStartingWith("SP$") ^^ {
-      case fields =>
-        SampleGroup(
+      fields => SampleGroup(
           fields.getValue(`SP:SCIENTIFIC_NAME`),
           fields.getValue(`SP:LINEAGE`),
           fields.getSubtags(`SP:LINK`),
@@ -62,10 +59,9 @@ trait SampleGroupParser extends FieldParsers {
 object SampleGroupParser extends SampleGroupParser
 
 trait AnalyticalChemistryGroupParser extends FieldParsers {
-  def analyticalChemistryGroup =
+  def analyticalChemistryGroup: Parser[AnalyticalChemistryGroup] =
     fieldsStartingWith("AC$") ^^ {
-      case fields =>
-        AnalyticalChemistryGroup(
+      fields => AnalyticalChemistryGroup(
           fields.getValue(`AC:INSTRUMENT`),
           fields.getValue(`AC:INSTRUMENT_TYPE`),
           fields.getSubtags(`AC:MASS_SPECTROMETRY`),
@@ -78,10 +74,9 @@ trait AnalyticalChemistryGroupParser extends FieldParsers {
 object AnalyticalChemistryGroupParser extends AnalyticalChemistryGroupParser
 
 trait MassSpectralDataGroupParser extends FieldParsers {
-  def massSpectralDataGroup =
+  def massSpectralDataGroup: Parser[MassSpectralDataGroup] =
     fieldsStartingWith("MS$") ^^ {
-      case fields =>
-        MassSpectralDataGroup(
+      fields => MassSpectralDataGroup(
           fields.getSubtags(`MS:FOCUSED_ION`),
           fields.getSubtags(`MS:DATA_PROCESSING`),
           fields -- List(`MS:FOCUSED_ION`, `MS:DATA_PROCESSING`)
@@ -92,7 +87,7 @@ trait MassSpectralDataGroupParser extends FieldParsers {
 object MassSpectralDataGroupParser extends MassSpectralDataGroupParser
 
 trait MassSpectralPeakDataGroupParser extends FieldParsers {
-  def massSpectralPeakDataGroup =
+  def massSpectralPeakDataGroup: Parser[MassSpectralPeakDataGroup] =
     fieldsStartingWith("PK$", tag => !List(`PK:ANNOTATION`, `PK:NUM_PEAK`).contains(tag)) ~
       lineWhere(tag => tag.startsWith(`PK:ANNOTATION`) || !tag.startsWith("PK$")).* ~
       fieldsStartingWith("PK$") ~

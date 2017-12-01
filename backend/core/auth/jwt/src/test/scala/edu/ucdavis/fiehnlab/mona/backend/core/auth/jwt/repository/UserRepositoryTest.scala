@@ -7,14 +7,14 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 /**
   *
   * Created by wohlgemuth on 3/24/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[EmbeddedAuthConfig], classOf[JWTAuthenticationConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class UserRepositoryTest extends WordSpec {

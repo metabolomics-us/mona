@@ -5,20 +5,24 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[DownloadScheduler]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
 class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLogging {
+
+  @LocalServerPort
+  private val port = 0
 
   @Autowired
   val staticDownloadService: StaticDownloadService = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
-
 
   "StaticDownloadServiceTest" should {
     "recursively delete static download directory" in {

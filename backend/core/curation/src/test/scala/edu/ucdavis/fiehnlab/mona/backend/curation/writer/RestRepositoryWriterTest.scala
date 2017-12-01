@@ -12,24 +12,22 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
-import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by wohlg on 3/11/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
-@WebIntegrationTest(Array("server.port=44444"))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class RestRepositoryWriterTest extends WordSpec with Eventually {
-
-  @Value( """${local.server.port}""")
-  val port: Int = 0
 
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
@@ -40,14 +38,12 @@ class RestRepositoryWriterTest extends WordSpec with Eventually {
   @Autowired
   val spectrumPersistenceService: SpectrumPersistenceService = null
 
-  //required for spring and scala test
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a writer " when {
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "given a list of spectra" should {
-
       "clear data first" in {
         spectrumPersistenceService.deleteAll()
 
@@ -55,6 +51,7 @@ class RestRepositoryWriterTest extends WordSpec with Eventually {
           assert(spectrumPersistenceService.count() == 0)
         }
       }
+
       "upload them to the server" in {
         writer.write(exampleRecords.toList.asJava)
         eventually(timeout(10 seconds)) {

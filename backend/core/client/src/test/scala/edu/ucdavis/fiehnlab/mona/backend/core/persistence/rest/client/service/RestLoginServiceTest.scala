@@ -12,9 +12,8 @@ import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.{SpringJUnit4ClassRunner, SpringRunner}
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.collection.JavaConverters._
 import scala.util.Properties
@@ -26,7 +25,7 @@ import scala.util.Properties
 @SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT, properties = Array("server.port=44444"))
 class RestLoginServiceTest extends WordSpec with LazyLogging {
 
-  val keepRunning = Properties.envOrElse("keep.server.running", "false").toBoolean
+  val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 
   @Autowired
   val loginService: LoginService = null
@@ -34,12 +33,9 @@ class RestLoginServiceTest extends WordSpec with LazyLogging {
   @Autowired
   val userRepo: UserRepository = null
 
-  //required for spring and scala tes
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "RestLoginServiceTest" should {
-
-
     "create user " in {
       userRepo.deleteAll()
       userRepo.save(User("admin", "secret", Array(Role("ADMIN")).toList.asJava))
@@ -57,14 +53,12 @@ class RestLoginServiceTest extends WordSpec with LazyLogging {
     "extend" in {
       val token = loginService.login(LoginRequest("admin", "secret"))
       val response = loginService.extend(token.token)
-
       assert(response.token != null)
-      val info = loginService.info(token.token)
 
+      val info = loginService.info(token.token)
       assert(info.username == "admin")
     }
 
-    //MUST BE LAST
     "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {
       if (keepRunning) {
         while (keepRunning) {
@@ -73,6 +67,5 @@ class RestLoginServiceTest extends WordSpec with LazyLogging {
         }
       }
     }
-
   }
 }

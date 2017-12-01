@@ -16,20 +16,26 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 
 /**
   * Created by wohlg on 4/13/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[CurationScheduler]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[CurationScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
 class CurationControllerTest extends AbstractSpringControllerTest with Eventually {
+
+  @LocalServerPort
+  private val port = 0
 
   @Autowired
   val notificationCounter: ReceivedEventCounter[Notification] = null
@@ -46,11 +52,8 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {
-
       mongoRepository.deleteAll()
-      for (spectrum <- exampleRecords) {
-        mongoRepository.save(spectrum)
-      }
+      exampleRecords.foreach(mongoRepository.save(_))
     }
 
     "these must all fail, since we require to be logged in " must {
@@ -66,7 +69,6 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
         given().contentType("application/json; charset=UTF-8").when().get("/curation").`then`().statusCode(401)
       }
     }
-
 
     "these must all fail, since we require to be an admin " must {
       "curateByQuery" in {

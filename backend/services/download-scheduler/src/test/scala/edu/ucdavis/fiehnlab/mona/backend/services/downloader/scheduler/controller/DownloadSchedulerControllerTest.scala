@@ -15,16 +15,21 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadS
 import org.junit.runner.RunWith
 import org.scalatest.Matchers
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by sajjan on 5/26/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[DownloadScheduler]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
 class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with Matchers {
+
+  @LocalServerPort
+  private val port = 0
 
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -48,10 +53,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       queryExportRepository.deleteAll()
       predefinedQueryRepository.deleteAll()
 
-      for (spectrum <- exampleRecords) {
-        mongoRepository.save(spectrum)
-      }
-
+      exampleRecords.foreach(mongoRepository.save(_))
       queryExportRepository.save(QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", "test", new Date, 0, 0, null, null))
     }
 

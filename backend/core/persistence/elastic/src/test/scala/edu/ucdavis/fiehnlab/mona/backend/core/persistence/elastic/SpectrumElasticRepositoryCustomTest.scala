@@ -10,13 +10,13 @@ import org.scalatest.BeforeAndAfterEach
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.repository.CrudRepository
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
 
 /**
   * Created by wohlg_000 on 3/9/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[TestConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
 class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectrum, QueryBuilder] with BeforeAndAfterEach {
@@ -36,7 +36,7 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
   "elastic specific queries " should {
 
     s"we should be able to reload our data" in {
-      for (spectrum <- exampleRecords) {
+      exampleRecords.foreach { spectrum =>
         val size = getRepository.count()
 
         getRepository.save(spectrum)

@@ -19,19 +19,25 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by wohlg on 4/12/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[CurationScheduler]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[CurationScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
 class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
+
+  @LocalServerPort
+  private val port = 0
 
   @Autowired
   val testCurationRunner: TestCurationRunner = null
@@ -52,7 +58,6 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
   "CurationServiceTest" should {
     val exampleSpectrum: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
-
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "load some data" in {

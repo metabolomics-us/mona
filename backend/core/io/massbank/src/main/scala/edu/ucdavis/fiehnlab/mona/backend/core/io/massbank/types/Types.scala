@@ -15,7 +15,7 @@ case class PeakTriple(mz: Double, absInt: Double, relInt: Double)
 
 case class PeakData(preprocessedPeaks: List[PeakTriple]) {
   private def computeRelativeIntensities(ps: List[PeakTriple]): List[PeakTriple] =
-    if (!ps.isEmpty) {
+    if (ps.nonEmpty) {
       val x = ps.map(_.absInt).max
       ps.map(p => p.copy(relInt = math.round(p.absInt / x * 999f)))
     }

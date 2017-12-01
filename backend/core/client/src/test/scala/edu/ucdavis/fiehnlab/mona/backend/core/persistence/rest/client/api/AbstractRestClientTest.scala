@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.test.context.TestContextManager
 import org.springframework.web.client.HttpClientErrorException
@@ -20,7 +20,7 @@ import scala.language.postfixOps
 /**
   * Created by wohlgemuth on 3/2/16.
   */
-abstract class AbstractRestClientTest extends WordSpec with Eventually with LazyLogging with ShouldMatchers {
+abstract class AbstractRestClientTest extends WordSpec with Eventually with LazyLogging with Matchers {
   @Value( """${local.server.port}""")
   val port: Int = 0
 
@@ -36,7 +36,6 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
     * some test data to work with
     */
   "when we start a client" when {
-
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "we must have a user first " must {
@@ -56,9 +55,7 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
       }
 
       "we should be able to add spectra" in {
-        for (spec <- exampleRecords) {
-          spectrumRestClient.add(spec)
-        }
+        exampleRecords.foreach(spectrumRestClient.add)
       }
 
       "we should have 58 spectra" in {
@@ -170,7 +167,6 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
       }
 
       "to query none existing data should result in a 404" in {
-
         val thrown = intercept[HttpClientErrorException] {
           spectrumRestClient.get("I don't Exist And I Like Beer, but whiskey is not bad either")
         }

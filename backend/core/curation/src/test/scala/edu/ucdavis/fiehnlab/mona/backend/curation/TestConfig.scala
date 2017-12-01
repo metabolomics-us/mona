@@ -5,8 +5,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginResponse
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts.FetchCTSCompoundData
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.RestRepositoryReader
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,12 +38,6 @@ class TestConfig {
 
     loginService.login("admin", "secret")
   }
-
-  @Bean
-  def classyfireProcessor: ClassyfireProcessor = new ClassyfireProcessor
-
-  @Bean
-  def ctsProcessor: FetchCTSCompoundData = new FetchCTSCompoundData
 
   @Autowired
   val userRepository: UserRepository = null

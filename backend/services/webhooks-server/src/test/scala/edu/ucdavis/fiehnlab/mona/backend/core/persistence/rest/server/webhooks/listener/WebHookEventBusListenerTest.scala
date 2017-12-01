@@ -15,9 +15,11 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.t
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -26,10 +28,12 @@ import scala.language.postfixOps
   * Created by wohlgemuth on 4/8/16.
   */
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TestConfig]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Eventually {
 
+  @LocalServerPort
+  private val port = 0
 
   @Autowired
   val webHookRepository: WebHookRepository = null
@@ -40,16 +44,12 @@ class WebHookEventBusListenerTest extends AbstractSpringControllerTest with Even
   @Autowired
   val eventBus: EventBus[Spectrum] = null
 
-  //required for spring and scala test
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-
-  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
-
-  val spectrum: Spectrum = reader.read(input)
-
   "the webhook event listener" must {
+    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
+    val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
+    val spectrum: Spectrum = reader.read(input)
 
     "create a webhook" in {
       webHookRepository.deleteAll()

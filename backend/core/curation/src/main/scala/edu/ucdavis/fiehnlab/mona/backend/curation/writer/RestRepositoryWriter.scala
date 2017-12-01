@@ -45,14 +45,11 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
       if (spectrum.id == null) {
         logger.debug("adding spectra to server")
         monaSpectrumRestClient.add(spectrum)
-      }
-      else {
+      } else {
         logger.debug(s"updating spectra on server ${spectrum.id}")
 
         try {
           val s = monaSpectrumRestClient.get(spectrum.id)
-
-
           monaSpectrumRestClient.updateAsync(spectrum, spectrum.id)
         } catch {
           case e: HttpClientErrorException =>
@@ -64,7 +61,6 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
               throw e
             }
         }
-
       }
 
       counter = counter + 1
@@ -72,10 +68,8 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
       if (counter % 1000 == 1) {
         logger.info(s"written ${counter} spectra to the repository")
       }
-    }
-    catch {
+    } catch {
       case e: HttpServerErrorException =>
-
         if (retrySilently && retriesLeft > 0) {
           retriesLeft = retriesLeft - 1
           logger.warn(s"${e.getMessage} attempting recovery ${maxRetries - retriesLeft} out of ${maxRetries}")
@@ -85,8 +79,7 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
 
           //success time to reset the retires
           retriesLeft = maxRetries
-        }
-        else {
+        } else {
           throw e
         }
     }

@@ -12,22 +12,21 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.Res
 import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 3/18/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
-@WebIntegrationTest(Array("server.port=44444"))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class RestRepositoryReaderTest extends WordSpec {
-  @Value( """${local.server.port}""")
-  val port: Int = 0
+
 
   @Autowired
   val spectrumRestClient: GenericRestClient[Spectrum, String] = null
@@ -41,7 +40,6 @@ class RestRepositoryReaderTest extends WordSpec {
   @Autowired
   val userRepository: UserRepository = null
 
-  //required for spring and scala test
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
@@ -52,32 +50,24 @@ class RestRepositoryReaderTest extends WordSpec {
       userRepository.deleteAll()
       userRepository.save(User("admin", "secret", Array(Role("ADMIN")).toList.asJava))
       spectrumRestClient.login("admin", "secret")
-
     }
 
     "we need to prepare the database " in {
-
-      spectrumRestClient.list().foreach(x =>
-        spectrumRestClient.delete(x.id)
-      )
-      for (spec <- exampleRecords) {
-        spectrumRestClient.add(spec)
-      }
-
+      spectrumRestClient.list().foreach(x => spectrumRestClient.delete(x.id))
+      exampleRecords.foreach(spectrumRestClient.add)
     }
+
     "read" in {
-
       var count = 0
-
       var data: Spectrum = null
 
       do {
         data = restRepositoryReaderAll.read()
+
         if (data != null) {
           count = count + 1
         }
-      }
-      while (data != null)
+      } while (data != null)
 
       assert(count == exampleRecords.length)
     }
