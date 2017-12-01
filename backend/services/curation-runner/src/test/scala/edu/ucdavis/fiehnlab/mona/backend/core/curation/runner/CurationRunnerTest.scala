@@ -10,10 +10,10 @@ import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration, Primary}
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -22,8 +22,8 @@ import scala.language.postfixOps
 /**
   * Created by sajjan on 5/31/2017.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[CurationRunner], classOf[TestConfig]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[CurationRunner], classOf[TestConfig]))
 class CurationRunnerTest extends WordSpec with Eventually with LazyLogging {
 
   @Autowired

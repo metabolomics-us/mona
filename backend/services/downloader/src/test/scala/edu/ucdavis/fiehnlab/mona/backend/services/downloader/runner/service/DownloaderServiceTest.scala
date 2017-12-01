@@ -14,16 +14,16 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.Downloader
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 
 /**
   * Created by sajjan on 5/26/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[Downloader]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[Downloader]))
 class DownloaderServiceTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -45,10 +45,7 @@ class DownloaderServiceTest extends WordSpec with LazyLogging {
 
     "load some data" in {
       mongoRepository.deleteAll()
-
-      for (spectrum <- exampleRecords) {
-        mongoRepository.save(spectrum)
-      }
+      exampleRecords.foreach(mongoRepository.save(_))
     }
 
     // ID for

@@ -16,10 +16,10 @@ import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration._
@@ -32,8 +32,8 @@ class TestConfig
 /**
   * Created by wohlg on 3/15/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedServiceConfig], classOf[TestConfig]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[EmbeddedServiceConfig], classOf[TestConfig]))
 class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLogging with Eventually {
 
   val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
@@ -54,7 +54,6 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
 
 
   "a spectrum persistence service " must {
-
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
     val curatedRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 

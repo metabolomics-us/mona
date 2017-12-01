@@ -14,7 +14,6 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.http.MediaType
 
 import scala.collection.JavaConverters._
@@ -47,9 +46,6 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 
 
   "after initializing the environment" when {
-
-    RestAssured.baseURI = s"http://localhost:$port/rest"
-
     "A Rest Controller" should {
       "save may require authentication" in {
         if (saveRequiresAuthentication) {
@@ -106,10 +102,7 @@ abstract class AbstractGenericRESTControllerTest[TYPE](endpoint: String) extends
 /**
   * provides us with a simple, elegant way to refresh the application context between runs
   */
-@WebIntegrationTest(Array("server.port=9999", "eureka.client.enabled:false"))
 abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
-
-  val port: Int = 9999
 
   @Autowired
   val userRepository: UserRepository = null
@@ -131,7 +124,6 @@ abstract class AbstractSpringControllerTest extends WordSpec with LazyLogging {
     logger.debug(s"generated token for user $user is ${response.token}")
     given().contentType(MediaType.APPLICATION_JSON_VALUE).header("Authorization", s"Bearer ${response.token}")
   }
-
 
   "our first test set" must {
     "prepare the object mapper for rest assured" in {

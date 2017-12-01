@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow
 
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.config.WorkflowConfiguration
@@ -9,19 +8,18 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by wohlgemuth on 3/14/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TestWorkflowConfig]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[TestWorkflowConfig]))
 class WorkflowTest extends WordSpec {
-
 
   @Autowired
   @Qualifier("linearTestWorkflow")
@@ -30,10 +28,9 @@ class WorkflowTest extends WordSpec {
   @Autowired
   val testListener: TestListener = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   val data = LinearTest("test data")
-
 
   "a workflow given data" when {
     "initialized " must {
@@ -52,7 +49,6 @@ class WorkflowTest extends WordSpec {
       "the listener must have fired 3 times for start events" in {
         assert(testListener.processesStarted == 3)
       }
-
     }
 
     "its graph must have it's elements int the following order" must {
@@ -61,13 +57,14 @@ class WorkflowTest extends WordSpec {
       "first A" in {
         assert(graph.heads.head == graph.getNode("first").get)
       }
+
       "second B" in {
         assert(graph.getChildren("first").head == graph.getNode("second").get)
       }
+
       "third C" in {
         assert(graph.getChildren("second").head == graph.getNode("third").get)
       }
-
     }
   }
 }

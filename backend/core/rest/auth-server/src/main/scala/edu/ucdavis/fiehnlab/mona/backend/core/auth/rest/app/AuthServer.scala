@@ -52,8 +52,7 @@ class AuthCommandRunner extends CommandLineRunner with LazyLogging {
     if (userRepository.findByUsername(adminUser) == null) {
       val user = userRepository.save(User(adminUser, adminPassword, List(Role("ADMIN")).asJava))
       logger.info(s"created default user: $user as admin, based on central credentials")
-    }
-    else {
+    } else {
       logger.info("utilizing existing user account")
     }
   }

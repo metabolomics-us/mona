@@ -20,7 +20,6 @@ public class CustomErrorController implements ErrorController {
 
     private static final String PATH = "/error";
 
-
     @Autowired
     private ErrorAttributes errorAttributes;
 
@@ -38,11 +37,9 @@ public class CustomErrorController implements ErrorController {
 
     private Map<String, Object> getErrorAttributes(HttpServletRequest request, boolean includeStackTrace) {
         RequestAttributes requestAttributes = new ServletRequestAttributes(request);
-        Map map = errorAttributes.getErrorAttributes(requestAttributes, includeStackTrace);
+        Map<String, Object> map = errorAttributes.getErrorAttributes(requestAttributes, includeStackTrace);
         map.put("uri", request.getRequestURI());
         map.put("url", request.getRequestURL().toString());
-
         return map;
     }
-
 }

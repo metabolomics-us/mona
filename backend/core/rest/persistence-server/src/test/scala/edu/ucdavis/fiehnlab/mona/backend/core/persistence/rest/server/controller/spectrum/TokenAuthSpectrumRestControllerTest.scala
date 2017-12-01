@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 
 import java.io.{InputStreamReader, StringWriter}
 
+import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.{JSONDomainReader, MonaMapper}
@@ -13,21 +14,27 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.Sp
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.MediaType
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.Properties
 
 /**
   * Created by wohlgemuth on 3/1/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerTest[Spectrum]("/spectra") with Eventually {
+
+  @LocalServerPort
+  private val port: String = null
 
   val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 
@@ -40,14 +47,12 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
   @Autowired
   val spectrumElasticRepository: PagingAndSortingRepository[Spectrum, String] with RSQLRepositoryCustom[Spectrum, String] = null
 
-
-  //required for spring and scala tests
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "we will be connecting to the REST controller" when {
+    RestAssured.baseURI = s"http://localhost:$port/rest"
 
     "while working in it" should {
-
       val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
       val curatedRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
@@ -63,7 +68,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           val content = writer.toString
           logger.info(s"content: $content")
 
-          authenticate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
+          authenticate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").`then`().statusCode(200)
         }
 
         "fails when an empty spectra is uploaded" in {
@@ -73,7 +78,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
-          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").`then`().statusCode(400)
         }
 
         "fails if no submitter is provided" in {
@@ -83,7 +88,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
-          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").`then`().statusCode(400)
         }
 
         "fails if no compound is provided" in {
@@ -93,7 +98,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
-          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").`then`().statusCode(400)
         }
 
         "fails if compound is null" in {
@@ -103,7 +108,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
-          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").`then`().statusCode(400)
         }
 
         "fails if id is empty" in {
@@ -113,7 +118,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           mapper.writeValue(writer, spectrum)
 
           val content = writer.toString
-          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").then().statusCode(400)
+          authenticate().contentType("application/json; charset=UTF-8").body(content).when().post("/spectra").`then`().statusCode(400)
         }
       }
 
@@ -134,9 +139,9 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
         assert(countBefore == 0)
 
-        for (spectrum <- exampleRecords) {
+        exampleRecords.foreach { spectrum =>
           logger.debug("starting post request")
-          authenticate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").then().statusCode(200)
+          authenticate().contentType("application/json; charset=UTF-8").body(spectrum).when().post("/spectra").`then`().statusCode(200)
         }
 
         eventually(timeout(10 seconds)) {
@@ -147,42 +152,39 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
 
       "we should be able to query all the spectra using GET at /rest/spectra" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra").`then`().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(spectrumRepository.count() == exampleRecords.length)
       }
 
       "we should be able to test our pagination, while using GET at /rest/spectra?size=10 to 10 records" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").`then`().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(10 == exampleRecords.length)
       }
 
       "we should be able to test our pagination, while using GET at /rest/spectra?size=10&page=1 to 10 records" in {
-        val firstRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val firstRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").`then`().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(10 == firstRecords.length)
 
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10&page=1").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10&page=1").`then`().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(10 == exampleRecords.length)
 
-        for (spec <- exampleRecords) {
-          assert(!firstRecords.contains(spec))
-        }
+        exampleRecords.foreach(spectrum => assert(!firstRecords.contains(spectrum)))
       }
 
-
       "we need to be authenticated to delete spectra " in {
-        given().when().delete(s"/spectra/111").then().statusCode(401)
+        given().when().delete(s"/spectra/111").`then`().statusCode(401)
       }
 
       "we need to be an admin to delete spectra " in {
-        authenticate("test", "test-secret").when().delete(s"/spectra/111").then().statusCode(403)
+        authenticate("test", "test-secret").when().delete(s"/spectra/111").`then`().statusCode(403)
       }
 
       "we should be able to delete a spectra using DELETE at /rest/spectra" in {
-        val firstRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").then().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val firstRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=10").`then`().statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         val countBefore = spectrumRepository.count()
 
         for (spec <- firstRecords) {
-          authenticate().when().delete(s"/spectra/${spec.id}").then().statusCode(200)
+          authenticate().when().delete(s"/spectra/${spec.id}").`then`().statusCode(200)
         }
 
         eventually(timeout(10 seconds)) {
@@ -192,27 +194,27 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to execute custom name subqueries and counts at /rest/spectra/search using GET" in {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='Trigenolline'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound=q=\"names.name=='Trigenolline'\"").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
 
         assert(exampleRecords.length == 1)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='Trigenolline'\"").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound=q=\"names.name=='Trigenolline'\"").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 1)
       }
 
       "we should be able to execute custom name queries at /rest/spectra/search using GET" ignore {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='Trigenolline'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='Trigenolline'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 1)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='Trigenolline'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=compound.names.name=='Trigenolline'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 1)
       }
 
       "we should be able to execute custom metadata queries at /rest/spectra/search using GET" ignore {
-        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
+        val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 21)
 
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 21)
       }
 
@@ -224,9 +226,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
           var fetchedLast = false
 
           for (i <- 1 to 25) {
-
-            val result: Array[Spectrum] = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?size=1&page=2&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-
+            val result: Array[Spectrum] = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?size=1&page=2&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
             assert(result.length == 1)
 
             val current = result(0)
@@ -235,8 +235,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
               last = current
               assert(!fetchedLast)
               fetchedLast = true
-            }
-            else {
+            } else {
               assert(last.id == current.id)
             }
           }
@@ -244,27 +243,27 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
       }
       "we should be able to get a query count without providing a query" in {
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 48)
       }
 
       "we should be able to get a query count with an empty query" in {
-        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
+        val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
         assert(count == 48)
       }
 
       "we should be able to update a spectra with new properties" in {
-        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
         val splash: Splash = spectrum.splash.copy(splash = "tada")
         val modifiedSpectrum: Spectrum = spectrum.copy(splash = splash)
         val countBefore = spectrumRepository.count()
 
-        authenticate().body(modifiedSpectrum).when().contentType("application/json; charset=UTF-8").post("/spectra").then().log().all(true).contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
+        authenticate().body(modifiedSpectrum).when().contentType("application/json; charset=UTF-8").post("/spectra").`then`().log().all(true).contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
 
         eventually(timeout(10 seconds)) {
           val countAfter = spectrumRepository.count()
-          val spectrumAfterUpdate = given().when().contentType("application/json; charset=UTF-8").get(s"/spectra/${modifiedSpectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
+          val spectrumAfterUpdate = given().when().contentType("application/json; charset=UTF-8").get(s"/spectra/${modifiedSpectrum.id}").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
           assert(spectrumAfterUpdate.splash.splash == modifiedSpectrum.splash.splash)
           assert(countBefore == countAfter)
@@ -272,45 +271,45 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
       }
 
       "we should be able to receive a spectra by it's ID using GET at /rest/spectra/{id}" in {
-        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
-        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
         assert(spectrum.id.equals(spectrumByID.id))
       }
 
       "if a spectra doesn't exist at /rest/spectra/{id}, we should receive a 404 " in {
-        given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA1234").then().statusCode(404)
+        given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA1234").`then`().statusCode(404)
       }
 
       "we should be able to move a spectrum from one id to another using PUT as /rest/spectra " in {
-        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
-        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/${spectrum.id}").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
         eventually(timeout(10 seconds)) {
-          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
+          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
         }
       }
 
       "we need to be authenticated for PUT requests" in {
-        given().contentType("application/json; charset=UTF-8").when().body(Spectrum).put(s"/spectra/TADA_NEW_ID").then().statusCode(401)
+        given().contentType("application/json; charset=UTF-8").when().body(Spectrum).put(s"/spectra/TADA_NEW_ID").`then`().statusCode(401)
       }
 
       "we should be able to update a spectrum at a given path using PUT at /rest/spectra " in {
-        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
+        val spectrum = given().contentType("application/json; charset=UTF-8").when().get("/spectra?size=1").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]]).head
 
-        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumByID = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumIdMoved = authenticate().contentType("application/json; charset=UTF-8").when().body(spectrumByID).put(s"/spectra/TADA_NEW_ID").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
-        val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
+        val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
         eventually(timeout(10 seconds)) {
           //should not exist anymore
-          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").then().statusCode(404)
+          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").`then`().statusCode(404)
         }
       }
 
@@ -319,11 +318,11 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         val mongoRepositoryCount = spectrumMongoRepository.count()
         val elasticRepositoryCount = spectrumElasticRepository.count()
 
-        authenticate().when().delete(s"/spectra/TADA_NEW_ID").then().statusCode(200)
+        authenticate().when().delete(s"/spectra/TADA_NEW_ID").`then`().statusCode(200)
 
         eventually(timeout(10 seconds)) {
           //should not exist anymore
-          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").then().statusCode(404)
+          given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").`then`().statusCode(404)
 
           assert(spectrumRepository.count() == repositoryCount - 1)
           assert(spectrumMongoRepository.count() == mongoRepositoryCount - 1)
@@ -335,48 +334,48 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
     "we must be able to support different content types" must {
       "/spectra" should {
         "support application/json" in {
-          given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
+          given().contentType("application/json; charset=UTF-8").when().get("/spectra").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
         }
 
         "text/msp must produce a msp file" in {
-          given().header("accept", "text/msp").when().log().all(true).get("/spectra").then().contentType("text/msp").statusCode(200).log().all(true)
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra").`then`().contentType("text/msp").statusCode(200).log().all(true)
         }
 
         "text/msp must produce a msp file with size set" in {
-          given().header("accept", "text/msp").when().log().all(true).get("/spectra?size=2").then().contentType("text/msp").statusCode(200).log().all(true)
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra?size=2").`then`().contentType("text/msp").statusCode(200).log().all(true)
         }
 
         "text/msp must produce a msp file with pagination" in {
-          given().header("accept", "text/msp").when().log().all(true).get("/spectra?size=2&page=1").then().contentType("text/msp").statusCode(200).log().all(true)
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra?size=2&page=1").`then`().contentType("text/msp").statusCode(200).log().all(true)
         }
       }
 
       "/spectra/id" should {
         "application/json must produce a json file" in {
-          val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
+          val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
         }
 
         "text/msp must produce a msp file" in {
-          val spec = given().contentType("application/json; charset=UTF-8").when().get("/spectra").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])(0)
-          given().header("accept", "text/msp").when().log().all(true).get(s"/spectra/${spec.id}").then().log().all(true).contentType("text/msp").statusCode(200)
+          val spec = given().contentType("application/json; charset=UTF-8").when().get("/spectra").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])(0)
+          given().header("accept", "text/msp").when().log().all(true).get(s"/spectra/${spec.id}").`then`().log().all(true).contentType("text/msp").statusCode(200)
         }
       }
 
       "/spectra/search" should {
         "application/json must produce a json file" in {
-          val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
+          val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200)
         }
 
         "text/msp must produce a msp file" in {
-          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().log().all(true).contentType("text/msp").statusCode(200)
         }
 
         "text/msp must produce a msp file with size set" in {
-          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?size=2&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?size=2&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().log().all(true).contentType("text/msp").statusCode(200)
         }
 
         "text/msp must produce a msp file with pagination" in {
-          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?size=2&page=1&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").then().log().all(true).contentType("text/msp").statusCode(200)
+          given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?size=2&page=1&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().log().all(true).contentType("text/msp").statusCode(200)
         }
       }
 

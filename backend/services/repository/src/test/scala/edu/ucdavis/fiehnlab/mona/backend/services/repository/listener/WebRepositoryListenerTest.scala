@@ -17,9 +17,11 @@ import org.apache.commons.io.FileUtils
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.util.Properties
 
@@ -27,12 +29,12 @@ import scala.util.Properties
 /**
   * Created by wohlg_000 on 5/18/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[WebRepository]))
-@WebIntegrationTest(Array("server.port=8888", "eureka.client.enabled:false"))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[WebRepository]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
 class WebRepositoryListenerTest extends WordSpec with LazyLogging {
 
-  val port: Int = 8888
+  @LocalServerPort
+  private val port = 0
 
   @Autowired
   val repositoryListener: RepositoryListener = null
@@ -75,19 +77,19 @@ class WebRepositoryListenerTest extends WordSpec with LazyLogging {
     "be able to expose data as endpoint" should {
 
       "be able to access /repository and browse it " in {
-        given().contentType("application/json; charset=UTF-8").when().log.all(true).get("/repository").then().statusCode(200)
+        given().contentType("application/json; charset=UTF-8").when().log.all(true).get("/repository").`then`().statusCode(200)
       }
 
       "be able to access our spectra file" in {
         repositoryListener.received(Event(spectrum, eventType = Event.ADD))
-        val spectra = given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(200).extract().as(classOf[Spectrum])
+        val spectra = given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").`then`().statusCode(200).extract().as(classOf[Spectrum])
 
         assert(spectra.id == "252")
       }
 
       "be able to delete our spectra file" in {
         repositoryListener.received(Event(spectrum, eventType = Event.DELETE))
-        given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").then().statusCode(404)
+        given().contentType("application/json; charset=UTF-8").when().get(s"/repository/Boise_State_University/QASFUMOKHFSJGL-LAFRSMQTSA-N/splash10-0bt9-0910000000-9c8c58860a0fadd33800/252.json").`then`().statusCode(404)
       }
 
       "if specified the server should stay online, this can be done using the env variable 'keep.server.running=true' " in {

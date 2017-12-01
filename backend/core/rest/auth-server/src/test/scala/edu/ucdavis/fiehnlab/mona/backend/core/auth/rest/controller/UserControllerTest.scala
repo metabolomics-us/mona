@@ -7,21 +7,23 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfi
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import org.junit.runner.RunWith
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 4/4/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig], classOf[AuthSecurityConfig]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[JWTAuthenticationConfig], classOf[TestConfig], classOf[AuthSecurityConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class UserControllerTest extends AbstractGenericRESTControllerTest[User]("/users") {
 
-  //required for spring and scala tes
-  new TestContextManager(this.getClass).prepareTestInstance(this)
+  @LocalServerPort
+  private val port = 0
 
   /**
     * object to use for gets
@@ -41,6 +43,7 @@ class UserControllerTest extends AbstractGenericRESTControllerTest[User]("/users
 
   override val saveRequiresAuthentication: Boolean = false
 
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "UserController" should {
     RestAssured.baseURI = s"http://localhost:$port/rest"

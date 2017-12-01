@@ -2,12 +2,12 @@ package edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph
 
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by wohlgemuth on 3/14/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 class GraphTest extends WordSpec {
 
   case class Vertex(id: String) extends AbstractVertex[String]

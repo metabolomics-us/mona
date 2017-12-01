@@ -9,13 +9,18 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadS
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.StaticDownloadService
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[DownloadScheduler]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
 class StaticDownloadControllerTest extends AbstractSpringControllerTest {
+
+  @LocalServerPort
+  private val port = 0
 
   @Autowired
   val staticDownloadService: StaticDownloadService = null

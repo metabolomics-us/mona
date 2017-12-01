@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller
 
+import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
@@ -7,19 +8,24 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.r
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import org.junit.runner.RunWith
-import org.scalatest.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TestConfig]))
-class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("/webhooks") with Eventually with ShouldMatchers with LazyLogging {
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("/webhooks") with Eventually with Matchers with LazyLogging {
+
+  @LocalServerPort
+  private val port = 0
 
   @Autowired
   val webHookRepository: WebHookRepository = null
@@ -47,6 +53,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
   override def getId: String = getValue.name
 
   "a webhook controller" must {
+    RestAssured.baseURI = s"http://localhost:$port/rest"
 
     "secure endpoints" should {
       "viewing webhooks requires authentication" in {

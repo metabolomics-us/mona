@@ -5,11 +5,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.TagNames._
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.types.{MassBankRecord, PeakData}
 
 import scala.io.Source
+import scala.util.Try
 
 trait MassBankToSpectrumMapper {
-  def parse(src: Source) = MassBankRecordReader.read(src).map(record => recordToSpectrum(record))
+  def parse(src: Source): Try[Spectrum] = MassBankRecordReader.read(src).map(record => recordToSpectrum(record))
 
-  def parse(str: String) = MassBankRecordReader.read(str).map(record => recordToSpectrum(record))
+  def parse(str: String): Try[Spectrum] = MassBankRecordReader.read(str).map(record => recordToSpectrum(record))
 
   /** One-to-one mapping of MassBank record fields to base metadata fields */
   def recordToSpectrum(record: MassBankRecord): Spectrum = {
@@ -120,12 +121,12 @@ trait MassBankToSpectrumMapper {
 
   /** Generate biological compound information */
   private def extractBiologicalCompound(r: MassBankRecord): Compound = {
-    def asName(n: String) = Names(false, n, 0.0, "user-provided")
+    def asName(n: String) = Names(computed = false, n, 0.0, "user-provided")
 
     val names = r.chemicalGroup.name.map(asName).toArray
-    val inchi = r.chemicalGroup.iupac orNull
+    val inchi = r.chemicalGroup.iupac.orNull
 
-    Compound(inchi, null, null, null, names, null, false, null, "biological")
+    Compound(inchi, null, null, null, names, null, computed = false, null)
   }
 }
 

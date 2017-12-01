@@ -11,16 +11,16 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.util.IndexUtils
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by sajjan on 5/26/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TestConfig], classOf[SimilarityConfig]))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[TestConfig], classOf[SimilarityConfig]))
 class SimilaritySearchServiceTest extends WordSpec with Matchers with LazyLogging {
 
   @Autowired
@@ -37,7 +37,6 @@ class SimilaritySearchServiceTest extends WordSpec with Matchers with LazyLoggin
   "SimilarityControllerTest" should {
 
     "not return spectra with neighboring ions as valid matches" must {
-
       // Populate the database
       val testSpectrum: String = "117:100"
 
@@ -74,7 +73,7 @@ class SimilaritySearchServiceTest extends WordSpec with Matchers with LazyLoggin
         val hits: Array[SearchResult] = similaritySearchService.search(SimilaritySearchRequest(testSpectrum, 0.9), totalSpectra)
 
         assert(hits.length == 3)
-        assert(hits.map(_.hit.id).sorted sameElements correctMatches.map(_.id).sorted)
+        assert(hits.map(_.hit.id).sorted.sameElements(correctMatches.map(_.id).sorted))
       }
     }
   }

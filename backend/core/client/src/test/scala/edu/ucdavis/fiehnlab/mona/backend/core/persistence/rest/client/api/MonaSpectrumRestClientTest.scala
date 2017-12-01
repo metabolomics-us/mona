@@ -23,13 +23,11 @@ class MonaSpectrumRestClientTest extends AbstractRestClientTest {
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
 
-  //required for spring and scala tes
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-
-
   "we must be able to" must {
+    val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
+
     "get all available meta data names" in {
       val set = monaSpectrumRestClient.listMetaDataNames
       assert(set.nonEmpty)

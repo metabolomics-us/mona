@@ -2,35 +2,33 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.cts
 
 import java.io.InputStreamReader
 
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientTestConfig
-import edu.ucdavis.fiehnlab.mona.backend.curation.TestConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundTestConfig
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.{SpringApplicationConfiguration, WebIntegrationTest}
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by sajjan on 3/14/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[RestClientTestConfig], classOf[TestConfig], classOf[JWTAuthenticationConfig]))
-@WebIntegrationTest(Array("server.port=44444"))
+@RunWith(classOf[SpringRunner])
+@SpringBootTest(classes = Array(classOf[CompoundTestConfig], classOf[RestClientConfig]))
 class FetchCTSCompoundDataTest extends WordSpec {
-  val reader = JSONDomainReader.create[Spectrum]
+
+  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   @Autowired
   val ctsProcessor: FetchCTSCompoundData = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "this processor" when {
     val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-
     val spectrum: Spectrum = reader.read(input)
 
     "given a spectra" must {

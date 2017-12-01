@@ -37,7 +37,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
         s"we must be able to support doing several iterations of the process, this is iteration $iteration" must {
 
           s"we should be able to store our data" in {
-            for (spectrum <- exampleRecords) {
+            exampleRecords.foreach { spectrum =>
               val size = getRepository.count()
               val result = getRepository.save(spectrum) //saveOrUpdate
               assert(result.isInstanceOf[T])

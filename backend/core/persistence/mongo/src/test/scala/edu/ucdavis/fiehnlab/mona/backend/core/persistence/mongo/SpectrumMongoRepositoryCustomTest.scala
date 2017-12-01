@@ -33,10 +33,10 @@ class SpectrumMongoRepositoryCustomTest extends RSQLRepositoryCustomTest[Spectru
   "MongoDB specific queries " should {
 
     s"we should be able to reload our data" in {
-      for (spectrum <- exampleRecords) {
+      exampleRecords.foreach { spectrum =>
         val size = getRepository.count()
 
-        val result = getRepository.save(spectrum)
+        getRepository.save(spectrum)
         val newSize = getRepository.count()
 
         assert(newSize == size + 1)
