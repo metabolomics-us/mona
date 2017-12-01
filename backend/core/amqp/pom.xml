@@ -6,16 +6,16 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
     <artifactId>amqp</artifactId>
-    <name>massbank</name>
+    <version>1.5-SNAPSHOT</version>
+    <name>amqp</name>
 
     <parent>
-        <artifactId>core</artifactId>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
+        <artifactId>core</artifactId>
         <version>1.5-SNAPSHOT</version>
     </parent>
 
-    <description>This module provides a shared event bus implementation to which clients can easily join and subscribe
-    </description>
+    <description>This module provides a shared event bus implementation to which clients can easily join and subscribe</description>
 
     <dependencies>
         <dependency>

@@ -2,15 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>server</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.mona.app</groupId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.app.server</groupId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.app.server</groupId>
     <artifactId>configuration</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <name>configuration</name>
+
+    <parent>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend.app</groupId>
+        <artifactId>server</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
 
     <description>This module will manage the configuration of all services</description>
 
