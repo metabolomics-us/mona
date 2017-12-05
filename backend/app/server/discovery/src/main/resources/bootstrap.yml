@@ -1,19 +1,13 @@
-#basic configuration how to connect to the configuration server
 spring:
   appliction:
     name: discovery
 
-#our local server port
 server:
   port: 8761
 
-#eureka server settings
 eureka:
-  instance:
-    preferIpAddress: true
   client:
     registerWithEureka: false
     fetchRegistry: false
     server:
       waitTimeInMsWhenSyncEmpty: 0
-
