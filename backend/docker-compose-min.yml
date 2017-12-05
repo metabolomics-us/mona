@@ -23,14 +23,14 @@ services:
   elasticsearch_master:
     image: elasticsearch:1.7.5
     ports:
-      - 9500:9500
+      - 9200:9200
       - 9300:9300
-    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="es-cluster"
+    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
     image: elasticsearch:1.7.5
-    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="es-cluster"
+    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
 
   rabbitmq:
     image: rabbitmq:3-management
