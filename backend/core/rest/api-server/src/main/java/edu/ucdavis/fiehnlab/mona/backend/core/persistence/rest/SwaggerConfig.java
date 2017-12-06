@@ -23,7 +23,6 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
     @Value("${spring.application.name}")
     private String appName;
 
-
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -40,7 +39,7 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
     }
 
     private ApiInfo apiInfo() {
-        ApiInfo apiInfo = new ApiInfo(
+        return new ApiInfo(
                 "MassBank of North America (MoNA)",
                 "API Documentation for the " + appName,
                 "v1",
@@ -49,7 +48,6 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
                 "GNU Lesser General Public License",
                 "http://www.gnu.org/licenses/lgpl-3.0.en.html",
                 Collections.emptyList());
-        return apiInfo;
     }
 
     @Override
