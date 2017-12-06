@@ -39,14 +39,13 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
                 UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS, false, true, 60000L);
     }
 
-
     private ApiInfo apiInfo() {
         ApiInfo apiInfo = new ApiInfo(
-                "Massbank of Northern America (MoNA)",
-                "description of the api for the " + appName,
-                "V1",
-                "Terms of service",
-                new Contact("Gert Wohlgemuth", "http://mona.fiehnlab.ucdavis.edu", "wohlgemuth@ucdavis.edu"),
+                "MassBank of North America (MoNA)",
+                "API Documentation for the " + appName,
+                "v1",
+                "Terms of Service",
+                new Contact("MoNA Development Team", "http://mona.fiehnlab.ucdavis.edu", "wohlgemuth@ucdavis.edu"),
                 "GNU Lesser General Public License",
                 "http://www.gnu.org/licenses/lgpl-3.0.en.html",
                 Collections.emptyList());
