@@ -12,6 +12,10 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.UiConfiguration;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 public class SwaggerConfig extends WebSecurityConfigurerAdapter {
@@ -29,10 +33,11 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
                 .build().apiInfo(apiInfo());
     }
 
-//    @Bean
-//    public UiConfiguration uiConfig() {
-//        return UiConfiguration.DEFAULT;
-//    }
+    @Bean
+    public UiConfiguration uiConfig() {
+        return new UiConfiguration("validatorUrl", "none", "alpha", "schema",
+                UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS, false, true, 60000L);
+    }
 
 
     private ApiInfo apiInfo() {
@@ -43,7 +48,8 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
                 "Terms of service",
                 new Contact("Gert Wohlgemuth", "http://mona.fiehnlab.ucdavis.edu", "wohlgemuth@ucdavis.edu"),
                 "GNU Lesser General Public License",
-                "http://www.gnu.org/licenses/lgpl-3.0.en.html");
+                "http://www.gnu.org/licenses/lgpl-3.0.en.html",
+                Collections.emptyList());
         return apiInfo;
     }
 
@@ -54,5 +60,4 @@ public class SwaggerConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/v2/api-docs")
                 .antMatchers(HttpMethod.GET, "/webjars/**");
     }
-
 }
