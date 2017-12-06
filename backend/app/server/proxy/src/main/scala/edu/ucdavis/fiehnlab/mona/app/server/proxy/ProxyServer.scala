@@ -3,8 +3,10 @@ package edu.ucdavis.fiehnlab.mona.app.server.proxy
 import java.io.IOException
 import javax.servlet.MultipartConfigElement
 
+import com.netflix.zuul.ZuulFilter
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.{LoggableDispatcherServlet, LoggingService}
+import edu.ucdavis.fiehnlab.mona.app.server.proxy.swagger.SwaggerRedirectFilter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.SpringApplication
@@ -14,6 +16,7 @@ import org.springframework.boot.web.servlet.{MultipartConfigFactory, ServletRegi
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy
+import org.springframework.cloud.netflix.zuul.filters.discovery.DiscoveryClientRouteLocator
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.core.io.Resource
@@ -39,11 +42,6 @@ class ProxyServer {
   @Autowired
   val loggingService: LoggingService = null
 
-  //  @Bean
-  //  def rewriteFilter: ZuulFilter = {
-  //    new SwaggerRedirectFilter()
-  //  }
-
   @Value("${spring.http.multipart.max-file-size}")
   val multipartMaxFileSize: String = null
 
@@ -57,6 +55,11 @@ class ProxyServer {
     factory.setMaxRequestSize(multipartMaxRequestSize)
     factory.setLocation(System.getProperty("java.io.tmpdir"))
     factory.createMultipartConfig()
+  }
+
+  @Bean
+  def rewriteFilter: ZuulFilter = {
+    new SwaggerRedirectFilter
   }
 
   @Bean
@@ -81,9 +84,16 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
   override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
 
   override def addResourceHandlers(registry: ResourceHandlerRegistry): Unit = {
+
     // Add handler for all static files and REST endpoints
-    registry.addResourceHandler("/**/*.css", "/**/*.html", "/**/*.js", "/**/*.json", "/**/*.jpg", "/**/*.jpeg",
-      "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2", "/rest/**")
+    registry.addResourceHandler(
+        // Web resources
+        "/**/*.css", "/**/*.html", "/**/*.js", "/**/*.json", "/**/*.jpg",
+        "/**/*.jpeg", "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2",
+
+        // API endpoints
+        "/rest/**", "/**/v2/api-docs"
+      )
       .addResourceLocations(resourceProperties.getStaticLocations: _*)
       .setCachePeriod(resourceProperties.getCachePeriod)
 
@@ -113,7 +123,5 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 }
 
 object ProxyServer extends App {
-  // System.setProperty("spring.config.name", "proxy-service");
-
   new SpringApplication(classOf[ProxyServer]).run()
 }
