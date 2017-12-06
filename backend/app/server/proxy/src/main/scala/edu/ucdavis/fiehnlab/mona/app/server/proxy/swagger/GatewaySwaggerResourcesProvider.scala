@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.app.server.proxy.swagger
 
 import java.util
+import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +24,10 @@ class GatewaySwaggerResourcesProvider extends SwaggerResourcesProvider with Lazy
 
   @Autowired
   val discoveryClient: DiscoveryClient = null
+
+  @PostConstruct
+  private def initialize(): Unit = get()
+
 
   override def get(): util.List[SwaggerResource] = {
     val resources: mutable.Map[String, SwaggerResource] = mutable.Map()

@@ -16,7 +16,6 @@ import org.springframework.boot.web.servlet.{MultipartConfigFactory, ServletRegi
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy
-import org.springframework.cloud.netflix.zuul.filters.discovery.DiscoveryClientRouteLocator
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.core.io.Resource
@@ -87,13 +86,13 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
 
     // Add handler for all static files and REST endpoints
     registry.addResourceHandler(
-        // Web resources
-        "/**/*.css", "/**/*.html", "/**/*.js", "/**/*.json", "/**/*.jpg",
-        "/**/*.jpeg", "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2",
+      // Web resources
+      "/**/*.css", "/**/*.html", "/**/*.js", "/**/*.json", "/**/*.jpg",
+      "/**/*.jpeg", "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2",
 
-        // API endpoints
-        "/rest/**", "/**/v2/api-docs"
-      )
+      // API endpoints
+      "/rest/**", "/**/v2/api-docs"
+    )
       .addResourceLocations(resourceProperties.getStaticLocations: _*)
       .setCachePeriod(resourceProperties.getCachePeriod)
 

@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest
 import com.netflix.zuul.ZuulFilter
 import com.netflix.zuul.context.RequestContext
 import com.typesafe.scalalogging.LazyLogging
-import org.springframework.cloud.netflix.zuul.filters.RouteLocator
 import springfox.documentation.swagger2.web.Swagger2Controller
 
 class SwaggerRedirectFilter extends ZuulFilter with LazyLogging {
