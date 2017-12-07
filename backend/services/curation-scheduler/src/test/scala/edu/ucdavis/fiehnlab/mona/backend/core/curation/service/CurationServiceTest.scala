@@ -3,8 +3,9 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.service
 import java.io.InputStreamReader
 import javax.annotation.PostConstruct
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaNotificationBusCounterConfiguration, Notification}
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.CurationScheduler
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.controller.CurationController
@@ -19,7 +20,6 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.stereotype.Component
@@ -117,7 +117,7 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
   * simple test class to ensure the message was processed
   */
 @Component
-class TestCurationRunner extends GenericMessageListener[Spectrum] {
+class TestCurationRunner extends GenericMessageListener[Spectrum] with LazyLogging {
 
   @Autowired
   private val connectionFactory: ConnectionFactory = null
@@ -146,6 +146,8 @@ class TestCurationRunner extends GenericMessageListener[Spectrum] {
   override def handleMessage(spectrum: Spectrum): Unit = {
     messageReceived = true
     messageCount += 1
+
+    logger.debug(s"Message Received, messageCount = $messageCount")
   }
 
   def resetMessageStatus(): Unit = {

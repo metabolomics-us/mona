@@ -20,7 +20,6 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.stereotype.Component
@@ -172,9 +171,10 @@ class TestDownloader extends GenericMessageListener[QueryExport] with LazyLoggin
   var messageReceived: Boolean = false
   var messageCount: Int = 0
 
-  override def handleMessage(spectrum: QueryExport): Unit = {
+  override def handleMessage(message: QueryExport): Unit = {
     messageReceived = true
     messageCount += 1
+
     logger.debug(s"Message Received, messageCount = $messageCount")
   }
 

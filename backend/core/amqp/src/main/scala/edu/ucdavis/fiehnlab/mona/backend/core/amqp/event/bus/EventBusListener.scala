@@ -127,6 +127,7 @@ class ReceivedEventCounter[T: ClassTag](override val eventBus: EventBus[T]) exte
     * @param event
     */
   override def received(event: Event[T]): Unit = {
+    logger.debug(s"Received event: ${event.content.getClass.getSimpleName}")
     counter.incrementAndGet()
   }
 }

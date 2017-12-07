@@ -4,7 +4,7 @@ import java.io.InputStreamReader
 import java.util.Date
 import java.util.concurrent.CountDownLatch
 
-import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
+import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCounterConfiguration, MonaNotificationBusCounterConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
@@ -26,14 +26,8 @@ import scala.reflect.ClassTag
   * Created by wohlg on 4/6/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[StringTestConfig], classOf[MonaNotificationBusConfiguration], classOf[MonaEventBusConfiguration]))
+@SpringBootTest(classes = Array(classOf[StringTestConfig], classOf[MonaNotificationBusCounterConfiguration], classOf[MonaEventBusCounterConfiguration]))
 class EventBusListenerTest extends WordSpec with Eventually {
-
-  val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
-
-  val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-
-  val spectrum: Spectrum = reader.read(input)
 
   @Autowired
   val eventBus: EventBus[Spectrum] = null
@@ -47,6 +41,11 @@ class EventBusListenerTest extends WordSpec with Eventually {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "EventBusListenerTest" should {
+
+    val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
+    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
+    val spectrum: Spectrum = reader.read(input)
+
     "assure we have several event listeners" in {
       assert(eventListener.size == 5)
     }

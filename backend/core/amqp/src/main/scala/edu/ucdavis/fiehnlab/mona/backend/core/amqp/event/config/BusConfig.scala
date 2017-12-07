@@ -55,6 +55,11 @@ class MonaEventBusConfiguration {
     */
   @Bean
   def eventBus: EventBus[Spectrum] = new EventBus[Spectrum]("mona-persistence-events")
+}
+
+@Import(Array(classOf[BusConfig], classOf[MonaEventBusConfiguration]))
+@Configuration
+class MonaEventBusCounterConfiguration {
 
   /**
     * counts all the events send over the event bus
@@ -76,7 +81,11 @@ class MonaNotificationBusConfiguration {
 
   @Bean
   def notificationsBus: EventBus[Notification] = new EventBus[Notification]("mona-notification-bus")
+}
 
+@Import(Array(classOf[BusConfig], classOf[MonaNotificationBusConfiguration]))
+@Configuration
+class MonaNotificationBusCounterConfiguration {
 
   /**
     * counts all the events send over the event bus
@@ -87,6 +96,7 @@ class MonaNotificationBusConfiguration {
   @Bean
   def notificationBusCounter(eventBus: EventBus[Notification]): ReceivedEventCounter[Notification] = new ReceivedEventCounter[Notification](eventBus)
 }
+
 
 /**
   * defines a notification event and is used to notify other objects on the subscribed bus that stuff is
