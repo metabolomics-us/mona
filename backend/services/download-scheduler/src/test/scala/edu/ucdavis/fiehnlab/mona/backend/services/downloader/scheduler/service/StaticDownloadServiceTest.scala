@@ -12,11 +12,8 @@ import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
+@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLogging {
-
-  @LocalServerPort
-  private val port = 0
 
   @Autowired
   val staticDownloadService: StaticDownloadService = null
