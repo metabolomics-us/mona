@@ -33,11 +33,11 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
     *
     * @return
     */
-  def regenerateStatistics = {
+  def regenerateStatistics(): Unit = {
     restOperations.postForEntity(s"${this.monaRestServer}/rest/statistics/update", new HttpEntity[String]("", this.buildHeaders), classOf[Void])
   }
 
-  def regenerateDownloads = {
+  def regenerateDownloads(): Unit = {
     val url = s"${this.monaRestServer}/rest/downloads/generatePredefined"
 
     restOperations.exchange(url, HttpMethod.GET, new HttpEntity[String]("parameters", this.buildHeaders), classOf[Array[Any]])

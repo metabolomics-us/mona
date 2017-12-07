@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by sajjan on 5/26/16.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
+@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with Matchers {
 
   @LocalServerPort

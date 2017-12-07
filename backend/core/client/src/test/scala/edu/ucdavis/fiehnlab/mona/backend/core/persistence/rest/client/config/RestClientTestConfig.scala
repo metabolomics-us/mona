@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.service.RestLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.EmbeddedRestServerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.config.StatisticsRepositoryConfig
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.{Bean, Import, Primary}
 
@@ -18,7 +19,7 @@ class RestClientTestConfig {
 
   @Bean
   @Primary
-  def loginService: LoginService = new RestLoginService("localhost", 44444)
+  def loginService(@Value("${server.port}") port: Int): LoginService = new RestLoginService("localhost", port)
 
   @Bean
   def loginServiceDelegate: LoginService = new MongoLoginService

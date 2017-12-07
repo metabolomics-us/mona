@@ -33,11 +33,8 @@ import scala.language.postfixOps
   * Created by wohlg on 4/12/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[CurationScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
+@SpringBootTest(classes = Array(classOf[CurationScheduler], classOf[MonaNotificationBusCounterConfiguration]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
-
-  @LocalServerPort
-  private val port = 0
 
   @Autowired
   val testCurationRunner: TestCurationRunner = null

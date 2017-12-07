@@ -34,6 +34,7 @@ abstract class AbstractRestClientTest extends WordSpec with Eventually with Lazy
     * some test data to work with
     */
   "when we start a client" when {
+
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "we must have a user first " must {

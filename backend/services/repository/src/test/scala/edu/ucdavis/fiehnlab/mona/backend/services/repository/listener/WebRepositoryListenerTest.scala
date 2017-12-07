@@ -30,7 +30,7 @@ import scala.util.Properties
   * Created by wohlg_000 on 5/18/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[WebRepository]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
+@SpringBootTest(classes = Array(classOf[WebRepository]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class WebRepositoryListenerTest extends WordSpec with LazyLogging {
 
   @LocalServerPort

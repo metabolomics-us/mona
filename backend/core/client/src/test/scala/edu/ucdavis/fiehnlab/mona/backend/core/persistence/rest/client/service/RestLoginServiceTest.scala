@@ -22,7 +22,7 @@ import scala.util.Properties
   * Created by wohlg on 3/27/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT, properties = Array("server.port=44444"))
+@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class RestLoginServiceTest extends WordSpec with LazyLogging {
 
   val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean

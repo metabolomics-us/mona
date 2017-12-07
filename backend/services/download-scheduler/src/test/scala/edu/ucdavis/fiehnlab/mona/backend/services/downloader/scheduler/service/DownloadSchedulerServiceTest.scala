@@ -33,11 +33,8 @@ import scala.language.postfixOps
   * Created by sajjan on 5/26/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.RANDOM_PORT, properties = Array("eureka.client.enabled:false"))
+@SpringBootTest(classes = Array(classOf[DownloadScheduler]), webEnvironment = WebEnvironment.DEFINED_PORT)
 class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eventually {
-
-  @LocalServerPort
-  private val port = 0
 
   @Autowired
   val testRunner: TestDownloader = null
