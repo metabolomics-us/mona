@@ -320,23 +320,21 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       }
 
       "able to handle update events " in {
-        spectrumPersistenceService.deleteAll()
+
         webHookRepository.deleteAll()
+
+        eventually(timeout(5 seconds)) {
+          assert(webHookRepository.count() == 0)
+        }
+
+        spectrumPersistenceService.deleteAll()
 
         eventually(timeout(5 seconds)) {
           assert(spectrumPersistenceService.count() == 0)
         }
 
-        eventually(timeout(5 seconds)) {
-          webHookRepository
-        }
-
-        //get count of spectra in db
-
         //add mona spectrum
         given().body(getValue).when().get(s"/webhooks/sync?id=AU100601&type=add").`then`().statusCode(200)
-
-        //wait a bit
 
         //ensure the new spectra is now added
         eventually(timeout(5 seconds)) {
@@ -361,6 +359,3 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
   override val requiresAuthForAllRequests: Boolean = true
 }
-
-
-
