@@ -21,8 +21,6 @@ import scala.language.postfixOps
   * Created by wohlgemuth on 3/2/16.
   */
 abstract class AbstractRestClientTest extends WordSpec with Eventually with LazyLogging with Matchers {
-  @Value( """${local.server.port}""")
-  val port: Int = 0
 
   @Autowired
   val spectrumRestClient: GenericRestClient[Spectrum, String] = null

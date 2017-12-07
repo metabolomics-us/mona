@@ -26,14 +26,11 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.Properties
 
-@SpringBootApplication
-class TestConfig
-
 /**
   * Created by wohlg on 3/15/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[EmbeddedServiceConfig], classOf[TestConfig]))
+@SpringBootTest(classes = Array(classOf[EmbeddedServiceConfig]))
 class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLogging with Eventually {
 
   val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean

@@ -20,7 +20,7 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
 
   @PostConstruct
-  def authorize = {
+  def authorize(): Unit = {
     logger.debug("logging in to server")
     monaSpectrumRestClient.login(loginToken)
   }
@@ -56,8 +56,7 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
             if (e.getMessage.contains("404")) {
               logger.debug("server was not aware of id, assuming it's a backup and adding it instead")
               monaSpectrumRestClient.add(spectrum)
-            }
-            else {
+            } else {
               throw e
             }
         }
@@ -66,13 +65,13 @@ class RestRepositoryWriter(val loginToken: String, val retrySilently: Boolean = 
       counter = counter + 1
 
       if (counter % 1000 == 1) {
-        logger.info(s"written ${counter} spectra to the repository")
+        logger.info(s"written $counter spectra to the repository")
       }
     } catch {
       case e: HttpServerErrorException =>
         if (retrySilently && retriesLeft > 0) {
           retriesLeft = retriesLeft - 1
-          logger.warn(s"${e.getMessage} attempting recovery ${maxRetries - retriesLeft} out of ${maxRetries}")
+          logger.warn(s"${e.getMessage} attempting recovery ${maxRetries - retriesLeft} out of $maxRetries")
 
           Thread.sleep(recoveryPauseInMS)
           write(spectrum)

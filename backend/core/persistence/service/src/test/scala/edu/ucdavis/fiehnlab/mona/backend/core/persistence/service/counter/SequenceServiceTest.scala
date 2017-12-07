@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by sajjan on 11/23/16.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[EmbeddedServiceConfig], classOf[TestConfig]))
+@SpringBootTest(classes = Array(classOf[EmbeddedServiceConfig]))
 class SequenceServiceTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -49,6 +49,3 @@ class SequenceServiceTest extends WordSpec with LazyLogging {
     }
   }
 }
-
-@SpringBootApplication
-class TestConfig

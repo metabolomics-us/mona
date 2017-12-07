@@ -23,6 +23,6 @@ class EventScheduler[T] {
     *
     * @param event
     */
-  def scheduleEventProcessing(event: Event[T]): Unit = persistenceEventListeners.asScala.sortBy(_.priority).reverse.foreach(_.handleEvent(event))
+  def scheduleEventProcessing(event: Event[T]): Unit = persistenceEventListeners.asScala.sortBy(-_.priority).foreach(_.handleEvent(event))
 }
 
