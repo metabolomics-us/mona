@@ -70,7 +70,7 @@ class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLo
       val fileList: Array[String] = staticDownloadService.listStaticDownloads()
 
       assert(fileList.length == 2)
-      assert(fileList.last == "test/gcmsRecord.json")
+      assert(fileList.contains("test/gcmsRecord.json"))
       staticDownloadService.fileExists("test/gcmsRecord.json")
     }
   }
