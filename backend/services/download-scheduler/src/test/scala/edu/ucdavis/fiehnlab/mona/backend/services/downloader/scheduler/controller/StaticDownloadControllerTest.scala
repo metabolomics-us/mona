@@ -76,7 +76,7 @@ class StaticDownloadControllerTest extends AbstractSpringControllerTest {
     "there should be two static downloads available" in {
       val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get("/static").`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
       assert(result.length == 2)
-      assert(result.last == StaticDownload("gcmsRecord.json", "test"))
+      assert(result.contains(StaticDownload("gcmsRecord.json", "test")))
     }
 
     "download a file with a category" in {
