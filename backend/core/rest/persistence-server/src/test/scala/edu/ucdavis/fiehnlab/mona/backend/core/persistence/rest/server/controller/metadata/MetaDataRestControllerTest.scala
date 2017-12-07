@@ -43,11 +43,9 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
         spectrumRepository.deleteAll()
         assert(spectrumRepository.count() == 0)
 
-        //58 spectra for us to work with
         val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
         assert(exampleRecords.length == 58)
 
-        //save each record
         exampleRecords.foreach { x => spectrumRepository.save(x) }
       }
 
