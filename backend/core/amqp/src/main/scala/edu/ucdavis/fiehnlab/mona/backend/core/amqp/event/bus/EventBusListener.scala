@@ -56,11 +56,9 @@ abstract class EventBusListener[T: ClassTag](val eventBus: EventBus[T]) extends 
     }
 
     val queue = new Queue(queueName, false, false, true)
-    val exchange = new FanoutExchange(eventBus.busName, false, true)
 
     rabbitAdmin.declareQueue(queue)
-    rabbitAdmin.declareExchange(exchange)
-    rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange))
+    rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(eventBus.exchange))
     rabbitAdmin.afterPropertiesSet()
 
     logger.info(s"connecting to queue: ${queue.getName}")

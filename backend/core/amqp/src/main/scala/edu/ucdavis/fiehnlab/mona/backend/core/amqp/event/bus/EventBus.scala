@@ -1,11 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus
 
 
+import javax.annotation.PostConstruct
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.amqp.core.FanoutExchange
+import org.springframework.amqp.rabbit.core.{RabbitAdmin, RabbitTemplate}
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.reflect.ClassTag
@@ -40,7 +43,19 @@ class EventBus[T: ClassTag](val busName: String = "mona-event-bus") extends Lazy
   @Autowired
   val rabbitTemplate: RabbitTemplate = null
 
+  @Autowired
+  private val rabbitAdmin: RabbitAdmin = null
+
   val objectMapper: ObjectMapper = MonaMapper.create
+
+  val exchange = new FanoutExchange(busName, false, true)
+
+
+  @PostConstruct
+  def init(): Unit = {
+    rabbitAdmin.declareExchange(exchange)
+    rabbitAdmin.afterPropertiesSet()
+  }
 
   /**
     * send the event along the bus, the retrievers should do something with it or plainly ignore it
