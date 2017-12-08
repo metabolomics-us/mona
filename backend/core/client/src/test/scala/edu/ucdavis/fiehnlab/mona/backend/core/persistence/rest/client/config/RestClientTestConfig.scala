@@ -19,7 +19,8 @@ class RestClientTestConfig {
 
   @Bean
   @Primary
-  def loginService(@Value("${server.port}") port: Int): LoginService = new RestLoginService("localhost", port)
+  def loginService(@Value("${mona.rest.server.host}") host: String, @Value("${mona.rest.server.port}") port: Int): LoginService =
+    new RestLoginService("localhost", port)
 
   @Bean
   def loginServiceDelegate: LoginService = new MongoLoginService
