@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Score, Spectrum}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Score, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
 import org.springframework.batch.item.ItemProcessor
 
@@ -25,8 +25,8 @@ class FinalizeCuration extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
     // Update score object with scaled score if possible, otherwise score is null
     val score: Score =
       if (spectrum.score.impacts.nonEmpty) {
-        var rawScore: Double = spectrum.score.impacts.map(_.value).sum
-        var totalScore: Double = spectrum.score.impacts.map(_.value.abs).sum
+        val rawScore: Double = spectrum.score.impacts.map(_.value).sum
+        val totalScore: Double = spectrum.score.impacts.map(_.value.abs).sum
 
         if (totalScore == 0) {
           // Give a median score if no impacts are given
@@ -38,9 +38,6 @@ class FinalizeCuration extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
         null
       }
 
-    spectrum.copy(
-      metaData = spectrum.metaData :+ MetaData("none", computed = true, hidden = true, "Last Auto-Curation", null, null, null, new Date),
-      score = score
-    )
+    spectrum.copy(lastCurated = new Date, score = score)
   }
 }

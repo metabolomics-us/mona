@@ -158,8 +158,6 @@ abstract class GenericRESTController[T] {
   }
 
   def doPut(id: String, resource: T): Future[ResponseEntity[T]] = {
-    new AsyncResult[ResponseEntity[T]](
-      new ResponseEntity(getRepository.save(resource), HttpStatus.OK)
-    )
+    new AsyncResult[ResponseEntity[T]](new ResponseEntity(getRepository.save(resource), HttpStatus.OK))
   }
 }

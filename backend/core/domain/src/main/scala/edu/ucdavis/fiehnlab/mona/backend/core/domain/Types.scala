@@ -264,6 +264,7 @@ case class Spectrum(
 
                      dateCreated: Date,
                      lastUpdated: Date,
+                     lastCurated: Date = null,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
                      metaData: Array[MetaData],
@@ -322,6 +323,7 @@ object Spectrum {
       id = spectrum.id,
       dateCreated = spectrum.dateCreated,
       lastUpdated = spectrum.lastUpdated,
+      lastCurated = null,
       metaData = spectrum.metaData.filter(_.category != "annotation"),
       annotations = spectrum.metaData.filter(_.category == "annotation"),
       submitter = spectrum.submitter,
@@ -371,6 +373,7 @@ case class LegacySpectrum(
     */
   def asSpectrum: Spectrum = Spectrum(this)
 }
+
 
 /**
   * this is an optional defined library, which declares from which source the spectrum is coming
