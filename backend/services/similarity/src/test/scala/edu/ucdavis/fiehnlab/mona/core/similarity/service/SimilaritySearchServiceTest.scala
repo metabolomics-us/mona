@@ -59,7 +59,7 @@ class SimilaritySearchServiceTest extends WordSpec with Matchers with LazyLoggin
         spectrumMongoRepository.deleteAll()
 
         (correctMatches ++ incorrectMatches).foreach { x =>
-          val spectrum: Spectrum = Spectrum(null, x.id, null, null, null, null, null, x.spectrum, null, null, null, null, null)
+          val spectrum: Spectrum = Spectrum(null, x.id, null, null, null, null, null, null, x.spectrum, null, null, null, null, null)
           spectrumMongoRepository.save(spectrum)
         }
       }

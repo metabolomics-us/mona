@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.curation.listener
 
+import java.util.Date
+
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.{EventBus, EventBusListener}
 import edu.ucdavis.fiehnlab.mona.backend.core.curation.service.CurationService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -18,17 +20,26 @@ class CurationEventBusListener @Autowired()(val bus: EventBus[Spectrum]) extends
   val curationService: CurationService = null
 
   /**
+    * Allow scheduling of curation if curation has never been scheduled or if it hasn't
+    * been curated within the past 15 minutes
+    * @param spectrum
+    * @return
+    */
+  private def shouldScheduleCuration(spectrum: Spectrum): Boolean = {
+    spectrum.lastCurated == null || (new Date().getTime - spectrum.lastCurated.getTime) / (60 * 1000) >= 15
+  }
+
+  /**
     * an element has been received from the bus and should be now processed
     *
     * @param event
     */
   override def received(event: Event[Spectrum]): Unit = {
     event.eventType match {
-      //we only care about ADDs at this point in time
-      case Event.ADD =>
+      case Event.ADD | Event.UPDATE if shouldScheduleCuration(event.content) =>
         curationService.scheduleSpectrum(event.content)
 
-      case _ => //ignore not of interest
+      case _ =>
     }
   }
 }

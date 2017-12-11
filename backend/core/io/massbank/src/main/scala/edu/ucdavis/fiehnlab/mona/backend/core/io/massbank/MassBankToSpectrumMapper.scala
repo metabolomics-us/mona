@@ -18,6 +18,7 @@ trait MassBankToSpectrumMapper {
       id = record.recordSpecificGroup.accession.orNull,
       dateCreated = null,
       lastUpdated = null,
+      lastCurated = null,
       score = null,
 
       metaData = extractMetadata(record),
