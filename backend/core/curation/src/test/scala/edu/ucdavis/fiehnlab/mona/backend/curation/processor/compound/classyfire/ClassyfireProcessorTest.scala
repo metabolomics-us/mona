@@ -5,7 +5,7 @@ import java.io.InputStreamReader
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundTestConfig
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CompoundTestApplication
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by wohlgemuth on 5/5/16.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[CompoundTestConfig], classOf[RestClientConfig]))
+@SpringBootTest(classes = Array(classOf[CompoundTestApplication], classOf[RestClientConfig]))
 class ClassyfireProcessorTest extends WordSpec {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
