@@ -20,8 +20,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
@@ -31,8 +29,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
@@ -42,8 +38,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # RabbitMQ messaging service
   rabbitmq:
@@ -53,8 +47,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
 
   #
@@ -68,15 +60,13 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
-    entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=swarm -jar *.jar"
     environment:
       - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # The configuration service provides the required configuration to each service that has
   # a bootstrap.yml registered against it
@@ -86,15 +76,13 @@ services:
       - discovery
     depends_on:
       - discovery
-    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=swarm -jar *.jar"
     environment:
       - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
 
   #
@@ -106,54 +94,46 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-bootstrap:latest
     depends_on:
       - config
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx2G -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx2G -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     deploy:
       replicas: 1
       restart_policy:
         condition: none
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # Webhook support to notify external apis
   webhooks:
     image: eros.fiehnlab.ucdavis.edu/mona-webhooks-server:latest
     depends_on:
       - config
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # Scheduler for curation jobs
   curationScheduler:
     image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler:latest
     depends_on:
       - config
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # Serves the content of MoNA as a repository
   repository:
     image: eros.fiehnlab.ucdavis.edu/mona-repository
     depends_on:
       - config
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     volumes:
       - repository-data:/data
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
 
   #
@@ -165,20 +145,18 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:latest
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # Main authentication service
   auth:
     image: eros.fiehnlab.ucdavis.edu/mona-auth-server:latest
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     deploy:
       replicas: 1
       restart_policy:
@@ -191,13 +169,11 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-similarity
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
 
   #
@@ -209,7 +185,7 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     networks:
        - proxy
        - default
@@ -223,36 +199,30 @@ services:
         - com.df.serviceDomain=mona.fiehnlab.ucdavis.edu
         - com.df.port=8080
         - com.df.timeoutServer=300
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # Download service for scheduling and running download jobs
   downloader:
     image: eros.fiehnlab.ucdavis.edu/mona-download-scheduler:latest
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     volumes:
       - downloader-data:/data
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # Run scheduled curation tasks
   curationRunner:
     image: eros.fiehnlab.ucdavis.edu/mona-curation-runner:latest
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=swarm -jar *.jar"
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
 networks:
   default:
