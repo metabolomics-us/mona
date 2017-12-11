@@ -22,8 +22,9 @@ class FinalizeCurationTest extends WordSpec {
     "given a spectra" must {
       val processedSpectrum = processor.process(spectrumGiven)
 
-      "remove the computed metadata for the spectrum" in {
-        assert(processedSpectrum.metaData.exists(_.name == "Last Auto-Curation"))
+      "add lastCurated field to spectrum" in {
+        assert(spectrumGiven.lastCurated == null)
+        assert(processedSpectrum.lastCurated != null)
       }
     }
   }

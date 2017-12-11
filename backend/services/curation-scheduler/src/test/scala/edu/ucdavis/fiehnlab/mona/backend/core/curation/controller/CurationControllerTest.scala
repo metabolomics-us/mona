@@ -127,13 +127,15 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
         val mapper = MonaMapper.create
         val writer = new StringWriter()
         mapper.writeValue(writer, exampleRecords.head)
-        val content = writer.toString
 
+        val content = writer.toString
         val result: Spectrum = given().contentType("application/json; charset=UTF-8").body(content).when().post("/curation").`then`().statusCode(200).extract().body().as(classOf[Spectrum])
 
         assert(result.score != null)
         assert(result.score.impacts.nonEmpty)
-        assert(result.metaData.exists(_.name == "Last Auto-Curation"))
+
+        assert(exampleRecords.head.lastCurated == null)
+        assert(result.lastCurated != null)
       }
     }
   }

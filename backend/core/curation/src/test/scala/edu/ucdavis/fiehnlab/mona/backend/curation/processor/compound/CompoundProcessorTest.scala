@@ -19,7 +19,7 @@ import scala.collection.mutable.ArrayBuffer
   * Created by sajjan on 9/26/16.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[CompoundTestConfig], classOf[RestClientConfig]))
+@SpringBootTest(classes = Array(classOf[CompoundTestApplication], classOf[RestClientConfig]))
 class CompoundProcessorTest extends WordSpec {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]

@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by sajjan on 9/26/16.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[CompoundTestConfig], classOf[RestClientConfig]))
+@SpringBootTest(classes = Array(classOf[CompoundTestApplication], classOf[RestClientConfig]))
 class CalculateCompoundPropertiesTest extends WordSpec {
 
   @Autowired
