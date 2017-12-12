@@ -7,13 +7,12 @@ import com.netflix.zuul.ZuulFilter
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.{LoggableDispatcherServlet, LoggingService}
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.swagger.SwaggerRedirectFilter
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.web.{DispatcherServletAutoConfiguration, ResourceProperties}
 import org.springframework.boot.web.servlet.{MultipartConfigFactory, ServletRegistrationBean}
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy
 import org.springframework.context.annotation.{Bean, Configuration, Import}
@@ -25,17 +24,15 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.servlet.DispatcherServlet
 import org.springframework.web.servlet.config.annotation.{CorsRegistry, ResourceHandlerRegistry, WebMvcConfigurerAdapter}
 import org.springframework.web.servlet.resource.PathResourceResolver
-import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 /**
   * Created by wohlgemuth on 3/28/16.
   */
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableZuulProxy
 @Controller
 @RefreshScope
-@EnableSwagger2
+@Import(Array(classOf[EurekaClientConfig]))
 class ProxyServer {
 
   @Autowired

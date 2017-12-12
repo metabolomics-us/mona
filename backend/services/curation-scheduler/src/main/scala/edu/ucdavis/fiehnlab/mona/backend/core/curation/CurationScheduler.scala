@@ -5,13 +5,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationC
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import org.apache.http.impl.client.HttpClientBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
@@ -21,19 +20,16 @@ import org.springframework.security.config.annotation.web.builders.{HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.web.client.{RestOperations, RestTemplate}
-import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 /**
   * This class starts the curation service and let's it listen in the background for messages
   * it also exposes a couple of rest points, which allow simple scheduling of messages
   */
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableWebSecurity
-@EnableSwagger2
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
-  classOf[JWTAuthenticationConfig], classOf[CurationConfig], classOf[SwaggerConfig]))
+  classOf[JWTAuthenticationConfig], classOf[CurationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig]))
 class CurationScheduler extends WebSecurityConfigurerAdapter {
 
   @Autowired

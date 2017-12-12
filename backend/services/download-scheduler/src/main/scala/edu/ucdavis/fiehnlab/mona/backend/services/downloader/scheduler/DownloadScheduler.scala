@@ -5,14 +5,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusCon
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.config.DownloadConfig
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.config.DownloadListenerConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.Import
 import org.springframework.core.annotation.Order
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
@@ -21,19 +20,16 @@ import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
 import org.springframework.security.config.http.SessionCreationPolicy
-import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 /**
   * Created by sajjan on 5/25/16.
   */
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableWebSecurity
-@EnableSwagger2
 @EnableScheduling
 @Order(5)
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[MongoConfig],
-  classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[DownloadConfig], classOf[DownloadListenerConfig]))
+  classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig], classOf[DownloadConfig], classOf[DownloadListenerConfig]))
 @EnableMongoRepositories(basePackageClasses = Array(classOf[TagStatisticsMongoRepository]))
 class DownloadScheduler extends WebSecurityConfigurerAdapter with LazyLogging {
 
