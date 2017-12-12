@@ -1,0 +1,22 @@
+spring:
+  appliction:
+    name: discovery
+  cloud:
+    config:
+      server:
+        prefix: /config
+        bootstrap: true
+        git:
+          uri: https://bitbucket.org/fiehnlab/mona-config.git
+
+server:
+  port: 8761
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    server:
+      waitTimeInMsWhenSyncEmpty: 0
