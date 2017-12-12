@@ -19,7 +19,6 @@
 
     <modules>
         <module>configuration</module>
-        <module>discovery</module>
         <module>proxy</module>
     </modules>
 </project>

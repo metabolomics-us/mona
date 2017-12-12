@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.mona.backend.app.server</groupId>
+    <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
     <artifactId>discovery</artifactId>
     <version>1.5-SNAPSHOT</version>
     <name>discovery</name>
 
     <parent>
-        <groupId>edu.ucdavis.fiehnlab.mona.backend.app</groupId>
-        <artifactId>server</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
+        <artifactId>core</artifactId>
         <version>1.5-SNAPSHOT</version>
     </parent>
 
@@ -25,6 +25,16 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
     </dependencies>
 </project>
