@@ -145,8 +145,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-      placement:
-        constraints: [node.hostname == swarm5]
 
   # MoNA similarity service
   similarity:
@@ -189,7 +187,7 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-download-scheduler:latest
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker,swarm -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     volumes:
       - downloader-data:/data
     deploy:
@@ -202,7 +200,7 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-curation-runner:latest
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker,swarm -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     deploy:
       replicas: 1
       restart_policy:
