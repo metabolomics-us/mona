@@ -59,21 +59,7 @@ services:
       - rabbitmq
     entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
     environment:
-      - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
-
-  # The configuration service provides the required configuration to each service that has
-  # a bootstrap.yml registered against it
-  config:
-    image: eros.fiehnlab.ucdavis.edu/mona-configuration:latest
-    ports:
-      - 1111:1111
-    links:
-      - discovery
-    depends_on:
-      - discovery
-    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
-    environment:
-      - JAVA_OPTS='-Xmx256m -XX:+UseParallelGC'
+      - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
 
 
   #
@@ -84,8 +70,8 @@ services:
   bootstrap:
     image: eros.fiehnlab.ucdavis.edu/mona-bootstrap:latest
     depends_on:
-      - config
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx2G -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx2G -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Webhook support to notify external apis
   webhooks:
@@ -93,8 +79,8 @@ services:
     ports:
       - 4444:4444
     depends_on:
-      - config
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Scheduler for curation jobs
   curationScheduler:
@@ -102,8 +88,8 @@ services:
     ports:
       - 5555:5555
     depends_on:
-      - config
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Serves the content of MoNA as a repository
   repository:
@@ -111,8 +97,8 @@ services:
     ports:
       - 8888:8888
     depends_on:
-      - config
-    entrypoint: bash -c "./wait-for-it.sh config:1111 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     volumes:
       - repository-data:/data
 
@@ -126,14 +112,14 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:latest
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Main authentication service
   auth:
     image: eros.fiehnlab.ucdavis.edu/mona-auth-server:latest
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # MoNA similarity service
   similarity:
@@ -142,7 +128,7 @@ services:
     - 9999:9999
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
 
   #
@@ -158,7 +144,7 @@ services:
       - persistence
     environment:
       - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Download service for scheduling and running download jobs
   downloader:
@@ -167,7 +153,7 @@ services:
       - 7777:7777
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     volumes:
       - downloader-data:/data
 
@@ -176,4 +162,4 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-curation-runner:latest
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://config:1111 -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
