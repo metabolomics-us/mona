@@ -7,14 +7,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.service.MongoLoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.rest.config.AuthSecurityConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.{CommandLineRunner, SpringApplication}
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.stereotype.Component
-import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 import scala.collection.JavaConverters._
 
@@ -22,9 +20,7 @@ import scala.collection.JavaConverters._
   * Created by wohlgemuth on 3/28/16.
   */
 @SpringBootApplication
-@EnableDiscoveryClient
-@Import(Array(classOf[AuthSecurityConfig], classOf[JWTAuthenticationConfig], classOf[SwaggerConfig]))
-@EnableSwagger2
+@Import(Array(classOf[AuthSecurityConfig], classOf[JWTAuthenticationConfig], classOf[SwaggerConfig], classOf[EurekaClientConfig]))
 class AuthServer {
 
   /**

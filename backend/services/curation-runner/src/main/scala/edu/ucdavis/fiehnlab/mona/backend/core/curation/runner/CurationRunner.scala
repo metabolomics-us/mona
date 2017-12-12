@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.curation.runner
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.EurekaClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.config.CurationConfig
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
@@ -14,7 +15,6 @@ import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
@@ -25,9 +25,8 @@ import org.springframework.security.config.annotation.web.configuration.{EnableW
   */
 @SpringBootApplication
 @EnableWebSecurity
-@EnableDiscoveryClient
-@Import(Array(classOf[RestClientConfig], classOf[CurationConfig]))
 @Order(1)
+@Import(Array(classOf[RestClientConfig], classOf[CurationConfig], classOf[EurekaClientConfig]))
 class CurationRunner extends WebSecurityConfigurerAdapter with LazyLogging {
 
   @Autowired

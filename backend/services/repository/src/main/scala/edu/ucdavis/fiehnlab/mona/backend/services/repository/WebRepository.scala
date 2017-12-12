@@ -7,6 +7,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.{MonaEventBusConfiguration, MonaNotificationBusConfiguration}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.EurekaClientConfig
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.{FileLayout, SubmitterInchiKeySplashId}
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.listener.RepositoryListener
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.utility.FindDirectory
@@ -20,7 +21,6 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.embedded._
 import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient
 import org.springframework.context.annotation.{Bean, Configuration, DependsOn, Import}
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
@@ -31,8 +31,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
   * Created by wohlg_000 on 5/18/2016.
   */
 @SpringBootApplication
-@EnableDiscoveryClient
-@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration]))
+@Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[EurekaClientConfig]))
 class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
 
 
