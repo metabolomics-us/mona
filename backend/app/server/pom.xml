@@ -18,7 +18,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>configuration</module>
         <module>proxy</module>
     </modules>
 </project>
