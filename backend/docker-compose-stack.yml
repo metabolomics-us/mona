@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 volumes:
   mongo-data:
@@ -41,7 +41,7 @@ services:
 
   # RabbitMQ messaging service
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.6-management
     hostname: rabbitmq
     deploy:
       replicas: 1
