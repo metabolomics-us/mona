@@ -25,6 +25,8 @@ services:
   elasticsearch_master:
     image: elasticsearch:1.7.5
     entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
+    networks:
+      - default
     deploy:
       replicas: 1
       restart_policy:
@@ -34,6 +36,8 @@ services:
   elasticsearch_node:
     image: elasticsearch:1.7.5
     entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
+    networks:
+      - default
     deploy:
       replicas: 1
       restart_policy:
@@ -42,7 +46,8 @@ services:
   # RabbitMQ messaging service
   rabbitmq:
     image: rabbitmq:3.6-management
-    hostname: rabbitmq
+    networks:
+      - default
     deploy:
       replicas: 1
       restart_policy:
