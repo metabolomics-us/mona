@@ -12,7 +12,9 @@ import org.springframework.context.annotation.{Bean, Configuration, Primary, Pro
 import scala.collection.JavaConverters._
 
 /**
-  * Assigns
+  * Identifies the correct ip address associated with the docker container's hostname to
+  * solve the issue of unreachable services when deploying with docker swarm
+  * https://github.com/spring-cloud/spring-cloud-netflix/issues/1820
   * Created by sajjan on 12/11/17.
   */
 @Configuration
