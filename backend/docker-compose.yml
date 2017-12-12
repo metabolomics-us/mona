@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 volumes:
   mongo-data:
@@ -37,7 +37,7 @@ services:
     entrypoint: ./bin/elasticsearch -Xmx4g
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.6-management
     hostname: rabbitmq
     ports:
       - 15672:15672
