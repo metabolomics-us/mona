@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.event.Event
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
 
@@ -26,8 +27,11 @@ class CurationService {
   @Autowired
   val notifications: EventBus[Notification] = null
 
+  @Autowired
+  val curationWorkflow: ItemProcessor[Spectrum, Spectrum] = null
+
   /**
-    * sends this spectrum to our dedicated queue. This queue can have many consumers to then
+    * Sends this spectrum to our dedicated queue. This queue can have many consumers to then
     * asynchronously process and curate the object
     *
     * @param spectrum
@@ -36,6 +40,13 @@ class CurationService {
     rabbitTemplate.convertAndSend(queueName, spectrum)
     notifications.sendEvent(Event(Notification(CurationScheduled(spectrum), getClass.getName)))
   }
+
+  /**
+    * Immediately curate the given spectrum
+    * @param spectrum
+    * @return
+    */
+  def curateSpectrum(spectrum: Spectrum): Spectrum = curationWorkflow.process(spectrum)
 }
 
 /**
