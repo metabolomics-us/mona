@@ -64,6 +64,7 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-discovery:latest
     depends_on:
       - mongodb
+      - elasticsearch_master
       - rabbitmq
     entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
     environment:
