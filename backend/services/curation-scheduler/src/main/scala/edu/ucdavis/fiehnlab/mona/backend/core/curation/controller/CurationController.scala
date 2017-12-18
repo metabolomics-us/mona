@@ -33,9 +33,6 @@ class CurationController extends LazyLogging {
   @Autowired
   val curationService: CurationService = null
 
-  @Autowired
-  val curationWorkflow: ItemProcessor[Spectrum, Spectrum] = null
-
   /**
     * schedules the spectra with the specified id for curation
     *
@@ -94,11 +91,13 @@ class CurationController extends LazyLogging {
   }
 
   /**
-    * curate a single spectrum
+    * Curate a single spectrum on demand
     */
   @RequestMapping(path = Array(""), method = Array(RequestMethod.POST))
   def curateSpectrum(@RequestBody spectrum: Spectrum): Future[ResponseEntity[Spectrum]] = {
-    new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity(curationWorkflow.process(spectrum), HttpStatus.OK))
+    new AsyncResult[ResponseEntity[Spectrum]](
+      new ResponseEntity(curationService.curateSpectrum(spectrum), HttpStatus.OK)
+    )
   }
 }
 

@@ -76,6 +76,7 @@ class CurationScheduler extends WebSecurityConfigurerAdapter {
     web.ignoring()
       .antMatchers(HttpMethod.GET, "/*")
       .antMatchers(HttpMethod.POST, "/rest/curation")
+      .antMatchers(HttpMethod.POST, "/rest/conversion/**")
   }
 }
 
