@@ -267,7 +267,7 @@
                                 <div class="input-group">
                                     <span class="input-group-btn">
                                         <span class="btn btn-primary btn-file">
-                                            Browse&hellip; <input type="file" ng-file-select="parseMolFile($files)" />
+                                            Browse&hellip; <input type="file" ng-file-select="parseMolFile($files)" ng-diabled="compoundProcessing" />
                                         </span>
                                     </span>
 
@@ -288,14 +288,17 @@
                             <div>
                                 Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
                                 will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
-                                using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                                using this tool will overwrite any existing MOL file, InChI code or InChIKey.
                             </div>
                             <hr />
 
                             <div class="text-center" chemical-sketcher id="molSketcher" ng-model="currentSpectrum.molFile"></div>
 
                             <div class="form-group text-center">
-                                <button ng-click="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                                <button type="button" class="btn btn-primary" ng-click="convertMolToInChI()" ng-disabled="compoundProcessing">
+                                    <span ng-if="compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+                                    <span>Pull Compound Info from MOL Data</span>
+                                </button>
                             </div>
                         </uib-accordion-group>
                     </uib-accordion>

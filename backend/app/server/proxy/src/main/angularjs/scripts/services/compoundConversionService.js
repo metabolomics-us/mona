@@ -24,9 +24,6 @@
         this.InChIKeyToName = function(inchiKey, callback, errorCallback) {
             $http.get(CTSURL +'/rest/convert/InChIKey/Chemical%20Name/'+ inchiKey).then(
                 function(response) {
-                console.log(response)
-                    console.log(response.data.length)
-                    console.log(response.data[0].result.length)
                     if (response.data.length > 0 && response.data[0].result.length > 0) {
                         callback(response.data[0].result)
                     } else {
@@ -40,7 +37,7 @@
         /**
 		 * Look up the InChI for given InChIKey from the CTS
          */
-        this.getInChIByInChIKey = function(inchikey, callback, errorCallback) {
+        this.getInChIByInChIKey = function(inchiKey, callback, errorCallback) {
             $http.get(CTSURL +'/rest/convert/InChIKey/InChI%20Code/'+ inchiKey).then(
                 function(response) {
                     if (response.data.length > 0 && response.data[0].result.length > 0) {
