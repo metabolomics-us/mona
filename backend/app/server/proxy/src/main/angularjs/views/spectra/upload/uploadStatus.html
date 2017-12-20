@@ -1,10 +1,10 @@
 <div class="row">
     <div class="col-md-12">
-        <!--
-        <div ng-show="!auth.isLoggedIn()">
+        <div ng-show="!auth.isLoggedIn()" class="alert alert-warning" role="alert">
             <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a> before uploading spectra!</h3>
+            <h5>You can start using the uploader without an account, but you will not be able to submit your spectra without registering and logging in.</h5>
         </div>
-        -->
+
         <div ng-show="spectraUploaded">
             <h3>Thank you for your submission!</h3>
 
