@@ -471,7 +471,9 @@
                             <input type="text"
                                    ng-model="meta.name"
                                    placeholder="Metadata Name"
-                                   uib-typeahead="x for x in metadataNames | filter:$viewValue | limitTo:8"
+                                   uib-typeahead="x.name for x in metadataNames | filter:$viewValue | orderBy:count | limitTo:8"
+                                   typeahead-show-hint="true"
+                                   typeahead-min-length="0"
                                    class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
@@ -479,7 +481,9 @@
                                    ng-model="meta.value"
                                    ng-disabled="!meta.name || meta.name == ''"
                                    placeholder="Metadata Value"
-                                   uib-typeahead="x for x in queryMetadataValues(meta.name, $viewValue)"
+                                   uib-typeahead="x.value for x in queryMetadataValues(meta.name, $viewValue)"
+                                   typeahead-show-hint="true"
+                                   typeahead-min-length="0"
                                    class="form-control" />
                         </div>
                         <div class="col-sm-2 form-group">

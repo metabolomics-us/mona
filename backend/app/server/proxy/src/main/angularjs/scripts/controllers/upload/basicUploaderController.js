@@ -573,11 +573,10 @@
             if (angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') === '')
                 value = '';
 
-            return $http.post(
-                REST_BACKEND_SERVER + '/rest/metaData/values/search',
-                {metaDataName: name, partialMetaDataValue: value}
+            return $http.get(
+                REST_BACKEND_SERVER + '/rest/metaData/values?name='+ encodeURI(name) +'&search='+ encodeURI(value)
             ).then(function(data) {
-                return data.data;
+                return data.data.values;
             });
         };
 
