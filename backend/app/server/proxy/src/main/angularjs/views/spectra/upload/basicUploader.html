@@ -613,7 +613,6 @@
                                 <span ng-if="!currentSpectrum.inchi"><i>None Provided</i></span>
                             </td>
                         </tr>
-                        <!--
                         <tr>
                             <td>SMILES</td>
                             <td>
@@ -621,7 +620,6 @@
                                 <span ng-if="!currentSpectrum.smiles"><i>None Provided</i></span>
                             </td>
                         </tr>
-                        -->
                     </tbody>
                 </table>
 
@@ -690,7 +688,8 @@
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
                         <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
-                        <li class="next"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
+                        <li class="next" ng-if="auth.isLoggedIn()"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
+                        <li class="next" ng-if="!auth.isLoggedIn()"><a href="" ng-click="auth.handleLogin()">Log in before Uploading to MoNA</a></li>
                     </ul>
                 </nav>
             </div>
