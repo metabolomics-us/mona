@@ -1,0 +1,173 @@
+version: '3'
+
+volumes:
+  mongo-data:
+  repository-data:
+  downloader-data:
+
+services:
+  #
+  # Data Management
+  #
+
+  mongodb:
+    image: mongo:3.2.4
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - default
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  # Elasticsearch master and entrypoint
+  elasticsearch_master:
+    image: elasticsearch:1.7.5
+    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
+    networks:
+      - default
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  # Elasticsearch node, which may be scaled
+  elasticsearch_node:
+    image: elasticsearch:1.7.5
+    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
+    networks:
+      - default
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  # RabbitMQ messaging service
+  rabbitmq:
+    image: rabbitmq:3.6-management
+    networks:
+      - default
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+
+  #
+  # MoNA base services
+  #
+
+  # The discovery service provided us with a local overview of our services
+  # and allows for easy scaling and load balancing using our proxy at a later stage
+  discovery:
+    image: eros.fiehnlab.ucdavis.edu/mona-discovery:latest
+    depends_on:
+      - mongodb
+      - elasticsearch_master
+      - rabbitmq
+    entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
+    environment:
+      - JAVA_OPTS='-Xmxm -XX:+UseParallelGC'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+
+  #
+  # Initial services to start up
+  #
+
+  # Scheduler for curation jobs
+  curationScheduler:
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-scheduler:latest
+    depends_on:
+      - discovery
+    entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+
+  #
+  # Persistence server, which utilizes above services, and other dependent services
+  #
+
+  # Persistence service with qery interface
+  persistence:
+    image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:latest
+    depends_on:
+      - curationScheduler
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  # Main authentication service
+  auth:
+    image: eros.fiehnlab.ucdavis.edu/mona-auth-server:latest
+    depends_on:
+      - curationScheduler
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+
+  #
+  # Proxy and additional standalone services
+  #
+
+  # The main entrypoint for MoNA
+  proxy:
+    image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
+    depends_on:
+      - persistence
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    networks:
+       - proxy
+       - default
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - com.df.notify=true
+        - com.df.distribute=true
+        - com.df.serviceDomain=mona.fiehnlab.ucdavis.edu
+        - com.df.port=8080
+        - com.df.timeoutServer=300
+
+  # Download service for scheduling and running download jobs
+  downloader:
+    image: eros.fiehnlab.ucdavis.edu/mona-download-scheduler:latest
+    depends_on:
+      - persistence
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    volumes:
+      - downloader-data:/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  # Run scheduled curation tasks
+  curationRunner:
+    image: eros.fiehnlab.ucdavis.edu/mona-curation-runner:latest
+    depends_on:
+      - persistence
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  default:
+    external: false
+  proxy:
+    external: true
