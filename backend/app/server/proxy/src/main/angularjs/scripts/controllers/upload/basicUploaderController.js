@@ -142,6 +142,7 @@
             $scope.currentSpectrum.molFile = '';
             $scope.currentSpectrum.inchi = '';
             $scope.currentSpectrum.inchiKey = '';
+            $scope.currentSpectrum.smiles = '';
             $scope.currentSpectrum.names = [''];
         };
 
@@ -151,21 +152,21 @@
          * @param names array of compound names
          * @param callback
          */
-        function namesToInChIKey(names, callback) {
+        var namesToInChIKey = function(names, callback) {
             if (names.length == 0) {
-                return null;
+                callback(null);
             } else {
                 CompoundConversionService.nameToInChIKey(names[0], function(molecule) {
                     if (molecule !== null) {
                         callback(molecule);
                     } else {
-                        namesToInChIKey(names.slice(1));
+                        namesToInChIKey(names.slice(1), callback);
                     }
                 }, function(error) {
-                    namesToInChIKey(names.slice(1));
+                    namesToInChIKey(names.slice(1), callback);
                 });
             }
-        }
+        };
 
         /**
          * Pull names from CTS given an InChIKey and update the currentSpectrum
@@ -217,6 +218,7 @@
             CompoundConversionService.getInChIByInChIKey(
                 inchiKey,
                 function (data) {
+                    $scope.currentSpectrum.inchi = data[0];
                     processInChI(data[0]);
                 },
                 function (response) {
@@ -271,20 +273,16 @@
 
             // Process names
             else if ($scope.currentSpectrum.names.length > 0) {
-                CompoundConversionService.namesToInChIKey(
-                    $scope.currentSpectrum.names,
-                    function(inchiKey) {
-                        if (inchiKey !== null) {
-                            $log.info('Found InChIKey: '+ inchiKey);
-                            $scope.currentSpectrum.inchiKey = inchiKey;
-                            processInChIKey(inchiKey);
-                        } else {
-                            $scope.compoundError = 'Unable to find a match for provided name!';
-                        }
-
+                namesToInChIKey($scope.currentSpectrum.names, function(inchiKey) {
+                    if (inchiKey !== null) {
+                        $log.info('Found InChIKey: '+ inchiKey);
+                        $scope.currentSpectrum.inchiKey = inchiKey;
+                        processInChIKey(inchiKey);
+                    } else {
+                        $scope.compoundError = 'Unable to find a match for provided name!';
                         $scope.compoundProcessing = false;
                     }
-                );
+                });
             }
 
             else {
