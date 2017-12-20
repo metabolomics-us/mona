@@ -4,12 +4,13 @@
 
 (function () {
     'use strict';
-    BasicUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'gwChemifyService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
+
+    basicUploaderController.$inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'CompoundConversionService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
     angular.module('moaClientApp')
-        .controller('BasicUploaderController', BasicUploaderController);
+        .controller('BasicUploaderController', basicUploaderController);
 
     /* @ngInject */
-    function BasicUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, gwChemifyService,
+    function basicUploaderController($scope, $rootScope, $window, $location, UploadLibraryService, CompoundConversionService,
                                         $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http) {
 
         $scope.currentSpectrum = null;
@@ -154,7 +155,7 @@
             if (names.length == 0) {
                 return null;
             } else {
-                gwChemifyService.nameToInChIKey(names[0], function(molecule) {
+                CompoundConversionService.nameToInChIKey(names[0], function(molecule) {
                     if (molecule !== null) {
                         callback(molecule);
                     } else {
@@ -172,44 +173,148 @@
         $scope.retrieveCompoundData = function() {
             $log.info("Retrieving MOL data...");
 
-            if ($scope.currentSpectrum.inchiKey) {
-                gwCtsService.convertInchiKeyToMol($scope.currentSpectrum.inchiKey, function (molecule) {
-                    if (molecule !== null) {
-                        $scope.currentSpectrum.molFile = molecule;
-                    } else if ($scope.currentSpectrum.inchi) {
-                        gwCtsService.convertInChICodeToMol($scope.currentSpectrum.inchi, function (molecule) {
-                            if (molecule !== null) {
-                                $scope.currentSpectrum.molFile = molecule;
-                            }
-                        });
+            $scope.compoundProcessing = false;
+            $scope.compoundError = undefined;
+
+
+            /**
+             * Pull names from CTS given an InChIKey and update the currentSpectrum
+             */
+            var pullNames = function(inchiKey) {
+                // Only pull if there are no names provided
+                if ($scope.currentSpectrum.names.length == 0 || ($scope.currentSpectrum.names.length == 1 && $scope.currentSpectrum.names[0] == '')) {
+                    CompoundConversionService.InChIKeyToName(
+                        inchiKey,
+                        function (data) {
+                            $scope.currentSpectrum.names = $scope.currentSpectrum.names.filter(function(x) {
+                                return x != '';
+                            });
+
+                            Array.prototype.push.apply($scope.currentSpectrum.names, data);
+
+                            $scope.compoundProcessing = false;
+                        },
+                        function () {
+                            $scope.compoundProcessing = false;
+                        }
+                    );
+                } else {
+                    $scope.compoundProcessing = false;
+                }
+            };
+
+            /**
+             * Pull compound summary given an InChI
+             */
+            var processInChI = function(inchi) {
+                CompoundConversionService.parseInChI(
+                    $scope.currentSpectrum.inchi,
+                    function (response) {
+                        $scope.currentSpectrum.smiles = response.data.smiles;
+                        $scope.currentSpectrum.inchiKey = response.data.inchiKey;
+                        $scope.currentSpectrum.molFile = response.data.molData;
+
+                        pullNames(response.data.inchiKey);
+                    },
+                    function (response) {
+                        $scope.compoundError = 'Unable to process provided InChI!'
+                        $scope.compoundProcessing = false;
                     }
-                });
+                );
+            };
+
+            var processInChIKey = function(inchiKey) {
+                CompoundConversionService.getInChIByInChIKey(
+                    inchiKey,
+                    function (data) {
+                        processInChI(data[0]);
+                    },
+                    function (response) {
+                        if (response.status == 200) {
+                            $scope.compoundError = 'No results found for provided InChIKey!';
+                        } else {
+                            $scope.compoundError = 'Unable to process provided InChIKey!';
+                        }
+
+                        $scope.compoundProcessing = false;
+                    }
+                );
             }
 
-            else if ($scope.currentSpectrum.inchi) {
-                gwCtsService.convertInChICodeToMol($scope.currentSpectrum.inchi, function (molecule) {
-                    if (molecule !== null) {
-                        $scope.currentSpectrum.molFile = molecule;
+
+            $scope.compoundProcessing = true;
+
+
+            // Process InChI
+            if ($scope.currentSpectrum.inchi) {
+                processInChI($scope.currentSpectrum.inchi);
+            }
+
+            // Process SMILES
+            else if ($scope.currentSpectrum.smiles) {
+                CompoundConversionService.parseSMILES(
+                    $scope.currentSpectrum.smiles,
+                    function (response) {
+                        $scope.currentSpectrum.inchi = response.data.inchi;
+                        $scope.currentSpectrum.inchiKey = response.data.inchiKey;
+                        $scope.currentSpectrum.molFile = response.data.molData;
+
+                        pullNames(response.data.inchiKey);
+                    },
+                    function (response) {
+                        $scope.compoundError = 'Unable to process provided SMILES!';
+                        $scope.compoundProcessing = false;
                     }
-                });
+                );
+            }
+
+            // Process InChIKey
+            else if ($scope.currentSpectrum.inchiKey) {
+                processInChIKey($scope.currentSpectrum.inchiKey);
+            }
+
+            // Process names
+            else if ($scope.currentSpectrum.names.length > 0) {
+                CompoundConversionService.namesToInChIKey(
+                    $scope.currentSpectrum.names,
+                    function(inchiKey) {
+                        if (inchiKey !== null) {
+                            $log.info('Found InChIKey: '+ inchiKey);
+                            $scope.currentSpectrum.inchiKey = inchiKey;
+                            processInChIKey(inchiKey);
+                        } else {
+                            $scope.compoundError = 'Unable to find a match for provided name!';
+                        }
+
+                        $scope.compoundProcessing = false;
+                    }
+                );
             }
 
             else {
-                namesToInChIKey($scope.currentSpectrum.names, function(inchiKey) {
-                    if (inchiKey !== null) {
-                        console.log('Found InChIKey: '+ inchiKey);
-                        $scope.currentSpectrum.inchiKey = inchiKey;
-
-                        gwCtsService.convertInchiKeyToMol(inchiKey, function (molecule) {
-                            if (molecule !== null) {
-                                $scope.currentSpectrum.molFile = molecule;
-                            }
-                        });
-                    }
-                });
+                $scope.compoundError = 'Please provide compound details!';
+                $scope.compoundProcessing = false;
             }
         };
 
+
+        $scope.parseMolFile = function(files) {
+            if (files.length == 1) {
+                var file = files[0];
+                var fileReader = new FileReader();
+
+                fileReader.onload = function(event) {
+                    console.log(event.target.result);
+                    
+                    gwCtsService.convertToInchiKey(event.target.result, function (result) {
+                        console.log(result);
+                        $scope.currentSpectrum.inchiKey = result.inchikey;
+                    });
+                };
+    
+                fileReader.readAsText(files[0]);
+            }
+        };
 
         $scope.convertMolToInChI = function () {
             if (angular.isDefined($scope.currentSpectrum.molFile) && $scope.currentSpectrum.molFile !== '') {
