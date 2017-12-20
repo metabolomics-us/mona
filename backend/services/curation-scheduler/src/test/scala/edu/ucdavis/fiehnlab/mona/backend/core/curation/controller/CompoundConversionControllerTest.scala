@@ -46,7 +46,6 @@ class CompoundConversionControllerTest extends AbstractSpringControllerTest with
 
       "fail gracefully on bad request" in {
         given().contentType("application/json; charset=UTF-8").when().body(WrappedString("abc")).post("/conversion/smiles").`then`().statusCode(500)
-
       }
     }
   }
