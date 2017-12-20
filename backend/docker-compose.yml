@@ -16,28 +16,22 @@ services:
       - 27017:27017
     volumes:
       - mongo-data:/data/db
-    networks:
-      - default
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile
+    image: elasticsearch:1.7.5
+    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
     ports:
       - 9500:9200
       - 9300:9300
-    entrypoint: ./bin/elasticsearch -Xmx4g
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile
-    entrypoint: ./bin/elasticsearch -Xmx4g
+    image: elasticsearch:1.7.5
+    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.6-management
     hostname: rabbitmq
     ports:
       - 15672:15672

@@ -563,7 +563,8 @@
                     <ul class="pager" style="margin: 0px !important;">
                         <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
                         <li><strong style="font-size: 1.2em;">Summary</strong></li>
-                        <li class="next"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
+                        <li class="next" ng-if="auth.isLoggedIn()"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
+                        <li class="next" ng-if="!auth.isLoggedIn()"><a href="" ng-click="auth.handleLogin()">Log in before uploading to MoNA</a></li>
                     </ul>
                 </nav>
             </div>
@@ -689,7 +690,7 @@
                     <ul class="pager" style="margin: 0px !important;">
                         <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
                         <li class="next" ng-if="auth.isLoggedIn()"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
-                        <li class="next" ng-if="!auth.isLoggedIn()"><a href="" ng-click="auth.handleLogin()">Log in before Uploading to MoNA</a></li>
+                        <li class="next" ng-if="!auth.isLoggedIn()"><a href="" ng-click="auth.handleLogin()">Log in before uploading to MoNA</a></li>
                     </ul>
                 </nav>
             </div>
