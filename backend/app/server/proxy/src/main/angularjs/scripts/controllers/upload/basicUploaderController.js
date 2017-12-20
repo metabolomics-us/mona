@@ -168,80 +168,76 @@
         }
 
         /**
+         * Pull names from CTS given an InChIKey and update the currentSpectrum
+         */
+        var pullNames = function(inchiKey) {
+            // Only pull if there are no names provided
+            if ($scope.currentSpectrum.names.length == 0 || ($scope.currentSpectrum.names.length == 1 && $scope.currentSpectrum.names[0] == '')) {
+                CompoundConversionService.InChIKeyToName(
+                    inchiKey,
+                    function (data) {
+                        $scope.currentSpectrum.names = $scope.currentSpectrum.names.filter(function(x) {
+                            return x != '';
+                        });
+
+                        Array.prototype.push.apply($scope.currentSpectrum.names, data);
+
+                        $scope.compoundProcessing = false;
+                    },
+                    function () {
+                        $scope.compoundProcessing = false;
+                    }
+                );
+            } else {
+                $scope.compoundProcessing = false;
+            }
+        };
+
+        /**
+         * Pull compound summary given an InChI
+         */
+        var processInChI = function(inchi) {
+            CompoundConversionService.parseInChI(
+                $scope.currentSpectrum.inchi,
+                function (response) {
+                    $scope.currentSpectrum.smiles = response.data.smiles;
+                    $scope.currentSpectrum.inchiKey = response.data.inchiKey;
+                    $scope.currentSpectrum.molFile = response.data.molData;
+
+                    pullNames(response.data.inchiKey);
+                },
+                function (response) {
+                    $scope.compoundError = 'Unable to process provided InChI!'
+                    $scope.compoundProcessing = false;
+                }
+            );
+        };
+
+        var processInChIKey = function(inchiKey) {
+            CompoundConversionService.getInChIByInChIKey(
+                inchiKey,
+                function (data) {
+                    processInChI(data[0]);
+                },
+                function (response) {
+                    if (response.status == 200) {
+                        $scope.compoundError = 'No results found for provided InChIKey!';
+                    } else {
+                        $scope.compoundError = 'Unable to process provided InChIKey!';
+                    }
+
+                    $scope.compoundProcessing = false;
+                }
+            );
+        };
+
+        /**
          * Generate MOL file from available compound information
          */
         $scope.retrieveCompoundData = function() {
             $log.info("Retrieving MOL data...");
 
-            $scope.compoundProcessing = false;
             $scope.compoundError = undefined;
-
-
-            /**
-             * Pull names from CTS given an InChIKey and update the currentSpectrum
-             */
-            var pullNames = function(inchiKey) {
-                // Only pull if there are no names provided
-                if ($scope.currentSpectrum.names.length == 0 || ($scope.currentSpectrum.names.length == 1 && $scope.currentSpectrum.names[0] == '')) {
-                    CompoundConversionService.InChIKeyToName(
-                        inchiKey,
-                        function (data) {
-                            $scope.currentSpectrum.names = $scope.currentSpectrum.names.filter(function(x) {
-                                return x != '';
-                            });
-
-                            Array.prototype.push.apply($scope.currentSpectrum.names, data);
-
-                            $scope.compoundProcessing = false;
-                        },
-                        function () {
-                            $scope.compoundProcessing = false;
-                        }
-                    );
-                } else {
-                    $scope.compoundProcessing = false;
-                }
-            };
-
-            /**
-             * Pull compound summary given an InChI
-             */
-            var processInChI = function(inchi) {
-                CompoundConversionService.parseInChI(
-                    $scope.currentSpectrum.inchi,
-                    function (response) {
-                        $scope.currentSpectrum.smiles = response.data.smiles;
-                        $scope.currentSpectrum.inchiKey = response.data.inchiKey;
-                        $scope.currentSpectrum.molFile = response.data.molData;
-
-                        pullNames(response.data.inchiKey);
-                    },
-                    function (response) {
-                        $scope.compoundError = 'Unable to process provided InChI!'
-                        $scope.compoundProcessing = false;
-                    }
-                );
-            };
-
-            var processInChIKey = function(inchiKey) {
-                CompoundConversionService.getInChIByInChIKey(
-                    inchiKey,
-                    function (data) {
-                        processInChI(data[0]);
-                    },
-                    function (response) {
-                        if (response.status == 200) {
-                            $scope.compoundError = 'No results found for provided InChIKey!';
-                        } else {
-                            $scope.compoundError = 'Unable to process provided InChIKey!';
-                        }
-
-                        $scope.compoundProcessing = false;
-                    }
-                );
-            }
-
-
             $scope.compoundProcessing = true;
 
 
@@ -304,12 +300,8 @@
                 var fileReader = new FileReader();
 
                 fileReader.onload = function(event) {
-                    console.log(event.target.result);
-                    
-                    gwCtsService.convertToInchiKey(event.target.result, function (result) {
-                        console.log(result);
-                        $scope.currentSpectrum.inchiKey = result.inchikey;
-                    });
+                    $scope.currentSpectrum.molFile = event.target.result;
+                    $scope.convertMolToInChI();
                 };
     
                 fileReader.readAsText(files[0]);
@@ -318,10 +310,24 @@
 
         $scope.convertMolToInChI = function () {
             if (angular.isDefined($scope.currentSpectrum.molFile) && $scope.currentSpectrum.molFile !== '') {
-                gwCtsService.convertToInchiKey($scope.currentSpectrum.molFile, function (result) {
-                    console.log(result);
-                    $scope.currentSpectrum.inchiKey = result.inchikey;
-                });
+                $scope.compoundProcessing = false;
+
+                CompoundConversionService.parseMOL(
+                    $scope.currentSpectrum.molFile,
+                    function (response) {
+                        $scope.currentSpectrum.inchi = response.data.inchi;
+                        $scope.currentSpectrum.smiles = response.data.smiles;
+                        $scope.currentSpectrum.inchiKey = response.data.inchiKey;
+
+                        pullNames(response.data.inchiKey);
+                    },
+                    function (response) {
+                        $scope.compoundMolError = 'Unable to process provided MOL data!'
+                        $scope.compoundProcessing = false;
+                    }
+                );
+            } else {
+                $scope.compoundMolError
             }
         };
 
