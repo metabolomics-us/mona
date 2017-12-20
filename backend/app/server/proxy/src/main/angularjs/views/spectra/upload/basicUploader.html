@@ -169,15 +169,23 @@
                         SMILES, compound name, a MOL/SDF file, or draw a structure yourself.  Then, click on
                         "Update Compound" to automatically pull the remaining fields from the
                         <a href="http://cts.fiehnlab.ucdavis.edu" target="_blank">Chemical Translation Service</a>.
-                        Please note that some names or InChIKeys do not exist in compound databases, and so the CTS
-                        may not find anything - in this case, using a full structure such as InChI, SMILES or MOL is preferred.</small>
+                    </small>
                 </p>
                 <br />
 
-                <div ng-if="currentSpectrum.molFile" style="text-align: center;">
+                <div ng-if="currentSpectrum.molFile && !compoundProcessing" style="text-align: center;">
                     <div chemical-sketcher readonly="true"
                          id="compoundViewer"
                          ng-model="currentSpectrum.molFile"></div>
+                </div>
+
+                <div class="alert alert-info" role="alert" ng-show="compoundProcessing" style="text-align: center;">
+                    <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Pulling compound data...</h4>
+                </div>
+
+                <div ng-if="compoundError" class="alert alert-danger" role="alert">
+                    <h3><i class="fa fa-exclamation-triangle"></i> Error!</h3>
+                    <h4>{{compoundError}}</h4>
                 </div>
                 <br />
 
@@ -194,16 +202,6 @@
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-md-3 col-lg-3"><label>InChIKey:</label></div>
-                    <div class="col-md-9 col-lg-9">
-                        <input type="text"
-                               ng-model="currentSpectrum.inchiKey"
-                               placeholder="InChIKey"
-                               class="form-control" />
-                    </div>
-                </div>
-
-                <div class="row form-group">
                     <div class="col-md-3 col-lg-3"><label>InChI:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
@@ -213,7 +211,6 @@
                     </div>
                 </div>
 
-                <!--
                 <div class="row form-group">
                     <div class="col-md-3 col-lg-3"><label>SMILES</label></div>
                     <div class="col-md-9 col-lg-9">
@@ -223,11 +220,23 @@
                                class="form-control" />
                     </div>
                 </div>
-                -->
+
+                <div class="row form-group">
+                    <div class="col-md-3 col-lg-3"><label>InChIKey:</label></div>
+                    <div class="col-md-9 col-lg-9">
+                        <input type="text"
+                               ng-model="currentSpectrum.inchiKey"
+                               placeholder="InChIKey"
+                               class="form-control" />
+                    </div>
+                </div>
 
                 <div class="form-group text-center">
-                    <button ng-click="retrieveCompoundData()" class="btn btn-primary">Update Compound</button>
-                    <button ng-click="resetCompound()" class="btn btn-danger">Reset Compound</button>
+                    <button type="button" class="btn btn-primary" ng-click="retrieveCompoundData()" ng-disabled="compoundProcessing">
+                        <span ng-if="compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+                        <span>Update Compound</span>
+                    </button>
+                    <button ng-click="resetCompound()" class="btn btn-danger" ng-disabled="compoundProcessing">Reset Compound</button>
                 </div>
 
                 <div class="row form-group">
