@@ -5,6 +5,7 @@
 
 (function() {
     'use strict';
+
     authenticationService.$inject = ['Submitter', '$log', '$q', '$http', '$rootScope', 'CookieService', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
         .service('AuthenticationService', authenticationService);
@@ -13,7 +14,6 @@
     function authenticationService(Submitter, $log, $q, $http, $rootScope, CookieService, REST_BACKEND_SERVER) {
         var self = this;
         self.loggingIn = false;
-
 
         function pullSubmitterData() {
             $http({
