@@ -88,7 +88,7 @@ class DownloadSchedulerService extends LazyLogging {
     // Update the list of pre-generated downloads based on libraries present in the database
     tagStatisticsRepository.findAll().asScala
       .filter(_.category == "library")
-      .filter(tag => !predefinedQueryRepository.exists(s"Libraries - ${tag.text}"))
+      .filter(tag => predefinedQueryRepository.findByQuery(s"""tags.text=="$tag"""").isEmpty)
       .foreach { tag =>
         logger.info(s"Creating new predefined download for ${tag.text}")
 

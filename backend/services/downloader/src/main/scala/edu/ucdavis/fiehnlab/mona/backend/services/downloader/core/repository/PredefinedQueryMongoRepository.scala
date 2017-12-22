@@ -8,4 +8,7 @@ import org.springframework.stereotype.Repository
   * Created by sajjan on 6/6/16.
   */
 @Repository("predefinedQueryMongoRepository")
-trait PredefinedQueryMongoRepository extends PagingAndSortingRepository[PredefinedQuery, String]
+trait PredefinedQueryMongoRepository extends PagingAndSortingRepository[PredefinedQuery, String] {
+
+  def findByQuery(query: String): Array[PredefinedQuery]
+}
