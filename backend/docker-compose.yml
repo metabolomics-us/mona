@@ -22,7 +22,7 @@ services:
     image: elasticsearch:1.7.5
     entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
     ports:
-      - 9500:9200
+      - 9200:9200
       - 9300:9300
 
   # Elasticsearch node, which may be scaled
