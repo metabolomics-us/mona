@@ -88,18 +88,18 @@ class DownloadSchedulerService extends LazyLogging {
     // Update the list of pre-generated downloads based on libraries present in the database
     tagStatisticsRepository.findAll().asScala
       .filter(_.category == "library")
-      .filter(tag => predefinedQueryRepository.findByQuery(s"""tags.text=="$tag"""").isEmpty)
       .foreach { tag =>
-        logger.info(s"Creating new predefined download for ${tag.text}")
-
         val tagComponents: Array[String] = tag.text.split(" - ")
 
         // Create each level of the tag if it contains separators
+        // For example, a library tag of "Test - A" would create libraries "Test" and "Test - A"
         (1 to tagComponents.length).foreach { i =>
-          val tag: String = tagComponents.slice(0, i).mkString(" - ")
+          val tagLabel: String = tagComponents.slice(0, i).mkString(" - ")
 
-          if (!predefinedQueryRepository.exists(tag)) {
-            predefinedQueryRepository.save(PredefinedQuery(s"Libraries - $tag", tag, s"""tags.text=="$tag"""", 0, null, null))
+          if (predefinedQueryRepository.findByQuery(s"""tags.text=="$tagLabel"""").isEmpty) {
+            logger.info(s"Creating new predefined download for ${tag.text}: $tagLabel")
+
+            predefinedQueryRepository.save(PredefinedQuery(s"Libraries - $tagLabel", tagLabel, s"""tags.text=="$tagLabel"""", 0, null, null))
           }
         }
       }
