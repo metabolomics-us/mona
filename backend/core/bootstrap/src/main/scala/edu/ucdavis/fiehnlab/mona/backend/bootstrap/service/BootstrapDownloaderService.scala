@@ -58,14 +58,14 @@ class BootstrapDownloaderService extends LazyLogging {
     saveQuery("Libraries - MassBank", "MassBank Spectral Database", "tags.text==MassBank")
     saveQuery("Libraries - MassBank - MassBank EU", "MassBank EU", """tags.text=="MassBank EU"""")
     saveQuery("Libraries - MassBank - CASMI 2016", "CASMI 2016", """tags.text=="CASMI 2016"""")
-    saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", "tags.text==ReSpect")
-    saveQuery("Libraries - HMDB", "Human Metabolome Database", "tags.text==HMDB")
-    saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", "tags.text==GNPS")
-    saveQuery("Libraries - LipidBlast", "LipidBlast In-Silico MS/MS Database for Lipid Identification", "tags.text==LipidBlast")
-    saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", "tags.text==FAHFA")
-    saveQuery("Libraries - iTree", "iTree Mass Spectral Tree Library", "tags.text==iTree")
-    saveQuery("Libraries - RTX5 Fiehnlib", "RTX5 Fiehn Lab Metabolic Profiling Library", "tags.text==FiehnLib")
-    saveQuery("Libraries - MetaboBASE", "Bruker Sumner MetaboBASE Plant Library", "tags.text==MetaboBASE")
+    saveQuery("Libraries - ReSpect", "RIKEN MS^n Spectral Database for Phytochemicals", """tags.text=="ReSpect"""")
+    saveQuery("Libraries - HMDB", "Human Metabolome Database", """tags.text=="HMDB"""")
+    saveQuery("Libraries - GNPS", "Global Natural Product Social Molecular Networking Library", """tags.text=="GNPS"""")
+    saveQuery("Libraries - LipidBlast", "LipidBlast In-Silico MS/MS Database for Lipid Identification", """tags.text=="LipidBlast"""")
+    saveQuery("Libraries - FAHFA", "Fatty Acid ester of Hydroxyl Fatty Acid In-Silico Library", """tags.text=="FAHFA"""")
+    saveQuery("Libraries - iTree", "iTree Mass Spectral Tree Library", """tags.text=="iTree"""")
+    saveQuery("Libraries - RTX5 Fiehnlib", "RTX5 Fiehn Lab Metabolic Profiling Library", """tags.text=="FiehnLib"""")
+    saveQuery("Libraries - MetaboBASE", "Bruker Sumner MetaboBASE Plant Library", """tags.text=="MetaboBASE"""")
   }
 
   /**
@@ -78,8 +78,8 @@ class BootstrapDownloaderService extends LazyLogging {
 
     // Create export for all spectra
     saveQuery("All Spectra", "All Spectra", "")
-    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", "tags.text=='In-Silico'")
-    //    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", "")
+    saveQuery("All Spectra - Experimental Spectra", "Experimental Spectra", """tags.text!="In-Silico"""")
+    saveQuery("All Spectra - In-Silico Spectra", "In-Silico Spectra", """tags.text=="In-Silico"""")
 
     saveQuery(
       "GC-MS Spectra",
