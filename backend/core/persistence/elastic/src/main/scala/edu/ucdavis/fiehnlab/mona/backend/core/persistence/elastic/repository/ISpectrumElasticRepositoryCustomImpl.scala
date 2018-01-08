@@ -13,6 +13,9 @@ import org.springframework.data.domain.{Page, PageRequest, Pageable}
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
 import org.springframework.data.elasticsearch.core.query._
 
+import scala.collection.JavaConverters._
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by wohlg_000 on 3/3/2016.
   */
@@ -22,10 +25,30 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   val elasticsearchTemplate: ElasticsearchTemplate = null
 
   /**
+    * Uses the ElasticSearch scroll api to retrieve all matches for the given query
     * @param query
     * @return
     */
-  override def nativeQuery(query: QueryBuilder): util.List[Spectrum] = elasticsearchTemplate.queryForList(getSearch(query), classOf[Spectrum])
+  override def nativeQuery(query: QueryBuilder): util.List[Spectrum] = {
+    val search = getSearch(query)
+    search.setPageable(new PageRequest(0, 25))
+
+    val scrollId: String = elasticsearchTemplate.scan(search, 60000, false)
+    val result: ArrayBuffer[Spectrum] = ArrayBuffer[Spectrum]()
+    var hasRecords = true
+
+    while(hasRecords) {
+      val page: Page[Spectrum] = elasticsearchTemplate.scroll(scrollId, 60000, classOf[Spectrum])
+
+      if (page.hasContent) {
+        result ++= page.asScala
+      } else {
+        hasRecords = false
+      }
+    }
+
+    result.asJava
+  }
 
   /**
     *
@@ -62,12 +85,8 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   override def nativeQueryCount(query: QueryBuilder): Long = elasticsearchTemplate.count(getSearch(query), classOf[Spectrum])
 
   def getSearch(queryBuilder: QueryBuilder): SearchQuery = {
-    //uggly but best solution I found so far. If we do it without pagination request, spring will always limit it to 10 results.
-    //TODO obviously onces the delete bug doesnt happen anymore we should get rid of the aggregations
     val query = new NativeSearchQueryBuilder()
       .withQuery(queryBuilder)
-      .withPageable(new PageRequest(0, 1000000))
-      //.addAggregation(AggregationBuilders.terms("by_id").field("id"))
       .build()
 
     logger.info(s"query: ${query.getQuery}")
@@ -85,7 +104,7 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
   override def saveOrUpdate(value: Spectrum): Unit = {
     assert(value.id != null)
     elasticsearchTemplate.index(new IndexQueryBuilder().withId(value.id).withObject(value).build())
-    elasticsearchTemplate.refresh(classOf[Spectrum], true)
+    elasticsearchTemplate.refresh(classOf[Spectrum])
   }
 
   /**

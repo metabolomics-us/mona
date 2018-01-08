@@ -1,27 +1,23 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.elastic.rsql;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.facet.FacetBuilder;
 import org.elasticsearch.search.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.core.*;
-import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
-import org.springframework.data.elasticsearch.core.facet.FacetRequest;
-import org.springframework.data.elasticsearch.core.mapping.ElasticsearchPersistentEntity;
-import org.springframework.data.elasticsearch.core.query.Query;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.EntityMapper;
+import org.springframework.data.elasticsearch.core.SearchResultMapper;
+import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.util.Assert;
 
 import java.util.List;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Created by sajjan on 7/25/17.
@@ -29,34 +25,9 @@ import java.util.List;
  * TODO Must be updated upon any change of spring-data-elasticsearch module
  */
 public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchTemplate.class);
-
-    private Client client;
-
-
-    public CustomElasticsearchTemplate(Client client) {
-        super(client);
-        this.client = client;
-    }
 
     public CustomElasticsearchTemplate(Client client, EntityMapper entityMapper) {
         super(client, entityMapper);
-        this.client = client;
-    }
-
-    public CustomElasticsearchTemplate(Client client, ResultsMapper resultsMapper) {
-        super(client, resultsMapper);
-        this.client = client;
-    }
-
-    public CustomElasticsearchTemplate(Client client, ElasticsearchConverter elasticsearchConverter) {
-        super(client, elasticsearchConverter);
-        this.client = client;
-    }
-
-    public CustomElasticsearchTemplate(Client client, ElasticsearchConverter elasticsearchConverter, ResultsMapper resultsMapper) {
-        super(client, elasticsearchConverter, resultsMapper);
-        this.client = client;
     }
 
     private SearchResponse doSearch(SearchRequestBuilder searchRequest, SearchQuery searchQuery) {
@@ -64,19 +35,16 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
             searchRequest.setPostFilter(searchQuery.getFilter());
         }
 
-        if (CollectionUtils.isNotEmpty(searchQuery.getElasticsearchSorts())) {
+        if (!isEmpty(searchQuery.getElasticsearchSorts())) {
             for (SortBuilder sort : searchQuery.getElasticsearchSorts()) {
                 searchRequest.addSort(sort);
             }
         }
 
-        if (CollectionUtils.isNotEmpty(searchQuery.getFacets())) {
-            for (FacetRequest facetRequest : searchQuery.getFacets()) {
-                FacetBuilder facet = facetRequest.getFacet();
-                if (facetRequest.applyQueryFilter() && searchQuery.getFilter() != null) {
-                    facet.facetFilter(searchQuery.getFilter());
-                }
-                searchRequest.addFacet(facet);
+        if (!isEmpty(searchQuery.getScriptFields())) {
+            searchRequest.addField("_source");
+            for (ScriptField scriptedField : searchQuery.getScriptFields()) {
+                searchRequest.addScriptField(scriptedField.fieldName(), scriptedField.script());
             }
         }
 
@@ -86,18 +54,18 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
             }
         }
 
-        if (CollectionUtils.isNotEmpty(searchQuery.getAggregations())) {
+        if (!isEmpty(searchQuery.getIndicesBoost())) {
+            for (IndexBoost indexBoost : searchQuery.getIndicesBoost()) {
+                searchRequest.addIndexBoost(indexBoost.getIndexName(), indexBoost.getBoost());
+            }
+        }
+
+        if (!isEmpty(searchQuery.getAggregations())) {
             for (AbstractAggregationBuilder aggregationBuilder : searchQuery.getAggregations()) {
                 searchRequest.addAggregation(aggregationBuilder);
             }
         }
         return searchRequest.setQuery(searchQuery.getQuery()).execute().actionGet();
-    }
-
-    private ElasticsearchPersistentEntity getPersistentEntityFor(Class clazz) {
-        Assert.isTrue(clazz.isAnnotationPresent(Document.class), "Unable to identify index name. " + clazz.getSimpleName()
-                + " is not a Document. Make sure the document class is annotated with @Document(indexName=\"foo\")");
-        return getElasticsearchConverter().getMappingContext().getPersistentEntity(clazz);
     }
 
     private String[] retrieveIndexNameFromPersistentEntity(Class clazz) {
@@ -142,9 +110,14 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
         // duplication issues during pagination
         // This is the ONLY reason for this terrible hack of a file
         int startRecord = 0;
-        SearchRequestBuilder searchRequestBuilder = client.prepareSearch(toArray(query.getIndices()))
+        SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(toArray(query.getIndices()))
                 .setSearchType(query.getSearchType()).setTypes(toArray(query.getTypes()))
                 .setPreference("paging");
+
+        if (query.getSourceFilter() != null) {
+            SourceFilter sourceFilter = query.getSourceFilter();
+            searchRequestBuilder.setFetchSource(sourceFilter.getIncludes(), sourceFilter.getExcludes());
+        }
 
         if (query.getPageable() != null) {
             startRecord = query.getPageable().getPageNumber() * query.getPageable().getPageSize();
@@ -153,13 +126,13 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
         searchRequestBuilder.setFrom(startRecord);
 
         if (!query.getFields().isEmpty()) {
-            searchRequestBuilder.addFields(toArray(query.getFields()));
+            searchRequestBuilder.setFetchSource(toArray(query.getFields()),null);
         }
 
         if (query.getSort() != null) {
             for (Sort.Order order : query.getSort()) {
-                searchRequestBuilder.addSort(order.getProperty(), order.getDirection() == Sort.Direction.DESC ? SortOrder.DESC
-                        : SortOrder.ASC);
+                searchRequestBuilder.addSort(order.getProperty(),
+                        order.getDirection() == Sort.Direction.DESC ? SortOrder.DESC : SortOrder.ASC);
             }
         }
 
@@ -170,7 +143,7 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
     }
 
     @Override
-    public <T> FacetedPage<T> queryForPage(SearchQuery query, Class<T> clazz, SearchResultMapper mapper) {
+    public <T> Page<T> queryForPage(SearchQuery query, Class<T> clazz, SearchResultMapper mapper) {
         SearchResponse response = doSearch(prepareSearch(query, clazz), query);
         return mapper.mapResults(response, clazz, query.getPageable());
     }
