@@ -35,13 +35,13 @@ class MappingUpdater extends LazyLogging {
     elasticsearchTemplate.createIndex(classOf[Spectrum])
 
     logger.debug("refreshing index")
-    elasticsearchTemplate.refresh(classOf[Spectrum], true)
+    elasticsearchTemplate.refresh(classOf[Spectrum])
 
     logger.debug("updating mapping")
     updateTextValueMapping()
 
     logger.debug("refreshing index")
-    elasticsearchTemplate.refresh(classOf[Spectrum], true)
+    elasticsearchTemplate.refresh(classOf[Spectrum])
   }
 
   /**
