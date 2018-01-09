@@ -7,16 +7,13 @@ services:
       - 27017:27017
 
   elasticsearch:
-    build:
-        context: ./docker
-        dockerfile: DockerfileElasticMaster
+    image: elasticsearch:2.4
     ports:
        - 9200:9200
        - 9300:9300
-    entrypoint: ./bin/elasticsearch
 
   rabbitmq:
-    image:  rabbitmq:3.6-management
+    image: rabbitmq:3.6-management
     hostname: rabbitmq
     ports:
       - 5672:5672

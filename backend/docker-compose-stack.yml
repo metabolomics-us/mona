@@ -23,8 +23,8 @@ services:
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
-    image: elasticsearch:1.7.5
-    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
+    image: elasticsearch:2.4
+    command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.node.master=true ]
     networks:
       - default
     deploy:
@@ -34,8 +34,8 @@ services:
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
-    image: elasticsearch:1.7.5
-    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="mona-cluster"
+    image: elasticsearch:2.4
+    command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Ddiscovery.zen.ping.unicast.hosts=elasticsearch_master ]
     networks:
       - default
     deploy:
