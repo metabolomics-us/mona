@@ -92,7 +92,7 @@ object AdductBuilder {
     *
     * @return
     */
-  def makeTMS(): IAtomContainer = {
+  def makeTMSGroup(): IAtomContainer = {
     val molecule: IAtomContainer = new AtomContainer()
 
     val silicon: Atom = new Atom("Si")
@@ -118,8 +118,8 @@ object AdductBuilder {
     *
     * @return
     */
-  def makeTMSBoundToOxygen(): IAtomContainer = {
-    val molecule: IAtomContainer = makeTMS()
+  def makeTMSGroupBoundToOxygen(): IAtomContainer = {
+    val molecule: IAtomContainer = makeTMSGroup()
 
     molecule.addAtom(new Atom("O"))
     molecule.addBond(0, 4, IBond.Order.SINGLE)
@@ -132,8 +132,8 @@ object AdductBuilder {
     *
     * @return
     */
-  def makeTMSBoundToNitrogen(): IAtomContainer = {
-    val molecule: IAtomContainer = makeTMS()
+  def makeTMSGroupBoundToNitrogen(): IAtomContainer = {
+    val molecule: IAtomContainer = makeTMSGroup()
 
     molecule.addAtom(new Atom("N"))
     molecule.addBond(0, 4, IBond.Order.SINGLE)
@@ -146,8 +146,8 @@ object AdductBuilder {
     *
     * @return
     */
-  def makeTMSBoundToSulfur(): IAtomContainer = {
-    val molecule: IAtomContainer = makeTMS()
+  def makeTMSGroupBoundToSulfur(): IAtomContainer = {
+    val molecule: IAtomContainer = makeTMSGroup()
 
     molecule.addAtom(new Atom("S"))
     molecule.addBond(0, 4, IBond.Order.SINGLE)
@@ -160,8 +160,8 @@ object AdductBuilder {
     *
     * @return
     */
-  def makeTMSBoundToPhosphorus(): IAtomContainer = {
-    val molecule: IAtomContainer = makeTMS()
+  def makeTMSGroupBoundToPhosphorus(): IAtomContainer = {
+    val molecule: IAtomContainer = makeTMSGroup()
 
     molecule.addAtom(new Atom("P"))
     molecule.addBond(0, 4, IBond.Order.SINGLE)

@@ -7,14 +7,14 @@ import org.openscience.cdk.interfaces.IAtomContainer
   */
 trait Derivatizer {
   def derivatize(molecule: IAtomContainer,
-                 functionalGroups: List[IAtomContainer],
-                 ignoreImpossibleCompounds: Boolean = false): List[IAtomContainer]
+                 functionalGroups: Array[IAtomContainer],
+                 ignoreImpossibleCompounds: Boolean = false): Array[IAtomContainer]
 
   def isDerivatized(molecule: IAtomContainer): Boolean
 
   def generateDerivatizationProduct(molecule: IAtomContainer,
                                     maxTMSCount: Integer,
-                                    functionalGroups: List[IAtomContainer] = TMSFavoredFunctionalGroups.buildFavoredGroupsInOrder()): IAtomContainer
+                                    functionalGroups: Array[IAtomContainer] = TMSFavoredFunctionalGroups.buildFavoredGroupsInOrder()): IAtomContainer
 
   def getMOLFile(molecule: IAtomContainer): String
 }

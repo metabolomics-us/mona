@@ -11,8 +11,8 @@ object TMSFavoredFunctionalGroups {
     *
     * @return
     */
-  def buildFavoredGroupsInOrder(): List[IAtomContainer] = {
-    List(
+  def buildFavoredGroupsInOrder(): Array[IAtomContainer] = {
+    Array(
       FunctionalGroupBuilder.makeHydroxyGroup(),
       FunctionalGroupBuilder.makePhosphate(),
       FunctionalGroupBuilder.makeThiol(),
