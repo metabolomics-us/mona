@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.math.histogram.Histogram
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.SpectrumUtils
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 
 /**
@@ -24,11 +24,11 @@ class SimilarHistogramIndex(binningMethod: BinningMethod, cache: SpectrumCache, 
     * @return
     */
   override def searchIndex(spectrum: SimpleSpectrum, internalKey: String): Iterable[SimpleSpectrum] = {
-    val keys = indexMap.keySet.filter(s => isSimilar(spectrum.histogram, s))
+    val keys: Iterable[String] = indexMap.keySet.asScala.filter(s => isSimilar(spectrum.histogram, s))
 
     logger.info(s"Keys were reduced by ${100 - keys.size / indexMap.size() * 100}% from ${indexMap.size()} to ${keys.size}")
 
-    keys.flatMap(indexMap.get(_))
+    keys.flatMap(indexMap.get(_).asScala)
   }
 
   /**

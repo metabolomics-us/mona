@@ -10,8 +10,8 @@ import org.openscience.cdk.layout.StructureDiagramGenerator
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator
 import org.openscience.cdk.{AtomContainer, Bond}
 
-import scala.collection.JavaConversions._
-import scala.collection.mutable.ListBuffer
+import scala.collection.JavaConverters._
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by sajjan on 4/25/16
@@ -27,13 +27,13 @@ class TMSDerivatizer extends Derivatizer {
     * @param functionalGroups
     * @param ignoreImpossibleCompounds
     */
-  def derivatize(molecule: IAtomContainer, functionalGroups: List[IAtomContainer], ignoreImpossibleCompounds: Boolean = false): List[IAtomContainer] = {
-    val derivatizations: ListBuffer[IAtomContainer] = ListBuffer()
+  def derivatize(molecule: IAtomContainer, functionalGroups: Array[IAtomContainer], ignoreImpossibleCompounds: Boolean = false): Array[IAtomContainer] = {
+    val derivatizations: ArrayBuffer[IAtomContainer] = ArrayBuffer()
 
     // Skip impossible compounds
     if (ignoreImpossibleCompounds) {
       // All hydroxy groups are derivatized at once
-      def hydroxyDerivatized: List[IAtomContainer] = derivatize(new AtomContainer(molecule), List(FunctionalGroupBuilder.makeHydroxyGroup()))
+      def hydroxyDerivatized: Array[IAtomContainer] = derivatize(new AtomContainer(molecule), Array(FunctionalGroupBuilder.makeHydroxyGroup()))
 
       if (hydroxyDerivatized.nonEmpty) {
         // Add our hyrdroxylized compound to the results list
@@ -58,13 +58,13 @@ class TMSDerivatizer extends Derivatizer {
       (1 to MAX_DERIVITIZATION_ATTEMPTS).foreach { _ =>
 
         // Search all subgraphs for derivatization subgroup
-        isomorphismTester.getSubgraphMap(structure, subGroup).foreach { x: RMap =>
+        isomorphismTester.getSubgraphMap(structure, subGroup).asScala.foreach { x: RMap =>
           // Get associated atom and bond
           val bond: IBond = structure.getBond(x.getId1)
           val atom: IAtom = structure.getAtom(x.getId2)
 
-          val connectedAtoms: List[IAtom] = structure.getConnectedAtomsList(atom).toList
-          val connectedHydrogens: List[IAtom] = connectedAtoms.filter(_.getSymbol == "H")
+          val connectedAtoms: Iterable[IAtom] = structure.getConnectedAtomsList(atom).asScala
+          val connectedHydrogens: Iterable[IAtom] = connectedAtoms.filter(_.getSymbol == "H")
 
           if (connectedHydrogens.nonEmpty) {
             // Get connected hydrogen
@@ -86,13 +86,13 @@ class TMSDerivatizer extends Derivatizer {
             val sdg: StructureDiagramGenerator = new StructureDiagramGenerator()
             sdg.setMolecule(new AtomContainer(structure))
             sdg.generateCoordinates()
-            derivatizations.add(sdg.getMolecule)
+            derivatizations += sdg.getMolecule
           }
         }
       }
     }
 
-    derivatizations.toList
+    derivatizations.toArray
   }
 
   /**
@@ -114,9 +114,9 @@ class TMSDerivatizer extends Derivatizer {
     * @return
     */
   def generateDerivatizationProduct(molecule: IAtomContainer, maxTMSCount: Integer,
-                                    functionalGroups: List[IAtomContainer] = TMSFavoredFunctionalGroups.buildFavoredGroupsInOrder()): IAtomContainer = {
+                                    functionalGroups: Array[IAtomContainer] = TMSFavoredFunctionalGroups.buildFavoredGroupsInOrder()): IAtomContainer = {
 
-    val result: List[IAtomContainer] = derivatize(molecule, functionalGroups, true)
+    val result: Array[IAtomContainer] = derivatize(molecule, functionalGroups, ignoreImpossibleCompounds = true)
 
     if (result.nonEmpty) {
       result.last

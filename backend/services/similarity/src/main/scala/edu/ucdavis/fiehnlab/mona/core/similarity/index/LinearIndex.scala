@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.index.cache.SpectrumCache
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.binning.{BinningMethod, NoBinningMethod}
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
   * Simplest possible index
@@ -60,7 +60,7 @@ class LinearIndex(override val binningMethod: BinningMethod, override val cache:
     * @param key
     * @return
     */
-  override def get(key: Any): Iterable[SimpleSpectrum] = indexMap.values()
+  override def get(key: Any): Iterable[SimpleSpectrum] = indexMap.values().asScala
 
   /**
     * Size of this index

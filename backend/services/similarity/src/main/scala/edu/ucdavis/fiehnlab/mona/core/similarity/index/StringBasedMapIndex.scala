@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.index.cache.SpectrumCache
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.binning.{BinningMethod, NoBinningMethod}
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 1/28/16.
@@ -45,7 +45,7 @@ abstract class StringBasedMapIndex(binningMethod: BinningMethod, cache: Spectrum
   override def doIndex(spectrum: SimpleSpectrum): Index = {
     val key: String = buildKey(spectrum)
 
-    if (!indexMap.contains(key)) {
+    if (!indexMap.containsKey(key)) {
       indexMap.put(key, createAssociationBacking())
     }
 
@@ -112,7 +112,7 @@ abstract class StringBasedMapIndex(binningMethod: BinningMethod, cache: Spectrum
     if (indexMap.containsKey(internalKey)) {
       logger.debug(s"utilized key: $internalKey")
 
-      indexMap.get(internalKey).toSet[SimpleSpectrum]
+      indexMap.get(internalKey).asScala.toSet[SimpleSpectrum]
     } else {
       List.empty
     }
