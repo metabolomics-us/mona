@@ -13,6 +13,7 @@ import scala.collection.mutable.ArrayBuffer
   */
 @Step(description = "this step will update ionization type metadata values to standard values")
 class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
+
   val POSITIVE_TERMS: Array[String] = Array("positive", "pos", "p", "+")
   val NEGATIVE_TERMS: Array[String] = Array("negative", "neg", "n", "-")
   val ALL_TERMS: Array[String] = POSITIVE_TERMS ++ NEGATIVE_TERMS
@@ -26,7 +27,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
   override def process(spectrum: Spectrum): Spectrum = {
 
     val metaData: Array[MetaData] = spectrum.metaData
-    val matches: Array[MetaData] = metaData.filter(_.name == CommonMetaData.IONIZATION_MODE)
+    val matches: Array[MetaData] = metaData.filter(_.name.toLowerCase == CommonMetaData.IONIZATION_MODE.toLowerCase)
 
     // Look at existing ionization mode values
     if (matches.nonEmpty) {

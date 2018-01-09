@@ -74,7 +74,7 @@ class TMSDerivatizer extends Derivatizer {
             atom.setImplicitHydrogenCount(atom.getImplicitHydrogenCount - 1)
 
             // Add our TMS group
-            val tms: IAtomContainer = AdductBuilder.makeTMS()
+            val tms: IAtomContainer = AdductBuilder.makeTMSGroup()
 
             structure.removeBond(structure.getBond(connectedAtom, atom))
             structure.removeAtom(connectedAtom)
@@ -102,7 +102,7 @@ class TMSDerivatizer extends Derivatizer {
     * @return
     */
   def isDerivatized(molecule: IAtomContainer): Boolean = {
-    new UniversalIsomorphismTester().isSubgraph(molecule, AdductBuilder.makeTMS())
+    new UniversalIsomorphismTester().isSubgraph(molecule, AdductBuilder.makeTMSGroup())
   }
 
   /**

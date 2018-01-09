@@ -11,6 +11,7 @@ import org.springframework.batch.item.ItemProcessor
   */
 @Step(description = "this step will update ms level metadata values to standard values")
 class NormalizeMSLevelValue extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
+
   /**
     * processes the given spectrum and removes all it's computed meta data
     *
@@ -21,7 +22,7 @@ class NormalizeMSLevelValue extends ItemProcessor[Spectrum, Spectrum] with LazyL
     val updatedMetaData: Array[MetaData] = spectrum.metaData.map(normalizeMSLevelData(_, spectrum.id)).filter(_ != null)
 
     val updatedScore: Score =
-      if (updatedMetaData.exists(x => x.name == CommonMetaData.MS_LEVEL && x.value.toString.matches("^MS[1-9]$"))) {
+      if (updatedMetaData.exists(x => x.name.toLowerCase == CommonMetaData.MS_LEVEL.toLowerCase && x.value.toString.matches("^MS[1-9]$"))) {
         CurationUtilities.addImpact(spectrum.score, 1, "MS type/level identified")
       } else {
         CurationUtilities.addImpact(spectrum.score, -1, "No MS type/level provided")
