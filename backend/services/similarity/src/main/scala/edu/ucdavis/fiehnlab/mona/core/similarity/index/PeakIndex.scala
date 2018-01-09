@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.math.binning.{BinByRoundingMeth
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{BinnedSimpleSpectrum, SimpleSpectrum}
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.SpectrumUtils
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
   * Created by sajjan on 2/7/17.
@@ -92,7 +92,7 @@ class PeakIndex(override val binningMethod: BinningMethod, override val cache: S
       logger.trace(s"Looking up integer m/z value $mz")
 
       if (indexMap.containsKey(mz)) {
-        indexMap.get(mz).toSet[SimpleSpectrum]
+        indexMap.get(mz).asScala.toSet[SimpleSpectrum]
       } else {
         Set.empty[SimpleSpectrum]
       }
