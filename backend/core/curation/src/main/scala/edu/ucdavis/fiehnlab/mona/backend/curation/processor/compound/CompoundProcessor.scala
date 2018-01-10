@@ -81,7 +81,7 @@ class CompoundMOLProcessor extends AbstractCompoundProcessor {
         impacts.append(Impact(-1, "MOL data could not be parsed"))
       }
 
-      (compound.molFile, molecule)
+      (compoundConversion.generateMolDefinition(molecule), molecule)
     } else {
       logger.info(s"$id: No MOL definition found")
       (null, null)
@@ -164,7 +164,7 @@ class CompoundSMILESProcessor extends AbstractCompoundProcessor {
 @Component
 class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
 
-  val URL: String = "http://cts.fiehnlab.ucdavis.edu/service/inchikeytomol/"
+  val CTS_URL: String = "http://cts.fiehnlab.ucdavis.edu/service/inchikeytomol/"
 
   @Autowired
   protected val restOperations: RestOperations = null
@@ -178,17 +178,18 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
 
     // Lookup InChIKey
     if (inchikey != null && inchikey.toString != "") {
-      logger.info(s"$id: Looking up MOL definition by InChIKey on CTS, invoking url $URL$inchikey")
+      logger.info(s"$id: Looking up MOL definition by InChIKey on CTS, invoking url $CTS_URL$inchikey")
 
       try {
-        val response: ResponseEntity[CTSInChIKeyLookupResponse] = restOperations.getForEntity(URL + inchikey, classOf[CTSInChIKeyLookupResponse])
+        val response: ResponseEntity[CTSInChIKeyLookupResponse] = restOperations.getForEntity(CTS_URL + inchikey, classOf[CTSInChIKeyLookupResponse])
 
         if (response.getStatusCode == HttpStatus.OK) {
           val molDefinition: String = response.getBody.molecule
+          val molecule: IAtomContainer = compoundConversion.parseMolDefinition(molDefinition)
 
           if (molDefinition != null && molDefinition.nonEmpty) {
             logger.info(s"$id: Request successful, parsing MOL definition")
-            (response.getBody.molecule, compoundConversion.parseMolDefinition(molDefinition))
+            (compoundConversion.generateMolDefinition(molecule), molecule)
           } else {
             logger.info(s"$id: InChIKey lookup failed, ${response.getBody.message}")
             (null, null)
