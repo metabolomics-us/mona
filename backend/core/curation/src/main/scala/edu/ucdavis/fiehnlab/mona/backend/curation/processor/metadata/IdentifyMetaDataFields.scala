@@ -57,7 +57,9 @@ class IdentifyMetaDataFields extends ItemProcessor[Spectrum, Spectrum] with Lazy
     }
 
     // Check for precursor information
-    if (tagNames.contains(CommonTags.LCMS_SPECTRUM.toLowerCase)) {
+    val msLevel: Array[String] = spectrum.metaData.filter(_.name.toLowerCase == CommonMetaData.MS_LEVEL.toLowerCase).map(_.value.toString)
+
+    if (tagNames.contains(CommonTags.LCMS_SPECTRUM.toLowerCase) && msLevel.nonEmpty && !msLevel.contains("MS") && !msLevel.contains("MS1")) {
       if (metaDataNames.contains(CommonMetaData.PRECURSOR_TYPE.toLowerCase)) {
         impacts.append(Impact(1, "Precursor type provided"))
       } else {
