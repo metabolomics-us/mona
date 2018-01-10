@@ -8,9 +8,15 @@ services:
 
   elasticsearch:
     image: elasticsearch:2.4
+    command: [ elasticsearch, -Dhttp.cors.enabled=true, -Dhttp.cors.allow-origin=* ]
     ports:
        - 9200:9200
        - 9300:9300
+
+  elasticsearch_head:
+    image: mobz/elasticsearch-head:2
+    ports:
+     - 9100:9100
 
   rabbitmq:
     image: rabbitmq:3.6-management
