@@ -44,6 +44,8 @@ class CompoundConversion extends LazyLogging {
   }
 
 
+
+
   /**
     *
     * @param smiles
@@ -53,7 +55,7 @@ class CompoundConversion extends LazyLogging {
     try {
       val smilesParser: SmilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance())
       smilesParser.kekulise(false)
-      smilesParser.parseSmiles(smiles)
+      AtomContainerManipulator.suppressHydrogens(smilesParser.parseSmiles(smiles))
     } catch {
       case e: InvalidSmilesException =>
         logger.error("Invalid SMILES Code")
@@ -104,7 +106,8 @@ class CompoundConversion extends LazyLogging {
     logger.debug(s"Receive MOL data: $molString")
 
     // Read MOL data
-    new MDLV2000Reader(new StringReader(molString)).read(new AtomContainer())
+    val molecule: IAtomContainer = new MDLV2000Reader(new StringReader(molString)).read(new AtomContainer())
+    AtomContainerManipulator.suppressHydrogens(molecule)
   }
 
   /**
