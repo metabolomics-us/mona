@@ -8,7 +8,6 @@ ms type	ms level
 spectrum type	ms level
 authors	author
 spectrumid	accession
-adductionname	adduct
 mw	molecular weight
 Tandem Scanning Method	scanning method
 mass-to-charge ratio	m/z
@@ -20,6 +19,10 @@ ionizationmode	ionization mode
 precursormz	precursor m/z
 precursor mass	precursor m/z
 adductionaccuratemass	precursor m/z
+adductionname	precursor m/z
+precursor mz	precursor m/z
+adduct ion name	precursor m/z
+adduct	precursor m/z
 precursor ion	precursor type
 m/z difference	delta m/z
 source instrument	instrument
@@ -52,8 +55,6 @@ compoundclass	compound class
 exactmass	exact mass
 mz exact	exact mass
 Magnetic Field	magnetic field strength
-precursor mz	precursor m/z
-adduct ion name	adduct
 IE	ionization energy
 thomson	m/z
 activation	precursor activation

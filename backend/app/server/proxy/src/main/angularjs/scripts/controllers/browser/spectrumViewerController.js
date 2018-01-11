@@ -139,10 +139,6 @@
                 return truncateDecimal(mass, 4);
             };
 
-            var truncateRetentionTime = function(mass) {
-                return truncateDecimal(mass, 1);
-            };
-
 
             // truncate metadata
             if (angular.isDefined(delayedSpectrum.metaData)) {
@@ -151,10 +147,12 @@
 
                     var name = curMeta.name.toLowerCase();
 
-                    if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
+                    if (name.indexOf('mass accuracy') > -1) {
+                        curMeta.value = truncateDecimal(curMeta.value, 1);
+                    } else if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
                         curMeta.value = truncateMass(curMeta.value);
                     } else if (name.indexOf('retention') > -1) {
-                        curMeta.value = truncateRetentionTime(curMeta.value);
+                        curMeta.value = truncateDecimal(curMeta.value, 1);
                     }
                 }
             }
