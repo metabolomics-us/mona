@@ -9,7 +9,7 @@ import org.openscience.cdk.{Atom, AtomContainer, Bond}
 object AdductBuilder {
 
   /**
-    * Definitions of positive mode lcms adducts
+    * Definitions of positive mode LC-MS adducts
     * http://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
     */
   final val LCMS_POSITIVE_ADDUCTS: Map[String, (Double) => Double] = Map(
@@ -48,7 +48,7 @@ object AdductBuilder {
   )
 
   /**
-    * Definitions of negative mode lcms adducts
+    * Definitions of negative mode LC-MS adducts
     * http://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
     */
   final val LCMS_NEGATIVE_ADDUCTS: Map[String, (Double) => Double] = Map(
@@ -66,24 +66,7 @@ object AdductBuilder {
     "[2M-H]-" -> { M: Double => 2 * M - 1.007276 },
     "[2M+FA-H]-" -> { M: Double => 2 * M + 44.998201 },
     "[2M+Hac-H]-" -> { M: Double => 2 * M + 59.013851 },
-    "[3M-H]-" -> { M: Double => 3 * M - 1.007276 },
-    "[M+CH3OH+H]-" -> { M: Double => M + 33.033489 },
-    "[M+K]-" -> { M: Double => M + 38.963158 },
-    "[M+ACN+H]-" -> { M: Double => M + 42.033823 },
-    "[M+2Na-H]-" -> { M: Double => M + 44.971160 },
-    "[M+IsoProp+H]-" -> { M: Double => M + 61.06534 },
-    "[M+ACN+Na]-" -> { M: Double => M + 64.015765 },
-    "[M+2K-H]-" -> { M: Double => M + 76.919040 },
-    "[M+DMSO+H]-" -> { M: Double => M + 79.02122 },
-    "[M+2ACN+H]-" -> { M: Double => M + 83.060370 },
-    "[M+IsoProp+Na+H]-" -> { M: Double => M + 84.05511 },
-    "[2M+H]-" -> { M: Double => 2 * M + 1.007276 },
-    "[2M+NH4]-" -> { M: Double => 2 * M + 18.033823 },
-    "[2M+Na]-" -> { M: Double => 2 * M + 22.989218 },
-    "[2M+3H2O+2H]-" -> { M: Double => 2 * M + 28.02312 },
-    "[2M+K]-" -> { M: Double => 2 * M + 38.963158 },
-    "[2M+ACN+H]-" -> { M: Double => 2 * M + 42.033823 },
-    "[2M+ACN+Na]-" -> { M: Double => 2 * M + 64.015765 }
+    "[3M-H]-" -> { M: Double => 3 * M - 1.007276 }
   )
 
 
