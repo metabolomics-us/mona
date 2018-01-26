@@ -27,14 +27,14 @@ class ColumnValidation extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
     val metaData: Array[MetaData] = spectrum.metaData.filter(_.name == CommonMetaData.COLUMN)
 
     if (metaData.isEmpty) {
-      logger.debug(s"No column found for spectrum ${spectrum.id}")
+      logger.info(s"${spectrum.id}: No column found")
     } else {
       metaData.foreach { x =>
         val diameterAndLengthDefined: Boolean = DIAMETER_AND_LENGTH_REGEX.findFirstIn(x.value.toString).isDefined
         val onlyLengthDefined: Boolean = LENGTH_REGEX.findFirstIn(x.value.toString).isDefined
 
         if (!diameterAndLengthDefined && !onlyLengthDefined) {
-          logger.warn(s"Length and Diameter not specified for spectrum ${spectrum.id}")
+          logger.warn(s"${spectrum.id}: Length and Diameter not specified")
         }
       }
     }

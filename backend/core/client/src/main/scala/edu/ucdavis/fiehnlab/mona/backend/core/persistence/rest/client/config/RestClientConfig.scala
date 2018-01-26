@@ -30,12 +30,12 @@ class RestClientConfig extends LazyLogging {
 
   @Bean(name = Array[String]("monaRestServer"))
   def monaRestServer(@Value("${mona.rest.server.host:localhost}") monaServerHost: String, @Value("${mona.rest.server.port:8080}") monaServerPort: Int): String = {
-    s"http://${monaServerHost}:${monaServerPort}"
+    s"http://$monaServerHost:$monaServerPort"
   }
 
   @Bean
   def connectionManager(): HttpClientConnectionManager = {
-    logger.info(s"creating connection manager for ${monaMaxConnections} max connections and ${monaMaxRouteConnections} for each route")
+    logger.info(s"creating connection manager for $monaMaxConnections max connections and $monaMaxRouteConnections for each route")
     val connectionManager = new PoolingHttpClientConnectionManager()
     connectionManager.setDefaultMaxPerRoute(monaMaxRouteConnections)
     connectionManager.setMaxTotal(monaMaxConnections)
@@ -82,10 +82,8 @@ class RestClientConfig extends LazyLogging {
     converter
   }
 
-
   @Bean
   def monaSpectrumRestClient: MonaSpectrumRestClient = {
     new MonaSpectrumRestClient
   }
-
 }
