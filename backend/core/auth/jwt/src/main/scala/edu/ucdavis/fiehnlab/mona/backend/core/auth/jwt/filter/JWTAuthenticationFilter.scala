@@ -45,11 +45,11 @@ class JWTAuthenticationFilter(authenticationService: JWTAuthenticationService) e
 
       val headerValue = request.getHeader(authHeader.head)
 
-      logger.info(s"received header: ${headerValue}")
+      logger.debug(s"received header: $headerValue")
+
       if (!headerValue.trim.toLowerCase.startsWith("bearer")) {
         throw new AuthenticationServiceException(s"Authorization header was not of type bearer, header was ${authHeader.head}")
       }
-
 
       try {
         val token = headerValue.trim.substring(7); // The part after "Bearer "
