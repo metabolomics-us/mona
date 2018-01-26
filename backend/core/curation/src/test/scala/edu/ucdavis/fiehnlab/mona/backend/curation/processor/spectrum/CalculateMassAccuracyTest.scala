@@ -10,12 +10,12 @@ import org.scalatest.{Matchers, WordSpec}
 /**
   * Created by sajjan on 3/21/16.
   */
-class CalculateAdductAndMassAccuracyTest extends WordSpec with Matchers {
+class CalculateMassAccuracyTest extends WordSpec with Matchers {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 
   "this processor" when {
-    val processor = new CalculateAdductAndMassAccuracy
+    val processor = new CalculateMassAccuracy
 
     val exampleRecord: Spectrum = JSONDomainReader.create[Spectrum].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
 

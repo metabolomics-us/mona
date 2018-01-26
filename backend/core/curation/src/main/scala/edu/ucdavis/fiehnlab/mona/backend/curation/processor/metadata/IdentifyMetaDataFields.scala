@@ -41,6 +41,7 @@ class IdentifyMetaDataFields extends ItemProcessor[Spectrum, Spectrum] with Lazy
     }
 
     if (tagNames.contains(CommonTags.LCMS_SPECTRUM.toLowerCase) || tagNames.contains(CommonTags.GCMS_SPECTRUM.toLowerCase)) {
+
       // Check for retention time/index
       if (metaDataNames.contains(CommonMetaData.RETENTION_TIME.toLowerCase) || metaDataNames.contains(CommonMetaData.RETENTION_INDEX.toLowerCase)) {
         impacts.append(Impact(1, "Retention time/index provided"))

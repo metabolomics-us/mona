@@ -44,8 +44,6 @@ class CompoundConversion extends LazyLogging {
   }
 
 
-
-
   /**
     *
     * @param smiles
