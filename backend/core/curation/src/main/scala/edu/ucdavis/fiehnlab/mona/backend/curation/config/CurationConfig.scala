@@ -7,10 +7,12 @@ import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.BusConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.{Workflow, WorkflowBuilder}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCompoundProperties
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.adduct.AdductPrediction
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata.{IdentifyMetaDataFields, NormalizeIonizationModeValue, NormalizeMSLevelValue, NormalizeMetaDataNames}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateMassAccuracy, CalculateSplash, NormalizeSpectrum}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation.{ColumnValidation, MassAccuracyValidation}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.{FinalizeCuration, RemoveComputedData}
 import edu.ucdavis.fiehnlab.mona.backend.curation.reader.{JSONFileSpectraReader, JSONLegacyFileSpectraReader}
 import edu.ucdavis.fiehnlab.mona.backend.curation.writer.RestRepositoryWriter
@@ -96,7 +98,6 @@ class CurationConfig extends LazyLogging {
           // Spectrum-level curation
           new NormalizeSpectrum,
           new CalculateSplash,
-          new CalculateMassAccuracy,
 
           // Metadata curation
           new NormalizeMetaDataNames,
@@ -104,6 +105,11 @@ class CurationConfig extends LazyLogging {
           new NormalizeIonizationModeValue,
           new NormalizeMSLevelValue,
           new IdentifyMetaDataFields,
+
+          // Validation
+          new AdductPrediction,
+          new CalculateMassAccuracy,
+          new MassAccuracyValidation,
 
           // Add validation metadata
           new FinalizeCuration
