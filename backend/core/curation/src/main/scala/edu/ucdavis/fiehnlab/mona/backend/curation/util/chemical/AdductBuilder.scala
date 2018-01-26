@@ -1,18 +1,22 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.util.chemical
 
+import com.typesafe.scalalogging.LazyLogging
 import org.openscience.cdk.interfaces.{IAtomContainer, IBond}
 import org.openscience.cdk.{Atom, AtomContainer, Bond}
 
 /**
   * Created by sajjan on 4/1/16.
   */
-object AdductBuilder {
+object AdductBuilder extends LazyLogging {
+
+  private final val E_MASS: Double = 5.4857990946e-4
 
   /**
     * Definitions of positive mode LC-MS adducts
     * http://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
     */
-  final val LCMS_POSITIVE_ADDUCTS: Map[String, (Double) => Double] = Map(
+  final val LCMS_POSITIVE_ADDUCTS: Map[String, Double => Double] = Map(
+    "[M]+" -> { M: Double => M - E_MASS },
     "[M+3H]+" -> { M: Double => M / 3.0 + 1.007276 },
     "[M+2H+Na]+" -> { M: Double => M / 3.0 + 8.334590 },
     "[M+H+2Na]+" -> { M: Double => M / 3 + 15.7661904 },
@@ -52,7 +56,8 @@ object AdductBuilder {
     * Definitions of negative mode LC-MS adducts
     * http://fiehnlab.ucdavis.edu/staff/kind/Metabolomics/MS-Adduct-Calculator/
     */
-  final val LCMS_NEGATIVE_ADDUCTS: Map[String, (Double) => Double] = Map(
+  final val LCMS_NEGATIVE_ADDUCTS: Map[String, Double => Double] = Map(
+    "[M]-" -> { M: Double => M + E_MASS },
     "[M-3H]-" -> { M: Double => M / 3.0 - 1.007276 },
     "[M-2H]-" -> { M: Double => M / 2.0 - 1.007276 },
     "[M-H2O-H]-" -> { M: Double => M - 19.01839 },
@@ -69,6 +74,48 @@ object AdductBuilder {
     "[2M+Hac-H]-" -> { M: Double => 2 * M + 59.013851 },
     "[3M-H]-" -> { M: Double => 3 * M - 1.007276 }
   )
+
+
+  /**
+    *
+    * @param adduct
+    * @return
+    */
+  def findAdduct(adduct: String): (String, String, Double => Double) = {
+    if (adduct == null) {
+      (adduct, "not found", null)
+    } else {
+      // Determine ionization mode from adduct
+      val ionizationMode: String = {
+        val x: String = adduct.split(']').last
+
+        if (x.length > 1 && x.contains('+')) {
+          "positive"
+        } else if (x.length > 1 && x.contains('-')) {
+          "negative"
+        } else {
+          null
+        }
+      }
+
+      // Strip square brackets and trailing +/-/* and split into groups, keeping the +/- signs
+      val blocks: Seq[String] = adduct.stripPrefix("[").reverse.dropWhile(c => "+-*]".contains(c)).reverse.split("(?=[+-])")
+
+      // Search lazily for all permutations adduct terms after the first
+      blocks.tail
+        .permutations
+        .map(blocks.head + _.mkString)
+        .collectFirst {
+          case x if ionizationMode != "negative" && LCMS_POSITIVE_ADDUCTS.contains(s"[$x]+") =>
+            logger.info(s"Found adduct match: $adduct -> [$x]+")
+            (s"[$x]+", "positive", LCMS_POSITIVE_ADDUCTS(s"[$x]+"))
+
+          case x if ionizationMode != "positive" && LCMS_NEGATIVE_ADDUCTS.contains(s"[$x]-") =>
+            logger.info(s"Found adduct match: $adduct -> [$x]-")
+            (s"[$x]-", "negative", LCMS_NEGATIVE_ADDUCTS(s"[$x]-"))
+        }.getOrElse((adduct, "not found", null))
+    }
+  }
 
 
   /**
