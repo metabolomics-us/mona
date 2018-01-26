@@ -11,6 +11,7 @@ import org.springframework.batch.item.ItemProcessor
   */
 @Step(description = "this step will validate the computed mass accuracy information")
 class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
+
   val MINIMUM_ACCURACY: Double = 5.0
 
   /**
