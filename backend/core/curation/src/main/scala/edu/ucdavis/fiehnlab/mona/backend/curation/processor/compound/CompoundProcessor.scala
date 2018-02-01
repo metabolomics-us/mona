@@ -32,10 +32,41 @@ class CompoundProcessor extends LazyLogging {
 
   def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer) = {
 
-    val molProcessorResult = molProcessor.process(compound, id, impacts)
-    val inchiProcessorResult = inchiProcessor.process(compound, id, impacts)
-    val smilesProcessorResult = smilesProcessor.process(compound, id, impacts)
-    val inchikeyProcessorResult = inchikeyProcessor.process(compound, id, impacts)
+    val molProcessorResult =
+      try {
+        molProcessor.process(compound, id, impacts)
+      } catch {
+        case e: Exception =>
+          e.printStackTrace()
+          null
+      }
+
+    val inchiProcessorResult =
+      try {
+        inchiProcessor.process(compound, id, impacts)
+      } catch {
+        case e: Exception =>
+          e.printStackTrace()
+          null
+      }
+
+    val smilesProcessorResult =
+      try {
+        smilesProcessor.process(compound, id, impacts)
+      } catch {
+        case e: Exception =>
+          e.printStackTrace()
+          null
+      }
+
+    val inchikeyProcessorResult =
+      try {
+        inchikeyProcessor.process(compound, id, impacts)
+      } catch {
+        case e: Exception =>
+          e.printStackTrace()
+          null
+      }
 
     if (molProcessorResult._1 != null && molProcessorResult._2 != null) {
       logger.info(s"$id: Using provided MOL definition")
