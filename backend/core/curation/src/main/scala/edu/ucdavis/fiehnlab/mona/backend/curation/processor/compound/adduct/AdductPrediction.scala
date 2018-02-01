@@ -133,7 +133,10 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
 
       else {
         logger.info(s"${spectrum.id}: Precursor information validated successfully")
-        spectrum
+
+        spectrum.copy(
+          score = CurationUtilities.addImpact(spectrum.score, 1.0, "Precursor information and provided compound validated")
+        )
       }
     }
   }
