@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
-import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.{CommonMetaData, CurationUtilities}
 import org.springframework.batch.item.ItemProcessor
 
 /**
@@ -12,7 +12,9 @@ import org.springframework.batch.item.ItemProcessor
 @Step(description = "this step will validate the computed mass accuracy information")
 class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
-  val MINIMUM_ACCURACY: Double = 5.0
+  val MINIMUM_ACCURACY: Double = 250.0
+  val GOOD_ACCURACY: Double = 5.0
+  val HIGH_ACCURACY: Double = 1.0
 
   /**
     * processes the given spectrum
@@ -24,16 +26,32 @@ class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with Lazy
     val massAccuracyMetaData: Array[MetaData] = spectrum.metaData.filter(_.name == CommonMetaData.MASS_ACCURACY)
 
     if (massAccuracyMetaData.isEmpty) {
-      logger.trace(s"Mass accuracy not defined for specturm ${spectrum.id}")
+      logger.debug(s"${spectrum.id}: Mass accuracy not defined for specturm")
     }
 
     else {
       val massAccuracy: Double = massAccuracyMetaData.head.value.asInstanceOf[Double]
 
-      if (massAccuracy > MINIMUM_ACCURACY) {
-        logger.warn(s"Spectrum ${spectrum.id} has mass accuracy of $massAccuracy, greater than the threshold of $MINIMUM_ACCURACY")
+      if (massAccuracy <= HIGH_ACCURACY) {
+        logger.info(s"${spectrum.id}: Has a high mass accuracy of $massAccuracy")
+
+        spectrum.copy(
+          score = CurationUtilities.addImpact(spectrum.score, 2.0, s"High mass accuracy of $massAccuracy")
+        )
+      } else if (massAccuracy <= GOOD_ACCURACY) {
+        logger.info(s"${spectrum.id}: Has a good mass accuracy of $massAccuracy")
+
+        spectrum.copy(
+          score = CurationUtilities.addImpact(spectrum.score, 1.0, s"Mass accuracy of $massAccuracy")
+        )
+      } else if (massAccuracy > MINIMUM_ACCURACY) {
+        logger.info(s"S${spectrum.id}: Has a poor mass accuracy of $massAccuracy, greater than the threshold of $MINIMUM_ACCURACY")
+
+        spectrum.copy(
+          score = CurationUtilities.addImpact(spectrum.score, -1.0, s"Poor mass accuracy of $massAccuracy")
+        )
       } else {
-        logger.info(s"Spectrum ${spectrum.id} has mass accuracy of $massAccuracy, within the threshold of $MINIMUM_ACCURACY")
+        logger.info(s"${spectrum.id}: Has mass accuracy of $massAccuracy, within the threshold of $MINIMUM_ACCURACY")
       }
     }
 
