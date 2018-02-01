@@ -67,19 +67,15 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
     val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, id)
 
 
-    if (molDefinition == null) {
-      logger.warn(s"$id: No MOL definition found!")
-      impacts.append(Impact(-2, "Unable to read or generate MOL data"))
-      compound
-    }
-
-    else if (molecule == null) {
+    if (molecule == null) {
       logger.warn(s"$id: Unable to load provided structure information with CDK")
       impacts.append(Impact(-10, "Unable to generate a molecular structure from provided compound data"))
       compound
-    }
-
-    else {
+    } else if (molDefinition == null) {
+      logger.warn(s"$id: No MOL definition found")
+      impacts.append(Impact(-2, "Unable to read or generate MOL data"))
+      compound
+    } else {
       // Read MOL data
       logger.debug(s"$id: Received mol:\n $molDefinition")
 
