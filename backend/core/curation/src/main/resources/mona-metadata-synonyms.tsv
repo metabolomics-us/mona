@@ -19,10 +19,10 @@ ionizationmode	ionization mode
 precursormz	precursor m/z
 precursor mass	precursor m/z
 adductionaccuratemass	precursor m/z
-adductionname	precursor m/z
 precursor mz	precursor m/z
-adduct ion name	precursor m/z
-adduct	precursor m/z
+adductionname	precursor type
+adduct ion name	precursor type
+adduct	precursor type
 precursor ion	precursor type
 m/z difference	delta m/z
 source instrument	instrument
