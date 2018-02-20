@@ -13,7 +13,7 @@ import org.springframework.batch.item.ItemProcessor
 @Step(description = "this step will validate the given adduct information, predicting values if possible")
 class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
-  private val PRECURSOR_MATCH_TOLERANCE: Double = 0.1
+  private val PRECURSOR_MATCH_TOLERANCE: Double = 0.5
 
   /**
     * Processes the given spectrum
