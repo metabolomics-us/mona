@@ -377,6 +377,10 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         "text/msp must produce a msp file with pagination" in {
           given().header("accept", "text/msp").when().log().all(true).get("/spectra/search?size=2&page=1&query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().log().all(true).contentType("text/msp").statusCode(200)
         }
+
+        "we should be able to execute" in {
+          given().when().log().all(true).get("/spectra/search?query=metaData=q='name==\"collision energy\" and value==\"35%\"'").`then`().log().all(true).statusCode(200)
+        }
       }
 
 
