@@ -48,7 +48,6 @@ abstract class DomainReader[T: ClassTag] {
 /**
   * simple event handler, don't see to many use for different implementations for it
   *
-  * @param ev$1
   * @tparam T
   */
 abstract class DomainReadEventHandler[T: ClassTag] {

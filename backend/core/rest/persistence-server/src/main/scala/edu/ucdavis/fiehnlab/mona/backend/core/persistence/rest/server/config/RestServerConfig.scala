@@ -6,6 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.PersistenceServiceConfig
@@ -95,6 +96,7 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
 
   override def extendMessageConverters(converters: util.List[HttpMessageConverter[_]]): Unit = {
     converters.add(new MSPConverter())
+    converters.add(new SDFConverter())
   }
 
   override def configurePathMatch(configurer: PathMatchConfigurer): Unit = {
@@ -109,6 +111,7 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
       useJaf(false)
       .defaultContentType(MediaType.APPLICATION_JSON)
       .mediaType("msp", MediaType.valueOf("txt/msp"))
+      .mediaType("sdf", MediaType.valueOf("txt/sdf"))
       .mediaType("json", MediaType.APPLICATION_JSON)
 
     super.configureContentNegotiation(configurer)
@@ -116,7 +119,7 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
 }
 
 /**
-  * converts from object to MSP
+  * Converts JSON records to MSP
   */
 class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("text/msp")) {
 
@@ -131,22 +134,13 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
   override def writeInternal(t: Any, outputMessage: HttpOutputMessage): Unit = {
     val writer = new MSPWriter
 
-    val write = (x: Any) => {
-      writer.write(x.asInstanceOf[Spectrum], outputMessage.getBody)
-    }
+    def write(x: Any): Unit = writer.write(x.asInstanceOf[Spectrum], outputMessage.getBody)
 
     t match {
-      case y: Spectrum =>
-        write(y)
-
-      case x: Iterable[_] =>
-        x.foreach(write)
-
-      case x: util.Collection[_] =>
-        x.asScala.foreach(write)
-
-      case _ =>
-        logger.info(s"what the fuck is this ${t}")
+      case y: Spectrum => write(y)
+      case x: Iterable[_] => x.foreach(write)
+      case x: util.Collection[_] => x.asScala.foreach(write)
+      case _ => logger.error(s"Undetermined type $t")
     }
   }
 
@@ -159,6 +153,46 @@ class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("
       case q if q == classOf[util.Collection[_]] => true
       case _ =>
         logger.debug(s"Unknown class type provided to MSP converter: $clazz")
+        false
+    }
+  }
+}
+
+/**
+  * Converts JSON records to SDF
+  */
+class SDFConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("text/sdf")) {
+
+  override def readInternal(clazz: Class[_ <: Any], inputMessage: HttpInputMessage): Spectrum = throw new RuntimeException("read is not supported!")
+
+  override def canWrite(mediaType: MediaType): Boolean = {
+    mediaType != null && mediaType.equals(MediaType.valueOf("text/sdf"))
+  }
+
+  override def canRead(mediaType: MediaType): Boolean = false
+
+  override def writeInternal(t: Any, outputMessage: HttpOutputMessage): Unit = {
+    val writer = new SDFWriter
+
+    def write(x: Any): Unit = writer.write(x.asInstanceOf[Spectrum], outputMessage.getBody)
+
+    t match {
+      case y: Spectrum => write(y)
+      case x: Iterable[_] => x.foreach(write)
+      case x: util.Collection[_] => x.asScala.foreach(write)
+      case _ => logger.error(s"Undetermined type $t")
+    }
+  }
+
+  override def supports(clazz: Class[_]): Boolean = {
+    clazz match {
+      case q if q == classOf[Spectrum] => true
+      case q if q == classOf[Iterable[_]] => true
+      case q if q == classOf[Wrappers.JIterableWrapper[_]] => true
+      case q if q == classOf[Wrappers.JListWrapper[_]] => true
+      case q if q == classOf[util.Collection[_]] => true
+      case _ =>
+        logger.debug(s"Unknown class type provided to SDF converter: $clazz")
         false
     }
   }
