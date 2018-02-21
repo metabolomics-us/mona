@@ -26,7 +26,7 @@ class BootstrapDownloaderService extends LazyLogging {
   def saveQuery(label: String, description: String, query: String): Unit = {
     if (!predefinedQueryRepository.exists(label)) {
       logger.info(s"Saving predefined query: $label")
-      predefinedQueryRepository.save(PredefinedQuery(label, description, query, 0, null, null))
+      predefinedQueryRepository.save(PredefinedQuery(label, description, query, 0, null, null, null))
     }
   }
 
