@@ -122,6 +122,11 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
             assert(result.size == 58)
           }
 
+          "we should be able to execute RSQL queries like metaData=q='name==\"collision energy\" and value==\"35%\"'" in {
+            val result = getRepository.query("metaData=q='name==\"collision energy\" and value==\"35%\"'", "")
+            assert(result.size() == 0)
+          }
+
           "reading the same events should be an update" in {
             val it = getRepository.findAll().iterator()
 
