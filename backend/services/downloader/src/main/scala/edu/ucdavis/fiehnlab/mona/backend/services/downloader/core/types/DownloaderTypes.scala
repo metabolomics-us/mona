@@ -36,5 +36,6 @@ case class PredefinedQuery(
                             queryCount: Long,
 
                             jsonExport: QueryExport,
-                            mspExport: QueryExport
+                            mspExport: QueryExport,
+                            sdfExport: QueryExport
                           )

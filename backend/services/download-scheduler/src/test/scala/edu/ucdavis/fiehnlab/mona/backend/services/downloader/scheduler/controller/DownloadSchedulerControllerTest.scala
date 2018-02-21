@@ -66,7 +66,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
 
     // Add new predefined download
     "add predefined download" in {
-      val query: PredefinedQuery = predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
+      val query: PredefinedQuery = predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null, null))
 
       given().contentType("application/json; charset=UTF-8").when().body(query).post("/predefined").`then`().statusCode(401)
 

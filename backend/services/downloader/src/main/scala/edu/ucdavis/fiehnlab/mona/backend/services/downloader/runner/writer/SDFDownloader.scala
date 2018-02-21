@@ -2,18 +2,18 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
 import java.io.BufferedWriter
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
 import org.springframework.stereotype.Service
 
 /**
   * Created by sajjan on 9/13/16.
   */
 @Service
-class JSONDownloader extends AbstractDownloader {
+class SDFDownloader extends AbstractDownloader {
 
-  val objectMapper: ObjectMapper = MonaMapper.create
+  val mspWriter: SDFWriter = new SDFWriter
 
 
   /**
@@ -21,26 +21,26 @@ class JSONDownloader extends AbstractDownloader {
     *
     * @return
     */
-  override def getFilePrefix: String = "[\n"
+  override def getFilePrefix: String = ""
 
   /**
     * File format suffix
     *
     * @return
     */
-  override def getFileSuffix: String = "\n]"
+  override def getFileSuffix: String = ""
 
   /**
     * File format separator
     *
     * @return
     */
-  override def getFileSeparator: String = ",\n"
+  override def getFileSeparator: String = "\n"
 
   /**
     *
     */
   override def writeSpectrum(spectrum: Spectrum, bufferedWriter: BufferedWriter): Unit = {
-    bufferedWriter.write(objectMapper.writeValueAsString(spectrum))
+    mspWriter.write(spectrum, bufferedWriter)
   }
 }

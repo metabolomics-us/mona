@@ -47,7 +47,7 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
       exampleRecords.foreach(mongoRepository.save(_))
 
       predefinedQueryRepository.deleteAll()
-      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
+      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null, null))
     }
 
     "be able to download a json file using a message" in {
@@ -83,6 +83,24 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
       assert(predefinedQuery != null)
       assert(predefinedQuery.mspExport != null)
       assert(predefinedQuery.mspExport.id == mspExport.id)
+      assert(predefinedQuery.queryCount == 58)
+    }
+
+
+    "be able to download a msp file using a message" in {
+      val sdfExport: QueryExport = QueryExport("2", "All Spectra", "", "sdf", null, new Date, 0, 0, null, null)
+
+      downloadListener.handleMessage(sdfExport)
+
+      val result: QueryExport = queryExportRepository.findOne(sdfExport.id)
+      assert(result != null)
+      assert(result.count == 58)
+      assert(result.size > 0)
+
+      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
+      assert(predefinedQuery != null)
+      assert(predefinedQuery.mspExport != null)
+      assert(predefinedQuery.mspExport.id == sdfExport.id)
       assert(predefinedQuery.queryCount == 58)
     }
   }

@@ -82,7 +82,7 @@ abstract class AbstractDownloader extends LazyLogging {
   /**
     *
     */
-  def writeSpectrum(spectrum: Spectrum, bufferedWriter: BufferedWriter)
+  def writeSpectrum(spectrum: Spectrum, bufferedWriter: BufferedWriter): Unit
 
 
   /**
