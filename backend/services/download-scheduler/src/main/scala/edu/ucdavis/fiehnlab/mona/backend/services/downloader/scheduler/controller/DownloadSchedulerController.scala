@@ -13,7 +13,6 @@ import org.springframework.core.io.InputStreamResource
 import org.springframework.http.{HttpStatus, MediaType, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation._
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
 
 import scala.collection.JavaConverters._
 
@@ -54,7 +53,7 @@ class DownloadSchedulerController extends LazyLogging {
     if (queryExport == null) {
       logger.info(s"\t-> Download object $id does not exist!")
 
-      throw new NoSuchRequestHandlingMethodException(request)
+      new AsyncResult[ResponseEntity[InputStreamResource]](new ResponseEntity(HttpStatus.NOT_FOUND))
     } else {
       val exportPath: Path = Paths.get(exportDir, queryExport.exportFile)
 
@@ -71,7 +70,7 @@ class DownloadSchedulerController extends LazyLogging {
       } else {
         logger.info(s"\t-> Download file ${exportPath.toAbsolutePath.toString} does not exist!")
 
-        throw new NoSuchRequestHandlingMethodException(request)
+        new AsyncResult[ResponseEntity[InputStreamResource]](new ResponseEntity(HttpStatus.NOT_FOUND))
       }
     }
   }

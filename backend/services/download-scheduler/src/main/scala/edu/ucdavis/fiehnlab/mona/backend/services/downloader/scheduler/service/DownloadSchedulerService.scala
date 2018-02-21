@@ -99,7 +99,7 @@ class DownloadSchedulerService extends LazyLogging {
           if (predefinedQueryRepository.findByQuery(s"""tags.text=="$tagLabel"""").isEmpty) {
             logger.info(s"Creating new predefined download for ${tag.text}: $tagLabel")
 
-            predefinedQueryRepository.save(PredefinedQuery(s"Libraries - $tagLabel", tagLabel, s"""tags.text=="$tagLabel"""", 0, null, null))
+            predefinedQueryRepository.save(PredefinedQuery(s"Libraries - $tagLabel", tagLabel, s"""tags.text=="$tagLabel"""", 0, null, null, null))
           }
         }
       }
