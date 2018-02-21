@@ -66,7 +66,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       queryExportRepository.save(QueryExport("test", "test", "", "json", "test@localhost", new Date, 0, 0, null, null))
 
       predefinedQueryRepository.deleteAll()
-      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null))
+      predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null, null))
     }
 
     "scheduleDownload" in {

@@ -6,7 +6,7 @@ import java.nio.file.{Files, Path, Paths}
 import java.util.zip.{ZipEntry, ZipOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer.{JSONDownloader, MSPDownloader}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer.{JSONDownloader, MSPDownloader, SDFDownloader}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -18,6 +18,9 @@ class DownloadWriterService extends LazyLogging {
 
   @Autowired
   val mspDownloader: MSPDownloader = null
+
+  @Autowired
+  val sdfDownloader: SDFDownloader = null
 
   @Autowired
   val jsonDownloader: JSONDownloader = null
@@ -41,6 +44,7 @@ class DownloadWriterService extends LazyLogging {
 
     val count: Long = format match {
       case "msp" => mspDownloader.write(query, exportFile)
+      case "sdf" => sdfDownloader.write(query, exportFile)
       case "json" | _ => jsonDownloader.write(query, exportFile)
     }
 

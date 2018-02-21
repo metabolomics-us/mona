@@ -120,6 +120,12 @@ class DownloadSchedulerService extends LazyLogging {
       } else {
         downloads.append(predefinedQuery.mspExport)
       }
+
+      if (predefinedQuery.sdfExport == null) {
+        downloads.append(QueryExport(UUID.randomUUID.toString, predefinedQuery.label, predefinedQuery.query, "sdf", null, new Date, 0, 0, null, null))
+      } else {
+        downloads.append(predefinedQuery.sdfExport)
+      }
     }
 
     // Send downloads to the queue

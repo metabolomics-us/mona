@@ -31,7 +31,7 @@ class PredefinedQueryMongoRepositoryTest extends WordSpec {
 
     "be able to save and retrieve a PredefinedQuery object" in {
       predefinedQueryMongoRepository.deleteAll()
-      predefinedQueryMongoRepository.save(PredefinedQuery("test", "", "", 0, null, null))
+      predefinedQueryMongoRepository.save(PredefinedQuery("test", "", "", 0, null, null, null))
 
       assert(predefinedQueryMongoRepository.count() == 1)
       assert(predefinedQueryMongoRepository.findOne("test") != null)

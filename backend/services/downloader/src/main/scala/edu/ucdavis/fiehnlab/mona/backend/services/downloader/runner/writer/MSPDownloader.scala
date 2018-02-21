@@ -39,7 +39,7 @@ class MSPDownloader extends AbstractDownloader {
   /**
     *
     */
-  override def writeSpectrum(spectrum: Spectrum, bufferedWriter: BufferedWriter) = {
+  override def writeSpectrum(spectrum: Spectrum, bufferedWriter: BufferedWriter): Unit = {
     mspWriter.write(spectrum, bufferedWriter)
   }
 }

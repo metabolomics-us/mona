@@ -45,6 +45,8 @@ class DownloadListener extends GenericMessageListener[QueryExport] with LazyLogg
               predefinedQuery.copy(jsonExport = result, queryCount = result.count)
             else if (result.format == "msp")
               predefinedQuery.copy(mspExport = result, queryCount = result.count)
+            else if (result.format == "sdf")
+              predefinedQuery.copy(sdfExport = result, queryCount = result.count)
             else
               predefinedQuery
 
