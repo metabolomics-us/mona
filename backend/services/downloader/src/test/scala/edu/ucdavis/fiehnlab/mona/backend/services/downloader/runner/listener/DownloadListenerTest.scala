@@ -87,7 +87,7 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
     }
 
 
-    "be able to download a msp file using a message" in {
+    "be able to download a sdf file using a message" in {
       val sdfExport: QueryExport = QueryExport("2", "All Spectra", "", "sdf", null, new Date, 0, 0, null, null)
 
       downloadListener.handleMessage(sdfExport)
