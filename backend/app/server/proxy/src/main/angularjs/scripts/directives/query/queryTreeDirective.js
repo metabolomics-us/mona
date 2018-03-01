@@ -45,6 +45,8 @@
                     '        <ul class="uib-dropdown-menu dropdown-menu-right">' +
                     '            <li data-ng-if="node.jsonExport !== null"><a data-ng-href="{{downloadJSON(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.json\']"><i class="fa fa-download"></i> JSON (Internal MoNA Format) ({{node.jsonExport.size | bytes}})</a></li>' +
                     '            <li data-ng-if="node.mspExport !== null"><a data-ng-href="{{downloadMSP(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.msp\']"><i class="fa fa-download"></i> MSP (NIST compatible) ({{node.mspExport.size | bytes}})</a></li>' +
+                    '            <li data-ng-if="node.sdfExport !== null"><a data-ng-href="{{downloadSDF(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.sdf\']"><i class="fa fa-download"></i> SDF (NIST compatible) ({{node.sdfExport.size | bytes}})</a></li>' +
+
                     '        </ul>' +
                     '    </span>' +
                     '    <span class="pull-right" data-ng-if="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>' +
