@@ -24,6 +24,10 @@
             return REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.mspExport.id;
         };
 
+        $scope.downloadSDF = function(node) {
+            return REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.sdfExport.id;
+        };
+
         /**
          * Get predefined queries and build query tree
          */
