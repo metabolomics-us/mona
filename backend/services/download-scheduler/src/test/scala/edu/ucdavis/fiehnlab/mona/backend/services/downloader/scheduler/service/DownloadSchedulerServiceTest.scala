@@ -110,7 +110,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       }
 
       eventually(timeout(10 seconds)) {
-        assert(notificationCounter.getEventCount == count + 2)
+        assert(notificationCounter.getEventCount == count + 3)
       }
     }
 
