@@ -126,7 +126,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
           logger.info(s"${spectrum.id}: Unable to determine precursor type given theoretical mass = $theoreticalMass, precursor m/z = $precursorMass and delta = $dist")
 
           spectrum.copy(
-            score = CurationUtilities.addImpact(spectrum.score, -1.0, "Unable to determine a valid adduct for the provided compound and precursor m/z")
+            score = CurationUtilities.addImpact(spectrum.score, -5.0, "Unable to determine a valid adduct for the provided compound and precursor m/z")
           )
         }
       }
