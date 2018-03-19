@@ -2,13 +2,16 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf
 
 import java.io.{PrintWriter, Writer}
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.{CRLFPrintWriter, DomainWriter}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 /**
   * Created by wohlgemuth on 5/27/16.
   */
 class SDFWriter extends DomainWriter {
+
+  override val CRLF: Boolean = true
 
   /**
     * General function for exporting SDF metadata format
@@ -55,7 +58,7 @@ class SDFWriter extends DomainWriter {
       printMetaData("NAME", compound.names.head.name, writer)
 
       if (synonyms) {
-        printMetaData("SYNONYMS", compound.names.tail.map(_.name).mkString("\n"), writer)
+        printMetaData("SYNONYMS", compound.names.tail.map(_.name).mkString(getNewLine), writer)
       }
     }
   }
@@ -105,7 +108,7 @@ class SDFWriter extends DomainWriter {
 
     val comments = (spectrum.metaData ++ compound.metaData).map(
       value => s"${value.name}=${value.value.toString}"
-    ).mkString("\n")
+    ).mkString(getNewLine)
 
     printMetaData("COMMENT", comments, writer)
   }
@@ -121,7 +124,7 @@ class SDFWriter extends DomainWriter {
     val ions: Array[String] = spectrum.spectrum.split(" ").map(_.split(":").mkString(" "))
 
     printMetaData("NUM PEAKS", ions.length.toString, writer)
-    printMetaData("MASS SPECTRAL PEAKS", ions.mkString("\n"), writer)
+    printMetaData("MASS SPECTRAL PEAKS", ions.mkString(getNewLine), writer)
   }
 
 
@@ -135,7 +138,7 @@ class SDFWriter extends DomainWriter {
     * @return
     */
   def write(spectrum: Spectrum, writer: Writer): Unit = {
-    val p = new PrintWriter(writer)
+    val p = new CRLFPrintWriter(writer)
 
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
@@ -161,7 +164,6 @@ class SDFWriter extends DomainWriter {
     buildSpectraString(spectrum, p)
     p.println("$$$$")
 
-    p.println()
     p.flush()
   }
 }

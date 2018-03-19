@@ -2,13 +2,15 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp
 
 import java.io.{PrintWriter, Writer}
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.{CRLFPrintWriter, DomainWriter}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 /**
   * Created by wohlgemuth on 5/27/16.
   */
 class MSPWriter extends DomainWriter {
+
+  override val CRLF: Boolean = true
 
   /**
     * Uses the biological or first compound, sorting the names by score and writes the highest scored name
@@ -136,7 +138,7 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def write(spectrum: Spectrum, writer: Writer): Unit = {
-    val p = new PrintWriter(writer)
+    val p = new CRLFPrintWriter(writer)
 
     // Name and synonyms, including NIST-specific fields
     buildNames(spectrum, synonyms = true, p)
