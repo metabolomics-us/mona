@@ -7,10 +7,6 @@
     /* @ngInject */
     function MainController($scope, $rootScope, Spectrum, $log) {
 
-        $scope.slides = [
-            {image: 'images/spectrum-1.png', id: 'BSU00002', name: 'Cyclopamine'},
-            {image: 'images/spectrum-2.png', id: 'AU101801', name: 'Ro-42130'}
-        ];
 
         $scope.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
         $scope.showcaseSpectra = [];
