@@ -24,13 +24,14 @@ adductionname	precursor type
 adduct ion name	precursor type
 adduct	precursor type
 precursor ion	precursor type
+parent ion	precursor type
+selected ion m/z	precursor m/z
 m/z difference	delta m/z
 source instrument	instrument
 z	charge state
 principal investigator	senior author
 instrument configuration	instrument
 submituser	submitter
-parent ion	precursor type
 Th	m/z
 datacollector	data collector
 Activation Method	dissociation method
@@ -42,7 +43,6 @@ B	magnetic field strength
 ion mode	ionization mode
 scan polarity	ionization mode
 data processing	data transformation
-selected ion m/z	precursor m/z
 molecule formula	molecular formula
 flow	flow rate
 polarity	ionization mode
