@@ -256,10 +256,10 @@
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: 'name'">
-                                        <td class="col-lg-4 col-md-4">
+                                        <td class="col-lg-4 col-md-4" data-metadata-name="{{meta.name}}">
                                             <span metadata-query value="meta"> {{meta.name}}</span>
                                         </td>
-                                        <td class="col-lg-8 col-md-8">
+                                        <td class="col-lg-8 col-md-8" data-metadata-value="{{meta.value}}">
                                             <span ng-if="angular.isNumber(meta.value)">{{meta.value | number:4}} {{meta.unit}}</span>
                                             <span ng-if="!angular.isNumber(meta.value)">{{meta.value}} {{meta.unit}}</span>
 
