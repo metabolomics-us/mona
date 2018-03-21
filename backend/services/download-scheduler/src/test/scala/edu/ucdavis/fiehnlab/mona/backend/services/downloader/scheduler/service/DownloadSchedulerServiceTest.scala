@@ -127,7 +127,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       }
 
       eventually(timeout(10 seconds)) {
-        assert(notificationCounter.getEventCount == count + 8)
+        assert(notificationCounter.getEventCount == count + 12)
       }
 
       assert(predefinedQueryRepository.exists("Libraries - 1"))
