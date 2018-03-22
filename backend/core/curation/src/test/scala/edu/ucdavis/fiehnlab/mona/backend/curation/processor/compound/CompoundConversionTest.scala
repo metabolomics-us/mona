@@ -22,7 +22,7 @@ class CompoundConversionTest extends WordSpec {
 
     smiles_tests.foreach { case (key, value) =>
 
-      s"generate the correct canonical SMILES for $key" in {
+      s"generate a valid canonical SMILES for $key" in {
         val molecule: IAtomContainer = compoundConversion.parseMolDefinition(compoundConversion.smilesToMolDefinition(key))
 
         assert(compoundConversion.moleculeToSMILES(molecule) == value)

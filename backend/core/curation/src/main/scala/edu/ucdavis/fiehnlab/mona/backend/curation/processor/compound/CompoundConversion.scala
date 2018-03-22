@@ -92,7 +92,8 @@ class CompoundConversion extends LazyLogging {
       if (returnStatus == INCHI_RET.WARNING) {
         logger.warn(s"InChI warning: ${inchiToStructure.getMessage}")
       }
-      molecule
+
+      AtomContainerManipulator.suppressHydrogens(molecule)
     }
   }
 
@@ -205,7 +206,7 @@ class CompoundConversion extends LazyLogging {
     */
   def moleculeToSMILES(molecule: IAtomContainer): String = {
     try {
-      SmilesGenerator.unique().create(addHydrogens(molecule))
+      SmilesGenerator.unique().create(molecule)
     } catch {
       case e: Exception => new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols).create(addHydrogens(molecule))
     }
