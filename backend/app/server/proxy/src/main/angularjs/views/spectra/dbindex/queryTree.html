@@ -10,10 +10,14 @@
 
         <div data-query-tree-view data-tree-id="tree" data-tree-model="queryTree"></div>
 
+    </div>
+</div>
 
-        <h3 ng-if="angular.equals(static, {})"><i class="fa fa-table"></i> Additional Downloads</h3>
+<div class="row" ng-if="!angular.equals(static, {})">
+    <div class="col-md-12">
+        <h3><i class="fa fa-table"></i> Additional Downloads</h3>
 
-        <div class="list-group panel-query-tree well" ng-if="angular.equals(static, {})">
+        <div class="list-group panel-query-tree well">
             <div class="list-group-item" data-ng-repeat-start="(category, files) in static">
                 <b>{{category}}</b>
             </div>
