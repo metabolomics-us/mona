@@ -10,7 +10,7 @@ import org.openscience.cdk.inchi.{InChIGeneratorFactory, InChIToStructure}
 import org.openscience.cdk.interfaces.{IAtomContainer, IAtomContainerSet}
 import org.openscience.cdk.io.{MDLV2000Reader, MDLV2000Writer}
 import org.openscience.cdk.layout.StructureDiagramGenerator
-import org.openscience.cdk.smiles.{SmilesGenerator, SmilesParser}
+import org.openscience.cdk.smiles.{SmiFlavor, SmilesGenerator, SmilesParser}
 import org.openscience.cdk.tools.CDKHydrogenAdder
 import org.openscience.cdk.tools.manipulator.{AtomContainerManipulator, MolecularFormulaManipulator}
 import org.openscience.cdk.{AtomContainer, DefaultChemObjectBuilder}
@@ -29,13 +29,17 @@ class CompoundConversion extends LazyLogging {
     * @param molecule
     * @return
     */
-  def addExplicitHydrogens(molecule: IAtomContainer): IAtomContainer = {
+  def addHydrogens(molecule: IAtomContainer, addExplicitHydrogens: Boolean = false): IAtomContainer = {
     if (molecule != null) {
       val newMolecule: IAtomContainer = molecule
 
+      AtomContainerManipulator.removeHydrogens(newMolecule)
       AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(newMolecule)
       CDKHydrogenAdder.getInstance(DefaultChemObjectBuilder.getInstance()).addImplicitHydrogens(newMolecule)
-      AtomContainerManipulator.convertImplicitToExplicitHydrogens(newMolecule)
+
+      if (addExplicitHydrogens) {
+        AtomContainerManipulator.convertImplicitToExplicitHydrogens(newMolecule)
+      }
 
       newMolecule
     } else {
@@ -116,6 +120,7 @@ class CompoundConversion extends LazyLogging {
   def generateMolDefinition(molecule: IAtomContainer): String = {
     val stringWriter: StringWriter = new StringWriter()
     val mdlWriter: MDLV2000Writer = new MDLV2000Writer(stringWriter)
+    mdlWriter.setWriteAromaticBondTypes(true)
 
     AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(molecule)
 
@@ -198,5 +203,11 @@ class CompoundConversion extends LazyLogging {
     * @param molecule
     * @return
     */
-  def moleculeToSMILES(molecule: IAtomContainer): String = SmilesGenerator.generic().create(molecule)
+  def moleculeToSMILES(molecule: IAtomContainer): String = {
+    try {
+      SmilesGenerator.unique().create(addHydrogens(molecule))
+    } catch {
+      case e: Exception => new SmilesGenerator(SmiFlavor.Unique | SmiFlavor.UseAromaticSymbols).create(addHydrogens(molecule))
+    }
+  }
 }
