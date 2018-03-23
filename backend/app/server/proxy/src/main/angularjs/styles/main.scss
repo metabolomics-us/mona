@@ -433,3 +433,24 @@ input[readonly] {
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+
+/**
+ * Carousel
+ */
+.carousel-indicators {
+  bottom: -35px;
+}
+
+.carousel-indicators li {
+  border-color: #999;
+  background-color: #ccc;
+}
+
+.carousel-inner {
+   margin-bottom: 35px;
+}
+.carousel-control {
+  display: none;
+}
+
