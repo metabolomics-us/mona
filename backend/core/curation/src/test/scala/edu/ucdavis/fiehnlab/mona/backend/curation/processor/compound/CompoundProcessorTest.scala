@@ -113,5 +113,17 @@ class CompoundProcessorTest extends WordSpec {
       assert(molDefinition.split('\n')(3).trim().split(' ')(0).toInt == 64)
       assert(AtomContainerManipulator.getImplicitHydrogenCount(molecule) == AtomContainerManipulator.getTotalHydrogenCount(molecule))
     }
+
+
+    "handle CXMXRPHRNRROMY-UHFFFAOYSA-N" in {
+      val compound: Compound = Compound("", "CXMXRPHRNRROMY-UHFFFAOYSA-N", Array.empty[MetaData], "", Array.empty[Names], Array.empty[Tags], computed = false, null)
+
+      val (molDefinition, molecule): (String, IAtomContainer) = compoundProcessor.process(compound, "MoNA001203")
+      assert(molDefinition != null)
+      assert(molecule != null)
+
+      assert(molDefinition.split('\n')(3).trim().split(' ')(0).toInt == 14)
+      assert(AtomContainerManipulator.getImplicitHydrogenCount(molecule) == AtomContainerManipulator.getTotalHydrogenCount(molecule))
+    }
   }
 }
