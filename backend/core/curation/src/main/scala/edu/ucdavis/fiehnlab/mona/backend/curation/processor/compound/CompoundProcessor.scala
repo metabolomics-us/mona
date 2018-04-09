@@ -103,7 +103,7 @@ trait AbstractCompoundProcessor extends LazyLogging {
 class CompoundMOLProcessor extends AbstractCompoundProcessor {
 
   def process(compound: Compound, id: String, impacts: ArrayBuffer[Impact]): (String, IAtomContainer) = {
-    if (compound.molFile != null || compound.molFile == "") {
+    if (compound.molFile != null && !compound.molFile.isEmpty) {
       logger.info(s"$id: Parsing MOL definition")
 
       val molecule: IAtomContainer = compoundConversion.parseMolDefinition(compound.molFile)
@@ -128,7 +128,7 @@ class CompoundInChIProcessor extends AbstractCompoundProcessor {
     val inchiMetaData: Option[MetaData] = compound.metaData.find(_.name.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase)
 
     val inchi: String =
-      if (compound.inchi != null && compound.inchi != "")
+      if (compound.inchi != null && !compound.inchi.isEmpty)
         compound.inchi
       else if (inchiMetaData.isDefined && inchiMetaData.get.value.toString != "")
         inchiMetaData.get.value.toString
@@ -167,7 +167,7 @@ class CompoundSMILESProcessor extends AbstractCompoundProcessor {
     val smiles: Option[MetaData] = compound.metaData.find(_.name.toLowerCase == CommonMetaData.SMILES.toLowerCase)
 
     // Parse SMILES
-    if (smiles.isDefined && smiles.get.value.toString != "") {
+    if (smiles.isDefined && !smiles.get.value.toString.isEmpty) {
       logger.info(s"$id: Converting SMILES to MOL definition")
 
       val molecule: IAtomContainer = compoundConversion.smilesToMolecule(smiles.get.value.toString)
@@ -208,7 +208,7 @@ class CompoundInChIKeyProcessor extends AbstractCompoundProcessor {
         compound.metaData.filter(_.name.toLowerCase == CommonMetaData.INCHI_KEY.toLowerCase).map(_.value.toString).headOption.orNull
 
     // Lookup InChIKey
-    if (inchikey != null && inchikey.toString != "") {
+    if (inchikey != null && !inchikey.isEmpty) {
       logger.info(s"$id: Looking up MOL definition by InChIKey on CTS, invoking url $CTS_URL$inchikey")
 
       try {
