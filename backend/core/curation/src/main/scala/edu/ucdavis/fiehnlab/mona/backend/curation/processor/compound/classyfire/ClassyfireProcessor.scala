@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire
 
+import java.net.InetAddress
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.annotations.Step
@@ -24,6 +26,17 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   @Autowired
   protected val restOperations: RestOperations = null
 
+
+  def isReachable(): Boolean = {
+    try {
+      InetAddress.getByName("http://classyfire.wishartlab.com").isReachable(10)
+    } catch {
+      case e: Exception =>
+        e.printStackTrace()
+        false
+    }
+  }
+
   /**
     * build a copy of the provided spectra
     *
@@ -31,17 +44,22 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     * @return
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    logger.info(s"${spectrum.id}: Retrieving classification data from ClassyFire")
 
-    val compounds = spectrum.compound.map(compound =>
-      if (compound.classification == null) {
-        classify(compound.copy(classification = Array[MetaData]()), spectrum.id)
-      } else {
-        classify(compound, spectrum.id)
-      }
-    )
+    if (isReachable()) {
+      logger.info(s"${spectrum.id}: Retrieving classification data from ClassyFire")
 
-    spectrum.copy(compound = compounds)
+      val compounds = spectrum.compound.map(compound =>
+        if (compound.classification == null) {
+          classify(compound.copy(classification = Array[MetaData]()), spectrum.id)
+        } else {
+          classify(compound, spectrum.id)
+        }
+      )
+      spectrum.copy(compound = compounds)
+    } else {
+      logger.error(s"${spectrum.id}: ClassyFire is unreachable!")
+      spectrum
+    }
   }
 
   /**
