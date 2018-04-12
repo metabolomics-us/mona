@@ -2,9 +2,10 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import java.io.InputStreamReader
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
+import edu.ucdavis.fiehnlab.mona.backend.curation.util.CommonMetaData
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -62,6 +63,15 @@ class CalculateCompoundPropertiesTest extends WordSpec {
       assert(result.score != null)
       assert(result.score.impacts.nonEmpty)
       assert(result.score.impacts.map(_.value).sum == 2.0)
+    }
+
+    "ensure that identifiers aren't duplicated when computed version matches the provided" in {
+      val compound: Compound = Compound("", "UYHMVWFYYZIVOP-RUAQSNJLSA-N", Array.empty[MetaData], "", Array.empty[Names], Array.empty[Tags], computed = false, null)
+      val spectrum: Spectrum = Spectrum(Array(compound), "test", null, null, null, Array.empty[MetaData], null, null, null, null, null, null, null, null)
+
+      val result: Spectrum = calculateCompoundProperties.process(spectrum)
+
+      assert(result.compound.head.metaData.count(_.name == CommonMetaData.INCHI_KEY) == 1)
     }
   }
 }

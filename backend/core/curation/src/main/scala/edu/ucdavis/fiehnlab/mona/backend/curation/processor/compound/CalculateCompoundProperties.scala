@@ -52,12 +52,12 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
 
 
     // Add submitted InChI and InChIKey to metadata if we haven't already
-    if (compound.inchi != null && compound.inchi != "" && compound.metaData.forall(_.name.toLowerCase != CommonMetaData.INCHI_CODE.toLowerCase)) {
+    if (compound.inchi != null && !compound.inchi .isEmpty && compound.metaData.forall(_.name.toLowerCase != CommonMetaData.INCHI_CODE.toLowerCase)) {
       metaData.append(MetaData("none", computed = false, hidden = false, CommonMetaData.INCHI_CODE,
         null, null, null, compound.inchi))
     }
 
-    if (compound.inchiKey != null && compound.inchiKey != "" && compound.metaData.forall(_.name.toLowerCase != CommonMetaData.INCHI_KEY.toLowerCase)) {
+    if (compound.inchiKey != null && !compound.inchiKey.isEmpty && compound.metaData.forall(_.name.toLowerCase != CommonMetaData.INCHI_KEY.toLowerCase)) {
       metaData.append(MetaData("none", computed = false, hidden = false, CommonMetaData.INCHI_KEY,
         null, null, null, compound.inchiKey))
     }
@@ -97,9 +97,9 @@ class CalculateCompoundProperties extends ItemProcessor[Spectrum, Spectrum] with
       val computedInChI: String = compoundConversion.moleculeToInChI(molecule)
       val computedInChIKey: String = compoundConversion.moleculeToInChIKey(molecule)
 
-      val providedInChI: Option[MetaData] = compound.metaData
+      val providedInChI: Option[MetaData] = (compound.metaData ++ metaData)
         .find(x => x.name.toLowerCase == CommonMetaData.INCHI_CODE.toLowerCase && !x.computed)
-      val providedInChIKey: Option[MetaData] = compound.metaData
+      val providedInChIKey: Option[MetaData] = (compound.metaData ++ metaData)
         .find(x => x.name.toLowerCase == CommonMetaData.INCHI_KEY.toLowerCase && !x.computed)
 
       if (providedInChI.isEmpty || providedInChI.get.value.toString != computedInChI) {
