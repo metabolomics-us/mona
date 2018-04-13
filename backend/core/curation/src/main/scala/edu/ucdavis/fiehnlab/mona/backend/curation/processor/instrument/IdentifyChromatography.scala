@@ -28,6 +28,7 @@ class IdentifyChromatography extends ItemProcessor[Spectrum, Spectrum] with Lazy
   val LCMS_METADATA_CRITERIA: Map[String, Array[String]] = Map(
     (CommonMetaData.INSTRUMENT, Array(".*lcms.*", ".*lc-ms.*", ".*lc/ms.*", ".*ltq.*")),
     (CommonMetaData.INSTRUMENT_TYPE, Array(".*lc.*", ".*quattro[ _]qqq.*")),
+    (CommonMetaData.COLUMN, Array(".*uplc.*", ".*acquity.*")),
     (CommonMetaData.SOLVENT, Array(".*")),
     (CommonMetaData.SAMPLE_INTRODUCTION, Array(".*lc.*", ".*liquid.*")),
     ("ion source", Array(".*lc.*")),
