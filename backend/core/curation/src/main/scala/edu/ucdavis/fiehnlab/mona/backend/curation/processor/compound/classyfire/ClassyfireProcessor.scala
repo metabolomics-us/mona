@@ -29,7 +29,8 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
 
   def isReachable(): Boolean = {
     try {
-      InetAddress.getByName("http://classyfire.wishartlab.com").isReachable(10)
+      InetAddress.getByName("classyfire.wishartlab.com").isReachable(10)
+      true
     } catch {
       case e: Exception =>
         e.printStackTrace()
