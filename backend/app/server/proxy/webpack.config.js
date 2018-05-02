@@ -218,7 +218,13 @@ module.exports = function makeWebpackConfig() {
   config.devServer = {
     contentBase: './src/main/angularjs',
     stats: 'minimal',
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    proxy: {
+      '/rest': {
+        target: 'http://mona.fiehnlab.ucdavis.edu',
+        secure: false
+      }
+    }
   };
 
   return config;
