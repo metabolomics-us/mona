@@ -138,7 +138,7 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def write(spectrum: Spectrum, writer: Writer): Unit = {
-    val p = new CRLFPrintWriter(writer)
+    val p = getPrintWriter(writer)
 
     // Name and synonyms, including NIST-specific fields
     buildNames(spectrum, synonyms = true, p)
