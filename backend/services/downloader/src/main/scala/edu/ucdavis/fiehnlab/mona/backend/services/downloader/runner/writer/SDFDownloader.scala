@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 import java.io.BufferedWriter
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
 import org.springframework.stereotype.Service
 
