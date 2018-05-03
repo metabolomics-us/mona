@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 /**
-  * Created by wohlgemuth on 5/27/16.
+  * Created by sajjan on 2/21/18.
   */
 class SDFWriter extends DomainWriter {
 

@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.scalatest.WordSpec
 
 /**
-  * Created by wohlg_000 on 5/27/2016.
+  * Created by sajjan on 2/21/18.
   */
 class SDFWriterTest extends WordSpec {
 
