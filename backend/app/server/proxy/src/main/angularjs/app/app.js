@@ -1,21 +1,22 @@
 'use strict';
 
+// CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// Dependencies
 import angular from 'angular';
-import ngRoute from 'angular-route';
+import uirouter from 'angular-ui-router';
 import ngResource from 'angular-resource';
 import ngCookies from 'angular-cookies';
 import ngAnimate from 'angular-animate';
 import uiBootstrap from 'angular-ui-bootstrap'
 
-//var angular = require('angular');
-//import angularRoute from 'angular-route/angular-route';
+import routing from './app.config';
 
-import {AuthenticationController} from './controllers/authentication/authenticationController';
+import AuthenticationController from './authentication/authentication.controller';
 
-angular.module('moaClientApp', [
-  ngRoute,
+export default angular.module('moaClientApp', [
+  uirouter,
   ngResource,
   ngCookies,
   ngAnimate,
@@ -34,6 +35,8 @@ angular.module('moaClientApp', [
 //        'nvd3',
 //        'angular-google-analytics'
 ])
+  .config(routing)
+  .controller('AuthenticationController', AuthenticationController)
 
   /**
    * Global $http error handling
@@ -100,5 +103,3 @@ angular.module('moaClientApp', [
       }
     };
   }])
-
-  .controller('AuthenticationController', AuthenticationController);

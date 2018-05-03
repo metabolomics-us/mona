@@ -6,17 +6,19 @@
 
 'use strict';
 
+export default class AuthenticationController {
+  constructor($scope, $rootScope) {
+    this.ADMIN_ROLE_NAME = 'ROLE_ADMIN';
+    this.currentUser = null;
+    this.welcomeMessage = 'Login/Register';
+  }
+}
+
+AuthenticationController.$inject = ['$scope', '$rootScope'];
+
 
 //AuthenticationController.$inject = ['$scope', '$rootScope', '$uibModal', 'AuthenticationService'];
 //export function AuthenticationController($scope, $rootScope, $uibModal, AuthenticationService) {
-AuthenticationController.$inject = ['$scope', '$rootScope'];
-
-/* @ngInject */
-export function AuthenticationController($scope, $rootScope) {
-  var ADMIN_ROLE_NAME = 'ROLE_ADMIN';
-
-  this.currentUser = null;
-  this.welcomeMessage = 'Login/Register';
 //
 //  /**
 //   * Returns whether or not the user is logged in
@@ -107,7 +109,7 @@ export function AuthenticationController($scope, $rootScope) {
 //  (function() {
 //    AuthenticationService.validate();
 //  })();
-}
+//}
 
 
 

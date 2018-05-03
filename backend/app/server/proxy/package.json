@@ -11,13 +11,13 @@
     "start": "npm run server"
   },
   "dependencies": {
+    "@uirouter/angularjs": "^1.0.16",
     "angular": "~1.5.0",
-    "angular-route": "~1.5.0",
-    "angular-resource": "~1.5.0",
-    "angular-cookies": "~1.5.0",
     "angular-animate": "~1.5.0",
-    "angular-ui-bootstrap": "0.14.3",
+    "angular-cookies": "~1.5.0",
     "angular-dialog-service": "5.3.0",
+    "angular-resource": "~1.5.0",
+    "angular-ui-bootstrap": "0.14.3",
     "bootstrap": "3.3.7"
   },
   "devDependencies": {
