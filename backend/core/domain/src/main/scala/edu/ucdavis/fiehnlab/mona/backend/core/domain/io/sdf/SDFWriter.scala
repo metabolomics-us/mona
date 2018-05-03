@@ -138,7 +138,7 @@ class SDFWriter extends DomainWriter {
     * @return
     */
   def write(spectrum: Spectrum, writer: Writer): Unit = {
-    val p = new CRLFPrintWriter(writer)
+    val p = getPrintWriter(writer)
 
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
