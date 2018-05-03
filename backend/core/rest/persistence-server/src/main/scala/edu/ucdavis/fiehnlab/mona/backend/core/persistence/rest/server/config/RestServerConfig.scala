@@ -5,8 +5,6 @@ import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.service.RestSecurityService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.SwaggerConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.GenericRESTController
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.config.PersistenceServiceConfig
@@ -14,14 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
 import org.springframework.core.annotation.Order
 import org.springframework.http._
-import org.springframework.http.converter.{AbstractHttpMessageConverter, HttpMessageConverter}
+import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.security.config.annotation.web.builders.{HttpSecurity, WebSecurity}
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, PathMatchConfigurer, WebMvcConfigurerAdapter}
-
-import scala.collection.JavaConverters._
-import scala.collection.convert.Wrappers
 
 /**
   * this class configures all our controller and also prepares security measures for these mentioned controllers
@@ -115,85 +110,5 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
       .mediaType("json", MediaType.APPLICATION_JSON)
 
     super.configureContentNegotiation(configurer)
-  }
-}
-
-/**
-  * Converts JSON records to MSP
-  */
-class MSPConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("text/msp")) {
-
-  override def readInternal(clazz: Class[_ <: Any], inputMessage: HttpInputMessage): Spectrum = throw new RuntimeException("read is not supported!")
-
-  override def canWrite(mediaType: MediaType): Boolean = {
-    mediaType != null && mediaType.equals(MediaType.valueOf("text/msp"))
-  }
-
-  override def canRead(mediaType: MediaType): Boolean = false
-
-  override def writeInternal(t: Any, outputMessage: HttpOutputMessage): Unit = {
-    val writer = new MSPWriter
-
-    def write(x: Any): Unit = writer.write(x.asInstanceOf[Spectrum], outputMessage.getBody)
-
-    t match {
-      case y: Spectrum => write(y)
-      case x: Iterable[_] => x.foreach(write)
-      case x: util.Collection[_] => x.asScala.foreach(write)
-      case _ => logger.error(s"Undetermined type $t")
-    }
-  }
-
-  override def supports(clazz: Class[_]): Boolean = {
-    clazz match {
-      case q if q == classOf[Spectrum] => true
-      case q if q == classOf[Iterable[_]] => true
-      case q if q == classOf[Wrappers.JIterableWrapper[_]] => true
-      case q if q == classOf[Wrappers.JListWrapper[_]] => true
-      case q if q == classOf[util.Collection[_]] => true
-      case _ =>
-        logger.debug(s"Unknown class type provided to MSP converter: $clazz")
-        false
-    }
-  }
-}
-
-/**
-  * Converts JSON records to SDF
-  */
-class SDFConverter extends AbstractHttpMessageConverter[Any](MediaType.valueOf("text/sdf")) {
-
-  override def readInternal(clazz: Class[_ <: Any], inputMessage: HttpInputMessage): Spectrum = throw new RuntimeException("read is not supported!")
-
-  override def canWrite(mediaType: MediaType): Boolean = {
-    mediaType != null && mediaType.equals(MediaType.valueOf("text/sdf"))
-  }
-
-  override def canRead(mediaType: MediaType): Boolean = false
-
-  override def writeInternal(t: Any, outputMessage: HttpOutputMessage): Unit = {
-    val writer = new SDFWriter
-
-    def write(x: Any): Unit = writer.write(x.asInstanceOf[Spectrum], outputMessage.getBody)
-
-    t match {
-      case y: Spectrum => write(y)
-      case x: Iterable[_] => x.foreach(write)
-      case x: util.Collection[_] => x.asScala.foreach(write)
-      case _ => logger.error(s"Undetermined type $t")
-    }
-  }
-
-  override def supports(clazz: Class[_]): Boolean = {
-    clazz match {
-      case q if q == classOf[Spectrum] => true
-      case q if q == classOf[Iterable[_]] => true
-      case q if q == classOf[Wrappers.JIterableWrapper[_]] => true
-      case q if q == classOf[Wrappers.JListWrapper[_]] => true
-      case q if q == classOf[util.Collection[_]] => true
-      case _ =>
-        logger.debug(s"Unknown class type provided to SDF converter: $clazz")
-        false
-    }
   }
 }
