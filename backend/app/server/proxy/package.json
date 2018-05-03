@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "author": "Sajjan Singh Mehta",
   "homepage": "https://mona.fiehnlab.ucdavis.edu",
-  "repository" : "https://bitbucket.org/fiehnlab/mona.git",
-  "license" : "LGPL-3.0",
+  "repository": "https://bitbucket.org/fiehnlab/mona.git",
+  "license": "LGPL-3.0",
   "scripts": {
     "serve": "webpack-dev-server --history-api-fallback --inline --progress --port 8080",
     "build": "rimraf ./dist && webpack --bail --progress --profile",
