@@ -18,10 +18,11 @@
     "angular-animate": "~1.5.0",
     "angular-cookies": "~1.5.0",
     "angular-dialog-service": "5.3.0",
+    "angular-google-analytics": "~1.1.8",
     "angular-resource": "~1.5.0",
     "angular-ui-bootstrap": "0.14.3",
-    "angular-google-analytics": "~1.1.8",
-    "bootstrap": "~3.3.7"
+    "bootstrap": "~3.3.7",
+    "font-awesome": "^4.7.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.5.0",
