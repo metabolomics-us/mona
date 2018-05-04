@@ -17,7 +17,9 @@ import globals from './app.globals';
 import analytics from './app.config.analytics';
 import routing from './app.config.routing';
 
-import AuthenticationController from './authentication/authentication.controller';
+import AuthenticationController from './core/authentication.controller';
+import AuthenticationService from './core/authentication.service';
+import Cookieervice from './core/cookie.service';
 
 export default angular.module('MoNA', [
   uirouter,

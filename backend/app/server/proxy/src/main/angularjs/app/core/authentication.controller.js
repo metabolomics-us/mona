@@ -7,6 +7,7 @@
 'use strict';
 
 export default class AuthenticationController {
+
   constructor($scope, $rootScope) {
     this.ADMIN_ROLE_NAME = 'ROLE_ADMIN';
     this.currentUser = null;
