@@ -8,6 +8,19 @@ import org.springframework.data.mongodb.core.mapping.Document
 import scala.annotation.meta.field
 
 
+/**
+  * Query export corresponding to a single exported results file format
+  * @param id
+  * @param label
+  * @param query
+  * @param format
+  * @param emailAddress
+  * @param date
+  * @param count
+  * @param size
+  * @param queryFile
+  * @param exportFile
+  */
 @Document(collection = "QUERY_EXPORTS")
 case class QueryExport(
                         @(Id@field)
@@ -26,6 +39,16 @@ case class QueryExport(
                         exportFile: String
                       )
 
+/**
+  * Definition for an individual query download with multiple formats
+  * @param label
+  * @param description
+  * @param query
+  * @param queryCount
+  * @param jsonExport
+  * @param mspExport
+  * @param sdfExport
+  */
 @Document(collection = "PREDEFINED_QUERIES")
 case class PredefinedQuery(
                             @(Id@field)
@@ -39,3 +62,30 @@ case class PredefinedQuery(
                             mspExport: QueryExport,
                             sdfExport: QueryExport
                           )
+
+
+/**
+  * Summary for a static download
+  * @param fileName
+  * @param category
+  * @param description
+  */
+case class StaticDownload(
+                           fileName: String,
+                           category: String,
+                           description: String
+                         )
+
+object StaticDownload {
+  def apply(filePath: String): StaticDownload = apply(filePath, null)
+
+  def apply(filePath: String, description: String): StaticDownload = {
+    val path: Array[String] = filePath.split('/')
+
+    if (path.length == 1) {
+      StaticDownload(filePath, null, description)
+    } else {
+      StaticDownload(path.last, path.head, description)
+    }
+  }
+}
