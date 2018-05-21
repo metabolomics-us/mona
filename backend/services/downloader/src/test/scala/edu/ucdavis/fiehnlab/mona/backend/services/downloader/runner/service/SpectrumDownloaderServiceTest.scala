@@ -24,7 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[Downloader]))
-class DownloaderServiceTest extends WordSpec with LazyLogging {
+class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
   @Autowired
   val downloaderService: DownloaderService = null

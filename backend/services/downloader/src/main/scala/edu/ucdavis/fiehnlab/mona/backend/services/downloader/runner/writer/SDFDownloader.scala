@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
   * Created by sajjan on 9/13/16.
   */
 @Service
-class SDFDownloader extends AbstractDownloader {
+class SDFDownloader extends SpectrumDownloader {
 
   val mspWriter: SDFWriter = new SDFWriter
 
@@ -20,21 +20,21 @@ class SDFDownloader extends AbstractDownloader {
     *
     * @return
     */
-  override def getFilePrefix: String = ""
+  override def getContentPrefix: String = ""
 
   /**
     * File format suffix
     *
     * @return
     */
-  override def getFileSuffix: String = ""
+  override def getContentSuffix: String = ""
 
   /**
     * File format separator
     *
     * @return
     */
-  override def getFileSeparator: String = "\n"
+  override def getRecordSeparator: String = "\n"
 
   /**
     *

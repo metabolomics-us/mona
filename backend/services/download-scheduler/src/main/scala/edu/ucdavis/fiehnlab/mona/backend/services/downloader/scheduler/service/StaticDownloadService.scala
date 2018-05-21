@@ -65,6 +65,7 @@ class StaticDownloadService extends LazyLogging {
       .asScala
       .filter(Files.isRegularFile(_))
       .filter(!_.toString.endsWith(".description.txt"))
+      .filter(!_.toString.endsWith(".tmp"))
       .map { file =>
         // Read description if it exists
         val descriptionFile: Path = Paths.get(file.toAbsolutePath +".description.txt")

@@ -6,7 +6,7 @@ import java.nio.file.{Files, Path, Paths}
 import java.util.zip.{ZipEntry, ZipOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer.{JSONDownloader, MSPDownloader, SDFDownloader}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service
 class DownloadWriterService extends LazyLogging {
 
   @Autowired
+  val downloaders: List[SpectrumDownloader] = null
+
+  @Autowired
   val mspDownloader: MSPDownloader = null
 
   @Autowired
@@ -24,6 +27,9 @@ class DownloadWriterService extends LazyLogging {
 
   @Autowired
   val jsonDownloader: JSONDownloader = null
+
+  @Autowired
+  val pngDownloader: PNGDownloader = null
 
 
   /**
@@ -46,6 +52,7 @@ class DownloadWriterService extends LazyLogging {
       case "msp" => mspDownloader.write(query, exportFile)
       case "sdf" => sdfDownloader.write(query, exportFile)
       case "json" | _ => jsonDownloader.write(query, exportFile)
+      case "png" | _ => pngDownloader.write(query, exportFile)
     }
 
     logger.info(s"Finished exporting $count spectra")

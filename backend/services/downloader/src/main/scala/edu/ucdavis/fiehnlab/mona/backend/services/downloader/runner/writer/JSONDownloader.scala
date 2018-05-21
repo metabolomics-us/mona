@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
   * Created by sajjan on 9/13/16.
   */
 @Service
-class JSONDownloader extends AbstractDownloader {
+class JSONDownloader extends SpectrumDownloader {
 
   val objectMapper: ObjectMapper = MonaMapper.create
 
@@ -21,21 +21,21 @@ class JSONDownloader extends AbstractDownloader {
     *
     * @return
     */
-  override def getFilePrefix: String = "[\n"
+  override def getContentPrefix: String = "[\n"
 
   /**
     * File format suffix
     *
     * @return
     */
-  override def getFileSuffix: String = "\n]"
+  override def getContentSuffix: String = "\n]"
 
   /**
     * File format separator
     *
     * @return
     */
-  override def getFileSeparator: String = ",\n"
+  override def getRecordSeparator: String = ",\n"
 
   /**
     *

@@ -23,6 +23,8 @@ class DownloaderService extends LazyLogging {
   @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
   val downloadDir: String = null
 
+  def staticDownloadDir: Path = Paths.get(downloadDir, "static")
+
   val objectMapper: ObjectMapper = MonaMapper.create
 
   /**
