@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service
 /**
   * Created by sajjan on 9/13/16.
   */
-@Service
-abstract class AbstractDownloader extends LazyLogging {
+abstract class SpectrumDownloader extends LazyLogging {
 
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -59,25 +58,25 @@ abstract class AbstractDownloader extends LazyLogging {
 
 
   /**
-    * File format prefix
+    * Content prefix for this file format
     *
     * @return
     */
-  def getFilePrefix: String
+  def getContentPrefix: String
 
   /**
-    * File format suffix
+    * Content suffix for this file format
     *
     * @return
     */
-  def getFileSuffix: String
+  def getContentSuffix: String
 
   /**
-    * File format separator
+    * Record separator for this file format
     *
     * @return
     */
-  def getFileSeparator: String
+  def getRecordSeparator: String
 
   /**
     *
@@ -90,7 +89,7 @@ abstract class AbstractDownloader extends LazyLogging {
     */
   def write(query: String, exportFile: Path): Long = {
     val bufferedWriter = Files.newBufferedWriter(exportFile)
-    bufferedWriter.write(getFilePrefix)
+    bufferedWriter.write(getContentPrefix)
 
     var count: Long = 0
     val total: Long = countQuery(query)
@@ -103,7 +102,7 @@ abstract class AbstractDownloader extends LazyLogging {
       val spectrum = it.next()
 
       if (count > 0) {
-        bufferedWriter.write(getFileSeparator)
+        bufferedWriter.write(getRecordSeparator)
       }
 
       writeSpectrum(spectrum, bufferedWriter)
@@ -114,7 +113,7 @@ abstract class AbstractDownloader extends LazyLogging {
       }
     }
 
-    bufferedWriter.write(getFileSuffix)
+    bufferedWriter.write(getContentSuffix)
     bufferedWriter.close()
 
     count

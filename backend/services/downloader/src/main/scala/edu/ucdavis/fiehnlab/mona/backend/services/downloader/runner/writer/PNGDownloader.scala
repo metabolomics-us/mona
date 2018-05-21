@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
   * Created by sajjan on 5/3/18.
   */
 @Service
-class StaticFileDownloader extends AbstractDownloader {
+class PNGDownloader extends SpectrumDownloader {
 
   val pngWriter: PNGWriter = new PNGWriter
 
@@ -20,21 +20,21 @@ class StaticFileDownloader extends AbstractDownloader {
     *
     * @return
     */
-  override def getFilePrefix: String = ""
+  override def getContentPrefix: String = ""
 
   /**
     * File format suffix
     *
     * @return
     */
-  override def getFileSuffix: String = ""
+  override def getContentSuffix: String = ""
 
   /**
     * File format separator
     *
     * @return
     */
-  override def getFileSeparator: String = ""
+  override def getRecordSeparator: String = "\n"
 
   /**
     *

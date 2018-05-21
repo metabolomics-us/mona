@@ -105,7 +105,7 @@ class DownloadSchedulerService extends LazyLogging {
       }
 
 
-    // Compile a list of downloads to schedule
+    // Downloads to schedule
     val downloads: ArrayBuffer[QueryExport] = ArrayBuffer()
 
     predefinedQueryRepository.findAll().asScala.foreach { predefinedQuery: PredefinedQuery =>
@@ -125,6 +125,11 @@ class DownloadSchedulerService extends LazyLogging {
         downloads.append(QueryExport(UUID.randomUUID.toString, predefinedQuery.label, predefinedQuery.query, "sdf", null, new Date, 0, 0, null, null))
       } else {
         downloads.append(predefinedQuery.sdfExport)
+      }
+
+      // Export PNG data as independent export
+      if (predefinedQuery.query.isEmpty) {
+        downloads.append(QueryExport(UUID.randomUUID.toString, predefinedQuery.label, predefinedQuery.query, "png", null, new Date, 0, 0, null, null))
       }
     }
 
