@@ -5,6 +5,7 @@ import com.jayway.restassured.RestAssured.given
 import com.jayway.restassured.builder.MultiPartSpecBuilder
 import com.jayway.restassured.specification.MultiPartSpecification
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.StaticDownload
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.StaticDownloadService
 import org.junit.runner.RunWith
@@ -50,13 +51,13 @@ class StaticDownloadControllerTest extends AbstractSpringControllerTest {
         .build()
 
       val result = authenticate().contentType("multipart/form-data").multiPart(file).when().post("/static").`then`().statusCode(200).extract().body().as(classOf[StaticDownload])
-      assert(result == StaticDownload("monaRecord.json", null))
+      assert(result == StaticDownload("monaRecord.json", null, null))
     }
 
     "there should be one static download available" in {
       val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get("/static").`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
       assert(result.length == 1)
-      assert(result.last == StaticDownload("monaRecord.json", null))
+      assert(result.last == StaticDownload("monaRecord.json", null, null))
     }
 
     "download a file without a category" in {
@@ -70,13 +71,13 @@ class StaticDownloadControllerTest extends AbstractSpringControllerTest {
         .build()
 
       val result = authenticate().contentType("multipart/form-data").multiPart(file).multiPart("category", "test").when().post("/static").`then`().statusCode(200).extract().body().as(classOf[StaticDownload])
-      assert(result == StaticDownload("gcmsRecord.json", "test"))
+      assert(result == StaticDownload("gcmsRecord.json", "test", null))
     }
 
     "there should be two static downloads available" in {
       val result: Array[StaticDownload] = given().contentType("application/json; charset=UTF-8").when().get("/static").`then`().statusCode(200).extract().body().as(classOf[Array[StaticDownload]])
       assert(result.length == 2)
-      assert(result.contains(StaticDownload("gcmsRecord.json", "test")))
+      assert(result.contains(StaticDownload("gcmsRecord.json", "test", null)))
     }
 
     "download a file with a category" in {
