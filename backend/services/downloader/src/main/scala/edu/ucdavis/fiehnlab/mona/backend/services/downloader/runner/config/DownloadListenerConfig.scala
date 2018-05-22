@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.config
 
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener.DownloadListener
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener.QueryExportListener
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.MessageConverter
@@ -17,15 +17,19 @@ class DownloadListenerConfig {
 
   @Autowired
   @Qualifier("spectra-download-queue")
-  val queueName: String = null
+  val exportQueueName: String = null
+
+  @Autowired
+  @Qualifier("spectra-predefined-download-queue")
+  val predefinedQueueName: String = null
 
   @Bean
-  def container(connectionFactory: ConnectionFactory, listener: DownloadListener, messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+  def container(connectionFactory: ConnectionFactory, listener: QueryExportListener, messageConverter: MessageConverter): SimpleMessageListenerContainer = {
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
     container.setMessageListener(listener)
     container.setMessageConverter(messageConverter)
-    container.setQueueNames(queueName)
+    container.setQueueNames(exportQueueName)
     container
   }
 }

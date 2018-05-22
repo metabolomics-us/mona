@@ -26,7 +26,11 @@ class DownloadSchedulerService extends LazyLogging {
 
   @Autowired
   @Qualifier("spectra-download-queue")
-  val queueName: String = null
+  val exportQueueName: String = null
+
+  @Autowired
+  @Qualifier("spectra-predefined-download-queue")
+  val predefinedQueueName: String = null
 
   @Autowired
   val queryExportRepository: QueryExportMongoRepository = null
@@ -55,7 +59,7 @@ class DownloadSchedulerService extends LazyLogging {
     logger.info(s"Scheduling query $query as $format")
     val download: QueryExport = QueryExport(UUID.randomUUID.toString, null, query, format, null, new Date, 0, 0, null, null)
 
-    rabbitTemplate.convertAndSend(queueName, download)
+    rabbitTemplate.convertAndSend(exportQueueName, download)
     notifications.sendEvent(Event(Notification(download, getClass.getName)))
 
     download
@@ -73,7 +77,7 @@ class DownloadSchedulerService extends LazyLogging {
 
     if (download != null) {
       logger.info(s"Rescheduling query: $id")
-      rabbitTemplate.convertAndSend(queueName, download)
+      rabbitTemplate.convertAndSend(exportQueueName, download)
       notifications.sendEvent(Event(Notification(download, getClass.getName)))
     }
 
@@ -135,7 +139,7 @@ class DownloadSchedulerService extends LazyLogging {
 
     // Send downloads to the queue
     downloads.foreach { download =>
-      rabbitTemplate.convertAndSend(queueName, download)
+      rabbitTemplate.convertAndSend(exportQueueName, download)
       notifications.sendEvent(Event(Notification(download, getClass.getName)))
     }
 
