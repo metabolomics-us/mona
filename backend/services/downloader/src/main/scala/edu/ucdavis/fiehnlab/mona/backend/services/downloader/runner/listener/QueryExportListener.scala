@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
   * Created by sajjan on 6/9/16.
   */
 @Component
-class DownloadListener extends GenericMessageListener[QueryExport] with LazyLogging {
+class QueryExportListener extends GenericMessageListener[QueryExport] with LazyLogging {
 
   @Autowired
   val downloadService: DownloaderService = null
