@@ -32,6 +32,9 @@ class DownloadWriterService extends LazyLogging {
   val pngDownloader: PNGDownloader = null
 
 
+  def exportQuery(query: String, )
+
+
   /**
     *
     * @param queryFile
