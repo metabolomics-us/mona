@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.config
 
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener.QueryExportListener
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener.{PredefinedQueryExportListener, QueryExportListener}
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.MessageConverter
@@ -24,12 +24,15 @@ class DownloadListenerConfig {
   val predefinedQueueName: String = null
 
   @Bean
-  def container(connectionFactory: ConnectionFactory, listener: QueryExportListener, messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+  def container(connectionFactory: ConnectionFactory, queryExportListener: QueryExportListener,
+                predefinedQueryExportListener: PredefinedQueryExportListener,
+                messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
-    container.setMessageListener(listener)
+    container.setMessageListener(queryExportListener, predefinedQueryExportListener)
     container.setMessageConverter(messageConverter)
-    container.setQueueNames(exportQueueName)
+    container.setQueueNames(exportQueueName, predefinedQueueName)
     container
   }
 }

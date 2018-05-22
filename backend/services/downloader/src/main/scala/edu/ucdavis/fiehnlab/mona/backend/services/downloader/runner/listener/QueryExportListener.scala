@@ -31,30 +31,27 @@ class QueryExportListener extends GenericMessageListener[QueryExport] with LazyL
       // Download query
       val result: QueryExport = downloadService.download(export)
 
-      // Handle standard exports
-      if (export.format != "png") {
-        // Save updated query export
-        queryExportRepository.save(result)
+      // Save updated query export
+      queryExportRepository.save(result)
 
-        // Update predefined download if necessary
-        if (result.emailAddress == null || result.emailAddress.isEmpty) {
-          val predefinedQuery = predefinedQueryRepository.findOne(result.label)
+      // Update predefined download if necessary
+      if (result.emailAddress == null || result.emailAddress.isEmpty) {
+        val predefinedQuery = predefinedQueryRepository.findOne(result.label)
 
-          if (predefinedQuery != null) {
-            // Update jsonExport or mspExport in the predefined query
-            val updatedPredefinedQuery =
-              if (result.format == "json")
-                predefinedQuery.copy(jsonExport = result, queryCount = result.count)
-              else if (result.format == "msp")
-                predefinedQuery.copy(mspExport = result, queryCount = result.count)
-              else if (result.format == "sdf")
-                predefinedQuery.copy(sdfExport = result, queryCount = result.count)
-              else
-                predefinedQuery
+        if (predefinedQuery != null) {
+          // Update jsonExport or mspExport in the predefined query
+          val updatedPredefinedQuery =
+            if (result.format == "json")
+              predefinedQuery.copy(jsonExport = result, queryCount = result.count)
+            else if (result.format == "msp")
+              predefinedQuery.copy(mspExport = result, queryCount = result.count)
+            else if (result.format == "sdf")
+              predefinedQuery.copy(sdfExport = result, queryCount = result.count)
+            else
+              predefinedQuery
 
-            // Save the updated predefined query
-            predefinedQueryRepository.save(updatedPredefinedQuery)
-          }
+          // Save the updated predefined query
+          predefinedQueryRepository.save(updatedPredefinedQuery)
         }
       }
 

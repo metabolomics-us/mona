@@ -3,13 +3,16 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.service
 import java.io._
 import java.nio.file.{Files, Path, Paths}
 import java.util.Date
+import javax.annotation.PostConstruct
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Service
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by sajjan on 5/25/16.
@@ -17,15 +20,27 @@ import org.springframework.stereotype.Service
 @Service
 class DownloaderService extends LazyLogging {
 
+  @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
+  val downloadDirPath: String = null
+
+  def downloadDir: Path = Paths.get(downloadDirPath)
+
+  def staticDownloadDir: Path = Paths.get(downloadDirPath, "static")
+
   @Autowired
   val downloadWriterService: DownloadWriterService = null
 
-  @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
-  val downloadDir: String = null
+  /**
+    * Create export directories if needed
+    */
+  @PostConstruct
+  private def init(): Unit = {
+    if (Files.notExists(downloadDir))
+      Files.createDirectories(downloadDir)
 
-  def staticDownloadDir: Path = Paths.get(downloadDir, "static")
-
-  val objectMapper: ObjectMapper = MonaMapper.create
+    if (Files.notExists(staticDownloadDir))
+      Files.createDirectories(staticDownloadDir)
+  }
 
   /**
     *
@@ -43,6 +58,25 @@ class DownloaderService extends LazyLogging {
     }
   }
 
+  def downloadPredefinedQuery(query: PredefinedQuery): PredefinedQuery = {
+
+    val downloadHandles: ArrayBuffer[DownloadHandle] = ArrayBuffer()
+    downloadHandles.append(DownloadHandle(query, "json"))
+    downloadHandles.append(DownloadHandle(query, "msp"))
+    downloadHandles.append(DownloadHandle(query, "sdf"))
+
+    // Create additional static files if this query corresponds to all spectra
+    if (query.query.isEmpty) {
+      downloadHandles.append(DownloadHandle(query, "png", static = true))
+    }
+
+
+
+    query
+  }
+
+
+
   /**
     *
     * @param export
@@ -50,14 +84,6 @@ class DownloaderService extends LazyLogging {
   def download(export: QueryExport): QueryExport = download(export, compressExport = true)
 
   def download(export: QueryExport, compressExport: Boolean): QueryExport = {
-    // Create export directory if needed
-    val directory: File = new File(downloadDir)
-
-    if (!directory.exists()) {
-      if (!directory.mkdirs()) {
-        throw new FileNotFoundException(s"was not able to create storage directory at: $downloadDir")
-      }
-    }
 
     // Use the export ID as the label if one does not exist
     val label: String =
@@ -79,14 +105,14 @@ class DownloaderService extends LazyLogging {
 
 
     // Export query string
-    val queryFile: Path = Paths.get(downloadDir, queryFilename)
+    val queryFile: Path = Paths.get(downloadDirPath, queryFilename)
 
     downloadWriterService.writeQueryFile(queryFile, export.query)
 
 
     // Export query results
-    val exportFile: Path = Paths.get(downloadDir, exportFilename)
-    val compressedFile: Path = Paths.get(downloadDir, compressedExportFilename)
+    val exportFile: Path = Paths.get(downloadDirPath, exportFilename)
+    val compressedFile: Path = Paths.get(downloadDirPath, compressedExportFilename)
 
     val count: Long = downloadWriterService.writeExportFile(exportFile, compressedFile, export.query, export.format, compressExport)
 
