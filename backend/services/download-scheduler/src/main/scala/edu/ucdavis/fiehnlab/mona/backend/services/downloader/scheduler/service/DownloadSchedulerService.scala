@@ -87,7 +87,7 @@ class DownloadSchedulerService extends LazyLogging {
   /**
     * Generates the downloads of all export formats for each predefined query download
     */
-  def generatePredefinedDownloads(): Array[QueryExport] = {
+  def generatePredefinedDownloads(): Array[PredefinedQuery] = {
 
     // Update the list of pre-generated downloads based on libraries present in the database
     tagStatisticsRepository.findAll().asScala
@@ -109,7 +109,7 @@ class DownloadSchedulerService extends LazyLogging {
       }
 
 
-    // Downloads to schedule
+    /*
     val downloads: ArrayBuffer[QueryExport] = ArrayBuffer()
 
     predefinedQueryRepository.findAll().asScala.foreach { predefinedQuery: PredefinedQuery =>
@@ -139,6 +139,14 @@ class DownloadSchedulerService extends LazyLogging {
     }
 
     downloads.toArray
+    */
+
+    // Predefined downloads to schedule
+    predefinedQueryRepository.findAll().asScala.toArray.map { predefinedQuery: PredefinedQuery =>
+      rabbitTemplate.convertAndSend(predefinedQueueName, predefinedQuery)
+      notifications.sendEvent(Event(Notification(predefinedQuery, getClass.getName)))
+      predefinedQuery
+    }
   }
 
   /**
