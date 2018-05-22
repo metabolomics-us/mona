@@ -130,11 +130,6 @@ class DownloadSchedulerService extends LazyLogging {
       } else {
         downloads.append(predefinedQuery.sdfExport)
       }
-
-      // Export PNG data as independent export
-      if (predefinedQuery.query.isEmpty) {
-        downloads.append(QueryExport(UUID.randomUUID.toString, predefinedQuery.label, predefinedQuery.query, "png", null, new Date, 0, 0, null, null))
-      }
     }
 
     // Send downloads to the queue

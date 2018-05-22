@@ -150,6 +150,7 @@ class TestDownloader extends GenericMessageListener[QueryExport] with LazyLoggin
   val rabbitAdmin: RabbitAdmin = null
 
   @Autowired
+  @Qualifier("spectra-download-queue-instance")
   val downloadQueue: Queue = null
 
   @PostConstruct
