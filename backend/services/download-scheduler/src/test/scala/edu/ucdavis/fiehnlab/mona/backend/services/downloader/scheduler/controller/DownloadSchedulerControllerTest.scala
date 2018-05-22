@@ -135,8 +135,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       "succeed if authenticated as an admin" in {
         val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").`then`().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
 
-        assert(result.length == 3)
-        assert(result.forall(_.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))
+        assert(result.length == 1)
         assert(result.exists(_.label == "All Spectra"))
       }
     }
