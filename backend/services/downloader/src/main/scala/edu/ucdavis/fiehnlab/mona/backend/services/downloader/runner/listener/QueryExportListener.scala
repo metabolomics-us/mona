@@ -29,7 +29,7 @@ class QueryExportListener extends GenericMessageListener[QueryExport] with LazyL
       logger.info(s"Received download request: ${export.label}")
 
       // Download query
-      val result: QueryExport = downloadService.download(export)
+      val result: QueryExport = downloadService.downloadQueryExport(export)
 
       // Save updated query export
       queryExportRepository.save(result)

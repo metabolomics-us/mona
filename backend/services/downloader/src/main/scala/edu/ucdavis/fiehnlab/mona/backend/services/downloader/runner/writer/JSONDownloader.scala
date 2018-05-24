@@ -1,17 +1,16 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
-import java.io.BufferedWriter
+import java.nio.file.Path
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import org.springframework.stereotype.Service
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
 
 /**
   * Created by sajjan on 9/13/16.
   */
-@Service
-class JSONDownloader extends SpectrumDownloader {
+class JSONDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = true) extends SpectrumDownloader(export, downloadDir, compress) {
 
   val objectMapper: ObjectMapper = MonaMapper.create
 
@@ -40,7 +39,5 @@ class JSONDownloader extends SpectrumDownloader {
   /**
     *
     */
-  override def writeSpectrum(spectrum: Spectrum, bufferedWriter: BufferedWriter): Unit = {
-    bufferedWriter.write(objectMapper.writeValueAsString(spectrum))
-  }
+  override def writeSpectrum(spectrum: Spectrum): Unit = exportWriter.write(objectMapper.writeValueAsString(spectrum))
 }
