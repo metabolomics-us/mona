@@ -1,16 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
-import java.io.BufferedWriter
+import java.nio.file.Path
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png.PNGWriter
-import org.springframework.stereotype.Service
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
 
 /**
   * Created by sajjan on 5/3/18.
   */
-@Service
-class PNGDownloader extends SpectrumDownloader {
+class PNGDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = true) extends SpectrumDownloader(export, downloadDir, compress) {
 
   val pngWriter: PNGWriter = new PNGWriter
 
@@ -34,12 +33,10 @@ class PNGDownloader extends SpectrumDownloader {
     *
     * @return
     */
-  override def getRecordSeparator: String = "\n"
+  override def getRecordSeparator: String = ""
 
   /**
     *
     */
-  override def writeSpectrum(spectrum: Spectrum, bufferedWriter: BufferedWriter): Unit = {
-    pngWriter.write(spectrum, bufferedWriter)
-  }
+  override def writeSpectrum(spectrum: Spectrum): Unit = pngWriter.write(spectrum, exportWriter)
 }

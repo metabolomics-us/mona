@@ -1,16 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
-import java.io.BufferedWriter
+import java.nio.file.Path
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
-import org.springframework.stereotype.Service
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
 
 /**
   * Created by sajjan on 9/13/16.
   */
-@Service
-class SDFDownloader extends SpectrumDownloader {
+class SDFDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = true) extends SpectrumDownloader(export, downloadDir, compress) {
 
   val mspWriter: SDFWriter = new SDFWriter
 
@@ -39,7 +38,5 @@ class SDFDownloader extends SpectrumDownloader {
   /**
     *
     */
-  override def writeSpectrum(spectrum: Spectrum, bufferedWriter: BufferedWriter): Unit = {
-    mspWriter.write(spectrum, bufferedWriter)
-  }
+  override def writeSpectrum(spectrum: Spectrum): Unit = mspWriter.write(spectrum, exportWriter)
 }

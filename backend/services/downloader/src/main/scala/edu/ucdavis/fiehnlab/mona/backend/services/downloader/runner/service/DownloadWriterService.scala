@@ -1,13 +1,14 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.service
 
-import java.io.{BufferedInputStream, FileInputStream, FileOutputStream}
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Path, Paths}
-import java.util.zip.{ZipEntry, ZipOutputStream}
+import java.lang.Iterable
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.util.DynamicIterable
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer._
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.{Page, Pageable}
 import org.springframework.stereotype.Service
 
 /**
@@ -17,80 +18,78 @@ import org.springframework.stereotype.Service
 class DownloadWriterService extends LazyLogging {
 
   @Autowired
-  val downloaders: List[SpectrumDownloader] = null
-
-  @Autowired
-  val mspDownloader: MSPDownloader = null
-
-  @Autowired
-  val sdfDownloader: SDFDownloader = null
-
-  @Autowired
-  val jsonDownloader: JSONDownloader = null
-
-  @Autowired
-  val pngDownloader: PNGDownloader = null
-
-
-  def exportQuery(query: String, )
+  private val mongoRepository: ISpectrumMongoRepositoryCustom = null
 
 
   /**
+    * Return the results of a given query as a paginated iterator
     *
-    * @param queryFile
+    * @param query
+    */
+  private def executeQuery(query: String): Iterable[Spectrum] = {
+    new DynamicIterable[Spectrum, String](query, 25) {
+
+      /**
+        * Loads more data from the server for the given query
+        */
+      override def fetchMoreData(query: String, pageable: Pageable): Page[Spectrum] = {
+        if (query == null || query.isEmpty) {
+          mongoRepository.findAll(pageable)
+        } else {
+          mongoRepository.rsqlQuery(query, pageable)
+        }
+      }
+    }
+  }
+
+  /**
+    * Find the spectrum count for a given query
+    *
     * @param query
     * @return
     */
-  def writeQueryFile(queryFile: Path, query: String): Path = {
-    logger.info(s"Exporting query file ${queryFile.getFileName}")
-
-    Files.write(queryFile, query.getBytes(StandardCharsets.UTF_8))
+  private def countQuery(query: String): Long = {
+    if (query == null || query.isEmpty) {
+      mongoRepository.count()
+    } else {
+      mongoRepository.rsqlQueryCount(query)
+    }
   }
 
+  /**
+    *
+    * @param query
+    * @param label
+    * @param downloaders
+    * @return
+    */
+  def exportQuery(query: String, label: String, downloaders: Array[SpectrumDownloader]): Long = {
 
-  def writeExportFile(exportFile: Path, compressedFile: Path, query: String, format: String, compress: Boolean): Long = {
-    logger.info(s"Exporting spectra to file ${exportFile.getFileName}")
+    var count: Long = 0
+    val total: Long = countQuery(query)
 
-    val count: Long = format match {
-      case "msp" => mspDownloader.write(query, exportFile)
-      case "sdf" => sdfDownloader.write(query, exportFile)
-      case "json" | _ => jsonDownloader.write(query, exportFile)
-      case "png" | _ => pngDownloader.write(query, exportFile)
+    logger.info(s"$label: Starting export of $total spectra")
+
+    // Initialize each downloader
+    downloaders.foreach(_.initializeExport())
+
+    // Start querying the database
+    val it = executeQuery(query).iterator
+
+    while (it.hasNext) {
+      val spectrum: Spectrum = it.next()
+
+      // Write the current spectrum for each output format
+      downloaders.foreach(_.write(spectrum))
+      count += 1
+
+      if (count % 1000 == 0)
+        logger.info(s"$label: Exported $count/$total")
     }
 
-    logger.info(s"Finished exporting $count spectra")
+    // Close each downloader and compress if requested
+    downloaders.foreach(_.closeExport())
 
-
-    // Compress results
-    if (compress) {
-      logger.info(s"Compressing ${exportFile.getFileName} -> ${compressedFile.getFileName}")
-
-      val compressedTemporaryFile: Path = Paths.get(compressedFile.getParent.toAbsolutePath.toString, compressedFile.getFileName.toString + ".tmp")
-
-      val zipFile: ZipOutputStream = new ZipOutputStream(new FileOutputStream(compressedTemporaryFile.toAbsolutePath.toString))
-
-      zipFile.putNextEntry(new ZipEntry(exportFile.getFileName.toString))
-
-      val inputStream: BufferedInputStream = new BufferedInputStream(new FileInputStream(exportFile.toAbsolutePath.toString))
-      val buffer: Array[Byte] = new Array[Byte](1024)
-      var length: Int = inputStream.read(buffer, 0, 1024)
-
-
-      while (length != -1) {
-        zipFile.write(buffer, 0, length)
-        length = inputStream.read(buffer, 0, 1024)
-      }
-
-      inputStream.close()
-      zipFile.closeEntry()
-      zipFile.close()
-
-      // Delete exported file and move temporary export file to stored location
-      Files.deleteIfExists(exportFile)
-      Files.deleteIfExists(compressedFile)
-      Files.move(compressedTemporaryFile, compressedFile)
-    }
-
-    count
+    total
   }
 }
