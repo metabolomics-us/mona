@@ -261,6 +261,7 @@ object SpectrumDownloader {
     case "msp" => new MSPDownloader(queryExport, downloadDir, compress)
     case "sdf" => new SDFDownloader(queryExport, downloadDir, compress)
     case "png" => new PNGDownloader(queryExport, downloadDir, compress)
+    case "ids" => new IdentifierTableDownloader(queryExport, downloadDir, compress)
     case _ => throw new Exception(s"Unsupported format $format")
   }
 
