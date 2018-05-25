@@ -160,8 +160,8 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
 
       // Check that png export was created
-      val pngFile: Path = Paths.get(dir, "static", result.jsonExport.exportFile.replace(".json", ".csv"))
-      val pngDescriptionFile: Path = Paths.get(dir, "static", result.jsonExport.exportFile.replace(".json", ".csv") +".description.txt")
+      val pngFile: Path = Paths.get(dir, "static", result.jsonExport.exportFile.replace(".json", "-spectrum-images.csv"))
+      val pngDescriptionFile: Path = Paths.get(dir, "static", result.jsonExport.exportFile.replace(".json", "-spectrum-images.csv") +".description.txt")
 
       assert(Files.exists(pngFile))
       assert(Files.exists(pngDescriptionFile))
@@ -189,7 +189,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
       Files.delete(Paths.get(dir, result.jsonExport.queryFile))
 
       // Check that png export was NOT created
-      val pngFile: Path = Paths.get(dir, "static", result.jsonExport.exportFile.replace(".json", ".csv"))
+      val pngFile: Path = Paths.get(dir, "static", result.jsonExport.exportFile.replace(".json", "-spectrum-images.csv"))
       assert(Files.notExists(pngFile))
     }
   }
