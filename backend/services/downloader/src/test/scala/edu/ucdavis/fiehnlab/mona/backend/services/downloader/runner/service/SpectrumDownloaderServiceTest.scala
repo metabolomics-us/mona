@@ -169,6 +169,17 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
       Files.delete(pngFile)
       Files.delete(pngDescriptionFile)
+
+      // Check that identifier table was created
+      val idsFile: Path = Paths.get(dir, "static", result.jsonExport.exportFile.replace(".json", "-identifier-table.csv"))
+      val idsDescriptionFile: Path = Paths.get(dir, "static", result.jsonExport.exportFile.replace(".json", "-identifier-table.csv") +".description.txt")
+
+      assert(Files.exists(idsFile))
+      assert(Files.exists(idsDescriptionFile))
+      assert(new String(Files.readAllBytes(idsFile)).trim.split("\n").length == 58)
+
+      Files.delete(idsFile)
+      Files.delete(idsDescriptionFile)
     }
 
     "export predefined query for query" in {
