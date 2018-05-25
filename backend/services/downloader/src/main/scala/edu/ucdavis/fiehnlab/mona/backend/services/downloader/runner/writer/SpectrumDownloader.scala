@@ -25,14 +25,20 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     *
     * @return
     */
-  protected def exportFilename: String = s"MoNA-export-$basename.${if (export.format == "png") "csv" else export.format}"
+  protected def exportFilename: String = s"MoNA-export-$basename.${export.format}"
 
   /**
     * Filename for compressed export
     *
     * @return
     */
-  protected def compressedExportFilename: String = s"MoNA-export-$basename-${export.format}.zip"
+  protected def compressedExportFilename: String = {
+    if (exportFilename.contains('.')) {
+      s"${exportFilename.substring(0, exportFilename.lastIndexOf('.'))}-${export.format}.zip"
+    } else {
+      s"$exportFilename-${export.format}.zip"
+    }
+  }
 
   /**
     * Filename for query export

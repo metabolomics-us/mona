@@ -9,6 +9,8 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer.Spect
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Service
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by sajjan on 5/25/16.
   */
@@ -48,14 +50,16 @@ class DownloaderService extends LazyLogging {
     val mspDownloader: SpectrumDownloader = SpectrumDownloader(query, query.mspExport, "msp", downloadDir, compress)
     val sdfDownloader: SpectrumDownloader = SpectrumDownloader(query, query.sdfExport, "sdf", downloadDir, compress)
 
-    // Create additional static files if this query corresponds to all spectra
-    val downloaders: Array[SpectrumDownloader] =
-      if (query.query.isEmpty)
-        Array(jsonDownloader, mspDownloader, sdfDownloader, SpectrumDownloader(query.label, query.query, "png", staticDownloadDir, compress))
-      else
-        Array(jsonDownloader, mspDownloader, sdfDownloader)
+    val downloaders: ArrayBuffer[SpectrumDownloader] = new ArrayBuffer()
+    downloaders.append(jsonDownloader, mspDownloader, sdfDownloader)
 
-    val count: Long = downloadWriterService.exportQuery(query.query, query.label, downloaders)
+    // Create additional static files if this query corresponds to all spectra
+    if (query.query.isEmpty) {
+      downloaders.append(SpectrumDownloader(query.label, query.query, "png", staticDownloadDir, compress))
+      downloaders.append(SpectrumDownloader(query.label, query.query, "ids", staticDownloadDir, compress))
+    }
+
+    val count: Long = downloadWriterService.exportQuery(query.query, query.label, downloaders.toArray)
 
     query.copy(
       queryCount = count,

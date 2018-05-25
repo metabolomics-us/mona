@@ -13,6 +13,12 @@ class PNGDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = 
 
   val pngWriter: PNGWriter = new PNGWriter
 
+  /**
+    * Filename for this export
+    *
+    * @return
+    */
+  override def exportFilename: String = s"MoNA-export-$basename-spectrum-images.csv"
 
   /**
     * File format prefix
