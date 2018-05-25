@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer
 
-import java.nio.file.Path
+import java.nio.file.{Files, Path}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png.PNGWriter
@@ -34,6 +34,20 @@ class PNGDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = 
     * @return
     */
   override def getRecordSeparator: String = ""
+
+  /**
+    * Create description file and prevent writing query file
+    */
+  override def writeAssociatedFiles(): Unit = {
+    val descriptionFile: Path =
+      if (compress)
+        downloadDir.resolve(compressedExportFilename + ".description.txt")
+      else
+        downloadDir.resolve(exportFilename + ".description.txt")
+
+    Files.write(descriptionFile, "Table of Base64-encoded spectrum images for all MoNA records".getBytes)
+  }
+
 
   /**
     *
