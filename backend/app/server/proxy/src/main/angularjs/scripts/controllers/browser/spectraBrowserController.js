@@ -325,7 +325,7 @@
                         SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', $location.search().inchikey, true);
                     }
 
-                    SpectraQueryBuilderService.executeQuery();
+                    SpectraQueryBuilderService.executeQuery(true);
                 }
 
                 // Handle SPLASH queries
@@ -333,7 +333,7 @@
                     $log.info('Accepting SPLASH query from URL: ' + $location.search().splash);
 
                     SpectraQueryBuilderService.addSplashToQuery($location.search().splash);
-                    SpectraQueryBuilderService.executeQuery();
+                    SpectraQueryBuilderService.executeQuery(true);
                 }
                 
                 // Handle general queries
