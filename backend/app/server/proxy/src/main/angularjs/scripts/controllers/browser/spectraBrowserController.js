@@ -271,7 +271,7 @@
 
                 if (!Number.isNaN(size)) {
                     $log.info('Updating search to use page size to '+ size);
-                    $location.search('size', size);
+                    $location.search('size', size).replace();
                 }
             });
             
