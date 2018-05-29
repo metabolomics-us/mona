@@ -92,6 +92,7 @@ class SerializationConfig extends WebMvcConfigurerAdapter with LazyLogging {
   override def extendMessageConverters(converters: util.List[HttpMessageConverter[_]]): Unit = {
     converters.add(new MSPConverter())
     converters.add(new SDFConverter())
+    converters.add(new PNGConverter())
   }
 
   override def configurePathMatch(configurer: PathMatchConfigurer): Unit = {

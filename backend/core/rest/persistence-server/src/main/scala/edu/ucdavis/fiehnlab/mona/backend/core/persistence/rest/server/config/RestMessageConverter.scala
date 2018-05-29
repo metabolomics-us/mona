@@ -5,6 +5,7 @@ import java.util
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp.MSPWriter
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.png.PNGWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf.SDFWriter
 import org.springframework.http.{HttpInputMessage, HttpOutputMessage, MediaType}
 import org.springframework.http.converter.AbstractHttpMessageConverter
@@ -61,3 +62,8 @@ class MSPConverter extends RestMessageConverter(new MSPWriter, "text/msp")
   * Converts JSON records to SDF
   */
 class SDFConverter extends RestMessageConverter(new SDFWriter, "text/sdf")
+
+/**
+  * Converts JSON records to SDF
+  */
+class PNGConverter extends RestMessageConverter(new PNGWriter, "image/png")
