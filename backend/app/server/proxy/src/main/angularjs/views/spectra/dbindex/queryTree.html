@@ -22,7 +22,12 @@
                 <b>{{category}}</b>
             </div>
             <div class="list-group-item" style="padding-left: 3em;" data-ng-repeat-end data-ng-repeat="file in files">
-                <a ng-href="{{file.path}}">{{file.fileName}}</a>
+                <span>{{file.description}}</span>
+                <span class="pull-right">
+                    <a ng-href="{{file.path}}" target="_blank" data-ga-track-event="['download', 'click', file.fileName]">
+                        <i class="fa fa-download"></i> Download
+                    </a>
+                </span>
             </div>
         </div>
     </div>

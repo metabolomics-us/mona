@@ -76,7 +76,7 @@
             }
         };
 
-        this.executeQuery = function() {
+        this.executeQuery = function(replace) {
             var query = this.getRSQLQuery();
 
             if (query !== '' || this.textSearch !== '') {
@@ -90,6 +90,12 @@
                     $log.debug('Executing empty query');
                     $location.path('/spectra/browse').search({});
                 }
+            }
+
+            replace = typeof replace !== 'undefined' ? replace : false;
+
+            if (replace) {
+                $location.replace();
             }
         };
 
