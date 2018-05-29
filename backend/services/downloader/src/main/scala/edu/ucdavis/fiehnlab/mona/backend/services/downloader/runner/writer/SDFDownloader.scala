@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExp
   */
 class SDFDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = true) extends SpectrumDownloader(export, downloadDir, compress) {
 
-  val mspWriter: SDFWriter = new SDFWriter
+  val sdfWriter: SDFWriter = new SDFWriter
 
 
   /**
@@ -38,5 +38,5 @@ class SDFDownloader(export: QueryExport, downloadDir: Path, compress: Boolean = 
   /**
     *
     */
-  override def writeSpectrum(spectrum: Spectrum): Unit = mspWriter.write(spectrum, exportWriter)
+  override def writeSpectrum(spectrum: Spectrum): Unit = sdfWriter.write(spectrum, exportWriter)
 }
