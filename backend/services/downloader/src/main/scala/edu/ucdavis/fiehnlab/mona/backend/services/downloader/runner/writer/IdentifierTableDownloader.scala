@@ -49,7 +49,7 @@ class IdentifierTableDownloader(export: QueryExport, downloadDir: Path, compress
       else
         downloadDir.resolve(exportFilename + ".description.txt")
 
-    Files.write(descriptionFile, "Table spectral and chemical identifiers for all MoNA records".getBytes)
+    Files.write(descriptionFile, "Table of spectral and chemical identifiers for all MoNA records".getBytes)
   }
 
 
