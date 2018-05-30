@@ -50,7 +50,7 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     *
     * @return
     */
-  protected def exportFile: Path = downloadDir.resolve(exportFilename)
+  protected def temporaryExportFile: Path = downloadDir.resolve(exportFilename +".tmp")
 
   /**
     * Spectrum counter
@@ -106,15 +106,15 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
 
 
   /**
-    * Export file writer definition
+    * Export file writer definition for temporary export file
     */
-  protected lazy val exportWriter: BufferedWriter = Files.newBufferedWriter(exportFile)
+  protected lazy val exportWriter: BufferedWriter = Files.newBufferedWriter(temporaryExportFile)
 
   /**
     * Initialize buffered writer and write the file prefix
     */
   def initializeExport(): Unit = {
-    logger.info(s"Exporting query file ${exportFile.getFileName}")
+    logger.info(s"Exporting query file $exportFilename")
     exportWriter.write(getContentPrefix)
   }
 
@@ -145,7 +145,7 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
     exportWriter.close()
 
     if (compress) {
-      logger.info(s"Compressing ${exportFile.getFileName} -> $compressedExportFilename")
+      logger.info(s"Compressing ${temporaryExportFile.getFileName} -> $compressedExportFilename")
 
       val compressedFile: Path = downloadDir.resolve(compressedExportFilename)
       val compressedTemporaryFile: Path = downloadDir.resolve(compressedExportFilename + ".tmp")
@@ -154,7 +154,7 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
       val zipFile: ZipOutputStream = new ZipOutputStream(Files.newOutputStream(compressedTemporaryFile))
       zipFile.putNextEntry(new ZipEntry(exportFilename))
 
-      val inputStream: BufferedInputStream = new BufferedInputStream(new FileInputStream(exportFile.toAbsolutePath.toString))
+      val inputStream: BufferedInputStream = new BufferedInputStream(Files.newInputStream(temporaryExportFile))
       val buffer: Array[Byte] = new Array[Byte](1024)
       var length: Int = inputStream.read(buffer, 0, 1024)
 
@@ -168,9 +168,15 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
       zipFile.close()
 
       // Delete exported file and move temporary export file to stored location
-      Files.deleteIfExists(exportFile)
+      Files.deleteIfExists(temporaryExportFile)
       Files.deleteIfExists(compressedFile)
       Files.move(compressedTemporaryFile, compressedFile)
+    } else {
+      // Move the temporary export
+      val exportFile: Path = downloadDir.resolve(exportFilename)
+
+      Files.deleteIfExists(exportFile)
+      Files.move(temporaryExportFile, exportFile)
     }
 
     // Export additional associated files
@@ -216,7 +222,7 @@ abstract class SpectrumDownloader(export: QueryExport, downloadDir: Path, compre
         label = getLabel,
         count = counter,
         date = new Date,
-        size = Files.size(exportFile),
+        size = Files.size(downloadDir.resolve(exportFilename)),
 
         queryFile = queryFilename,
         exportFile = exportFilename
