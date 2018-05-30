@@ -24,7 +24,10 @@ class PNGWriter extends DomainWriter {
 
   private def createPlot(spectrum: Spectrum): Plot = {
     // Normalize spectrum
-    val ions = spectrum.spectrum.split(' ').map(x => (x.split(':')(0).toDouble, x.split(':')(1).toDouble))
+    val ions = spectrum.spectrum.split(' ')
+      .map(x => (x.split(':')(0).toDouble, x.split(':')(1).toDouble))
+      .sortBy(-_._2)
+      .take(250)
     val maxIntensity: Double = ions.map(_._2).max
 
     // Build data table
