@@ -37,7 +37,14 @@
 
     <div class="row" ng-if="classifications.length > 0">
         <div class="col-md-12">
-            <h4>Compound Classification (provided by <a href="http://classyfire.wishartlab.com" target="_blank">ClassyFire</a>)</h4>
+            <h4>Compound Classification (provided by <a ng-href="{{classifications[0].url.replace('.json', '')}}" target="_blank">ClassyFire</a>) <sup><a href ng-click="showClassyFireInfo = !showClassyFireInfo"><i class="fa fa-question-circle"></i></a></sup></h4>
+            <div ng-show="showClassyFireInfo">
+                <a href="http://classyfire.wishartlab.com" target="_blank">ClassyFire</a>
+                is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
+                entities based on their structure. ClassyFire combines structure search, IUPAC name parsing, and evaluation
+                of logical expressions to retrieve structural features, which are then mapped to the corresponding ChemOnt classes.
+                <hr />
+            </div>
 
             <script type="text/ng-template" id="classyfireTree">
                 <span class="tree-label"><i class="icon-folder-open"></i> <span metadata-query value="node" classification="true">{{ node.name | titlecase }}</span></span> <span> {{ node.value }}</span>
