@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.types
 
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.SpectrumUtils
-import edu.ucdavis.fiehnlab.splash.resolver.Tags
 
 /**
   * Created by sajjan on 10/11/16.
@@ -29,8 +28,8 @@ case class Ion(mz: Double, intensity: Double) {
   * @param ions
   * @param public
   */
-class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Double, val public: Boolean, val tags: Option[List[Tags]]) {
-  def this(id: String, ions: Array[Ion], precursorMZ: Double, public: Boolean) = this(id, ions, precursorMZ, public, None)
+class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Double, val public: Boolean, val tags: Array[String]) {
+  def this(id: String, ions: Array[Ion], precursorMZ: Double, public: Boolean) = this(id, ions, precursorMZ, public, Array())
 
   def this(id: String, ions: Array[Ion]) = this(id, ions, -1, true)
 
