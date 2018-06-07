@@ -80,7 +80,10 @@ class SimilaritySearchService extends LazyLogging {
     logger.info(s"Filtering by precursor m/z ${request.precursorMZ} with tolerance +/-$tolerance Da" +
       (if (request.precursorTolerancePPM > 0.0) s" (+/- ${request.precursorTolerancePPM} ppm)" else ""))
 
-    results.filter(x => Math.abs(x.hit.precursorMZ - request.precursorMZ) <= tolerance)
+    // Filter by precursor m/z and then by tags
+    results
+      .filter(x => Math.abs(x.hit.precursorMZ - request.precursorMZ) <= tolerance)
+      .filter(x => request.tags.forall(t => x.hit.tags.contains(t)))
   }
 
   /**
