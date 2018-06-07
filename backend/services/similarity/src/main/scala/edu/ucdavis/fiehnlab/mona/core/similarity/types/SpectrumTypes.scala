@@ -29,6 +29,7 @@ case class Ion(mz: Double, intensity: Double) {
   * @param public
   */
 class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Double, val public: Boolean, val tags: Array[String]) {
+
   def this(id: String, ions: Array[Ion], precursorMZ: Double, public: Boolean) = this(id, ions, precursorMZ, public, Array())
 
   def this(id: String, ions: Array[Ion]) = this(id, ions, -1, true)

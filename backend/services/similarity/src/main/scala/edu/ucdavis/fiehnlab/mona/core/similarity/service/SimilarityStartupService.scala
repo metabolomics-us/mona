@@ -37,13 +37,16 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
   }
 
 
-  private def addToIndex(spectrum: Spectrum, precursorMZ: Option[MetaData], indexName: String, indexType: IndexType): Int = {
+  private def addToIndex(spectrum: Spectrum, indexName: String, indexType: IndexType): Int = {
+    val precursorMZ: Option[MetaData] = spectrum.metaData.find(_.name == CommonMetaData.PRECURSOR_MASS)
+    val tags: Array[String] = spectrum.tags.map(_.text)
+
     if (precursorMZ.isDefined) {
       try {
         val precursorString: String = precursorMZ.get.value.toString
-        indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble), indexName, indexType)
+        indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, precursorString.toDouble, tags), indexName, indexType)
       } catch {
-        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum), indexName, indexType)
+        case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, tags), indexName, indexType)
       }
     } else {
       indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum), indexName, indexType)
@@ -64,11 +67,10 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
 
     while (it.hasNext) {
       val spectrum: Spectrum = it.next()
-      val precursorMZ: Option[MetaData] = spectrum.metaData.find(_.name == CommonMetaData.PRECURSOR_MASS)
 
       // Add precursor information if available
-      val mainIndexSize: Int = addToIndex(spectrum, precursorMZ, "default", IndexType.DEFAULT)
-      val peakIndexSize: Int = addToIndex(spectrum, precursorMZ, "default", IndexType.PEAK)
+      val mainIndexSize: Int = addToIndex(spectrum, "default", IndexType.DEFAULT)
+      val peakIndexSize: Int = addToIndex(spectrum, "default", IndexType.PEAK)
 
       counter += 1
 
