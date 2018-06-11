@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[Downloader]))
-class DownloadListenerTest extends WordSpec with LazyLogging {
+class QueryExportListenerTest extends WordSpec with LazyLogging {
 
   @Autowired
   val mongoRepository: ISpectrumMongoRepositoryCustom = null
@@ -34,7 +34,7 @@ class DownloadListenerTest extends WordSpec with LazyLogging {
   val predefinedQueryRepository: PredefinedQueryMongoRepository = null
 
   @Autowired
-  val downloadListener: DownloadListener = null
+  val downloadListener: QueryExportListener = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

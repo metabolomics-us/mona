@@ -9,12 +9,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.TagStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import org.junit.runner.RunWith
 import org.scalatest.Matchers
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
@@ -40,6 +41,10 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
   @Autowired
   val predefinedQueryRepository: PredefinedQueryMongoRepository = null
 
+  @Autowired
+  @Qualifier("tagStatisticsMongoRepository")
+  private val tagStatisticsRepository: TagStatisticsMongoRepository = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "DownloadSchedulerControllerTest" should {
@@ -52,9 +57,13 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       mongoRepository.deleteAll()
       queryExportRepository.deleteAll()
       predefinedQueryRepository.deleteAll()
+      tagStatisticsRepository.deleteAll()
 
       exampleRecords.foreach(mongoRepository.save(_))
+      assert(mongoRepository.count() == exampleRecords.length)
+
       queryExportRepository.save(QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", "test", new Date, 0, 0, null, null))
+      assert(queryExportRepository.count() == 1)
     }
 
     // Test download of a spectrum
@@ -67,6 +76,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
     // Add new predefined download
     "add predefined download" in {
       val query: PredefinedQuery = predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null, null))
+      assert(predefinedQueryRepository.count() == 1)
 
       given().contentType("application/json; charset=UTF-8").when().body(query).post("/predefined").`then`().statusCode(401)
 
@@ -125,8 +135,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       "succeed if authenticated as an admin" in {
         val result = authenticate().contentType("application/json; charset=UTF-8").when().get("/generatePredefined").`then`().statusCode(200).extract().body().as(classOf[Array[QueryExport]])
 
-        assert(result.length == 3)
-        assert(result.forall(_.id.matches("^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$")))
+        assert(result.length == 1)
         assert(result.exists(_.label == "All Spectra"))
       }
     }

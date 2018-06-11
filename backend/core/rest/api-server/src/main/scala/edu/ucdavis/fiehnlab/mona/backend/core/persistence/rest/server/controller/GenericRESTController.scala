@@ -41,7 +41,7 @@ abstract class GenericRESTController[T] {
     *
     * @return
     */
-  @RequestMapping(path = Array(""), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp"))
+  @RequestMapping(path = Array(""), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp", "text/sdf", "image/png"))
   @Async
   @ResponseBody
   final def list(@RequestParam(value = "page", required = false) page: Integer, @RequestParam(value = "size", required = false) size: Integer): Future[ResponseEntity[Iterable[T]]] = {
@@ -111,7 +111,7 @@ abstract class GenericRESTController[T] {
     * @return
     */
   @Async
-  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp"))
+  @RequestMapping(path = Array("/{id}"), method = Array(RequestMethod.GET), produces = Array("application/json", "text/msp", "text/sdf", "image/png"))
   @ResponseBody
   final def get(@PathVariable("id") id: String, servletRequest: ServletRequest, servletResponse: ServletResponse): Future[ResponseEntity[T]] = {
     doGet(id, servletRequest, servletResponse)

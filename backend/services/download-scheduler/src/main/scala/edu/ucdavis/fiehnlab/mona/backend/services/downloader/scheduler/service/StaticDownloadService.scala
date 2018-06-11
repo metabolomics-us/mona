@@ -5,6 +5,7 @@ import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.StaticDownload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -54,7 +55,7 @@ class StaticDownloadService extends LazyLogging {
     *
     * @return
     */
-  def listStaticDownloads(): Array[String] = {
+  def listStaticDownloads(): Array[StaticDownload] = {
     if (Files.notExists(staticDownloadDir)) {
       Files.createDirectories(staticDownloadDir)
     }
@@ -63,8 +64,18 @@ class StaticDownloadService extends LazyLogging {
       .iterator()
       .asScala
       .filter(Files.isRegularFile(_))
-      .map(staticDownloadDir.relativize(_).toString)
-      .toArray
+      .filter(!_.toString.endsWith(".description.txt"))
+      .filter(!_.toString.endsWith(".tmp"))
+      .map { file =>
+        // Read description if it exists
+        val descriptionFile: Path = Paths.get(file.toAbsolutePath +".description.txt")
+
+        if (Files.exists(descriptionFile)) {
+          StaticDownload(staticDownloadDir.relativize(file).toString, new String(Files.readAllBytes(descriptionFile)))
+        } else {
+          StaticDownload(staticDownloadDir.relativize(file).toString)
+        }
+      }.toArray
   }
 
   /**
@@ -74,7 +85,7 @@ class StaticDownloadService extends LazyLogging {
     * @param category
     * @return
     */
-  def storeStaticFile(file: MultipartFile, category: String = null): String = {
+  def storeStaticFile(file: MultipartFile, category: String = null, description: String = null): String = {
     // Build file path
     val exportPath: Path = category match {
       case null => staticDownloadDir
@@ -87,17 +98,23 @@ class StaticDownloadService extends LazyLogging {
     }
 
     // Specify export file
-    val exportFile: Path = exportPath.resolve(
-      if (file.getOriginalFilename.nonEmpty)
-        file.getOriginalFilename
-      else
-        file.getName
-    )
+    val exportFilename: String =
+      if (file.getOriginalFilename.nonEmpty) file.getOriginalFilename
+      else file.getName
+    val exportFile: Path = exportPath.resolve(exportFilename)
 
-    logger.info(s"Storing file ${exportFile}")
+    logger.info(s"Storing file $exportFile")
 
-    // Write the MultipartFile to the static download directory
+    // Write the MultipartFile and to the static download directory
     Files.copy(file.getInputStream, exportFile, StandardCopyOption.REPLACE_EXISTING)
+
+    // Export description if available
+    if (description != null) {
+      val descrptionFilename: String = exportFilename +".description.txt"
+
+      logger.info(s"Storing description file $descrptionFilename")
+      Files.write(exportPath.resolve(descrptionFilename), description.getBytes)
+    }
 
     // Return the relative file path
     staticDownloadDir.relativize(exportFile).toString

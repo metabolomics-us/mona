@@ -83,12 +83,12 @@ class DownloadSchedulerController extends LazyLogging {
   @RequestMapping(path = Array("/schedule"), method = Array(RequestMethod.GET))
   @Async
   def scheduleDownload(@RequestParam(required = true, name = "query") query: String,
-                       @RequestParam(required = false, name = "format", defaultValue = "json") format: String): Future[ResponseEntity[QueryExport]] = {
+                       @RequestParam(required = false, name = "format", defaultValue = "json") format: String): ResponseEntity[QueryExport] = {
 
     // Schedule download
     val downloadObject: QueryExport = downloadSchedulerService.scheduleDownload(query, format)
 
-    new AsyncResult[ResponseEntity[QueryExport]](new ResponseEntity(downloadObject, HttpStatus.OK))
+    new ResponseEntity(downloadObject, HttpStatus.OK)
   }
 
   /**
@@ -99,15 +99,15 @@ class DownloadSchedulerController extends LazyLogging {
     */
   @RequestMapping(path = Array("/schedule/{id}"), method = Array(RequestMethod.GET))
   @ResponseBody
-  def reschedule(@PathVariable("id") id: String): Future[ResponseEntity[QueryExport]] = {
+  def reschedule(@PathVariable("id") id: String): ResponseEntity[QueryExport] = {
 
     // Schedule download
     val downloadObject: QueryExport = downloadSchedulerService.scheduleDownload(id)
 
     if (downloadObject == null) {
-      new AsyncResult[ResponseEntity[QueryExport]](new ResponseEntity(HttpStatus.NOT_FOUND))
+      new ResponseEntity(HttpStatus.NOT_FOUND)
     } else {
-      new AsyncResult[ResponseEntity[QueryExport]](new ResponseEntity(downloadObject, HttpStatus.OK))
+      new ResponseEntity(downloadObject, HttpStatus.OK)
     }
   }
 
@@ -116,9 +116,8 @@ class DownloadSchedulerController extends LazyLogging {
     */
   @RequestMapping(path = Array("/predefined"), method = Array(RequestMethod.GET))
   @Async
-  def listPredefinedDownloads(): Future[ResponseEntity[Array[PredefinedQuery]]] = {
-    val predefinedDownloads: Array[PredefinedQuery] = predefinedQueryRepository.findAll().asScala.toArray
-    new AsyncResult[ResponseEntity[Array[PredefinedQuery]]](new ResponseEntity(predefinedDownloads, HttpStatus.OK))
+  def listPredefinedDownloads(): ResponseEntity[Array[PredefinedQuery]] = {
+    new ResponseEntity(predefinedQueryRepository.findAll().asScala.toArray, HttpStatus.OK)
   }
 
   /**
@@ -128,11 +127,8 @@ class DownloadSchedulerController extends LazyLogging {
     */
   @RequestMapping(path = Array("/predefined"), method = Array(RequestMethod.POST))
   @Async
-  def createPredefinedDownloads(@RequestBody query: PredefinedQuery): Future[ResponseEntity[PredefinedQuery]] = {
-
-    new AsyncResult[ResponseEntity[PredefinedQuery]](
-      new ResponseEntity(predefinedQueryRepository.save(query), HttpStatus.OK)
-    )
+  def createPredefinedDownloads(@RequestBody query: PredefinedQuery): ResponseEntity[PredefinedQuery] = {
+    new ResponseEntity(predefinedQueryRepository.save(query), HttpStatus.OK)
   }
 
   /**
@@ -140,9 +136,7 @@ class DownloadSchedulerController extends LazyLogging {
     */
   @RequestMapping(path = Array("/generatePredefined"), method = Array(RequestMethod.GET))
   @Async
-  def generatePredefinedDownloads(): Future[ResponseEntity[Array[QueryExport]]] = {
-    new AsyncResult[ResponseEntity[Array[QueryExport]]](
-      new ResponseEntity(downloadSchedulerService.generatePredefinedDownloads(), HttpStatus.OK)
-    )
+  def generatePredefinedDownloads(): ResponseEntity[Array[PredefinedQuery]] = {
+    new ResponseEntity(downloadSchedulerService.generatePredefinedDownloads(), HttpStatus.OK)
   }
 }

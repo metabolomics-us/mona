@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.StaticDownload
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.DownloadScheduler
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,10 +37,10 @@ class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLo
       staticDownloadService.storeStaticFile(file)
 
       // Verify that it appears in the list of static downloads
-      val fileList: Array[String] = staticDownloadService.listStaticDownloads()
+      val fileList: Array[StaticDownload] = staticDownloadService.listStaticDownloads()
 
       assert(fileList.length == 1)
-      assert(fileList.last == "monaRecord.json")
+      assert(fileList.map(_.fileName).last == "monaRecord.json")
       staticDownloadService.fileExists("monaRecord.json")
     }
 
@@ -47,28 +48,29 @@ class StaticDownloadServiceTest extends AbstractSpringControllerTest with LazyLo
       // Build file to upload and store it
       val file: MockMultipartFile = new MockMultipartFile("monaRecord.json", getClass.getResourceAsStream("/monaRecord.json"))
 
-      staticDownloadService.storeStaticFile(file)
+      staticDownloadService.storeStaticFile(file, description = "test")
 
       // Verify that it appears in the list of static downloads
-      val fileList: Array[String] = staticDownloadService.listStaticDownloads()
+      val fileList: Array[StaticDownload] = staticDownloadService.listStaticDownloads()
 
       assert(fileList.length == 1)
-      assert(fileList.last == "monaRecord.json")
+      assert(fileList.map(_.fileName).last == "monaRecord.json")
       staticDownloadService.fileExists("monaRecord.json")
+      staticDownloadService.fileExists("monaRecord.json.description.txt")
     }
 
     "upload a static file with a test category" in {
       // Build file to upload and store it
       val file: MockMultipartFile = new MockMultipartFile("gcmsRecord.json", getClass.getResourceAsStream("/gcmsRecord.json"))
 
-      staticDownloadService.storeStaticFile(file, "test")
+      staticDownloadService.storeStaticFile(file, category = "test")
 
       // Verify that it appears in the list of static downloads
-      val fileList: Array[String] = staticDownloadService.listStaticDownloads()
+      val fileList: Array[StaticDownload] = staticDownloadService.listStaticDownloads()
 
       assert(fileList.length == 2)
-      assert(fileList.contains("test/gcmsRecord.json"))
-      staticDownloadService.fileExists("test/gcmsRecord.json")
+      assert(fileList.map(_.fileName).contains("gcmsRecord.json"))
+      staticDownloadService.fileExists("gcmsRecord.json")
     }
   }
 }

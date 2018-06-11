@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.config
 
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener.DownloadListener
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener.{PredefinedQueryExportListener, QueryExportListener}
+import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.MessageConverter
@@ -16,16 +17,36 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 class DownloadListenerConfig {
 
   @Autowired
-  @Qualifier("spectra-download-queue")
-  val queueName: String = null
+  @Qualifier("spectra-download-queue-instance")
+  val exportQueue: Queue = null
+
+  @Autowired
+  @Qualifier("spectra-predefined-download-queue-instance")
+  val predefinedQueue: Queue = null
 
   @Bean
-  def container(connectionFactory: ConnectionFactory, listener: DownloadListener, messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+  @Qualifier("message-listener-query-export")
+  def queryExportListenerContainer(connectionFactory: ConnectionFactory, queryExportListener: QueryExportListener,
+                messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
-    container.setMessageListener(listener)
+    container.setMessageListener(queryExportListener)
     container.setMessageConverter(messageConverter)
-    container.setQueueNames(queueName)
+    container.setQueues(exportQueue)
+    container
+  }
+
+  @Bean
+  @Qualifier("message-listener-predefined-query")
+  def predefinedQueryListenerContainer(connectionFactory: ConnectionFactory, predefinedQueryExportListener: PredefinedQueryExportListener,
+                messageConverter: MessageConverter): SimpleMessageListenerContainer = {
+
+    val container = new SimpleMessageListenerContainer()
+    container.setConnectionFactory(connectionFactory)
+    container.setMessageListener(predefinedQueryExportListener)
+    container.setMessageConverter(messageConverter)
+    container.setQueues(predefinedQueue)
     container
   }
 }

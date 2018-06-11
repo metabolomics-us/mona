@@ -100,15 +100,19 @@ class SpectrumRestControllerSecurityTest extends AbstractSpringControllerTest wi
       }
 
       "upload a spectrum as a regular user" in {
+        assert(spectrumRepository.count() == 0)
+
         val result: Spectrum = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).log().all().when().post("/spectra").`then`().statusCode(200).extract().as(classOf[Spectrum])
         assert(spectrumRepository.count() == 1)
         assert(result.id == curatedRecords.head.id)
         assert(result.submitter.id == "test")
       }
 
-      "overwrite the spectrum as the same user" in {
-        authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).log().all().when().post("/spectra").`then`().statusCode(200)
+      "overwrite the spectrum as the same user and ensure that the date is propagated" in {
+        val spectrum: Spectrum = given().contentType("application/json; charset=UTF-8").log().all().when().get("/spectra/AU100601").`then`().statusCode(200).extract().as(classOf[Spectrum])
+        val result: Spectrum = authenticate("test", "test-secret").contentType("application/json; charset=UTF-8").body(curatedRecords.head).log().all().when().post("/spectra").`then`().statusCode(200).extract().as(classOf[Spectrum])
         assert(spectrumRepository.count() == 1)
+        assert(spectrum.dateCreated.compareTo(result.dateCreated) == 0)
       }
 
       "not overwrite the spectrum as a different regular user" in {

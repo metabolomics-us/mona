@@ -110,7 +110,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       }
 
       eventually(timeout(10 seconds)) {
-        assert(notificationCounter.getEventCount == count + 3)
+        assert(notificationCounter.getEventCount == count + 1)
       }
     }
 
@@ -127,7 +127,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       }
 
       eventually(timeout(10 seconds)) {
-        assert(notificationCounter.getEventCount == count + 12)
+        assert(notificationCounter.getEventCount == count + 4)
       }
 
       assert(predefinedQueryRepository.exists("Libraries - 1"))
@@ -141,7 +141,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
   * Simple test class to ensure the message was processed
   */
 @Component
-class TestDownloader extends GenericMessageListener[QueryExport] with LazyLogging {
+class TestDownloader extends GenericMessageListener[Any] with LazyLogging {
 
   @Autowired
   private val connectionFactory: ConnectionFactory = null
@@ -150,16 +150,21 @@ class TestDownloader extends GenericMessageListener[QueryExport] with LazyLoggin
   val rabbitAdmin: RabbitAdmin = null
 
   @Autowired
-  val downloadQueue: Queue = null
+  @Qualifier("spectra-download-queue-instance")
+  val exportQueue: Queue = null
+
+  @Autowired
+  @Qualifier("spectra-predefined-download-queue-instance")
+  val predefinedQueue: Queue = null
 
   @PostConstruct
   def init(): Unit = {
-    rabbitAdmin.declareQueue(downloadQueue)
+    rabbitAdmin.declareQueue(exportQueue)
+    rabbitAdmin.declareQueue(predefinedQueue)
 
     val container = new SimpleMessageListenerContainer()
     container.setConnectionFactory(connectionFactory)
-
-    container.setQueues(downloadQueue)
+    container.setQueues(exportQueue, predefinedQueue)
     container.setMessageListener(this)
     container.setRabbitAdmin(rabbitAdmin)
     container.start()
@@ -168,7 +173,7 @@ class TestDownloader extends GenericMessageListener[QueryExport] with LazyLoggin
   var messageReceived: Boolean = false
   var messageCount: Int = 0
 
-  override def handleMessage(message: QueryExport): Unit = {
+  override def handleMessage(message: Any): Unit = {
     messageReceived = true
     messageCount += 1
 

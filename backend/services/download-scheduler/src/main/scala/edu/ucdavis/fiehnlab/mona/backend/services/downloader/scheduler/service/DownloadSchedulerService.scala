@@ -26,7 +26,11 @@ class DownloadSchedulerService extends LazyLogging {
 
   @Autowired
   @Qualifier("spectra-download-queue")
-  val queueName: String = null
+  val exportQueueName: String = null
+
+  @Autowired
+  @Qualifier("spectra-predefined-download-queue")
+  val predefinedQueueName: String = null
 
   @Autowired
   val queryExportRepository: QueryExportMongoRepository = null
@@ -55,7 +59,7 @@ class DownloadSchedulerService extends LazyLogging {
     logger.info(s"Scheduling query $query as $format")
     val download: QueryExport = QueryExport(UUID.randomUUID.toString, null, query, format, null, new Date, 0, 0, null, null)
 
-    rabbitTemplate.convertAndSend(queueName, download)
+    rabbitTemplate.convertAndSend(exportQueueName, download)
     notifications.sendEvent(Event(Notification(download, getClass.getName)))
 
     download
@@ -73,7 +77,7 @@ class DownloadSchedulerService extends LazyLogging {
 
     if (download != null) {
       logger.info(s"Rescheduling query: $id")
-      rabbitTemplate.convertAndSend(queueName, download)
+      rabbitTemplate.convertAndSend(exportQueueName, download)
       notifications.sendEvent(Event(Notification(download, getClass.getName)))
     }
 
@@ -83,7 +87,7 @@ class DownloadSchedulerService extends LazyLogging {
   /**
     * Generates the downloads of all export formats for each predefined query download
     */
-  def generatePredefinedDownloads(): Array[QueryExport] = {
+  def generatePredefinedDownloads(): Array[PredefinedQuery] = {
 
     // Update the list of pre-generated downloads based on libraries present in the database
     tagStatisticsRepository.findAll().asScala
@@ -104,37 +108,12 @@ class DownloadSchedulerService extends LazyLogging {
         }
       }
 
-
-    // Compile a list of downloads to schedule
-    val downloads: ArrayBuffer[QueryExport] = ArrayBuffer()
-
-    predefinedQueryRepository.findAll().asScala.foreach { predefinedQuery: PredefinedQuery =>
-      if (predefinedQuery.jsonExport == null) {
-        downloads.append(QueryExport(UUID.randomUUID.toString, predefinedQuery.label, predefinedQuery.query, "json", null, new Date, 0, 0, null, null))
-      } else {
-        downloads.append(predefinedQuery.jsonExport)
-      }
-
-      if (predefinedQuery.mspExport == null) {
-        downloads.append(QueryExport(UUID.randomUUID.toString, predefinedQuery.label, predefinedQuery.query, "msp", null, new Date, 0, 0, null, null))
-      } else {
-        downloads.append(predefinedQuery.mspExport)
-      }
-
-      if (predefinedQuery.sdfExport == null) {
-        downloads.append(QueryExport(UUID.randomUUID.toString, predefinedQuery.label, predefinedQuery.query, "sdf", null, new Date, 0, 0, null, null))
-      } else {
-        downloads.append(predefinedQuery.sdfExport)
-      }
+    // Predefined downloads to schedule
+    predefinedQueryRepository.findAll().asScala.toArray.map { predefinedQuery: PredefinedQuery =>
+      rabbitTemplate.convertAndSend(predefinedQueueName, predefinedQuery)
+      notifications.sendEvent(Event(Notification(predefinedQuery, getClass.getName)))
+      predefinedQuery
     }
-
-    // Send downloads to the queue
-    downloads.foreach { download =>
-      rabbitTemplate.convertAndSend(queueName, download)
-      notifications.sendEvent(Event(Notification(download, getClass.getName)))
-    }
-
-    downloads.toArray
   }
 
   /**

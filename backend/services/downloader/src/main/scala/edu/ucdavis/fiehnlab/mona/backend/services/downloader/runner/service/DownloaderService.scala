@@ -1,15 +1,15 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.service
 
-import java.io._
 import java.nio.file.{Files, Path, Paths}
-import java.util.Date
+import javax.annotation.PostConstruct
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.writer.SpectrumDownloader
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Service
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by sajjan on 5/25/16.
@@ -17,99 +17,68 @@ import org.springframework.stereotype.Service
 @Service
 class DownloaderService extends LazyLogging {
 
-  @Autowired
-  val downloadWriterService: DownloadWriterService = null
-
   @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
-  val downloadDir: String = null
+  private val downloadDirPath: String = null
 
-  val objectMapper: ObjectMapper = MonaMapper.create
+  private def downloadDir: Path = Paths.get(downloadDirPath)
+
+  private def staticDownloadDir: Path = Paths.get(downloadDirPath, "static")
+
+  @Autowired
+  private val downloadWriterService: DownloadWriterService = null
+
+  /**
+    * Create export directories if needed
+    */
+  @PostConstruct
+  private def init(): Unit = {
+    if (Files.notExists(downloadDir))
+      Files.createDirectories(downloadDir)
+
+    if (Files.notExists(staticDownloadDir))
+      Files.createDirectories(staticDownloadDir)
+  }
 
   /**
     *
-    * @param label
-    * @param emailAddress
+    * @param query
     * @return
     */
-  def buildExportBasename(label: String, emailAddress: String): String = {
-    val sanitizedLabel: String = label.split(" - ").last.replaceAll(" ", "_").replaceAll("/", "-")
+  def downloadPredefinedQuery(query: PredefinedQuery, compress: Boolean = true): PredefinedQuery = {
 
-    if (emailAddress == null || emailAddress.isEmpty) {
-      sanitizedLabel
-    } else {
-      emailAddress.split("@").head + '-' + sanitizedLabel
+    val jsonDownloader: SpectrumDownloader = SpectrumDownloader(query, query.jsonExport, "json", downloadDir, compress)
+    val mspDownloader: SpectrumDownloader = SpectrumDownloader(query, query.mspExport, "msp", downloadDir, compress)
+    val sdfDownloader: SpectrumDownloader = SpectrumDownloader(query, query.sdfExport, "sdf", downloadDir, compress)
+
+    val downloaders: ArrayBuffer[SpectrumDownloader] = new ArrayBuffer()
+    downloaders.append(jsonDownloader, mspDownloader, sdfDownloader)
+
+    // Create additional static files if this query corresponds to all spectra
+    if (query.query.isEmpty) {
+      downloaders.append(SpectrumDownloader(query.label, query.query, "png", staticDownloadDir, compress))
+      downloaders.append(SpectrumDownloader(query.label, query.query, "ids", staticDownloadDir, compress))
     }
+
+    val count: Long = downloadWriterService.exportQuery(query.query, query.label, downloaders.toArray)
+
+    query.copy(
+      queryCount = count,
+      jsonExport = jsonDownloader.toQueryExport,
+      mspExport = mspDownloader.toQueryExport,
+      sdfExport = sdfDownloader.toQueryExport
+    )
   }
 
   /**
     *
     * @param export
+    * @return
     */
-  def download(export: QueryExport): QueryExport = download(export, compressExport = true)
+  def downloadQueryExport(export: QueryExport, compress: Boolean = true): QueryExport = {
+    val downloader: SpectrumDownloader = SpectrumDownloader(export, export.format, downloadDir, compress)
 
-  def download(export: QueryExport, compressExport: Boolean): QueryExport = {
-    // Create export directory if needed
-    val directory: File = new File(downloadDir)
+    downloadWriterService.exportQuery(export.query, export.label, Array(downloader))
 
-    if (!directory.exists()) {
-      if (!directory.mkdirs()) {
-        throw new FileNotFoundException(s"was not able to create storage directory at: $downloadDir")
-      }
-    }
-
-    // Use the export ID as the label if one does not exist
-    val label: String =
-      if (export.label == null || export.label.isEmpty)
-        export.id
-      else
-        export.label
-
-
-    logger.info(s"Starting download for label $label")
-    logger.info(s"Query: ${export.query}")
-
-    // Generate export filenames
-    val basename: String = buildExportBasename(label, export.emailAddress)
-
-    val queryFilename: String = s"MoNA-export-$basename-query.txt"
-    val exportFilename: String = s"MoNA-export-$basename.${export.format}"
-    val compressedExportFilename: String = s"MoNA-export-$basename-${export.format}.zip"
-
-
-    // Export query string
-    val queryFile: Path = Paths.get(downloadDir, queryFilename)
-
-    downloadWriterService.writeQueryFile(queryFile, export.query)
-
-
-    // Export query results
-    val exportFile: Path = Paths.get(downloadDir, exportFilename)
-    val compressedFile: Path = Paths.get(downloadDir, compressedExportFilename)
-
-    val count: Long = downloadWriterService.writeExportFile(exportFile, compressedFile, export.query, export.format, compressExport)
-
-    if (compressExport) {
-      // Update export object with filesize, query count and filenames
-      export.copy(
-        label = label,
-        count = count,
-        date = new Date,
-        size = Files.size(compressedFile),
-
-        queryFile = queryFilename,
-        exportFile = compressedExportFilename
-      )
-    } else {
-      // Update export object with filesize, query count and filenames
-      export.copy(
-        label = label,
-        count = count,
-        date = new Date,
-        size = Files.size(exportFile),
-
-        queryFile = queryFilename,
-        exportFile = exportFilename
-      )
-    }
+    downloader.toQueryExport
   }
 }

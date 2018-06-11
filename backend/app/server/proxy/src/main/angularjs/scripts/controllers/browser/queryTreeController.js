@@ -40,6 +40,7 @@
                         query: null,
                         jsonExport: null,
                         mspExport: null,
+                        sdfExport: null,
                         display: data.some(function(x) { return x.label.indexOf('Libraries') > -1 && x.queryCount > 0; })
                     });
 
@@ -105,8 +106,6 @@
 
             DownloadService.getStaticDownloads(
                 function(data) {
-                    console.log(data);
-
                     data.forEach(function(x) {
                         if (angular.isDefined(x.category)) {
                             var categoryName = x.category[0].toUpperCase() + x.category.substr(1);
@@ -118,7 +117,7 @@
                             x.path = REST_BACKEND_SERVER +'/rest/downloads/static/'+ x.category +'/'+ x.fileName;
                             $scope.static[categoryName].push(x);
                         } else {
-                            if (!$scope.static.hasOwnProperty(categoryName)) {
+                            if (!$scope.static.hasOwnProperty('General')) {
                                 $scope.static['General'] = [];
                             }
 
@@ -126,8 +125,6 @@
                             $scope.static['General'].push(x);
                         }
                     });
-
-                    console.log($scope.static)
                 },
                 function(error) {
                     $log.error('query tree failed: ' + error);

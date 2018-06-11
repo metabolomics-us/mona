@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.controll
 import java.nio.file.{Files, Path}
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.StaticDownload
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service.StaticDownloadService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.InputStreamResource
@@ -25,13 +26,15 @@ class StaticDownloadController extends LazyLogging {
     * List all available static downloads
     */
   @RequestMapping(path = Array("/static"), method = Array(RequestMethod.GET))
-  def listStaticDownloads(): Array[StaticDownload] = {
-    staticDownloadService.listStaticDownloads().map(StaticDownload(_))
-  }
+  def listStaticDownloads(): Array[StaticDownload] = staticDownloadService.listStaticDownloads()
+
 
   @RequestMapping(path = Array("/static"), method = Array(RequestMethod.POST))
-  def uploadStaticDownload(@RequestParam(value = "file", required = true) file: MultipartFile, @RequestParam(value = "category", required = false) category: String): StaticDownload = {
-    StaticDownload(staticDownloadService.storeStaticFile(file, category))
+  def uploadStaticDownload(@RequestParam(value = "file", required = true) file: MultipartFile,
+                           @RequestParam(value = "category", required = false) category: String,
+                           @RequestParam(value = "description", required = false) description: String): StaticDownload = {
+
+    StaticDownload(staticDownloadService.storeStaticFile(file, category, description))
   }
 
   @RequestMapping(path = Array("/static/{filename:.+}"), method = Array(RequestMethod.GET))
@@ -56,20 +59,5 @@ class StaticDownloadController extends LazyLogging {
     logger.info(s"$category$filename")
 
     getStaticDownload(s"$category/$filename")
-  }
-}
-
-
-case class StaticDownload(fileName: String, category: String)
-
-object StaticDownload {
-  def apply(filePath: String): StaticDownload = {
-    val path: Array[String] = filePath.split('/')
-
-    if (path.length == 1) {
-      StaticDownload(filePath, null)
-    } else {
-      StaticDownload(path.last, path.head)
-    }
   }
 }
