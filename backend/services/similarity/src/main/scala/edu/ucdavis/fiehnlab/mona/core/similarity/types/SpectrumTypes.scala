@@ -28,14 +28,23 @@ case class Ion(mz: Double, intensity: Double) {
   * @param ions
   * @param public
   */
-class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Double, val public: Boolean) {
-  def this(id: String, ions: Array[Ion]) = this(id, ions, -1, true)
+class SimpleSpectrum(val id: String, val ions: Array[Ion], val precursorMZ: Double, val tags: Array[String], val public: Boolean) {
 
-  def this(id: String, spectrumString: String) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, true)
+  /**
+    * Constructors
+    */
 
-  def this(id: String, spectrumString: String, precursorMZ: Double) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, true)
+  def this(id: String, ions: Array[Ion], precursorMZ: Double, tags: Array[String]) = this(id, ions, precursorMZ, tags, true)
 
-  def this(id: String, spectrumString: String, public: Boolean) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, public)
+  def this(id: String, ions: Array[Ion], tags: Array[String]) = this(id, ions, -1, tags, true)
+
+  def this(id: String, ions: Array[Ion]) = this(id, ions, -1, Array(), true)
+
+  def this(id: String, spectrumString: String, precursorMZ: Double, tags: Array[String]) = this(id, SpectrumUtils.stringToIons(spectrumString), precursorMZ, tags, true)
+
+  def this(id: String, spectrumString: String, tags: Array[String]) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, tags, true)
+
+  def this(id: String, spectrumString: String) = this(id, SpectrumUtils.stringToIons(spectrumString), -1, Array(), true)
 
   def this(spectrum: StoredSpectrum) = this(spectrum.id, spectrum.spectrum)
 
