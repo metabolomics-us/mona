@@ -149,6 +149,39 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
       }
     }
 
+    "perform similarity queries with precursor filtering and tag filtering" should {
+      "use absolute tolerance with present" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("LCMS"))
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.length == 1)
+        assert(result.head.score > 0.99)
+      }
+
+      "use absolute tolerance with non-present tag" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("GCMS"))
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.isEmpty)
+      }
+    }
+
+    "perform similarity queries with multi-tag filtering" should {
+      "match multiple tags that are present" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("112.05:100", 0.25, -1, 0, 0, Array("LCMS", "massbank"))
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.length == 2)
+        assert(result.head.score > 0.8)
+      }
+
+      "should match no spectra when tags are not present" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("81:100", 0.25, -1, 0, 0, Array("LCMS", "HMDB"))
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.length == 0)
+      }
+    }
 
     "perform a simple peak search" in {
       val request: PeakSearchRequest = PeakSearchRequest(Array(108, 126), 1)
