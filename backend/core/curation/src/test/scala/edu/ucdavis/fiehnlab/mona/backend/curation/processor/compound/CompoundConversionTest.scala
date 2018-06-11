@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound
 
 import org.openscience.cdk.interfaces.IAtomContainer
+import org.openscience.cdk.validate.CDKValidator
 import org.scalatest.WordSpec
 
 /**
@@ -27,6 +28,20 @@ class CompoundConversionTest extends WordSpec {
 
         assert(compoundConversion.moleculeToSMILES(molecule) == value)
       }
+    }
+
+    "generate a valid SMILES with [N+] for InChI=1S/C26H55NO7P/c1-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-26(29)32-23-25(28)24-34-35(30,31)33-22-21-27(2,3)4/h25,28H,5-24H2,1-4H3,(H,30,31)/t25-/m1/s1" in {
+      // TODO Identify charge issues with the following InChI
+      // https://bitbucket.org/fiehnlab/mona/issues/204/smiles-is-missing-symbol-should-be-n-not-n
+      val molecule: IAtomContainer = compoundConversion.inchiToMolecule("InChI=1S/C26H55NO7P/c1-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-26(29)32-23-25(28)24-34-35(30,31)33-22-21-27(2,3)4/h25,28H,5-24H2,1-4H3,(H,30,31)/t25-/m1/s1")
+
+      val x = new CDKValidator().validateMolecule(molecule)
+      println(x.getCount)
+      println(x.getErrorCount)
+      println(x.getOKCount)
+      println(x.getWarningCount)
+
+      assert(compoundConversion.moleculeToSMILES(molecule) == "O=C(OCC(O)COP(=O)(O)OCC[N](C)(C)C)CCCCCCCCCCCCCCCCC")
     }
   }
 }
