@@ -44,20 +44,17 @@ class SimilaritySearchService extends LazyLogging {
 
     logger.info(s"Search discovered ${results.length} hits")
 
-    // Filter by precursor m/z if available, sort by score and return SearchResult objects
-    if (request.precursorMZ > 0.0) {
-      filterSimilaritySearchResults(request, results)
-        .filter(x => request.tags == null || request.tags.forall(t => x.hit.tags.contains(t)))
-        .sortBy(-_.score)
-        .take(size)
-        .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
-    } else {
-      results
-        .filter(x => request.tags == null || request.tags.forall(t => x.hit.tags.contains(t)))
-        .sortBy(-_.score)
-        .take(size)
-        .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
-    }
+    // Filter by precursor m/z if available
+    (if (request.precursorMZ > 0.0) filterSimilaritySearchResults(request, results) else results)
+
+      // Filter by tags
+      .filter(x => request.requiredTags == null || request.requiredTags.forall(t => x.hit.tags.contains(t)))
+      .filter(x => request.filterTags == null || request.filterTags.isEmpty || request.filterTags.exists(t => x.hit.tags.contains(t)))
+
+      // Sort by score and return SearchResult objects
+      .sortBy(-_.score)
+      .take(size)
+      .map(x => SearchResult(spectrumMongoRepository.findOne(x.hit.id), x.score))
   }
 
   /**
