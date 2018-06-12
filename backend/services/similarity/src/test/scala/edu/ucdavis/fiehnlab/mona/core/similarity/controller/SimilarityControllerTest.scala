@@ -151,7 +151,7 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
 
     "perform similarity queries with precursor filtering and tag filtering" should {
       "use absolute tolerance with present" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("LCMS"))
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("LCMS"), Array())
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.length == 1)
@@ -159,7 +159,7 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
       }
 
       "use absolute tolerance with non-present tag" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("GCMS"))
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("108.0204:4.934837 126.0308:0.502892 133.0156:34.528632 150.042:100", 0.25, 150.0421, 0.01, 0, Array("GCMS"), Array())
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.isEmpty)
@@ -168,7 +168,7 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
 
     "perform similarity queries with multi-tag filtering" should {
       "match multiple tags that are present" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("112.05:100", 0.25, -1, 0, 0, Array("LCMS", "massbank"))
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("112.05:100", 0.25, -1, 0, 0, Array("LCMS", "massbank"), Array())
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.length == 2)
@@ -176,10 +176,18 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
       }
 
       "should match no spectra when tags are not present" in {
-        val request: SimilaritySearchRequest = SimilaritySearchRequest("81:100", 0.25, -1, 0, 0, Array("LCMS", "HMDB"))
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("112.05:100", 0.25, -1, 0, 0, Array("LCMS", "HMDB"), Array())
         val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
 
         assert(result.length == 0)
+      }
+
+      "should match spectra with filter tags" in {
+        val request: SimilaritySearchRequest = SimilaritySearchRequest("112.05:100", 0.25, -1, 0, 0, Array("LCMS"), Array("massbank", "HMDB"))
+        val result: Array[SearchResult] = given().contentType("application/json; charset=UTF-8").body(request).when().post("/search").`then`().statusCode(200).extract().body().as(classOf[Array[SearchResult]])
+
+        assert(result.length == 2)
+        assert(result.head.score > 0.8)
       }
     }
 
