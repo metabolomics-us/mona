@@ -64,17 +64,21 @@ object SpectrumUtils {
     * @return
     */
   def stringToIons(spectrum: String, normalizeSpectrum: Boolean = false): Array[Ion] = {
-    var ions: Array[Ion] = spectrum
-      .split(' ')
-      .map(_.split(':'))
-      .map(ion => Ion(ion(0).toDouble, ion(1).toDouble))
-      .sortBy(_.mz)
-
-    if (normalizeSpectrum) {
-      val maxIntensity: Double = ions.map(_.intensity).max
-      ions.map(ion => ion.copy(intensity = 100 * ion.intensity / maxIntensity))
+    if (spectrum.isEmpty) {
+      Array()
     } else {
-      ions
+      val ions: Array[Ion] = spectrum
+        .split(' ')
+        .map(_.split(':'))
+        .map(ion => Ion(ion(0).toDouble, ion(1).toDouble))
+        .sortBy(_.mz)
+
+      if (normalizeSpectrum) {
+        val maxIntensity: Double = ions.map(_.intensity).max
+        ions.map(ion => ion.copy(intensity = 100 * ion.intensity / maxIntensity))
+      } else {
+        ions
+      }
     }
   }
 
