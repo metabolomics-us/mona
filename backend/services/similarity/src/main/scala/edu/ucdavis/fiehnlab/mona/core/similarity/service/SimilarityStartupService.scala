@@ -49,7 +49,7 @@ class SimilarityStartupService extends ApplicationListener[ApplicationReadyEvent
         case _: Throwable => indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, tags), indexName, indexType)
       }
     } else {
-      indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum), indexName, indexType)
+      indexUtils.addToIndex(new SimpleSpectrum(spectrum.id, spectrum.spectrum, tags), indexName, indexType)
     }
   }
 
