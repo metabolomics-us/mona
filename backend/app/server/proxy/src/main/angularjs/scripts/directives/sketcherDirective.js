@@ -86,19 +86,23 @@
 
                         if (angular.isDefined(model)) {
                             if (angular.isDefined(model.molFile) || (angular.isString(model) && model.indexOf('M  END') > -1)) {
+                                // Load and sanitize MOL file
                                 var molFile = angular.isDefined(model.molFile) ? model.molFile : model;
+                                $log.debug('rendering mol file: \n' + molFile);
+
+                                molFile = molFile.split('$$$$')[0];
+
+                                if (molFile.indexOf('\n') > 0) {
+                                    molFile = "\n" + molFile + "\n";
+                                }
+
+                                if (molFile[molFile.length - 1] != '\n') {
+                                    molFile += '\n';
+                                }
 
                                 try {
-                                    //$log.debug('rendering mol file: \n' + molFile);
-
-                                    if (molFile.indexOf('\n') > 0) {
-                                        var mol = ChemDoodle.readMOL("\n" + molFile + "\n");
-                                        sketcher.loadMolecule(mol);
-                                    }
-                                    else {
-                                        var mol = ChemDoodle.readMOL(molFile);
-                                        sketcher.loadMolecule(mol);
-                                    }
+                                    var mol = ChemDoodle.readMOL(molFile);
+                                    sketcher.loadMolecule(mol);
                                     sketcher.repaint();
                                 } catch (e) {
                                     $log.warn('problem rendering mol file:\n\n' + molFile);
