@@ -168,7 +168,6 @@ class MSPWriter extends DomainWriter {
     buildMetaData(spectrum.metaData, "Ion_mode", "ionization mode", p, x => x.charAt(0).toUpper.toString)
     buildMetaData(spectrum.metaData, "Collision_energy", "collision energy", p)
     buildMetaData(spectrum.metaData, "Retention_index", "retention index", p)
-    buildCompoundMetaData(spectrum, "InChIKey", "InChIKey", p)
     buildCompoundMetaData(spectrum, "Formula", "molecular formula", p)
     buildCompoundMetaData(spectrum, "MW", "total exact mass", p, x => (x.toDouble + 0.2).toInt.toString)
     buildCompoundMetaData(spectrum, "ExactMass", "total exact mass", p)
