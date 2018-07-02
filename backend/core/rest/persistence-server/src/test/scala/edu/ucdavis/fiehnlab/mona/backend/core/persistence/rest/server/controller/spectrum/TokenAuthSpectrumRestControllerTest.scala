@@ -202,7 +202,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         assert(count == 1)
       }
 
-      "we should be able to execute custom name queries at /rest/spectra/search using GET" ignore {
+      "we should be able to execute custom name queries at /rest/spectra/search using GET" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='Trigenolline'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 1)
 
@@ -210,12 +210,12 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         assert(count == 1)
       }
 
-      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" ignore {
+      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-        assert(exampleRecords.length == 21)
+         assert(exampleRecords.length == 20)
 
         val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
-        assert(count == 21)
+        assert(count == 20)
       }
 
 
