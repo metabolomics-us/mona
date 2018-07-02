@@ -308,8 +308,11 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
         eventually(timeout(10 seconds)) {
-          //should not exist anymore
+          // should not exist anymore
           given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").`then`().statusCode(404)
+
+          // wait for elastic to sync
+          assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
         }
       }
 
@@ -326,7 +329,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
           assert(spectrumRepository.count() == repositoryCount - 1)
           assert(spectrumMongoRepository.count() == mongoRepositoryCount - 1)
-          assert(spectrumMongoRepository.count() == elasticRepositoryCount - 1)
+          assert(spectrumElasticRepository.count() == elasticRepositoryCount - 1)
         }
       }
     }
