@@ -196,7 +196,7 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
         }
       }
 
-      "be able to download a specific query from the remote, with a large amount of results" in {
+      "be able to download a specific query from the remote, with a large amount of results" ignore {
         spectrumPersistenceService.deleteAll()
 
         eventually(timeout(50 seconds)) {
