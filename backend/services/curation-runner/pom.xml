@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
     <artifactId>curation-runner</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>curation-runner</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>services</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <description>

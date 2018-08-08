@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.app</groupId>
     <artifactId>webhooks-client</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>webhooks-client</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend.app</groupId>
         <artifactId>clients</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <dependencies>

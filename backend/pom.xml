@@ -6,7 +6,7 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona</groupId>
     <artifactId>backend</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>backend</name>
 
     <parent>
@@ -26,6 +26,7 @@
 
     <properties>
         <docker.imagePrefix>mona</docker.imagePrefix>
+        <revision>2.0.0-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
@@ -88,63 +89,63 @@
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>amqp</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>auth</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>auth</artifactId>
                 <type>test-jar</type>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
                 <artifactId>api</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
                 <artifactId>jwt</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>client</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>client</artifactId>
                 <type>test-jar</type>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>curation</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>domain</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>domain</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
                 <scope>test</scope>
                 <type>test-jar</type>
             </dependency>
@@ -152,25 +153,25 @@
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.io</groupId>
                 <artifactId>massbank</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>persistence</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
                 <artifactId>elastic</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
                 <artifactId>elastic</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -178,20 +179,20 @@
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
                 <artifactId>mongo</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
                 <artifactId>mongo</artifactId>
                 <type>test-jar</type>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
                 <artifactId>rsql</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
@@ -199,19 +200,19 @@
                 <artifactId>rsql</artifactId>
                 <scope>test</scope>
                 <type>test-jar</type>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.persistence</groupId>
                 <artifactId>service</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
                 <artifactId>api-server</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
@@ -219,26 +220,26 @@
                 <artifactId>api-server</artifactId>
                 <scope>test</scope>
                 <type>test-jar</type>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
                 <artifactId>auth-server</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
                 <artifactId>persistence-server</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
                 <artifactId>persistence-server</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -246,25 +247,25 @@
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>statistics</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
                 <artifactId>workflow</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
                 <artifactId>downloader</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>edu.ucdavis.fiehnlab.mona.backend.services</groupId>
                 <artifactId>webhooks-server</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

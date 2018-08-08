@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
     <artifactId>jwt</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>jwt</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
         <artifactId>auth</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <dependencies>

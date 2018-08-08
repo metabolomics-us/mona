@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
     <artifactId>domain</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>domain</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend</groupId>
         <artifactId>core</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <description>This module contains the basic domain classes and shared utility classes</description>
