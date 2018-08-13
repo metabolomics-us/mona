@@ -6,13 +6,13 @@
 
     <groupId>edu.ucdavis.fiehnlab.mona.backend.app.clients</groupId>
     <artifactId>uploader</artifactId>
-    <version>${revision}</version>
+    <version>2.0.0-SNAPSHOT</version>
     <name>uploader</name>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab.mona.backend.app</groupId>
         <artifactId>clients</artifactId>
-        <version>${revision}</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <packaging>jar</packaging>
