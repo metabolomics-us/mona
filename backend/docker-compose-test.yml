@@ -2,13 +2,13 @@ version: '3'
 
 services:
   mongodb:
-    image: mongo:3.2.4
+    image: mongo:3.4
     ports:
       - 27017:27017
 
   elasticsearch:
-    image: elasticsearch:2.4
-    command: [ elasticsearch, -Dhttp.cors.enabled=true, -Dhttp.cors.allow-origin=* ]
+    image: elasticsearch:5.6
+    command: [ elasticsearch, -Ehttp.cors.enabled=true, -Ehttp.cors.allow-origin=* ]
     ports:
        - 9200:9200
        - 9300:9300
@@ -19,7 +19,7 @@ services:
      - 9100:9100
 
   rabbitmq:
-    image: rabbitmq:3.6-management
+    image: rabbitmq:3.7-management
     hostname: rabbitmq
     ports:
       - 5672:5672
