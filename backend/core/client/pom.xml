@@ -52,7 +52,6 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.rest</groupId>
             <artifactId>auth-server</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
