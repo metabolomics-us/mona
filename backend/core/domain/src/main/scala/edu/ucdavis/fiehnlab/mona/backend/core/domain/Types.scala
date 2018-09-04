@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain.annotation.{AnalyzedStringS
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.NumberDeserializer
 import org.hibernate.validator.constraints.NotEmpty
 import org.springframework.data.annotation.Id
-import org.springframework.data.elasticsearch.annotations.{Field, FieldIndex, FieldType}
+import org.springframework.data.elasticsearch.annotations.{Field, FieldType}
 import org.springframework.data.mongodb.core.index.{Indexed, TextIndexed}
 import org.springframework.data.mongodb.core.mapping.Document
 
@@ -33,16 +33,16 @@ case class MetaData(
                      @(Indexed@field)
                      @(TextIndexed@field)
                      @(AnalyzedStringSerialize@field)
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.Keyword)
                      name: String,
 
                      score: Score,
 
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.Keyword)
                      @(Indexed@field)
                      unit: String,
 
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.Keyword)
                      url: String,
 
                      /**
@@ -61,18 +61,18 @@ case class MetaData(
 
 case class Names(
                   @(Indexed@field)
-                  @(Field@field)(`type` = FieldType.Boolean, index = FieldIndex.not_analyzed)
+                  @(Field@field)(`type` = FieldType.Boolean)
                   computed: Boolean,
 
                   @(Indexed@field)
                   @(TextIndexed@field)
                   @(AnalyzedStringSerialize@field)
-                  @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                  @(Field@field)(`type` = FieldType.Keyword)
                   name: String,
 
                   score: Double,
 
-                  @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                  @(Field@field)(`type` = FieldType.Keyword)
                   source: String
                 )
 
@@ -84,7 +84,7 @@ case class Tags(
                  @(Indexed@field)
                  @(TextIndexed@field)
                  @(AnalyzedStringSerialize@field)
-                 @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                 @(Field@field)(`type` = FieldType.Keyword)
                  text: String
                )
 
@@ -105,13 +105,13 @@ case class Tags(
   */
 case class Compound(
                      @Deprecated
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.Keyword)
                      inchi: String,
 
                      @Deprecated
                      @(Indexed@field)
                      @(TextIndexed@field)
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.Keyword)
                      inchiKey: String,
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
@@ -131,7 +131,7 @@ case class Compound(
                      @(Field@field)(`type` = FieldType.Object)
                      score: Score,
 
-                     @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                     @(Field@field)(`type` = FieldType.Keyword)
                      kind: String = "biological",
 
                      @(Field@field)(`type` = FieldType.Nested, includeInParent = true)
@@ -148,19 +148,19 @@ case class Score(
                 )
 
 case class Splash(
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   @(Field@field)(`type` = FieldType.Keyword)
                    block1: String, //ns
 
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   @(Field@field)(`type` = FieldType.Keyword)
                    block2: String, //ns
 
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   @(Field@field)(`type` = FieldType.Keyword)
                    block3: String, //ns
 
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   @(Field@field)(`type` = FieldType.Keyword)
                    block4: String, //ns
 
-                   @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                   @(Field@field)(`type` = FieldType.Keyword)
                    @(Indexed@field)
                    @(TextIndexed@field)
                    splash: String
@@ -185,27 +185,27 @@ case class Submitter(
                       @(Id@field)
                       @(Indexed@field)
                       @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                      @(Field@field)(`type` = FieldType.Keyword)
                       id: String,
 
                       @(Indexed@field)
                       @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                      @(Field@field)(`type` = FieldType.Keyword)
                       emailAddress: String,
 
                       @(Indexed@field)
                       @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                      @(Field@field)(`type` = FieldType.Keyword)
                       firstName: String,
 
                       @(Indexed@field)
                       @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                      @(Field@field)(`type` = FieldType.Keyword)
                       lastName: String,
 
                       @(Indexed@field)
                       @(TextIndexed@field)
-                      @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                      @(Field@field)(`type` = FieldType.Keyword)
                       institution: String
                     )
 
@@ -277,7 +277,7 @@ case class Spectrum(
 
                      @(NotNull@field)
                      @(NotEmpty@field)
-                     @(Field@field)(`type` = FieldType.String)
+                     @(Field@field)(`type` = FieldType.Text)
                      spectrum: String,
 
                      @(Field@field)(`type` = FieldType.Object)
@@ -386,12 +386,12 @@ case class LegacySpectrum(
 case class Library(
                     @(Indexed@field)
                     @(TextIndexed@field)
-                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                    @(Field@field)(`type` = FieldType.Keyword)
                     id: String,
 
                     @(Indexed@field)
                     @(TextIndexed@field)
-                    @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
+                    @(Field@field)(`type` = FieldType.Keyword)
                     library: String,
 
                     description: String,

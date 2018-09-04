@@ -24,14 +24,14 @@ abstract class DynamicIterable[T, Q](val query: Q, val fetchSize: Int = 10, val 
     * @return
     */
   override def iterator: java.util.Iterator[T] = new java.util.Iterator[T] {
-    var result: Page[T] = fetchMoreData(query, new PageRequest(0, fetchSize))
+    var result: Page[T] = fetchMoreData(query, PageRequest.of(0, fetchSize))
     var it: util.Iterator[T] = result.iterator()
     var page: Int = 1
 
     override def hasNext: Boolean = {
       if (!it.hasNext) {
         logger.debug(s"fetching new set of data, page ${result.getNumber} is exhausted, fetch size is $fetchSize")
-        result = fetchMoreData(query, new PageRequest(page, fetchSize))
+        result = fetchMoreData(query, PageRequest.of(page, fetchSize))
         it = result.iterator()
         page = page + 1
 
