@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository
 
 import java.lang.Iterable
+import java.util.Optional
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.User
@@ -36,25 +37,27 @@ class UserRepository extends PagingAndSortingRepository[User, String] with LazyL
 
   override def findAll(sort: Sort): Iterable[User] = userRepository.findAll(sort)
 
-  override def delete(id: String): Unit = userRepository.delete(id)
+  override def deleteById(id: String): Unit = userRepository.deleteById(id)
 
-  override def findOne(id: String): User = userRepository.findOne(id)
+  def findOne(id: String): User = findById(id).orElse(null)
+
+  override def findById(id: String): Optional[User] = userRepository.findById(id)
 
   override def findAll(): Iterable[User] = userRepository.findAll()
 
-  override def delete(iterable: Iterable[_ <: User]): Unit = userRepository.delete(iterable)
+  override def deleteAll(iterable: Iterable[_ <: User]): Unit = userRepository.deleteAll(iterable)
 
   override def deleteAll(): Unit = userRepository.deleteAll()
 
-  override def findAll(iterable: Iterable[String]): Iterable[User] = userRepository.findAll(iterable)
+  override def findAllById(iterable: Iterable[String]): Iterable[User] = userRepository.findAllById(iterable)
 
-  override def exists(id: String): Boolean = userRepository.exists(id)
+  override def existsById(id: String): Boolean = userRepository.existsById(id)
 
   override def count(): Long = userRepository.count()
 
   override def delete(t: User): Unit = userRepository.delete(t)
 
-  override def save[S <: User](iterable: Iterable[S]): Iterable[S] = userRepository.save(iterable)
+  override def saveAll[S <: User](iterable: Iterable[S]): Iterable[S] = userRepository.saveAll(iterable)
 
   override def save[S <: User](s: S): S = {
     if (s.password.matches("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}")) {

@@ -14,9 +14,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.Sp
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.MediaType
 import org.springframework.test.context.TestContextManager

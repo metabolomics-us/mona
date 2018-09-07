@@ -1,17 +1,18 @@
 package edu.ucdavis.fiehnlab.mona.app.server.proxy
 
 import java.io.IOException
-import javax.servlet.MultipartConfigElement
 
 import com.netflix.zuul.ZuulFilter
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.{LoggableDispatcherServlet, LoggingService}
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.swagger.SwaggerRedirectFilter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
+import javax.servlet.MultipartConfigElement
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.web.{DispatcherServletAutoConfiguration, ResourceProperties}
+import org.springframework.boot.autoconfigure.web.ResourceProperties
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
 import org.springframework.boot.web.servlet.{MultipartConfigFactory, ServletRegistrationBean}
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy
@@ -22,7 +23,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.stereotype.Controller
 import org.springframework.web.servlet.DispatcherServlet
-import org.springframework.web.servlet.config.annotation.{CorsRegistry, ResourceHandlerRegistry, WebMvcConfigurerAdapter}
+import org.springframework.web.servlet.config.annotation.{CorsRegistry, ResourceHandlerRegistry, WebMvcConfigurer}
 import org.springframework.web.servlet.resource.PathResourceResolver
 
 /**
@@ -59,8 +60,8 @@ class ProxyServer {
   }
 
   @Bean
-  def dispatcherRegistration: ServletRegistrationBean = {
-    val servletRegistrationBean: ServletRegistrationBean = new ServletRegistrationBean(dispatcherServlet)
+  def dispatcherRegistration: ServletRegistrationBean[DispatcherServlet] = {
+    val servletRegistrationBean: ServletRegistrationBean[DispatcherServlet] = new ServletRegistrationBean(dispatcherServlet)
     servletRegistrationBean.setMultipartConfig(multipartConfigElement)
     servletRegistrationBean
   }
@@ -72,7 +73,7 @@ class ProxyServer {
 }
 
 @Configuration
-class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
+class CorsConfig extends WebMvcConfigurer with LazyLogging {
 
   @Autowired
   val resourceProperties: ResourceProperties = null
@@ -91,12 +92,12 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
       "/rest/**", "/**/v2/api-docs"
     )
       .addResourceLocations(resourceProperties.getStaticLocations: _*)
-      .setCachePeriod(resourceProperties.getCachePeriod)
+      .setCachePeriod(resourceProperties.getCache.getPeriod.getSeconds.toInt)
 
     // Handle all other paths with angular
     registry.addResourceHandler("/**")
       .addResourceLocations(resourceProperties.getStaticLocations.map(x => x + "index.html"): _*)
-      .setCachePeriod(resourceProperties.getCachePeriod)
+      .setCachePeriod(resourceProperties.getCache.getPeriod.getSeconds.toInt)
       .resourceChain(true)
       .addResolver(new PathResourceResolver() {
         @throws(classOf[IOException])

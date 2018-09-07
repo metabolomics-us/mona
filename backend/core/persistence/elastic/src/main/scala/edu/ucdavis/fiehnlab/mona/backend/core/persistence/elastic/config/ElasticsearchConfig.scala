@@ -24,9 +24,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 class ElasticsearchConfig extends LazyLogging {
 
   /**
-    * this defines our custom wired elastic search template
-    *
-    * @return
+    * defines our custom wired elastic search template
     */
   @Bean
   def elasticsearchTemplate(elasticClient: Client): ElasticsearchTemplate = {

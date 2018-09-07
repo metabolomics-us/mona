@@ -123,10 +123,10 @@ class WebHookService extends LazyLogging {
             case e: HttpClientErrorException =>
               if (e.getMessage == "404 Not Found") {
                 //spectra does not exit, now we can delete it safely
-                val spectrum = spectrumPersistenceService.findOne(id)
+                val spectrum = spectrumPersistenceService.findById(id)
 
                 if (spectrum != null) {
-                  spectrumPersistenceService.delete(id)
+                  spectrumPersistenceService.deleteById(id)
                   new ResponseEntity[Any](HttpStatus.OK)
                 } else {
                   new ResponseEntity[Any](s"sorry this spectra ($id) did not exist on the local server", HttpStatus.NOT_FOUND)

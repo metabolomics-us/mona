@@ -50,7 +50,7 @@ class SpectrumElasticRepositoryCustomTest extends RSQLRepositoryCustomTest[Spect
       val query: String = """tags.text=="test - unknown - unknown - positive""""
 
       getRepository.save(spectrum.copy(id = "test", tags = spectrum.tags ++ Array(Tags(ruleBased = false, "test - unknown - unknown - positive"))))
-      assert(getRepository.exists("test"))
+      assert(getRepository.existsById("test"))
 
       val result = getRepository.query(query, "")
       assert(result.size() == 1)

@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.statistics.service
 
 import java.util.Date
 
-import com.mongodb.{BasicDBObject, DBObject}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation._
-import org.springframework.data.mongodb.core.aggregation.{AggregationOperation, AggregationOperationContext}
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
@@ -66,19 +64,9 @@ class StatisticsService extends LazyLogging {
           unwind("compound"),
           unwind("compound.metaData"),
           `match`(Criteria.where("compound.metaData.name").is("InChIKey")),
-          project().and("compound.metaData.value").as("value"),
 
           // Get first InChIKey block and group
-          new AggregationOperation() {
-            override def toDBObject(context: AggregationOperationContext): DBObject =
-              context.getMappedObject(new BasicDBObject(
-                "$project", new BasicDBObject(
-                  "value", new BasicDBObject(
-                    "$substr", Array("$value", 0, 14)
-                  )
-                )
-              ))
-          },
+          project().and("compound.metaData.value").substring(0, 14).as("value"),
 
           group("value"),
           group().count().as("count")

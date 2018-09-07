@@ -45,7 +45,7 @@ class StatisticsServiceTest extends WordSpec with LazyLogging {
       spectrumMongoRepository.deleteAll()
       globalStatisticsRepository.deleteAll()
 
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
+      exampleRecords.foreach(spectrumMongoRepository.save)
       assert(spectrumMongoRepository.count() == 50)
     }
 

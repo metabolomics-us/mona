@@ -42,14 +42,14 @@ class SubmitterStatisticsServiceTest extends WordSpec with LazyLogging {
       val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
       spectrumMongoRepository.deleteAll()
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
+      exampleRecords.foreach(spectrumMongoRepository.save)
       assert(spectrumMongoRepository.count() == 58)
     }
 
     "load data curatedRecords.json" in {
       val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
+      exampleRecords.foreach(spectrumMongoRepository.save)
       assert(spectrumMongoRepository.count() == 108)
     }
 

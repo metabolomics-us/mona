@@ -10,5 +10,5 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
   */
 @ComponentScan(Array("edu.ucdavis.fiehnlab.mona.backend.core.statistics"))
 @Configuration
-@EnableMongoRepositories(basePackageClasses = Array(classOf[IStatisticsMongoRepository], classOf[MetaDataStatisticsMongoRepository], classOf[TagStatisticsMongoRepository]), excludeFilters = Array())
+@EnableMongoRepositories(basePackageClasses = Array(classOf[IStatisticsMongoRepository], classOf[MetaDataStatisticsMongoRepository], classOf[TagStatisticsMongoRepository]))
 class StatisticsRepositoryConfig

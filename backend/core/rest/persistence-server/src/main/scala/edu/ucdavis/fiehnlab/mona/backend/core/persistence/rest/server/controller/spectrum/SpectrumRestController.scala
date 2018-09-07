@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.spectrum
 
+import java.util.Optional
 import java.util.concurrent.Future
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, WrappedString}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.PagingAndSortingRepository
@@ -19,7 +20,6 @@ import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestMapping, _}
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuffer
 
 @CrossOrigin
 @RestController
@@ -51,7 +51,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
   private def validateSpectrum(spectrum: String): Boolean = {
     val splash: String = SplashUtil.splash(spectrum, SpectraType.MS)
 
-    !blacklistedSplashRepository.exists(splash)
+    !blacklistedSplashRepository.existsById(splash)
   }
 
 
@@ -71,12 +71,13 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
                  @RequestParam(value = "text", required = false) textQuery: WrappedString,
                  request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
 
+
     def sendQuery(rsqlQuery: String, textQuery: String, page: Integer, size: Integer): Iterable[Spectrum] = {
       if (size != null) {
         if (page != null) {
-          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(page, size)).getContent.asScala
+          spectrumPersistenceService.findAll(rsqlQuery, textQuery, PageRequest.of(page, size)).getContent.asScala
         } else {
-          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(0, size)).getContent.asScala
+          spectrumPersistenceService.findAll(rsqlQuery, textQuery, PageRequest.of(0, size)).getContent.asScala
         }
       } else {
         spectrumPersistenceService.findAll(rsqlQuery, textQuery).asScala
@@ -128,7 +129,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username)
+    val existingSubmitter: Optional[Submitter] = submitterMongoRepository.findById(loginInfo.username)
 
     // Return a 422 Unprocessable Entity error if the spectrum is not valid
     if (!validateSpectrum(spectrum.spectrum)) {
@@ -137,34 +138,34 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
     // Admins can save anything
     else if (loginInfo.roles.contains("ADMIN")) {
-      val existingSpectrum: Spectrum = getRepository.findOne(spectrum.id)
+      val existingSpectrum: Optional[Spectrum] = getRepository.findById(spectrum.id)
 
-      if (existingSpectrum == null) {
+      if (!existingSpectrum.isPresent) {
         super.doSave(spectrum)
       } else {
-        super.doSave(spectrum.copy(dateCreated = existingSpectrum.dateCreated))
+        super.doSave(spectrum.copy(dateCreated = existingSpectrum.get().dateCreated))
       }
     }
 
     // If a user has no submitter information, we cannot accept the spectrum
-    else if (existingSubmitter == null) {
+    else if (!existingSubmitter.isPresent) {
       new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.FORBIDDEN))
     }
 
     // If no id is provided, a new record can be added with no issues
     else if (spectrum.id == null || spectrum.id.isEmpty) {
-      super.doSave(spectrum.copy(id = null, submitter = existingSubmitter))
+      super.doSave(spectrum.copy(id = null, submitter = existingSubmitter.get()))
     }
 
     // Check whether a spectrum with the given id exists.  If it does, the submitter
     // must own it to update it.  Otherwise, the request is not allowed
     else {
-      val existingSpectrum: Spectrum = getRepository.findOne(spectrum.id)
+      val existingSpectrum: Optional[Spectrum] = getRepository.findById(spectrum.id)
 
-      if (existingSpectrum == null) {
-        super.doSave(spectrum.copy(submitter = existingSubmitter))
-      } else if (existingSpectrum.submitter.id == loginInfo.username) {
-        super.doSave(spectrum.copy(dateCreated = existingSpectrum.dateCreated, submitter = existingSubmitter))
+      if (!existingSpectrum.isPresent) {
+        super.doSave(spectrum.copy(submitter = existingSubmitter.get()))
+      } else if (existingSpectrum.get().submitter.id == loginInfo.username) {
+        super.doSave(spectrum.copy(dateCreated = existingSpectrum.get().dateCreated, submitter = existingSubmitter.get()))
       } else {
         new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.CONFLICT))
       }
@@ -184,7 +185,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     val token: String = httpServletRequest.getHeader("Authorization").split(" ").last
     val loginInfo: LoginInfo = loginService.info(token)
 
-    val existingSubmitter: Submitter = submitterMongoRepository.findById(loginInfo.username)
+    val existingSubmitter: Optional[Submitter] = submitterMongoRepository.findById(loginInfo.username)
 
     // Return a 422 Unprocessable Entity error if the spectrum is not valid
     if (!validateSpectrum(spectrum.spectrum)) {
@@ -193,22 +194,22 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
     // Admins can save anything
     else if (loginInfo.roles.contains("ADMIN")) {
-      val existingOldSpectrum: Spectrum = getRepository.findOne(spectrum.id)
-      val existingNewSpectrum: Spectrum = getRepository.findOne(id)
+      val existingOldSpectrum: Optional[Spectrum] = getRepository.findById(spectrum.id)
+      val existingNewSpectrum: Optional[Spectrum] = getRepository.findById(id)
 
       if (spectrum.id == null || spectrum.id == "" || spectrum.id == id) {
-        if (existingOldSpectrum == null) {
+        if (!existingOldSpectrum.isPresent) {
           super.doSave(spectrum.copy(id = id))
         } else {
-          super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated))
+          super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.get().dateCreated))
         }
       } else {
-        getRepository.delete(spectrum.id)
+        getRepository.deleteById(spectrum.id)
 
-        if (existingOldSpectrum != null) {
-          super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated))
-        } else if (existingNewSpectrum != null) {
-          super.doSave(spectrum.copy(id = id, dateCreated = existingNewSpectrum.dateCreated))
+        if (!existingOldSpectrum.isPresent) {
+          super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.get().dateCreated))
+        } else if (existingNewSpectrum.isPresent) {
+          super.doSave(spectrum.copy(id = id, dateCreated = existingNewSpectrum.get().dateCreated))
         } else {
           super.doSave(spectrum.copy(id = id))
         }
@@ -216,21 +217,21 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
     }
 
     // If a user has no submitter information, we cannot accept the spectrum
-    else if (existingSubmitter == null) {
+    else if (!existingSubmitter.isPresent) {
       new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.FORBIDDEN))
     }
 
     // User should be able to update or change the id their own spectra
     else {
-      val existingOldSpectrum: Spectrum = getRepository.findOne(spectrum.id)
-      val existingNewSpectrum: Spectrum = getRepository.findOne(id)
+      val existingOldSpectrum: Optional[Spectrum] = getRepository.findById(spectrum.id)
+      val existingNewSpectrum: Optional[Spectrum] = getRepository.findById(id)
 
       // Handle the case of saving a new spectrum/updating record $id
       if (spectrum.id == null || spectrum.id.isEmpty || spectrum.id == id) {
-        if (existingOldSpectrum == null) {
-          super.doSave(spectrum.copy(id = id, submitter = existingSubmitter))
-        } else if (existingOldSpectrum.submitter == null || existingOldSpectrum.submitter.id == loginInfo.username) {
-          super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated, submitter = existingSubmitter))
+        if (!existingOldSpectrum.isPresent) {
+          super.doSave(spectrum.copy(id = id, submitter = existingSubmitter.get()))
+        } else if (existingOldSpectrum.get().submitter == null || existingOldSpectrum.get().submitter.id == loginInfo.username) {
+          super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.get().dateCreated, submitter = existingSubmitter.get()))
         } else {
           new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.FORBIDDEN))
         }
@@ -238,22 +239,22 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
       // Handle the case of differing ids
       else {
-        if (existingOldSpectrum != null && existingOldSpectrum.submitter.id != loginInfo.username) {
+        if (existingOldSpectrum.isPresent && existingOldSpectrum.get().submitter.id != loginInfo.username) {
           // Not allowed to delete old spectrum if it belongs to someone else
           new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.CONFLICT))
-        } else if (existingNewSpectrum != null && existingNewSpectrum.submitter.id != loginInfo.username) {
+        } else if (existingNewSpectrum.isPresent && existingNewSpectrum.get().submitter.id != loginInfo.username) {
           // Not allowed to update the new spectrum if it belongs to someone else
           new AsyncResult[ResponseEntity[Spectrum]](new ResponseEntity[Spectrum](HttpStatus.CONFLICT))
         } else {
-          getRepository.delete(spectrum.id)
+          getRepository.deleteById(spectrum.id)
 
           // Use the old dateCreated field
-          if (existingOldSpectrum != null) {
-            super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.dateCreated, submitter = existingSubmitter))
-          } else if (existingNewSpectrum != null) {
-            super.doSave(spectrum.copy(id = id, dateCreated = existingNewSpectrum.dateCreated, submitter = existingSubmitter))
+          if (existingOldSpectrum.isPresent) {
+            super.doSave(spectrum.copy(id = id, dateCreated = existingOldSpectrum.get().dateCreated, submitter = existingSubmitter.get()))
+          } else if (existingNewSpectrum.isPresent) {
+            super.doSave(spectrum.copy(id = id, dateCreated = existingNewSpectrum.get().dateCreated, submitter = existingSubmitter.get()))
           } else {
-            super.doSave(spectrum.copy(id = id, submitter = existingSubmitter))
+            super.doSave(spectrum.copy(id = id, submitter = existingSubmitter.get()))
           }
         }
       }

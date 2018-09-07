@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener
 
 import java.io.InputStreamReader
-import java.util.Date
+import java.util.{Date, Optional}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -44,7 +44,7 @@ class QueryExportListenerTest extends WordSpec with LazyLogging {
 
     "load some data" in {
       mongoRepository.deleteAll()
-      exampleRecords.foreach(mongoRepository.save(_))
+      exampleRecords.foreach(mongoRepository.save)
 
       predefinedQueryRepository.deleteAll()
       predefinedQueryRepository.save(PredefinedQuery("All Spectra", "", "", 0, null, null, null))
@@ -55,17 +55,17 @@ class QueryExportListenerTest extends WordSpec with LazyLogging {
 
       downloadListener.handleMessage(jsonExport)
 
-      val result: QueryExport = queryExportRepository.findOne(jsonExport.id)
-      assert(result != null)
-      assert(result.count == 58)
-      assert(result.size > 0)
+      val result: Optional[QueryExport] = queryExportRepository.findById(jsonExport.id)
+      assert(result.isPresent)
+      assert(result.get().count == 58)
+      assert(result.get().size > 0)
 
-      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
-      assert(predefinedQuery != null)
-      assert(predefinedQuery.jsonExport != null)
-      assert(predefinedQuery.jsonExport.id == jsonExport.id)
-      assert(predefinedQuery.mspExport == null)
-      assert(predefinedQuery.queryCount == 58)
+      val predefinedQuery: Optional[PredefinedQuery] = predefinedQueryRepository.findById(result.get().label)
+      assert(predefinedQuery.isPresent)
+      assert(predefinedQuery.get().jsonExport != null)
+      assert(predefinedQuery.get().jsonExport.id == jsonExport.id)
+      assert(predefinedQuery.get().mspExport == null)
+      assert(predefinedQuery.get().queryCount == 58)
     }
 
 
@@ -74,16 +74,16 @@ class QueryExportListenerTest extends WordSpec with LazyLogging {
 
       downloadListener.handleMessage(mspExport)
 
-      val result: QueryExport = queryExportRepository.findOne(mspExport.id)
-      assert(result != null)
-      assert(result.count == 58)
-      assert(result.size > 0)
+      val result: Optional[QueryExport] = queryExportRepository.findById(mspExport.id)
+      assert(result.isPresent)
+      assert(result.get().count == 58)
+      assert(result.get().size > 0)
 
-      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
-      assert(predefinedQuery != null)
-      assert(predefinedQuery.mspExport != null)
-      assert(predefinedQuery.mspExport.id == mspExport.id)
-      assert(predefinedQuery.queryCount == 58)
+      val predefinedQuery: Optional[PredefinedQuery] = predefinedQueryRepository.findById(result.get().label)
+      assert(predefinedQuery.isPresent)
+      assert(predefinedQuery.get().mspExport != null)
+      assert(predefinedQuery.get().mspExport.id == mspExport.id)
+      assert(predefinedQuery.get().queryCount == 58)
     }
 
 
@@ -92,16 +92,16 @@ class QueryExportListenerTest extends WordSpec with LazyLogging {
 
       downloadListener.handleMessage(sdfExport)
 
-      val result: QueryExport = queryExportRepository.findOne(sdfExport.id)
-      assert(result != null)
-      assert(result.count == 58)
-      assert(result.size > 0)
+      val result: Optional[QueryExport] = queryExportRepository.findById(sdfExport.id)
+      assert(result.isPresent)
+      assert(result.get().count == 58)
+      assert(result.get().size > 0)
 
-      val predefinedQuery: PredefinedQuery = predefinedQueryRepository.findOne(result.label)
-      assert(predefinedQuery != null)
-      assert(predefinedQuery.mspExport != null)
-      assert(predefinedQuery.mspExport.id == sdfExport.id)
-      assert(predefinedQuery.queryCount == 58)
+      val predefinedQuery: Optional[PredefinedQuery] = predefinedQueryRepository.findById(result.get().label)
+      assert(predefinedQuery.isPresent)
+      assert(predefinedQuery.get().mspExport != null)
+      assert(predefinedQuery.get().mspExport.id == sdfExport.id)
+      assert(predefinedQuery.get().queryCount == 58)
     }
   }
 }

@@ -52,9 +52,9 @@ abstract class GenericRESTController[T] {
     val data: Iterable[T] = {
       if (size != null) {
         if (page != null) {
-          getRepository.findAll(new PageRequest(page, size, Sort.Direction.ASC, "id")).getContent.asScala
+          getRepository.findAll(PageRequest.of(page, size, Sort.Direction.ASC, "id")).getContent.asScala
         } else {
-          getRepository.findAll(new PageRequest(0, size, Sort.Direction.ASC, "id")).getContent.asScala
+          getRepository.findAll(PageRequest.of(0, size, Sort.Direction.ASC, "id")).getContent.asScala
         }
       } else {
         new DynamicIterable[T, String]("", fetchSize) {
@@ -121,8 +121,8 @@ abstract class GenericRESTController[T] {
     val headers = new HttpHeaders()
     // headers.add("Content-Type", servletRequest.getContentType)
 
-    if (getRepository.exists(id)) {
-      new AsyncResult[ResponseEntity[T]](new ResponseEntity[T](getRepository.findOne(id), headers, HttpStatus.OK))
+    if (getRepository.existsById(id)) {
+      new AsyncResult[ResponseEntity[T]](new ResponseEntity[T](getRepository.findById(id).get(), headers, HttpStatus.OK))
     } else {
       new AsyncResult[ResponseEntity[T]](new ResponseEntity[T](HttpStatus.NOT_FOUND))
     }
@@ -140,7 +140,7 @@ abstract class GenericRESTController[T] {
   @ResponseBody
   final def delete(@PathVariable("id") id: String): Unit = doDelete(id)
 
-  def doDelete(id: String): Unit = getRepository.delete(id)
+  def doDelete(id: String): Unit = getRepository.deleteById(id)
 
 
   /**

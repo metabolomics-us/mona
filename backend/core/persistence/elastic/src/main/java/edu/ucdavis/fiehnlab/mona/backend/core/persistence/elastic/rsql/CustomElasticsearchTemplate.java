@@ -4,14 +4,14 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.highlight.HighlightBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.data.domain.Page;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.EntityMapper;
 import org.springframework.data.elasticsearch.core.SearchResultMapper;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
+import org.springframework.data.elasticsearch.core.facet.FacetRequest;
 import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.util.Assert;
 
@@ -25,6 +25,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * TODO Must be updated upon any change of spring-data-elasticsearch module
  */
 public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
+
+    private static final String FIELD_SCORE = "_score";
 
     public CustomElasticsearchTemplate(Client client, EntityMapper entityMapper) {
         super(client, entityMapper);
@@ -41,17 +43,20 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
             }
         }
 
-        if (!isEmpty(searchQuery.getScriptFields())) {
-            searchRequest.addField("_source");
+        if (!searchQuery.getScriptFields().isEmpty()) {
+            //_source should be return all the time
+            //searchRequest.addStoredField("_source");
             for (ScriptField scriptedField : searchQuery.getScriptFields()) {
                 searchRequest.addScriptField(scriptedField.fieldName(), scriptedField.script());
             }
         }
 
         if (searchQuery.getHighlightFields() != null) {
+            HighlightBuilder highlightBuilder = new HighlightBuilder();
             for (HighlightBuilder.Field highlightField : searchQuery.getHighlightFields()) {
-                searchRequest.addHighlightedField(highlightField);
+                highlightBuilder.field(highlightField);
             }
+            searchRequest.highlighter(highlightBuilder);
         }
 
         if (!isEmpty(searchQuery.getIndicesBoost())) {
@@ -63,6 +68,12 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
         if (!isEmpty(searchQuery.getAggregations())) {
             for (AbstractAggregationBuilder aggregationBuilder : searchQuery.getAggregations()) {
                 searchRequest.addAggregation(aggregationBuilder);
+            }
+        }
+
+        if (!isEmpty(searchQuery.getFacets())) {
+            for (FacetRequest aggregatedFacet : searchQuery.getFacets()) {
+                searchRequest.addAggregation(aggregatedFacet.getFacet());
             }
         }
         return searchRequest.setQuery(searchQuery.getQuery()).execute().actionGet();
@@ -106,20 +117,18 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
         Assert.notNull(query.getIndices(), "No index defined for Query");
         Assert.notNull(query.getTypes(), "No type defined for Query");
 
-        // Add a custom preference key to force queries to execute on the same shards, preventing
-        // duplication issues during pagination
-        // This is the ONLY reason for this terrible hack of a file
         int startRecord = 0;
         SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(toArray(query.getIndices()))
-                .setSearchType(query.getSearchType()).setTypes(toArray(query.getTypes()))
-                .setPreference("paging");
+                .setSearchType(query.getSearchType())
+                .setTypes(toArray(query.getTypes()))
+                .setVersion(true);
 
         if (query.getSourceFilter() != null) {
             SourceFilter sourceFilter = query.getSourceFilter();
             searchRequestBuilder.setFetchSource(sourceFilter.getIncludes(), sourceFilter.getExcludes());
         }
 
-        if (query.getPageable() != null) {
+        if (query.getPageable().isPaged()) {
             startRecord = query.getPageable().getPageNumber() * query.getPageable().getPageSize();
             searchRequestBuilder.setSize(query.getPageable().getPageSize());
         }
@@ -131,8 +140,27 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
 
         if (query.getSort() != null) {
             for (Sort.Order order : query.getSort()) {
-                searchRequestBuilder.addSort(order.getProperty(),
-                        order.getDirection() == Sort.Direction.DESC ? SortOrder.DESC : SortOrder.ASC);
+                SortOrder sortOrder = order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC;
+
+                if (FIELD_SCORE.equals(order.getProperty())) {
+                    ScoreSortBuilder sort = SortBuilders //
+                            .scoreSort() //
+                            .order(sortOrder);
+
+                    searchRequestBuilder.addSort(sort);
+                } else {
+                    FieldSortBuilder sort = SortBuilders //
+                            .fieldSort(order.getProperty()) //
+                            .order(sortOrder);
+
+                    if (order.getNullHandling() == Sort.NullHandling.NULLS_FIRST) {
+                        sort.missing("_first");
+                    } else if (order.getNullHandling() == Sort.NullHandling.NULLS_LAST) {
+                        sort.missing("_last");
+                    }
+
+                    searchRequestBuilder.addSort(sort);
+                }
             }
         }
 
@@ -143,7 +171,7 @@ public class CustomElasticsearchTemplate extends ElasticsearchTemplate {
     }
 
     @Override
-    public <T> Page<T> queryForPage(SearchQuery query, Class<T> clazz, SearchResultMapper mapper) {
+    public <T> AggregatedPage<T> queryForPage(SearchQuery query, Class<T> clazz, SearchResultMapper mapper) {
         SearchResponse response = doSearch(prepareSearch(query, clazz), query);
         return mapper.mapResults(response, clazz, query.getPageable());
     }

@@ -15,7 +15,6 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.test.context.TestContextManager
@@ -52,7 +51,6 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
 
   "a spectrum persistence service " must {
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
-    val curatedRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/curatedRecords.json")))
 
     "delete everything" in {
       spectrumElasticRepository.deleteAll()
@@ -76,7 +74,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         s"store ${exampleRecords.length} records" in {
-          spectrumPersistenceService.save(exampleRecords.toList.asJava)
+          spectrumPersistenceService.saveAll(exampleRecords.toList.asJava)
 
           //this can happen async in the background so we need to wrap it with an eventually
           eventually(timeout(10 seconds)) {
@@ -97,7 +95,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "query all data with pagination " in {
-          val result: Page[Spectrum] = spectrumPersistenceService.findAll(new PageRequest(0, 10))
+          val result: Page[Spectrum] = spectrumPersistenceService.findAll(PageRequest.of(0, 10))
           assert(result.getTotalPages == 6)
         }
 
@@ -126,7 +124,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "query data with pagination" in {
-          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", "", new PageRequest(0, 10))
+          val result = spectrumPersistenceService.findAll("""metaData=q='name=="ion mode" and value==negative'""", "", PageRequest.of(0, 10))
           assert(result.getTotalPages == 3)
           assert(result.getContent.size() == 10)
         }
@@ -139,9 +137,10 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
           assert(spectrum.id == toUpdate.id)
 
           spectrumPersistenceService.update(toUpdate)
-          val updated = spectrumPersistenceService.findOne(spectrum.id)
+          val updated = spectrumPersistenceService.findById(spectrum.id)
 
-          assert(updated.spectrum == "1:1")
+          assert(updated.isPresent)
+          assert(updated.get().spectrum == "1:1")
           assert(countBefore == spectrumPersistenceService.count())
         }
 
@@ -165,7 +164,7 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
 
         "delete 1 spectra in the repository" in {
           assert(spectrumPersistenceService.count() == exampleRecords.length)
-          val spectra: Spectrum = spectrumPersistenceService.findAll(new PageRequest(1, 10)).getContent.get(5)
+          val spectra: Spectrum = spectrumPersistenceService.findAll(PageRequest.of(1, 10)).getContent.get(5)
           val count = spectrumPersistenceService.count()
           spectrumPersistenceService.delete(spectra)
 
@@ -177,9 +176,9 @@ class SpectrumPersistenceServiceWithAkkaHanderTest extends WordSpec with LazyLog
         }
 
         "delete 10 spectra in the repository by utilizing the iterable method" in {
-          val spectra = spectrumPersistenceService.findAll(new PageRequest(0, 10)).getContent
+          val spectra = spectrumPersistenceService.findAll(PageRequest.of(0, 10)).getContent
           val count = spectrumPersistenceService.count()
-          spectrumPersistenceService.delete(spectra)
+          spectrumPersistenceService.deleteAll(spectra)
 
           //assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
 

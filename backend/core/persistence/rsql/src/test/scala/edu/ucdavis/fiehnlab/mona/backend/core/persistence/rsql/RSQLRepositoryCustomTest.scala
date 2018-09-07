@@ -67,7 +67,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
           }
 
           "we should be able to execute RSQL queries like splash.block1=='splash10' with pagination" in {
-            val result: Page[T] = getRepository.query(s"splash.block1==splash10", "", new PageRequest(0, 10))
+            val result: Page[T] = getRepository.query(s"splash.block1==splash10", "", PageRequest.of(0, 10))
             assert(result.getContent.size() == 10)
             assert(result.getTotalPages == 6)
           }
@@ -150,7 +150,7 @@ abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with La
 
             "support pageable sizes of 1" in {
               var last: Spectrum = null
-              val page = new PageRequest(0, 1)
+              val page = PageRequest.of(0, 1)
 
               for (_ <- 1 to 250) {
                 val current: Spectrum = getRepository.query("tags=q='text=match=\"[(LCMS)(lcms)]+\"'", "", page).iterator().next().asInstanceOf[Spectrum]

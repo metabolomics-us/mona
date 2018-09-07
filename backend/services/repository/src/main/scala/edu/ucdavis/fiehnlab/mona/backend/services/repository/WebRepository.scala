@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.repository
 
 import java.io.File
-import javax.servlet.http.HttpServletRequest
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
@@ -11,6 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.EurekaClientConfi
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.layout.{FileLayout, SubmitterInchiKeySplashId}
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.listener.RepositoryListener
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.utility.FindDirectory
+import javax.servlet.http.HttpServletRequest
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.http.server.GitServlet
@@ -19,8 +19,9 @@ import org.eclipse.jgit.transport.resolver.RepositoryResolver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.context.embedded._
-import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory
+import org.springframework.boot.web.servlet.ServletRegistrationBean
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory
 import org.springframework.context.annotation.{Bean, Configuration, DependsOn, Import}
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
@@ -33,7 +34,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @SpringBootApplication
 @Import(Array(classOf[MonaEventBusConfiguration], classOf[MonaNotificationBusConfiguration], classOf[EurekaClientConfig]))
 class WebRepository extends WebSecurityConfigurerAdapter with LazyLogging {
-
 
   @Autowired
   val locator: FindDirectory = null
@@ -107,8 +107,8 @@ class ConfigureJetty extends LazyLogging {
   def localDirectory = new File(new File(this.locator.dir), "repository")
 
   @Bean
-  def jetty: EmbeddedServletContainerFactory = {
-    val factory = new JettyEmbeddedServletContainerFactory()
+  def jetty: ServletWebServerFactory = {
+    val factory = new JettyServletWebServerFactory()
     factory.setRegisterDefaultServlet(false)
     factory
   }
@@ -119,7 +119,7 @@ class ConfigureJetty extends LazyLogging {
     * @return
     */
   @Bean
-  def servlet: ServletRegistrationBean = {
+  def servlet: ServletRegistrationBean[DefaultServlet] = {
     logger.info(s"registering our servlet and using dir: $localDirectory")
     val servlet = new DefaultServlet
     val bean = new ServletRegistrationBean(servlet, "/repository/*")
@@ -143,7 +143,7 @@ class ConfigureJetty extends LazyLogging {
     * @return
     */
   @Bean
-  def servletGit(bareGitRepository: Git, locator: FindDirectory): ServletRegistrationBean = {
+  def servletGit(bareGitRepository: Git, locator: FindDirectory): ServletRegistrationBean[GitServlet] = {
     logger.info(s"registering our servlet and using dir: $localDirectory")
     val servlet = new GitServlet
 

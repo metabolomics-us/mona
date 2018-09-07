@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.submitter
 
+import java.util.Optional
 import java.util.concurrent.Future
+
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.{ServletRequest, ServletResponse}
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.LoginInfo
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
@@ -41,9 +42,9 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
 
     if (loginInfo.roles.contains("ADMIN")) {
       super.doList(page, size)
-    } else if (submitterMongoRepository.exists(loginInfo.username)) {
+    } else if (submitterMongoRepository.existsById(loginInfo.username)) {
       new AsyncResult[ResponseEntity[Iterable[Submitter]]](
-        new ResponseEntity[Iterable[Submitter]](Array(submitterMongoRepository.findOne(loginInfo.username)), HttpStatus.OK)
+        new ResponseEntity[Iterable[Submitter]](Array(submitterMongoRepository.findById(loginInfo.username).get()), HttpStatus.OK)
       )
     } else {
       new AsyncResult[ResponseEntity[Iterable[Submitter]]](new ResponseEntity[Iterable[Submitter]](Array.empty[Submitter], HttpStatus.OK))
@@ -82,9 +83,9 @@ class SubmitterRestController extends GenericRESTController[Submitter] {
     if (loginInfo.roles.contains("ADMIN")) {
       super.doSave(submitter)
     } else {
-      val existingUser: Submitter = submitterMongoRepository.findOne(loginInfo.username)
+      val existingUser: Optional[Submitter] = submitterMongoRepository.findById(loginInfo.username)
 
-      if (existingUser == null || existingUser.id == loginInfo.username) {
+      if (!existingUser.isPresent || existingUser.get().id == loginInfo.username) {
         super.doSave(submitter.copy(id = loginInfo.username))
       } else {
         new AsyncResult[ResponseEntity[Submitter]](new ResponseEntity[Submitter](HttpStatus.CONFLICT))

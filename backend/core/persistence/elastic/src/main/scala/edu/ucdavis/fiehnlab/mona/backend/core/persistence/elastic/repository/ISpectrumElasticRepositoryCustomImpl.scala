@@ -10,11 +10,9 @@ import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.index.query._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, PageRequest, Pageable}
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate
+import org.springframework.data.elasticsearch.core.{ElasticsearchTemplate, ScrolledPage}
 import org.springframework.data.elasticsearch.core.query._
 
-import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by wohlg_000 on 3/3/2016.
@@ -30,24 +28,18 @@ class ISpectrumElasticRepositoryCustomImpl extends SpectrumElasticRepositoryCust
     * @return
     */
   override def nativeQuery(query: QueryBuilder): util.List[Spectrum] = {
-    val search = getSearch(query)
-    search.setPageable(new PageRequest(0, 25))
+    val search: SearchQuery = getSearch(query)
+    search.setPageable(PageRequest.of(0, 25))
 
-    val scrollId: String = elasticsearchTemplate.scan(search, 60000, false)
-    val result: ArrayBuffer[Spectrum] = ArrayBuffer[Spectrum]()
-    var hasRecords = true
+    var scroll: Page[Spectrum] = elasticsearchTemplate.startScroll(60000, search, classOf[Spectrum])
+    val result: util.ArrayList[Spectrum] = new util.ArrayList[Spectrum]()
 
-    while(hasRecords) {
-      val page: Page[Spectrum] = elasticsearchTemplate.scroll(scrollId, 60000, classOf[Spectrum])
-
-      if (page.hasContent) {
-        result ++= page.asScala
-      } else {
-        hasRecords = false
-      }
+    while (scroll.hasContent) {
+      result.addAll(scroll.getContent)
+      scroll = elasticsearchTemplate.continueScroll(scroll.asInstanceOf[ScrolledPage[Spectrum]].getScrollId, 60000, classOf[Spectrum])
     }
 
-    result.asJava
+    result
   }
 
   /**

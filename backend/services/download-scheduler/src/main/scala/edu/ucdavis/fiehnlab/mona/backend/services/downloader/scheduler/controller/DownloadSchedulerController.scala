@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.controller
 
 import java.nio.file.{Files, Path, Paths}
+import java.util.Optional
 import java.util.concurrent.Future
-import javax.servlet.http.HttpServletRequest
 
+import javax.servlet.http.HttpServletRequest
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
@@ -48,14 +49,14 @@ class DownloadSchedulerController extends LazyLogging {
 
     logger.info(s"Starting download of $id...")
 
-    val queryExport: QueryExport = queryExportRepository.findOne(id)
+    val queryExport: Optional[QueryExport] = queryExportRepository.findById(id)
 
-    if (queryExport == null) {
+    if (!queryExport.isPresent) {
       logger.info(s"\t-> Download object $id does not exist!")
 
       new AsyncResult[ResponseEntity[InputStreamResource]](new ResponseEntity(HttpStatus.NOT_FOUND))
     } else {
-      val exportPath: Path = Paths.get(exportDir, queryExport.exportFile)
+      val exportPath: Path = Paths.get(exportDir, queryExport.get().exportFile)
 
       logger.info(s"\t-> Attempting to download file ${exportPath.toAbsolutePath.toString}...")
 

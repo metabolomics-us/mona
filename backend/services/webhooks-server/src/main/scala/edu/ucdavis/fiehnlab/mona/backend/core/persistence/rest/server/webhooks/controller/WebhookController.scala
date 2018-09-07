@@ -76,8 +76,8 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
 
     if (loginInfo.roles.contains("ADMIN")) {
       super.doGet(id, servletRequest, servletResponse)
-    } else if (webhookRepository.exists(id)) {
-      val existingWebHook: WebHook = webhookRepository.findOne(id)
+    } else if (webhookRepository.existsById(id)) {
+      val existingWebHook: WebHook = webhookRepository.findById(id).get()
 
       if (existingWebHook.username == loginInfo.username) {
         new AsyncResult[ResponseEntity[WebHook]](new ResponseEntity[WebHook](existingWebHook, HttpStatus.OK))
@@ -102,8 +102,8 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
 
     if (loginInfo.roles.contains("ADMIN")) {
       super.doSave(webHook)
-    } else if (webhookRepository.exists(webHook.name)) {
-      val existingWebHook: WebHook = webhookRepository.findOne(webHook.name)
+    } else if (webhookRepository.existsById(webHook.name)) {
+      val existingWebHook: WebHook = webhookRepository.findById(webHook.name).get()
 
       if (existingWebHook.username == loginInfo.username) {
         super.doSave(webHook.copy(username = loginInfo.username))
@@ -128,8 +128,8 @@ class WebhookController extends GenericRESTController[WebHook] with LazyLogging 
 
     if (loginInfo.roles.contains("ADMIN")) {
       super.doPut(id, webHook)
-    } else if (webhookRepository.exists(webHook.name)) {
-      val existingWebHook: WebHook = webhookRepository.findOne(webHook.name)
+    } else if (webhookRepository.existsById(webHook.name)) {
+      val existingWebHook: WebHook = webhookRepository.findById(webHook.name).get()
 
       if (existingWebHook.username == loginInfo.username) {
         super.doPut(id, webHook)

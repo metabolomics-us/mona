@@ -1,9 +1,11 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.listener
 
+import java.util.Optional
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.listener.GenericMessageListener
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.repository.{PredefinedQueryMongoRepository, QueryExportMongoRepository}
-import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.QueryExport
+import edu.ucdavis.fiehnlab.mona.backend.services.downloader.core.types.{PredefinedQuery, QueryExport}
 import edu.ucdavis.fiehnlab.mona.backend.services.downloader.runner.service.DownloaderService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -36,19 +38,19 @@ class QueryExportListener extends GenericMessageListener[QueryExport] with LazyL
 
       // Update predefined download if necessary
       if (result.emailAddress == null || result.emailAddress.isEmpty) {
-        val predefinedQuery = predefinedQueryRepository.findOne(result.label)
+        val predefinedQuery: Optional[PredefinedQuery] = predefinedQueryRepository.findById(result.label)
 
-        if (predefinedQuery != null) {
+        if (predefinedQuery.isPresent) {
           // Update jsonExport or mspExport in the predefined query
-          val updatedPredefinedQuery =
+          val updatedPredefinedQuery: PredefinedQuery =
             if (result.format == "json")
-              predefinedQuery.copy(jsonExport = result, queryCount = result.count)
+              predefinedQuery.get().copy(jsonExport = result, queryCount = result.count)
             else if (result.format == "msp")
-              predefinedQuery.copy(mspExport = result, queryCount = result.count)
+              predefinedQuery.get().copy(mspExport = result, queryCount = result.count)
             else if (result.format == "sdf")
-              predefinedQuery.copy(sdfExport = result, queryCount = result.count)
+              predefinedQuery.get().copy(sdfExport = result, queryCount = result.count)
             else
-              predefinedQuery
+              predefinedQuery.get()
 
           // Save the updated predefined query
           predefinedQueryRepository.save(updatedPredefinedQuery)

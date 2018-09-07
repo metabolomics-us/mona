@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.mona.backend.services.downloader.scheduler.service
 
-import java.util.{Date, UUID}
+import java.util.{Date, Optional, UUID}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.EventBus
@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuffer
 
 
 /**
@@ -73,15 +72,15 @@ class DownloadSchedulerService extends LazyLogging {
     */
   def scheduleDownload(id: String): QueryExport = {
     logger.info(s"Looking up query: $id")
-    val download: QueryExport = queryExportRepository.findOne(id)
+    val download: Optional[QueryExport] = queryExportRepository.findById(id)
 
-    if (download != null) {
+    if (download.isPresent) {
       logger.info(s"Rescheduling query: $id")
-      rabbitTemplate.convertAndSend(exportQueueName, download)
-      notifications.sendEvent(Event(Notification(download, getClass.getName)))
+      rabbitTemplate.convertAndSend(exportQueueName, download.get())
+      notifications.sendEvent(Event(Notification(download.get(), getClass.getName)))
     }
 
-    download
+    download.get()
   }
 
   /**

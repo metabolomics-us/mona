@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository
 
+import java.util.Optional
+
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Submitter
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
@@ -32,5 +34,5 @@ trait ISubmitterMongoRepository extends PagingAndSortingRepository[Submitter, St
     * @param id
     * @return
     */
-  def findById(id: String): Submitter
+  def findById(id: String): Optional[Submitter]
 }

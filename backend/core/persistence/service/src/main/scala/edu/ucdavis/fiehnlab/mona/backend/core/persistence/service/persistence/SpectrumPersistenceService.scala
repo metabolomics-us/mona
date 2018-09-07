@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence
 
 import java.lang
-import java.util.Date
+import java.util.{Date, Optional}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
@@ -148,7 +148,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  def findOne(id: String): Spectrum = spectrumMongoRepository.findOne(id)
+  def findById(id: String): Optional[Spectrum] = spectrumMongoRepository.findById(id)
 
   /**
     *
@@ -243,7 +243,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  override def findAll(ids: lang.Iterable[String]): lang.Iterable[Spectrum] = spectrumMongoRepository.findAll(ids)
+  override def findAllById(ids: lang.Iterable[String]): lang.Iterable[Spectrum] = spectrumMongoRepository.findAllById(ids)
 
   /**
     * kinda inefficient, since it has to find the object first
@@ -251,9 +251,12 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @param id
     */
   @CacheEvict(value = Array("spectra"))
-  final override def delete(id: String): Unit = {
-    val spectrum = findOne(id)
-    delete(spectrum)
+  final override def deleteById(id: String): Unit = {
+    val spectrum = findById(id)
+
+    if (spectrum.isPresent) {
+      delete(spectrum.get())
+    }
   }
 
   /**
@@ -261,7 +264,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     *
     * @param entities
     */
-  override def delete(entities: lang.Iterable[_ <: Spectrum]): Unit = {
+  override def deleteAll(entities: lang.Iterable[_ <: Spectrum]): Unit = {
     val iterator = entities.iterator()
 
     while (iterator.hasNext) {
@@ -270,11 +273,8 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
   }
 
 
-  override def save[S <: Spectrum](entities: lang.Iterable[S]): lang.Iterable[S] = {
-    entities.asScala.collect {
-      case s: S => save(s)
-    }.asJava
-  }
+  override def saveAll[S <: Spectrum](entities: lang.Iterable[S]): lang.Iterable[S] =
+    entities.asScala.map(save).asJava
 
   /**
     * checks if the given id exist in the database
@@ -283,7 +283,7 @@ class SpectrumPersistenceService extends LazyLogging with PagingAndSortingReposi
     * @return
     */
   @Cacheable(value = Array("spectra"))
-  override def exists(id: String): Boolean = spectrumMongoRepository.exists(id)
+  override def existsById(id: String): Boolean = spectrumMongoRepository.existsById(id)
 
   /**
     * finds all data with sorting.
