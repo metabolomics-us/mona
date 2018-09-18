@@ -8,13 +8,13 @@ services:
 
   elasticsearch:
     image: elasticsearch:5.6
-    command: [ elasticsearch, -Ehttp.cors.enabled=true, -Ehttp.cors.allow-origin=* ]
+    command: [ elasticsearch, -Ecluster.name=mona-cluster, -Ehttp.host=0.0.0.0, -Etransport.host=0.0.0.0, -Ehttp.cors.enabled=true, -Ehttp.cors.allow-origin=* ]
     ports:
        - 9200:9200
        - 9300:9300
 
   elasticsearch_head:
-    image: mobz/elasticsearch-head:2
+    image: mobz/elasticsearch-head:5
     ports:
      - 9100:9100
 
