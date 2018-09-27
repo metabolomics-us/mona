@@ -5,8 +5,9 @@ spring:
   cloud:
     config:
       uri:  http://localhost:1111
-  http:
+  servlet:
     multipart:
+      enabled: true
       max-file-size: 128MB
       max-request-size: 128MB
 
