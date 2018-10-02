@@ -631,10 +631,13 @@
                                 <goals>
                                     <goal>repackage</goal>
                                 </goals>
-                                <!-- TODO Check if this is required -->
-                                <!--<configuration>-->
-                                    <!--<classifier>exec</classifier>-->
-                                <!--</configuration>-->
+                                <!--
+                                Packages the runnable spring boot appliction jar with a -exec suffix to allow for
+                                importing non-runnable jars as maven dependencies
+                                -->
+                                <configuration>
+                                    <classifier>exec</classifier>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
