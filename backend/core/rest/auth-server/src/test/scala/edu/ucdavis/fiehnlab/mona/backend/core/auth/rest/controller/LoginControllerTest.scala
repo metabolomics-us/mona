@@ -14,9 +14,9 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConf
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
 import org.junit.runner.RunWith
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
@@ -67,7 +67,7 @@ class LoginControllerTest extends AbstractSpringControllerTest {
 
         "you need to be authenticated for extending tokens" in {
           val response = given().contentType("application/json; charset=UTF-8").body(LoginRequest("admin", "secret")).when().post("/auth/login").`then`().statusCode(200).extract().body().as(classOf[LoginResponse])
-          given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/extend").`then`().statusCode(401).extract().body().as(classOf[LoginResponse])
+          given().contentType("application/json; charset=UTF-8").body(response).when().post("/auth/extend").`then`().statusCode(401)
         }
 
         "extend a token" in {
