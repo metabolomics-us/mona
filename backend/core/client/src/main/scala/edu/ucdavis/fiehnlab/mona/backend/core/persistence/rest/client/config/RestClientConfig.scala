@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config
 
+import java.util.function.Supplier
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.config.DomainConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.MonaMapper
@@ -10,10 +12,13 @@ import org.apache.http.conn.HttpClientConnectionManager
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation._
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+import org.springframework.http.client.{ClientHttpRequestFactory, HttpComponentsClientHttpRequestFactory}
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.web.client.{RestOperations, RestTemplate}
+import org.springframework.web.client.RestOperations
+import org.springframework.web.util.DefaultUriBuilderFactory
+import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode
 
 /**
   * Created by wohlg_000 on 3/2/2016.
@@ -39,7 +44,6 @@ class RestClientConfig extends LazyLogging {
     val connectionManager = new PoolingHttpClientConnectionManager()
     connectionManager.setDefaultMaxPerRoute(monaMaxRouteConnections)
     connectionManager.setMaxTotal(monaMaxConnections)
-
     connectionManager
   }
 
@@ -49,18 +53,26 @@ class RestClientConfig extends LazyLogging {
     * @return
     */
   @Bean
-  def restOperations(connectionManager: HttpClientConnectionManager): RestOperations = {
+  def restOperations(builder: RestTemplateBuilder, connectionManager: HttpClientConnectionManager): RestOperations = {
+    logger.info("creating rest template with custom URI builder")
 
-    logger.info("creating rest template")
+    // Required as the default encoding mode in Spring 5.0.x of URI_COMPONENT does not properly encode URI query params
+    // TODO Can be removed upon upgrade to Spring 5.1
+    val uriTemplateHandler: DefaultUriBuilderFactory = new DefaultUriBuilderFactory()
+    uriTemplateHandler.setEncodingMode(EncodingMode.TEMPLATE_AND_VALUES)
 
     val httpClient = HttpClientBuilder.create()
       .setConnectionManager(connectionManager)
       .build()
 
-    val rest: RestTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient))
-    rest.getMessageConverters.add(0, mappingJacksonHttpMessageConverter)
-    rest
-  }
+    builder
+      .additionalMessageConverters(mappingJacksonHttpMessageConverter)
+      .requestFactory(new Supplier[ClientHttpRequestFactory] {
+        override def get(): ClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient)
+      })
+      .uriTemplateHandler(uriTemplateHandler)
+      .build()
+}
 
   /**
     * provides us with an easy way to authenticate against the services
