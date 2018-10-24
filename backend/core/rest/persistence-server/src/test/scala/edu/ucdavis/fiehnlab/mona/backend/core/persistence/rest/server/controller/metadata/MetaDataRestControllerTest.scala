@@ -46,7 +46,7 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
         val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
         assert(exampleRecords.length == 58)
 
-        exampleRecords.foreach { x => spectrumRepository.save(x) }
+        exampleRecords.foreach(spectrumRepository.save)
       }
 
       "we should be able to generate statistics" in {
@@ -81,11 +81,18 @@ class MetaDataRestControllerTest extends AbstractSpringControllerTest {
         assert(result.values.head.count == 58)
       }
 
-      "we should be able to query all the meta data values for a specific name that special characters" in {
+      "we should be able to query all the meta data values for a specific name that contains special characters" in {
         val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/values?name=precursor m/z").`then`().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
 
         assert(result.name == "precursor m/z")
         assert(result.values.length == 55)
+      }
+
+      "we should be able to query all the meta data values for a specific name that contains reserved uri characters" in {
+        val result = given().contentType("application/json; charset=UTF-8").log().all().when().get("/metaData/values?name=[M+3ACN+2H]+").`then`().log().all(true).statusCode(200).extract().body().as(classOf[MetaDataStatistics])
+
+        assert(result.name == "[M+3ACN+2H]+")
+        assert(result.values.length == 1)
       }
 
       "we should be able to search for metadata values" in {
