@@ -5,18 +5,16 @@ import org.springframework.http.{HttpEntity, HttpMethod}
 import org.springframework.stereotype.Component
 
 /**
-  * specific client to work with MoNA spectrums and there MetaData
+  * client to work with MoNA spectra and associated metaaata
   */
 @Component
 class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/spectra") {
-
-  val metaDataPath = "/rest/metaData"
 
   /**
     * returns a list of all available metadata names
     */
   def listMetaDataNames: Array[String] = {
-    restOperations.getForObject(s"$monaRestServer/$metaDataPath/names", classOf[Array[MetaDataName]]).map(_.name)
+    restOperations.getForObject(s"$monaRestServer/rest/metaData/names", classOf[Array[MetaDataName]]).map(_.name)
   }
 
   /**
@@ -25,7 +23,7 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
     * @param name
     */
   def listMetaDataValues(name: String): Array[Any] = {
-    restOperations.getForObject(s"$monaRestServer/$metaDataPath/values?name=$name", classOf[Array[Any]])
+    restOperations.getForObject(s"$monaRestServer/rest/metaData/values?name={name}", classOf[Array[Any]], name)
   }
 
   /**
@@ -34,13 +32,15 @@ class MonaSpectrumRestClient extends GenericRestClient[Spectrum, String](s"rest/
     * @return
     */
   def regenerateStatistics(): Unit = {
-    restOperations.postForEntity(s"${this.monaRestServer}/rest/statistics/update", new HttpEntity[String]("", this.buildHeaders), classOf[Void])
+    restOperations.postForEntity(s"$monaRestServer/rest/statistics/update", new HttpEntity[String]("", this.buildHeaders), classOf[Void])
   }
 
+  /**
+    * regenerates all pre-defined downloads
+    */
   def regenerateDownloads(): Unit = {
-    val url = s"${this.monaRestServer}/rest/downloads/generatePredefined"
-
-    restOperations.exchange(url, HttpMethod.GET, new HttpEntity[String]("parameters", this.buildHeaders), classOf[Array[Any]])
+    restOperations.exchange(s"$monaRestServer/rest/downloads/generatePredefined", HttpMethod.GET,
+      new HttpEntity[String]("parameters", this.buildHeaders), classOf[Array[Any]])
   }
 }
 

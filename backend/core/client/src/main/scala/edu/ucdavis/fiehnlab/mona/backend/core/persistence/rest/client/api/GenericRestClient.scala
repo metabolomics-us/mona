@@ -54,7 +54,7 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     */
   def count(query: Option[String] = None): Long = query match {
     case Some(x) =>
-      restOperations.getForObject(s"$requestPath/search/count?query=$x", classOf[Long])
+      restOperations.getForObject(s"$requestPath/search/count?query={query}", classOf[Long], x)
 
     case _ => restOperations.getForObject(s"$requestPath/count", classOf[Long])
   }
@@ -84,7 +84,9 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @param dao
     * @param id
     */
-  def updateAsync(dao: T, id: ID): Unit = restOperations.exchange(s"$requestPath/$id", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
+  def updateAsync(dao: T, id: ID): Unit = {
+    restOperations.exchange(s"$requestPath/$id", HttpMethod.PUT, new HttpEntity[T](dao, buildHeaders), classTag[T].runtimeClass)
+  }
 
 
   /**
@@ -103,7 +105,9 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     *
     * @param id
     */
-  def delete(id: ID) = restOperations.exchange(s"$requestPath/$id", HttpMethod.DELETE, new HttpEntity[Nothing](buildHeaders), classTag[T].runtimeClass)
+  def delete(id: ID): Unit = {
+    restOperations.exchange(s"$requestPath/$id", HttpMethod.DELETE, new HttpEntity[Nothing](buildHeaders), classTag[T].runtimeClass)
+  }
 
   /**
     * loads the object specified by the id
@@ -135,37 +139,19 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
         * loads more data from the server for the given query
         */
       override def fetchMoreData(query: Option[String], pageable: Pageable): Page[T] = {
+        val params: String = s"?size=${pageable.getPageSize}&page=${pageable.getPageNumber}"
 
-        var path: String = s"$requestPath"
-
-        query match {
+        val result: Array[T] = query match {
           case Some(x) =>
-            path = s"$path/search?size=${
-              pageable.getPageSize
-            }&page=${
-              pageable.getPageNumber
-            }&query=$x"
+            logger.debug(s"calling path: $requestPath/search$params&query=$x")
+            restOperations.getForObject(s"$requestPath/search$params&query={query}", classTag[Array[T]].runtimeClass, x).asInstanceOf[Array[T]]
           case _ =>
-            path = s"$path?size=${
-              pageable.getPageSize
-            }&page=${
-              pageable.getPageNumber
-            }"
+            logger.debug(s"calling path: $requestPath$params")
+            restOperations.getForObject(s"$requestPath$params", classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
         }
 
-        logger.debug(s"calling path: $path")
-        val result = restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
-
-        logger.debug(s"received: ${
-          result.length
-        }, page: ${
-          pageable.getPageNumber
-        } size: ${
-          pageable.getPageSize
-        }")
-        result.foreach {
-          s => logger.info(s"\tspectra: $s")
-        }
+        logger.debug(s"received: ${result.length}, page: ${pageable.getPageNumber} size: ${pageable.getPageSize}")
+        result.foreach { s => logger.debug(s"\tspectra: $s") }
 
         new PageImpl[T](result.toList.asJava, pageable, internalCount)
       }
@@ -181,35 +167,37 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     * @return
     */
   def list(query: Option[String] = None, page: Option[Int] = None, pageSize: Option[Int] = None): Iterable[T] = {
-
-    val utilizedPageSize: String = pageSize match {
+    val sizeParam: String = pageSize match {
       case Some(a) => s"?size=$a"
       case _ => ""
     }
 
-    val pageToLookAt: String = page match {
-      case Some(a) => utilizedPageSize match {
+    val pageParam: String = page match {
+      case Some(a) => sizeParam match {
         case "" => s"?page=$a"
         case _ => s"&page=$a"
       }
       case _ => ""
     }
 
-    val pathToInvoke = query match {
-      case Some(a) =>
-        val path = s"$requestPath/search$utilizedPageSize$pageToLookAt"
+    query match {
+      case Some(x) =>
+        val path: String = s"$requestPath/search$sizeParam$pageParam"
 
-        if (path.contains("?")) {
-          s"$path&query=$a"
+        val queryParam = pageParam match {
+          case "" => "?query="
+          case _ => "&query="
         }
-        else {
-          s"$path?query=$a"
-        }
+
+        logger.info(s"path to invoke: $path$queryParam=$x")
+        restOperations.getForObject(s"$path$queryParam{query}", classTag[Array[T]].runtimeClass, x).asInstanceOf[Array[T]]
+
       case _ =>
-        s"$requestPath$utilizedPageSize$pageToLookAt"
+        val path: String = s"$requestPath$sizeParam$pageParam"
+
+        logger.debug(s"path to invoke: $path")
+        restOperations.getForObject(path, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
     }
-    logger.debug(s"path to invoke: $pathToInvoke")
-    restOperations.getForObject(pathToInvoke, classTag[Array[T]].runtimeClass).asInstanceOf[Array[T]]
   }
 
   /**
@@ -222,7 +210,6 @@ class GenericRestClient[T: ClassTag, ID](basePath: String) extends LazyLogging {
     logger.debug(s"logging in using service: $loginService")
     val token = loginService.login(LoginRequest(username, password)).token
     login(token)
-
   }
 
   /**
