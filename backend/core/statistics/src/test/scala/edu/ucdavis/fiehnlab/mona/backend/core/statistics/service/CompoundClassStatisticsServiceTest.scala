@@ -35,7 +35,7 @@ class CompoundClassStatisticsServiceTest extends WordSpec {
 
     "load data" in {
       spectrumMongoRepository.deleteAll()
-      exampleRecords.foreach(spectrumMongoRepository.save(_))
+      exampleRecords.foreach(spectrumMongoRepository.save)
       assert(spectrumMongoRepository.count() == 50)
     }
 

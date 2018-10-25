@@ -59,7 +59,7 @@ class DownloadSchedulerControllerTest extends AbstractSpringControllerTest with 
       predefinedQueryRepository.deleteAll()
       tagStatisticsRepository.deleteAll()
 
-      exampleRecords.foreach(mongoRepository.save(_))
+      exampleRecords.foreach(mongoRepository.save)
       assert(mongoRepository.count() == exampleRecords.length)
 
       queryExportRepository.save(QueryExport("test", "test", "metaData=q='name==\"ion mode\" and value==negative'", "json", "test", new Date, 0, 0, null, null))

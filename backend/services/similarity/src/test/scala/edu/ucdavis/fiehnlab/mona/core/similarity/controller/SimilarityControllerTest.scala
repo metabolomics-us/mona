@@ -51,7 +51,7 @@ class SimilarityControllerTest extends WordSpec with Matchers with LazyLogging {
 
     "load some data" in {
       mongoRepository.deleteAll()
-      exampleRecords.foreach(mongoRepository.save(_))
+      exampleRecords.foreach(mongoRepository.save)
 
       assert(mongoRepository.count() == 58)
     }

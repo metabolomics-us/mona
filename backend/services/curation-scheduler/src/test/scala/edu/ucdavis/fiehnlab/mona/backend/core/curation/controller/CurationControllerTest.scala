@@ -53,7 +53,7 @@ class CurationControllerTest extends AbstractSpringControllerTest with Eventuall
 
     "load some data" in {
       mongoRepository.deleteAll()
-      exampleRecords.foreach(mongoRepository.save(_))
+      exampleRecords.foreach(mongoRepository.save)
     }
 
     "these must all fail, since we require to be logged in " must {

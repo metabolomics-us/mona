@@ -45,7 +45,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "load some data" in {
       mongoRepository.deleteAll()
-      exampleRecords.foreach(mongoRepository.save(_))
+      exampleRecords.foreach(mongoRepository.save)
     }
 
     // ID for

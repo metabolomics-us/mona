@@ -103,7 +103,7 @@ class TagStatisticsService {
     val results: Array[TagStatistics] = tagAggregation()
 
     tagStatisticsRepository.deleteAll()
-    results.foreach(tagStatisticsRepository.save(_))
+    results.foreach(tagStatisticsRepository.save)
 
     // Update tags by library information
     libraryTagsAggregation()

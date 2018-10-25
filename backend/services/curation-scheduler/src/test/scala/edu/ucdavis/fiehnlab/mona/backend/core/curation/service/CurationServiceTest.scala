@@ -59,7 +59,7 @@ class CurationServiceTest extends AbstractSpringControllerTest with Eventually {
 
     "load some data" in {
       mongoRepository.deleteAll()
-      exampleRecords.foreach(x => mongoRepository.save(x))
+      exampleRecords.foreach(mongoRepository.save)
     }
 
     "scheduleSpectra" in {

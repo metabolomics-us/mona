@@ -53,7 +53,7 @@ class StatisticsRestControllerTest extends AbstractSpringControllerTest {
         assert(exampleRecords.length == 50)
 
         //save each record
-        exampleRecords.foreach { x => spectrumRepository.save(x) }
+        exampleRecords.foreach(spectrumRepository.save)
       }
 
       "not update statistics as a non-admin" in {

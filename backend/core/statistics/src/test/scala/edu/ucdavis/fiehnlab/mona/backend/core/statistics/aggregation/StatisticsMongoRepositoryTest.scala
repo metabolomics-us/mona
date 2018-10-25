@@ -42,7 +42,7 @@ class StatisticsMongoRepositoryTest extends WordSpec {
   "Metadata aggregation queries" should {
 
     spectrumMongoRepository.deleteAll()
-    exampleRecords.foreach(spectrumMongoRepository.save(_))
+    exampleRecords.foreach(spectrumMongoRepository.save)
 
     "given a specific metadata field" must {
       val msLevel = statisticsMongoRepository.aggregateByName("ms level")
