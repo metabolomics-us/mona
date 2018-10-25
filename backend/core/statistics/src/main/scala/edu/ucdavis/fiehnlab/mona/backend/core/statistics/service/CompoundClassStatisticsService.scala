@@ -53,7 +53,9 @@ class CompoundClassStatisticsService {
       |    for (var i = 0; i < this.compound.length; i++) {
       |        // Find all InChIKey first blocks
       |        var inchikeys = this.compound[i].metaData
-      |          .filter(function(x) { return x.name == "InChIKey"; })
+      |          .filter(function(x) {
+      |              return x.name == "InChIKey" && typeof x.value === "string" && ;
+      |          })
       |          .map(function(x) { return x.value.slice(0, 14); });
       |
       |        // Continue if no InChIKey is found or no classification is present
