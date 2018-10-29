@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller
+package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.config
 
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.MonaNotificationBusCounterConfiguration
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
@@ -35,3 +35,5 @@ class TestConfig {
   @Bean
   def tokenSecret: TokenSecret = TokenSecret("sadaskdkljsalkd")
 }
+
+

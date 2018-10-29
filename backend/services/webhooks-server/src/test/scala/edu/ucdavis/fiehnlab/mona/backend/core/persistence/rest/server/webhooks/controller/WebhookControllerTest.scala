@@ -4,6 +4,7 @@ import com.jayway.restassured.RestAssured
 import com.jayway.restassured.RestAssured._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.config.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.{WebHookRepository, WebHookResultRepository}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.{WebHook, WebHookResult}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.service.persistence.SpectrumPersistenceService
@@ -320,7 +321,6 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
       }
 
       "able to handle update events " in {
-
         webHookRepository.deleteAll()
 
         eventually(timeout(5 seconds)) {
@@ -346,7 +346,6 @@ class WebhookControllerTest extends AbstractGenericRESTControllerTest[WebHook]("
 
         //ensure the new spectra is now update
         eventually(timeout(5 seconds)) {
-          Thread.sleep(2000)
           spectrumPersistenceService.count() shouldBe 1
         }
       }

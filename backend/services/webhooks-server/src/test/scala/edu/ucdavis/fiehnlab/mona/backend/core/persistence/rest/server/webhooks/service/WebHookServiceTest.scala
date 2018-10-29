@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.bus.ReceivedEventCounter
 import edu.ucdavis.fiehnlab.mona.backend.core.amqp.event.config.Notification
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractSpringControllerTest
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.controller.TestConfig
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.config.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.repository.WebHookRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.webhooks.types.WebHook
 import org.junit.runner.RunWith
@@ -43,12 +43,13 @@ class WebHookServiceTest extends AbstractSpringControllerTest with Eventually {
 
     "trigger" in {
       webHookRepository.deleteAll()
-      webHookRepository.save(WebHook("test", s"http://localhost:$port/info?id=", "test", null))
+      webHookRepository.save(WebHook("test", s"http://localhost:$port/info", "test", null))
 
       val count = notificationCounter.getEventCount
       val result = webHookService.trigger("12345", "test")
 
       assert(result.length == 1)
+      assert(result.forall(_.success))
 
       eventually(timeout(100 seconds)) {
         assert(notificationCounter.getEventCount == count + 1)
