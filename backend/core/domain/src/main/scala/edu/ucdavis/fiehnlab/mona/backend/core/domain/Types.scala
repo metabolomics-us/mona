@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 import scala.annotation.meta.field
 import scala.beans.BeanProperty
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * definition of the MoNA domain classes and accepts arbitrary values, which needs to be supported by different
@@ -207,7 +208,27 @@ case class Submitter(
                       @(TextIndexed@field)
                       @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                       institution: String
-                    )
+                    ) {
+
+  override def toString: String = {
+    val s: ArrayBuffer[String] = new ArrayBuffer[]()
+
+    if (this.firstName != null && this.firstName.nonEmpty) {
+      s.append(this.firstName)
+    }
+
+    if (this.lastName != null && this.lastName.nonEmpty) {
+      s.append(this.lastName)
+    }
+
+    if (this.institution != null && this.institution.nonEmpty) {
+      s.append(s"(${this.institution})")
+    }
+
+    s.mkString(" ")
+  }
+}
+
 
 /**
   * this defines an author, which actually acquired the spectra
