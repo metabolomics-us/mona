@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.msp
 
 import java.io.{PrintWriter, Writer}
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.{CRLFPrintWriter, DomainWriter}
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 /**
@@ -106,11 +106,21 @@ class MSPWriter extends DomainWriter {
   def buildComments(spectrum: Spectrum, writer: PrintWriter): Unit = {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
-    val comments = (spectrum.metaData ++ compound.metaData).map(
-      value => s""""${value.name}=${value.value.toString.replaceAll("\"", "")}""""
-    ).mkString(" ")
+    val comments = (compound.metaData ++ spectrum.metaData).map(value => {
+        (value.name, value.value.toString.replaceAll("\"", ""))
+    }).toBuffer
 
-    writer.println(s"Comments: $comments")
+    if (spectrum.splash != null) {
+      comments.append(("SPLASH", spectrum.splash.splash))
+    }
+
+    if (spectrum.submitter != null) {
+      comments.append(("submitter", spectrum.submitter.toString))
+    }
+
+    val commentsString = comments.map(x => s""""${x._1}=${x._2}"""").mkString(" ")
+
+    writer.println(s"Comments: $commentsString")
   }
 
   /**
