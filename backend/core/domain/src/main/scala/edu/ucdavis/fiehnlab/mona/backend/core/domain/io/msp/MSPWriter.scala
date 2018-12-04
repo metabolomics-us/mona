@@ -152,7 +152,7 @@ class MSPWriter extends DomainWriter {
 
     // Name and synonyms, including NIST-specific fields
     buildNames(spectrum, synonyms = true, p)
-    p.println("SYNON: $:00in-source")
+    p.println("Synon: $:00in-source")
 
     // TODO properly handle additional NIST fields
     //   $:04 - blank
