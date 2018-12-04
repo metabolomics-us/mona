@@ -106,13 +106,18 @@ class MSPWriter extends DomainWriter {
   def buildComments(spectrum: Spectrum, writer: PrintWriter): Unit = {
     val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
 
-    val comments = (compound.metaData ++ spectrum.metaData).map(x => {
-      if (x.computed) {
-        ("computed " + x.name, x.value.toString.replaceAll("\"", ""))
-      } else {
-        (x.name, x.value.toString.replaceAll("\"", ""))
-      }
-    }).toBuffer
+    val excludedMetadata = Array("inchikey", "total exact mass", "molecular formula")
+
+    val comments = (compound.metaData ++ spectrum.metaData)
+      .filter(x => !excludedMetadata.contains(x.name.toLowerCase))
+      .map(x => {
+        if (x.computed) {
+          ("computed " + x.name, x.value.toString.replaceAll("\"", ""))
+        } else {
+          (x.name, x.value.toString.replaceAll("\"", ""))
+        }
+      })
+      .toBuffer
 
     if (spectrum.splash != null) {
       comments.append(("SPLASH", spectrum.splash.splash))
