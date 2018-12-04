@@ -211,7 +211,7 @@ case class Submitter(
                     ) {
 
   override def toString: String = {
-    val s: ArrayBuffer[String] = new ArrayBuffer[]()
+    val s: ArrayBuffer[String] = new ArrayBuffer
 
     if (this.firstName != null && this.firstName.nonEmpty) {
       s.append(this.firstName)
