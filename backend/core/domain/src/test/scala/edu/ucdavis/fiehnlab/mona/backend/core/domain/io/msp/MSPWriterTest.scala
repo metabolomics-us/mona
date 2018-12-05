@@ -35,7 +35,7 @@ class MSPWriterTest extends WordSpec {
           }
 
           "in-source NIST tag" in {
-            assert(out.toString.contains("SYNON: $:00in-source"))
+            assert(out.toString.contains("Synon: $:00in-source"))
           }
 
           "DB#" in {
@@ -102,7 +102,7 @@ class MSPWriterTest extends WordSpec {
           }
 
           "in-source NIST tag" in {
-            assert(out.toString.contains("SYNON: $:00in-source"))
+            assert(out.toString.contains("Synon: $:00in-source"))
           }
 
           "DB#" in {
