@@ -20,6 +20,8 @@ class DownloaderService extends LazyLogging {
   @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
   private val downloadDirPath: String = null
 
+  private val enableAllSpectraStaticFiles = false
+
   private def downloadDir: Path = Paths.get(downloadDirPath)
 
   private def staticDownloadDir: Path = Paths.get(downloadDirPath, "static")
@@ -54,7 +56,7 @@ class DownloaderService extends LazyLogging {
     downloaders.append(jsonDownloader, mspDownloader, sdfDownloader)
 
     // Create additional static files if this query corresponds to all spectra
-    if (query.query.isEmpty) {
+    if (enableAllSpectraStaticFiles && query.query.isEmpty) {
       downloaders.append(SpectrumDownloader(query.label, query.query, "png", staticDownloadDir, compress))
       downloaders.append(SpectrumDownloader(query.label, query.query, "ids", staticDownloadDir, compress))
     }
