@@ -143,7 +143,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export predefined query for all spectra" in {
       val query: PredefinedQuery = PredefinedQuery("All Spectra", "", "", 0, null, null, null)
-      val result: PredefinedQuery = downloaderService.downloadPredefinedQuery(query, compress = false)
+      val result: PredefinedQuery = downloaderService.downloadPredefinedQuery(query, compress = false, enableAllSpectraStaticFiles = true)
 
       assert(result.queryCount == 58)
 
@@ -184,7 +184,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export predefined query for query" in {
       val query: PredefinedQuery = PredefinedQuery("Negative Mode Spectra", "", "metaData=q='name==\"ion mode\" and value==negative'", 0, null, null, null)
-      val result: PredefinedQuery = downloaderService.downloadPredefinedQuery(query, compress = false)
+      val result: PredefinedQuery = downloaderService.downloadPredefinedQuery(query, compress = false, enableAllSpectraStaticFiles = true)
 
       assert(result.queryCount == 25)
 

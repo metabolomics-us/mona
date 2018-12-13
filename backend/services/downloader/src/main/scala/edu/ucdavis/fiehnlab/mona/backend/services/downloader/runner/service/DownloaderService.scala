@@ -20,8 +20,6 @@ class DownloaderService extends LazyLogging {
   @Value("${mona.downloads:#{systemProperties['java.io.tmpdir']}}#{systemProperties['file.separator']}mona_downloads")
   private val downloadDirPath: String = null
 
-  private val enableAllSpectraStaticFiles = false
-
   private def downloadDir: Path = Paths.get(downloadDirPath)
 
   private def staticDownloadDir: Path = Paths.get(downloadDirPath, "static")
@@ -46,7 +44,7 @@ class DownloaderService extends LazyLogging {
     * @param query
     * @return
     */
-  def downloadPredefinedQuery(query: PredefinedQuery, compress: Boolean = true): PredefinedQuery = {
+  def downloadPredefinedQuery(query: PredefinedQuery, compress: Boolean = true, enableAllSpectraStaticFiles: Boolean = false): PredefinedQuery = {
 
     val jsonDownloader: SpectrumDownloader = SpectrumDownloader(query, query.jsonExport, "json", downloadDir, compress)
     val mspDownloader: SpectrumDownloader = SpectrumDownloader(query, query.mspExport, "msp", downloadDir, compress)
