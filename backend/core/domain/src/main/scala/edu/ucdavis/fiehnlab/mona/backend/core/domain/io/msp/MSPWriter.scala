@@ -110,6 +110,7 @@ class MSPWriter extends DomainWriter {
 
     val comments = (compound.metaData ++ spectrum.metaData)
       .filter(x => !excludedMetadata.contains(x.name.toLowerCase))
+      .filter(x => x.value != null)
       .map(x => {
         if (x.computed) {
           ("computed " + x.name, x.value.toString.replaceAll("\"", ""))
