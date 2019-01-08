@@ -104,31 +104,14 @@ class MSPWriter extends DomainWriter {
     * @return
     */
   def buildComments(spectrum: Spectrum, writer: PrintWriter): Unit = {
-    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+    val excludedMetaData = Array(
+      "inchikey", "total exact mass", "molecular formula",
+      "instrument", "instrument type", "precursor type", "precursor m/z", "ms level",
+      "ionization mode", "collision energy", "retention index"
+    )
 
-    val excludedMetadata = Array("inchikey", "total exact mass", "molecular formula")
-
-    val comments = (compound.metaData ++ spectrum.metaData)
-      .filter(x => !excludedMetadata.contains(x.name.toLowerCase))
-      .filter(x => x.value != null)
-      .map(x => {
-        if (x.computed) {
-          ("computed " + x.name, x.value.toString.replaceAll("\"", ""))
-        } else {
-          (x.name, x.value.toString.replaceAll("\"", ""))
-        }
-      })
-      .toBuffer
-
-    if (spectrum.splash != null) {
-      comments.append(("SPLASH", spectrum.splash.splash))
-    }
-
-    if (spectrum.submitter != null) {
-      comments.append(("submitter", spectrum.submitter.toString))
-    }
-
-    val commentsString = comments.map(x => s""""${x._1}=${x._2}"""").mkString(" ")
+    val commentsString = getAdditionalMetaData(spectrum, excludedMetaData)
+      .map(x => s""""${x._1}=${x._2.toString}"""").mkString(" ")
 
     writer.println(s"Comments: $commentsString")
   }

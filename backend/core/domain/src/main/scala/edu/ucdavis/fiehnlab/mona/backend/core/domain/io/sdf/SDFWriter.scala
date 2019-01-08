@@ -2,8 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.domain.io.sdf
 
 import java.io.{PrintWriter, Writer}
 
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.{CRLFPrintWriter, DomainWriter}
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.io
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.DomainWriter
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Compound, MetaData, Spectrum}
 
 /**
@@ -104,13 +103,17 @@ class SDFWriter extends DomainWriter {
     * @return
     */
   def buildComments(spectrum: Spectrum, writer: PrintWriter): Unit = {
-    val compound: Compound = spectrum.compound.find(_.kind == "biological").getOrElse(spectrum.compound.head)
+    val excludedMetaData = Array(
+      "inchikey", "total exact mass", "molecular formula",
+      "instrument", "instrument type", "precursor type", "precursor m/z", "ms level",
+      "ionization mode", "collision energy"
+    )
 
-    val comments = (spectrum.metaData ++ compound.metaData).map(
-      value => s"${value.name}=${value.value.toString}"
-    ).mkString(getNewLine)
+    val commentsString = getAdditionalMetaData(spectrum, excludedMetaData)
+      .map(x => s"${x._1}=${x._2.toString}")
+      .mkString(getNewLine)
 
-    printMetaData("COMMENT", comments, writer)
+    printMetaData("COMMENT", commentsString, writer)
   }
 
   /**
