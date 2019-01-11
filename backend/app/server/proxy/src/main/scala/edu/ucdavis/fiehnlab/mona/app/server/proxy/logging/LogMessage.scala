@@ -20,7 +20,6 @@ case class LogMessage(
                        queryString: String,
                        postData: String,
 
-                       clientIp: String,
                        clientCountry: String,
                        clientRegion: String,
                        clientCity: String,

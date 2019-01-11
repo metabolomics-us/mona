@@ -43,7 +43,7 @@ class LoggingService extends LazyLogging {
         // Create logging message
         val logMessage: LogMessage = LogMessage(
           null, httpStatus, httpMethod, requestURI, requestQueryString, postData,
-          ipAddress, country, region, city,
+          country, region, city,
           duration, new Date
         )
 
