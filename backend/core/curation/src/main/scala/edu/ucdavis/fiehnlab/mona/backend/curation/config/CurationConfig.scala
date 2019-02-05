@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.CalculateCo
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.adduct.AdductPrediction
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.compound.classyfire.ClassyfireProcessor
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.instrument.IdentifyChromatography
-import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata.{IdentifyMetaDataFields, NormalizeIonizationModeValue, NormalizeMSLevelValue, NormalizeMetaDataNames}
+import edu.ucdavis.fiehnlab.mona.backend.curation.processor.metadata._
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.spectrum.{CalculateMassAccuracy, CalculateSplash, NormalizeSpectrum, SpectrumIonCountScoringRule}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.validation.{ColumnValidation, MassAccuracyValidation}
 import edu.ucdavis.fiehnlab.mona.backend.curation.processor.{FinalizeCuration, RemoveComputedData}
@@ -105,6 +105,7 @@ class CurationConfig extends LazyLogging {
           new IdentifyChromatography,
           new NormalizeIonizationModeValue,
           new NormalizeMSLevelValue,
+          new NormalizePrecursorValues,
           new IdentifyMetaDataFields,
 
           // Validation
