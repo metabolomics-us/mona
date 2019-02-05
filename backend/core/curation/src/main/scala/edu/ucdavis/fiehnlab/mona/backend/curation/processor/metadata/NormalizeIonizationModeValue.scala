@@ -19,7 +19,7 @@ class NormalizeIonizationModeValue extends ItemProcessor[Spectrum, Spectrum] wit
   val ALL_TERMS: Array[String] = POSITIVE_TERMS ++ NEGATIVE_TERMS
 
   /**
-    * processes the given spectrum and removes all it's computed meta data
+    * processes the given spectrum
     *
     * @param spectrum to be processed
     * @return processed spectrum

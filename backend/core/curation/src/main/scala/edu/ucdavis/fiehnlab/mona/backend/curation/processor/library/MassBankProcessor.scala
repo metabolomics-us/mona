@@ -10,6 +10,7 @@ import org.springframework.batch.item.ItemProcessor
   */
 @Step(description = "this step will process a MassBank spectrum")
 class MassBankProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
+
   /**
     * processes the given spectrum
     *
@@ -17,8 +18,6 @@ class MassBankProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLoggi
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-
-
     spectrum
   }
 }

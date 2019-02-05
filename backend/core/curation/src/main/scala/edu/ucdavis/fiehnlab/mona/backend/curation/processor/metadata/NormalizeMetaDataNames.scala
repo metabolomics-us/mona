@@ -14,7 +14,7 @@ class NormalizeMetaDataNames extends ItemProcessor[Spectrum, Spectrum] {
   val SYNONYMS: Map[String, String] = MetaDataSynonyms.ALL_SYNONYMS
 
   /**
-    * processes the given spectrum and removes all it's computed meta data
+    * processes the given spectrum
     *
     * @param spectrum to be processed
     * @return processed spectrum

@@ -16,7 +16,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
   private val PRECURSOR_MATCH_TOLERANCE: Double = 0.5
 
   /**
-    * Processes the given spectrum
+    * processes the given spectrum
     *
     * @param spectrum to be processed
     * @return processed spectrum
@@ -126,7 +126,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
           logger.info(s"${spectrum.id}: Unable to determine precursor type given theoretical mass = $theoreticalMass, precursor m/z = $precursorMass and delta = $dist")
 
           spectrum.copy(
-            score = CurationUtilities.addImpact(spectrum.score, -5.0, "Unable to determine a valid adduct for the provided compound and precursor m/z")
+            score = CurationUtilities.addImpact(spectrum.score, -5, "Unable to determine a valid adduct for the provided compound and precursor m/z")
           )
         }
       }
@@ -135,7 +135,7 @@ class AdductPrediction extends ItemProcessor[Spectrum, Spectrum] with LazyLoggin
         logger.info(s"${spectrum.id}: Precursor information validated successfully")
 
         spectrum.copy(
-          score = CurationUtilities.addImpact(spectrum.score, 1.0, "Precursor information and provided compound validated")
+          score = CurationUtilities.addImpact(spectrum.score, 1, "Precursor information and provided compound validated")
         )
       }
     }

@@ -14,7 +14,7 @@ import org.springframework.batch.item.ItemProcessor
 class CalculateMassAccuracy extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   /**
-    * Processes the given spectrum
+    * processes the given spectrum
     *
     * @param spectrum to be processed
     * @return processed spectrum

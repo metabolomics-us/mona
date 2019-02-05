@@ -14,7 +14,7 @@ import org.springframework.batch.item.ItemProcessor
 class CalculateSplash extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   /**
-    * processes the given spectrum and
+    * processes the given spectrum
     *
     * @param spectrum to be processed
     * @return processed spectrum

@@ -37,19 +37,19 @@ class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with Lazy
         logger.info(s"${spectrum.id}: Has a high mass accuracy of $massAccuracy")
 
         spectrum.copy(
-          score = CurationUtilities.addImpact(spectrum.score, 2.0, s"High mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
+          score = CurationUtilities.addImpact(spectrum.score, 2, s"High mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
         )
       } else if (massAccuracy <= GOOD_ACCURACY) {
         logger.info(s"${spectrum.id}: Has a good mass accuracy of $massAccuracy")
 
         spectrum.copy(
-          score = CurationUtilities.addImpact(spectrum.score, 1.0, s"Mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
+          score = CurationUtilities.addImpact(spectrum.score, 1, s"Mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
         )
       } else if (massAccuracy > MINIMUM_ACCURACY) {
         logger.info(s"S${spectrum.id}: Has a poor mass accuracy of $massAccuracy, greater than the threshold of $MINIMUM_ACCURACY")
 
         spectrum.copy(
-          score = CurationUtilities.addImpact(spectrum.score, -1.0, s"Poor mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
+          score = CurationUtilities.addImpact(spectrum.score, -1, s"Poor mass accuracy of ${"%.3f".format(massAccuracy)} ppm")
         )
       } else {
         logger.info(s"${spectrum.id}: Has mass accuracy of $massAccuracy, within the threshold of $MINIMUM_ACCURACY")

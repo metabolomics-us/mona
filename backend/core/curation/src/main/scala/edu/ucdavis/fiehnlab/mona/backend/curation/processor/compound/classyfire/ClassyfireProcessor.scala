@@ -27,7 +27,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
   protected val restOperations: RestOperations = null
 
 
-  def isReachable(): Boolean = {
+  def isReachable: Boolean = {
     try {
       InetAddress.getByName("classyfire.wishartlab.com").isReachable(10)
       true
@@ -46,7 +46,7 @@ class ClassyfireProcessor extends ItemProcessor[Spectrum, Spectrum] with LazyLog
     */
   override def process(spectrum: Spectrum): Spectrum = {
 
-    if (isReachable()) {
+    if (isReachable) {
       logger.info(s"${spectrum.id}: Retrieving classification data from ClassyFire")
 
       val compounds = spectrum.compound.map(compound =>

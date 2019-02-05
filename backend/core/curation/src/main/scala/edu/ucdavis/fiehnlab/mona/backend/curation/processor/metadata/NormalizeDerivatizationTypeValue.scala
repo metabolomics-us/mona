@@ -15,7 +15,7 @@ import scala.collection.mutable.ArrayBuffer
 class NormalizeDerivatizationTypeValue extends ItemProcessor[Spectrum, Spectrum] with LazyLogging {
 
   /**
-    * processes the given spectrum and removes all it's computed meta data
+    * processes the given spectrum
     *
     * @param spectrum to be processed
     * @return processed spectrum

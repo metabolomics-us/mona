@@ -35,7 +35,7 @@ class ClassyfireProcessorTest extends WordSpec with LazyLogging {
     "process" in {
       assert(classyfireProcessor != null)
 
-      if (classyfireProcessor.isReachable()) {
+      if (classyfireProcessor.isReachable) {
         val output = classyfireProcessor.process(spectrumGiven)
 
         output.compound.foreach { compound =>
