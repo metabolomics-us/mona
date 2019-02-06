@@ -21,11 +21,13 @@ class NormalizeIonizationModeValueTest extends WordSpec {
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "given a spectra" must {
-      exampleRecords.foreach { spectrum: Spectrum =>
-        val processedSpectrum = processor.process(spectrum)
+      "verify the presence of an ionization mode metadata" in {
+        exampleRecords.foreach { spectrum: Spectrum =>
+          val processedSpectrum = processor.process(spectrum)
 
-        assert(processedSpectrum.metaData.exists(_.name == CommonMetaData.IONIZATION_MODE))
-        assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("ionization mode/type")))
+          assert(processedSpectrum.metaData.exists(_.name == CommonMetaData.IONIZATION_MODE))
+          assert(processedSpectrum.score.impacts.exists(_.reason.toLowerCase.contains("ionization mode/type")))
+        }
       }
     }
   }

@@ -24,11 +24,13 @@ class NormalizeMSLevelValueTest extends WordSpec {
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "given a spectra" must {
-      exampleRecords.foreach { spectrum: Spectrum =>
-        val processedSpectrum = processor.process(spectrum)
+      "verify the presence of an MS level metadata" in {
+        exampleRecords.foreach { spectrum: Spectrum =>
+          val processedSpectrum = processor.process(spectrum)
 
-        assert(processedSpectrum.metaData.exists(_.name == CommonMetaData.MS_LEVEL))
-        assert(processedSpectrum.score.impacts.exists(_.reason.contains("MS type/level")))
+          assert(processedSpectrum.metaData.exists(_.name == CommonMetaData.MS_LEVEL))
+          assert(processedSpectrum.score.impacts.exists(_.reason.contains("MS type/level")))
+        }
       }
     }
   }

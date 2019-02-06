@@ -19,8 +19,10 @@ class NormalizeMetaDataNamesTest extends WordSpec {
     val exampleRecords: Array[Spectrum] = JSONDomainReader.create[Array[Spectrum]].read(new InputStreamReader(getClass.getResourceAsStream("/monaRecords.json")))
 
     "given a spectra" must {
-      exampleRecords.foreach { spectrum: Spectrum =>
-        val processedSpectrum = processor.process(spectrum)
+      "normalize metdata names" in {
+        exampleRecords.foreach { spectrum: Spectrum =>
+          val processedSpectrum = processor.process(spectrum)
+        }
       }
     }
   }
