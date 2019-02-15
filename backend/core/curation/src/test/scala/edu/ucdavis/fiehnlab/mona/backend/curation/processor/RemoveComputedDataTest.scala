@@ -16,8 +16,7 @@ class RemoveComputedDataTest extends WordSpec {
   "this processor" when {
     val processor = new RemoveComputedData
 
-    val input = new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json"))
-    val spectrumGiven: Spectrum = reader.read(input)
+    val spectrumGiven: Spectrum = reader.read(new InputStreamReader(getClass.getResourceAsStream("/monaRecord.json")))
 
     "given a spectra" must {
       val processedSpectrum = processor.process(spectrumGiven)
