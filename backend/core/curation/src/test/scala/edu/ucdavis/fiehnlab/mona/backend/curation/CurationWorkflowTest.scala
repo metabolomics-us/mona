@@ -12,7 +12,6 @@ import org.scalatest.WordSpec
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
@@ -20,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by sajjan on 2/13/19.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[CurationConfig], classOf[JWTAuthenticationConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(classes = Array(classOf[RestClientTestConfig], classOf[CurationConfig], classOf[JWTAuthenticationConfig]))
 class CurationWorkflowTest extends WordSpec {
 
   @Autowired
@@ -34,7 +33,13 @@ class CurationWorkflowTest extends WordSpec {
     "curate MSJ00001" in {
       val spectrum = reader.read(new InputStreamReader(getClass.getResourceAsStream("/MSJ00001.json")))
       val processedSpectrum = curationWorkflow.process(spectrum)
+      assert(processedSpectrum.lastCurated != null)
+    }
 
+    "curate PT201840" in {
+      val spectrum = reader.read(new InputStreamReader(getClass.getResourceAsStream("/PT201840.json")))
+      val processedSpectrum = curationWorkflow.process(spectrum)
+      assert(processedSpectrum.lastCurated != null)
     }
   }
 }
