@@ -23,7 +23,7 @@ class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with Lazy
     * @return processed spectrum
     */
   override def process(spectrum: Spectrum): Spectrum = {
-    val massAccuracyMetaData: Array[MetaData] = spectrum.metaData.filter(_.name == CommonMetaData.MASS_ACCURACY)
+    val massAccuracyMetaData: Array[MetaData] = spectrum.metaData.filter(x => x.name == CommonMetaData.MASS_ACCURACY && x.computed)
 
     if (massAccuracyMetaData.isEmpty) {
       logger.debug(s"${spectrum.id}: Mass accuracy not defined for specturm")
@@ -31,6 +31,7 @@ class MassAccuracyValidation extends ItemProcessor[Spectrum, Spectrum] with Lazy
     }
 
     else {
+      logger.info(massAccuracyMetaData.head.toString)
       val massAccuracy: Double = massAccuracyMetaData.head.value.asInstanceOf[Double]
 
       if (massAccuracy <= HIGH_ACCURACY) {
