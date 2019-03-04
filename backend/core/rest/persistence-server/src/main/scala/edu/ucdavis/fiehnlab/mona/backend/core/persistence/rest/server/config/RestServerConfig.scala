@@ -78,7 +78,9 @@ class RestServerConfig extends WebSecurityConfigurerAdapter {
       .antMatchers(HttpMethod.GET, "/rest/tags/**")
       .antMatchers(HttpMethod.GET, "/rest/statistics/**")
       .antMatchers(HttpMethod.GET, "/rest/news/**")
+      .antMatchers(HttpMethod.GET, "/rest/comments/**")
 
+      .antMatchers(HttpMethod.POST, "/rest/comments")
       .antMatchers(HttpMethod.POST, "/rest/spectra/count")
 
       //no authentication for metadata

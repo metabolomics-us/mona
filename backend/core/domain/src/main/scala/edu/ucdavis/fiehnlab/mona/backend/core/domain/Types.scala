@@ -480,3 +480,13 @@ case class NewsEntry(
 
 @Document(collection = "SPLASH_BLACKLIST")
 case class BlacklistedSplash(@(Id@field) splash: String)
+
+@Document(collection = "COMMENTS")
+case class SpectrumComment(
+                            @(Id@field)
+                            id: String,
+                            monaID: String,
+                            user: String,
+                            emailAddress: String,
+                            comment: String
+                          )

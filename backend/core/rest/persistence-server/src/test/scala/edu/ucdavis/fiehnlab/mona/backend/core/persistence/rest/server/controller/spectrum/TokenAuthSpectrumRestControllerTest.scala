@@ -202,7 +202,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         assert(count == 1)
       }
 
-      "we should be able to execute custom name queries at /rest/spectra/search using GET" ignore {
+      "we should be able to execute custom name queries at /rest/spectra/search using GET" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=compound.names.name=='Trigenolline'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
         assert(exampleRecords.length == 1)
 
@@ -210,12 +210,12 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         assert(count == 1)
       }
 
-      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" ignore {
+      "we should be able to execute custom metadata queries at /rest/spectra/search using GET" in {
         val exampleRecords = given().contentType("application/json; charset=UTF-8").when().get("/spectra/search?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Array[Spectrum]])
-        assert(exampleRecords.length == 21)
+         assert(exampleRecords.length == 20)
 
         val count = authenticate().contentType("application/json: charset=UTF-8").when().get("/spectra/search/count?query=metaData=q='name==\"ion mode\" and value==\"negative\"'").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().as(classOf[Int])
-        assert(count == 21)
+        assert(count == 20)
       }
 
 
@@ -308,8 +308,11 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
         val spectrumByIDNew = given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/TADA_NEW_ID").`then`().contentType(MediaType.APPLICATION_JSON_VALUE).statusCode(200).extract().body().as(classOf[Spectrum])
 
         eventually(timeout(10 seconds)) {
-          //should not exist anymore
+          // should not exist anymore
           given().contentType("application/json; charset=UTF-8").when().get(s"/spectra/${spectrum.id}").`then`().statusCode(404)
+
+          // wait for elastic to sync
+          assert(spectrumMongoRepository.count() == spectrumElasticRepository.count())
         }
       }
 
@@ -326,7 +329,7 @@ class TokenAuthSpectrumRestControllerTest extends AbstractGenericRESTControllerT
 
           assert(spectrumRepository.count() == repositoryCount - 1)
           assert(spectrumMongoRepository.count() == mongoRepositoryCount - 1)
-          assert(spectrumMongoRepository.count() == elasticRepositoryCount - 1)
+          assert(spectrumElasticRepository.count() == elasticRepositoryCount - 1)
         }
       }
     }
