@@ -6,9 +6,14 @@
             <uib-tab index="0" select="selectTab(0)" active="activeTab[0]">
                 <uib-tab-heading class="search-heading">Database Content</uib-tab-heading>
 
-                <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
-
-                <table class="table">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>
+                            <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
+                        </th>
+                    </tr>
+                    </thead>
                     <tbody>
                     <tr>
                         <td>Submitters:</td>
@@ -19,7 +24,7 @@
                         <td>{{globalData.spectrumCount | number}}</td>
                     </tr>
                     <tr>
-                        <td>Unique Compounds (first InChIKey block):</td>
+                        <td>Unique Compounds (by InChIKey layer):</td>
                         <td>{{globalData.compoundCount | number}}</td>
                     </tr>
                     <tr>
@@ -40,6 +45,8 @@
                     </tr>
                     </tbody>
                 </table>
+
+                <span style="font-size: 0.9em">Last updated on: {{globalData.date | date}}</span>
             </uib-tab>
 
             <uib-tab index="1" select="selectTab(1)" active="activeTab[1]">
