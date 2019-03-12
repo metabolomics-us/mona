@@ -24,6 +24,7 @@
 
     /* @ngInject */
     function submitterQueryController($scope, SpectraQueryBuilderService) {
+
         /**
          * Create a new query based on the selected submitter
          */
