@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 
 import com.jayway.restassured.RestAssured
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumComment
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.SpectrumFeedback
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.config.{EmbeddedRestServerConfig, TestConfig}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controller.AbstractGenericRESTControllerTest
 import org.junit.runner.RunWith
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[EmbeddedRestServerConfig], classOf[JWTAuthenticationConfig], classOf[TestConfig]), webEnvironment = WebEnvironment.DEFINED_PORT)
-class SpectrumCommentRestControllerTest extends AbstractGenericRESTControllerTest[SpectrumComment]("/comments") with Eventually {
+class SpectrumFeedbackRestControllerTest extends AbstractGenericRESTControllerTest[SpectrumFeedback]("/feedback") with Eventually {
 
   @LocalServerPort
   private val port = 0
@@ -26,7 +26,7 @@ class SpectrumCommentRestControllerTest extends AbstractGenericRESTControllerTes
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
-  "SpectrumCommentRestControllerTest" must {
+  "SpectrumFeedbackRestControllerTest" must {
     RestAssured.baseURI = s"http://localhost:$port/rest"
   }
 
@@ -35,7 +35,7 @@ class SpectrumCommentRestControllerTest extends AbstractGenericRESTControllerTes
     *
     * @return
     */
-  override def getValue: SpectrumComment = SpectrumComment("test", "MoNA000001", "test user", "test@test", "commment")
+  override def getValue: SpectrumFeedback = SpectrumFeedback("test", "MoNA000001", "test user", "comment", "commment value")
 
   /**
     * returns an id for us for testing
