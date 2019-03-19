@@ -98,7 +98,7 @@ services:
   proxy:
     image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
     ports:
-      - 9090:8080
+      - 8080:8080
     depends_on:
       - persistence
     environment:
