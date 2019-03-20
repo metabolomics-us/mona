@@ -38,7 +38,7 @@
         $scope.downloadData = function(data, filetype, mimetype) {
             // Identify and sanitize filename
             var inchikeys = $scope.compound.metaData.filter(function(x) {
-                return x.name == 'InChIKey';
+                return x.name === 'InChIKey';
             });
 
             var filename = (inchikeys.length > 0) ? inchikeys[0].value :
@@ -74,43 +74,53 @@
         $timeout(function() {
             $scope.classifications = [];
 
-            // Get high order classifications
-            var classes = ['kingdom', 'superclass', 'class', 'subclass']
-                .map(function(value) {
-                    var filteredData = $scope.compound.classification.filter(function(x) { return x.name == value; });
-                    return filteredData.length > 0? filteredData[0] : null;
-                }).filter(function(x) { return x != null; });
+            if ($scope.compound.hasOwnProperty('classification')) {
+                // Get high order classifications
+                var classes = ['kingdom', 'superclass', 'class', 'subclass']
+                    .map(function (value) {
+                        var filteredData = $scope.compound.classification.filter(function (x) {
+                            return x.name === value;
+                        });
+                        return filteredData.length > 0 ? filteredData[0] : null;
+                    }).filter(function (x) {
+                        return x != null;
+                    });
 
-            // Get intermediate classifications
-            var intermediate_parents = $scope.compound.classification
-                .filter(function(x) { return x.name.indexOf('direct parent level') == 0; })
-                .map(function(x, i) {
-                    x.name = 'intermediate parent '+ (i + 1);
-                    return x;
+                // Get intermediate classifications
+                var intermediate_parents = $scope.compound.classification
+                    .filter(function (x) {
+                        return x.name.indexOf('direct parent level') === 0;
+                    })
+                    .map(function (x, i) {
+                        x.name = 'intermediate parent ' + (i + 1);
+                        return x;
+                    });
+
+                classes = classes.concat(intermediate_parents);
+
+                // Get parent classes
+                var direct_parent = $scope.compound.classification.filter(function (x) {
+                    return x.name === 'direct parent';
                 });
+                // var alternate_parents = $scope.compound.classification.filter(function (x) {
+                //     return x.name === 'alternative parent';
+                // });
 
-            classes = classes.concat(intermediate_parents);
+                // var parents = direct_parent.concat(alternate_parents);
 
-            // Get parent classes
-            var direct_parent = $scope.compound.classification.filter(function(x) { return x.name == 'direct parent'; });
-            var alternate_parents = $scope.compound.classification.filter(function(x) { return x.name == 'alternative parent'; });
-
-            // var parents = direct_parent.concat(alternate_parents);
-
-            // Build tree
-            if (classes.length > 0) {
-                var node = null;
-
-                for (var i = classes.length - 1; i >= 0; i--) {
-                    if (i == classes.length - 1) {
-                        classes[i].nodes = direct_parent;
-                    } else {
-                        classes[i].nodes = [classes[i + 1]];
+                // Build tree
+                if (classes.length > 0) {
+                    for (var i = classes.length - 1; i >= 0; i--) {
+                        if (i === classes.length - 1) {
+                            classes[i].nodes = direct_parent;
+                        } else {
+                            classes[i].nodes = [classes[i + 1]];
+                        }
                     }
-                }
 
-                $scope.classifications.push(classes[0]);
+                    $scope.classifications.push(classes[0]);
+                }
             }
-        })
+        });
     }
 })();
