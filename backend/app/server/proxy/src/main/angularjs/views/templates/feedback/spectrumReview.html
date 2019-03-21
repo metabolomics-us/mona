@@ -1,7 +1,10 @@
 <div class="btn-group top5" uib-dropdown>
-    <button type="button" class="btn dropdown-toggle btn-sm btn-info" uib-dropdown-toggle>
-        <i class='fa fa-comments'></i>
-        <span>Review Spectrum</span>
+    <button type="button" class="btn dropdown-toggle btn-sm" uib-dropdown-toggle
+            ng-class="{'btn-info': !submitted, 'btn-success': submitted}"
+            ng-disabled="submitting || submitted">
+        <i ng-show="!submitted" class="fa fa-comments"></i>
+        <i ng-show="submitted" class="fa fa-check"></i>
+        <span>Review Spectrum Quality</span>
     </button>
 
     <ul class="uib-dropdown-menu">

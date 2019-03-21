@@ -5,14 +5,14 @@
 (function() {
     'use strict';
 
-    spectrumReviewController.$inject = ['$scope'];
+    spectrumReviewController.$inject = ['$scope', '$http', 'AuthenticationService', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
         .directive('spectrumReview', spectrumReview);
 
     function spectrumReview() {
         return {
             replace: true,
-            templateUrl: '/views/templates/feedback/submitterQuery.html',
+            templateUrl: '/views/templates/feedback/spectrumReview.html',
             restrict: 'A',
             scope: {
                 spectrum: '=spectrum'
@@ -22,38 +22,24 @@
     }
 
     /* @ngInject */
-    function spectrumReviewController($scope) {
+    function spectrumReviewController($scope, $http, AuthenticationService, REST_BACKEND_SERVER) {
+        $scope.submitting = false;
+        $scope.submitted = false;
 
         $scope.rate = function(value) {
+            AuthenticationService.getCurrentUser().then(function(data) {
+                var payload = {
+                    monaID: $scope.spectrum.id,
+                    userID: data.username,
+                    name: 'spectrum_quality',
+                    value: value
+                };
 
+                $http.post(REST_BACKEND_SERVER + '/rest/feedback', payload).then(function(data) {
+                    $scope.submitting = false;
+                    $scope.submitted = true;
+                });
+            });
         };
-
-        /**
-         * Create a new query based on the selected submitter
-         */
-        $scope.newQuery = function() {
-            SpectraQueryBuilderService.prepareQuery();
-            $scope.addToQuery();
-        };
-
-        /**
-         * Add selected submitter to the current query
-         */
-        $scope.addToQuery = function() {
-            SpectraQueryBuilderService.addUserToQuery($scope.submitter.id);
-            SpectraQueryBuilderService.executeQuery();
-        };
-
-        /**
-         * Curate spectra based on selected submitter
-         */
-        $scope.curateSpectra = function() {
-            SpectraQueryBuilderService.prepareQuery();
-            SpectraQueryBuilderService.addUserToQuery($scope.submitter.id);
-
-            var query = SpectraQueryBuilderService.getRSQLQuery();
-            // TODO Add curation functionality
-            // Spectrum.curateSpectraByQuery(query, function(data) {});
-        }
     }
 })();
