@@ -1,50 +1,55 @@
 package edu.ucdavis.fiehnlab.mona.app.server.proxy.logging
 
+import javax.servlet.FilterChain
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
-
-import com.netflix.zuul.exception.ZuulException
-import org.springframework.web.servlet.DispatcherServlet
-import org.springframework.web.util.{ContentCachingRequestWrapper, ContentCachingResponseWrapper, WebUtils}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.Ordered
+import org.springframework.stereotype.Component
+import org.springframework.web.filter.OncePerRequestFilter
+import org.springframework.web.util.{ContentCachingRequestWrapper, WebUtils}
 
 /**
   * Created by sajjan on 12/15/16.
   * http://stackoverflow.com/a/39207422/406772
   */
-class LoggableDispatcherServlet(val loggingService: LoggingService) extends DispatcherServlet {
+@Component
+class RequestLoggingFilter extends OncePerRequestFilter with Ordered {
+
+  private val requestBeginTime = new ThreadLocal[Long]
+
+  private val order = Ordered.LOWEST_PRECEDENCE - 10
+
+  @Autowired
+  val loggingService: LoggingService = null
 
   /**
     *
     * @param request
     * @param response
     */
-  override def doDispatch(request: HttpServletRequest, response: HttpServletResponse): Unit = {
+  override def doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain): Unit = {
+
+    logger.info("Starting filter")
+
+    val isFirstRequest: Boolean = !isAsyncDispatch(request)
 
     // Add caching wrapper to request and response if necessary
-    val cachingRequest: HttpServletRequest =
-      if (!request.isInstanceOf[ContentCachingRequestWrapper])
+    val cachedRequest: HttpServletRequest =
+      if (isFirstRequest && !request.isInstanceOf[ContentCachingRequestWrapper])
         new ContentCachingRequestWrapper(request)
       else
         request
 
-    val cachingResponse: HttpServletResponse =
-      if (!response.isInstanceOf[ContentCachingResponseWrapper])
-        new ContentCachingResponseWrapper(response)
-      else
-        response
-
     // Time request
-    val startTime: Long = System.currentTimeMillis()
+    requestBeginTime.set(System.currentTimeMillis())
 
     try {
-      logger.debug("Running logging servlet")
-      super.doDispatch(cachingRequest, cachingResponse)
-    } catch {
-      // TODO Doesn't work?
-      case _: ZuulException =>
-        logger.info("Zuul Forwarding Error - wait for Eureka to identify service")
+      logger.debug("Running logging servlet for "+ cachedRequest.getSession.getId)
+      filterChain.doFilter(cachedRequest, response)
     } finally {
-      log(cachingRequest, cachingResponse, System.currentTimeMillis() - startTime)
-      updateResponse(cachingResponse)
+      if (!isAsyncStarted(cachedRequest)) {
+        logRequest(cachedRequest, response, System.currentTimeMillis() - requestBeginTime.get())
+      }
     }
   }
 
@@ -54,7 +59,7 @@ class LoggableDispatcherServlet(val loggingService: LoggingService) extends Disp
     * @param response
     * @param duration
     */
-  private def log(request: HttpServletRequest, response: HttpServletResponse, duration: Long): Unit = {
+  private def logRequest(request: HttpServletRequest, response: HttpServletResponse, duration: Long): Unit = {
 
     // Get http properties
     val httpStatus: Int = response.getStatus
@@ -83,11 +88,5 @@ class LoggableDispatcherServlet(val loggingService: LoggingService) extends Disp
     loggingService.logRequest(httpStatus, httpMethod, requestURI, requestQueryString, postData, ipAddress, duration)
   }
 
-  /**
-    *
-    * @param response
-    */
-  private def updateResponse(response: HttpServletResponse): Unit = {
-    WebUtils.getNativeResponse(response, classOf[ContentCachingResponseWrapper]).copyBodyToResponse()
-  }
+  def getOrder: Int = this.order
 }

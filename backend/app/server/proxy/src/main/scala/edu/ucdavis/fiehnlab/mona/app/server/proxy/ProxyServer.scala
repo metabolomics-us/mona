@@ -5,7 +5,7 @@ import javax.servlet.MultipartConfigElement
 
 import com.netflix.zuul.ZuulFilter
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.{LoggableDispatcherServlet, LoggingService}
+import edu.ucdavis.fiehnlab.mona.app.server.proxy.logging.{RequestLoggingFilter, LoggingService}
 import edu.ucdavis.fiehnlab.mona.app.server.proxy.swagger.SwaggerRedirectFilter
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.{EurekaClientConfig, SwaggerConfig}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -35,9 +35,6 @@ import org.springframework.web.servlet.resource.PathResourceResolver
 @Import(Array(classOf[EurekaClientConfig]))
 class ProxyServer {
 
-  @Autowired
-  val loggingService: LoggingService = null
-
   @Value("${spring.http.multipart.max-file-size}")
   val multipartMaxFileSize: String = null
 
@@ -56,18 +53,6 @@ class ProxyServer {
   @Bean
   def rewriteFilter: ZuulFilter = {
     new SwaggerRedirectFilter
-  }
-
-  @Bean
-  def dispatcherRegistration: ServletRegistrationBean = {
-    val servletRegistrationBean: ServletRegistrationBean = new ServletRegistrationBean(dispatcherServlet)
-    servletRegistrationBean.setMultipartConfig(multipartConfigElement)
-    servletRegistrationBean
-  }
-
-  @Bean(name = Array(DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME))
-  def dispatcherServlet: DispatcherServlet = {
-    new LoggableDispatcherServlet(loggingService)
   }
 }
 
