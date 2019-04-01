@@ -29,7 +29,7 @@ class PredefinedQueryExportListener extends GenericMessageListener[PredefinedQue
       logger.info(s"Received predefined query download request: ${predefinedQuery.label}")
 
       // Download query
-      val result: PredefinedQuery = downloadService.downloadPredefinedQuery(predefinedQuery)
+      val result: PredefinedQuery = downloadService.generatePredefinedExport(predefinedQuery)
 
       queryExportRepository.save(result.jsonExport)
       queryExportRepository.save(result.mspExport)

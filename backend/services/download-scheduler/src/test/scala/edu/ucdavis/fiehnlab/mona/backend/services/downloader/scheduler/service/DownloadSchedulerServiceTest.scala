@@ -73,7 +73,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       val count = notificationCounter.getEventCount
 
       testRunner.messageReceived = false
-      downloadSchedulerService.scheduleDownload("", "json")
+      downloadSchedulerService.scheduleExport("", "json")
 
       eventually(timeout(10 seconds)) {
         assert(testRunner.messageReceived)
@@ -88,7 +88,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       val count = notificationCounter.getEventCount
 
       testRunner.messageReceived = false
-      downloadSchedulerService.scheduleDownload("test")
+      downloadSchedulerService.scheduleExport("test")
 
       eventually(timeout(10 seconds)) {
         assert(testRunner.messageReceived)
@@ -103,7 +103,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       val count = notificationCounter.getEventCount
 
       testRunner.messageReceived = false
-      downloadSchedulerService.generatePredefinedDownloads()
+      downloadSchedulerService.generatePredefinedExports()
 
       eventually(timeout(10 seconds)) {
         assert(testRunner.messageReceived)
@@ -120,7 +120,7 @@ class DownloadSchedulerServiceTest extends AbstractSpringControllerTest with Eve
       val count = notificationCounter.getEventCount
 
       testRunner.messageReceived = false
-      downloadSchedulerService.generatePredefinedDownloads()
+      downloadSchedulerService.generatePredefinedExports()
 
       eventually(timeout(10 seconds)) {
         assert(testRunner.messageReceived)

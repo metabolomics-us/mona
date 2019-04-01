@@ -53,7 +53,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export all spectra as JSON without compression" in {
       val export: QueryExport = QueryExport("", "All Spectra", "", "json", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.downloadQueryExport(export, compress = false)
+      val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
 
       assert(result.count == 58)
       assert(result.size > 0)
@@ -69,7 +69,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export all spectra as JSON with compression" in {
       val export: QueryExport = QueryExport("", "All Spectra", "", "json", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.downloadQueryExport(export)
+      val result: QueryExport = downloaderService.generateQueryExport(export)
 
       assert(result.count == 58)
       assert(result.size > 0)
@@ -82,7 +82,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export all spectra as MSP without compression" in {
       val export: QueryExport = QueryExport("", "All Spectra", "", "msp", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.downloadQueryExport(export, compress = false)
+      val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
 
       assert(result.count == 58)
       assert(result.size > 0)
@@ -98,7 +98,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export all spectra as MSP with compression" in {
       val export: QueryExport = QueryExport("", "All Spectra", "", "msp", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.downloadQueryExport(export)
+      val result: QueryExport = downloaderService.generateQueryExport(export)
 
       assert(result.count == 58)
       assert(result.size > 0)
@@ -111,7 +111,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export negative mode spectra as JSON" in {
       val export: QueryExport = QueryExport("", "Negative Mode Spectra", "metaData=q='name==\"ion mode\" and value==negative'", "json", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.downloadQueryExport(export, compress = false)
+      val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
 
       assert(result.count == 25)
       assert(result.size > 0)
@@ -127,7 +127,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export negative mode spectra as MSP" in {
       val export: QueryExport = QueryExport("", "Negative Mode Spectra", "metaData=q='name==\"ion mode\" and value==negative'", "msp", null, null, 0, 0, null, null)
-      val result: QueryExport = downloaderService.downloadQueryExport(export, compress = false)
+      val result: QueryExport = downloaderService.generateQueryExport(export, compress = false)
 
       assert(result.count == 25)
       assert(result.size > 0)
@@ -143,7 +143,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export predefined query for all spectra" in {
       val query: PredefinedQuery = PredefinedQuery("All Spectra", "", "", 0, null, null, null)
-      val result: PredefinedQuery = downloaderService.downloadPredefinedQuery(query, compress = false, enableAllSpectraStaticFiles = true)
+      val result: PredefinedQuery = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
 
       assert(result.queryCount == 58)
 
@@ -184,7 +184,7 @@ class SpectrumDownloaderServiceTest extends WordSpec with LazyLogging {
 
     "export predefined query for query" in {
       val query: PredefinedQuery = PredefinedQuery("Negative Mode Spectra", "", "metaData=q='name==\"ion mode\" and value==negative'", 0, null, null, null)
-      val result: PredefinedQuery = downloaderService.downloadPredefinedQuery(query, compress = false, enableAllSpectraStaticFiles = true)
+      val result: PredefinedQuery = downloaderService.generatePredefinedExport(query, compress = false, enableAllSpectraStaticFiles = true)
 
       assert(result.queryCount == 25)
 

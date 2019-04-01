@@ -28,7 +28,7 @@ class RequestLoggingFilter extends OncePerRequestFilter with Ordered {
     * @param response
     */
   override def doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain): Unit = {
-    
+
     val isFirstRequest: Boolean = !isAsyncDispatch(request)
 
     // Add caching wrapper to request and response if necessary

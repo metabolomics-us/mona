@@ -32,11 +32,13 @@ class DownloaderService extends LazyLogging {
     */
   @PostConstruct
   private def init(): Unit = {
-    if (Files.notExists(downloadDir))
+    if (Files.notExists(downloadDir)) {
       Files.createDirectories(downloadDir)
+    }
 
-    if (Files.notExists(staticDownloadDir))
+    if (Files.notExists(staticDownloadDir)) {
       Files.createDirectories(staticDownloadDir)
+    }
   }
 
   /**
@@ -44,7 +46,7 @@ class DownloaderService extends LazyLogging {
     * @param query
     * @return
     */
-  def downloadPredefinedQuery(query: PredefinedQuery, compress: Boolean = true, enableAllSpectraStaticFiles: Boolean = false): PredefinedQuery = {
+  def generatePredefinedExport(query: PredefinedQuery, compress: Boolean = true, enableAllSpectraStaticFiles: Boolean = false): PredefinedQuery = {
 
     val jsonDownloader: SpectrumDownloader = SpectrumDownloader(query, query.jsonExport, "json", downloadDir, compress)
     val mspDownloader: SpectrumDownloader = SpectrumDownloader(query, query.mspExport, "msp", downloadDir, compress)
@@ -74,7 +76,7 @@ class DownloaderService extends LazyLogging {
     * @param export
     * @return
     */
-  def downloadQueryExport(export: QueryExport, compress: Boolean = true): QueryExport = {
+  def generateQueryExport(export: QueryExport, compress: Boolean = true): QueryExport = {
     val downloader: SpectrumDownloader = SpectrumDownloader(export, export.format, downloadDir, compress)
 
     downloadWriterService.exportQuery(export.query, export.label, Array(downloader))

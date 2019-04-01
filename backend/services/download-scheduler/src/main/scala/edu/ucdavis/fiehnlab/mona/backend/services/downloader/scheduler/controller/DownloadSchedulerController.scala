@@ -86,7 +86,7 @@ class DownloadSchedulerController extends LazyLogging {
                        @RequestParam(required = false, name = "format", defaultValue = "json") format: String): ResponseEntity[QueryExport] = {
 
     // Schedule download
-    val downloadObject: QueryExport = downloadSchedulerService.scheduleDownload(query, format)
+    val downloadObject: QueryExport = downloadSchedulerService.scheduleExport(query, format)
 
     new ResponseEntity(downloadObject, HttpStatus.OK)
   }
@@ -101,8 +101,8 @@ class DownloadSchedulerController extends LazyLogging {
   @ResponseBody
   def reschedule(@PathVariable("id") id: String): ResponseEntity[QueryExport] = {
 
-    // Schedule download
-    val downloadObject: QueryExport = downloadSchedulerService.scheduleDownload(id)
+    // Schedule export
+    val downloadObject: QueryExport = downloadSchedulerService.scheduleExport(id)
 
     if (downloadObject == null) {
       new ResponseEntity(HttpStatus.NOT_FOUND)
@@ -112,31 +112,31 @@ class DownloadSchedulerController extends LazyLogging {
   }
 
   /**
-    * Lists all available predefined downloads
+    * Lists all available predefined exports
     */
   @RequestMapping(path = Array("/predefined"), method = Array(RequestMethod.GET))
   @Async
-  def listPredefinedDownloads(): ResponseEntity[Array[PredefinedQuery]] = {
+  def listPredefinedExports(): ResponseEntity[Array[PredefinedQuery]] = {
     new ResponseEntity(predefinedQueryRepository.findAll().asScala.toArray, HttpStatus.OK)
   }
 
   /**
-    * Add a new predefined download
+    * Add a new predefined export
     *
     * @return
     */
   @RequestMapping(path = Array("/predefined"), method = Array(RequestMethod.POST))
   @Async
-  def createPredefinedDownloads(@RequestBody query: PredefinedQuery): ResponseEntity[PredefinedQuery] = {
+  def createPredefinedExport(@RequestBody query: PredefinedQuery): ResponseEntity[PredefinedQuery] = {
     new ResponseEntity(predefinedQueryRepository.save(query), HttpStatus.OK)
   }
 
   /**
-    * Schedules the re-generation of predefined downloads
+    * Schedules the re-generation of predefined exports
     */
   @RequestMapping(path = Array("/generatePredefined"), method = Array(RequestMethod.GET))
   @Async
-  def generatePredefinedDownloads(): ResponseEntity[Array[PredefinedQuery]] = {
-    new ResponseEntity(downloadSchedulerService.generatePredefinedDownloads(), HttpStatus.OK)
+  def generatePredefinedExports(): ResponseEntity[Array[PredefinedQuery]] = {
+    new ResponseEntity(downloadSchedulerService.generatePredefinedExports(), HttpStatus.OK)
   }
 }

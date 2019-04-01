@@ -50,12 +50,12 @@ class DownloadSchedulerService extends LazyLogging {
 
 
   /**
-    * Sends a query to be scheduled for download to our dedicated queue
+    * Sends a query to be scheduled for export to our dedicated queue
     *
     * @param query
     * @param format
     */
-  def scheduleDownload(query: String, format: String): QueryExport = {
+  def scheduleExport(query: String, format: String): QueryExport = {
     logger.info(s"Scheduling query $query as $format")
     val download: QueryExport = QueryExport(UUID.randomUUID.toString, null, query, format, null, new Date, 0, 0, null, null)
 
@@ -66,12 +66,12 @@ class DownloadSchedulerService extends LazyLogging {
   }
 
   /**
-    * Schedules an existing query export to be re-downloaded
+    * Schedules an existing query export to be re-exported
     *
     * @param id
     * @return
     */
-  def scheduleDownload(id: String): QueryExport = {
+  def scheduleExport(id: String): QueryExport = {
     logger.info(s"Looking up query: $id")
     val download: QueryExport = queryExportRepository.findOne(id)
 
@@ -87,7 +87,7 @@ class DownloadSchedulerService extends LazyLogging {
   /**
     * Generates the downloads of all export formats for each predefined query download
     */
-  def generatePredefinedDownloads(): Array[PredefinedQuery] = {
+  def generatePredefinedExports(): Array[PredefinedQuery] = {
 
     // Update the list of pre-generated downloads based on libraries present in the database
     tagStatisticsRepository.findAll().asScala
@@ -117,10 +117,10 @@ class DownloadSchedulerService extends LazyLogging {
   }
 
   /**
-    * Schedules the generation of predefined downloads once a day
+    * Schedules the generation of predefined exports once a day
     */
   @Scheduled(cron = "0 0 1 * * *")
-  private def schedulePredefinedDownloads(): Unit = {
-    generatePredefinedDownloads()
+  private def schedulePredefinedExports(): Unit = {
+    generatePredefinedExports()
   }
 }
