@@ -28,35 +28,34 @@ class QueryExportListener extends GenericMessageListener[QueryExport] with LazyL
     try {
       logger.info(s"Received download request: ${export.label}")
 
-      // Download query
-      val result: QueryExport = downloadService.generateQueryExport(export)
+      if (export.format.equalsIgnoreCase("static")) {
+        // Export static formats for the given query
+        val result: QueryExport = downloadService.generateStaticExports(export)
 
-      // Save updated query export
-      queryExportRepository.save(result)
+        logger.info(s"Finished exporting static downloads for ${result.label}, exported ${result.count} spectra")
+      } else {
+        // Export query
+        val result: QueryExport = downloadService.generateQueryExport(export)
 
-      // Update predefined download if necessary
-      if (result.emailAddress == null || result.emailAddress.isEmpty) {
-        val predefinedQuery = predefinedQueryRepository.findOne(result.label)
+        // Save updated query export for non-static exports
+        queryExportRepository.save(result)
 
-        if (predefinedQuery != null) {
-          // Update jsonExport or mspExport in the predefined query
-          val updatedPredefinedQuery =
-            if (result.format == "json")
-              predefinedQuery.copy(jsonExport = result, queryCount = result.count)
-            else if (result.format == "msp")
-              predefinedQuery.copy(mspExport = result, queryCount = result.count)
-            else if (result.format == "sdf")
-              predefinedQuery.copy(sdfExport = result, queryCount = result.count)
-            else
-              predefinedQuery
+        // Update predefined download if necessary
+        if (result.emailAddress == null || result.emailAddress.isEmpty) {
+          val predefinedQuery = predefinedQueryRepository.findOne(result.label)
 
-          // Save the updated predefined query
-          predefinedQueryRepository.save(updatedPredefinedQuery)
+          if (predefinedQuery != null) {
+            // Update the format-specific export in the predefined query
+            result.format match {
+              case "json" => predefinedQueryRepository.save(predefinedQuery.copy(jsonExport = result, queryCount = result.count))
+              case "msp" => predefinedQueryRepository.save(predefinedQuery.copy(mspExport = result, queryCount = result.count))
+              case "sdf" => predefinedQueryRepository.save(predefinedQuery.copy(sdfExport = result, queryCount = result.count))
+            }
+          }
         }
+
+        logger.info(s"Finished exporting ${result.count} spectra for ${result.label}")
       }
-
-      logger.info(s"Finished downloading ${result.label}, exported ${result.count} spectra")
-
     } catch {
       case e: Exception => logger.error(s"exception during download of ${export.label}, failing silently: ${e.getMessage}", e)
     }

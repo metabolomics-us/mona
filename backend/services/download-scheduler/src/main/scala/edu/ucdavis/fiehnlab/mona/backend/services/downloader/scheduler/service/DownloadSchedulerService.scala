@@ -117,10 +117,35 @@ class DownloadSchedulerService extends LazyLogging {
   }
 
   /**
+    *
+    */
+  def generateStaticExports(): Array[QueryExport] = {
+    // Hard-coded static exports for all spectra, export formats can be modified in the DownloaderService
+    logger.info(s"Scheduling static export generation")
+    val download: QueryExport = QueryExport(UUID.randomUUID.toString, "All Spectra", "", "static", null, new Date, 0, 0, null, null)
+
+    rabbitTemplate.convertAndSend(exportQueueName, download)
+    notifications.sendEvent(Event(Notification(download, getClass.getName)))
+
+    Array(download)
+  }
+
+  /**
     * Schedules the generation of predefined exports once a day
     */
   @Scheduled(cron = "0 0 0 * * ?")
   private def schedulePredefinedExports(): Unit = {
+    logger.info("Scheduling predefined export generation")
     generatePredefinedExports()
+  }
+
+
+  /**
+    * Schedules the generation of static exports for all spectra (e.g. base64 png and ID exports) once a week
+    */
+  @Scheduled(cron = "0 0 12 ? * SUN")
+  private def scheduleStaticExports(): Unit = {
+    logger.info("Starting static export generation")
+    generateStaticExports()
   }
 }

@@ -42,7 +42,7 @@ class DownloaderService extends LazyLogging {
   }
 
   /**
-    *
+    * Generate updated exports for a predefined query definition
     * @param query
     * @return
     */
@@ -72,7 +72,21 @@ class DownloaderService extends LazyLogging {
   }
 
   /**
-    *
+    * Generate updated static exports the given query definition
+    * @param compress
+    */
+  def generateStaticExports(export: QueryExport, compress: Boolean = true): QueryExport = {
+    val downloaders = Array(
+      SpectrumDownloader(export.label, export.query, "png", staticDownloadDir, compress),
+      SpectrumDownloader(export.label, export.query, "ids", staticDownloadDir, compress)
+    )
+
+    downloadWriterService.exportQuery(export.query, export.label, downloaders)
+    export.copy(count = downloaders.head.toQueryExport.count)
+  }
+
+  /**
+    * Generate an export for a custom query
     * @param export
     * @return
     */
@@ -80,7 +94,6 @@ class DownloaderService extends LazyLogging {
     val downloader: SpectrumDownloader = SpectrumDownloader(export, export.format, downloadDir, compress)
 
     downloadWriterService.exportQuery(export.query, export.label, Array(downloader))
-
     downloader.toQueryExport
   }
 }

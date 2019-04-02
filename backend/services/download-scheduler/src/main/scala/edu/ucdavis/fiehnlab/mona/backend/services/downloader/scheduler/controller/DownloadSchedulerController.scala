@@ -139,4 +139,13 @@ class DownloadSchedulerController extends LazyLogging {
   def generatePredefinedExports(): ResponseEntity[Array[PredefinedQuery]] = {
     new ResponseEntity(downloadSchedulerService.generatePredefinedExports(), HttpStatus.OK)
   }
+
+  /**
+    * Schedules the re-generation of static exports
+    */
+  @RequestMapping(path = Array("/generateStatic"), method = Array(RequestMethod.GET))
+  @Async
+  def generateStaticExports(): ResponseEntity[Array[QueryExport]] = {
+    new ResponseEntity(downloadSchedulerService.generateStaticExports(), HttpStatus.OK)
+  }
 }
