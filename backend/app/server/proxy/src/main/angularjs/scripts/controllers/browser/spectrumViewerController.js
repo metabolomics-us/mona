@@ -42,7 +42,7 @@
 
         if (angular.isDefined($scope.spectrum.compound)) {
             for (var i = 0; i < $scope.spectrum.compound.length; i++) {
-                $scope.accordionStatus.isCompoundOpen.push(i == 0);
+                $scope.accordionStatus.isCompoundOpen.push(i === 0);
             }
         }
 
@@ -99,7 +99,7 @@
             Spectrum.searchSimilarSpectra(
                 {spectrum: $scope.spectrum.spectrum, minSimilarity: 0.5},
                 function(data) {
-                    $scope.similarSpectra = data;
+                    $scope.similarSpectra = data.filter(function(x) { return x.id !== $scope.spectrum.id; });
                     $scope.loadingSimilarSpectra = false;
                 }, function(data) {
                     $scope.loadingSimilarSpectra = false;
