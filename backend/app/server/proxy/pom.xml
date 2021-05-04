@@ -124,8 +124,8 @@
                         </goals>
 
                         <configuration>
-                            <nodeVersion>v5.3.0</nodeVersion>
-                            <npmVersion>3.3.12</npmVersion>
+                            <nodeVersion>v14.16.1</nodeVersion>
+                            <npmVersion>6.14.13</npmVersion>
                         </configuration>
                     </execution>
 
@@ -141,7 +141,7 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-
+                    <!--
                     <execution>
                         <id>bower install</id>
 
@@ -153,17 +153,18 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-
+                    -->
 
                     <execution>
-                        <id>grunt build</id>
+                        <id>npm build</id>
 
                         <goals>
-                            <goal>grunt</goal>
+                            <goal>npm</goal>
                         </goals>
 
                         <configuration>
-                            <arguments>dist</arguments>
+                            <arguments>run</arguments>
+                            <arguments>build</arguments>
                         </configuration>
                     </execution>
 

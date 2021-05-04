@@ -1,0 +1,20 @@
+import "./main";
+import "./searchBoxController";
+import "./authentication/authenticationController";
+import "./authentication/authenticationModalController";
+import "./authentication/registrationModalController";
+import "./browser/spectraBrowserController";
+import "./browser/queryTreeController";
+import "./browser/spectraDatabaseIndexController";
+import "./browser/spectrumViewerController";
+import "./documentation/DocumentationTermController";
+import "./query/advancedSearchController";
+import "./query/spectraQueryModalController";
+import "./statistics/statisticsController";
+import "./submitter/submitterController";
+import "./submitter/submitterModalController";
+import "./submitter/submitterProfileController";
+import "./upload/advancedUploaderController";
+import "./upload/basicUploaderController";
+import "./upload/spectraUploadStatusController";
+

@@ -2,3 +2,5 @@ bower_components
 .sass-cache/
 coverage
 server.js
+package-lock.json
+src/main/app/dist
