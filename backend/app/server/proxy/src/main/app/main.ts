@@ -10,9 +10,9 @@ import "angular-sanitize";
 import "angular-animate";
 import "angular-ui-bootstrap";
 import "bootstrap";
-import "angular-dialog-service/dist/dialogs";
-//import "bootstrap-multiselect";
-//dist/js/bootstrap-multiselect
+import "angular-dialog-service";
+import "bootstrap-multiselect";
+import "components-font-awesome/css/font-awesome.css";
 import "flot";
 import "ng-tags-input";
 import "angular-cts-service";
@@ -25,6 +25,10 @@ import "angular-filter";
 import "d3/d3";
 import "nvd3";
 import "angular-nvd3";
+import "./styles/autocomplete.scss";
+import "./styles/main.scss";
+import "./styles/search.scss";
+import "./styles/theme.scss";
 import "./lib/chemdoodle-test/ChemDoodleWeb";
 
 import "./components/app";

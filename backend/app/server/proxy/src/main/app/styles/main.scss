@@ -1,10 +1,10 @@
 @import "search";
 
-$icon-font-path: "/bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 
-// bower:scss
-@import "../bower_components/bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
-@import "../bower_components/AngularJS-Toaster/toaster.scss";
+// npm:scss
+@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+@import "~angularjs-toaster/toaster.scss";
 // endbower
 
 /**
