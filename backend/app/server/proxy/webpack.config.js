@@ -10,7 +10,7 @@ module.exports = {
     resolve: {
         extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"],
         alias : {
-            //jquery: "jquery/src/jquery",
+            jquery: "jquery/src/jquery",
         },
     },
     module: {
