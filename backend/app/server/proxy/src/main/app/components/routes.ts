@@ -17,44 +17,44 @@ import * as angular from 'angular';
         $routeProvider
             //defining the root url
             .when('/', {
-                templateUrl: 'views/main.html',
+                templateUrl: '../views/main.html',
                 controller: 'MainController'
             })
 
             //uploading a mass spec
             .when('/upload', {
-                templateUrl: 'views/spectra/upload/upload.html'
+                templateUrl: '../views/spectra/upload/upload.html'
             })
 
             .when('/upload/basic', {
-                templateUrl: 'views/spectra/upload/basicUploader.html',
+                templateUrl: '../views/spectra/upload/basicUploader.html',
                 controller: 'BasicUploaderController'
             })
 
             .when('/upload/advanced', {
-                templateUrl: 'views/spectra/upload/advancedUploader.html',
+                templateUrl: '../views/spectra/upload/advancedUploader.html',
                 controller: 'AdvancedUploaderController'
             })
 
             .when('/upload/status', {
-                templateUrl: 'views/spectra/upload/uploadStatus.html',
+                templateUrl: '../views/spectra/upload/uploadStatus.html',
                 controller: 'SpectraUploadController'
             })
 
             //spectrum browser
             .when('/spectra/browse', {
-                templateUrl: 'views/spectra/browse/spectra.html',
+                templateUrl: '../views/spectra/browse/spectra.html',
                 controller: 'SpectraBrowserController'
             })
 
             .when('/spectra/similaritySearch', {
-                templateUrl: 'views/spectra/browse/spectra.html',
+                templateUrl: '../views/spectra/browse/spectra.html',
                 controller: 'SpectraBrowserController'
             })
 
             //view individual spectrum
             .when('/spectra/display/:id', {
-                templateUrl: 'views/spectra/display/viewSpectrum.html',
+                templateUrl: '../views/spectra/display/viewSpectrum.html',
                 controller: 'ViewSpectrumController',
                 resolve: {
                     delayedSpectrum: /* @ngInject */['Spectrum', '$route', 'SpectrumCache', function(Spectrum, $route, SpectrumCache) {
@@ -90,7 +90,7 @@ import * as angular from 'angular';
 
             //database index and statistics
             .when('/spectra/statistics', {
-                templateUrl: 'views/spectra/dbindex/dbindex.html',
+                templateUrl: '../views/spectra/dbindex/dbindex.html',
                 controller: 'SpectraDatabaseIndexController',
                 reloadOnSearch: false
             })
@@ -100,41 +100,41 @@ import * as angular from 'angular';
             })
 
             .when('/downloads', {
-                templateUrl: 'views/spectra/dbindex/queryTree.html',
+                templateUrl: '../views/spectra/dbindex/queryTree.html',
                 controller: 'QueryTreeController'
             })
 
             .when('/spectra/search', {
-                templateUrl: 'views/spectra/query/search.html'
+                templateUrl: '../views/spectra/query/search.html'
             })
 
             //user profile page
             .when('/profile', {
-                templateUrl: 'views/submitters/profile.html',
+                templateUrl: '../views/submitters/profile.html',
                 controller: 'SubmitterProfileController'
             })
 
             //displaying all submitters
             .when('/admin/submitters', {
-                templateUrl: 'views/submitters/list.html',
+                templateUrl: '../views/submitters/list.html',
                 controller: 'SubmitterController'
             })
 
             .when('/documentation/license', {
-                templateUrl: 'views/documentation/license.html'
+                templateUrl: '../views/documentation/license.html'
             })
 
             .when('/documentation/query', {
-                templateUrl: 'views/documentation/query.html'
+                templateUrl: '../views/documentation/query.html'
             })
 
             .when('/documentation/terms', {
-                templateUrl: 'views/documentation/terms.html',
+                templateUrl: '../views/documentation/terms.html',
                 controller: 'DocumentationTermController'
             })
 
             .when('/500', {
-                templateUrl: 'views/500.html',
+                templateUrl: '../views/500.html',
                 controller: 'DocumentationTermController'
             })
 

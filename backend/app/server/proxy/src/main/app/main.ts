@@ -1,11 +1,10 @@
 import "angular";
-import "angular-ui-router";
 import "angular-resource";
 import "angularjs-toaster";
 import "es5-shim";
 import "json3";
 import "jquery";
-import "knockout";
+import "bootstrap/dist/js/bootstrap.min"
 import "bootstrap-multiselect/dist/js/bootstrap-multiselect";
 import "angular-cookies";
 import "angular-sanitize";

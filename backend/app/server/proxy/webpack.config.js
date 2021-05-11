@@ -9,29 +9,11 @@ module.exports = {
     },
     resolve: {
         extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"],
-        alias : {
-            jquery: "jquery/src/jquery",
-        },
     },
+
     module: {
         rules: [
             { test : /\.tsx?$/, loader: "ts-loader" , },
-            {
-                test: require.resolve("bootstrap-multiselect/dist/js/bootstrap-multiselect.js"),
-                use: [
-                    {
-                        loader: 'imports-loader',
-                        options: {
-                            imports: {
-                                moduleName: 'jquery',
-                                name: '$'
-
-                            },
-                            wrapper: true
-                        },
-                    },
-                ],
-            },
             {
                 test: /\.css$/i,
                 use: ["style-loader", "css-loader",],
@@ -72,7 +54,9 @@ module.exports = {
             $: "jquery",
             jQuery: "jquery",
             jquery: "jquery",
-            "window.jquery": "jquery"
+            "window.jquery": "jquery",
+            "window.jQuery": "jquery"
         })
-    ]
+    ],
+
 };

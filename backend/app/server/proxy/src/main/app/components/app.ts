@@ -5,7 +5,6 @@
 import * as angular from 'angular';
 import "bootstrap/dist/css/bootstrap.css";
 import "angular-dialog-service/dist/dialogs.min.css"
-import "bootstrap-multiselect/dist/css/bootstrap-multiselect.css"
 import "components-font-awesome/css/font-awesome.css";
 import "ng-tags-input/build/ng-tags-input.bootstrap.css";
 import "ng-tags-input/build/ng-tags-input.bootstrap.min.css";
@@ -14,15 +13,14 @@ import "nvd3/build/nv.d3.css";
 import "../lib/chemdoodle-test/ChemDoodleWeb.css"
 import "../styles/main.scss";
 import "../styles/autocomplete.scss";
+import "angular-ui-bootstrap/dist/ui-bootstrap-csp.css";
 
-import "jquery";
-import "knockout";
+import "angular-ui-bootstrap"
 import "bootstrap-multiselect/dist/js/bootstrap-multiselect";
 import 'angular-route';
 import 'angular-resource';
 import 'angular-cookies';
 import 'angular-animate';
-import 'angular-ui-bootstrap';
 import 'angular-filter';
 import 'angular-dialog-service/dist/dialogs';
 import 'ng-tags-input';
@@ -39,10 +37,10 @@ import 'angular-google-analytics';
 angular
     .module('moaClientApp', [
         'ngRoute',
+        'ui.bootstrap',
         'ngResource',
         'ngCookies',
         'ngAnimate',
-        'ui.bootstrap',
         'angular.filter',
         'dialogs.main',
         'ngTagsInput',
