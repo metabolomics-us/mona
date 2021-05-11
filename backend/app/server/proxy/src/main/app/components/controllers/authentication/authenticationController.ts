@@ -5,111 +5,119 @@
 // TODO: waiting for implementation of return user data for admin from authentication Service
 import * as angular from 'angular';
 
+class AuthenticationController {
+    private static $inject = ['$scope','$rootScope', '$uibModal', 'AuthenticationService'];
+    private $scope;
+    private $rootScope;
+    private $uibModal;
+    private AuthenticationService;
+    private ADMIN_ROLE_NAME;
+    private currentUser;
+    private welcomeMessage;
 
-    AuthenticationController.$inject = ['$scope', '$rootScope', '$uibModal', 'AuthenticationService'];
-    angular.module('moaClientApp')
-      .controller('AuthenticationController', AuthenticationController);
+    constructor($scope, $rootScope, $uibModal, AuthenticationService) {
+        this.$scope =$scope;
+        this.$rootScope = $rootScope;
+        this.$uibModal = $uibModal;
+        this.AuthenticationService = AuthenticationService;
+    }
 
-
-    /* @ngInject */
-    function AuthenticationController($scope, $rootScope, $uibModal, AuthenticationService) {
-        var ADMIN_ROLE_NAME = 'ROLE_ADMIN';
-        var self = this;
-
-        self.currentUser = null;
-        self.welcomeMessage = 'Login/Register';
-
-
-        /**
-         * Returns whether or not the user is logged in
-         * @returns {*}
-         */
-        self.isLoggedIn = function() {
-            return AuthenticationService.isLoggedIn();
-        };
-
-        self.isAdmin = function() {
-            if (AuthenticationService.isLoggedIn() && angular.isDefined($rootScope.currentUser.roles)) {
-                for (var i = 0; i < $rootScope.currentUser.roles.length; i++) {
-                    if ($rootScope.currentUser.roles[i].authority === ADMIN_ROLE_NAME)
-                        return true;
-                }
-            }
-
-            return false;
-        };
-
-        /**
-         * Handle login
-         */
-        self.handleLogin = function() {
-            if (self.isLoggedIn()) {
-                AuthenticationService.logout();
-            } else {
-                self.openAuthenticationDialog();
-            }
-        };
-
-        /**
-         * Opens the authentication modal dialog
-         */
-        self.openAuthenticationDialog = function() {
-            $uibModal.open({
-                templateUrl: '/views/authentication/authenticationModal.html',
-                controller: 'AuthenticationModalController',
-                size: 'sm',
-                backdrop: 'true'
-            });
-        };
-
-        /**
-         * Opens the registration modal dialog
-         */
-        self.handleRegistration = function() {
-            if (!self.isLoggedIn()) {
-                $uibModal.open({
-                    templateUrl: '/views/authentication/registrationModal.html',
-                    controller: 'RegistrationModalController',
-                    size: 'md',
-                    backdrop: 'static'
-                });
-            }
-        };
+    $onInit() {
+        this.currentUser = null;
+        this.ADMIN_ROLE_NAME = 'ROLE_ADMIN';
+        this.welcomeMessage = 'Login/Register';
 
         /**
          * Create a welcome message on login
          */
-        $scope.$on('auth:login-success', function(event, data, status, headers, config) {
+        this.$scope.$on('auth:login-success', function(event, data, status, headers, config) {
 
-            AuthenticationService.getCurrentUser().then(function(data) {
+            this.AuthenticationService.getCurrentUser().then(function(data) {
                 console.log(JSON.stringify(data));
-                self.welcomeMessage = 'Welcome, ' + data.firstName + '!';
+                this.welcomeMessage = 'Welcome, ' + data.firstName + '!';
             });
         });
 
         /**
          * Remove the welcome message on logout
          */
-        $scope.$on('auth:logout', function(event, data, status, headers, config) {
-            self.welcomeMessage = 'Login/Register';
+        this.$scope.$on('auth:logout', function(event, data, status, headers, config) {
+            this.welcomeMessage = 'Login/Register';
         });
 
         /**
          * Listen for external calls to bring up the authentication modal
          */
-        $scope.$on('auth:login', function(event) {
-            if (!self.isLoggedIn()) {
-                self.openAuthenticationDialog();
+        this.$scope.$on('auth:login', function(event) {
+            if (!this.isLoggedIn()) {
+                this.openAuthenticationDialog();
             }
         });
 
-        /**
-         * Attempt to log in with authentication cookie stored in cookie
-         */
-
-        AuthenticationService.validate();
-
+        this.AuthenticationService.validate();
     }
 
+    isLoggedIn() {
+        return this.AuthenticationService.isLoggedIn();
+    }
+
+    isAdmin() {
+        if (this.AuthenticationService.isLoggedIn() && angular.isDefined(this.$rootScope.currentUser.roles)) {
+            for (let i = 0; i < this.$rootScope.currentUser.roles.length; i++) {
+                if (this.$rootScope.currentUser.roles[i].authority === this.ADMIN_ROLE_NAME)
+                    return true;
+            }
+        }
+
+        return false;
+    };
+
+    /**
+     * Handle login
+     */
+    handleLogin() {
+        if (this.isLoggedIn()) {
+            this.AuthenticationService.logout();
+        } else {
+            this.openAuthenticationDialog();
+        }
+    };
+
+    /**
+     * Opens the authentication modal dialog
+     */
+    openAuthenticationDialog() {
+        this.$uibModal.open({
+            templateUrl: '/views/authentication/authenticationModal.html',
+            controller: 'AuthenticationModalController',
+            size: 'sm',
+            backdrop: 'true'
+        });
+    };
+
+    /**
+     * Opens the registration modal dialog
+     */
+    handleRegistration() {
+        if (!this.isLoggedIn()) {
+            this.$uibModal.open({
+                templateUrl: '/views/authentication/registrationModal.html',
+                controller: 'RegistrationModalController',
+                size: 'md',
+                backdrop: 'static'
+            });
+        }
+    };
+}
+
+let AuthenticationComponent = {
+    selector: "authenticationController",
+    templateUrl: "../../../index.html",
+    bindings: {},
+    controller: AuthenticationController
+}
+
+angular.module('moaClientApp')
+    .component(AuthenticationComponent.selector, AuthenticationComponent)
 
 

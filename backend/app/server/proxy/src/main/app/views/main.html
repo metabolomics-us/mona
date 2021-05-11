@@ -90,11 +90,11 @@
             <br />
 
             <uib-carousel interval="7000">
-                <uib-slide ng-repeat="spectrum in showcaseSpectra">
+                <uib-slide ng-repeat="spectrum in $ctrl.showcaseSpectra">
                     <div class="text-left" display-spectra-panel spectrum="spectrum"></div>
                 </uib-slide>
 
-                <uib-slide ng-if="showcaseSpectra.length === 0">
+                <uib-slide ng-if="$ctrl.showcaseSpectra.length === 0">
                     <div class="text-center">
                         <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
                     </div>

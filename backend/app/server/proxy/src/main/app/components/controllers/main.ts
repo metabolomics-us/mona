@@ -1,43 +1,60 @@
 import * as angular from 'angular';
 
-    MainController.$inject = ['$scope', '$rootScope', 'Spectrum', '$log'];
-    angular.module('moaClientApp')
-        .controller('MainController', MainController);
+class MainController {
+    private static $inject = ['$rootScope', 'Spectrum', '$log'];
+    private showcaseSpectraIds;
+    private showcaseSpectra;
+    private $log;
+    private $rootScope;
+    public Spectrum;
 
-    /* @ngInject */
-    function MainController($scope, $rootScope, Spectrum, $log) {
-
-
-        $scope.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
-        $scope.showcaseSpectra = [];
-
-        (function() {
-            $scope.showcaseSpectraIds.forEach(function(id) {
-                Spectrum.get(
-                    {id: id},
-                    function(data) {
-                        $scope.showcaseSpectra.push(data);
-                    },
-                    function(error) {
-                        $log.error("Failed to obtain spectrum "+ id)
-                    }
-                );
-            });
-
-            // console.log any Http error messages
-            while ($rootScope.httpError.length !== 0) {
-                var curError = $rootScope.httpError.pop();
-
-                if (angular.isDefined(curError)) {
-                    var method = curError.config.method;
-                    var url = curError.config.url;
-                    var status = curError.status;
-
-                    var message = 'Unable to ' + method + ' from ' + url + ' Status: ' + status;
-
-                    $log.error(message);
-                }
-            }
-        })();
+    constructor($rootScope, Spectrum, $log) {
+        this.$rootScope = $rootScope;
+        this.Spectrum = Spectrum;
+        this.$log = $log;
     }
+
+    checkHttpError() {
+        while (this.$rootScope.httpError.length !== 0) {
+            let curError = this.$rootScope.httpError.pop();
+
+            if (angular.isDefined(curError)) {
+                let method = curError.config.method;
+                let url = curError.config.url;
+                let status = curError.status;
+
+                let message = 'Unable to ' + method + ' from ' + url + ' Status: ' + status;
+
+                this.$log.error(message);
+            }
+        }
+    }
+
+    $onInit(){
+        this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
+        this.showcaseSpectra = [];
+
+        this.showcaseSpectraIds.forEach((id) => {
+            this.Spectrum.get(
+                {id: id},
+                (data) => {
+                    this.showcaseSpectra.push(data);
+                },
+                (error) => {
+                    this.$log.error("Failed to obtain spectrum "+ id)
+                }
+            );
+        });
+    }
+}
+
+let MainComponent = {
+    selector: "main",
+    templateUrl: "../../views/main.html",
+    bindings: {},
+    controller: MainController
+}
+
+angular.module('moaClientApp')
+        .component(MainComponent.selector, MainComponent);
 
