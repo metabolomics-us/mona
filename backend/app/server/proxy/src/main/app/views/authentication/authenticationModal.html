@@ -1,45 +1,45 @@
-<form role="form" name="authentication" autocomplete="off" novalidate ng-submit="submitLogin()">
-    <div class="modal-header" ng-if="state == 'login' || state == 'success'">
-        <button type="button" class="close" ng-click="cancelDialog()" aria-hidden="true">×</button>
+<form role="form" name="authentication" autocomplete="off" novalidate ng-submit="$ctrl.submitLogin()">
+    <div class="modal-header" ng-if="$ctrl.state == 'login' || $ctrl.state == 'success'">
+        <button type="button" class="close" ng-click="$ctrl.cancelDialog()" aria-hidden="true">×</button>
         <h3 class="modal-title">Log into MoNA</h3>
     </div>
-    <div class="modal-header" ng-if="state == 'logging in'">
+    <div class="modal-header" ng-if="$ctrl.state == 'logging in'">
         <h3 class="modal-title">Log into MoNA</h3>
     </div>
 
 
-    <div class="modal-body" ng-if="state == 'login'">
-        <div class="alert alert-danger .alert-dismissible " role="alert" ng-show="errors.length">
+    <div class="modal-body" ng-if="$ctrl.state == 'login'">
+        <div class="alert alert-danger .alert-dismissible " role="alert" ng-show="$ctrl.errors.length">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <span>Error:</span>
-            <span ng-if="errors.length == 1">{{errors[0]}}</span>
-            <ul ng-if="errors.length > 1">
-                <li ng-repeat="error in errors">{{error}}</li>
+            <span ng-if="$ctrl.errors.length == 1">{{$ctrl.errors[0]}}</span>
+            <ul ng-if="$ctrl.errors.length > 1">
+                <li ng-repeat="error in $ctrl.errors">{{error}}</li>
             </ul>
         </div>
 
-        <div class="row" ng-if="state == 'login'">
+        <div class="row" ng-if="$ctrl.state == 'login'">
             <div class="col-xs-12">
                 <div class="form-group">
                     <label for="email" class="sr-only">Email Address</label>
-                    <input type="text" id="email" ng-model="credentials.email" class="form-control" placeholder="Email Address" />
+                    <input type="text" id="email" ng-model="$ctrl.credentials.email" class="form-control" placeholder="Email Address" />
                 </div>
                 <div class="form-group">
                     <label for="password" class="sr-only">Password</label>
-                    <input type="password" id="password" ng-model="credentials.password" class="form-control" placeholder="Password" />
+                    <input type="password" id="password" ng-model="$ctrl.credentials.password" class="form-control" placeholder="Password" />
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal-body text-center" ng-if="state == 'logging in'">
+    <div class="modal-body text-center" ng-if="$ctrl.state == 'logging in'">
         <h4><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Logging in...</span></h4>
     </div>
-    <div class="modal-body text-center text-success" ng-if="state == 'success'">
+    <div class="modal-body text-center text-success" ng-if="$ctrl.state == 'success'">
         <h4><i class="fa fa-check"></i> Success!</h4>
     </div>
 
 
-    <div class="modal-footer" ng-if="state == 'login'">
+    <div class="modal-footer" ng-if="$ctrl.state == 'login'">
         <button class="btn btn-primary btn-block" type="submit">Log In</button>
     </div>
 </form>

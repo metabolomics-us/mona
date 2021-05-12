@@ -1,59 +1,77 @@
 import * as angular from 'angular';
 
-    AuthenticationModalController.$inject = ['$scope', '$uibModalInstance', '$timeout', 'AuthenticationService'];
-    angular.module('moaClientApp')
-      .controller('AuthenticationModalController', AuthenticationModalController);
+class AuthenticationModalController{
+    private static $inject = ['$scope', '$uibModalInstance', '$timeout', 'AuthenticationService'];
+    private $scope;
+    private $uibModalInstance;
+    private $timeout;
+    private AuthenticationService;
+    private errors;
+    private state;
+    private credentials;
 
-    /* @ngInject */
-    function AuthenticationModalController($scope, $uibModalInstance, $timeout, AuthenticationService) {
+    constructor($scope, $uibModalInstance, $timeout, AuthenticationService) {
+        this.$scope = $scope;
+        this.$uibModalInstance = $uibModalInstance;
+        this.$timeout = $timeout;
+        this.AuthenticationService = AuthenticationService;
+    }
 
-        $scope.errors = [];
-        $scope.state = 'login';
-
-        $scope.credentials = {
+    $onInit = () => {
+        this.errors = [];
+        this.state = 'login';
+        this.credentials = {
             email: '',
             password: ''
         };
+    }
 
-        $scope.cancelDialog = function() {
-            $uibModalInstance.dismiss('cancel');
-        };
-
-        /**
-         * closes the dialog and finishes and builds the query
-         */
-        $scope.submitLogin = function() {
-            $scope.errors = [];
-
-            if ($scope.credentials.email === '') {
-                $scope.errors.push('Please enter your email address');
-            }
-
-            if ($scope.credentials.password === '') {
-                $scope.errors.push('Please enter your password');
-            }
-
-            if ($scope.errors.length === 0) {
-                $scope.state = 'logging in';
-                AuthenticationService.login($scope.credentials.email, $scope.credentials.password);
-            }
-        };
-
-        $scope.$on('auth:login-success', function(event, data, status, headers, config) {
-            $scope.state = 'success';
-            $timeout(function() {
-                $uibModalInstance.close();
+    $onChanges = (changes) => {
+        this.$scope.$on('auth:login-success', (event, data, status, headers, config) => {
+            this.$scope.state = 'success';
+            this.$timeout(function() {
+                this.$uibModalInstance.close();
             }, 1000);
         });
 
-        $scope.$on('auth:login-error', function(event, data, status, headers, config) {
-            $scope.state = 'login';
+        this.$scope.$on('auth:login-error', (event, data, status, headers, config) => {
+            this.$scope.state = 'login';
 
             if (data.status == '401') {
-                $scope.errors.push('Invalid email or password');
+                this.$scope.errors.push('Invalid email or password');
             } else {
-                $scope.errors.push('Unable to reach MoNA server');
+                this.$scope.errors.push('Unable to reach MoNA server');
             }
         });
     }
 
+    submitLogin = () => {
+        this.errors = [];
+
+        if (this.credentials.email === '') {
+            this.errors.push('Please enter your email address');
+        }
+
+        if (this.credentials.password === '') {
+            this.errors.push('Please enter your password');
+        }
+
+        if (this.errors.length === 0) {
+            this.state = 'logging in';
+            this.AuthenticationService.login(this.credentials.email, this.credentials.password);
+        }
+    };
+
+
+
+}
+
+let AuthenticationModalComponent = {
+    selector: "authenticationModal",
+    templateUrl: "../../../views/authentication/authenticationModal.html",
+    bindings: {},
+    controller: AuthenticationModalController
+}
+
+angular.module('moaClientApp')
+    .component(AuthenticationModalComponent.selector, AuthenticationModalComponent)

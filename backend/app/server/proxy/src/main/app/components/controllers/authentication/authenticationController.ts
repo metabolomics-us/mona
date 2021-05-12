@@ -22,11 +22,13 @@ class AuthenticationController {
         this.AuthenticationService = AuthenticationService;
     }
 
-    $onInit() {
+    $onInit = () => {
         this.currentUser = null;
         this.ADMIN_ROLE_NAME = 'ROLE_ADMIN';
         this.welcomeMessage = 'Login/Register';
+    }
 
+    $onChanges = (changes) => {
         /**
          * Create a welcome message on login
          */

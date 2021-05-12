@@ -1,5 +1,6 @@
 import * as angular from 'angular';
 
+class
     RegistrationModalController.$inject = ['$scope', '$rootScope', '$uibModalInstance', '$http', 'AuthenticationService', 'REST_BACKEND_SERVER'];
     angular.module('moaClientApp')
       .controller('RegistrationModalController', RegistrationModalController);

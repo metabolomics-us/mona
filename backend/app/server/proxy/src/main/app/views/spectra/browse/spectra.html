@@ -1,5 +1,5 @@
 <!--Splash for search-->
-<div id="splash-page" ng-show="searchSplash" class="dissolve-animation">
+<div id="splash-page" ng-show="$ctrl.searchSplash" class="dissolve-animation">
     <div class="page-splash">
         <div class="page-splash-message">
             Searching
@@ -34,11 +34,11 @@
         <uib-accordion close-others="true">
             <uib-accordion-group heading="Display Generated Query" is-open="queryOpen">
                 <div>
-                    Generated RSQL Query: <a href="" ng-click="editQuery = !editQuery"><i class="fa fa-pencil-square-o"></i></a>
+                    Generated RSQL Query: <a href="" ng-click="$ctrl.editQuery = !$ctrl.editQuery"><i class="fa fa-pencil-square-o"></i></a>
 
-                    <pre ng-if="!editQuery">{{query !== '' && query !== undefined ? query : "[Empty Query]"}}</pre>
-                    <div ng-if="editQuery">
-                        <form ng-submit="updateQuery(query)">
+                    <pre ng-if="!$ctrl.editQuery">{{$ctrl.query !== '' && $ctrl.query !== undefined ? $ctrl.query : "[Empty Query]"}}</pre>
+                    <div ng-if="$ctrl.editQuery">
+                        <form ng-submit="$ctrl.updateQuery($ctrl.query)">
                             <div class="input-group">
                                 <input type="text" ng-model="query" class="form-control" />
                                 <span class="input-group-btn">
@@ -49,11 +49,11 @@
                     </div>
 
                     Full text search query:
-                    <pre>{{textQuery}}</pre>
+                    <pre>{{$ctrl.textQuery}}</pre>
 
                     <div>
                         Example cURL command to download all spectral JSON records matching the generated RSQL query:
-                        <pre>{{{query: query, text: textQuery} | curl}}</pre>
+                        <pre>{{{query: $ctrl.query, text: $ctrl.textQuery} | curl}}</pre>
                     </div>
 
                     <div>To download as an MSP file, add the header: <code>Accept: text/msp</code>.</div>
@@ -89,7 +89,7 @@
     <div class="col-md-12">
         <div class="pull-left">
             <button class="btn btn-primary"
-                    ng-show="pagination.table == false" ng-click="pagination.table = true"
+                    ng-show="$ctrl.pagination.table == false" ng-click="$ctrl.pagination.table = true"
                     uib-tooltip-placement="right"
                     uib-tooltip="Display Spectra in Tabular Mode"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
@@ -97,20 +97,20 @@
             </button>
 
             <button class="btn btn-primary"
-                    ng-show="pagination.table == true" ng-click="pagination.table = false"
+                    ng-show="$ctrl.pagination.table == true" ng-click="$ctrl.pagination.table = false"
                     uib-tooltip-placement="right"
                     uib-tooltip="Display Spectra in Panel Mode"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-list fa-fw" ng-click="table = false"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="searchSpectra()" uib-tooltip-placement="right"
+            <button class="btn btn-primary" ng-click="$ctrl.searchSpectra()" uib-tooltip-placement="right"
                     uib-tooltip="Start a New Query"
                     uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='2'>
                 <i class="fa fa-2x fa-search fa-fw"></i>
             </button>
 
-            <button class="btn btn-primary" ng-click="resetQuery()" uib-tooltip-placement="right"
+            <button class="btn btn-primary" ng-click="$ctrl.resetQuery()" uib-tooltip-placement="right"
                     uib-tooltip="Reset the Current Query" uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay="2">
                 <i class="fa fa-2x fa-refresh fa-fw"></i>
             </button>
@@ -124,8 +124,8 @@
             <button class="btn btn-primary" ng-click="queryOpen = queryOpen ? false : true" uib-tooltip-placement="left"
                     uib-tooltip="Number of spectra retrieved in this query, click to see additional details">
 
-                <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{pagination.totalSize > -1 ? pagination.totalSize : "Loading..."}}
-                <span ng-show="auth.isAdmin() && duration !== undefined"> ({{duration | number: 2}} s)</span>
+                <i class="fa fa-2x fa-slack fa-fw vcenter"></i>{{$ctrl.pagination.totalSize > -1 ? $ctrl.pagination.totalSize : "Loading..."}}
+                <span ng-show="auth.isAdmin() && $ctrl.duration !== undefined"> ({{$ctrl.duration | number: 2}} s)</span>
             </button>
         </div>
     </div>
@@ -134,15 +134,15 @@
 <div class="row top7">
     <div class="col-md-12">
         <select data-multi-select
-                data-ng-model="pagination.itemsPerPageSelection"
+                data-ng-model="$ctrl.pagination.itemsPerPageSelection"
                 data-buttonClass="btn btn-primary"
                 data-ng-options="option.toString() as option + ' records/page' for option in pagination.itemsPerPageOptions">
         </select>
 
         <select data-multi-select
                 multiple
-                data-ng-if="pagination.table == true"
-                data-ng-model="pagination.tableColumnSelected"
+                data-ng-if="$ctrl.pagination.table == true"
+                data-ng-model="$ctrl.pagination.tableColumnSelected"
                 data-buttonClass="btn btn-primary"
                 data-buttonText="Select Columns"
                 data-enableFiltering="true"
@@ -153,29 +153,29 @@
 
 <div class="row top17">
     <!-- display spectra as list -->
-    <div class="col-md-12" ng-show="pagination.table == false">
-        <div ng-repeat="spectrum in spectra">
+    <div class="col-md-12" ng-show="$ctrl.pagination.table == false">
+        <div ng-repeat="spectrum in $ctrl.spectra">
             <div display-spectra-panel spectrum="spectrum"></div>
         </div>
     </div>
 
     <!-- display spectra as table-->
-    <div class="col-md-12" ng-show="pagination.table == true">
+    <div class="col-md-12" ng-show="$ctrl.pagination.table == true">
         <table class="table table-hover table-striped" style="table-layout: fixed;">
             <thead>
             <tr>
-                <th data-ng-repeat="column in pagination.tableColumnSelected"
+                <th data-ng-repeat="column in $ctrl.pagination.tableColumnSelected"
                     data-ng-class="{'text-center': column != 'ID' && column != 'Name'}">{{column}}</th>
             </tr>
             </thead>
 
             <tbody>
-            <tr ng-show="spectra.length == 0"></tr>
+            <tr ng-show="$ctrl.spectra.length == 0"></tr>
 
-            <tr ng-repeat="spectrum in spectra" ng-click="viewSpectrum(spectrum.id, $index)">
-                <td data-ng-repeat="column in pagination.tableColumnSelected" data-ng-switch data-on="column">
+            <tr ng-repeat="spectrum in $ctrl.spectra" ng-click="$ctrl.viewSpectrum(spectrum.id, $index)">
+                <td data-ng-repeat="column in $ctrl.pagination.tableColumnSelected" data-ng-switch data-on="column">
                     <div data-ng-switch-when="ID">
-                        <div><a style="cursor: pointer" ng-href="{{viewSpectrum(spectrum.id)}}">{{spectrum.id}}</a></div>
+                        <div><a style="cursor: pointer" ng-href="{{$ctrl.viewSpectrum(spectrum.id)}}">{{spectrum.id}}</a></div>
                         <div>
                             <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
                         </div>
@@ -217,23 +217,23 @@
 
 
     <!-- loading information -->
-    <div class="text-center" ng-show="pagination.loading && !searchSplash">
+    <div class="text-center" ng-show="$ctrl.pagination.loading && !$ctrl.searchSplash">
         <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading...</h4>
     </div>
 
-    <div class="text-center" ng-show="!pagination.loading && spectra.length == 0">
+    <div class="text-center" ng-show="!pagination.loading && $ctrl.spectra.length == 0">
         <h4>No results found!</h4>
     </div>
 
     <!-- pagination -->
-    <div ng-if="!pagination.loading && pagination.totalSize > -1" class="text-center">
+    <div ng-if="!pagination.loading && $ctrl.pagination.totalSize > -1" class="text-center">
         <ul uib-pagination
-            total-items="pagination.totalSize"
-            max-size="pagination.maxSize"
-            items-per-page="pagination.itemsPerPage"
-            ng-model="pagination.currentPage"
+            total-items="$ctrl.pagination.totalSize"
+            max-size="$ctrl.pagination.maxSize"
+            items-per-page="$ctrl.pagination.itemsPerPage"
+            ng-model="$ctrl.pagination.currentPage"
             boundary-links="true"
-            ng-change="loadPage()"></ul>
+            ng-change="$ctrl.loadPage()"></ul>
     </div>
 
     <!-- spacer -->
