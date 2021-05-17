@@ -50,7 +50,7 @@ class MainController {
 
 let MainComponent = {
     selector: "main",
-    templateUrl: "../../views/main.html",
+    templateUrl: "../views/main.html",
     bindings: {},
     controller: MainController
 }

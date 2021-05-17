@@ -3,18 +3,18 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h3>
+                    <h3 class="panel-title">Spectrum {{$ctrl.spectrum.id}} for {{$ctrl.spectrum.compound[0].names[0].name}}</h3>
                 </div>
 
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12" ng-init="showScore = false">
                             <span uib-tooltip-placement="right"
-                                  uib-tooltip="Click to see the explaination for the {{0.0 + spectrum.score.score | number:2}} / 5 score"
+                                  uib-tooltip="Click to see the explaination for the {{0.0 + $ctrl.spectrum.score.score | number:2}} / 5 score"
                                   uib-tooltip-trigger="mouseenter" uib-tooltip-popup-delay='10'
                                   ng-click="showScore =! showScore">
                                 Rating:
-                                <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
+                                <span><uib-rating ng-model="$ctrl.spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
                                 <i class="fa fa-question"></i>
                             </span>
                         </div>
@@ -22,9 +22,9 @@
 
                     <div class="row" ng-show="showScore" ng-class="animate-show">
                         <div class="col-md-12">
-                            <div class="panel top17 panel-default" ng-show="spectrum.score">
+                            <div class="panel top17 panel-default" ng-show="$ctrl.spectrum.score">
                                 <div class="panel-heading">
-                                    Explanation for the {{spectrum.score.score | number:2}} / 5 star score
+                                    Explanation for the {{$ctrl.spectrum.score.score | number:2}} / 5 star score
                                 </div>
                                 <div class="panel-body">
                                     <table class="table">
@@ -35,7 +35,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr ng-repeat="impact in spectrum.score.impacts | orderBy:'-value'"
+                                        <tr ng-repeat="impact in $ctrl.spectrum.score.impacts | orderBy:'-value'"
                                             ng-class="impact.value < 0 ? 'danger' : (impact.value > 0 ? 'success' : 'warning')">
                                             <td>{{impact.value | number:2}}</td>
                                             <td>{{impact.reason}}</td>
@@ -44,16 +44,16 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="panel top17" ng-hide="spectrum.score">This spectrum has not yet been curated.</div>
+                            <div class="panel top17" ng-hide="$ctrl.spectrum.score">This spectrum has not yet been curated.</div>
                         </div>
                     </div>
 
-                    <div class="row top5" ng-if="spectrum.library !== null">
+                    <div class="row top5" ng-if="$ctrl.spectrum.library !== null">
                         <div class="col-md-12">
                             <ul class="list-unstyled">
                                 <li>
                                     <div class="h5">
-                                        <span data-display-library-reference spectrum="spectrum"></span>
+                                        <span data-display-library-reference spectrum="$ctrl.spectrum"></span>
                                     </div>
                                 </li>
                             </ul>
@@ -63,14 +63,14 @@
                     <div class="row top5">
                         <div class="col-md-8">
                             <ul class="list-inline">
-                                <li ng-repeat="tag in spectrum.tags">
-                                    <span tag-query rule-based="tag.ruleBased" value="tag" type="spectrum"></span>
+                                <li ng-repeat="tag in $ctrl.spectrum.tags">
+                                    <span tag-query rule-based="tag.ruleBased" value="tag" type="$ctrl.spectrum"></span>
                                 </li>
                             </ul>
                         </div>
 
                         <div class="col-md-4 text-right">
-                            <div spectra-download spectrum="spectrum"></div>
+                            <div spectra-download spectrum="$ctrl.spectrum"></div>
                         </div>
                     </div>
 
@@ -80,19 +80,19 @@
                                 <li>
                                     <div class="h5">
                                         SPLASH<sup><a href="http://splash.fiehnlab.ucdavis.edu" target="_blank"><i class="fa fa-question-circle" aria-hidden="true"></i></a></sup>:
-                                        <span splash-query value="spectrum.splash">{{spectrum.splash.splash}}</span>
+                                        <span splash-query value="$ctrl.spectrum.splash">{{$ctrl.spectrum.splash.splash}}</span>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="h5">
-                                        Submitter: <span submitter-query submitter="spectrum.submitter">{{spectrum.submitter.firstName}} {{spectrum.submitter.lastName}}</span>
+                                        Submitter: <span submitter-query submitter="spectrum.submitter">{{$ctrl.spectrum.submitter.firstName}} {{$ctrl.spectrum.submitter.lastName}}</span>
                                     </div>
                                 </li>
                             </ul>
                         </div>
 
                         <div class="col-md-3 text-right">
-                            <div spectrum-review spectrum="spectrum" ng-show="auth.isLoggedIn()"></div>
+                            <div spectrum-review spectrum="$ctrl.spectrum" ng-show="auth.isLoggedIn()"></div>
                         </div>
                     </div>
 
@@ -101,27 +101,27 @@
                     <div class="row">
                         <div class="col-md-12">
                             <uib-accordion close-others="false">
-                                <uib-accordion-group is-open="accordionStatus.isSpectraOpen">
+                                <uib-accordion-group is-open="$ctrl.accordionStatus.isSpectraOpen">
                                     <uib-accordion-heading>
                                         <div>Mass Spectrum
                                             <i class="pull-right glyphicon"
-                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isSpectraOpen,
-                                                       'glyphicon-chevron-right': !accordionStatus.isSpectraOpen}"></i>
+                                               ng-class="{'glyphicon-chevron-down': $ctrl.accordionStatus.isSpectraOpen,
+                                                       'glyphicon-chevron-right': !$ctrl.accordionStatus.isSpectraOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
 
                                     <div class="masspec-modal">
-                                        <mass-spec id="massSpec_{{spectrum.id}}"
-                                                   ng-model="spectrum.spectrum"></mass-spec>
+                                        <mass-spec id="massSpec_{{$ctrl.spectrum.id}}"
+                                                   ng-model="$ctrl.spectrum.spectrum"></mass-spec>
                                     </div>
                                 </uib-accordion-group>
 
-                                <uib-accordion-group is-open="accordionStatus.isIonTableOpen">
+                                <uib-accordion-group is-open="$ctrl.accordionStatus.isIonTableOpen">
                                     <uib-accordion-heading>
                                         <div>Ion Table / Peak Table
                                             <i class="pull-right glyphicon"
-                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isIonTableOpen,
-                                                    'glyphicon-chevron-right': !accordionStatus.isIonTableOpen}"></i>
+                                               ng-class="{'glyphicon-chevron-down': $ctrl.accordionStatus.isIonTableOpen,
+                                                    'glyphicon-chevron-right': !$ctrl.accordionStatus.isIonTableOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
 
@@ -129,13 +129,13 @@
                                         <table class="table">
                                             <thead>
                                             <tr>
-                                                <th><a href="" ng-click="sortIonTable('ion')">Ion</a></th>
-                                                <th><a href="" ng-click="sortIonTable('intensity')">Intensity</a></th>
-                                                <th><a href="" ng-click="sortIonTable('annotation')">Annotation</a></th>
+                                                <th><a href="" ng-click="$ctrl.sortIonTable('ion')">Ion</a></th>
+                                                <th><a href="" ng-click="$ctrl.sortIonTable('intensity')">Intensity</a></th>
+                                                <th><a href="" ng-click="$ctrl.sortIonTable('annotation')">Annotation</a></th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr ng-repeat="ion in massSpec | orderBy:ionTableSort:ionTableSortReverse">
+                                            <tr ng-repeat="ion in $ctrl.massSpec | orderBy:ionTableSort:ionTableSortReverse">
                                                 <td>{{ion.ion | number : 6}}</td>
                                                 <td>{{ion.intensity | number : 6}}</td>
                                                 <td>
@@ -152,27 +152,27 @@
                                     </div>
                                 </uib-accordion-group>
 
-                                <uib-accordion-group is-open="accordionStatus.isSimilarSpectraOpen">
+                                <uib-accordion-group is-open="$ctrl.accordionStatus.isSimilarSpectraOpen">
                                     <uib-accordion-heading>
-                                        <div ng-click="loadSimilarSpectra()">
+                                        <div ng-click="$ctrl.loadSimilarSpectra()">
                                             Similar Spectra
                                             <i class="pull-right glyphicon"
-                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isSimilarSpectraOpen,
-                                                          'glyphicon-chevron-right': !accordionStatus.isSimilarSpectraOpen}"></i>
+                                               ng-class="{'glyphicon-chevron-down': $ctrl.accordionStatus.isSimilarSpectraOpen,
+                                                          'glyphicon-chevron-right': !$ctrl.accordionStatus.isSimilarSpectraOpen}"></i>
                                         </div>
                                     </uib-accordion-heading>
 
-                                    <div class="text-center" ng-show="loadingSimilarSpectra">
+                                    <div class="text-center" ng-show="$ctrl.loadingSimilarSpectra">
                                         <p><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Searching for similar spectra...</span></p>
 
                                         <p>Please wait - this can take some time depending on server load.</p>
                                     </div>
 
-                                    <div class="text-center" ng-show="!loadingSimilarSpectra && !similarSpectra.length">
+                                    <div class="text-center" ng-show="!$ctrl.loadingSimilarSpectra && !$ctrl.similarSpectra.length">
                                         <h4>No spectra found with similarity of at least 500 / 1000.</h4>
                                     </div>
 
-                                    <div class="text-center" ng-show="!loadingSimilarSpectra && similarSpectra.length"
+                                    <div class="text-center" ng-show="!$ctrl.loadingSimilarSpectra && $ctrl.similarSpectra.length"
                                          style="height: 400px; overflow: auto; margin-top: 10px;">
 
                                         <table class="table table-hover table-striped" style="table-layout: fixed;">
@@ -186,8 +186,8 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr ng-repeat="s in similarSpectra"
-                                                ng-click="viewSpectrum(s.id)">
+                                            <tr ng-repeat="s in $ctrl.similarSpectra"
+                                                ng-click="$ctrl.viewSpectrum(s.id)">
                                                 <td>{{s.id}}</td>
                                                 <td>
                                                     <ul class="list-unstyled">
@@ -227,19 +227,19 @@
                             <h4>Compound Information</h4>
 
                             <uib-accordion>
-                                <uib-accordion-group ng-repeat="compound in spectrum.compound track by $index"
-                                                     is-open="accordionStatus.isCompoundOpen[$index]">
+                                <uib-accordion-group ng-repeat="compound in $ctrl.spectrum.compound track by $index"
+                                                     is-open="$ctrl.accordionStatus.isCompoundOpen[$index]">
                                     <uib-accordion-heading>
                                         <div>
-                                            <span ng-if="compound.kind !== null">{{compound.kind | ucfirst}}</span>
+                                            <span ng-if="$ctrl.compound.kind !== null">{{$ctrl.compound.kind | ucfirst}}</span>
                                             <span ng-of="compound.kind === null">Submitted Compound</span>
                                             <i class="pull-right glyphicon"
-                                               ng-class="{'glyphicon-chevron-down': accordionStatus.isCompoundOpen[$index],
-                                                          'glyphicon-chevron-right': !accordionStatus.isCompoundOpen[$index]}"></i>
+                                               ng-class="{'glyphicon-chevron-down': $ctrl.accordionStatus.isCompoundOpen[$index],
+                                                          'glyphicon-chevron-right': !$ctrl.accordionStatus.isCompoundOpen[$index]}"></i>
                                         </div>
                                     </uib-accordion-heading>
 
-                                    <div display-compound-info compound="compound"></div>
+                                    <div display-compound-info compound="$ctrl.compound"></div>
                                 </uib-accordion-group>
                             </uib-accordion>
                         </div>
@@ -248,7 +248,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <div ng-show="spectrum.metaData.length">
+                            <div ng-show="$ctrl.spectrum.metaData.length">
                                 <h4>Mass Spectral Metadata</h4>
                                 <table class="table">
                                     <thead>
@@ -258,7 +258,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="meta in spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: 'name'">
+                                    <tr ng-repeat="meta in $ctrl.spectrum.metaData | filter: {category: '!annotation'} | filter: {deleted : '!true'} | filter: {hidden: '!true'} | orderBy: 'name'">
                                         <td class="col-lg-4 col-md-4" data-metadata-name="{{meta.name}}">
                                             <span metadata-query value="meta"> {{meta.name}}</span>
                                         </td>

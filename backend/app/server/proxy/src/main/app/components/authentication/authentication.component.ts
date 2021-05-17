@@ -114,7 +114,7 @@ class AuthenticationController {
 
 let AuthenticationComponent = {
     selector: "authenticationController",
-    templateUrl: "../../../index.html",
+
     bindings: {},
     controller: AuthenticationController
 }

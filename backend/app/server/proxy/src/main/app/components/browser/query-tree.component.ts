@@ -154,7 +154,7 @@ class QueryTreeController{
 
 let QueryTreeComponent = {
     selector: "queryTree",
-    templateUrl: "../../../views/spectra/dbindex/queryTree.html",
+    templateUrl: "../../views/spectra/dbindex/queryTree.html",
     bindings: {},
     controller: QueryTreeController
 }

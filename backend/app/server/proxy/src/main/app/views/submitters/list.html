@@ -10,7 +10,7 @@
     <form role="form">
         <div class="input-group">
             <span class="input-group-addon"> <label for="query">Filter</label></span>
-            <input id="query" class="form-control" ng-model="submitter.query"
+            <input id="query" class="form-control" ng-model="$ctrl.submitter.query"
                    placeholder="Please enter your query term"/>
         </div>
         <table class="table">
@@ -26,7 +26,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="submitter in submitters | filter:submitter.query" id="submitter_{{submitter.id}}">
+            <tr ng-repeat="submitter in $ctrl.submitters | filter:submitter.query" id="submitter_{{submitter.id}}">
                 <td><span submitter-query submitter="submitter">{{submitter.firstName}}</span></td>
                 <td>{{submitter.lastName}}</td>
                 <td>{{submitter.institution}}</td>
@@ -34,9 +34,9 @@
                 <td><span spectra-score-for-user user="submitter"></span></td>
                 <td><span spectra-count-for-user user="submitter"></span></td>
                 <td>
-                    <button ng-click="displayEditDialog($index)" class="btn btn-default"><i
+                    <button ng-click="$ctrl.displayEditDialog($index)" class="btn btn-default"><i
                             class="fa fa-pencil-square-o "></i></button>
-                    <button ng-click="remove($index)" class="btn btn-default"><i
+                    <button ng-click="$ctrl.remove($index)" class="btn btn-default"><i
                             class="fa fa-minus-square"></i></button>
                     <input type="hidden" name="submitter.id" ng-value="submitter.id" value="{{submitter.id}}"/>
                 </td>
@@ -44,7 +44,7 @@
             </tbody>
         </table>
 
-        <button ng-click="displayCreateDialog()" class="btn btn-default"><i
+        <button ng-click="$ctrl.displayCreateDialog()" class="btn btn-default"><i
                 class="fa fa-user"></i>Add a new submitter
         </button>
     </form>

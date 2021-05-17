@@ -68,7 +68,7 @@ class AuthenticationModalController{
 
 let AuthenticationModalComponent = {
     selector: "authenticationModal",
-    templateUrl: "../../../views/authentication/authenticationModal.html",
+    templateUrl: "../../views/authentication/authenticationModal.html",
     bindings: {},
     controller: AuthenticationModalController
 }

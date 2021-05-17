@@ -17,45 +17,38 @@ import * as angular from 'angular';
         $routeProvider
             //defining the root url
             .when('/', {
-                templateUrl: '../views/main.html',
-                controller: 'MainController'
+                template: "<main></main>"
             })
 
             //uploading a mass spec
             .when('/upload', {
-                templateUrl: '../views/spectra/upload/upload.html'
+                templateUrl: './views/spectra/upload/upload.html'
             })
 
             .when('/upload/basic', {
-                templateUrl: '../views/spectra/upload/basicUploader.html',
-                controller: 'BasicUploaderController'
+                template: "<basic-uploader></basic-uploader>"
             })
 
             .when('/upload/advanced', {
-                templateUrl: '../views/spectra/upload/advancedUploader.html',
-                controller: 'AdvancedUploaderController'
+                template: "<advanced-uploader></advanced-uploader>"
             })
 
             .when('/upload/status', {
-                templateUrl: '../views/spectra/upload/uploadStatus.html',
-                controller: 'SpectraUploadController'
+                template: "<spectra-upload></spectra-upload>"
             })
 
             //spectrum browser
             .when('/spectra/browse', {
-                templateUrl: '../views/spectra/browse/spectra.html',
-                controller: 'SpectraBrowserController'
+                template: "<spectra-browser></spectra-browser>"
             })
 
             .when('/spectra/similaritySearch', {
-                templateUrl: '../views/spectra/browse/spectra.html',
-                controller: 'SpectraBrowserController'
+                template: "<spectra-browser></spectra-browser>"
             })
 
             //view individual spectrum
             .when('/spectra/display/:id', {
-                templateUrl: '../views/spectra/display/viewSpectrum.html',
-                controller: 'ViewSpectrumController',
+                template: "<spectrum-viewer></spectrum-viewer>",
                 resolve: {
                     delayedSpectrum: /* @ngInject */['Spectrum', '$route', 'SpectrumCache', function(Spectrum, $route, SpectrumCache) {
                         // If a spectrum is not cached or the id requested does not match the
@@ -90,8 +83,7 @@ import * as angular from 'angular';
 
             //database index and statistics
             .when('/spectra/statistics', {
-                templateUrl: '../views/spectra/dbindex/dbindex.html',
-                controller: 'SpectraDatabaseIndexController',
+                template: "<spectra-database-index></spectra-database-index>",
                 reloadOnSearch: false
             })
 
@@ -100,42 +92,37 @@ import * as angular from 'angular';
             })
 
             .when('/downloads', {
-                templateUrl: '../views/spectra/dbindex/queryTree.html',
-                controller: 'QueryTreeController'
+                template: "<query-tree></query-tree>"
             })
 
             .when('/spectra/search', {
-                templateUrl: '../views/spectra/query/search.html'
+                templateUrl: './views/spectra/query/search.html'
             })
 
             //user profile page
             .when('/profile', {
-                templateUrl: '../views/submitters/profile.html',
-                controller: 'SubmitterProfileController'
+                template: "<submitter-profile></submitter-profile>"
             })
 
             //displaying all submitters
             .when('/admin/submitters', {
-                templateUrl: '../views/submitters/list.html',
-                controller: 'SubmitterController'
+                template: "<submitter></submitter>"
             })
 
             .when('/documentation/license', {
-                templateUrl: '../views/documentation/license.html'
+                templateUrl: './views/documentation/license.html'
             })
 
             .when('/documentation/query', {
-                templateUrl: '../views/documentation/query.html'
+                templateUrl: './views/documentation/query.html'
             })
 
             .when('/documentation/terms', {
-                templateUrl: '../views/documentation/terms.html',
-                controller: 'DocumentationTermController'
+                template: "<documentation-term></documentation-term>"
             })
 
             .when('/500', {
-                templateUrl: '../views/500.html',
-                controller: 'DocumentationTermController'
+                template: "<documentation-term></documentation-term>"
             })
 
             //any other page is redirected to the root page

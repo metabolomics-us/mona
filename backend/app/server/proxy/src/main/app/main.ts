@@ -26,13 +26,13 @@ import "nvd3";
 import "angular-nvd3";
 import "./lib/chemdoodle-test/ChemDoodleWeb";
 
-import "./components/app";
-import "./components/services";
-import "./components/errors";
-import "./components/events";
-import "./components/routes";
-import "./components/controllers";
-import "./components/directives";
-import "./components/filters";
+import "./app";
+import "./services";
+import "./errors";
+import "./events";
+import "./routes";
+import "./components";
+import "./directives";
+import "./filters";
 
 

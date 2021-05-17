@@ -3,7 +3,7 @@
         <h3>Commonly used terms and abbreviations
         </h3>
 
-        <div ng-repeat="term in terms | orderBy : term.name">
+        <div ng-repeat="term in $ctrl.terms | orderBy : term.name">
         <div class="list-group">
 
             <h4 class="list-group-item-heading">{{term.name}}</h4>

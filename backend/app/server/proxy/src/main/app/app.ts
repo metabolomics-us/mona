@@ -10,9 +10,9 @@ import "ng-tags-input/build/ng-tags-input.bootstrap.css";
 import "ng-tags-input/build/ng-tags-input.bootstrap.min.css";
 import "nvd3/build/nv.d3.css";
 
-import "../lib/chemdoodle-test/ChemDoodleWeb.css"
-import "../styles/main.scss";
-import "../styles/autocomplete.scss";
+import "./lib/chemdoodle-test/ChemDoodleWeb.css"
+import "./styles/main.scss";
+import "./styles/autocomplete.scss";
 import "angular-ui-bootstrap/dist/ui-bootstrap-csp.css";
 
 import "angular-ui-bootstrap"

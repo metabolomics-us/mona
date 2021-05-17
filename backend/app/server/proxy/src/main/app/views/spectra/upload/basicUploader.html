@@ -14,7 +14,7 @@
 
 
         <!-- Select files to upload -->
-        <div data-ng-if="page == 0" class="panel panel-default">
+        <div data-ng-if="$ctrl.page == 0" class="panel panel-default">
             <div class="panel-heading"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
 
             <div class="panel-body">
@@ -26,11 +26,11 @@
                 <br />
 
                 <label>Upload a File:</label>
-                <p class="help-block" data-ng-show="uploadError" data-ng-class="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
-                <div class="input-group" data-ng-class="{'has-error': uploadError}">
+                <p class="help-block" data-ng-show="$ctrl.uploadError" data-ng-class="{'has-error': $ctrl.uploadError}"><strong>{{$ctrl.uploadError}}</strong></p>
+                <div class="input-group" data-ng-class="{'has-error': $ctrl.uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" data-ng-file-select="parseFiles($files)" />
+                            Browse&hellip; <input type="file" data-ng-file-select="$ctrl.parseFiles($files)" />
                         </span>
                     </span>
 
@@ -41,9 +41,9 @@
 
                 <br /><br />
 
-                <div class="input-group" data-ng-class="{'has-error': pasteError}">
+                <div class="input-group" data-ng-class="{'has-error': $ctrl.pasteError}">
                     <label>Paste a Mass Spectrum:</label>
-                    <p class="help-block" data-ng-show="pasteError"><strong>{{pasteError}}</strong></p>
+                    <p class="help-block" data-ng-show="$ctrl.pasteError"><strong>{{$ctrl.pasteError}}</strong></p>
                     <textarea class="form-control" rows="10" data-ng-model="pastedSpectrum"></textarea>
                     <span class="help-block">
                         Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
@@ -52,14 +52,14 @@
                         <code>...</code>
                     </span>
 
-                    <a class="btn btn-primary" data-ng-click="parsePastedSpectrum(pastedSpectrum)">Load Spectrum</a>
+                    <a class="btn btn-primary" data-ng-click="$ctrl.parsePastedSpectrum(pastedSpectrum)">Load Spectrum</a>
                 </div>
             </div>
         </div>
 
 
         <!-- Loading message -->
-        <div ng-if="page == 1" class="panel panel-default">
+        <div ng-if="$ctrl.page == 1" class="panel panel-default">
             <div class="panel-heading"><strong style="font-size: 1.2em;">Loading...</strong></div>
             <div class="panel-body text-center">
                 <span class="spinner">
@@ -71,20 +71,20 @@
 
 
         <!-- Error message if no spectra are found -->
-        <div ng-if="page == 2 && currentSpectrum === null" class="panel panel-default">
+        <div ng-if="$ctrl.page == 2 && $ctrl.currentSpectrum === null" class="panel panel-default">
             <div class="panel-heading"><strong style="font-size: 1.2em;">Loading...</strong></div>
             <div class="panel-body text-center"><strong>No valid mass spectra found in the uploaded file(s)!</strong></div>
         </div>
 
 
         <!-- Display spectrum -->
-        <div ng-if="page == 2 && currentSpectrum !== null" class="panel panel-default">
+        <div ng-if="$ctrl.page == 2 && $ctrl.currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="restart()">&larr; Restart</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.restart()">&larr; Restart</a></li>
                         <li><strong style="font-size: 1.2em;">Spectrum Viewer</strong></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
                     </ul>
                 </nav>
             </div>
@@ -95,7 +95,7 @@
                     you expect <br /> You may also add annotations to specific peaks in the ion table below.</small>
                 </p>
 
-                <p class="lead" ng-if="fileHasMultipleSpectra">
+                <p class="lead" ng-if="$ctrl.fileHasMultipleSpectra">
                     <small><strong>Note: </strong> The file you uploaded contains multiple mass spectral records.  The basic
                     uploader is only designed to process a single spectrum, and so only the first spectrum in your file
                     will be displayed.</small>
@@ -106,26 +106,26 @@
                 </div>
                 <br />
 
-                <div style="margin-top: 10px;" ng-if="!showIonTable">
+                <div style="margin-top: 10px;" ng-if="!$ctrl.showIonTable">
                     <p><strong>This mass spectrum is very large!</strong></p>
-                    <p>It contains {{currentSpectrum.ions.length}} individual ions. Loading them all automatically can slow down your browser, but you can manually build the ion table:</p>
+                    <p>It contains {{$ctrl.currentSpectrum.ions.length}} individual ions. Loading them all automatically can slow down your browser, but you can manually build the ion table:</p>
                     <br />
                     <p class="text-center"><a class="btn btn-primary" ng-click="$parent.showIonTable = true">Build Ion Table</a></p>
                 </div>
 
-                <div style="height: 500px; overflow: auto; margin-top: 10px;" ng-if="showIonTable">
+                <div style="height: 500px; overflow: auto; margin-top: 10px;" ng-if="$ctrl.showIonTable">
                     <table class="table">
                         <thead>
                         <tr>
                             <th>&nbsp;</th>
-                            <th><a href="" ng-click="sortIonTable('ion')">Ion</a></th>
-                            <th><a href="" ng-click="sortIonTable('intensity')">Intensity</a></th>
-                            <th><a href="" ng-click="sortIonTable('relativeIntensity')">Relative Intensity</a></th>
-                            <th><a href="" ng-click="sortIonTable('annotation')">Annotation</a></th>
+                            <th><a href="" ng-click="$ctrl.sortIonTable('ion')">Ion</a></th>
+                            <th><a href="" ng-click="$ctrl.sortIonTable('intensity')">Intensity</a></th>
+                            <th><a href="" ng-click="$ctrl.sortIonTable('relativeIntensity')">Relative Intensity</a></th>
+                            <th><a href="" ng-click="$ctrl.sortIonTable('annotation')">Annotation</a></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="ion in currentSpectrum.ions | orderBy:ionTableSort:ionTableSortReverse">
+                        <tr ng-repeat="ion in $ctrl.currentSpectrum.ions | orderBy:$ctrl.ionTableSort:$ctrl.ionTableSortReverse">
                             <td><input type="checkbox" ng-model="ion.selected" /></td>
                             <td>{{ion.ion}}</td>
                             <td>{{ion.intensity}}</td>
@@ -142,8 +142,8 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="restart()">&larr; Restart</a></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.restart()">&larr; Restart</a></li>
+                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
                     </ul>
                 </nav>
             </div>
@@ -151,13 +151,13 @@
 
 
         <!-- Compound information -->
-        <div ng-if="page == 3" class="panel panel-default">
+        <div ng-if="$ctrl.page == 3" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
                         <li><strong style="font-size: 1.2em;">Compound Information</strong></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
                     </ul>
                 </nav>
             </div>
@@ -173,19 +173,19 @@
                 </p>
                 <br />
 
-                <div ng-if="currentSpectrum.molFile && !compoundProcessing" style="text-align: center;">
+                <div ng-if="$ctrl.currentSpectrum.molFile && !$ctrl.compoundProcessing" style="text-align: center;">
                     <div chemical-sketcher readonly="true"
                          id="compoundViewer"
-                         ng-model="currentSpectrum.molFile"></div>
+                         ng-model="$ctrl.currentSpectrum.molFile"></div>
                 </div>
 
-                <div class="alert alert-info" role="alert" ng-show="compoundProcessing" style="text-align: center;">
+                <div class="alert alert-info" role="alert" ng-show="$ctrlcompoundProcessing" style="text-align: center;">
                     <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Pulling compound data...</h4>
                 </div>
 
-                <div ng-if="compoundError" class="alert alert-danger" role="alert">
+                <div ng-if="$ctrl.compoundError" class="alert alert-danger" role="alert">
                     <h3><i class="fa fa-exclamation-triangle"></i> Error!</h3>
-                    <h4>{{compoundError}}</h4>
+                    <h4>{{$ctrl.compoundError}}</h4>
                 </div>
                 <br />
 
@@ -193,11 +193,11 @@
                     <div class="col-lg-3"><label>Names:</label></div>
                     <div class="col-lg-9">
                         <input type="text"
-                               ng-repeat="name in currentSpectrum.names track by $index"
-                               ng-model="currentSpectrum.names[$index]"
+                               ng-repeat="name in $ctrl.currentSpectrum.names track by $index"
+                               ng-model="$ctrl.currentSpectrum.names[$index]"
                                placeholder="Name"
                                class="form-control" />
-                        <button type="button" class="btn btn-default btn-xs" ng-click="addName()">+</button>
+                        <button type="button" class="btn btn-default btn-xs" ng-click="$ctrl.addName()">+</button>
                     </div>
                 </div>
 
@@ -205,7 +205,7 @@
                     <div class="col-md-3 col-lg-3"><label>InChI:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               ng-model="currentSpectrum.inchi"
+                               ng-model="$ctrl.currentSpectrum.inchi"
                                placeholder="InChI"
                                class="form-control" />
                     </div>
@@ -215,7 +215,7 @@
                     <div class="col-md-3 col-lg-3"><label>SMILES</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               ng-model="currentSpectrum.smiles"
+                               ng-model="$ctrl.currentSpectrum.smiles"
                                placeholder="SMILES"
                                class="form-control" />
                     </div>
@@ -225,18 +225,18 @@
                     <div class="col-md-3 col-lg-3"><label>InChIKey:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               ng-model="currentSpectrum.inchiKey"
+                               ng-model="$ctrl.currentSpectrum.inchiKey"
                                placeholder="InChIKey"
                                class="form-control" />
                     </div>
                 </div>
 
                 <div class="form-group text-center">
-                    <button type="button" class="btn btn-primary" ng-click="retrieveCompoundData()" ng-disabled="compoundProcessing">
-                        <span ng-if="compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+                    <button type="button" class="btn btn-primary" ng-click="$ctrl.retrieveCompoundData()" ng-disabled="$ctrl.compoundProcessing">
+                        <span ng-if="$ctrl.compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
                         <span>Update Compound</span>
                     </button>
-                    <button ng-click="resetCompound()" class="btn btn-danger" ng-disabled="compoundProcessing">Reset Compound</button>
+                    <button ng-click="$ctrl.resetCompound()" class="btn btn-danger" ng-disabled="$ctrl.compoundProcessing">Reset Compound</button>
                 </div>
 
                 <div class="row form-group">
@@ -254,11 +254,11 @@
 
                             <div class="form-group">
                                 <label>Copy and paste a molecular structure:</label>
-                                <textarea class="form-control" ng-model="currentSpectrum.molFile" rows="10"></textarea>
+                                <textarea class="form-control" ng-model="$ctrl.currentSpectrum.molFile" rows="10"></textarea>
                             </div>
 
                             <div class="form-group text-center">
-                                <button ng-click="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                                <button ng-click="$ctrl.convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
                             </div>
 
                             <div class="form-group">
@@ -267,7 +267,7 @@
                                 <div class="input-group">
                                     <span class="input-group-btn">
                                         <span class="btn btn-primary btn-file">
-                                            Browse&hellip; <input type="file" ng-file-select="parseMolFile($files)" ng-diabled="compoundProcessing" />
+                                            Browse&hellip; <input type="file" ng-file-select="$ctrl.parseMolFile($files)" ng-diabled="$ctrl.compoundProcessing" />
                                         </span>
                                     </span>
 
@@ -292,11 +292,11 @@
                             </div>
                             <hr />
 
-                            <div class="text-center" chemical-sketcher id="molSketcher" ng-model="currentSpectrum.molFile"></div>
+                            <div class="text-center" chemical-sketcher id="molSketcher" ng-model="$ctrl.currentSpectrum.molFile"></div>
 
                             <div class="form-group text-center">
-                                <button type="button" class="btn btn-primary" ng-click="convertMolToInChI()" ng-disabled="compoundProcessing">
-                                    <span ng-if="compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+                                <button type="button" class="btn btn-primary" ng-click="$ctrl.convertMolToInChI()" ng-disabled="$ctrl.compoundProcessing">
+                                    <span ng-if="$ctrl.compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
                                     <span>Pull Compound Info from MOL Data</span>
                                 </button>
                             </div>
@@ -308,8 +308,8 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
+                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
                     </ul>
                 </nav>
             </div>
@@ -317,13 +317,13 @@
 
 
         <!-- Recommended spectrum metadata -->
-        <div ng-if="page == 4 && currentSpectrum !== null" class="panel panel-default">
+        <div ng-if="$ctrl.page == 4 && $ctrl.currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
                         <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
                     </ul>
                 </nav>
             </div>
@@ -342,7 +342,7 @@
                 <div style="margin-top: 10px;">
                     <div>
                         <label>Source Introduction / Chromatography Type:</label> <br />
-                        <select class="form-control" name="chromatography" ng-model="metadata.chromatography">
+                        <select class="form-control" name="chromatography" ng-model="$ctrl.metadata.chromatography">
                             <option value="" selected="selected">Select One</option>
                             <option value="Liquid Chromatography (LC)">Liquid Chromatography (LC)</option>
                             <option value="Gas Chromatography (GC)">Gas Chromatography (GC)</option>
@@ -352,15 +352,15 @@
                     </div>
                     <br />
 
-                    <div ng-if="metadata.chromatography && metadata.chromatography != 'Select One' && metadata.chromatography == 'Gas Chromatography (GC)'">
+                    <div ng-if="$ctrl.metadata.chromatography && $ctrl.metadata.chromatography != 'Select One' && $ctrl.metadata.chromatography == 'Gas Chromatography (GC)'">
                         <label>Derivatization:</label> <br />
-                        <input type="text" class="form-control" name="derivatization" ng-model="metadata.derivatization" />
+                        <input type="text" class="form-control" name="derivatization" ng-model="$ctrl.metadata.derivatization" />
                         <br />
                     </div>
 
                     <div>
                         <label>MS Type / Level:</label> <br />
-                        <select class="form-control" name="mslevel" ng-model="metadata.mslevel">
+                        <select class="form-control" name="mslevel" ng-model="$ctrl.metadata.mslevel">
                             <option value="" selected="selected">Select One</option>
                             <option value="MS">MS</option>
                             <option value="MS2">MS2</option>
@@ -371,19 +371,19 @@
                     </div>
                     <br />
 
-                    <div ng-if="metadata.mslevel && metadata.mslevel != 'Select One' && metadata.mslevel != 'MS'">
+                    <div ng-if="$ctrl.metadata.mslevel && $ctrl.metadata.mslevel != 'Select One' && $ctrl.metadata.mslevel != 'MS'">
                         <label>Precursor m/z:</label> <br />
-                        <input type="text" class="form-control" name="precursormz" ng-model="metadata.precursormz" />
+                        <input type="text" class="form-control" name="precursormz" ng-model="$ctrl.metadata.precursormz" />
                         <br />
 
                         <label>Precursor Type:</label> <br />
-                        <input type="text" class="form-control" name="precursortype" ng-model="metadata.precursortype"  />
+                        <input type="text" class="form-control" name="precursortype" ng-model="$ctrl.metadata.precursortype"  />
                         <br />
                     </div>
 
                     <div>
                         <label>Ionization Method:</label> <br />
-                        <select class="form-control" name="ionization" ng-model="metadata.ionization">
+                        <select class="form-control" name="ionization" ng-model="$ctrl.metadata.ionization">
                             <option value="" selected="selected">Select One</option>
                             <option value="Atmospheric Pressure Chemical Ionization (APCI)">Atmospheric Pressure Chemical Ionization (APCI)</option>
                             <option value="Electron Impact (EI)">Electron Impact (EI)</option>
@@ -410,7 +410,7 @@
 
                     <div>
                         <label>Polarity / Ion Mode:</label> <br />
-                        <select class="form-control" name="ionmode" ng-model="metadata.ionmode">
+                        <select class="form-control" name="ionmode" ng-model="$ctrl.metadata.ionmode">
                             <option value="" selected="selected">Select One</option>
                             <option value="Positive">Positive</option>
                             <option value="Negative">Negative</option>
@@ -421,7 +421,7 @@
 
                     <div>
                         <label>Authors (comma-separated):</label> <br />
-                        <input type="text" class="form-control" ng-model="metadata.authors" />
+                        <input type="text" class="form-control" ng-model="$ctrl.metadata.authors" />
                     </div>
                 </div>
             </div>
@@ -430,8 +430,8 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
+                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
                     </ul>
                 </nav>
             </div>
@@ -439,13 +439,13 @@
 
 
         <!-- Recommended spectrum metadata -->
-        <div ng-if="page == 5 && currentSpectrum !== null" class="panel panel-default">
+        <div ng-if="$ctrl.page == 5 && $ctrl.currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
                         <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
                     </ul>
                 </nav>
             </div>
@@ -466,7 +466,7 @@
                 <br />
 
                 <div id="metadata_editor" style="margin-top: 10px;">
-                    <div ng-repeat="meta in currentSpectrum.meta">
+                    <div ng-repeat="meta in $ctrl.currentSpectrum.meta">
                         <div class="col-sm-5 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
                             <input type="text"
                                    ng-model="meta.name"
@@ -487,13 +487,13 @@
                                    class="form-control" />
                         </div>
                         <div class="col-sm-2 form-group">
-                            <button ng-click="removeMetadataField($index)" class="btn btn-default"
+                            <button ng-click="$ctrl.removeMetadataField($index)" class="btn btn-default"
                                     tooltip="Remove this metadata field"><i class="fa fa-minus-square"></i></button>
                         </div>
                     </div>
 
                     <div class="col-sm-12">
-                        <button type="button" class="btn btn-default btn-xs" ng-click="addMetadataField()" tooltip="Add a new metadata field">+</button>
+                        <button type="button" class="btn btn-default btn-xs" ng-click="$ctrl.addMetadataField()" tooltip="Add a new metadata field">+</button>
                     </div>
                 </div>
             </div>
@@ -502,8 +502,8 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
+                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
                     </ul>
                 </nav>
             </div>
@@ -557,13 +557,13 @@
         -->
 
         <!-- Summary -->
-        <div ng-if="page == 6 && currentSpectrum !== null" class="panel panel-default">
+        <div ng-if="$ctrl.page == 6 && $ctrl.currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
                         <li><strong style="font-size: 1.2em;">Summary</strong></li>
-                        <li class="next" ng-if="auth.isLoggedIn()"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
+                        <li class="next" ng-if="auth.isLoggedIn()"><a href="" ng-click="$ctrl.uploadFile()">Upload to MoNA &rarr;</a></li>
                         <li class="next" ng-if="!auth.isLoggedIn()"><a href="" ng-click="auth.handleLogin()">Log in before uploading to MoNA</a></li>
                     </ul>
                 </nav>
@@ -576,19 +576,19 @@
 
                 <div class="page-header"><h3>Mass Spectrum</h3></div>
                 <div class="masspec-modal">
-                    <mass-spec ng-model="currentSpectrum.ions"></mass-spec>
+                    <mass-spec ng-model="$ctrl.currentSpectrum.ions"></mass-spec>
                 </div>
 
                 <div class="page-header"><h3>Compound Information</h3></div>
                 <div>
                     <ul>
-                        <li ng-repeat="name in currentSpectrum.names">{{name}}</li>
+                        <li ng-repeat="name in $ctrl.currentSpectrum.names">{{name}}</li>
                     </ul>
                 </div>
-                <div ng-if="currentSpectrum.molFile" style="text-align: center;">
+                <div ng-if="$ctrl.currentSpectrum.molFile" style="text-align: center;">
                     <div chemical-sketcher readonly="true"
                          id="compoundSummaryViewer"
-                         ng-model="currentSpectrum.molFile"></div>
+                         ng-model="$ctrl.currentSpectrum.molFile"></div>
                 </div>
 
 
@@ -603,22 +603,22 @@
                         <tr>
                             <td>InChIKey</td>
                             <td>
-                                <span ng-if="currentSpectrum.inchiKey">{{currentSpectrum.inchiKey}}</span>
-                                <span ng-if="!currentSpectrum.inchiKey"><i>None Provided</i></span>
+                                <span ng-if="$ctrl.currentSpectrum.inchiKey">{{$ctrl.currentSpectrum.inchiKey}}</span>
+                                <span ng-if="!$ctrl.currentSpectrum.inchiKey"><i>None Provided</i></span>
                             </td>
                         </tr>
                         <tr>
                             <td>InChI</td>
                             <td style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                <span ng-if="currentSpectrum.inchi">{{currentSpectrum.inchi}}</span>
-                                <span ng-if="!currentSpectrum.inchi"><i>None Provided</i></span>
+                                <span ng-if="$ctrl.currentSpectrum.inchi">{{$ctrl.currentSpectrum.inchi}}</span>
+                                <span ng-if="!$ctrl.currentSpectrum.inchi"><i>None Provided</i></span>
                             </td>
                         </tr>
                         <tr>
                             <td>SMILES</td>
                             <td>
-                                <span ng-if="currentSpectrum.smiles">{{currentSpectrum.smiles}}</span>
-                                <span ng-if="!currentSpectrum.smiles"><i>None Provided</i></span>
+                                <span ng-if="$ctrl.currentSpectrum.smiles">{{$ctrl.currentSpectrum.smiles}}</span>
+                                <span ng-if="!$ctrl.currentSpectrum.smiles"><i>None Provided</i></span>
                             </td>
                         </tr>
                     </tbody>
@@ -634,42 +634,42 @@
                     </thead>
                     <tbody>
 
-                    <tr ng-if="metadata.chromatography && metadata.chromatography != 'Select One'">
+                    <tr ng-if="$ctrl.metadata.chromatography && $ctrl.metadata.chromatography != 'Select One'">
                         <td>Source Introduction / Chromatography Type</td>
-                        <td>{{metadata.chromatography}}</td>
+                        <td>{{$ctrl.metadata.chromatography}}</td>
                     </tr>
 
-                    <tr ng-if="metadata.mslevel && metadata.mslevel != 'Select One'">
+                    <tr ng-if="$ctrl.metadata.mslevel && $ctrl.metadata.mslevel != 'Select One'">
                         <td>MS Type / Level</td>
-                        <td>{{metadata.mslevel}}</td>
+                        <td>{{$ctrl.metadata.mslevel}}</td>
                     </tr>
 
-                    <tr ng-if="metadata.precursormz && metadata.precursormz != 'Select One'">
+                    <tr ng-if="$ctrl.metadata.precursormz && $ctrl.metadata.precursormz != 'Select One'">
                         <td>Precursor m/z</td>
-                        <td>{{metadata.precursormz}}</td>
+                        <td>{{$ctrl.metadata.precursormz}}</td>
                     </tr>
 
-                    <tr ng-if="metadata.precursortype && metadata.precursortype != 'Select One'">
+                    <tr ng-if="$ctrl.metadata.precursortype && $ctrl.metadata.precursortype != 'Select One'">
                         <td>Precursor Type</td>
-                        <td>{{metadata.precursortype}}</td>
+                        <td>{{$ctrl.metadata.precursortype}}</td>
                     </tr>
 
-                    <tr ng-if="metadata.ionization && metadata.ionization != 'Select One'">
+                    <tr ng-if="$ctrl.metadata.ionization && $ctrl.metadata.ionization != 'Select One'">
                         <td>Ionization Method</td>
-                        <td>{{metadata.ionization}}</td>
+                        <td>{{$ctrl.metadata.ionization}}</td>
                     </tr>
 
-                    <tr ng-if="metadata.ionmode && metadata.ionmode != 'Select One'">
+                    <tr ng-if="$ctrl.metadata.ionmode && $ctrl.metadata.ionmode != 'Select One'">
                         <td>Polarity / Ion Mode</td>
-                        <td>{{metadata.ionmode}}</td>
+                        <td>{{$ctrl.metadata.ionmode}}</td>
                     </tr>
 
-                    <tr ng-if="metadata.authors">
+                    <tr ng-if="$ctrl.metadata.authors">
                         <td>Authors</td>
-                        <td>{{metadata.authors}}</td>
+                        <td>{{$ctrl.metadata.authors}}</td>
                     </tr>
 
-                    <tr ng-repeat="meta in currentSpectrum.meta">
+                    <tr ng-repeat="meta in $ctrl.currentSpectrum.meta">
                         <td>{{meta.name}}</td>
                         <td>{{meta.value}}</td>
                     </tr>
@@ -688,8 +688,8 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
-                        <li class="next" ng-if="auth.isLoggedIn()"><a href="" ng-click="uploadFile()">Upload to MoNA &rarr;</a></li>
+                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
+                        <li class="next" ng-if="auth.isLoggedIn()"><a href="" ng-click="$ctrl.uploadFile()">Upload to MoNA &rarr;</a></li>
                         <li class="next" ng-if="!auth.isLoggedIn()"><a href="" ng-click="auth.handleLogin()">Log in before uploading to MoNA</a></li>
                     </ul>
                 </nav>

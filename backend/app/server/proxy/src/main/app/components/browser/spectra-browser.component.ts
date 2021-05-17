@@ -24,13 +24,10 @@ class SpectraBrowserController {
     private searchSplash;
     private editQuery;
     private startTime;
-    private addMetadataMap;
     private query;
     private textQuery;
     private duration;
     private search;
-    private setAndWatchPaginationOptions;
-    private setPageSize;
 
     constructor($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, MetadataService, CookieService, $timeout, $log, toaster, Analytics) {
         this.$scope = $scope;
@@ -82,106 +79,9 @@ class SpectraBrowserController {
          */
         this.editQuery = false;
 
-        /**
-         * Get total exact mass as accurate mass of spectrum
-         */
-        this.addMetadataMap = (spectra) => {
-            for (let i = 0; i < spectra.length; i++) {
-                let metaDataMap = {};
-
-                if (angular.isDefined(spectra[i].compound)) {
-                    for (let j = 0; j < spectra[i].compound.length; j++) {
-                        spectra[i].compound[j].metaData.forEach((metaData) => {
-                            if (metaData.name === 'total exact mass') {
-                                metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
-                            } else {
-                                metaDataMap[metaData.name] = metaData.value;
-                            }
-
-                            if (metaData.unit) {
-                                metaDataMap[metaData.name] += ' ' + metaData.unit;
-                            }
-                        });
-
-                        if (spectra[i].compound.kind === 'biological')
-                            break;
-                    }
-                }
-
-                spectra[i].metaData.forEach((metaData) => {
-                    if (metaData.name == 'mass accuracy' || metaData.name == "mass error") {
-                        metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
-                    } else {
-                        metaDataMap[metaData.name] = metaData.value;
-                    }
-
-                    if (metaData.unit) {
-                        metaDataMap[metaData.name] += ' ' + metaData.unit;
-                    }
-                });
-
-                spectra[i].metaDataMap = metaDataMap;
-            }
-
-            return spectra
-        };
-
-        this.setPageSize = (pageSize) => {
-            let size = parseInt(pageSize);
-
-            if (!Number.isNaN(size)) {
-                this.$log.debug('Setting current page size to ' + this.$location.search().size);
-                this.pagination.itemsPerPage = size;
-                this.pagination.itemsPerPageSelection = size.toString();
-
-                if (this.pagination.itemsPerPageOptions.indexOf(size) == -1) {
-                    this.pagination.itemsPerPageOptions.push(size);
-                    this.pagination.itemsPerPageOptions.sort(function (a, b) {
-                        return parseInt(a) - parseInt(b);
-                    });
-                }
-
-                this.CookieService.update('spectraBrowser-pagination-itemsPerPage', this.pagination.itemsPerPageSelection);
-            }
-        };
-
-        this.setAndWatchPaginationOptions = () => {
-            // Load cookies
-            let itemsPerPage = this.CookieService.get('spectraBrowser-pagination-itemsPerPage');
-            let tableView = this.CookieService.getBooleanValue('spectraBrowser-pagination-table', false);
-            let tableColumnsSelected = this.CookieService.get('spectraBrowser-pagination-tableColumnsSelected');
-
-            if (tableView) {
-                this.pagination.table = tableView;
-            }
-
-            if (angular.isDefined(tableColumnsSelected)) {
-                this.pagination.tableColumnSelected = JSON.parse(tableColumnsSelected);
-            }
-
-
-            // Watch pagination options
-            this.$scope.$watch('pagination.itemsPerPageSelection', () => {
-                let size = parseInt(this.pagination.itemsPerPageSelection);
-
-                if (!Number.isNaN(size)) {
-                    this.$log.info('Updating search to use page size to ' + size);
-                    this.$location.search('size', size).replace();
-                }
-            });
-
-            this.$scope.$watch('pagination.table', function () {
-                this.CookieService.update('spectraBrowser-pagination-table', this.$scope.pagination.table.toString());
-            });
-
-            this.$scope.$watch('pagination.tableColumnSelected', function () {
-                this.CookieService.update('spectraBrowser-pagination-tableColumnsSelected', JSON.stringify(this.$scope.pagination.tableColumnSelected));
-            });
-        };
-
         // Get unique metadata values for dropdown
         this.MetadataService.metaDataNames({},
-             (data) => {
+            (data) => {
                 data.sort((a, b) => {
                     return parseInt(b.count) - parseInt(a.count);
                 }).filter((x) => {
@@ -265,6 +165,108 @@ class SpectraBrowserController {
         this.setAndWatchPaginationOptions();
     }
 
+    /**
+     * Get total exact mass as accurate mass of spectrum
+     */
+    addMetadataMap = (spectra) => {
+        for (let i = 0; i < spectra.length; i++) {
+            let metaDataMap = {};
+
+            if (angular.isDefined(spectra[i].compound)) {
+                for (let j = 0; j < spectra[i].compound.length; j++) {
+                    spectra[i].compound[j].metaData.forEach((metaData) => {
+                        if (metaData.name === 'total exact mass') {
+                            metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
+                        } else {
+                            metaDataMap[metaData.name] = metaData.value;
+                        }
+
+                        if (metaData.unit) {
+                            metaDataMap[metaData.name] += ' ' + metaData.unit;
+                        }
+                    });
+
+                    if (spectra[i].compound.kind === 'biological')
+                        break;
+                }
+            }
+
+            spectra[i].metaData.forEach((metaData) => {
+                if (metaData.name == 'mass accuracy' || metaData.name == "mass error") {
+                    metaDataMap[metaData.name] = parseFloat(metaData.value).toFixed(4);
+                } else {
+                    metaDataMap[metaData.name] = metaData.value;
+                }
+
+                if (metaData.unit) {
+                    metaDataMap[metaData.name] += ' ' + metaData.unit;
+                }
+            });
+
+            spectra[i].metaDataMap = metaDataMap;
+        }
+
+        return spectra
+    };
+
+    setPageSize = (pageSize) => {
+        let size = parseInt(pageSize);
+
+        if (!Number.isNaN(size)) {
+            this.$log.debug('Setting current page size to ' + this.$location.search().size);
+            this.pagination.itemsPerPage = size;
+            this.pagination.itemsPerPageSelection = size.toString();
+
+            if (this.pagination.itemsPerPageOptions.indexOf(size) == -1) {
+                this.pagination.itemsPerPageOptions.push(size);
+                this.pagination.itemsPerPageOptions.sort(function (a, b) {
+                    return parseInt(a) - parseInt(b);
+                });
+            }
+
+            this.CookieService.update('spectraBrowser-pagination-itemsPerPage', this.pagination.itemsPerPageSelection);
+        }
+    };
+
+    setAndWatchPaginationOptions = () => {
+        // Load cookies
+        let itemsPerPage = this.CookieService.get('spectraBrowser-pagination-itemsPerPage');
+        let tableView = this.CookieService.getBooleanValue('spectraBrowser-pagination-table', false);
+        let tableColumnsSelected = this.CookieService.get('spectraBrowser-pagination-tableColumnsSelected');
+
+        if (tableView) {
+            this.pagination.table = tableView;
+        }
+
+        if (angular.isDefined(tableColumnsSelected)) {
+            this.pagination.tableColumnSelected = JSON.parse(tableColumnsSelected);
+        }
+
+
+        // Watch pagination options
+        this.$scope.$watch('pagination.itemsPerPageSelection', () => {
+            let size = parseInt(this.pagination.itemsPerPageSelection);
+
+            if (!Number.isNaN(size)) {
+                this.$log.info('Updating search to use page size to ' + size);
+                this.$location.search('size', size).replace();
+            }
+        });
+
+        this.$scope.$watch(()=> this.pagination.table, () =>
+            this.CookieService.update('spectraBrowser-pagination-table', this.pagination.table.toString())
+        );
+        //this.$scope.$watch('pagination.table', function () {
+        //    this.CookieService.update('spectraBrowser-pagination-table', this.pagination.table.toString());
+        //});
+
+        this.$scope.$watch(()=> this.pagination.tableColumnSelected, () =>
+            this.CookieService.update('spectraBrowser-pagination-tableColumnsSelected', JSON.stringify(this.pagination.tableColumnSelected))
+        );
+        //this.$scope.$watch('pagination.tableColumnSelected', function () {
+        //    this.CookieService.update('spectraBrowser-pagination-tableColumnsSelected', JSON.stringify(this.pagination.tableColumnSelected));
+        //});
+    };
 
     hideSplash = () => {
         this.$timeout(() => {
@@ -408,7 +410,7 @@ class SpectraBrowserController {
 
 let SpectraBrowserComponent = {
     selector: "spectraBrowser",
-    templateUrl: "../../../views/spectra/browse/spectra.html",
+    templateUrl: "../../views/spectra/browse/spectra.html",
     bindings: {},
     controller: SpectraBrowserController
 }
