@@ -11,7 +11,7 @@ import * as angular from 'angular';
     function gwMetaQueryInput() {
         var directive = {
             restrict: 'E',
-            templateUrl: '/views/templates/metaQueryInput.html',
+            templateUrl: '../../views/templates/metaQueryInput.html',
             replace: true,
             transclude: true,
             scope: {

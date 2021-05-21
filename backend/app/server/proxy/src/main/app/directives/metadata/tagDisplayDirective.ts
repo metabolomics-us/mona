@@ -11,7 +11,7 @@ import * as angular from 'angular';
     function tagDisplay() {
         return {
             restrict: 'A',
-            templateUrl: '/views/templates/query/tagDisplay.html',
+            templateUrl: '../../views/templates/query/tagDisplay.html',
             replace: true,
             transclude: true,
             scope: {

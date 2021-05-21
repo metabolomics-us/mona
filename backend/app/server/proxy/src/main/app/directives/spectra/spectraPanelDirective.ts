@@ -11,7 +11,7 @@ import * as angular from 'angular';
         return {
             require: "ngModel",
             restrict: "A",
-            templateUrl: '/views/spectra/display/panel.html',
+            templateUrl: '../../views/spectra/display/panel.html',
             replace: true,
             scope: {
                 spectrum: '=spectrum'

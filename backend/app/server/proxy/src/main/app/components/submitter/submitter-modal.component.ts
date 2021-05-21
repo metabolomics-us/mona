@@ -4,25 +4,25 @@
 
 import * as angular from 'angular';
 
-class SubmitterModalController{
-    private static $inject = ['$scope', 'Submitter', '$uibModalInstance', 'newSubmitter'];
+export default class SubmitterModalController{
+    private static $inject = ['$scope', 'Submitter'];
     private $scope;
     private Submitter;
-    private $uibModalInstance;
+    private modalInstance;
     private newSubmitter;
     private formErrors;
 
-    constructor($scope, Submitter, $uibModalInstance, newSubmitter){
+    constructor($scope, Submitter){
         this.$scope = $scope;
-        this.$uibModalInstance = this.$uibModalInstance;
-        this.newSubmitter = newSubmitter;
     }
+
+
 
     /**
      * cancels any dialog in this controller
      */
     cancelDialog = () => {
-        this.$uibModalInstance.dismiss('cancel');
+        this.modalInstance.dismiss('cancel');
     };
 
     /**
@@ -33,7 +33,7 @@ class SubmitterModalController{
 
         //update the submitter
         this.Submitter.update(submitter, function(data) {
-            this.$uibModalInstance.close(submitter);
+            this.modalInstance.close(submitter);
         }, (error) => {
             this.handleDialogError(error);
         });
@@ -47,7 +47,7 @@ class SubmitterModalController{
 
         //no submitter id so create a new one
         this.Submitter.save(submitter, (savedSubmitter) => {
-            this.$uibModalInstance.close(savedSubmitter);
+            this.modalInstance.close(savedSubmitter);
         }, (error) => {
             this.handleDialogError(error);
         });
@@ -99,7 +99,12 @@ class SubmitterModalController{
 
 let SubmitterModalComponent = {
     selector: "submitterModal",
-    bindings: {},
+    bindings: {
+        modalInstance: '<',
+        resolve: '<',
+        close: '&',
+        dismiss: '&',
+    },
     controller: SubmitterModalController
 }
 

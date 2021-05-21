@@ -12,7 +12,7 @@ import * as angular from 'angular';
     function spectraTopScoresForUsers(StatisticsService) {
         return {
             replace: true,
-            templateUrl: '/views/templates/scores/hallOfFame.html',
+            templateUrl: '../../views/templates/scores/hallOfFame.html',
             scope: {
                 limit: '@'
             },

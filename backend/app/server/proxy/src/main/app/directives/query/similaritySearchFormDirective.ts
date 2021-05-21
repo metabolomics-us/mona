@@ -7,7 +7,7 @@ import * as angular from 'angular';
     function similaritySearchForm() {
         return {
             restrict: 'E',
-            templateUrl: 'views/spectra/query/similaritySearchForm.html',
+            templateUrl: '../../views/spectra/query/similaritySearchForm.html',
             controller: SpectraSimilarityQueryController
         };
     }

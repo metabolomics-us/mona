@@ -26,9 +26,7 @@ class AuthenticationController {
         this.currentUser = null;
         this.ADMIN_ROLE_NAME = 'ROLE_ADMIN';
         this.welcomeMessage = 'Login/Register';
-    }
 
-    $onChanges = (changes) => {
         /**
          * Create a welcome message on login
          */
@@ -90,7 +88,7 @@ class AuthenticationController {
      */
     openAuthenticationDialog() {
         this.$uibModal.open({
-            templateUrl: '/views/authentication/authenticationModal.html',
+            templateUrl: '../../views/authentication/authenticationModal.html',
             controller: 'AuthenticationModalController',
             size: 'sm',
             backdrop: 'true'
@@ -103,8 +101,7 @@ class AuthenticationController {
     handleRegistration() {
         if (!this.isLoggedIn()) {
             this.$uibModal.open({
-                templateUrl: '/views/authentication/registrationModal.html',
-                controller: 'RegistrationModalController',
+                component: 'registrationModal',
                 size: 'md',
                 backdrop: 'static'
             });
@@ -113,8 +110,8 @@ class AuthenticationController {
 }
 
 let AuthenticationComponent = {
-    selector: "authenticationController",
-
+    selector: "authentication",
+    templateUrl: "../../views/navbar/loginDropdown.html",
     bindings: {},
     controller: AuthenticationController
 }

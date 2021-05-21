@@ -1,4 +1,5 @@
 import './compoundConversionService';
+import './registration.service';
 import './authenticationService';
 import './cache/queryCacheService';
 import './cache/spectrumCacheService';

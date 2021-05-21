@@ -12,7 +12,7 @@ import * as angular from 'angular';
         return {
             require: "ngModel",
             restrict: "A",
-            templateUrl: '/views/templates/spectra/download.html',
+            templateUrl: '../../views/templates/spectra/download.html',
             replace: true,
             scope: {
                 spectrum: '=spectrum'

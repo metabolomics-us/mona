@@ -3,6 +3,7 @@
  */
 
 import * as angular from 'angular';
+import SubmitterModalController from "./submitter-modal.component";
 
 class SubmitterController{
     private static $inject = ['$scope', 'Submitter', '$uibModal'];
@@ -54,9 +55,9 @@ class SubmitterController{
      */
     displayCreateDialog = () => {
         let modalInstance = this.$uibModal.open({
-            templateUrl: '/views/submitters/dialog/createDialog.html',
+            templateUrl: '../../views/submitters/dialog/createDialog.html',
             /* @ngInject */
-            controller: 'SubmitterModalController',
+            controller: SubmitterModalController,
             size: 'lg',
             backdrop: 'static',
             resolve: {
@@ -80,9 +81,9 @@ class SubmitterController{
      */
     displayEditDialog = (index) => {
         let modalInstance = this.$uibModal.open({
-            templateUrl: '/views/submitters/dialog/editDialog.html',
+            templateUrl: '../../views/submitters/dialog/editDialog.html',
             /* @ngInject */
-            controller: 'SubmitterModalController',
+            controller: SubmitterModalController,
             size: 'lg',
             backdrop: 'static',
             resolve: {

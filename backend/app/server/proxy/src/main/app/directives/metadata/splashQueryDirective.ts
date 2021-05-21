@@ -11,7 +11,7 @@ import * as angular from 'angular';
     function splashQuery() {
         return {
             restrict: 'A',
-            templateUrl: '/views/templates/query/splashQuery.html',
+            templateUrl: '../../views/templates/query/splashQuery.html',
             replace: true,
             transclude: true,
             scope: {

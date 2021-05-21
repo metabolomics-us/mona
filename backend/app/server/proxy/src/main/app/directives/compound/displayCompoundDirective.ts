@@ -16,7 +16,7 @@ import * as angular from 'angular';
             scope: {
                 compound: '=compound'
             },
-            templateUrl: '/views/compounds/displayCompound.html',
+            templateUrl: '../../views/compounds/displayCompound.html',
             controller: displayCompoundInfoController
         };
     }

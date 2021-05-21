@@ -60,7 +60,7 @@ angular
          * usage: in app.config
          */
         /* @ngInject */
-        .constant('REST_BACKEND_SERVER', '')
+        .constant('REST_BACKEND_SERVER', 'http://0.0.0.0:1337/0.0.0.0:8080')
         .config(['$provide', '$httpProvider', function($provide, $httpProvider) {
             $provide.factory('httpInterceptor', ['$q', '$location', '$rootScope', function($q, $location, $rootScope) {
                 $rootScope.httpError = [];

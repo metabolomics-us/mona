@@ -11,7 +11,7 @@ import * as angular from 'angular';
     function tagQuery() {
         return {
             restrict: 'A',
-            templateUrl: '/views/templates/query/tagQuery.html',
+            templateUrl: '../../views/templates/query/tagQuery.html',
             replace: true,
             scope: {
                 ruleBased: '=',

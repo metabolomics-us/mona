@@ -7,7 +7,7 @@ import * as angular from 'angular';
     function keywordSearchForm() {
         return {
             restrict: 'E',
-            templateUrl: 'views/spectra/query/keywordSearchForm.html',
+            templateUrl: '../../views/spectra/query/keywordSearchForm.html',
             controller: KeywordSearchController
         };
     }

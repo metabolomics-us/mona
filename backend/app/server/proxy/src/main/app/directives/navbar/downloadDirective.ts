@@ -11,6 +11,6 @@ import * as angular from 'angular';
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: '/views/navbar/download.html'
+            templateUrl: '../../views/navbar/download.html'
         };
     }

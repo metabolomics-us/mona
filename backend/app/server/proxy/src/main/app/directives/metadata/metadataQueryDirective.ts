@@ -10,7 +10,7 @@ import * as angular from 'angular';
     function metadataQuery() {
         return {
             restrict: 'A',
-            templateUrl: '/views/templates/query/metadataQuery.html',
+            templateUrl: '../../views/templates/query/metadataQuery.html',
             replace: true,
             transclude: true,
             scope: {

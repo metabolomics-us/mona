@@ -1,4 +1,5 @@
 import * as angular from 'angular';
+import "bootstrap-multiselect/dist/js/bootstrap-multiselect";
 
     /*
      * Examples:

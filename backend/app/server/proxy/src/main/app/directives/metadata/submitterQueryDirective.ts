@@ -12,7 +12,7 @@ import * as angular from 'angular';
         return {
             replace: true,
             transclude: true,
-            templateUrl: '/views/templates/query/submitterQuery.html',
+            templateUrl: '../../views/templates/query/submitterQuery.html',
             restrict: 'A',
             scope: {
                 submitter: '=submitter'

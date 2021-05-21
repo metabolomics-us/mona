@@ -22,7 +22,7 @@ import * as angular from 'angular';
         var directive = {
             restrict: 'A',
             replace: false,
-            templateUrl: '/views/autocomplete.html',
+            templateUrl: '../../views/autocomplete.html',
             scope: {
                 "id": "@inputid",
                 "name": "&inputname",

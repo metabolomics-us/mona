@@ -1,7 +1,7 @@
 import * as angular from 'angular';
 
 class AuthenticationModalController{
-    private static $inject = ['$scope', '$uibModalInstance', '$timeout', 'AuthenticationService'];
+    private static $inject = ['$scope',  '$timeout', 'AuthenticationService'];
     private $scope;
     private $uibModalInstance;
     private $timeout;
@@ -17,16 +17,14 @@ class AuthenticationModalController{
         this.AuthenticationService = AuthenticationService;
     }
 
-    $onInit = () => {
+    $onInit() {
         this.errors = [];
         this.state = 'login';
         this.credentials = {
             email: '',
             password: ''
         };
-    }
 
-    $onChanges = (changes) => {
         this.$scope.$on('auth:login-success', (event, data, status, headers, config) => {
             this.$scope.state = 'success';
             this.$timeout(function() {
@@ -45,7 +43,8 @@ class AuthenticationModalController{
         });
     }
 
-    submitLogin = () => {
+
+    submitLogin() {
         this.errors = [];
 
         if (this.credentials.email === '') {

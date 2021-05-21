@@ -6,7 +6,7 @@ import * as angular from 'angular';
     function advancedSearchForm() {
         return {
             restrict: 'E',
-            templateUrl: 'views/spectra/query/advancedSearchForm.html',
+            templateUrl: '../../views/spectra/query/advancedSearchForm.html',
             link: linkFunc
         };
     }

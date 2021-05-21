@@ -11,6 +11,6 @@ import * as angular from 'angular';
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: '/views/navbar/resDropdown.html'
+            templateUrl: '../../views/navbar/resDropdown.html'
         };
     }

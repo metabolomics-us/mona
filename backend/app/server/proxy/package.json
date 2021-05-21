@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "build": "rimraf src/main/dist && webpack --bail --progress --profile",
-    "start": "webpack serve --open"
+    "start": "webpack serve --open --port 9090"
   },
   "dependencies": {
     "angular": "1.6.10",

@@ -15,7 +15,7 @@ import "./metadata/typeaheadFocusDirective";
 import "./navbar/adminDropDownDirective";
 import "./navbar/browseDropDownDirective";
 import "./navbar/downloadDirective";
-import "./navbar/loginDropDownDirective";
+//import "./navbar/loginDropDownDirective";
 import "./navbar/resourceDropDownDirective";
 import "./navbar/searchBoxDirective";
 import "./navbar/titleHeaderDirective";

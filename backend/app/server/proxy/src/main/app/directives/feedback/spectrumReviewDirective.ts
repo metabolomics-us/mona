@@ -11,7 +11,7 @@ import * as angular from 'angular';
     function spectrumReview() {
         return {
             replace: true,
-            templateUrl: '/views/templates/feedback/spectrumReview.html',
+            templateUrl: '../../views/templates/feedback/spectrumReview.html',
             restrict: 'A',
             scope: {
                 spectrum: '=spectrum'
