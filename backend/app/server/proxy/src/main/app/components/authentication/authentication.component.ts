@@ -30,9 +30,9 @@ class AuthenticationController {
         /**
          * Create a welcome message on login
          */
-        this.$scope.$on('auth:login-success', function(event, data, status, headers, config) {
+        this.$scope.$on('auth:login-success', (event, data, status, headers, config) => {
 
-            this.AuthenticationService.getCurrentUser().then(function(data) {
+            this.AuthenticationService.getCurrentUser().then((data) => {
                 console.log(JSON.stringify(data));
                 this.welcomeMessage = 'Welcome, ' + data.firstName + '!';
             });
@@ -41,16 +41,16 @@ class AuthenticationController {
         /**
          * Remove the welcome message on logout
          */
-        this.$scope.$on('auth:logout', function(event, data, status, headers, config) {
+        this.$scope.$on('auth:logout', (event, data, status, headers, config) => {
             this.welcomeMessage = 'Login/Register';
         });
 
         /**
          * Listen for external calls to bring up the authentication modal
          */
-        this.$scope.$on('auth:login', function(event) {
+        this.$scope.$on('auth:login', (event) => {
             if (!this.isLoggedIn()) {
-                this.openAuthenticationDialog();
+                this.AuthenticationService.openAuthenticationDialog();
             }
         });
 
@@ -75,25 +75,29 @@ class AuthenticationController {
     /**
      * Handle login
      */
+
     handleLogin() {
+        this.AuthenticationService.handleLogin();
+    }
+
+   /* handleLogin() {
         if (this.isLoggedIn()) {
             this.AuthenticationService.logout();
         } else {
             this.openAuthenticationDialog();
         }
-    };
+    };*/
 
     /**
      * Opens the authentication modal dialog
      */
-    openAuthenticationDialog() {
+    /*openAuthenticationDialog() {
         this.$uibModal.open({
-            templateUrl: '../../views/authentication/authenticationModal.html',
-            controller: 'AuthenticationModalController',
+            component: 'authenticationModal',
             size: 'sm',
             backdrop: 'true'
         });
-    };
+    }; */
 
     /**
      * Opens the registration modal dialog
@@ -112,7 +116,11 @@ class AuthenticationController {
 let AuthenticationComponent = {
     selector: "authentication",
     templateUrl: "../../views/navbar/loginDropdown.html",
-    bindings: {},
+    bindings: {
+        modalInstance: '<',
+        resolve: '<',
+        close: '&'
+    },
     controller: AuthenticationController
 }
 

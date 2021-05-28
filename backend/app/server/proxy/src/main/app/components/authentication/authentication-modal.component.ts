@@ -3,16 +3,15 @@ import * as angular from 'angular';
 class AuthenticationModalController{
     private static $inject = ['$scope',  '$timeout', 'AuthenticationService'];
     private $scope;
-    private $uibModalInstance;
     private $timeout;
+    private modalInstance;
     private AuthenticationService;
     private errors;
     private state;
     private credentials;
 
-    constructor($scope, $uibModalInstance, $timeout, AuthenticationService) {
+    constructor($scope, $timeout, AuthenticationService) {
         this.$scope = $scope;
-        this.$uibModalInstance = $uibModalInstance;
         this.$timeout = $timeout;
         this.AuthenticationService = AuthenticationService;
     }
@@ -26,9 +25,9 @@ class AuthenticationModalController{
         };
 
         this.$scope.$on('auth:login-success', (event, data, status, headers, config) => {
-            this.$scope.state = 'success';
-            this.$timeout(function() {
-                this.$uibModalInstance.close();
+            this.state = 'success';
+            this.$timeout(() =>{
+                this.modalInstance.close();
             }, 1000);
         });
 
@@ -36,9 +35,9 @@ class AuthenticationModalController{
             this.$scope.state = 'login';
 
             if (data.status == '401') {
-                this.$scope.errors.push('Invalid email or password');
+                this.errors.push('Invalid email or password');
             } else {
-                this.$scope.errors.push('Unable to reach MoNA server');
+                this.errors.push('Unable to reach MoNA server');
             }
         });
     }
@@ -61,6 +60,10 @@ class AuthenticationModalController{
         }
     };
 
+    cancelDialog() {
+        this.modalInstance.dismiss('cancel');
+    };
+
 
 
 }
@@ -68,7 +71,11 @@ class AuthenticationModalController{
 let AuthenticationModalComponent = {
     selector: "authenticationModal",
     templateUrl: "../../views/authentication/authenticationModal.html",
-    bindings: {},
+    bindings: {
+        modalInstance: '<',
+        resolve: '<',
+        close: '&'
+    },
     controller: AuthenticationModalController
 }
 

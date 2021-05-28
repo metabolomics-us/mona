@@ -5,7 +5,7 @@
 import * as angular from 'angular';
 
 class BasicUploaderController{
-    private static $inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'CompoundConversionService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
+    private static $inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'CompoundConversionService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http', 'AuthenticationService'];
     private $scope;
     private $rootScope;
     private $window;
@@ -18,6 +18,8 @@ class BasicUploaderController{
     private $log;
     private REST_BACKEND_SERVER;
     private $http;
+    private AuthenticationService;
+    private FileUploader;
     private currentSpectrum;
     private metadata;
     private page;
@@ -34,14 +36,14 @@ class BasicUploaderController{
     private compoundMolError;
     private uploadError;
     private error;
-    private currentUser;
     private tags;
     private metadataNames;
 
-    constructor($scope, $rootScope, $window, $location, UploadLibraryService, CompoundConversionService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http){
+    constructor($scope, $rootScope, $window, $location, UploadLibraryService, CompoundConversionService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http, AuthenticationService){
         this.$scope = $scope;
         this.$rootScope = $rootScope;
         this.$window = $window;
+        this.$location = $location;
         this.UploadLibraryService = UploadLibraryService;
         this.CompoundConversionService = CompoundConversionService;
         this.$q = $q;
@@ -50,9 +52,10 @@ class BasicUploaderController{
         this.$log = $log;
         this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
         this.$http = $http;
+        this.AuthenticationService = AuthenticationService;
     }
 
-    $onInit = () => {
+    $onInit(){
         this.currentSpectrum = null;
         this.metadata = {};
         this.page = 0;
@@ -322,7 +325,7 @@ class BasicUploaderController{
 
         // Process names
         else if (this.currentSpectrum.names.length > 0) {
-            this.namesToInChIKey(this.currentSpectrum.names, function(inchiKey) {
+            this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
                 if (inchiKey !== null) {
                     this.$log.info('Found InChIKey: '+ inchiKey);
                     this.currentSpectrum.inchiKey = inchiKey;
@@ -385,6 +388,7 @@ class BasicUploaderController{
     };
 
 
+
     /**
      * Parse spectra
      * @param files
@@ -392,7 +396,8 @@ class BasicUploaderController{
     parseFiles = (files) => {
         this.page = 1;
         this.uploadError = null;
-
+        console.log('check current spectrum');
+        console.log(this.currentSpectrum);
         this.UploadLibraryService.loadSpectraFile(files[0],
              (data, origin) => {
                 this.$log.info("Loading file "+ files[0].name +"...");
@@ -462,7 +467,7 @@ class BasicUploaderController{
                             }
                         });
                     } else {
-                        this.$log.info("Skipping additional spectrum in file "+ files[0].name);
+                        //this.$log.info("Skipping additional spectrum in file "+ files[0].name);
                         this.fileHasMultipleSpectra = true;
                     }
                 }, origin);
@@ -585,7 +590,7 @@ class BasicUploaderController{
                     url: this.REST_BACKEND_SERVER + '/rest/spectra',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + this.currentUser.access_token
+                        'Authorization': 'Bearer ' + this.AuthenticationService.currentUser.access_token
                     },
                     data: JSON.stringify(spectrum)
                 };

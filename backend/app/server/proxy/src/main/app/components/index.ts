@@ -17,4 +17,5 @@ import "./submitter/submitter-profile.component";
 import "./upload/advanced-uploader.component";
 import "./upload/basic-uploader.component";
 import "./upload/spectra-upload.component";
+import "./upload/upload-page.component";
 

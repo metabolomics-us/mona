@@ -31,7 +31,7 @@ class SpectraUploadController{
             this.$log.info("SUCCESS!");
             this.$log.info(data);
 
-            this.$scope.spectra.push(data.data)
+            this.spectra.push(data.data)
         });
 
         this.$scope.$on('spectra:uploaderror', (event, error) => {

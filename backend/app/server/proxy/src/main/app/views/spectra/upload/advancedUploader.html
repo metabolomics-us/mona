@@ -9,8 +9,8 @@
         </div>
         <br />
 
-        <div ng-show="!auth.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a> before uploading spectra!</h4>
+        <div ng-show="!$ctrl.AuthenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
+            <h4><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="$ctrl.AuthenticationService.handleLogin()">log in</a> before uploading spectra!</h4>
             <h5>You can start using the uploader without an account, but you will not be able to submit your spectra without registering and logging in.</h5>
         </div>
 
@@ -27,7 +27,7 @@
                 <div class="input-group">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" ng-file-select="$ctrl.parseFiles($files)" multiple />
+                            Browse&hellip; <input type="file" ngf-select="$ctrl.parseFiles($files)" multiple />
                         </span>
                     </span>
 
@@ -348,8 +348,8 @@
                     <a class="btn btn-warning" ng-click="$ctrl.resetFile()">Restart</a>
                     <a class="btn btn-primary" ng-click="$ctrl.exportFile()">Export as MSP</a>
 
-                    <a ng-show="!auth.isLoggedIn()" class="btn btn-primary" ng-click="$ctrl.waitForLogin(); auth.handleLogin()">Login to Upload to MoNA</a>
-                    <a ng-show="auth.isLoggedIn()" class="btn btn-primary" ng-click="$ctrl.uploadFile()">Upload to MoNA</a>
+                    <a ng-show="!$ctrl.AuthenticationService.isLoggedIn()" class="btn btn-primary" ng-click="$ctrl.waitForLogin(); $ctrl.AuthenticationService.handleLogin()">Login to Upload to MoNA</a>
+                    <a ng-show="$ctrl.AuthenticationService.isLoggedIn()" class="btn btn-primary" ng-click="$ctrl.uploadFile()">Upload to MoNA</a>
                 </div>
             </div>
         </div>

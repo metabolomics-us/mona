@@ -6,177 +6,199 @@
 
 import * as angular from 'angular';
 
-    uploadLibraryService.$inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'gwMgfService', 'gwChemifyService', 'AuthenticationService', 'gwCtsService', '$log', '$q', 'gwMassbankService', '$filter', 'AsyncService', 'MetaDataOptimizationService'];
-    angular.module('moaClientApp')
-        .service('UploadLibraryService', uploadLibraryService);
+export class UploadLibraryService{
+    private static $inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'gwMgfService', 'gwChemifyService', 'AuthenticationService', 'gwCtsService', '$log', '$q', 'gwMassbankService', '$filter', 'AsyncService', 'MetaDataOptimizationService'];
+    private $rootScope;
+    private ApplicationError;
+    private Spectrum;
+    private gwMspService;
+    private gwMgfService;
+    private gwChemifyService;
+    private AuthenticationService;
+    private gwCtsService;
+    private $log
+    private $q;
+    private gwMassbankService;
+    private $filter;
+    private AsyncService;
+    private MetaDataOptimizationService;
+    private completedSpectraCount;
+    private failedSpectraCount;
+    private uploadedSpectraCount;
+    private uploadStartTime;
 
-    /* @ngInject */
-    function uploadLibraryService($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService,
-                                  gwChemifyService, AuthenticationService, gwCtsService, $log, $q,
-                                  gwMassbankService, $filter, AsyncService, MetaDataOptimizationService) {
+    constructor($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService, gwChemifyService, AuthenticationService, gwCtsService, $log, $q, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService){
+        this.$rootScope = $rootScope;
+        this.ApplicationError = ApplicationError;
+        this.Spectrum = Spectrum;
+        this.gwMspService = gwMspService;
+        this.gwMgfService = gwMgfService;
+        this.gwChemifyService = gwChemifyService;
+        this.AuthenticationService = AuthenticationService;
+        this.gwCtsService = gwCtsService;
+        this.$log = $log;
+        this.$q = $q;
+        this.gwMassbankService = gwMassbankService;
+        this.$filter = $filter;
+        this.AsyncService = AsyncService;
+        this.MetaDataOptimizationService = MetaDataOptimizationService;
+    }
 
-        // Representing this service
-        var self = this;
+    $onInit = () => {
+        this.completedSpectraCount = 0;
+        this.failedSpectraCount = 0;
+        this.uploadedSpectraCount = 0;
+        this.uploadStartTime = -1;
+    }
 
-        // Number of submitted spectra
-        self.completedSpectraCount = 0;
-        self.failedSpectraCount = 0;
-        self.uploadedSpectraCount = 0;
-        self.uploadStartTime = -1;
+    /**
+     * obtains a promise for us to get to the an inchi key for a spectra object
+     * @param spectra
+     * @returns {Deferred}
+     */
+     obtainKey(spectra){
+        //var deferred = $q.defer();
 
         /**
-         * obtains a promise for us to get to the an inchi key for a spectra object
+         * helper function to resolve the correct inchi by name
          * @param spectra
-         * @returns {Deferred}
          */
-        function obtainKey(spectra) {
-            var deferred = $q.defer();
-
-            /**
-             * helper function to resolve the correct inchi by name
-             * @param spectra
-             */
-            var resolveByName = function(spectra) {
-                if (spectra.name) {
-                    gwChemifyService.nameToInChIKey(spectra.name, function(key) {
-                        if (key === null) {
-                            deferred.reject("sorry no InChI Key found for " + spectra.name + ", at name to InChI key!");
-                        }
-                        else {
-                            spectra.inchiKey = key;
-                            deferred.resolve(spectra);
-                        }
-                    });
-                }
-
-                //if we have a bunch of names
-                else if (spectra.names && spectra.names.length > 0) {
-
-                    gwChemifyService.nameToInChIKey(spectra.names[0], function(key) {
-                        if (key === null) {
-                            deferred.reject("sorry no InChI Key found for " + spectra.names[0] + ", at names to InChI key!");
-                        }
-                        else {
-                            spectra.inchiKey = key;
-                            deferred.resolve(spectra);
-                        }
-                    });
-                }
-
-                //we got nothing so we give up
-                else {
-                    deferred.reject("sorry given object was invalid, we need a name, or an InChI code, InChI Key or an array with names for this to work!")
-                }
-            };
-
-            //if we got an inchi code
-            if (spectra.inchi) {
-                //no work needed
-                deferred.resolve(spectra);
-
+        let resolveByName = (spectra, resolve, reject) => {
+            if (spectra.name) {
+                this.gwChemifyService.nameToInChIKey(spectra.name, (key) => {
+                    if (key === null) {
+                        reject("sorry no InChI Key found for " + spectra.name + ", at name to InChI key!");
+                    }
+                    else {
+                        spectra.inchiKey = key;
+                        resolve(spectra);
+                    }
+                });
             }
 
+            //if we have a bunch of names
+            else if (spectra.names && spectra.names.length > 0) {
+
+                this.gwChemifyService.nameToInChIKey(spectra.names[0], (key) => {
+                    if (key === null) {
+                        reject("sorry no InChI Key found for " + spectra.names[0] + ", at names to InChI key!");
+                    }
+                    else {
+                        spectra.inchiKey = key;
+                        resolve(spectra);
+                    }
+                });
+            }
+
+            //we got nothing so we give up
+            else {
+                reject("sorry given object was invalid, we need a name, or an InChI code, InChI Key or an array with names for this to work!")
+            }
+        };
+
+        const myPromise = new Promise((resolve, reject) => {
+            if (spectra.inchi) {
+                //no work needed
+                resolve(spectra);
+            }
             //in case we got a smiles
             else if (spectra.smiles) {
-                gwCtsService.convertSmileToInChICode(spectra.smiles, function(data) {
+                this.gwCtsService.convertSmileToInChICode(spectra.smiles, (data) => {
                     spectra.inchi = data.inchicode;
                     spectra.inchiKey = data.inchikey;
 
-                    deferred.resolve(spectra);
+                    resolve(spectra);
                 });
             }
 
             //in case we got an inchi
             else if (spectra.inchiKey) {
-                gwCtsService.convertInchiKeyToMol(spectra.inchiKey, function(molecule) {
-
-                    //
+                this.gwCtsService.convertInchiKeyToMol(spectra.inchiKey, (molecule) => {
                     if (molecule === null && spectra.inchi === null) {
-                        resolveByName(spectra);
+                        resolveByName(spectra, resolve, reject);
                     }
                     else {
                         if (molecule !== null) {
                             spectra.molFile = molecule;
                         }
-                        deferred.resolve(spectra);
+                        resolve(spectra);
                     }
                 });
             }
 
             else {
-                resolveByName(spectra);
+                resolveByName(spectra, resolve, reject);
             }
+        })
 
-            return deferred.promise;
-        }
+        return myPromise;
+    }
 
-        /**
-         * assembles a spectra and prepares it for upload
-         * @param submitter
-         * @param saveSpectrumCallback
-         * @param spectrumObject
-         * @param additionalData
-         */
-        function workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData) {
+    /**
+     * assembles a spectra and prepares it for upload
+     * @param submitter
+     * @param saveSpectrumCallback
+     * @param spectrumObject
+     * @param additionalData
+     */
+     workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData) {
 
-            var defer = $q.defer();
-
+        //var defer = $q.defer();
+        const myPromise = new Promise((resolve, reject) => {
             //if we have  a key or an inchi
             if (spectrumObject.inchiKey !== null && spectrumObject.inchi !== null) {
-                self.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData).then(function(submittedSpectra) {
+                this.submitSpectrum(spectrumObject, submitter, saveSpectrumCallback, additionalData).then((submittedSpectra) => {
                     //assign our result
-                    defer.resolve(submittedSpectra);
+                    resolve(submittedSpectra);
                 });
             }
 
             //we need to get a key or inchi code
             else {
                 //get the key
-                obtainKey(spectrumObject).then(function(spectrumWithKey) {
+                this.obtainKey(spectrumObject).then((spectrumWithKey: any) => {
                     //only if we have an inchi or a molfile we can submit this file
                     if (spectrumWithKey.inchi !== null || spectrumWithKey.molFile !== null) {
                         //$log.debug('submitting object:\n\n' + $filter('json')(spectrumWithKey));
-                        self.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData).then(function(submittedSpectra) {
-                            defer.resolve(submittedSpectra);
+                        this.submitSpectrum(spectrumWithKey, submitter, saveSpectrumCallback, additionalData).then((submittedSpectra) => {
+                            resolve(submittedSpectra);
                         });
                     }
 
                     else {
-                        $log.error("invalid " + $filter('json')(spectrumWithKey));
-                        defer.reject(new Error('dropped object from submission, since it was declared invalid, it had neither an InChI or a Molfile, which means the provide InChI key most likely was not found!'));
+                        this.$log.error("invalid " + this.$filter('json')(spectrumWithKey));
+                        reject(new Error('dropped object from submission, since it was declared invalid, it had neither an InChI or a Molfile, which means the provide InChI key most likely was not found!'));
                     }
-                }).catch(function(error) {
-                    $log.warn(error + '\n' + $filter('json')(spectrumObject));
-                    defer.reject(error);
+                }).catch((error) => {
+                    this.$log.warn(error + '\n' + this.$filter('json')(spectrumObject));
+                    reject(error);
                 });
             }
+        })
 
-            //return our promise
-            return defer.promise;
-        }
+        return myPromise;
+    }
 
+    /**
+     *
+     * @param spectra
+     * @param submitter
+     * @param saveSpectrumCallback
+     * @param additionalData
+     */
+    submitSpectrum = (spectra, submitter, saveSpectrumCallback, additionalData) => {
+        //$log.debug("submitting spectra...");
+        //$log.debug($filter('json')(spectra));
 
-        /**
-         *
-         * @param spectra
-         * @param submitter
-         * @param saveSpectrumCallback
-         * @param additionalData
-         */
-        self.submitSpectrum = function(spectra, submitter, saveSpectrumCallback, additionalData) {
-            //$log.debug("submitting spectra...");
-            //$log.debug($filter('json')(spectra));
+        //$log.debug("additional data...");
+        //$log.debug($filter('json')(additionalData));
 
-            //$log.debug("additional data...");
-            //$log.debug($filter('json')(additionalData));
-
-            var deferred = $q.defer();
-
-            //optimize all our metadata
-            MetaDataOptimizationService.optimizeMetaData(spectra.meta).then(function(metaData) {
+        //optimize all our metadata
+        const myPromise = new Promise((resolve, reject) => {
+            this.MetaDataOptimizationService.optimizeMetaData(spectra.meta).then((metaData) => {
 
                 //$log.debug("building final spectra...");
-                var s = self.buildSpectrum();
+                let s = this.buildSpectrum();
 
                 //assign structure information
                 if (spectra.inchiKey !== null)
@@ -197,7 +219,7 @@ import * as angular from 'angular';
                 }
 
                 if (angular.isDefined(spectra.names)) {
-                    for (var i = 0; i < spectra.names.length; i++) {
+                    for (let i = 0; i < spectra.names.length; i++) {
                         if (spectra.names[i] != "")
                             s.biologicalCompound.names.push({name: spectra.names[i]});
                     }
@@ -210,7 +232,7 @@ import * as angular from 'angular';
                 s.spectrum = spectra.spectrum;
 
                 if (angular.isDefined(spectra.tags)) {
-                    spectra.tags.forEach(function(tag) {
+                    spectra.tags.forEach((tag) => {
                         s.tags.push(tag);
                     });
                 }
@@ -220,14 +242,14 @@ import * as angular from 'angular';
                 //     s.comments.push({comment: spectra.comments});
                 // }
 
-                metaData.forEach(function(e) {
+                metaData.forEach((e) => {
                     s.metaData.push(e);
                 });
 
                 if (angular.isDefined(additionalData)) {
                     if (angular.isDefined(additionalData.tags)) {
-                        additionalData.tags.forEach(function(tag) {
-                            for (var i = 0; i < s.tags.length; i++) {
+                        additionalData.tags.forEach((tag) => {
+                            for (let i = 0; i < s.tags.length; i++) {
                                 if (s.tags[i].text === tag.text)
                                     return;
                             }
@@ -237,7 +259,7 @@ import * as angular from 'angular';
                     }
 
                     if (angular.isDefined(additionalData.meta)) {
-                        additionalData.meta.forEach(function(e) {
+                        additionalData.meta.forEach((e) => {
                             s.metaData.push(e);
                         });
                     }
@@ -255,203 +277,207 @@ import * as angular from 'angular';
 
 
                 //assign our result
-                deferred.resolve(s);
+                resolve(s);
             });
+        })
+        return myPromise;
+    };
 
-            return deferred.promise;
-        };
+    /**
+     *
+     * @returns {Spectrum}
+     */
+    buildSpectrum = () => {
+        let spectrum = new this.Spectrum();
+        spectrum.biologicalCompound = {names: []};
+        spectrum.tags = [];
+        spectrum.metaData = [];
 
-
-        /**
-         *
-         * @returns {Spectrum}
-         */
-        self.buildSpectrum = function() {
-            var spectrum = new Spectrum();
-            spectrum.biologicalCompound = {names: []};
-            spectrum.tags = [];
-            spectrum.metaData = [];
-
-            return spectrum;
-        };
-
-
-        /**
-         * Loads spectra file and returns the data to a callback function
-         * @param file
-         * @param callback
-         * @param fireUploadProgress
-         */
-        self.loadSpectraFile = function(file, callback, fireUploadProgress) {
-            var fileReader = new FileReader();
-
-            // Call the callback function with the loaded data once the file has been read
-            fileReader.onload = function(event) {
-                callback(event.target.result, file.name);
-
-                if (angular.isDefined(fireUploadProgress)) {
-                    fireUploadProgress(100);
-                }
-            };
-
-            // progress notification
-            fileReader.onprogress = function(event) {
-                if (event.lengthComputable && angular.isDefined(fireUploadProgress)) {
-                    fireUploadProgress((event.loaded / event.total) * 100);
-                }
-            };
-
-            //start the reading
-            fileReader.readAsText(file);
-        };
+        return spectrum;
+    };
 
 
-        /**
-         *
-         * @param data
-         * @param origin
-         * @returns {number}
-         */
-        self.countData = function(data, origin) {
-            if (angular.isDefined(origin)) {
-                if (origin.toLowerCase().indexOf(".msp") > 0) {
-                    return gwMspService.countSpectra(data);
-                }
-                else if (origin.toLowerCase().indexOf(".mgf") > 0) {
-                    return gwMgfService.countSpectra(data);
-                }
-                else if (origin.toLowerCase().indexOf(".txt") > 0) {
-                    return gwMassbankService.countSpectra(data);
-                }
-                else {
-                    alert('not supported file format!');
-                }
-            } else {
-                return gwMspService.countSpectra(data);
+    /**
+     * Loads spectra file and returns the data to a callback function
+     * @param file
+     * @param callback
+     * @param fireUploadProgress
+     */
+    loadSpectraFile = (file, callback, fireUploadProgress) => {
+        let fileReader = new FileReader();
+
+        // Call the callback function with the loaded data once the file has been read
+        fileReader.onload = (event) => {
+            callback(event.target.result, file.name);
+
+            if (angular.isDefined(fireUploadProgress)) {
+                fireUploadProgress(100);
             }
         };
 
-        /**
-         *
-         * @param data
-         * @param callback
-         * @param origin
-         */
-        self.processData = function(data, callback, origin) {
-            // Add origin to spectrum metadata before callback
-            var addOriginMetadata = function(spectrum) {
-                if (angular.isDefined(origin)) {
-                    spectrum.meta.push({name: 'origin', value: origin});
-                }
-
-                callback(spectrum);
-            };
-
-            // Parse data
-            if (angular.isDefined(origin)) {
-                if (origin.toLowerCase().indexOf(".msp") > 0) {
-                    $log.debug("uploading msp file...");
-                    gwMspService.convertFromData(data, addOriginMetadata);
-                }
-                else if (origin.toLowerCase().indexOf(".mgf") > 0) {
-                    $log.debug("uploading mgf file...");
-                    gwMgfService.convertFromData(data, addOriginMetadata);
-                }
-                else if (origin.toLowerCase().indexOf(".txt") > 0) {
-                    $log.debug("uploading massbank file...");
-                    gwMassbankService.convertFromData(data, addOriginMetadata);
-                }
-                else {
-                    alert('not supported file format!');
-                }
-            } else {
-                gwMspService.convertFromData(data, addOriginMetadata);
+        // progress notification
+        fileReader.onprogress = (event) => {
+            if (event.lengthComputable && angular.isDefined(fireUploadProgress)) {
+                fireUploadProgress((event.loaded / event.total) * 100);
             }
         };
 
-        /**
-         * simples uploader
-         * @param files
-         * @param saveSpectrumCallback
-         * @param wizardData
-         */
-        self.uploadSpectraFiles = function(files, saveSpectrumCallback, wizardData) {
-            for (var i = 0; i < files.length; i++) {
-                self.loadSpectraFile(files[i], function(data, origin) {
-                    self.processData(data, function(spectrum) {
-                        self.uploadSpectrum(spectrum, saveSpectrumCallback, wizardData);
-                    }, origin);
-                })
+        //start the reading
+        fileReader.readAsText(file);
+    };
+
+
+    /**
+     *
+     * @param data
+     * @param origin
+     * @returns {number}
+     */
+    countData = (data, origin) => {
+        if (angular.isDefined(origin)) {
+            if (origin.toLowerCase().indexOf(".msp") > 0) {
+                return this.gwMspService.countSpectra(data);
             }
-        };
-
-        /**
-         * @param spectra
-         * @param saveSpectrumCallback
-         */
-        self.uploadSpectra = function(spectra, saveSpectrumCallback) {
-            for (var i = 0; i < spectra.length; i++) {
-                self.uploadSpectrum(spectra[i], saveSpectrumCallback, {});
+            else if (origin.toLowerCase().indexOf(".mgf") > 0) {
+                return this.gwMgfService.countSpectra(data);
             }
-        };
-
-        /**
-         *
-         * @param wizardData
-         * @param saveSpectrumCallback
-         * @param additionalData
-         */
-        self.uploadSpectrum = function(wizardData, saveSpectrumCallback, additionalData) {
-            AuthenticationService.getCurrentUser().then(function(submitter) {
-                self.uploadedSpectraCount += 1;
-
-                AsyncService.addToPool(function() {
-                    var defered = $q.defer();
-
-                    workOnSpectra(submitter, saveSpectrumCallback, wizardData, additionalData).then(function(data) {
-                        defered.resolve(data);
-                        updateUploadProgress(true);
-                    }).catch(function(error) {
-                        $log.error("found an error: " + error);
-                        defered.reject(error);
-                        updateUploadProgress(false);
-                    });
-
-                    return defered.promise;
-                });
-            });
-
-            broadcastUploadProgress();
-        };
-
-
-        /**
-         * Checks if spectra are being processed and uploaded
-         */
-        self.isUploading = function() {
-            return self.completedSpectraCount + self.failedSpectraCount < self.uploadedSpectraCount;
-        };
-
-
-        /**
-         * Updates and broadcasts the upload progress
-         */
-        var updateUploadProgress = function(success) {
-            if (angular.isUndefined(success)) {
-                // do nothing
-            } else if (success) {
-                self.completedSpectraCount++;
-            } else if (!success) {
-                self.failedSpectraCount++;
+            else if (origin.toLowerCase().indexOf(".txt") > 0) {
+                return this.gwMassbankService.countSpectra(data);
             }
-
-            broadcastUploadProgress();
-        };
-
-        /**
-         * Requires separate function for broadcasting at start of upload
-         */
-        var broadcastUploadProgress = function() {
-            $rootScope.$broadcast('spectra:uploadprogress', self.completedSpectraCount, self.failedSpectraCount, self.uploadedSpectraCount);
+            else {
+                alert('not supported file format!');
+            }
+        } else {
+            return this.gwMspService.countSpectra(data);
         }
+    };
+
+    /**
+     *
+     * @param data
+     * @param callback
+     * @param origin
+     */
+    processData = (data, callback, origin) => {
+        // Add origin to spectrum metadata before callback
+        let addOriginMetadata = (spectrum) => {
+            if (angular.isDefined(origin)) {
+                spectrum.meta.push({name: 'origin', value: origin});
+            }
+
+            callback(spectrum);
+        };
+
+        // Parse data
+        if (angular.isDefined(origin)) {
+            if (origin.toLowerCase().indexOf(".msp") > 0) {
+                this.$log.debug("uploading msp file...");
+                this.gwMspService.convertFromData(data, addOriginMetadata);
+            }
+            else if (origin.toLowerCase().indexOf(".mgf") > 0) {
+                this.$log.debug("uploading mgf file...");
+                this.gwMgfService.convertFromData(data, addOriginMetadata);
+            }
+            else if (origin.toLowerCase().indexOf(".txt") > 0) {
+                this.$log.debug("uploading massbank file...");
+                this.gwMassbankService.convertFromData(data, addOriginMetadata);
+            }
+            else {
+                alert('not supported file format!');
+            }
+        } else {
+            this.gwMspService.convertFromData(data, addOriginMetadata);
+        }
+    };
+
+    /**
+     * simples uploader
+     * @param files
+     * @param saveSpectrumCallback
+     * @param wizardData
+     */
+    uploadSpectraFiles = (files, saveSpectrumCallback, wizardData) => {
+        for (let i = 0; i < files.length; i++) {
+            this.loadSpectraFile(files[i], (data, origin) => {
+                this.processData(data, (spectrum) => {
+                    this.uploadSpectrum(spectrum, saveSpectrumCallback, wizardData);
+                }, origin);
+            }, 0)
+        }
+    };
+
+    /**
+     * @param spectra
+     * @param saveSpectrumCallback
+     */
+    uploadSpectra = (spectra, saveSpectrumCallback) => {
+        for (let i = 0; i < spectra.length; i++) {
+            this.uploadSpectrum(spectra[i], saveSpectrumCallback, {});
+        }
+    };
+
+    /**
+     *
+     * @param wizardData
+     * @param saveSpectrumCallback
+     * @param additionalData
+     */
+    uploadSpectrum = (wizardData, saveSpectrumCallback, additionalData) => {
+        this.AuthenticationService.getCurrentUser().then((submitter) => {
+            this.uploadedSpectraCount += 1;
+
+            this.AsyncService.addToPool(() => {
+                const myPromise = new Promise((resolve, reject) => {
+                    this.workOnSpectra(submitter, saveSpectrumCallback, wizardData, additionalData).then((data) => {
+                        resolve(data);
+                        this.updateUploadProgress(true);
+                    }).catch((error) => {
+                        this.$log.error("found an error: " + error);
+                        reject(error);
+                        this.updateUploadProgress(false);
+                    });
+                })
+                return myPromise;
+            });
+        });
+
+        this.broadcastUploadProgress();
+    };
+
+
+    /**
+     * Checks if spectra are being processed and uploaded
+     */
+    isUploading = () => {
+        return this.completedSpectraCount + this.failedSpectraCount < this.uploadedSpectraCount;
+    };
+
+
+    /**
+     * Updates and broadcasts the upload progress
+     */
+    updateUploadProgress = (success) => {
+        if (angular.isUndefined(success)) {
+            // do nothing
+        } else if (success) {
+            this.completedSpectraCount++;
+        } else if (!success) {
+            this.failedSpectraCount++;
+        }
+
+        this.broadcastUploadProgress();
+    };
+
+    /**
+     * Requires separate function for broadcasting at start of upload
+     */
+    broadcastUploadProgress = () => {
+        this.$rootScope.$broadcast('spectra:uploadprogress', this.completedSpectraCount, this.failedSpectraCount, this.uploadedSpectraCount);
     }
+}
+
+
+angular.module('moaClientApp')
+    .service('UploadLibraryService', UploadLibraryService);
+
+

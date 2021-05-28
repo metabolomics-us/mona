@@ -16,7 +16,7 @@ import "bootstrap-multiselect/dist/js/bootstrap-multiselect";
                     // @ts-ignore
                     // @ts-ignore
                     let options = {
-                        onChange: function (optionElement, checked) {
+                        onChange: (optionElement, checked) => {
                             if (optionElement != null) {
                                 $(optionElement).removeProp('selected');
                             }
@@ -56,8 +56,7 @@ import "bootstrap-multiselect/dist/js/bootstrap-multiselect";
                         numberDisplayed: null,
                         disableIfEmpty: JSON,
                         disabledText: null,
-                        delimiterText: null,
-                        buttonText: null
+                        delimiterText: null
                     };
 
                     //attrs are lowercased by Angular, but options must match casing of bootstrap-multiselect
@@ -94,24 +93,24 @@ import "bootstrap-multiselect/dist/js/bootstrap-multiselect";
                     if (attrs.disabledtext) options.disabledText = attrs.disabledtext; //default:  ''
                     if (attrs.delimitertext) options.delimiterText = attrs.delimitertext; //default:  ', '
 
-                    if (attrs.buttontext) {
+                    /*if (attrs.buttontext) {
                         options.buttonText = function(options, select) {
                             return attrs.buttontext;
                         }
-                    }
+                    }*/
 
                     element.multiselect(options);
 
                     // Watch for any changes to the length of our select element
-                    scope.$watch(function () {
+                    scope.$watch(() => {
                         //debugger;
                         return element[0].length;
-                    }, function () {
+                    }, () => {
                         scope.$applyAsync(element.multiselect('rebuild'));
                     });
 
                     // Watch for any changes from outside the directive and refresh
-                    scope.$watch(attrs.ngModel, function () {
+                    scope.$watch(attrs.ngModel, () => {
                         element.multiselect('refresh');
                     });
                 }

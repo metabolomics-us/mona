@@ -6,12 +6,12 @@
     "start": "webpack serve --open --port 9090"
   },
   "dependencies": {
+    "@types/es6-promise": "^3.3.0",
     "angular": "1.6.10",
     "angular-animate": "1.6.10",
     "angular-cookies": "1.6.10",
     "angular-cts-service": "git+http://bitbucket.org/fiehnlab/angular-cts-service.git",
     "angular-dialog-service": "5.3.0",
-    "angular-file-upload": "^2.6.1",
     "angular-filter": "~0.5.17",
     "angular-google-analytics": "latest",
     "angular-massbank-parser": "git+http://bitbucket.org/fiehnlab/angular-massbank-parser.git",
@@ -33,6 +33,7 @@
     "flot": "0.8.3",
     "jquery": "~2.2.4",
     "json3": "~3.3.3",
+    "ng-file-upload": "^12.2.13",
     "ng-tags-input": "~2.3.0",
     "nvd3": "1.8.6",
     "paralleljs": "*"

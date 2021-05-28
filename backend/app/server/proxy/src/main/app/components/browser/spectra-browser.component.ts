@@ -384,7 +384,7 @@ class SpectraBrowserController {
         }
     };
 
-    searchSuccess(data) {
+    searchSuccess = (data) => {
         this.duration = (Date.now() - this.startTime) / 1000;
 
         if (data.length > 0) {
@@ -396,7 +396,7 @@ class SpectraBrowserController {
         this.pagination.loading = false;
     }
 
-    searchError(error) {
+    searchError = (error) => {
         this.hideSplash();
         this.pagination.loading = false;
 

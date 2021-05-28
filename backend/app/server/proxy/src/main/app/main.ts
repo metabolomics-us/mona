@@ -19,7 +19,7 @@ import "angular-msp-parser";
 import "angular-mgf-parser";
 import "angular-massbank-parser";
 import "angular-masspec-plotter";
-import "angular-file-upload";
+import "ng-file-upload";
 import "angular-filter";
 import "d3/d3";
 import "nvd3";

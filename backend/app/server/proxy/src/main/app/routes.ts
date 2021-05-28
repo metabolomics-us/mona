@@ -22,7 +22,7 @@ import * as angular from 'angular';
 
             //uploading a mass spec
             .when('/upload', {
-                templateUrl: './views/spectra/upload/upload.html'
+                template: "<upload-page></upload-page>"
             })
 
             .when('/upload/basic', {

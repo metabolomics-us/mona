@@ -3,9 +3,10 @@
  */
 
 import * as angular from 'angular';
+import {AuthenticationService} from "../../services/authenticationService";
 
 class AdvancedUploaderController{
-	private static $inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TagService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http'];
+	private static $inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TagService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http', 'AuthenticationService'];
 	private $scope;
 	private $rootScope;
 	private $window;
@@ -19,6 +20,7 @@ class AdvancedUploaderController{
 	private $log;
 	private REST_BACKEND_SERVER;
 	private $http;
+	private AuthenticationService;
 	// Loaded spectra data/status
 	private spectraLoaded;
 	private currentSpectrum;
@@ -43,7 +45,7 @@ class AdvancedUploaderController{
 
 
 
-	constructor($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, TagService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http){
+	constructor($scope, $rootScope, $window, $location, UploadLibraryService, gwCtsService, TagService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http, AuthenticationService){
 		this.$scope = $scope;
 		this.$rootScope = $rootScope;
 		this.$window = $window;
@@ -57,6 +59,7 @@ class AdvancedUploaderController{
 		this.$log = $log;
 		this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
 		this.$http = $http;
+		this.AuthenticationService = AuthenticationService;
 	}
 
 	$onInit = () => {
@@ -464,7 +467,8 @@ class AdvancedUploaderController{
 			this.$window.scrollTo(0, 0);
 		}
 
-		return (invalid.length === 0);
+		return true;
+		//return (invalid.length === 0);
 	};
 
 

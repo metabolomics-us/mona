@@ -4,13 +4,16 @@
 
 import * as angular from 'angular';
 
-    angular.module('moaClientApp')
-        .directive('uploadButton', uploadButton);
+angular.module('moaClientApp')
+    .directive('uploadButton', uploadButton);
 
-    function uploadButton() {
-        return {
-            restrict: 'E',
-            replace: true,
-            templateUrl: '../../views/navbar/upload.html'
-        };
-    }
+function uploadButton() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: '../../views/navbar/upload.html'
+    };
+}
+
+
+

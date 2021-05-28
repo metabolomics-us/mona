@@ -6,28 +6,30 @@
 import * as angular from 'angular';
 
 export class AuthenticationService{
-    private static $inject = ['Submitter','$rootScope','$log','$http','CookieService', 'REST_BACKEND_SERVER']
+    private static $inject = ['Submitter','$rootScope','$log','$http','CookieService', '$uibModal', 'REST_BACKEND_SERVER']
     private Submitter;
     private $log;
     private $http;
     private $rootScope;
     private CookieService;
+    private $uibModal;
     private REST_BACKEND_SERVER;
     private loggingIn;
     private currentUser;
 
-    constructor(Submitter, $log, $rootScope, $http, CookieService, REST_BACKEND_SERVER) {
+    constructor(Submitter, $rootScope, $log, $http, CookieService, $uibModal, REST_BACKEND_SERVER) {
         this.Submitter = Submitter;
+        this.$rootScope = $rootScope;
         this.$log = $log;
         this.$http = $http;
         this.CookieService = CookieService;
+        this.$uibModal = $uibModal;
         this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
-        this.$rootScope = $rootScope;
-
     }
 
     $onInit = () => {
         this.loggingIn = false;
+        this.currentUser = {};
     }
 
     pullSubmitterData() {
@@ -38,7 +40,7 @@ export class AuthenticationService{
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer '+ this.currentUser.access_token
             }
-        }).then(function (response) {
+        }).then((response) => {
             this.currentUser.emailAddress = response.data.emailAddress;
             this.currentUser.firstName = response.data.firstName;
             this.currentUser.lastName = response.data.lastName;
@@ -58,8 +60,11 @@ export class AuthenticationService{
             },
             data: {username: userName, password: password}
         }).then(
-            function (response) {
+            (response) => {
                 let token = response.data.token;
+                console.log(response);
+                console.log(token);
+                console.log(response.config.data.username);
 
                 this.currentUser = {username: response.config.data.username, access_token: token};
                 this.$log.info("Login success.  Current token: "+ this.currentUser.access_token);
@@ -70,7 +75,7 @@ export class AuthenticationService{
 
                 this.pullSubmitterData();
             },
-            function (response) {
+            (response) => {
                 this.$log.info(response);
                 this.$rootScope.$broadcast('auth:login-error', response.data, response.status, response.headers, response.config);
                 this.loggingIn = false;
@@ -106,13 +111,13 @@ export class AuthenticationService{
                     token: access_token
                 }
             }).then(
-                function (response) {
+                 (response) => {
                     this.$log.info(response);
                     this.currentUser = {username: response.data.username, access_token: response.config.data.token};
                     this.$log.info("Validation successful");
                     this.pullSubmitterData();
                 },
-                function (response) {
+                 (response) => {
                     this.currentUser = null;
                     this.CookieService.remove('AuthorizationToken');
                     this.$rootScope.$broadcast('auth:login-error', response.data, response.status, response.headers, response.config);
@@ -129,7 +134,7 @@ export class AuthenticationService{
      * log us out
      */
     logout() {
-        this.$rootScope.$broadcast('auth:logout', null, null, null, null);
+        //this.$rootScope.$broadcast('auth:logout', null, null, null, null);
         this.currentUser = null;
         this.CookieService.remove('AuthorizationToken');
     };
@@ -150,20 +155,40 @@ export class AuthenticationService{
      * @returns {*}
      */
     getCurrentUser() {
-        let deferred = this.$http.defer();
+        const newPromise = new Promise((resolve, reject) => {
+            if(this.isLoggedIn()) {
+                resolve(this.currentUser);
+                //resolve(this.currentUser);
+            } else{
+                resolve(null);
+            }
+        });
 
-        if (this.isLoggedIn()) {
-            deferred.resolve(this.currentUser);
-        } else {
-            deferred.resolve({});
-        }
-
-        return deferred.promise;
+        return newPromise;
     };
 
+    /**
+     * Handle login
+     */
+    handleLogin() {
+        if (this.isLoggedIn()) {
+            this.logout();
+        } else {
+            this.openAuthenticationDialog();
+        }
+    };
 
+    /**
+     * Opens the authentication modal dialog
+     */
+    openAuthenticationDialog() {
+        this.$uibModal.open({
+            component: 'authenticationModal',
+            size: 'sm',
+            backdrop: 'true'
+        });
+    };
 }
-
     angular.module('moaClientApp')
         .service('AuthenticationService', AuthenticationService);
 

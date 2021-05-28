@@ -28,7 +28,7 @@ import 'angular-msp-parser';
 import 'angular-mgf-parser';
 import 'angular-massbank-parser';
 import 'angular-cts-service';
-import 'angular-file-upload';
+import 'ng-file-upload';
 import 'angular-masspec-plotter';
 import 'angularjs-toaster';
 import 'nvd3';
@@ -48,7 +48,7 @@ angular
         'wohlgemuth.mgf.parser',
         'wohlgemuth.massbank.parser',
         'wohlgemuth.cts',
-        'angularFileUpload',
+        'ngFileUpload',
         'angularMasspecPlotter',
         'toaster',
         'nvd3',
