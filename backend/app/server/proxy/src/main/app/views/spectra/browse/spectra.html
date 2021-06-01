@@ -177,7 +177,7 @@
                     <div data-ng-switch-when="ID">
                         <div><a style="cursor: pointer" ng-href="{{$ctrl.viewSpectrum(spectrum.id)}}">{{spectrum.id}}</a></div>
                         <div>
-                            <span><uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></uib-rating></span>
+                            <span uib-rating ng-model="spectrum.score.score" max="5" data-readonly="true"></span>
                         </div>
                         <div ng-if="spectrum.similarity !== undefined">
                             <h4><span class="label label-primary" >Similarity: {{spectrum.similarity * 1000 | number:0}}</span></h4>

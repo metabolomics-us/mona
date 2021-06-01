@@ -37,7 +37,7 @@ import * as angular from 'angular';
              * @param attrs
              * @param ngModel
              */
-            link: function($scope, element, attrs, ngModel) {
+            link: ($scope, element, attrs, ngModel) => {
 
                 /**
                  * default properties
@@ -50,11 +50,11 @@ import * as angular from 'angular';
 
                 //only render if we got an id object
                 if (angular.isDefined($scope.id)) {
-                    var myId = $scope.id + '_sketcher';
+                    let myId = $scope.id + '_sketcher';
 
                     element.append('<canvas id="' + myId + '"></canvas>');
 
-                    var sketcher = null;
+                    let sketcher = null;
 
                     //we can only view
                     if ($scope.readonly) {
@@ -67,17 +67,19 @@ import * as angular from 'angular';
                             oneMolecule: true
                         });
                     }
+                    console.log(sketcher);
 
-                    sketcher.specs.atoms_displayTerminalCarbonLabels_2D = true;
-                    sketcher.specs.atoms_useJMOLColors = true;
-                    sketcher.specs.bonds_clearOverlaps_2D = true;
+                    //sketcher.specs.atoms_displayTerminalCarbonLabels_2D = true;
+                    sketcher.styles.atoms_displayTerminalCarbonLabels_2D = true;
+                    sketcher.styles.atoms_useJMOLColors = true;
+                    sketcher.styles.bonds_clearOverlaps_2D = true;
 
 
                     /**
                      * checks if our model has a molFile attribute or assumes that it's an inchiKey
                      * @param model spectrum object or inchi key
                      */
-                    var getMoleculeForModel = function(model) {
+                    let getMoleculeForModel = (model) => {
 
                         // model is array of object, we need to get the first one only
                         if (Array.isArray(model)) {
@@ -115,7 +117,7 @@ import * as angular from 'angular';
                             else if (angular.isString(model) && /^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test(model)) {
                                 $log.debug('Converting from InChIKey to MOL: '+ model);
                                 
-                                gwCtsService.convertInchiKeyToMol(model, function(molecule) {
+                                gwCtsService.convertInchiKeyToMol(model, (molecule) => {
                                     var mol = ChemDoodle.readMOL(molecule);
                                     sketcher.loadMolecule(mol);
                                 });
@@ -166,9 +168,9 @@ import * as angular from 'angular';
                     /**
                      * tracks changes to the model and if it's changes attempt to draw the structure
                      */
-                    $scope.$watch(function() {
+                    $scope.$watch(() => {
                         return $scope.bindModel;
-                    }, function(newValue, oldValue) {
+                    }, (newValue, oldValue) => {
                         if (newValue !== oldValue) {
                             getMoleculeForModel(newValue);
                         }
@@ -178,7 +180,7 @@ import * as angular from 'angular';
                     /**
                      * destroy our sketcher - doesn't work
                      */
-                    $scope.$on("$destroy", function() {
+                    $scope.$on("$destroy", () => {
                         sketcher = null;
                         var sameLevelElems = element.children();
 

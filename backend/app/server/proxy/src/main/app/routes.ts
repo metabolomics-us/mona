@@ -48,24 +48,26 @@ import * as angular from 'angular';
 
             //view individual spectrum
             .when('/spectra/display/:id', {
-                template: "<spectrum-viewer></spectrum-viewer>",
+                template: '<spectrum-viewer delayedspectrum = "$resolve.delayedSpectrum"></spectrum-viewer>',
                 resolve: {
-                    delayedSpectrum: /* @ngInject */['Spectrum', '$route', 'SpectrumCache', function(Spectrum, $route, SpectrumCache) {
+                    delayedSpectrum: /* @ngInject */['Spectrum', '$route', 'SpectrumCache', (Spectrum, $route, SpectrumCache) => {
                         // If a spectrum is not cached or the id requested does not match the
                         // cached spectrum, request it from the REST api
                         if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
+                            console.log(Spectrum);
                             return Spectrum.get(
                                 {id: $route.current.params.id},
-                                function(data) {
+                                (data) => {
                                 },
-                                function(error) {
+                                (error) => {
                                     alert('failed to obtain spectrum: ' + error);
                                 }
                             ).$promise;
                         }
 
                         else {
-                            var spectrum = SpectrumCache.getSpectrum();
+                            let spectrum = SpectrumCache.getSpectrum();
+                            console.log(spectrum);
                             SpectrumCache.removeSpectrum();
                             return spectrum;
                         }

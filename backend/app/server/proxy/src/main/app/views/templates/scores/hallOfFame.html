@@ -23,7 +23,7 @@
                 <span ng-hide="$index < 3">{{$index + 1}}</span>
             </td>
             <td><span submitter-query submitter="score">{{score.firstName}} {{score.lastName}}</span></td>
-            <td><uib-rating ng-model="score.score" max="5" data-readonly="true"></uib-rating></td>
+            <td uib-rating ng-model="score.score" max="5" data-readonly="true"></td>
             <td>{{score.count | number:0}}</td>
         </tr>
     </tbody>

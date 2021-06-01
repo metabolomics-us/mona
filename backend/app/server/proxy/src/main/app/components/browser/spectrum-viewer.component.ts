@@ -8,13 +8,14 @@
 import * as angular from 'angular';
 
 class SpectrumViewerController{
-    private static $inject = ['$scope', '$location', '$log', 'CookieService', 'Spectrum', 'delayedSpectrum'];
+    private static $inject = ['$scope', '$location', '$log', 'CookieService', 'Spectrum', 'AuthenticationService'];
     private $scope;
     private $location;
     private $log;
     private CookieService;
     private Spectrum;
-    private delayedSpectrum;
+    private delayedspectrum;
+    private AuthenticationService;
     private spectrum;
     private score;
     private massSpec;
@@ -30,20 +31,29 @@ class SpectrumViewerController{
     private match;
     private intensity;
 
-    constructor($scope, $location, $log, CookieService, Spectrum, delayedSpectrum){
+    constructor($scope, $location, $log, CookieService, Spectrum, AuthenticationService){
         this.$scope = $scope;
         this.$location = $location;
         this.CookieService = CookieService;
         this.Spectrum = Spectrum;
-        this.delayedSpectrum = delayedSpectrum;
+        this.AuthenticationService = AuthenticationService;
     }
 
     $onInit = () => {
+        console.log(this.delayedspectrum);
         /**
          * Sort order for the ion table - default m/z ascending
          */
         this.ionTableSort = 'ion';
         this.ionTableSortReverse = false;
+
+        /**
+         * quality score of our spectrum
+         * @type {number}
+         */
+        this.score = 0;
+
+        this.massSpec = [];
 
         this.massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
 
@@ -63,9 +73,9 @@ class SpectrumViewerController{
 
 
         // truncate metadata
-        if (angular.isDefined(this.delayedSpectrum.metaData)) {
-            for (let i = 0; i < this.delayedSpectrum.metaData.length; i++) {
-                let curMeta = this.delayedSpectrum.metaData[i];
+        if (angular.isDefined(this.delayedspectrum.metaData)) {
+            for (let i = 0; i < this.delayedspectrum.metaData.length; i++) {
+                let curMeta = this.delayedspectrum.metaData[i];
 
                 let name = curMeta.name.toLowerCase();
 
@@ -80,9 +90,9 @@ class SpectrumViewerController{
         }
 
         // truncate compounds
-        if (angular.isDefined(this.delayedSpectrum.compound)) {
-            for (let i = 0; i < this.delayedSpectrum.compound.length; i++) {
-                let compoundMeta = this.delayedSpectrum.compound[i].metaData;
+        if (angular.isDefined(this.delayedspectrum.compound)) {
+            for (let i = 0; i < this.delayedspectrum.compound.length; i++) {
+                let compoundMeta = this.delayedspectrum.compound[i].metaData;
                 for (let j = 0, m = compoundMeta.length; j < m; j++) {
                     let metadata = compoundMeta[j];
                     let name = metadata.name.toLowerCase();
@@ -102,16 +112,16 @@ class SpectrumViewerController{
         // Parse spectrum string to generate ion list
         let match;
 
-        while ((match = this.ionRegex.exec(this.delayedSpectrum.spectrum)) !== null) {
+        while ((match = this.ionRegex.exec(this.delayedspectrum.spectrum)) !== null) {
             // Find annotation
             let annotation = '';
             let computed = false;
 
-            if (angular.isDefined(this.delayedSpectrum.annotations)) {
-                for (let i = 0; i < this.delayedSpectrum.annotations.length; i++) {
-                    if (this.delayedSpectrum.annotations[i].value === parseFloat(match[1])) {
-                        annotation = this.delayedSpectrum.annotations[i].name;
-                        computed = this.delayedSpectrum.annotations[i].computed;
+            if (angular.isDefined(this.delayedspectrum.annotations)) {
+                for (let i = 0; i < this.delayedspectrum.annotations.length; i++) {
+                    if (this.delayedspectrum.annotations[i].value === parseFloat(match[1])) {
+                        annotation = this.delayedspectrum.annotations[i].name;
+                        computed = this.delayedspectrum.annotations[i].computed;
                     }
                 }
             }
@@ -135,15 +145,8 @@ class SpectrumViewerController{
         /**
          * Mass spectrum obtained from cache if it exists, otherwise from REST api
          */
-        this.spectrum = this.delayedSpectrum;
-
-        /**
-         * quality score of our spectrum
-         * @type {number}
-         */
-        this.score = 0;
-
-        this.massSpec = [];
+        this.spectrum = this.delayedspectrum;
+        console.log(this.spectrum);
 
 
         /**
@@ -166,8 +169,8 @@ class SpectrumViewerController{
         /**
          * watch the accordion status and updates related cookies
          */
-        this.$scope.$watch("accordionStatus", function(newVal) {
-            angular.forEach(this.accordionStatus, function(value, key) {
+        this.$scope.$watch("accordionStatus", (newVal) => {
+            angular.forEach(this.accordionStatus, (value, key) => {
 
                 if(key === 'isCompoundOpen') {
                     for (let i = 0; i < this.spectrum.compound.length; i++) {
@@ -211,10 +214,10 @@ class SpectrumViewerController{
 
         this.Spectrum.searchSimilarSpectra(
             {spectrum: this.spectrum.spectrum, minSimilarity: 0.5},
-            function(data) {
+            (data) => {
                 this.similarSpectra = data.filter((x) => { return x.id !== this.spectrum.id; });
                 this.loadingSimilarSpectra = false;
-            }, function(data) {
+            }, (data) => {
                 this.loadingSimilarSpectra = false;
             }
         );
@@ -236,7 +239,9 @@ class SpectrumViewerController{
 let SpectrumViewerComponent = {
     selector: "spectrumViewer",
     templateUrl: "../../views/spectra/display/viewSpectrum.html",
-    bindings: {},
+    bindings: {
+        delayedspectrum: '<'
+    },
     controller: SpectrumViewerController
 }
 

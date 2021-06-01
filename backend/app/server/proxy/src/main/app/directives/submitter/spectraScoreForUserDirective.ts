@@ -13,7 +13,7 @@ import * as angular from 'angular';
     function spectraScoreForUser($compile, StatisticsService) {
         return {
             replace: true,
-            template: '<span><uib-rating ng-model="score" max="5" data-readonly="true"></uib-rating></span>',
+            template: '<span uib-rating ng-model="score" max="5" data-readonly="true"></span>',
             scope: {
                 user: '=user'
             },
