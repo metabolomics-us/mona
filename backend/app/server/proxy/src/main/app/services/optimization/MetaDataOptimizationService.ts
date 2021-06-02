@@ -11,45 +11,58 @@
  */
 
 import * as angular from 'angular';
-    metaDataOptimizationService.$inject = ['ApplicationError', '$log', '$q', '$timeout', '$filter'];
-    angular.module('moaClientApp')
-      .service('MetaDataOptimizationService', metaDataOptimizationService);
 
-    /* @ngInject */
-    function metaDataOptimizationService(ApplicationError, $log, $q, $timeout, $filter) {
+class MetaDataOptimizationService{
+    private static $inject = ['ApplicationError', '$log', '$q', '$timeout', '$filter'];
+    private ApplicationError;
+    private $log;
+    private $q;
+    private $timeout;
+    private $filter;
+    private regexNumeric;
 
+    constructor(ApplicationError, $log, $q, $timeout, $filter) {
+        this.ApplicationError = ApplicationError;
+        this.$log = $log;
+        this.$q = $q;
+        this.$timeout = $timeout;
+        this.$filter = $filter;
+    }
+
+    $onInit = () => {
         /**
          * numeric value
          * @type {RegExp}
          */
-        var regexNumeric = /([0-9]+\.?[0-9]+)/;
+        this.regexNumeric = /([0-9]+\.?[0-9]+)/;
+    }
 
-        /** TODO: complete implementation and uncomment
-         * converts our retention time to seconds
-         * @param metadata
-         * @returns {*}
+    /** TODO: complete implementation and uncomment
+     * converts our retention time to seconds
+     * @param metadata
+     * @returns {*}
 
-         function convertRetentionTimeToSeconds(metadata) {
+     function convertRetentionTimeToSeconds(metadata) {
 
             /**
-             * regular expression to find regex metadata field
-         * @type {number}
+     * regular expression to find regex metadata field
+     * @type {number}
 
-         var regex = /retention[ -_]?time/i;
+     var regex = /retention[ -_]?time/i;
 
-         /**
-         * retetnion with minutes
-         * @type {RegExp}
+     /**
+     * retetnion with minutes
+     * @type {RegExp}
 
-         var regexMinutes = /([0-9]+\.?[0-9]+).*min/;
+     var regexMinutes = /([0-9]+\.?[0-9]+).*min/;
 
-         /**
-         * retention time with seconds
-         * @type {RegExp}
+     /**
+     * retention time with seconds
+     * @type {RegExp}
 
-         var regexSeconds = /([0-9]+\.?[0-9]+).*s/;
+     var regexSeconds = /([0-9]+\.?[0-9]+).*s/;
 
-         if (regex.test(metadata.name)) {
+     if (regex.test(metadata.name)) {
                 if (regexMinutes.test(metadata.value)) {
                     metadata.value = regexMinutes.exec(metadata.value)[1] * 60;
                 }
@@ -70,33 +83,33 @@ import * as angular from 'angular';
 
                 metadata.unit = "s";
             }
-         return metadata;
-         }*/
+     return metadata;
+     }*/
 
-        /**
-         * converts the name and category
-         * @param metadata
-         */
-        function convertName(metadata) {
-            if (metadata == null || metadata.name == null || metadata.name == "")
-                return null;
+    /**
+     * converts the name and category
+     * @param metadata
+     */
+     convertName = (metadata) => {
+        if (metadata == null || metadata.name == null || metadata.name == "")
+            return null;
 
-            metadata.name = metadata.name.replace(/_/g, " ").toLowerCase();
+        metadata.name = metadata.name.replace(/_/g, " ").toLowerCase();
 
-            if (angular.isDefined(metadata.category)) {
-                metadata.category = metadata.category.replace(/_/g, " ").toLowerCase();
+        if (angular.isDefined(metadata.category)) {
+            metadata.category = metadata.category.replace(/_/g, " ").toLowerCase();
 
-            }
-            return metadata;
         }
+        return metadata;
+    }
 
 
-        /**TODO: complete implementation and uncommment
-         * checks for collision energy and converts it
-         * @param metadata
-         * @returns {*}
+    /**TODO: complete implementation and uncommment
+     * checks for collision energy and converts it
+     * @param metadata
+     * @returns {*}
 
-         function convertUnits(metadata) {
+     function convertUnits(metadata) {
 
             var regexEv = /^\+?(-?[0-9]+\.?[0-9]+).*ev$/i;
             var regexPercent = /^\+?(-?[0-9]+\.?[0-9]*)\s*\%(?:\s\(nominal\)$)?/i;
@@ -154,23 +167,22 @@ import * as angular from 'angular';
             return metadata;
         }*/
 
-        /**
-         * works on the provided metadata array and returns a promise
-         * @param metaData
-         * @returns {*}
-         */
-        this.optimizeMetaData = function(metaData) {
-            //$log.debug("optimizing metaData");
-            var deferred = $q.defer();
-
+    /**
+     * works on the provided metadata array and returns a promise
+     * @param metaData
+     * @returns {*}
+     */
+    optimizeMetaData = (metaData) => {
+        //$log.debug("optimizing metaData");
+        const myPromise = new Promise((resolve, reject) => {
             //build our result object
-            var result = [];
+            let result = [];
 
             //build the list of values we want to ignore
-            for (var i in metaData) {
-                var object = metaData[i];
+            for (let i in metaData) {
+                let object = metaData[i];
 
-                object = convertName(object);
+                object = this.convertName(object);
                 //object = convertRetentionTimeToSeconds(object);
                 //object = convertUnits(object);
 
@@ -178,12 +190,13 @@ import * as angular from 'angular';
                     result.push(object);
                 }
             }
+            resolve(result);
+        });
 
-            //$log.debug("result object: " + $filter('json')(result));
-            //right now we do nothing, maybe later we do something with this stuff
-            deferred.resolve(result);
+        return myPromise;
+    };
+}
 
+angular.module('moaClientApp')
+    .service('MetaDataOptimizationService', MetaDataOptimizationService);
 
-            return deferred.promise;
-        };
-    }

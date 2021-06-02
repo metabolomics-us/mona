@@ -27,7 +27,6 @@ class SpectraBrowserController {
     private query;
     private textQuery;
     private duration;
-    private search;
 
     constructor($scope, Spectrum, SpectraQueryBuilderService, $location, SpectrumCache, MetadataService, CookieService, $timeout, $log, toaster, Analytics) {
         this.$scope = $scope;
@@ -348,7 +347,8 @@ class SpectraBrowserController {
      * Execute query
      */
     loadPage = () => {
-        this.search('page', this.pagination.currentPage);
+        this.$location.search('page', this.pagination.currentPage);
+        console.log(this.pagination.currentPage);
     };
 
     loadSpectra = () => {

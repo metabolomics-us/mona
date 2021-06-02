@@ -115,7 +115,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr data-ng-repeat="node in $ctrl.activeTableData | orderBy: tableSort | limitTo: 10:10*($ctrl.tableDataPage-1)">
+                    <tr data-ng-repeat="node in $ctrl.activeTableData | orderBy: $ctrl.tableSort | limitTo: 10:10*($ctrl.tableDataPage-1)">
                         <td>{{node.name}}</td>
                         <td>{{node.spectra | number:0}}</td>
                         <td>{{node.compounds | number:0}}</td>

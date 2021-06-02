@@ -67,7 +67,6 @@ import * as angular from 'angular';
                             oneMolecule: true
                         });
                     }
-                    console.log(sketcher);
 
                     //sketcher.specs.atoms_displayTerminalCarbonLabels_2D = true;
                     sketcher.styles.atoms_displayTerminalCarbonLabels_2D = true;

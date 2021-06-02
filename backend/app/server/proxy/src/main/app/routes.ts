@@ -54,7 +54,6 @@ import * as angular from 'angular';
                         // If a spectrum is not cached or the id requested does not match the
                         // cached spectrum, request it from the REST api
                         if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
-                            console.log(Spectrum);
                             return Spectrum.get(
                                 {id: $route.current.params.id},
                                 (data) => {
@@ -67,7 +66,6 @@ import * as angular from 'angular';
 
                         else {
                             let spectrum = SpectrumCache.getSpectrum();
-                            console.log(spectrum);
                             SpectrumCache.removeSpectrum();
                             return spectrum;
                         }

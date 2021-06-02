@@ -6,12 +6,22 @@
  */
 
 import * as angular from 'angular';
-    spectrumCache.$inject = ['$log', '$window'];
-    angular.module('moaClientApp')
-      .service('SpectrumCache', spectrumCache);
 
-    /* @ngInject */
-    function spectrumCache($log, $window) {
+class SpectrumCacheService{
+    private static $inject = ['$log', '$window'];
+    private $log;
+    private $window;
+    private browserSpectra;
+    private browserSpectraScroll;
+    private browserLocation;
+    private spectrum;
+
+    constructor($log, $window) {
+        this.$log = $log;
+        this.$window = $window;
+    }
+
+    $onInit = () => {
         /**
          * Stored browser spectra
          */
@@ -31,62 +41,66 @@ import * as angular from 'angular';
          * Stored spectrum for viewing
          */
         this.spectrum = null;
-
-
-        /**
-         * Clear all values stored in this cache factory
-         */
-        this.clear = function() {
-            this.removeBrowserSpectra();
-            this.removeBrowserLocation();
-            this.removeSpectrum();
-        };
-
-
-        this.hasBrowserSpectra = function() {
-            return this.browserSpectra !== null;
-        };
-        this.getBrowserSpectra = function() {
-            return this.browserSpectra;
-        };
-        this.setBrowserSpectra = function(browserSpectra) {
-            this.browserSpectraScroll = $(window).scrollTop();
-            this.browserSpectra = browserSpectra;
-        };
-        this.removeBrowserSpectra = function() {
-            this.browserSpectraScroll = null;
-            this.browserSpectra = null;
-        };
-
-        this.getBrowserSpectraScrollLocation = function() {
-            return this.browserSpectraScroll;
-        };
-
-
-        this.hasBrowserLocation = function() {
-            return this.browserLocation !== null;
-        };
-        this.getBrowserLocation = function() {
-            return this.browserLocation;
-        };
-        this.setBrowserLocation = function(browserLocation) {
-            this.browserLocation = browserLocation;
-        };
-        this.removeBrowserLocation = function() {
-            this.browserLocation = null;
-        };
-
-
-        this.hasSpectrum = function() {
-            return this.spectrum !== null;
-        };
-        this.getSpectrum = function() {
-            return this.spectrum;
-        };
-        this.setSpectrum = function(spectrum) {
-            this.spectrum = spectrum;
-        };
-        this.removeSpectrum = function() {
-            this.spectrum = null;
-        };
     }
+
+    /**
+     * Clear all values stored in this cache factory
+     */
+    clear = () => {
+        this.removeBrowserSpectra();
+        this.removeBrowserLocation();
+        this.removeSpectrum();
+    };
+
+
+    hasBrowserSpectra = () => {
+        return this.browserSpectra !== null;
+    };
+    getBrowserSpectra = () =>{
+        return this.browserSpectra;
+    };
+    setBrowserSpectra = (browserSpectra) =>{
+        this.browserSpectraScroll = $(window).scrollTop();
+        this.browserSpectra = browserSpectra;
+    };
+    removeBrowserSpectra = () =>{
+        this.browserSpectraScroll = null;
+        this.browserSpectra = null;
+    };
+
+    getBrowserSpectraScrollLocation = () =>{
+        return this.browserSpectraScroll;
+    };
+
+
+    hasBrowserLocation = () =>{
+        return this.browserLocation !== null;
+    };
+    getBrowserLocation = () =>{
+        return this.browserLocation;
+    };
+    setBrowserLocation = (browserLocation) =>{
+        this.browserLocation = browserLocation;
+    };
+    removeBrowserLocation = () =>{
+        this.browserLocation = null;
+    };
+
+
+    hasSpectrum = () =>{
+        return this.spectrum !== null;
+    };
+    getSpectrum = () =>{
+        return this.spectrum;
+    };
+    setSpectrum = (spectrum) =>{
+        this.spectrum = spectrum;
+    };
+    removeSpectrum = () =>{
+        this.spectrum = null;
+    };
+}
+
+angular.module('moaClientApp')
+    .service('SpectrumCache', SpectrumCacheService);
+

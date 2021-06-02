@@ -36,6 +36,7 @@ class SpectraDatabaseIndexController{
 
     constructor($scope, $http, $location, $window, $timeout, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
         this.$scope = $scope;
+        this.$http = $http;
         this.$location = $location;
         this.$window = $window;
         this.$timeout = $timeout;
@@ -46,6 +47,8 @@ class SpectraDatabaseIndexController{
     $onInit = () => {
         this.api = {};
         this.activeTab = [false, false, false];
+        this.tableDataPage = 1;
+        this.tableSort = '-spectra';
 
         // Metadata chart properties
         this.metadataFields = [
@@ -147,8 +150,11 @@ class SpectraDatabaseIndexController{
                 .then(
                     (response) => {
                         this.globalData = response.data;
+                        console.log(response.data);
                     },
-                    (response) => {}
+                    (response) => {
+                        console.log('something fucky');
+                    }
                 );
         };
 
@@ -173,9 +179,6 @@ class SpectraDatabaseIndexController{
                     (response) => {}
                 );
         };
-
-        this.tableDataPage = 1;
-        this.tableSort = '-spectra';
 
         this.buildHierarchy = (csv, index) => {
             let root = {
@@ -257,6 +260,10 @@ class SpectraDatabaseIndexController{
         };
 
         this.selectTab(0);
+
+        this.getGlobalStatistics();
+        this.getCompoundClassStatistics();
+        this.getMetadataValues();
     }
 
     selectTab = (idx) => {

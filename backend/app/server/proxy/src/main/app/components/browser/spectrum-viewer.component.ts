@@ -40,7 +40,6 @@ class SpectrumViewerController{
     }
 
     $onInit = () => {
-        console.log(this.delayedspectrum);
         /**
          * Sort order for the ion table - default m/z ascending
          */
@@ -146,8 +145,6 @@ class SpectrumViewerController{
          * Mass spectrum obtained from cache if it exists, otherwise from REST api
          */
         this.spectrum = this.delayedspectrum;
-        console.log(this.spectrum);
-
 
         /**
          * status of our accordion

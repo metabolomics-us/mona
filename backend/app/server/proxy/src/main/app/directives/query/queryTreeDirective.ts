@@ -36,15 +36,15 @@ import * as angular from 'angular';
                     '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i>' +
 
-                    '    <span data-ng-if="node.query !== null"><a data-ng-href="{{executeQuery(node)}}"><i class="fa fa-search"></i> {{node.singleLabel}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>'+
+                    '    <span data-ng-if="node.query !== null"><a data-ng-href="{{$ctrl.executeQuery(node)}}"><i class="fa fa-search"></i> {{node.singleLabel}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>'+
                     '    <span data-ng-if="node.query === null"> {{node.singleLabel}}</span>'+
 
                     '    <span class="pull-right" data-ng-show="node.jsonExport !== null || node.mspExport !== null || node.sdfExport !== null" data-uib-dropdown>' +
-                    '        <a href data-uib-dropdown-toggle class="dropdown-toggle"><i class="fa fa-download"></i> Download</a>' +
-                    '        <ul class="uib-dropdown-menu dropdown-menu-right">' +
-                    '            <li data-ng-if="node.jsonExport !== null"><a data-ng-href="{{downloadJSON(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.json\']"><i class="fa fa-download"></i> JSON (Internal MoNA Format) ({{node.jsonExport.size | bytes}})</a></li>' +
-                    '            <li data-ng-if="node.mspExport !== null"><a data-ng-href="{{downloadMSP(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.msp\']"><i class="fa fa-download"></i> MSP (NIST compatible) ({{node.mspExport.size | bytes}})</a></li>' +
-                    '            <li data-ng-if="node.sdfExport !== null"><a data-ng-href="{{downloadSDF(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.sdf\']"><i class="fa fa-download"></i> SDF (NIST compatible) ({{node.sdfExport.size | bytes}})</a></li>' +
+                    '        <a href uib-dropdown-toggle class="dropdown-toggle"><i class="fa fa-download"></i> Download</a>' +
+                    '        <ul class="uib-dropdown-menu dropdown-menu-right" uib-dropdown-menu dropdown-menu-right>' +
+                    '            <li data-ng-if="node.jsonExport !== null"><a data-ng-href="{{$ctrl.downloadJSON(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.json\']"><i class="fa fa-download"></i> JSON (Internal MoNA Format) ({{node.jsonExport.size | bytes}})</a></li>' +
+                    '            <li data-ng-if="node.mspExport !== null"><a data-ng-href="{{$ctrl.downloadMSP(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.msp\']"><i class="fa fa-download"></i> MSP (NIST compatible) ({{node.mspExport.size | bytes}})</a></li>' +
+                    '            <li data-ng-if="node.sdfExport !== null"><a data-ng-href="{{$ctrl.downloadSDF(node)}}" target="_self" download data-ga-track-event="[\'download\', \'click\', node.downloadLabel +\'.sdf\']"><i class="fa fa-download"></i> SDF (NIST compatible) ({{node.sdfExport.size | bytes}})</a></li>' +
                     '        </ul>' +
                     '    </span>' +
                     '    <span class="pull-right" data-ng-if="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>' +

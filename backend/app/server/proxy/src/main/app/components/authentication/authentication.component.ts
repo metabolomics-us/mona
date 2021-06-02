@@ -33,7 +33,6 @@ class AuthenticationController {
         this.$scope.$on('auth:login-success', (event, data, status, headers, config) => {
 
             this.AuthenticationService.getCurrentUser().then((data) => {
-                console.log(JSON.stringify(data));
                 this.welcomeMessage = 'Welcome, ' + data.firstName + '!';
             });
         });
