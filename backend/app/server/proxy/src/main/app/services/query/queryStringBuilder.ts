@@ -5,181 +5,195 @@
 
 import * as angular from 'angular';
 
-    queryStringBuilder.$inject = ['$log', 'QueryCache', 'qStrHelper'];
-    angular.module('moaClientApp')
-        .factory("queryStringBuilder", queryStringBuilder);
+class QueryStringBuilder{
+    private static $inject = ['$log', 'QueryCache', 'qStrHelper'];
+    private $log;
+    private QueryCache;
+    private qStrHelper;
+    private defaultQuery;
+    private queryStr;
+    private operand;
+    private compiled;
+    private service;
 
-    /* @ngInject */
-    function queryStringBuilder($log, QueryCache, qStrHelper) {
-        var defaultQuery = '/rest/spectra';
-        var queryStr;
-        var operand;
-        var compiled;
+    constructor($log, QueryCache, qStrHelper) {
+        this.$log = $log;
+        this.QueryCache = QueryCache;
+        this.qStrHelper = qStrHelper;
+    }
 
-        var service = {
-            buildQuery: buildQuery,
-            buildAdvanceQuery: buildAdvanceQuery,
-            updateQuery: updateQuery
+    $onInit = () => {
+        this.defaultQuery = '/rest/spectra';
+        this.service = {
+            buildQuery: this.buildQuery(),
+            buildAdvanceQuery: this.buildAdvanceQuery(),
+            updateQuery: this.updateQuery()
 
         };
-        return service;
+    }
 
+    /**
+     * updates on the fly queries submitted by users
+     */
+     updateQuery = () => {
+        // options: compound, metadata, tags
+        let query = this.QueryCache.getSpectraQuery(undefined);
+        let compiled = [];
+        let queryStr: any;
 
-        /**
-         * updates on the fly queries submitted by users
-         */
-        function updateQuery() {
-            // options: compound, metadata, tags
-            var query = QueryCache.getSpectraQuery();
-	        compiled = [];
-
-	        // updates compound metadata
-	        if (angular.isDefined(query.compound.metadata) && query.compound.metadata.length > 0) {
-		        queryStr = qStrHelper.buildMetaString(query.compound.metadata, true);
-		        compiled.push(queryStr);
-	        }
-
-	        // updates metadata
-	        if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
-		        queryStr = qStrHelper.buildMetaString(query.metadata);
-		        compiled.push('and', queryStr);
-	        }
-
-	        saveQuery();
+        // updates compound metadata
+        if (angular.isDefined(query.compound.metadata) && query.compound.metadata.length > 0) {
+            queryStr = this.qStrHelper.buildMetaString(query.compound.metadata, true);
+            compiled.push(queryStr);
         }
 
-        /**
-         * builds a queryString when user submit keywordFilter form
-         * @return rsql query string
-         */
-        function buildQuery() {
-            var query = QueryCache.getSpectraQuery();
-            compiled = [];
-
-            validateOperands(query);
-
-            console.log(query)
-
-            // build compound string
-            if (angular.isDefined(query.compound) && query.compound.length > 0) {
-                compiled.push(qStrHelper.buildCompoundString(query.compound));
-            }
-
-            // build compound metadata string
-            operand = query.operand.shift();
-            if (angular.isDefined(query.compoundDa)) {
-                // queryStr = qStrHelper.buildMeasurementString(query.compoundDa);
-                var leftOffset = query.compoundDa.mass - query.compoundDa.tolerance,
-                    rightOffset = query.compoundDa.mass + query.compoundDa.tolerance;
-                
-                queryStr =  "compound.metaData=q='name==\"total exact mass\" and "+
-                    "value>=" + leftOffset + " and value<=" + rightOffset + "'";
-                compiled.push(operand, queryStr);
-            }
-
-            // add formula
-            operand = query.operand.shift();
-            if (angular.isDefined(query.formula)) {
-                queryStr = "compound.metaData=q='name==\"molecular formula\" and value=match=\".*" + query.formula + ".*\"'";
-                compiled.push(operand, queryStr);
-            }
-
-            // add classification
-            operand = query.operand.shift();
-            if (angular.isDefined(query.classification)) {
-                queryStr = "compound.classification=q='value=match=\".*" + query.classification + ".*\"'";
-                compiled.push(operand, queryStr);
-            }
-
-            //build metadata filter string from search page
-            if (angular.isDefined(query.groupMeta)) {
-                queryStr = qStrHelper.addMetaFilterQueryString(query.groupMeta);
-                if (queryStr !== '') {
-                    compiled.push('and', queryStr);
-                }
-            }
-
-            saveQuery();
+        // updates metadata
+        if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
+            queryStr = this.qStrHelper.buildMetaString(query.metadata);
+            compiled.push('and', queryStr);
         }
 
+        this.saveQuery();
+    }
 
-        /**
-         * builds a queryString when user submit advancedSearch form
-         * @return rsql query string
-         */
-        function buildAdvanceQuery() {
-            var query = QueryCache.getSpectraQuery();
-            compiled = [];
+    /**
+     * builds a queryString when user submit keywordFilter form
+     * @return rsql query string
+     */
+     buildQuery = () => {
+        let query = this.QueryCache.getSpectraQuery(undefined);
+        let compiled = [];
+        let queryStr: any;
 
-            // compound name, inchiKey and class
-            operand = query.operand.compound.shift();
-            if (angular.isDefined(query.compound) && query.compound.length > 0) {
-                queryStr = qStrHelper.buildCompoundString(query.compound);
+        this.validateOperands(query);
 
-                // add user's selected operand
-                var re = /or compound.classification/;
-                var newStr = operand.concat(' compound.classification');
-                queryStr = queryStr.replace(re, newStr);
+        console.log(query)
 
-                compiled.push(queryStr);
-            }
+        // build compound string
+        if (angular.isDefined(query.compound) && query.compound.length > 0) {
+            compiled.push(this.qStrHelper.buildCompoundString(query.compound));
+        }
 
-            // add compound metadata
-            operand = query.operand.compound.shift();
-            if (angular.isDefined(query.compound.metadata) && query.compound.metadata.length > 0) {
-                queryStr = qStrHelper.buildMetaString(query.compound.metadata, true);
-                compiled.push(operand, queryStr);
-            }
+        // build compound metadata string
+        let operand = query.operand.shift();
+        if (angular.isDefined(query.compoundDa)) {
+            // queryStr = qStrHelper.buildMeasurementString(query.compoundDa);
+            let leftOffset = query.compoundDa.mass - query.compoundDa.tolerance,
+                rightOffset = query.compoundDa.mass + query.compoundDa.tolerance;
 
-            operand = query.operand.compound.shift();
-            if (angular.isDefined(query.compoundDa) && query.compoundDa.length > 0) {
-                queryStr = qStrHelper.buildMeasurementString(query.compoundDa);
-                compiled.push(operand, queryStr);
-            }
+            queryStr =  "compound.metaData=q='name==\"total exact mass\" and "+
+                "value>=" + leftOffset + " and value<=" + rightOffset + "'";
+            compiled.push(operand, queryStr);
+        }
 
-            // add metadata query
-            if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
-                queryStr = qStrHelper.buildMetaString(query.metadata);
+        // add formula
+        operand = query.operand.shift();
+        if (angular.isDefined(query.formula)) {
+            queryStr = "compound.metaData=q='name==\"molecular formula\" and value=match=\".*" + query.formula + ".*\"'";
+            compiled.push(operand, queryStr);
+        }
+
+        // add classification
+        operand = query.operand.shift();
+        if (angular.isDefined(query.classification)) {
+            queryStr = "compound.classification=q='value=match=\".*" + query.classification + ".*\"'";
+            compiled.push(operand, queryStr);
+        }
+
+        //build metadata filter string from search page
+        if (angular.isDefined(query.groupMeta)) {
+            queryStr = this.qStrHelper.addMetaFilterQueryString(query.groupMeta);
+            if (queryStr !== '') {
                 compiled.push('and', queryStr);
             }
-
-            // add metadata measurement
-            operand = query.operand.metadata.pop();
-            if (angular.isDefined(query.metadataDa) && query.metadataDa.length > 0) {
-
-            }
-
-
-            saveQuery();
         }
 
-        function saveQuery() {
-            // remove any leading operators
-            if (compiled[0] === 'and' || compiled[0] === 'or') {
-                compiled.shift();
-            }
-
-            compiled = compiled.length > 0 ? compiled.join(' ') : defaultQuery;
-            QueryCache.setSpectraQueryString(compiled);
-        }
-
-        function validateOperands(query) {
-            if(!angular.isDefined(query.operand)) {
-                throw new TypeError('query.operand property is undefined');
-            }
-        }
-
-        function buildTagsQueryString(tagQuery) {
-            var queryString = "";
-            for (var i = 0, l = tagQuery.length; i < l; i++) {
-                if (i > 0) {
-                    queryString += ' and ';
-                }
-                queryString += "tags=q='name.eq==" + tagQuery[i].name.eq + '\"\'';
-
-            }
-            return queryString;
-        }
-
-
+        this.saveQuery();
     }
+
+
+    /**
+     * builds a queryString when user submit advancedSearch form
+     * @return rsql query string
+     */
+    buildAdvanceQuery = () => {
+        let query = this.QueryCache.getSpectraQuery();
+        let compiled = [];
+        let operand: any;
+        let queryStr: any;
+
+        // compound name, inchiKey and class
+        operand = query.operand.compound.shift();
+        if (angular.isDefined(query.compound) && query.compound.length > 0) {
+            queryStr = this.qStrHelper.buildCompoundString(query.compound);
+
+            // add user's selected operand
+            let re = /or compound.classification/;
+            let newStr = operand.concat(' compound.classification');
+            queryStr = queryStr.replace(re, newStr);
+
+            compiled.push(queryStr);
+        }
+
+        // add compound metadata
+        operand = query.operand.compound.shift();
+        if (angular.isDefined(query.compound.metadata) && query.compound.metadata.length > 0) {
+            queryStr = this.qStrHelper.buildMetaString(query.compound.metadata, true);
+            compiled.push(operand, queryStr);
+        }
+
+        operand = query.operand.compound.shift();
+        if (angular.isDefined(query.compoundDa) && query.compoundDa.length > 0) {
+            queryStr = this.qStrHelper.buildMeasurementString(query.compoundDa);
+            compiled.push(operand, queryStr);
+        }
+
+        // add metadata query
+        if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
+            queryStr = this.qStrHelper.buildMetaString(query.metadata);
+            compiled.push('and', queryStr);
+        }
+
+        // add metadata measurement
+        operand = query.operand.metadata.pop();
+        if (angular.isDefined(query.metadataDa) && query.metadataDa.length > 0) {
+
+        }
+
+
+        this.saveQuery();
+    }
+
+    saveQuery() {
+        // remove any leading operators
+        let compiled: any;
+        if (compiled[0] === 'and' || compiled[0] === 'or') {
+            compiled.shift();
+        }
+
+        compiled = compiled.length > 0 ? compiled.join(' ') : this.defaultQuery;
+        this.QueryCache.setSpectraQueryString(compiled);
+    }
+
+    validateOperands(query) {
+        if(!angular.isDefined(query.operand)) {
+            throw new TypeError('query.operand property is undefined');
+        }
+    }
+
+    buildTagsQueryString(tagQuery) {
+        let queryString = "";
+        for (let i = 0, l = tagQuery.length; i < l; i++) {
+            if (i > 0) {
+                queryString += ' and ';
+            }
+            queryString += "tags=q='name.eq==" + tagQuery[i].name.eq + '\"\'';
+
+        }
+        return queryString;
+    }
+
+
+}
+angular.module('moaClientApp')
+    .service("queryStringBuilder", QueryStringBuilder);

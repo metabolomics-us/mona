@@ -55,20 +55,22 @@ import * as angular from 'angular';
                         // cached spectrum, request it from the REST api
                         if (!SpectrumCache.hasSpectrum() || SpectrumCache.getSpectrum().id !== $route.current.params.id) {
                             return Spectrum.get(
-                                {id: $route.current.params.id},
-                                (data) => {
+                                $route.current.params.id).then(
+                                (res) => {
+                                    return res.data;
                                 },
                                 (error) => {
                                     alert('failed to obtain spectrum: ' + error);
                                 }
-                            ).$promise;
+                            );
                         }
-
                         else {
                             let spectrum = SpectrumCache.getSpectrum();
                             SpectrumCache.removeSpectrum();
+                            console.log(spectrum);
                             return spectrum;
                         }
+
                     }]
                 }
             })

@@ -3,23 +3,24 @@
  */
 import * as angular from 'angular';
 
-    submitter.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
-    angular.module('moaClientApp')
-      .factory('Submitter', submitter);
-
-    /* @ngInject */
-    function submitter($resource, REST_BACKEND_SERVER, $http) {
-
-        $http.defaults.useXDomain = true;
-
-        return $resource(
-            REST_BACKEND_SERVER + '/rest/submitters/:id',
-            {id: "@id"},
-            {
-                'update': {
-                    method: 'PUT'
-
-                }
-            }
-        );
+class SubmitterService{
+    private static $inject = ['REST_BACKEND_SERVER', '$http'];
+    private REST_BACKEND_SERVER;
+    private $http;
+    constructor(REST_BACKEND_SERVER, $http) {
+        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
+        this.$http = $http;
     }
+
+    $onInit = () => {
+        this.$http.defaults.useXDomain = true;
+    }
+
+    update = (id) => {
+        return this.$http.put(this.REST_BACKEND_SERVER + '/rest/submitters/' + id);
+    }
+}
+
+angular.module('moaClientApp')
+    .service('Submitter', SubmitterService);
+

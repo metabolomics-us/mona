@@ -4,26 +4,30 @@
  */
 
 import * as angular from 'angular';
-    tagService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
-    angular.module('moaClientApp')
-        .factory('TagService', tagService);
 
-    /* @ngInject */
-    function tagService($resource, REST_BACKEND_SERVER, $http) {
+class TagService{
+    private static $inject = ['REST_BACKEND_SERVER', '$http'];
+    private REST_BACKEND_SERVER;
+    private $http;
 
-        $http.defaults.useXDomain = true;
-
-        return $resource(
-            REST_BACKEND_SERVER +'/rest/tags', {},
-            {
-                'library': {
-                    url: REST_BACKEND_SERVER + '/rest/tags/library',
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    isArray: true
-                }
-            }
-        );
+    constructor(REST_BACKEND_SERVER, $http) {
+        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
+        this.$http = $http;
     }
+
+    $onInit = () => {
+        this.$http.defaults.useXDomain = true;
+    }
+
+    query = () => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        return this.$http.get(this.REST_BACKEND_SERVER + '/rest/tags/library', config);
+    }
+}
+
+angular.module('moaClientApp')
+    .service('TagService', TagService);

@@ -50,8 +50,9 @@ class QueryTreeController{
      * Get predefined queries and build query tree
      */
     getPredefinedQueries = () => {
-        this.DownloadService.getPredefinedQueries(
-            (data) => {
+        this.DownloadService.getPredefinedQueries().then(
+            (res) => {
+                let data = res.data;
                 // Header entry for libraries, which is displayed by default if any libraries are being displayed
                 data.unshift({
                     label: "Libraries",
@@ -59,7 +60,7 @@ class QueryTreeController{
                     jsonExport: null,
                     mspExport: null,
                     sdfExport: null,
-                    display: data.some(function(x) { return x.label.indexOf('Libraries') > -1 && x.queryCount > 0; })
+                    display: data.some((x) => { return x.label.indexOf('Libraries') > -1 && x.queryCount > 0; })
                 });
 
                 // Set up all nodes
@@ -122,9 +123,10 @@ class QueryTreeController{
     getStaticDownloads = () => {
         this.static = {};
 
-        this.DownloadService.getStaticDownloads(
-            function(data) {
-                data.forEach(function(x) {
+        this.DownloadService.getStaticDownloads().then(
+            (res) => {
+                let data = res.data;
+                data.forEach((x) => {
                     if (angular.isDefined(x.category)) {
                         let categoryName = x.category[0].toUpperCase() + x.category.substr(1);
 

@@ -17,7 +17,7 @@ import * as angular from 'angular';
                 limit: '@'
             },
             link: function($scope, element, attrs, ngModel) {
-                StatisticsService.spectraTopScores({},
+                StatisticsService.spectraTopScores().then(
                     function(data) {
                         $scope.scores = data;
 

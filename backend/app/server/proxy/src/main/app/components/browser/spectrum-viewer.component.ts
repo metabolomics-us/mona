@@ -210,11 +210,12 @@ class SpectrumViewerController{
             return;
 
         this.Spectrum.searchSimilarSpectra(
-            {spectrum: this.spectrum.spectrum, minSimilarity: 0.5},
-            (data) => {
+            {spectrum: this.spectrum.spectrum, minSimilarity: 0.5}).then(
+            (res) => {
+                let data = res;
                 this.similarSpectra = data.filter((x) => { return x.id !== this.spectrum.id; });
                 this.loadingSimilarSpectra = false;
-            }, (data) => {
+            }, (res) => {
                 this.loadingSimilarSpectra = false;
             }
         );

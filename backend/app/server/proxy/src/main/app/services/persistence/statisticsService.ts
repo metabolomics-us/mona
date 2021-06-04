@@ -6,50 +6,55 @@
 
 import * as angular from 'angular';
 
-    statisticsService.$inject = ['$resource', 'REST_BACKEND_SERVER'];
-    angular.module('moaClientApp')
-        .factory('StatisticsService', statisticsService);
-
-    /* @ngInject */
-    function statisticsService($resource, REST_BACKEND_SERVER) {
-
-        return $resource(
-            REST_BACKEND_SERVER + '/rest/statistics/:time',
-            {time: "@time", method: "@method", max: "@max", id: "@id"},
-            {
-                'executionTime': {
-                    url: REST_BACKEND_SERVER + '/rest/statistics/category/:method/:time?max=:max',
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    isArray: true
-                },
-                'pendingJobs': {
-                    url: REST_BACKEND_SERVER + '/rest/statistics/jobs/pending',
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    isArray: true
-                },
-                'spectraCount': {
-                    url: REST_BACKEND_SERVER + '/rest/statistics/submitters/count/:id',
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    isArray: false
-                    
-                },
-                'spectraTopScores': {
-                    url: REST_BACKEND_SERVER + '/rest/statistics/submitters',
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    isArray: true
-                }
-            }
-        );
+class StatisticsService{
+    private static $inject = ['REST_BACKEND_SERVER', '$http'];
+    private REST_BACKEND_SERVER;
+    private $http;
+    constructor(REST_BACKEND_SERVER, $http){
+        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
+        this.$http = $http;
     }
+
+    executionTime = (data) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params: {
+                max: data.max
+            }
+        };
+        let api = this.REST_BACKEND_SERVER + '/rest/statistics/category/' + data.method + '/' + data.time;
+        return this.$http.get(api, config);
+    }
+
+    pendingJobs = () => {
+        const config = {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+        };
+        return this.$http.get(this.REST_BACKEND_SERVER + '/rest/statistics/jobs/pending', config);
+    }
+
+    spectraCount = (data) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        return this.$http.get(this.REST_BACKEND_SERVER + '/rest/statistics/submitters/count/' + data.id, config);
+    }
+
+    spectraTopScores = () => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        return this.$http.get(this.REST_BACKEND_SERVER + '/rest/statistics/submitters', config);
+    }
+}
+
+angular.module('moaClientApp')
+    .service('StatisticsService', StatisticsService);

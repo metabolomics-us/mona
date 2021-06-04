@@ -6,82 +6,99 @@
 
 import * as angular from 'angular';
 
-    asyncService.$inject = ['ApplicationError', '$log', '$q', '$interval'];
-    angular.module('moaClientApp')
-      .service('AsyncService', asyncService);
+class AsyncService{
+    private static $inject = ['ApplicationError', '$log', '$http', '$interval'];
+    private ApplicationError;
+    private $log;
+    private $http;
+    private $interval;
+    private runningTasks;
+    private maxRunningTasks;
+    private pool;
+    private poolRate;
+    private timeout;
 
-    /* @ngInject */
-    function asyncService(ApplicationError, $log, $q, $interval) {
+    constructor(ApplicationError, $log, $http, $interval) {
+        this.ApplicationError = ApplicationError;
+        this.$log = $log;
+        this.$http = $http;
+        this.$interval = $interval;
+    }
 
-        var runningTasks = 0;
+    $onInit = () => {
+        this.runningTasks = 0;
 
         //firefox allows max 6,
-        var maxRunningTasks = 4;
+        this.maxRunningTasks = 4;
 
-        var pool = [];
+        this.pool = [];
 
-        var poolRate = 200;
+        this.poolRate = 200;
 
-        var timeout = null;
+        this.timeout = null;
+    }
 
-        /**
-         * adds a function, which takes one argument and our obect to the pool
-         * @param runMe
-         * @param executeFunction
-         */
-        this.addToPool = function(executeFunction, data) {
-            pool.push({execute: executeFunction, data: data});
+    /**
+     * adds a function, which takes one argument and our obect to the pool
+     * @param runMe
+     * @param executeFunction
+     */
+    addToPool = (executeFunction, data) => {
+        this.pool.push({execute: executeFunction, data: data});
 
-            if (timeout === null) {
-                this.startPool();
-            }
-        };
+        if (this.timeout === null) {
+            this.startPool();
+        }
+    };
 
-        this.startPool = function() {
+    startPool = () => {
 
-            $log.info("starting pool and waiting for jobs");
+        this.$log.info("starting pool and waiting for jobs");
 
-            //works over the pool
-            var handlePool = function() {
-                if (runningTasks < maxRunningTasks) {
-                    for (var i = 0; i < maxRunningTasks; i++) {
-                        if (angular.isDefined(pool)) {
-                            if (pool.length > 0) {
-                                runningTasks = runningTasks + 1;
+        //works over the pool
+        let handlePool = () => {
+            if (this.runningTasks < this.maxRunningTasks) {
+                for (let i = 0; i < this.maxRunningTasks; i++) {
+                    if (angular.isDefined(this.pool)) {
+                        if (this.pool.length > 0) {
+                            this.runningTasks = this.runningTasks + 1;
 
-                                var object = pool.pop();
+                            let object = this.pool.pop();
 
-                                object.execute(object.data).then(function(data) {
-                                    runningTasks--;
-                                }).catch(function(error) {
-                                    runningTasks--;
-                                });
+                            object.execute(object.data).then((data) => {
+                                this.runningTasks--;
+                            }).catch((error) => {
+                                this.runningTasks--;
+                            });
 
-                            }
                         }
                     }
                 }
-                else if (pool.length === 0) {
-                    //stop the interval to save resources
-                    $interval.cancel(timeout);
-                    timeout = null;
-                }
-                else {
-                    $log.debug("waiting for running tasks to finish (" + runningTasks + ")");
-                }
-            };
-
-            //start the pull as interval
-
-            timeout = $interval(handlePool, poolRate);
+            }
+            else if (this.pool.length === 0) {
+                //stop the interval to save resources
+                this.$interval.cancel(this.timeout);
+                this.timeout = null;
+            }
+            else {
+                this.$log.debug("waiting for running tasks to finish (" + this.runningTasks + ")");
+            }
         };
 
-        this.hasPooledTasks = function() {
-            return pool.length > 0;
-        };
+        //start the pull as interval
 
-        this.resetPool = function() {
-            pool = [];
-            timeout = null;
-        }
+        this.timeout = this.$interval(handlePool, this.poolRate);
+    };
+
+    hasPooledTasks = () => {
+        return this.pool.length > 0;
+    };
+
+    resetPool = () => {
+        this.pool = [];
+        this.timeout = null;
     }
+
+}
+angular.module('moaClientApp')
+    .service('AsyncService', AsyncService);

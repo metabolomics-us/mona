@@ -4,34 +4,44 @@
 
 import * as angular from 'angular';
 
-    downloadService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
-    angular.module('moaClientApp')
-        .factory('DownloadService', downloadService);
-
-    /* @ngInject */
-    function downloadService($resource, REST_BACKEND_SERVER, $http) {
-
-        $http.defaults.useXDomain = true;
-
-        return $resource(
-            REST_BACKEND_SERVER +'/rest', {},
-            {
-                'getPredefinedQueries': {
-                    url: REST_BACKEND_SERVER +'/rest/downloads/predefined',
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    isArray: true
-                },
-                'getStaticDownloads': {
-                    url: REST_BACKEND_SERVER +'/rest/downloads/static',
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    isArray: true
-                }
-            }
-        );
+class DownloadService{
+    private static $inject = ['REST_BACKEND_SERVER', '$http'];
+    private REST_BACKEND_SERVER;
+    private $http;
+    constructor(REST_BACKEND_SERVER, $http) {
+        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
+        this.$http = $http;
     }
+
+    $onInit = () =>{
+        this.$http.defaults.useXDomain = true;
+    }
+
+    getPredefinedQueries = () => {
+        const api = this.REST_BACKEND_SERVER +'/rest/downloads/predefined';
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            isArray: true
+        }
+        return this.$http.get(api, config);
+    }
+
+    getStaticDownloads = () => {
+        const api = this.REST_BACKEND_SERVER +'/rest/downloads/static';
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            isArray: true
+        }
+        return this.$http.get(api, config);
+    }
+
+}
+
+angular.module('moaClientApp')
+    .service('DownloadService', DownloadService);
+
+

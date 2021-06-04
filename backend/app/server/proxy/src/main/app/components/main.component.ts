@@ -36,7 +36,7 @@ class MainController {
 
         this.showcaseSpectraIds.forEach((id) => {
             this.Spectrum.get(
-                {id: id},
+                id).then(
                 (data) => {
                     this.showcaseSpectra.push(data);
                 },

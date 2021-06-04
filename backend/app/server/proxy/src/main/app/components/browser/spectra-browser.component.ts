@@ -79,8 +79,9 @@ class SpectraBrowserController {
         this.editQuery = false;
 
         // Get unique metadata values for dropdown
-        this.MetadataService.metaDataNames({},
-            (data) => {
+        this.MetadataService.metaDataNames().then(
+            (res) => {
+                let data = res.data;
                 data.sort((a, b) => {
                     return parseInt(b.count) - parseInt(a.count);
                 }).filter((x) => {
@@ -307,11 +308,12 @@ class SpectraBrowserController {
         this.startTime = Date.now();
 
         this.Spectrum.searchSimilarSpectra(
-            this.SpectraQueryBuilderService.getSimilarityQuery(),
-             (data) => {
-                this.searchSuccess(data);
-                this.pagination.itemsPerPage = data.length;
-                this.pagination.totalSize = data.length;
+            this.SpectraQueryBuilderService.getSimilarityQuery()).then(
+             (res) => {
+                 let data = res.data;
+                 this.searchSuccess(data);
+                 this.pagination.itemsPerPage = data.length;
+                 this.pagination.totalSize = data.length;
             },
             this.searchError
         );
@@ -325,7 +327,8 @@ class SpectraBrowserController {
             endpoint: 'count',
             query: this.query,
             text: this.textQuery
-        }, (data) => {
+        }).then((res) => {
+            let data = res.data;
             this.pagination.totalSize = data.count;
         });
     };
@@ -372,7 +375,8 @@ class SpectraBrowserController {
             this.Spectrum.searchSpectra({
                 size: this.pagination.itemsPerPage,
                 page: currentPage
-            }, this.searchSuccess, this.searchError);
+            }).then(this.searchSuccess, this.searchError);
+
         } else {
             this.Spectrum.searchSpectra({
                 endpoint: 'search',
@@ -380,11 +384,12 @@ class SpectraBrowserController {
                 text: this.textQuery,
                 page: currentPage,
                 size: this.pagination.itemsPerPage
-            }, this.searchSuccess, this.searchError);
+            }).then(this.searchSuccess, this.searchError);
         }
     };
 
-    searchSuccess = (data) => {
+    searchSuccess = (res) => {
+        let data = res.data;
         this.duration = (Date.now() - this.startTime) / 1000;
 
         if (data.length > 0) {

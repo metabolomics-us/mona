@@ -8,74 +8,72 @@
 
 import * as angular from 'angular';
 
-    metadataService.$inject = ['$resource', 'REST_BACKEND_SERVER', '$http'];
-    angular.module('moaClientApp')
-      .factory('MetadataService', metadataService);
+class MetadataService{
+    private static $inject = ['REST_BACKEND_SERVER', '$http'];
+    private REST_BACKEND_SERVER;
+    private $http;
 
-    /* @ngInject */
-    function metadataService($resource, REST_BACKEND_SERVER, $http) {
-        $http.defaults.useXDomain = true;
-
-        return $resource(
-            REST_BACKEND_SERVER + '/rest/meta/:controller/:id/:subController/:subID/:subSubController?max=100',
-            {
-                controller: "@controller",
-                id: "@id",
-                categoryController: "@subController",
-                dataID: "@subID",
-                dataController: "@subSubController"
-            },
-            {
-                metadata: {
-                    method: "GET",
-                    isArray: true,
-                    params: {
-                        controller: "data"
-                    }
-                },
-                categories: {
-                    method: "GET",
-                    isArray: true,
-                    params: {
-                        controller: "category"
-                    }
-                },
-                categoryData: {
-                    method: "GET",
-                    isArray: true,
-                    params: {
-                        controller: "category",
-                        subController: "data"
-                    }
-                },
-                dataValues: {
-                    method: "GET",
-                    isArray: true,
-                    params: {
-                        controller: "data",
-                        subController: "value"
-                    }
-                },
-                queryValues: {
-                    url: REST_BACKEND_SERVER + '/rest/meta/data/search?max=10',
-                    method: 'POST',
-                    isArray: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    params: {query: '@query'}
-                },
-                metaDataNames: {
-                    url: REST_BACKEND_SERVER +'/rest/metaData/names',
-                    method: 'GET',
-                    isArray: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    cache: true
-                }
-            }
-        );
+    constructor(REST_BACKEND_SERVER, $http) {
+        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
+        this.$http = $http;
     }
 
+    $onInit = () => {
+        this.$http.defaults.useXDomain = true;
+    }
+
+    metadata = () => {
+        const config = {
+            isArray: true
+        };
+        return this.$http.get(this.REST_BACKEND_SERVER + '/rest/meta/data?max=100', config);
+    }
+
+    categories = () => {
+        const config = {
+            isArray: true
+        };
+        return this.$http.get(this.REST_BACKEND_SERVER + '/rest/meta/category?max=100', config);
+    }
+
+    categoryData = () => {
+        const config = {
+            isArray: true
+        };
+        return this.$http.get(this.REST_BACKEND_SERVER + '/rest/meta/category/data?max=100', config);
+    }
+
+    dataValues = () => {
+        const config = {
+            isArray: true
+        };
+        return this.$http.get(this.REST_BACKEND_SERVER + '/rest/meta/data/value?max=100', config);
+    }
+
+    queryValues = (data) => {
+        const config = {
+            isArray: true,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params: {query: '@query'}
+        };
+        return this.$http.post(this.REST_BACKEND_SERVER + '/rest/meta/data/search?max=10');
+    }
+
+    metaDataNames = () => {
+        const config = {
+            isArray: true,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            cache: true
+        };
+        return this.$http.get(this.REST_BACKEND_SERVER +'/rest/metaData/names', config);
+    }
+}
+
+
+angular.module('moaClientApp')
+    .service('MetadataService', MetadataService);
 
