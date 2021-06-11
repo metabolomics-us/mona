@@ -13,16 +13,12 @@
 
 import * as angular from 'angular';
 
-    flAngucomplete.$inject = ['$parse', '$http', '$sce', '$timeout'];
-    angular.module('moaClientApp')
-      .directive('flAngucomplete', flAngucomplete);
-
-    /* @ngInject */
-    function flAngucomplete($parse, $http, $sce, $timeout) {
-        var directive = {
+class AutocompleteDirective {
+    constructor() {
+        return {
             restrict: 'A',
             replace: false,
-            templateUrl: '../../views/autocomplete.html',
+            templateUrl: '../views/autocomplete.html',
             scope: {
                 "id": "@inputid",
                 "name": "&inputname",
@@ -41,13 +37,9 @@ import * as angular from 'angular';
                 "matchClass": "@matchclass",
                 "required": "@isrequired"
             },
-            /**
-             * does the actual linking
-             * @param $scope
-             * @param elem
-             * @param attrs
-             */
-            link: function($scope, elem, attrs) {
+            controller: AutocompleteController,
+            controllerAs: '$ctrl',
+            link: ($scope, elem, attrs, $ctrl) => {
                 $scope.lastSearchTerm = null;
                 $scope.currentIndex = null;
                 $scope.justChanged = false;
@@ -72,7 +64,7 @@ import * as angular from 'angular';
                  * @param oldTerm
                  * @returns {boolean}
                  */
-                var isNewSearchNeeded = function(newTerm, oldTerm) {
+                let isNewSearchNeeded = (newTerm, oldTerm) => {
                     return newTerm.length >= $scope.minLength && newTerm !== oldTerm
                 };
 
@@ -81,38 +73,38 @@ import * as angular from 'angular';
                  * @param responseData
                  * @param str
                  */
-                $scope.processResults = function(responseData, str) {
+                $scope.processResults = (responseData, str) => {
                     if (responseData && responseData.length > 0) {
                         $scope.results = [];
 
-                        var titleFields = [];
+                        let titleFields = [];
                         if ($scope.titleField && $scope.titleField !== "") {
                             titleFields = $scope.titleField.split(",");
                         }
 
-                        for (var i = 0; i < responseData.length; i++) {
+                        for (let i = 0; i < responseData.length; i++) {
                             // Get title variables
-                            var titleCode = [];
+                            let titleCode = [];
 
-                            for (var t = 0; t < titleFields.length; t++) {
+                            for (let t = 0; t < titleFields.length; t++) {
                                 titleCode.push(responseData[i][titleFields[t]]);
                             }
 
-                            var description = "";
+                            let description = "";
                             if ($scope.descriptionField) {
                                 description = responseData[i][$scope.descriptionField];
                             }
 
-                            var image = "";
+                            let image = "";
                             if ($scope.imageField) {
                                 image = responseData[i][$scope.imageField];
                             }
 
-                            var text = titleCode.join(' ');
+                            let text = titleCode.join(' ');
                             if ($scope.matchClass) {
-                                var re = new RegExp(str, 'i');
-                                var strPart = text.match(re)[0];
-                                text = $sce.trustAsHtml(text.replace(re, '<span class="' + $scope.matchClass + '">' + strPart + '</span>'));
+                                let re = new RegExp(str, 'i');
+                                let strPart = text.match(re)[0];
+                                text = $ctrl.$sce.trustAsHtml(text.replace(re, '<span class="' + $scope.matchClass + '">' + strPart + '</span>'));
                             }
 
                             //assign our result object
@@ -139,14 +131,14 @@ import * as angular from 'angular';
 
                     if (str.length >= $scope.minLength) {
                         if ($scope.localData) {
-                            var searchFields = $scope.searchFields.split(",");
+                            let searchFields = $scope.searchFields.split(",");
 
-                            var matches = [];
+                            let matches = [];
 
-                            for (var i = 0; i < $scope.localData.length; i++) {
-                                var match = false;
+                            for (let i = 0; i < $scope.localData.length; i++) {
+                                let match = false;
 
-                                for (var s = 0; s < searchFields.length; s++) {
+                                for (let s = 0; s < searchFields.length; s++) {
                                     match = match || (typeof $scope.localData[i][searchFields[s]] === 'string' && typeof str === 'string' && $scope.localData[i][searchFields[s]].toLowerCase().indexOf(str.toLowerCase()) >= 0);
                                 }
 
@@ -159,28 +151,28 @@ import * as angular from 'angular';
                             $scope.processResults(matches, str);
 
                         } else {
-                            $http.get($scope.url + str, {}).
-                              success(function(responseData, status, headers, config) {
-                                  $scope.searching = false;
-                                  $scope.processResults((($scope.dataField) ? responseData[$scope.dataField] : responseData ), str);
-                              }).
-                              error(function(data, status, headers, config) {
-                                  console.log("error");
-                              });
+                            $ctrl.$http.get($scope.url + str, {}).
+                            success((responseData, status, headers, config) => {
+                                $scope.searching = false;
+                                $scope.processResults((($scope.dataField) ? responseData[$scope.dataField] : responseData ), str);
+                            }).
+                            error((data, status, headers, config) => {
+                                console.log("error");
+                            });
                         }
                     }
                 };
 
-                $scope.hideResults = function() {
+                $scope.hideResults = () => {
 
-                    $scope.hideTimer = $timeout(function() {
+                    $scope.hideTimer = $ctrl.$timeout(() => {
                         $scope.showDropdown = false;
                     }, $scope.pause);
                 };
 
-                $scope.resetHideResults = function() {
+                $scope.resetHideResults = () => {
                     if ($scope.hideTimer) {
-                        $timeout.cancel($scope.hideTimer);
+                        $ctrl.$timeout.cancel($scope.hideTimer);
                     }
                 };
 
@@ -188,7 +180,7 @@ import * as angular from 'angular';
                  * if we hover over a row. we need to execute this action
                  * @param index
                  */
-                $scope.hoverRow = function(index) {
+                $scope.hoverRow = (index) => {
                     $scope.currentIndex = index;
 
                 };
@@ -197,7 +189,7 @@ import * as angular from 'angular';
                  * if we press an enter key or so
                  * @param event
                  */
-                $scope.keyPressed = function(event) {
+                $scope.keyPressed = (event) => {
                     if (!(event.which === 38 || event.which === 40 || event.which === 13)) {
                         if (!$scope.searchStr || $scope.searchStr === "") {
                             $scope.showDropdown = false;
@@ -209,12 +201,12 @@ import * as angular from 'angular';
                             $scope.results = [];
 
                             if ($scope.searchTimer) {
-                                $timeout.cancel($scope.searchTimer);
+                                $ctrl.$timeout.cancel($scope.searchTimer);
                             }
 
                             $scope.searching = true;
 
-                            $scope.searchTimer = $timeout(function() {
+                            $scope.searchTimer = $ctrl.$timeout(() => {
                                 $scope.searchTimerComplete($scope.searchStr);
                             }, $scope.pause);
                         }
@@ -227,7 +219,7 @@ import * as angular from 'angular';
                  * actually assign the result
                  * @param result
                  */
-                $scope.selectResult = function(result) {
+                $scope.selectResult = (result) => {
                     if ($scope.matchClass) {
                         result.title = result.title.toString().replace(/(<([^>]+)>)/ig, '');
                     }
@@ -237,18 +229,18 @@ import * as angular from 'angular';
                     $scope.results = [];
                 };
 
-                var inputField = elem.find('input');
+                let inputField = elem.find('input');
 
                 inputField.on('keyup', $scope.keyPressed);
 
-                elem.on("click", function(event) {
+                elem.on("click", (event) => {
                     $scope.showDropdown = true;
 
                     if (!$scope.searchStr || $scope.searchStr === "") {
-                        var max = $scope.localData.length <= 10 ? $scope.localData.length : 10;
-                        var results = [];
+                        let max = $scope.localData.length <= 10 ? $scope.localData.length : 10;
+                        let results = [];
 
-                        for (var i = 0; i < max; i++)
+                        for (let i = 0; i < max; i++)
                             results.push($scope.localData[i]);
 
                         $scope.processResults(results, "");
@@ -259,7 +251,7 @@ import * as angular from 'angular';
                     event.stopPropagation();
                 });
 
-                elem.on("keyup", function(event) {
+                elem.on("keyup", (event) => {
                     if (event.which === 40) {
                         if ($scope.results && ($scope.currentIndex + 1) < $scope.results.length) {
                             $scope.currentIndex++;
@@ -286,7 +278,7 @@ import * as angular from 'angular';
                         } else {
 
                             //object is needed to look like if we actual return from auto complete instead of utilizing a new object
-                            var originalResponse = {};
+                            let originalResponse = {};
                             originalResponse[$scope.titleField] = $scope.searchStr;
 
                             $scope.results = [];
@@ -317,14 +309,25 @@ import * as angular from 'angular';
                 });
 
             }
-        };
+        }
 
-        return directive;
     }
+}
 
-    /* REFACTORING WORK IN PROGRESS**
-    flAngucompleteController.$inject = ['$parse', '$http', '$sce', '$timeout'];
+class AutocompleteController {
+    private static $inject = ['$parse', '$http', '$sce', '$timeout'];
+    private $parse;
+    private $http;
+    private $sce;
+    private $timeout;
 
-    function flAngucompleteController($parse, $http, $sce, $timeout) {
+    constructor($parse, $http, $sce, $timeout) {
+        this.$parse = $parse;
+        this.$http = $http;
+        this.$sce = $sce;
+        this.$timeout = $timeout;
+    }
+}
 
-    }*/
+angular.module('moaClientApp')
+    .directive('flAngucomplete', AutocompleteDirective);

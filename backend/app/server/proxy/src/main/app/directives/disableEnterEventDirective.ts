@@ -5,13 +5,20 @@
  * TODO: directive usage can't be found.
  */
 import * as angular from 'angular';
-    angular.module('moaClientApp')
-      .directive('flNoSubmit', function() {
-          return function(scope, element, attrs) {
-              element.bind("keydown keypress", function(event) {
-                  if (event.which === 13) {
-                      event.preventDefault();
-                  }
-              });
-          };
-      });
+
+class DisableEnterEventDirective {
+    constructor() {
+        return {
+            link: (scope, element, attrs) => {
+                element.bind("keydown keypress", (event) => {
+                    if (event.which === 13) {
+                        event.preventDefault();
+                    }
+                });
+            }
+        }
+    }
+}
+
+angular.module('moaClientApp')
+    .directive('flNoSubmit', DisableEnterEventDirective)

@@ -4,11 +4,8 @@
 
 import * as angular from 'angular';
 
-    tagDisplayController.$inject = ['$scope', '$log', '$timeout', 'TagService'];
-    angular.module('moaClientApp')
-        .directive('tagDisplay', tagDisplay);
-
-    function tagDisplay() {
+class TagDisplayDirective {
+    constructor() {
         return {
             restrict: 'A',
             templateUrl: '../../views/templates/query/tagDisplay.html',
@@ -17,64 +14,84 @@ import * as angular from 'angular';
             scope: {
                 tags: '='
             },
-            controller: tagDisplayController
+            controller: TagDisplayController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    // Controller to handle building of the queries
-    /* @ngInject */
-    function tagDisplayController($scope, $log, $timeout, TagService) {
+class TagDisplayController {
+    private static $inject = ['$scope', '$log', '$timeout', 'TagService'];
+    private $scope;
+    private $log;
+    private $timeout;
+    private TagService;
+    private maxTagsCount;
 
-        $scope.tagClass = function(tag) {
-            var tagClass = [];
+    constructor($scope, $log, $timeout, TagService) {
+        this.$scope = $scope;
+        this.$log = $log;
+        this.$timeout = $timeout;
+        this.TagService = TagService;
+    }
 
-            // Button color based on selection
-            if (tag.selected === '+') {
-                tagClass.push('btn-success');
-            } else if (tag.selected === '-') {
-                tagClass.push('btn-danger');
-            } else {
-                tagClass.push('btn-default');
-            }
 
-            // Button size based on count
-            if ($scope.maxTagsCount > 0) {
-                if (tag.count / $scope.maxTagsCount < 0.25) {
-                    tagClass.push('btn-xs');
-                } else if (tag.count / $scope.maxTagsCount < 0.5) {
-                    tagClass.push('btn-sm');
-                } else if (tag.count / $scope.maxTagsCount > 0.75) {
-                    tagClass.push('btn-lg');
-                }
-            }
+    $onInit = () => {
+        this.$timeout(() => {
+            this.maxTagsCount = 0;
 
-            return tagClass;
-        };
+            if (angular.isUndefined(this.$scope.tags)) {
+                this.$scope.tags = [];
 
-        $timeout(function() {
-            $scope.maxTagsCount = 0;
+                this.TagService.query(
+                    (data) => {
+                        this.$scope.tags = data;
 
-            if (angular.isUndefined($scope.tags)) {
-                $scope.tags = [];
-
-                TagService.query(
-                    function(data) {
-                        $scope.tags = data;
-
-                        for (var i = 0; i < data.length; i++) {
-                            if (data[i].count > $scope.maxTagsCount)
-                                $scope.maxTagsCount = data[i].count;
+                        for (let i = 0; i < data.length; i++) {
+                            if (data[i].count > this.maxTagsCount)
+                                this.maxTagsCount = data[i].count;
                         }
                     },
-                    function(error) {
-                        $log.error('Tag pull failed: '+ error);
+                    (error) => {
+                        this.$log.error('Tag pull failed: '+ error);
                     }
                 );
             } else {
-                for (var i = 0; i < $scope.tags.length; i++) {
-                    if ($scope.tags[i].count > $scope.maxTagsCount)
-                        $scope.maxTagsCount = $scope.tags[i].count;
+                for (let i = 0; i < this.$scope.tags.length; i++) {
+                    if (this.$scope.tags[i].count > this.maxTagsCount)
+                        this.maxTagsCount = this.$scope.tags[i].count;
                 }
             }
         });
     }
+
+    tagClass = (tag) => {
+        let tagClass = [];
+
+        // Button color based on selection
+        if (tag.selected === '+') {
+            tagClass.push('btn-success');
+        } else if (tag.selected === '-') {
+            tagClass.push('btn-danger');
+        } else {
+            tagClass.push('btn-default');
+        }
+
+        // Button size based on count
+        if (this.maxTagsCount > 0) {
+            if (tag.count / this.maxTagsCount < 0.25) {
+                tagClass.push('btn-xs');
+            } else if (tag.count / this.maxTagsCount < 0.5) {
+                tagClass.push('btn-sm');
+            } else if (tag.count / this.maxTagsCount > 0.75) {
+                tagClass.push('btn-lg');
+            }
+        }
+
+        return tagClass;
+    };
+
+}
+
+angular.module('moaClientApp')
+    .directive('tagDisplay', TagDisplayDirective);

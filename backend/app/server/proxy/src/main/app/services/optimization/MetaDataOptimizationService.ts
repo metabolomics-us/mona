@@ -27,9 +27,6 @@ class MetaDataOptimizationService{
         this.$q = $q;
         this.$timeout = $timeout;
         this.$filter = $filter;
-    }
-
-    $onInit = () => {
         /**
          * numeric value
          * @type {RegExp}

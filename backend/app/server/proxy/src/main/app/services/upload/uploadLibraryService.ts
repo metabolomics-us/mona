@@ -26,6 +26,7 @@ export class UploadLibraryService{
     private failedSpectraCount;
     private uploadedSpectraCount;
     private uploadStartTime;
+    private uploadedSpectra;
 
     constructor($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService, gwChemifyService, AuthenticationService, gwCtsService, $log, $q, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService){
         this.$rootScope = $rootScope;
@@ -42,13 +43,11 @@ export class UploadLibraryService{
         this.$filter = $filter;
         this.AsyncService = AsyncService;
         this.MetaDataOptimizationService = MetaDataOptimizationService;
-    }
-
-    $onInit = () => {
         this.completedSpectraCount = 0;
         this.failedSpectraCount = 0;
         this.uploadedSpectraCount = 0;
         this.uploadStartTime = -1;
+        this.uploadedSpectra = [];
     }
 
     /**
@@ -288,7 +287,7 @@ export class UploadLibraryService{
      * @returns {Spectrum}
      */
     buildSpectrum = () => {
-        let spectrum = new this.Spectrum();
+        let spectrum = this.Spectrum;
         spectrum.biologicalCompound = {names: []};
         spectrum.tags = [];
         spectrum.metaData = [];

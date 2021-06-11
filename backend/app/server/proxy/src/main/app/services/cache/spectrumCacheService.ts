@@ -19,9 +19,6 @@ class SpectrumCacheService{
     constructor($log, $window) {
         this.$log = $log;
         this.$window = $window;
-    }
-
-    $onInit = () => {
         /**
          * Stored browser spectra
          */

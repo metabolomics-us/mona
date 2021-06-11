@@ -4,28 +4,39 @@
 
 import * as angular from 'angular';
 
-    spectraTopScoresForUsers.$inject = ['StatisticsService'];
-    angular.module('moaClientApp')
-        .directive('spectraTopScoresForUsers', spectraTopScoresForUsers);
-
-    /* @ngInject */
-    function spectraTopScoresForUsers(StatisticsService) {
+class SpectraTopScoresForUsersDirective {
+    constructor() {
         return {
             replace: true,
             templateUrl: '../../views/templates/scores/hallOfFame.html',
             scope: {
                 limit: '@'
             },
-            link: function($scope, element, attrs, ngModel) {
-                StatisticsService.spectraTopScores().then(
-                    function(data) {
-                        $scope.scores = data;
-
-                        $scope.scores.forEach(function(x) {
+            controller: SpectraTopScoresForUsersController,
+            controllerAs: '$ctrl',
+            link: ($scope, element, attrs, $ctrl) => {
+                $ctrl.StatisticsService.spectraTopScores().then(
+                    (data) => {
+                        console.log(data);
+                        $ctrl.scores = data.data;
+                        $ctrl.scores.forEach((x) => {
                             x.score -= 0.45;
                         });
-                    }
-                );
+                    })
             }
-        };
+        }
     }
+}
+
+class SpectraTopScoresForUsersController {
+    private static $inject = ['StatisticsService'];
+    private StatisticsService;
+    private scores;
+
+    constructor(StatisticsService) {
+        this.StatisticsService = StatisticsService;
+    }
+}
+
+angular.module('moaClientApp')
+    .directive('spectraTopScoresForUsers', SpectraTopScoresForUsersDirective);

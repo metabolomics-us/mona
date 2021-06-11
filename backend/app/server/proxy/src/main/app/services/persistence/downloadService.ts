@@ -11,9 +11,6 @@ class DownloadService{
     constructor(REST_BACKEND_SERVER, $http) {
         this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
         this.$http = $http;
-    }
-
-    $onInit = () =>{
         this.$http.defaults.useXDomain = true;
     }
 
@@ -33,8 +30,7 @@ class DownloadService{
         const config = {
             headers: {
                 'Content-Type': 'application/json'
-            },
-            isArray: true
+            }
         }
         return this.$http.get(api, config);
     }

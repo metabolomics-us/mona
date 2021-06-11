@@ -4,15 +4,12 @@
 
 import * as angular from 'angular';
 
-    queryTreeView.$inject = ['$compile'];
-    angular.module('moaClientApp')
-        .directive('queryTreeView', queryTreeView);
-
-    /* @ngInject */
-    function queryTreeView($compile) {
+class QueryTreeDirective {
+    constructor() {
         return {
             restrict: 'A',
-
+            controller: QueryTreeController,
+            controllerAs: '$ctrl',
             /**
              * Recursive tree-building function
              * @param scope
@@ -22,22 +19,23 @@ import * as angular from 'angular';
              * @param attrs.treeModel
              * @param attrs.queryTreeDepth
              */
-            link: function(scope, element, attrs) {
+            link: (scope, element, attrs, $ctrl) => {
+
                 // References to data and index for recursion
-                var treeId = attrs.treeId;
-                var treeModel = attrs.treeModel;
-                var depth = angular.isUndefined(attrs.queryTreeDepth) ? 0 : parseInt(attrs.queryTreeDepth);
+                let treeId = attrs.treeId;
+                let treeModel = attrs.treeModel;
+                let depth = angular.isUndefined(attrs.queryTreeDepth) ? 0 : parseInt(attrs.queryTreeDepth);
 
-                var style = depth > 0 ? 'padding-left: '+ (3 * depth) +'em' : '';
+                let style = depth > 0 ? 'padding-left: ' + (3 * depth) + 'em' : '';
 
-                var template =
-                    '<div class="list-group-item" style="'+ style +'" data-ng-repeat-start="node in '+ treeModel +'" ng-if="showHidden || node.display">' +
+                let template =
+                    '<div class="list-group-item" style="' + style + '" data-ng-repeat-start="node in ' + treeModel + '" ng-if="showHidden || node.display">' +
                     '    <i class="fa fa-folder-o" data-ng-show="node.children.length && node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-folder-open-o" data-ng-show="node.children.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                     '    <i class="fa fa-file-text-o" data-ng-hide="node.children.length"></i>' +
 
-                    '    <span data-ng-if="node.query !== null"><a data-ng-href="{{$ctrl.executeQuery(node)}}"><i class="fa fa-search"></i> {{node.singleLabel}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>'+
-                    '    <span data-ng-if="node.query === null"> {{node.singleLabel}}</span>'+
+                    '    <span data-ng-if="node.query !== null"><a data-ng-href="{{$ctrl.executeQuery(node)}}"><i class="fa fa-search"></i> {{node.singleLabel}}</a> ({{node.queryCount | number:0}} {{node.queryCount == 1 ? "spectrum" : "spectra"}})</span>' +
+                    '    <span data-ng-if="node.query === null"> {{node.singleLabel}}</span>' +
 
                     '    <span class="pull-right" data-ng-show="node.jsonExport !== null || node.mspExport !== null || node.sdfExport !== null" data-uib-dropdown>' +
                     '        <a href uib-dropdown-toggle class="dropdown-toggle"><i class="fa fa-download"></i> Download</a>' +
@@ -49,27 +47,27 @@ import * as angular from 'angular';
                     '    </span>' +
                     '    <span class="pull-right" data-ng-if="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>' +
 
-                    '</div>'+
-                    '<div data-ng-hide="node.collapsed" class="list-group" data-ng-repeat-end data-ng-if="node.children.length" data-query-tree-view data-query-tree-depth="'+ (depth + 1) +'" data-tree-id="'+ treeId +'" data-tree-model="node.children"></div>';
+                    '</div>' +
+                    '<div data-ng-hide="node.collapsed" class="list-group" data-ng-repeat-end data-ng-if="node.children.length" data-query-tree-view data-query-tree-depth="' + (depth + 1) + '" data-tree-id="' + treeId + '" data-tree-model="node.children"></div>';
 
-                if(treeId && treeModel) {
-                    if(depth == 0) {
-                        template = '<div class="form-group query-tree-display-option"><label><input type="checkbox" ng-model="showHidden"> Display Hidden Downloads</label></div>'+
-                                   '<div class="list-group panel-query-tree well">'+ template +'</div>';
+                if (treeId && treeModel) {
+                    if (depth == 0) {
+                        template = '<div class="form-group query-tree-display-option"><label><input type="checkbox" ng-model="showHidden"> Display Hidden Downloads</label></div>' +
+                            '<div class="list-group panel-query-tree well">' + template + '</div>';
 
                         // Create tree object if not exists
                         scope[treeId] = scope[treeId] || {};
 
                         // Collapse/expand node
-                        scope[treeId].selectNodeHead = scope[treeId].selectNodeHead || function(selectedNode) {
+                        scope[treeId].selectNodeHead = scope[treeId].selectNodeHead || function (selectedNode) {
                             selectedNode.collapsed = !selectedNode.collapsed;
                         };
 
                         // If node label clicks,
-                        scope[treeId].selectNodeLabel = scope[treeId].selectNodeLabel || function(selectedNode) {
+                        scope[treeId].selectNodeLabel = scope[treeId].selectNodeLabel || function (selectedNode) {
 
                             //remove highlight from previous node
-                            if( scope[treeId].currentNode && scope[treeId].currentNode.selected ) {
+                            if (scope[treeId].currentNode && scope[treeId].currentNode.selected) {
                                 scope[treeId].currentNode.selected = undefined;
                             }
 
@@ -81,8 +79,21 @@ import * as angular from 'angular';
                         };
                     }
 
-                    element.html('').append($compile(template)(scope));
+                    element.html('').append($ctrl.$compile(template)(scope));
                 }
             }
-        };
+        }
     }
+}
+
+class QueryTreeController {
+    private static $inject = ['$compile'];
+    private $compile;
+
+    constructor($compile) {
+        this.$compile = $compile;
+    }
+}
+
+angular.module('moaClientApp')
+    .directive('queryTreeView', QueryTreeDirective);

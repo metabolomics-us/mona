@@ -1,120 +1,143 @@
 import * as angular from 'angular';
 
-    SpectraSimilarityQueryController.$inject = ['$scope', '$location', '$log', 'UploadLibraryService', 'SpectraQueryBuilderService'];
-    angular.module('moaClientApp')
-        .directive('similaritySearchForm', similaritySearchForm);
-
-    function similaritySearchForm() {
+class SimilaritySearchFormDirective {
+    constructor() {
         return {
             restrict: 'E',
             templateUrl: '../../views/spectra/query/similaritySearchForm.html',
-            controller: SpectraSimilarityQueryController
+            controller: SimilaritySearchFormController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /* @ngInject */
-    function SpectraSimilarityQueryController($scope, $location, $log, UploadLibraryService, SpectraQueryBuilderService) {
-        $scope.page = 0;
+class SimilaritySearchFormController {
+    private static $inject = ['$scope', '$location', '$log', 'UploadLibraryService', 'SpectraQueryBuilderService'];
+    private $scope;
+    private $location;
+    private $log;
+    private UploadLibraryService;
+    private SpectraQueryBuilderService;
+    private page;
+    private pasteError;
+    private spectrum;
+    private uploadError;
 
-        $scope.parsePastedSpectrum = function(spectrum) {
-            $scope.pasteError = null;
+    constructor($scope, $location, $log, UploadLibraryService, SpectraQueryBuilderService) {
+        this.$scope = $scope;
+        this.$location = $location;
+        this.$log = $log;
+        this.UploadLibraryService = UploadLibraryService;
+        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
+    }
 
-            if (spectrum == null || spectrum == "") {
-                $scope.pasteError = 'Please input a valid spectrum!'
-            } else if (spectrum.match(/([0-9]*\.?[0-9]+)\s*:\s*([0-9]*\.?[0-9]+)/g)) {
-                $scope.spectrum = spectrum;
-                $scope.page = 2;
-            } else if (spectrum.match(/([0-9]+\.?[0-9]*)[ \t]+([0-9]*\.?[0-9]+)(?:\s*(?:[;\n])|(?:"?(.+)"?\n?))?/g)) {
-                spectrum = spectrum.split(/[\n\s]+/);
+    $onInit = () => {
+        this.page = 0;
+    }
 
-                if (spectrum.length % 2 == 0) {
-                    $scope.spectrum = [];
+    parsePastedSpectrum = (spectrum) => {
+        this.pasteError = null;
 
-                    for (var i = 0; i < spectrum.length / 2; i++) {
-                        $scope.spectrum.push(spectrum[2 * i] +':'+ spectrum[2 * i + 1]);
-                    }
+        if (spectrum == null || spectrum == "") {
+            this.pasteError = 'Please input a valid spectrum!'
+        } else if (spectrum.match(/([0-9]*\.?[0-9]+)\s*:\s*([0-9]*\.?[0-9]+)/g)) {
+            this.spectrum = spectrum;
+            this.page = 2;
+        } else if (spectrum.match(/([0-9]+\.?[0-9]*)[ \t]+([0-9]*\.?[0-9]+)(?:\s*(?:[;\n])|(?:"?(.+)"?\n?))?/g)) {
+            spectrum = spectrum.split(/[\n\s]+/);
 
-                    $scope.spectrum = $scope.spectrum.join(' ');
-                    $scope.page = 2;
-                } else {
-                    $scope.pasteError = 'Spectrum does not have complete ion/intensity pairs!'
+            if (spectrum.length % 2 == 0) {
+                this.spectrum = [];
+
+                for (let i = 0; i < spectrum.length / 2; i++) {
+                    this.spectrum.push(spectrum[2 * i] +':'+ spectrum[2 * i + 1]);
                 }
+
+                this.spectrum = this.spectrum.join(' ');
+                this.page = 2;
             } else {
-                $scope.pasteError = 'Unrecognized spectrum format!'
+                this.pasteError = 'Spectrum does not have complete ion/intensity pairs!'
             }
-        };
+        } else {
+            this.pasteError = 'Unrecognized spectrum format!'
+        }
+    };
 
-        /**
-         * Parse spectra
-         * @param files
-         */
-        $scope.parseFiles = function(files) {
-            $scope.page = 1;
-            $scope.spectrum = null;
-            $scope.uploadError = null;
+    /**
+     * Parse spectra
+     * @param files
+     */
+    parseFiles = (files) => {
+        this.page = 1;
+        this.spectrum = null;
+        this.uploadError = null;
 
-            UploadLibraryService.loadSpectraFile(files[0],
-                function(data, origin) {
-                    UploadLibraryService.processData(data, function(spectrum) {
-                        $scope.$apply(function() {
-                            // Create list of ions
-                            $scope.spectrum = spectrum.spectrum;
-                            $scope.page = 2;
-                        });
-                    }, origin);
-                },
-                function(progress) {
-                    if (progress == 100) {
-                        $scope.$apply(function() {
-                            if ($scope.spectrum == null) {
-                                $scope.page = 0;
-                                $scope.uploadError = 'Unable to load spectra!';
-                            } else {
-                                $scope.page = 2;
-                            }
-                        });
-                    }
-                }
-            );
-        };
-
-        /**
-         * Execute similarity search
-         * @param minSimilarity
-         * @param precursorMZ
-         * @param precursorMZTolerance
-         * @param precursorToleranceUnit
-         */
-        $scope.search = function(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit) {
-            var request = {
-                spectrum: $scope.spectrum,
-                minSimilarity: 500,
-                precursorMZ: null,
-                precursorTolerancePPM: null,
-                precursorToleranceDa: null
-                };
-
-            if (minSimilarity != null && angular.isNumber(+minSimilarity)) {
-                request.minSimilarity = parseFloat(minSimilarity);
-            }
-
-            if (precursorMZ != null && angular.isNumber(+precursorMZ)) {
-                request.precursorMZ = parseFloat(precursorMZ);
-            }
-
-            if (precursorMZTolerance != null && angular.isNumber(+precursorMZTolerance)) {
-                if (angular.isUndefined(precursorToleranceUnit) || precursorToleranceUnit == null || precursorMZTolerance == 'PPM') {
-                    request.precursorTolerancePPM = parseFloat(precursorMZTolerance);
-                }
-
-                if (precursorToleranceUnit == 'Da') {
-                    request.precursorToleranceDa = parseFloat(precursorMZTolerance);
+        this.UploadLibraryService.loadSpectraFile(files[0],
+            (data, origin) => {
+                this.UploadLibraryService.processData(data, (spectrum) => {
+                    this.$scope.$apply(() => {
+                        // Create list of ions
+                        this.spectrum = spectrum.spectrum;
+                        this.page = 2;
+                    });
+                }, origin);
+            },
+            (progress) => {
+                if (progress == 100) {
+                    this.$scope.$apply(() => {
+                        if (this.spectrum == null) {
+                            this.page = 0;
+                            this.uploadError = 'Unable to load spectra!';
+                        } else {
+                            this.page = 2;
+                        }
+                    });
                 }
             }
+        );
+    };
 
-            $log.info("Submitting similarity request: "+ JSON.stringify(request));
-
-            SpectraQueryBuilderService.setSimilarityQuery(request);
-            $location.path('/spectra/similaritySearch');
+    /**
+     * Execute similarity search
+     * @param minSimilarity
+     * @param precursorMZ
+     * @param precursorMZTolerance
+     * @param precursorToleranceUnit
+     */
+    search = (minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit) => {
+        let request = {
+            spectrum: this.spectrum,
+            minSimilarity: 500,
+            precursorMZ: null,
+            precursorTolerancePPM: null,
+            precursorToleranceDa: null
         };
-    }
+
+        if (minSimilarity != null && angular.isNumber(+minSimilarity)) {
+            request.minSimilarity = parseFloat(minSimilarity);
+        }
+
+        if (precursorMZ != null && angular.isNumber(+precursorMZ)) {
+            request.precursorMZ = parseFloat(precursorMZ);
+        }
+
+        if (precursorMZTolerance != null && angular.isNumber(+precursorMZTolerance)) {
+            if (angular.isUndefined(precursorToleranceUnit) || precursorToleranceUnit == null || precursorMZTolerance == 'PPM') {
+                request.precursorTolerancePPM = parseFloat(precursorMZTolerance);
+            }
+
+            if (precursorToleranceUnit == 'Da') {
+                request.precursorToleranceDa = parseFloat(precursorMZTolerance);
+            }
+        }
+
+        this.$log.info("Submitting similarity request: "+ JSON.stringify(request));
+
+        this.SpectraQueryBuilderService.setSimilarityQuery(request);
+        this.$location.path('/spectra/similaritySearch');
+    };
+
+}
+
+angular.module('moaClientApp')
+    .directive('similaritySearchForm', SimilaritySearchFormDirective);

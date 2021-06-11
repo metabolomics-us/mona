@@ -4,13 +4,15 @@
 
 import * as angular from 'angular';
 
-    angular.module('moaClientApp')
-        .directive('loginDropDown', loginDropDown);
-
-    function loginDropDown() {
+class LoginDropDownDirective {
+    constructor() {
         return {
             restrict: 'E',
             replace: true,
             templateUrl: '../../views/navbar/loginDropdown.html'
         };
     }
+}
+
+angular.module('moaClientApp')
+    .directive('loginDropDown', LoginDropDownDirective);

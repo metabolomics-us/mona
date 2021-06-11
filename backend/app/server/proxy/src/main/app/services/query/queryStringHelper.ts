@@ -12,9 +12,6 @@ class QueryStringHelper{
 
     constructor($log) {
         this.$log = $log;
-    }
-
-    $onInit = () => {
         this.service = {
             buildCompoundString: this.buildCompoundString,
             buildMetaString: this.buildMetaString,

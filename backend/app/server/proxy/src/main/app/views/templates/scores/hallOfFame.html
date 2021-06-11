@@ -10,12 +10,12 @@
     </thead>
 
     <tbody>
-        <tr ng-if="angular.isUndefined(scores)">
+        <tr ng-if="angular.isUndefined($ctrl.scores)">
             <td colspan="4" class="text-center">
                 <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
             </td>
         </tr>
-        <tr ng-repeat="score in scores | limitTo:limit">
+        <tr ng-repeat="score in $ctrl.scores | limitTo:limit">
             <td>
                 <i class="fa fa-trophy" ng-show="$index == 0"  style="color:#ffd700"></i>
                 <i class="fa fa-trophy" ng-show="$index == 1"  style="color:#C0C0C0"></i>

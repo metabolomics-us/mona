@@ -25,9 +25,6 @@ export class AuthenticationService{
         this.CookieService = CookieService;
         this.$uibModal = $uibModal;
         this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
-    }
-
-    $onInit = () => {
         this.loggingIn = false;
         this.currentUser = {};
     }

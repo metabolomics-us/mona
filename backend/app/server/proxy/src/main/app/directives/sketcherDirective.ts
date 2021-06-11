@@ -5,19 +5,14 @@
  */
 
 import * as angular from 'angular';
+declare const ChemDoodle: any;
 
-    chemicalSketcher.$inject = ['gwCtsService', '$log'];
-    declare const ChemDoodle: any;
-    angular.module('moaClientApp')
-      .directive('chemicalSketcher', chemicalSketcher);
-
-    /* @ngInject */
-    function chemicalSketcher(gwCtsService, $log) {
-        let directive = {
-            restrict: "A",
+class SketcherDirective {
+    constructor() {
+        return {
+            restrict: 'A',
             replace: false,
             require: 'ngModel',
-
             scope: {
                 //id of the object
                 id: '@id',
@@ -30,14 +25,9 @@ import * as angular from 'angular';
                 //wished height
                 height: '=?'
             },
-            /**
-             * links our sketcher into the directive
-             * @param $scope
-             * @param element
-             * @param attrs
-             * @param ngModel
-             */
-            link: ($scope, element, attrs, ngModel) => {
+            controller: SketcherController,
+            controllerAs: '$ctrl',
+            link: ($scope, element, attrs, $ctrl) => {
 
                 /**
                  * default properties
@@ -88,8 +78,8 @@ import * as angular from 'angular';
                         if (angular.isDefined(model)) {
                             if (angular.isDefined(model.molFile) || (angular.isString(model) && model.indexOf('M  END') > -1)) {
                                 // Load and sanitize MOL file
-                                var molFile = angular.isDefined(model.molFile) ? model.molFile : model;
-                                $log.debug('rendering mol file: \n' + molFile);
+                                let molFile = angular.isDefined(model.molFile) ? model.molFile : model;
+                                //$ctrl.$log.debug('rendering mol file: \n' + molFile);
 
                                 molFile = molFile.split('$$$$')[0];
 
@@ -102,22 +92,22 @@ import * as angular from 'angular';
                                 }
 
                                 try {
-                                    var mol = ChemDoodle.readMOL(molFile);
+                                    let mol = ChemDoodle.readMOL(molFile);
                                     sketcher.loadMolecule(mol);
                                     sketcher.repaint();
                                 } catch (e) {
-                                    $log.warn('problem rendering mol file:\n\n' + molFile);
-                                    $log.warn(e);
+                                    $ctrl.$log.warn('problem rendering mol file:\n\n' + molFile);
+                                    $ctrl.$log.warn(e);
                                 }
 
                                 return 'mol';
                             }
 
                             else if (angular.isString(model) && /^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test(model)) {
-                                $log.debug('Converting from InChIKey to MOL: '+ model);
-                                
-                                gwCtsService.convertInchiKeyToMol(model, (molecule) => {
-                                    var mol = ChemDoodle.readMOL(molecule);
+                                $ctrl.$log.debug('Converting from InChIKey to MOL: '+ model);
+
+                                $ctrl.gwCtsService.convertInchiKeyToMol(model, (molecule) => {
+                                    let mol = ChemDoodle.readMOL(molecule);
                                     sketcher.loadMolecule(mol);
                                 });
 
@@ -130,7 +120,7 @@ import * as angular from 'angular';
                     /**
                      * get an initial value, which was set in our model.
                      */
-                    var moleculeType = 'mol';
+                    let moleculeType = 'mol';
 
                     if (angular.isDefined($scope.bindModel) && $scope.readonly === true) {
                         moleculeType = getMoleculeForModel($scope.bindModel);
@@ -181,15 +171,27 @@ import * as angular from 'angular';
                      */
                     $scope.$on("$destroy", () => {
                         sketcher = null;
-                        var sameLevelElems = element.children();
+                        let sameLevelElems = element.children();
 
-                        for (var i = 0; i < sameLevelElems.length; i++) {
+                        for (let i = 0; i < sameLevelElems.length; i++) {
                             sameLevelElems[i].remove();
                         }
                     });
                 }
             }
-        };
+        }
 
-        return directive;
     }
+}
+
+class SketcherController {
+    private static $inject = ['gwCtsService', '$log'];
+    private gwCtsService;
+    private $log;
+    constructor(gwCtsService, $log) {
+        this.gwCtsService = gwCtsService;
+        this.$log = $log;
+    }
+}
+angular.module('moaClientApp')
+    .directive('chemicalSketcher', SketcherDirective);

@@ -4,11 +4,8 @@
 
 import * as angular from 'angular';
 
-    splashQueryController.$inject = ['$scope', 'SpectraQueryBuilderService'];
-    angular.module('moaClientApp')
-        .directive('splashQuery', splashQuery);
-
-    function splashQuery() {
+class SplashQueryDirective {
+    constructor() {
         return {
             restrict: 'A',
             templateUrl: '../../views/templates/query/splashQuery.html',
@@ -17,25 +14,45 @@ import * as angular from 'angular';
             scope: {
                 value: '=value'
             },
-            controller: splashQueryController
+            controller: SplashQueryController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /* @ngInject */
-    function splashQueryController($scope, SpectraQueryBuilderService) {
-        /**
-         * Create a new query based on the selected SPLASH
-         */
-        $scope.newQuery = function() {
-            SpectraQueryBuilderService.prepareQuery();
-            $scope.addToQuery();
-        };
-
-        /**
-         * Add selected SPLASH to the current query
-         */
-        $scope.addToQuery = function() {
-            SpectraQueryBuilderService.addSplashToQuery($scope.value.splash);
-            SpectraQueryBuilderService.executeQuery();
-        };
+class SplashQueryController {
+    private static $inject = ['$scope', 'SpectraQueryBuilderService'];
+    private $scope;
+    private SpectraQueryBuilderService;
+    constructor($scope, SpectraQueryBuilderService) {
+        this.$scope = $scope;
+        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
     }
+
+    $onInit = () => {
+        console.log(this.$scope.value.splash);
+        console.log(this.$scope.value);
+    }
+
+    /**
+     * Create a new query based on the selected SPLASH
+     */
+    newQuery = () => {
+        console.log("WHAT THE FUCK IS GOIGN ON");
+        this.SpectraQueryBuilderService.prepareQuery();
+        this.addToQuery();
+    };
+
+    /**
+     * Add selected SPLASH to the current query
+     */
+    addToQuery = () => {
+        console.log("WHAT THE FUCK IS GOIGN ON");
+        this.SpectraQueryBuilderService.addSplashToQuery(this.$scope.value.splash);
+        this.SpectraQueryBuilderService.executeQuery();
+    };
+}
+
+angular.module('moaClientApp')
+    .directive('splashQuery', SplashQueryDirective);
+

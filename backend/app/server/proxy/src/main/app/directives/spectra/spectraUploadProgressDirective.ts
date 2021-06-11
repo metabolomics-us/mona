@@ -5,87 +5,103 @@
 
 import * as angular from 'angular';
 
-    spectraUploadProgressBarController.$inject = ['$scope', 'UploadLibraryService'];
-    angular.module('moaClientApp')
-        .directive('spectraUploadProgressBar', spectraUploadProgressBar);
-
-    function spectraUploadProgressBar() {
+class SpectraUploadProgressDirective {
+    constructor() {
         return {
             restrict: 'AE',
             replace: false,
             template:
-                '<div data-ng-if="spectraUploadProgress != -1">' +
-                '    <div class="text-center"><i>Processed {{completedSpectraCount}} / {{uploadedSpectraCount}} spectra.</i></div>' +
-                '    <progressbar ng-class="{active: spectraUploadProgress < 100, \'progress-striped\': spectraUploadProgress < 100, \'progress-bar-success\': spectraUploadProgress == 100}" max="100" value="spectraUploadProgress">' +
-                '        <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" data-ng-bind="spectraUploadProgressString"></span>' +
-                '    </progressbar>' +
-                '    <div class="text-center">{{etaString}}</div>' +
+                '<div data-ng-if="$ctrl.spectraUploadProgress != -1">' +
+                '    <div class="text-center"><i>Processed {{$ctrl.completedSpectraCount}} / {{$ctrl.uploadedSpectraCount}} spectra.</i></div>' +
+                '    <uib-progressbar ng-class="{active: $ctrl.spectraUploadProgress < 100, \'progress-striped\': $ctrl.spectraUploadProgress < 100, \'progress-bar-success\': $ctrl.spectraUploadProgress == 100}" max="100" value="$ctrl.spectraUploadProgress">' +
+                '        <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" data-ng-bind="$ctrl.spectraUploadProgressString"></span>' +
+                '    </uib-progressbar>' +
+                '    <div class="text-center">{{$ctrl.etaString}}</div>' +
                 '</div>' +
-                '<div data-ng-if="spectraUploadProgress == -1"><i>No Upload Started</i></div>',
-            controller: spectraUploadProgressBarController
+                '<div data-ng-if="$ctrl.spectraUploadProgress == -1"><i>No Upload Started</i></div>',
+            controller: SpectraUploadProgressController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /**
-     * watches for changes to the upload progress
-     * @param $scope
-     */
-    /* @ngInject */
-    function spectraUploadProgressBarController($scope, UploadLibraryService) {
-        $scope.etaString = '';
+class SpectraUploadProgressController {
+    private static $inject = ['$scope', 'UploadLibraryService', 'AuthenticationService'];
+    private $scope;
+    private UploadLibraryService;
+    private AuthenticationService;
+    private etaString;
+    private completedSpectraCount;
+    private uploadedSpectraCount;
+    private failedSpectraCount;
+    private spectraUploadProgress;
+    private spectraUploadProgressString;
 
-        var buildEtaString = function() {
-            if (UploadLibraryService.uploadStartTime === -1 || !UploadLibraryService.isUploading()) {
-                $scope.etaString = '';
-            } else if ($scope.completedSpectraCount === 0) {
-                $scope.etaString = 'Loading spectra for processing...'
+    constructor($scope, UploadLibraryService, AuthenticationService) {
+        this.$scope = $scope;
+        this.UploadLibraryService = UploadLibraryService;
+        this.AuthenticationService = AuthenticationService;
+    }
 
-            } else {
-                // Calculate estimated time remaining
-                var dt = new Date().getTime() - UploadLibraryService.uploadStartTime;
-                var eta = dt * ($scope.uploadedSpectraCount - $scope.completedSpectraCount) / $scope.completedSpectraCount / 1000;
+    $onInit = () => {
+        this.etaString = '';
 
-                var seconds = Math.floor(eta % 60);
-                var minutes = Math.floor((eta / 60) % 60);
-                var hours = Math.floor(eta / 3600);
+        this.$scope.$on('spectra:uploadprogress', (event, completedSpectraCount, failedSpectraCount, uploadedSpectraCount) => {
+            console.log('Should be uploading at this point in time');
+            this.completedSpectraCount = completedSpectraCount + failedSpectraCount;
+            this.failedSpectraCount = failedSpectraCount;
+            this.uploadedSpectraCount = uploadedSpectraCount;
 
-                var etaString = '';
-
-                if (hours > 0) etaString += ' ' + hours + ' hours';
-                if (minutes > 0 || hours > 0) etaString += ' ' + minutes + ' minutes';
-                if (seconds > 0 || minutes > 0 || hours > 0) etaString += ' ' + seconds + ' seconds';
-
-                if (etaString !== '') {
-                    $scope.etaString = 'Estimated' + etaString + ' remaining';
-                } else {
-                    $scope.etaString = '';
-                }
-            }
-        };
-
-        $scope.$on('spectra:uploadprogress', function(event, completedSpectraCount, failedSpectraCount, uploadedSpectraCount) {
-            $scope.completedSpectraCount = completedSpectraCount + failedSpectraCount;
-            $scope.failedSpectraCount = failedSpectraCount;
-            $scope.uploadedSpectraCount = uploadedSpectraCount;
-
-            $scope.spectraUploadProgress = ($scope.completedSpectraCount / $scope.uploadedSpectraCount) * 100;
-            $scope.spectraUploadProgressString = $scope.spectraUploadProgress + '%';
-            buildEtaString();
+            this.spectraUploadProgress = (this.completedSpectraCount / this.uploadedSpectraCount) * 100;
+            this.spectraUploadProgressString = this.spectraUploadProgress + '%';
+            this.buildEtaString();
         });
 
-        (function() {
-            if (UploadLibraryService.isUploading()) {
-                // Temporarily counting completed and failed uploads together
-                $scope.completedSpectraCount = UploadLibraryService.completedSpectraCount + UploadLibraryService.failedSpectraCount;
-                $scope.uploadedSpectraCount = UploadLibraryService.uploadedSpectraCount;
+        if (this.UploadLibraryService.isUploading()) {
+            console.log('Currently getting shit in there');
+            // Temporarily counting completed and failed uploads together
+            this.completedSpectraCount = this.UploadLibraryService.completedSpectraCount + this.UploadLibraryService.failedSpectraCount;
+            this.uploadedSpectraCount = this.UploadLibraryService.uploadedSpectraCount;
 
-                $scope.spectraUploadProgress = ($scope.completedSpectraCount / $scope.uploadedSpectraCount) * 100;
-                $scope.spectraUploadProgressString = $scope.spectraUploadProgress + '%';
-            } else {
-                $scope.spectraUploadProgress = -1;
-                $scope.spectraUploadProgressString = 'Processing...';
-            }
+            this.spectraUploadProgress = (this.completedSpectraCount / this.uploadedSpectraCount) * 100;
+            this.spectraUploadProgressString = this.spectraUploadProgress + '%';
+        } else {
+            this.spectraUploadProgress = -1;
+            this.spectraUploadProgressString = 'Processing...';
+        }
 
-            buildEtaString();
-        })();
+        this.buildEtaString();
     }
+
+    buildEtaString = () => {
+        if (this.UploadLibraryService.uploadStartTime === -1 || !this.UploadLibraryService.isUploading()) {
+            this.etaString = '';
+        } else if (this.completedSpectraCount === 0) {
+            this.etaString = 'Loading spectra for processing...'
+
+        } else {
+            // Calculate estimated time remaining
+            let dt = new Date().getTime() - this.UploadLibraryService.uploadStartTime;
+            let eta = dt * (this.uploadedSpectraCount - this.completedSpectraCount) / this.completedSpectraCount / 1000;
+
+            let seconds = Math.floor(eta % 60);
+            let minutes = Math.floor((eta / 60) % 60);
+            let hours = Math.floor(eta / 3600);
+
+            let etaString = '';
+
+            if (hours > 0) etaString += ' ' + hours + ' hours';
+            if (minutes > 0 || hours > 0) etaString += ' ' + minutes + ' minutes';
+            if (seconds > 0 || minutes > 0 || hours > 0) etaString += ' ' + seconds + ' seconds';
+
+            if (etaString !== '') {
+                this.etaString = 'Estimated' + etaString + ' remaining';
+            } else {
+                this.etaString = '';
+            }
+        }
+    };
+}
+
+angular.module('moaClientApp')
+    .directive('spectraUploadProgressBar', SpectraUploadProgressDirective);

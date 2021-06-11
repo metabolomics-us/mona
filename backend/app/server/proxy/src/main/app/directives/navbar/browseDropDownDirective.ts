@@ -4,24 +4,33 @@
 
 import * as angular from 'angular';
 
-    browseController.$inject = ['$scope', 'SpectraQueryBuilderService'];
-    angular.module('moaClientApp')
-        .directive('browseDropDown', browseDropDown);
-
-    function browseDropDown() {
+class BrowseDropDownDirective {
+    constructor() {
         return {
             restrict: 'E',
             replace: true,
             templateUrl: '../../views/navbar/browseDropdown.html',
-            controller: browseController
+            controller: BrowseDropDownController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /* @ngInject */
-    function browseController($scope, SpectraQueryBuilderService) {
-        
-        // Reset query when user click browse
-        $scope.resetQuery = function() {
-            SpectraQueryBuilderService.prepareQuery();
-        }
+class BrowseDropDownController {
+    private static $inject = ['$scope', 'SpectraQueryBuilderService'];
+    private $scope;
+    private SpectraQueryBuilderService;
+
+    constructor($scope, SpectraQueryBuilderService) {
+        this.$scope = $scope;
+        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
     }
+
+    // Reset query when user click browse
+    resetQuery = () => {
+        this.SpectraQueryBuilderService.prepareQuery();
+    }
+}
+
+angular.module('moaClientApp')
+    .directive('browseDropDown', BrowseDropDownDirective);

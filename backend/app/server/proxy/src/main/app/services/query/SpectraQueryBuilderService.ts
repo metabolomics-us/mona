@@ -20,9 +20,6 @@ class SpectraQueryBuilderService {
         this.$log = $log;
         this.$location = $location;
         this.$route = $route;
-    }
-
-    $onInit = () => {
         /**
          * Stored query
          */

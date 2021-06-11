@@ -20,9 +20,6 @@ class QueryStringBuilder{
         this.$log = $log;
         this.QueryCache = QueryCache;
         this.qStrHelper = qStrHelper;
-    }
-
-    $onInit = () => {
         this.defaultQuery = '/rest/spectra';
         this.service = {
             buildQuery: this.buildQuery(),
@@ -31,6 +28,7 @@ class QueryStringBuilder{
 
         };
     }
+
 
     /**
      * updates on the fly queries submitted by users

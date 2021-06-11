@@ -4,13 +4,15 @@
 
 import * as angular from 'angular';
 
-    angular.module('moaClientApp')
-        .directive('searchBox', searchBox);
-
-    function searchBox() {
+class SearchBoxDirective {
+    constructor() {
         return {
             restrict: 'E',
             replace: true,
             templateUrl: '../../views/navbar/searchBox.html'
         };
     }
+}
+
+angular.module('moaClientApp')
+    .directive('searchBox', SearchBoxDirective);

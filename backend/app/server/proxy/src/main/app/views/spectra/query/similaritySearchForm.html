@@ -5,7 +5,7 @@
             <br />
 
             <!-- Spectrum selection page -->
-            <div ng-if="page == 0">
+            <div ng-if="$ctrl.page == 0">
                 <p class="lead">
                     <small>
                         Please choose a mass spectrum to search.  You may upload a file, from which we load
@@ -15,11 +15,11 @@
                 <br />
 
                 <label>Upload a File:</label>
-                <p class="help-block" ng-show="uploadError"><strong>{{uploadError}}</strong></p>
-                <div class="input-group" data-ng-class="{'has-error': uploadError}">
+                <p class="help-block" ng-show="$ctrl.uploadError"><strong>{{$ctrl.uploadError}}</strong></p>
+                <div class="input-group" data-ng-class="{'has-error': $ctrl.uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" ng-file-select="parseFiles($files)" />
+                            Browse&hellip; <input type="file" ngf-select="$ctrl.parseFiles($files)" />
                         </span>
                     </span>
 
@@ -30,9 +30,9 @@
 
                 <br /><br />
 
-                <div class="input-group" data-ng-class="{'has-error': pasteError}">
+                <div class="input-group" data-ng-class="{'has-error': $ctrl.pasteError}">
                     <label>Paste a Mass Spectrum:</label>
-                    <p class="help-block" ng-show="pasteError"><strong>{{pasteError}}</strong></p>
+                    <p class="help-block" ng-show="$ctrl.pasteError"><strong>{{$ctrl.pasteError}}</strong></p>
                     <textarea class="form-control" rows="10" ng-model="pastedSpectrum"></textarea>
                     <span class="help-block">
                         Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
@@ -41,12 +41,12 @@
                         <code>...</code>
                     </span>
 
-                    <a class="btn btn-primary" data-ng-click="parsePastedSpectrum(pastedSpectrum)">Load Spectrum</a>
+                    <a class="btn btn-primary" data-ng-click="$ctrl.parsePastedSpectrum(pastedSpectrum)">Load Spectrum</a>
                 </div>
             </div>
 
             <!-- Loading page -->
-            <div ng-if="page == 1">
+            <div ng-if="$ctrl.page == 1">
                 <span class="spinner">
                     <i class="fa fa-refresh fa-spin"></i>
                     Please wait while your file is loaded and processed...
@@ -54,7 +54,7 @@
             </div>
 
             <!-- Viewer + submit page -->
-            <div ng-if="page == 2" ng-init="precursorToleranceUnit = 'PPM'">
+            <div ng-if="$ctrl.page == 2" ng-init="precursorToleranceUnit = 'PPM'">
                 <p class="lead">
                     <small>
                         Please verify your mass spectrum and set your search parameters.  Note that this search returns
@@ -64,7 +64,7 @@
                 <br />
 
                 <div class="masspec-modal">
-                    <mass-spec ng-model="spectrum"></mass-spec>
+                    <mass-spec ng-model="$ctrl.spectrum"></mass-spec>
                 </div>
                 <br />
 
@@ -101,8 +101,8 @@
                 </div>
                 <br />
 
-                <button class="btn btn-warning" data-ng-click="page = 0">Reset</button>
-                <button class="btn btn-primary" data-ng-click="search(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit)">
+                <button class="btn btn-warning" data-ng-click="$ctrl.page = 0">Reset</button>
+                <button class="btn btn-primary" data-ng-click="$ctrl.search(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit)">
                     Search for Similar Spectra
                 </button>
             </div>

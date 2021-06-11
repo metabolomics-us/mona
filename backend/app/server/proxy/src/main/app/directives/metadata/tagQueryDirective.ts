@@ -4,11 +4,8 @@
 
 import * as angular from 'angular';
 
-    tagQueryController.$inject = ['$scope', 'SpectraQueryBuilderService', '$location'];
-    angular.module('moaClientApp')
-        .directive('tagQuery', tagQuery);
-
-    function tagQuery() {
+class TagQueryDirective {
+    constructor() {
         return {
             restrict: 'A',
             templateUrl: '../../views/templates/query/tagQuery.html',
@@ -20,30 +17,46 @@ import * as angular from 'angular';
                 size: '@'
             },
             priority: 1001,
-            controller: tagQueryController
+            controller: TagQueryController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /* @ngInject */
-    function tagQueryController($scope, SpectraQueryBuilderService, $location) {
-        /**
-         * Create a new query based on the selected tag value
-         */
-        $scope.newQuery = function() {
-            SpectraQueryBuilderService.prepareQuery();
-            $scope.addToQuery();
-        };
+class TagQueryController {
+    private static $inject = ['$scope', 'SpectraQueryBuilderService', '$location'];
+    private $scope;
+    private SpectraQueryBuilderService;
+    private $location;
 
-        /**
-         * Add selected tag value to the current query
-         */
-        $scope.addToQuery = function() {
-            if (angular.isDefined($scope.type) && $scope.type == 'compound') {
-                SpectraQueryBuilderService.addCompoundTagToQuery($scope.tag.text);
-            } else {
-                SpectraQueryBuilderService.addTagToQuery($scope.tag.text);
-            }
-
-            SpectraQueryBuilderService.executeQuery();
-        };
+    constructor($scope, SpectraQueryBuilderService, $location) {
+        this.$scope = $scope;
+        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
+        this.$location = $location;
     }
+
+    /**
+     * Create a new query based on the selected tag value
+     */
+    newQuery = () => {
+        this.SpectraQueryBuilderService.prepareQuery();
+        this.addToQuery();
+    };
+
+    /**
+     * Add selected tag value to the current query
+     */
+    addToQuery = () => {
+        if (angular.isDefined(this.$scope.type) && this.$scope.type == 'compound') {
+            this.SpectraQueryBuilderService.addCompoundTagToQuery(this.$scope.tag.text);
+        } else {
+            this.SpectraQueryBuilderService.addTagToQuery(this.$scope.tag.text);
+        }
+
+        this.SpectraQueryBuilderService.executeQuery();
+    };
+
+}
+
+angular.module('moaClientApp')
+    .directive('tagQuery', TagQueryDirective);

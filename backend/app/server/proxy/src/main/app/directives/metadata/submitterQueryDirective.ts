@@ -4,11 +4,8 @@
 
 import * as angular from 'angular';
 
-    submitterQueryController.$inject = ['$scope', 'SpectraQueryBuilderService'];
-    angular.module('moaClientApp')
-        .directive('submitterQuery', submitterQuery);
-
-    function submitterQuery() {
+class SubmitterQueryDirective {
+    constructor() {
         return {
             replace: true,
             transclude: true,
@@ -17,38 +14,53 @@ import * as angular from 'angular';
             scope: {
                 submitter: '=submitter'
             },
-            controller: submitterQueryController
+            controller: SubmitterQueryController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /* @ngInject */
-    function submitterQueryController($scope, SpectraQueryBuilderService) {
+class SubmitterQueryController {
+    private static $inject = ['$scope', 'SpectraQueryBuilderService', 'AuthenticationService'];
+    private $scope;
+    private SpectraQueryBuilderService;
+    private AuthenticationService;
 
-        /**
-         * Create a new query based on the selected submitter
-         */
-        $scope.newQuery = function() {
-            SpectraQueryBuilderService.prepareQuery();
-            $scope.addToQuery();
-        };
-
-        /**
-         * Add selected submitter to the current query
-         */
-        $scope.addToQuery = function() {
-            SpectraQueryBuilderService.addUserToQuery($scope.submitter.id);
-            SpectraQueryBuilderService.executeQuery();
-        };
-
-        /**
-         * Curate spectra based on selected submitter
-         */
-        $scope.curateSpectra = function() {
-            SpectraQueryBuilderService.prepareQuery();
-            SpectraQueryBuilderService.addUserToQuery($scope.submitter.id);
-
-            var query = SpectraQueryBuilderService.getRSQLQuery();
-            // TODO Add curation functionality
-            // Spectrum.curateSpectraByQuery(query, function(data) {});
-        }
+    constructor($scope, SpectraQueryBuilderService, AuthenticationService) {
+        this.$scope = $scope;
+        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
+        this.AuthenticationService = AuthenticationService;
     }
+
+    /**
+     * Create a new query based on the selected submitter
+     */
+    newQuery = () => {
+        this.SpectraQueryBuilderService.prepareQuery();
+        this.addToQuery();
+    };
+
+    /**
+     * Add selected submitter to the current query
+     */
+    addToQuery = () =>{
+        this.SpectraQueryBuilderService.addUserToQuery(this.$scope.submitter.id);
+        this.SpectraQueryBuilderService.executeQuery();
+    };
+
+    /**
+     * Curate spectra based on selected submitter
+     */
+    curateSpectra = () => {
+        this.SpectraQueryBuilderService.prepareQuery();
+        this.SpectraQueryBuilderService.addUserToQuery(this.$scope.submitter.id);
+
+        let query = this.SpectraQueryBuilderService.getRSQLQuery();
+        // TODO Add curation functionality
+        // Spectrum.curateSpectraByQuery(query, function(data) {});
+    }
+}
+
+angular.module('moaClientApp')
+    .directive('submitterQuery', SubmitterQueryDirective);
+

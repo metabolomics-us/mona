@@ -16,9 +16,6 @@ class MetadataService{
     constructor(REST_BACKEND_SERVER, $http) {
         this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
         this.$http = $http;
-    }
-
-    $onInit = () => {
         this.$http.defaults.useXDomain = true;
     }
 

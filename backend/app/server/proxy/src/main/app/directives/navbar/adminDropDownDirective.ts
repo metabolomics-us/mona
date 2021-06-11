@@ -4,13 +4,15 @@
 
 import * as angular from 'angular';
 
-    angular.module('moaClientApp')
-        .directive('adminDropDown', adminDropDown);
-
-    function adminDropDown() {
+class AdminDropDownDirective {
+    constructor() {
         return {
             restrict: 'E',
             replace: true,
             templateUrl: '../../views/navbar/adminDropdown.html'
         };
     }
+}
+
+angular.module('moaClientApp')
+    .directive('adminDropDown', AdminDropDownDirective);

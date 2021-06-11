@@ -3,11 +3,8 @@
  */
 import * as angular from 'angular';
 
-    displaySpectraPanelController.$inject = ['$scope', 'SpectrumCache'];
-    angular.module('moaClientApp')
-        .directive('displaySpectraPanel', displaySpectraPanel);
-
-    function displaySpectraPanel() {
+class SpectraPanelDirective {
+    constructor() {
         return {
             require: "ngModel",
             restrict: "A",
@@ -16,57 +13,75 @@ import * as angular from 'angular';
             scope: {
                 spectrum: '=spectrum'
             },
-            controller: displaySpectraPanelController
+            controller: SpectraPanelController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /* @ngInject */
-    function displaySpectraPanelController($scope, SpectrumCache) {
+class SpectraPanelController {
+    private static $inject = ['$scope', 'SpectrumCache'];
+    private $scope;
+    private SpectrumCache;
+    private IMPORTANT_METADATA;
+    private importantMetadata;
+    private secondaryMetadata;
 
+    constructor($scope, SpectrumCache) {
+        this.$scope = $scope;
+        this.SpectrumCache = SpectrumCache;
+    }
+
+    $onInit = () => {
         // Top 10 important metadata fields
-        var IMPORTANT_METADATA = [
+        this.IMPORTANT_METADATA = [
             'ms level', 'precursor type', 'precursor m/z', 'instrument', 'instrument type',
             'ionization', 'ionization mode', 'collision energy', 'retention time', 'retention index'
         ];
 
-        var truncateDecimal = function(s, length) {
-            return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
-        };
+        this.importantMetadata = [];
+        this.secondaryMetadata = [];
 
-        /**
-         * displays the spectrum for the given index
-         */
-        $scope.viewSpectrum = function() {
-            SpectrumCache.setSpectrum($scope.spectrum);
+        angular.forEach(this.$scope.spectrum.metaData, (metaData, index) => {
+            metaData.value = this.truncateDecimal(metaData.value, 4);
 
-            return '/spectra/display/' + $scope.spectrum.id;
-        };
+            if (this.IMPORTANT_METADATA.indexOf(metaData.name.toLowerCase()) > -1) {
+                this.importantMetadata.push(metaData);
+            } else {
+                this.secondaryMetadata.push(metaData);
+            }
+        });
 
-            var importantMetadata = [];
-            var secondaryMetadata = [];
+        this.importantMetadata = this.importantMetadata.sort((a, b) =>  {
+            if(this.IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) < this.IMPORTANT_METADATA.indexOf(a.name.toLowerCase())){
+                return -1
+            }
+            if(this.IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) > this.IMPORTANT_METADATA.indexOf(a.name.toLowerCase())){
+                return 1
+            }
+            else{
+                return 0
+            }
+        });
 
-            angular.forEach($scope.spectrum.metaData, function(metaData, index) {
-                metaData.value = truncateDecimal(metaData.value, 4);
-
-                if (IMPORTANT_METADATA.indexOf(metaData.name.toLowerCase()) > -1) {
-                    importantMetadata.push(metaData);
-                } else {
-                    secondaryMetadata.push(metaData);
-                }
-            });
-
-            importantMetadata = importantMetadata.sort((a, b) =>  {
-                if(IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) < IMPORTANT_METADATA.indexOf(a.name.toLowerCase())){
-                    return -1
-                }
-                if(IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) > IMPORTANT_METADATA.indexOf(a.name.toLowerCase())){
-                    return 1
-                }
-                else{
-                    return 0
-                }
-            });
-            
-            $scope.spectrum.metaData = importantMetadata.concat(secondaryMetadata).slice(0, 10);
+        this.$scope.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 10);
     }
+
+    truncateDecimal = (s, length) => {
+        return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
+    };
+
+    /**
+     * displays the spectrum for the given index
+     */
+    viewSpectrum = () => {
+        this.SpectrumCache.setSpectrum(this.$scope.spectrum);
+
+        return '/spectra/display/' + this.$scope.spectrum.id;
+    };
+
+}
+
+angular.module('moaClientApp')
+    .directive('displaySpectraPanel', SpectraPanelDirective);
 

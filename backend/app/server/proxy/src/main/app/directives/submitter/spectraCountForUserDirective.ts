@@ -4,33 +4,44 @@
 
 import * as angular from 'angular';
 
-    spectraCountForUser.$inject = ['$compile', 'StatisticsService'];
-    spectraCountForUserController.$inject = ['$scope'];
-    angular.module('moaClientApp')
-      .directive('spectraCountForUser', spectraCountForUser);
+class SpectraCountForUserDirective {
 
-    /* @ngInject */
-    function spectraCountForUser($compile, StatisticsService) {
-        var directive = {
+
+    constructor() {
+        return {
             replace: true,
-            template: '<span>{{spectraCount}}</span>',
+            template: '<span>{{$ctrl.$scope.spectraCount}}</span>',
             scope: {
                 user: '=user'
             },
-            link: function($scope, element, attrs, ngModel) {
-                StatisticsService.spectraCount({id: $scope.user.id},
-                    function(data) {
+            controller: SpectraCountForUserController,
+            controllerAs: '$ctrl',
+            link: ($scope, element, attrs, $ctrl) => {
+                $ctrl.StatisticsService.spectraCount({id: $scope.user.id},
+                    (data) => {
                         $scope.spectraCount = data.count;
-                    }
-                );
-            },
-            controller: spectraCountForUserController
-        };
+                    })
+            }
+        }
+    }
+}
 
-        return directive;
+class SpectraCountForUserController {
+    private static $inject = ['$scope', '$compile', 'StatisticsService'];
+    private $scope;
+    private $compile;
+    private StatisticsService;
+    constructor($scope, $compile, StatisticsService) {
+        this.$scope = $scope;
+        this.$compile = $compile;
+        this.StatisticsService = StatisticsService;
     }
 
-    /* @ngInject */
-    function spectraCountForUserController($scope) {
-        $scope.spectraCount = "loading...";
+    $onInit = () => {
+        this.$scope.spectraCount = "loading...";
     }
+
+}
+
+angular.module('moaClientApp')
+    .directive('spectraCountForUser', SpectraCountForUserDirective);

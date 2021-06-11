@@ -3,11 +3,8 @@
  */
 import * as angular from 'angular';
 
-    metadataQueryController.$inject = ['$scope', 'SpectraQueryBuilderService', '$location', '$log'];
-    angular.module('moaClientApp')
-        .directive('metadataQuery', metadataQuery);
-
-    function metadataQuery() {
+class MetadataQueryDirective {
+    constructor() {
         return {
             restrict: 'A',
             templateUrl: '../../views/templates/query/metadataQuery.html',
@@ -18,32 +15,49 @@ import * as angular from 'angular';
                 compound: '=compound',
                 classification: '=classification'
             },
-            controller: metadataQueryController
+            controller: MetadataQueryController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /* @ngInject */
-    function metadataQueryController($scope, SpectraQueryBuilderService, $location, $log) {
-        /**
-         * Create a new query based on the selected metadata value
-         */
-        $scope.newQuery = function() {
-            SpectraQueryBuilderService.prepareQuery();
-            $scope.addToQuery();
-        };
+class MetadataQueryController {
+    private static $inject = ['$scope', 'SpectraQueryBuilderService', '$location', '$log'];
+    private $scope;
+    private SpectraQueryBuilderService;
+    private $location;
+    private $log;
 
-        /**
-         * Add selected metadata value to the current query
-         */
-        $scope.addToQuery = function() {
-            if (angular.isDefined($scope.compound)) {
-                SpectraQueryBuilderService.addCompoundMetaDataToQuery($scope.metaData.name, $scope.metaData.value);
-            } else if (angular.isDefined($scope.classification)) {
-                SpectraQueryBuilderService.addClassificationToQuery($scope.metaData.name, $scope.metaData.value);
-            } else {
-                SpectraQueryBuilderService.addMetaDataToQuery($scope.metaData.name, $scope.metaData.value);
-            }
-
-            SpectraQueryBuilderService.executeQuery();
-        };
+    constructor($scope, SpectraQueryBuilderService, $location, $log) {
+        this.$scope = $scope;
+        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
+        this.$location = $location;
+        this.$log = $log;
     }
+
+    /**
+     * Create a new query based on the selected metadata value
+     */
+    newQuery = () => {
+        this.SpectraQueryBuilderService.prepareQuery();
+        this.addToQuery();
+    };
+
+    /**
+     * Add selected metadata value to the current query
+     */
+    addToQuery = () => {
+        if (angular.isDefined(this.$scope.compound)) {
+            this.SpectraQueryBuilderService.addCompoundMetaDataToQuery(this.$scope.metaData.name, this.$scope.metaData.value);
+        } else if (angular.isDefined(this.$scope.classification)) {
+            this.SpectraQueryBuilderService.addClassificationToQuery(this.$scope.metaData.name, this.$scope.metaData.value);
+        } else {
+            this.SpectraQueryBuilderService.addMetaDataToQuery(this.$scope.metaData.name, this.$scope.metaData.value);
+        }
+
+        this.SpectraQueryBuilderService.executeQuery();
+    };
+}
+
+angular.module('moaClientApp')
+    .directive('metadataQuery', MetadataQueryDirective);

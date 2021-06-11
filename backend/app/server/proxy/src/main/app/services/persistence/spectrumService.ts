@@ -38,6 +38,7 @@ class SpectrumService {
 	searchSpectraCount = (data: any) => {
 		const config = {
 			isArray: true,
+			params: data,
 			transformResponse:  (d: any) => {
 				return {count: d};
 			}

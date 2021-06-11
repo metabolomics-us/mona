@@ -3,63 +3,76 @@
  */
 import * as angular from 'angular';
 
-    displayLibraryReferenceController.$inject = ['$scope', '$log'];
-    angular.module('moaClientApp')
-        .directive('displayLibraryReference', displayLibraryReference);
-
-    function displayLibraryReference() {
+class SpectraLibraryDirective {
+    constructor() {
         return {
             require: 'ngModel',
             restrict: 'A',
-            template: '<span data-ng-bind-html="libraryString"></span>',
+            template: '<span data-ng-bind-html="$ctrl.libraryString"></span>',
             replace: true,
             scope: {
                 spectrum: '=spectrum'
             },
-            controller: displayLibraryReferenceController
+            controller: SpectraLibraryController,
+            controllerAs: '$ctrl'
         };
     }
+}
 
-    /* @ngInject */
-    function displayLibraryReferenceController($scope, $log) {
+class SpectraLibraryController {
+    private static $inject = ['$scope', '$log'];
+    private $scope;
+    private $log;
+    private libraryString;
 
+    constructor($scope, $log) {
+        this.$scope = $scope;
+        this.$log = $log;
+    }
+
+    $onInit = () => {
         // Empty string if no library object exists
-        if (!$scope.spectrum.library || !$scope.spectrum.library.description || $scope.spectrum.library.description == '') {
-            $scope.libraryString = '';
+        if (!this.$scope.spectrum.library || !this.$scope.spectrum.library.description || this.$scope.spectrum.library.description == '') {
+            this.libraryString = '';
             return;
         }
 
         // Base library string
-        $scope.libraryString = 'Originally submitted to the ';
+        this.libraryString = 'Originally submitted to the ';
 
-        var library = $scope.spectrum.library;
+        let library = this.$scope.spectrum.library;
 
         // Handle a provided library link
         if (angular.isDefined(library.link) && library.link != "") {
             // Link to library but no identifier
             if (!angular.isDefined(library.id)) {
-                $scope.libraryString += '<a href="'+ library.link +'" target="_blank">'+
+                this.libraryString += '<a href="'+ library.link +'" target="_blank">'+
                     library.description +'</a>';
             }
 
             // Link to library and identifier and link placeholder for identifier
             else if (angular.isDefined(library.id) && library.link.indexOf('%s') > -1) {
-                var link = library.link.replace('%s', library.id);
+                let link = library.link.replace('%s', library.id);
 
-                $scope.libraryString += $scope.spectrum.library.description + ' as <a href="'+ link +'" target="_blank">'+
+                this.libraryString += this.$scope.spectrum.library.description + ' as <a href="'+ link +'" target="_blank">'+
                     library.id +'</a>';
             }
 
             // Link to library and identifier but no link placeholder for identifier
             else {
-                $scope.libraryString += '<a href="'+ library.link +'" target="_blank">'+ library.description +
+                this.libraryString += '<a href="'+ library.link +'" target="_blank">'+ library.description +
                     '</a> as '+ library.id;
             }
         }
 
         // With no library link
         else {
-            $scope.libraryString += library.description;
+            this.libraryString += library.description;
         }
     }
 
+
+}
+
+angular.module('moaClientApp')
+    .directive('displayLibraryReference', SpectraLibraryDirective);

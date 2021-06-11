@@ -4,11 +4,8 @@
 
 import * as angular from 'angular';
 
-    spectrumReviewController.$inject = ['$scope', '$http', 'AuthenticationService', 'REST_BACKEND_SERVER'];
-    angular.module('moaClientApp')
-        .directive('spectrumReview', spectrumReview);
-
-    function spectrumReview() {
+class SpectrumReviewDirective{
+    constructor() {
         return {
             replace: true,
             templateUrl: '../../views/templates/feedback/spectrumReview.html',
@@ -16,28 +13,54 @@ import * as angular from 'angular';
             scope: {
                 spectrum: '=spectrum'
             },
-            controller: spectrumReviewController
-        };
+            controller: SpectrumReviewController,
+            controllerAs: '$ctrl'
+        }
+    }
+}
+
+class SpectrumReviewController{
+    private static $inject = ['$scope', '$http', 'AuthenticationService', 'REST_BACKEND_SERVER'];
+    private $scope;
+    private $http;
+    private AuthenticationService;
+    private REST_BACKEND_SERVER;
+    private submitting;
+    private submitted;
+    private spectrum;
+
+    constructor($scope, $http, AuthenticationService, REST_BACKEND_SERVER) {
+        this.$scope = $scope;
+        this.$http = $http;
+        this.AuthenticationService = AuthenticationService;
+        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
     }
 
-    /* @ngInject */
-    function spectrumReviewController($scope, $http, AuthenticationService, REST_BACKEND_SERVER) {
-        $scope.submitting = false;
-        $scope.submitted = false;
+    $onInit = () => {
+        this.submitting = false;
+        this.submitted = false;
+        console.log('Starting Up Boys');
+        console.log(this.$scope.spectrum.id);
+    }
 
-        $scope.rate = function(value) {
-            AuthenticationService.getCurrentUser().then(function(data) {
-                var payload = {
-                    monaID: $scope.spectrum.id,
-                    userID: data.username,
-                    name: 'spectrum_quality',
-                    value: value
-                };
+    rate = (value) => {
+        console.log('We in Here');
+        console.log(this.$scope.spectrum.id);
+        this.AuthenticationService.getCurrentUser().then((data) => {
+            let payload = {
+                monaID: this.$scope.spectrum.id,
+                userID: data.username,
+                name: 'spectrum_quality',
+                value: value
+            };
 
-                $http.post(REST_BACKEND_SERVER + '/rest/feedback', payload).then(function(data) {
-                    $scope.submitting = false;
-                    $scope.submitted = true;
-                });
+            this.$http.post(this.REST_BACKEND_SERVER + '/rest/feedback', payload).then((data) => {
+                this.submitting = false;
+                this.submitted = true;
             });
-        };
-    }
+        });
+    };
+}
+
+angular.module('moaClientApp')
+    .directive('spectrumReview', SpectrumReviewDirective);

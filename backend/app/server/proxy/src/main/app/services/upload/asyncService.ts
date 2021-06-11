@@ -23,9 +23,6 @@ class AsyncService{
         this.$log = $log;
         this.$http = $http;
         this.$interval = $interval;
-    }
-
-    $onInit = () => {
         this.runningTasks = 0;
 
         //firefox allows max 6,

@@ -5,10 +5,10 @@
     </a>
 
     <ul class="uib-dropdown-menu" uib-dropdown-menu>
-        <li><a ng-click="newQuery()">Create New Query</a></li>
-        <li><a ng-click="addToQuery()">Add to Query</a></li>
+        <li><a ng-click="$ctrl.newQuery()">Create New Query</a></li>
+        <li><a ng-click="$ctrl.addToQuery()">Add to Query</a></li>
 
-        <li ng-show="$parent.auth.isAdmin()" class="divider"></li>
-        <li ng-show="$parent.auth.isAdmin()"><a ng-click="curateSpectra()">Curate Spectra by Submitter</a></li>
+        <li ng-show="$ctrl.AuthenticationService.isAdmin()" class="divider"></li>
+        <li ng-show="$ctrl.AuthenticationService.isAdmin()"><a ng-click="$ctrl.curateSpectra()">Curate Spectra by Submitter</a></li>
     </ul>
 </span>

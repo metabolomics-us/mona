@@ -4,13 +4,15 @@
 
 import * as angular from 'angular';
 
-    angular.module('moaClientApp')
-        .directive('downloadButton', downloadButton);
-
-    function downloadButton() {
+class DownloadDirective {
+    constructor() {
         return {
             restrict: 'E',
             replace: true,
             templateUrl: '../../views/navbar/download.html'
         };
     }
+}
+
+angular.module('moaClientApp')
+    .directive('downloadButton', DownloadDirective);

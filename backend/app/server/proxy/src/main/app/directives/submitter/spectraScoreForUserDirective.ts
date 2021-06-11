@@ -4,30 +4,41 @@
 
 import * as angular from 'angular';
 
-    spectraScoreForUser.$inject = ['$compile', 'StatisticsService'];
-    spectraScoreForUserController.$inject = ['$scope'];
-    angular.module('moaClientApp')
-        .directive('spectraScoreForUser', spectraScoreForUser);
-
-    /* @ngInject */
-    function spectraScoreForUser($compile, StatisticsService) {
+class SpectraScoreForUserDirective {
+    constructor() {
         return {
             replace: true,
-            template: '<span uib-rating ng-model="score" max="5" data-readonly="true"></span>',
+            template: '<span uib-rating ng-model="$ctrl.$scope.score" max="5" data-readonly="true"></span>',
             scope: {
                 user: '=user'
             },
-            link: function($scope, element, attrs, ngModel) {
-                StatisticsService.spectraScore(
+            controller: SpectraScoreForUserController,
+            controllerAs: '$ctrl',
+            link: ($scope, element, attrs, $ctrl) => {
+                $ctrl.StatisticsService.spectraScore(
                     {id: $scope.user.id},
-                    function(data) {
+                    (data) => {
                         $scope.score = data.score;
                     }
                 );
-            },
-            controller: spectraScoreForUserController
-        };
-    }
+            }
+        }
 
-    /* @ngInject */
-    function spectraScoreForUserController($scope) {}
+    }
+}
+
+class SpectraScoreForUserController {
+    private static $inject = ['$scope', '$compile', 'StatisticsService'];
+    private $scope;
+    private $compile;
+    private StatisticsService;
+
+    constructor($scope, $compile, StatisticsService) {
+        this.$scope = $scope;
+        this.$compile = $compile;
+        this.StatisticsService = StatisticsService;
+    }
+}
+
+angular.module('moaClientApp')
+    .directive('spectraScoreForUser', SpectraScoreForUserDirective);

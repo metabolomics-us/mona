@@ -601,12 +601,11 @@ class BasicUploaderController{
                         this.$log.info('Spectra successfully Upload!');
                         this.$log.info('Reference ID: ' + data.data.id);
                         this.$log.info(data);
-
-                        this.$rootScope.$broadcast('spectra:uploadsuccess', data);
+                        this.UploadLibraryService.uploadedSpectra.push(data.data);
                     },
-                     (error) => {
-                        this.$log.info(error);
-                        this.$rootScope.$broadcast('spectra:uploaderror', error);
+                     (err) => {
+                         this.$log.info('ERROR');
+                         this.$log.info(err);
                     });
 
                 //spectrum.$batchSave(spectrum.submitter.access_token);

@@ -4,13 +4,15 @@
 
 import * as angular from 'angular';
 
-    angular.module('moaClientApp')
-        .directive('titleHeader', titleHeader);
-
-    function titleHeader() {
+class TitleHeaderDirective {
+    constructor() {
         return {
             restrict: 'E',
             replace: true,
             templateUrl: '../../views/navbar/titleHeader.html'
         };
     }
+}
+
+angular.module('moaClientApp')
+    .directive('titleHeader', TitleHeaderDirective);

@@ -488,7 +488,6 @@ class AdvancedUploaderController{
 			}
 
 			this.UploadLibraryService.uploadSpectra(this.spectra,  (spectrum) => {
-				this.$log.info(spectrum);
 				let req = {
 					method: 'POST',
 					url: this.REST_BACKEND_SERVER + '/rest/spectra',
@@ -503,8 +502,10 @@ class AdvancedUploaderController{
 						this.$log.info('Spectra successfully Upload!');
 						this.$log.info('Reference ID: ' + data.data.id);
 						this.$log.info(data);
+						this.UploadLibraryService.uploadedSpectra.push(data.data);
 					},
 					 (err) => {
+						this.$log.info('ERROR');
 						this.$log.info(err);
 					});
 

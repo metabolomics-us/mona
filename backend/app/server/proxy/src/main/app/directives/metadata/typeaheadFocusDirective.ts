@@ -3,41 +3,43 @@
  */
 import * as angular from 'angular';
 
-    angular.module('moaClientApp')
-        .directive('typeaheadFocus', typeaheadFocus);
-
-    function typeaheadFocus() {
+class TypeaheadFocusDirective {
+    constructor() {
         return {
             require: 'ngModel',
-            link: linkFunc
-        };
-    }
+            link: (scope, element, attr, ngModel) => {
+                //trigger the popup on 'click' because 'focus'
+                //is also triggered after the item selection
+                element.bind('click', () => {
 
-    function linkFunc(scope, element, attr, ngModel) {
+                    let viewValue = ngModel.$viewValue;
 
-        //trigger the popup on 'click' because 'focus'
-        //is also triggered after the item selection
-        element.bind('click', function() {
+                    //restore to null value so that the typeahead can detect a change
+                    if (ngModel.$viewValue === ' ') {
+                        ngModel.$setViewValue(null);
+                    }
 
-            var viewValue = ngModel.$viewValue;
+                    //force trigger the popup
+                    ngModel.$setViewValue(' ');
 
-            //restore to null value so that the typeahead can detect a change
-            if (ngModel.$viewValue === ' ') {
-                ngModel.$setViewValue(null);
+                    //set the actual value in case there was already a value in the input
+                    ngModel.$setViewValue(viewValue || ' ');
+                });
+
+                //compare function that treats the empty space as a match
+                scope.emptyOrMatch =  (actual, expected) => {
+                    if (expected === ' ') {
+                        return true;
+                    }
+                    return actual.indexOf(expected) > -1;
+                };
             }
-
-            //force trigger the popup
-            ngModel.$setViewValue(' ');
-
-            //set the actual value in case there was already a value in the input
-            ngModel.$setViewValue(viewValue || ' ');
-        });
-
-        //compare function that treats the empty space as a match
-        scope.emptyOrMatch = function(actual, expected) {
-            if (expected === ' ') {
-                return true;
-            }
-            return actual.indexOf(expected) > -1;
-        };
+        }
     }
+}
+
+angular.module('moaClientApp')
+    .directive('typeaheadFocus', TypeaheadFocusDirective);
+
+
+
