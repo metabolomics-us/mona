@@ -29,16 +29,10 @@ class SplashQueryController {
         this.SpectraQueryBuilderService = SpectraQueryBuilderService;
     }
 
-    $onInit = () => {
-        console.log(this.$scope.value.splash);
-        console.log(this.$scope.value);
-    }
-
     /**
      * Create a new query based on the selected SPLASH
      */
     newQuery = () => {
-        console.log("WHAT THE FUCK IS GOIGN ON");
         this.SpectraQueryBuilderService.prepareQuery();
         this.addToQuery();
     };
@@ -47,7 +41,6 @@ class SplashQueryController {
      * Add selected SPLASH to the current query
      */
     addToQuery = () => {
-        console.log("WHAT THE FUCK IS GOIGN ON");
         this.SpectraQueryBuilderService.addSplashToQuery(this.$scope.value.splash);
         this.SpectraQueryBuilderService.executeQuery();
     };

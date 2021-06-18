@@ -56,7 +56,7 @@ class SearchBoxController {
 
 
 let SearchBoxComponent = {
-    selector: "searchBoxCom",
+    selector: "searchBox",
     templateUrl: "../views/navbar/searchBox.html",
     bindings: {},
     controller: SearchBoxController

@@ -65,8 +65,6 @@ class QueryStringBuilder{
 
         this.validateOperands(query);
 
-        console.log(query)
-
         // build compound string
         if (angular.isDefined(query.compound) && query.compound.length > 0) {
             compiled.push(this.qStrHelper.buildCompoundString(query.compound));

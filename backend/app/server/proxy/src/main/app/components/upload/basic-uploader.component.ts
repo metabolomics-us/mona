@@ -396,8 +396,6 @@ class BasicUploaderController{
     parseFiles = (files) => {
         this.page = 1;
         this.uploadError = null;
-        console.log('check current spectrum');
-        console.log(this.currentSpectrum);
         this.UploadLibraryService.loadSpectraFile(files[0],
              (data, origin) => {
                 this.$log.info("Loading file "+ files[0].name +"...");
@@ -594,8 +592,6 @@ class BasicUploaderController{
                     },
                     data: JSON.stringify(spectrum)
                 };
-
-                console.log(req);
 
                 this.$http(req).then((data) => {
                         this.$log.info('Spectra successfully Upload!');

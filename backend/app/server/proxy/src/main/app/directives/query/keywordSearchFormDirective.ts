@@ -6,7 +6,7 @@ class KeywordSearchFormDirective {
             restrict: 'E',
             templateUrl: '../../views/spectra/query/keywordSearchForm.html',
             controller: KeywordSearchFormController,
-            controllerAs: '$ctrl'
+            controllerAs: 'keywordSearch'
         };
     }
 }
@@ -23,9 +23,12 @@ class KeywordSearchFormController {
     private ionMode;
     private libraryTags;
     private queryTags;
+    private test;
 
     constructor(SpectraQueryBuilderService, TagService, $log) {
         this.SpectraQueryBuilderService = SpectraQueryBuilderService;
+        this.TagService = TagService;
+        this.$log = $log;
     }
 
     $onInit = () => {
@@ -54,13 +57,13 @@ class KeywordSearchFormController {
         this.msType = [{name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
         this.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
 
-        this.TagService.query(
+        this.TagService.query().then(
              (tags) => {
-                this.queryTags = tags.filter((x) => {
+                this.queryTags = tags.data.filter((x) => {
                     return x.category != 'library' && !x.ruleBased;
                 });
 
-                this.libraryTags = tags.filter((x) => {
+                this.libraryTags = tags.data.filter((x) => {
                     return x.category == 'library';
                 });
             },

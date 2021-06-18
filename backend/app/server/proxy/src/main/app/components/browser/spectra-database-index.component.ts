@@ -150,10 +150,8 @@ class SpectraDatabaseIndexController{
                 .then(
                     (response) => {
                         this.globalData = response.data;
-                        console.log(response.data);
                     },
                     (response) => {
-                        console.log('something fucky');
                     }
                 );
         };

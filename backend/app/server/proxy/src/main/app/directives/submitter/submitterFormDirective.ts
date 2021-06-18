@@ -16,10 +16,6 @@ let submitterFormComponent = {
             this.$scope = $scope;
             this.RegistrationService = RegistrationService;
         }
-
-        $onInit(){
-            console.log(this.$scope);
-        }
     }
 }
 

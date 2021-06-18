@@ -340,7 +340,6 @@ class AdvancedUploaderController{
 	convertMolToInChI = () => {
 		if (angular.isDefined(this.currentSpectrum.molFile) && this.currentSpectrum.molFile !== '') {
 			this.gwCtsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
-				console.log(result);
 				this.currentSpectrum.inchiKey = result.inchikey;
 			});
 		}

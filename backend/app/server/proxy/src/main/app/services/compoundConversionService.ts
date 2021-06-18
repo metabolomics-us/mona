@@ -34,8 +34,8 @@ class CompoundConversionService{
     InChIKeyToName = (inchiKey, callback, errorCallback) => {
         this.$http.get(this.CTSURL +'/rest/convert/InChIKey/Chemical%20Name/'+ inchiKey).then(
             (response) => {
-                if (response.data.length > 0 && response.data[0].result.length > 0) {
-                    callback(response.data[0].result)
+                if (response.data.length > 0 && response.data[0].results.length > 0) {
+                    callback(response.data[0].results)
                 } else {
                     errorCallback({status: 200})
                 }
@@ -50,8 +50,8 @@ class CompoundConversionService{
     getInChIByInChIKey = (inchiKey, callback, errorCallback) => {
         this.$http.get(this.CTSURL +'/rest/convert/InChIKey/InChI%20Code/'+ inchiKey).then(
             (response) => {
-                if (response.data.length > 0 && response.data[0].result.length > 0) {
-                    callback(response.data[0].result)
+                if (response.data.length > 0 && response.data[0].results.length > 0) {
+                    callback(response.data[0].results)
                 } else {
                     errorCallback({status: 200})
                 }

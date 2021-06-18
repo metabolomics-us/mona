@@ -47,7 +47,6 @@ class SpectraUploadProgressController {
         this.etaString = '';
 
         this.$scope.$on('spectra:uploadprogress', (event, completedSpectraCount, failedSpectraCount, uploadedSpectraCount) => {
-            console.log('Should be uploading at this point in time');
             this.completedSpectraCount = completedSpectraCount + failedSpectraCount;
             this.failedSpectraCount = failedSpectraCount;
             this.uploadedSpectraCount = uploadedSpectraCount;
@@ -58,7 +57,6 @@ class SpectraUploadProgressController {
         });
 
         if (this.UploadLibraryService.isUploading()) {
-            console.log('Currently getting shit in there');
             // Temporarily counting completed and failed uploads together
             this.completedSpectraCount = this.UploadLibraryService.completedSpectraCount + this.UploadLibraryService.failedSpectraCount;
             this.uploadedSpectraCount = this.UploadLibraryService.uploadedSpectraCount;

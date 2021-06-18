@@ -7,7 +7,7 @@ spring:
         prefix: /config
         bootstrap: true
         git:
-          uri: https://bitbucket.org/fiehnlab/mona-config.git
+          uri: https://github.com/metabolomics-us/mona-config.git
 
 server:
   port: 8761

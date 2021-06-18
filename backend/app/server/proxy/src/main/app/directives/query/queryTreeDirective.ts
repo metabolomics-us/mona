@@ -9,7 +9,6 @@ class QueryTreeDirective {
         return {
             restrict: 'A',
             controller: QueryTreeController,
-            controllerAs: '$ctrl',
             /**
              * Recursive tree-building function
              * @param scope

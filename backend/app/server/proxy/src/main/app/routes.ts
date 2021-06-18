@@ -67,7 +67,6 @@ import * as angular from 'angular';
                         else {
                             let spectrum = SpectrumCache.getSpectrum();
                             SpectrumCache.removeSpectrum();
-                            console.log(spectrum);
                             return spectrum;
                         }
 

@@ -39,13 +39,9 @@ class SpectrumReviewController{
     $onInit = () => {
         this.submitting = false;
         this.submitted = false;
-        console.log('Starting Up Boys');
-        console.log(this.$scope.spectrum.id);
     }
 
     rate = (value) => {
-        console.log('We in Here');
-        console.log(this.$scope.spectrum.id);
         this.AuthenticationService.getCurrentUser().then((data) => {
             let payload = {
                 monaID: this.$scope.spectrum.id,

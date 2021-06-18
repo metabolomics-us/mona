@@ -125,7 +125,6 @@ class QueryTreeController{
 
         this.DownloadService.getStaticDownloads().then(
             (res) => {
-                console.log(res);
                 let data = res.data;
                 data.forEach((x) => {
                     if (angular.isDefined(x.category)) {

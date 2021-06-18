@@ -59,9 +59,6 @@ export class AuthenticationService{
         }).then(
             (response) => {
                 let token = response.data.token;
-                console.log(response);
-                console.log(token);
-                console.log(response.config.data.username);
 
                 this.currentUser = {username: response.config.data.username, access_token: token};
                 this.$log.info("Login success.  Current token: "+ this.currentUser.access_token);

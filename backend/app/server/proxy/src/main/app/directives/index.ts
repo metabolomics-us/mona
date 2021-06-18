@@ -17,7 +17,7 @@ import "./navbar/browseDropDownDirective";
 import "./navbar/downloadDirective";
 //import "./navbar/loginDropDownDirective";
 import "./navbar/resourceDropDownDirective";
-import "./navbar/searchBoxDirective";
+//import "./navbar/searchBoxDirective";
 import "./navbar/titleHeaderDirective";
 import "./navbar/uploadDirective";
 import "./query/queryTreeDirective";
