@@ -52,47 +52,47 @@ class QueryTreeController{
     getPredefinedQueries = () => {
         this.DownloadService.getPredefinedQueries().then(
             (res) => {
-                let data = res.data;
+                console.log(res);
                 // Header entry for libraries, which is displayed by default if any libraries are being displayed
-                data.unshift({
+                res.unshift({
                     label: "Libraries",
                     query: null,
                     jsonExport: null,
                     mspExport: null,
                     sdfExport: null,
-                    display: data.some((x) => { return x.label.indexOf('Libraries') > -1 && x.queryCount > 0; })
+                    display: res.some((x) => { return x.label.indexOf('Libraries') > -1 && x.queryCount > 0; })
                 });
 
                 // Set up all nodes
-                for (let i = 0; i < data.length; i++) {
-                    this.queries[data[i].label] = data[i];
+                for (let i = 0; i < res.length; i++) {
+                    this.queries[res[i].label] = res[i];
 
-                    let label = data[i].label.split(' - ');
-                    data[i].downloadLabel = data[i].label.replace(/ /g, '_').replace(/\//g, '-');
-                    data[i].depth = label.length;
-                    data[i].id = i;
-                    data[i].children = [];
+                    let label = res[i].label.split(' - ');
+                    res[i].downloadLabel = res[i].label.replace(/ /g, '_').replace(/\//g, '-');
+                    res[i].depth = label.length;
+                    res[i].id = i;
+                    res[i].children = [];
 
                     // Hide downloads with 0 records
                     if (i > 0) {
-                        data[i].display = (data[i].queryCount > 0);
+                        res[i].display = (res[i].queryCount > 0);
                     }
                 }
 
                 // Identify node parents
-                for (let i = 0; i < data.length; i++) {
-                    let label = data[i].label.split(' - ');
-                    data[i].singleLabel = label.pop();
+                for (let i = 0; i < res.length; i++) {
+                    let label = res[i].label.split(' - ');
+                    res[i].singleLabel = label.pop();
                     let parentLabel = label.join(" - ");
 
-                    if (data[i].depth === 1) {
-                        data[i].parent = -1;
-                        this.queryTree.push(data[i]);
+                    if (res[i].depth === 1) {
+                        res[i].parent = -1;
+                        this.queryTree.push(res[i]);
                     } else {
-                        for (let j = 0; j < data.length; j++) {
-                            if (data[j].label === parentLabel) {
-                                data[i].parent = j;
-                                data[j].children.push(data[i]);
+                        for (let j = 0; j < res.length; j++) {
+                            if (res[j].label === parentLabel) {
+                                res[i].parent = j;
+                                res[j].children.push(res[i]);
                                 break;
                             }
                         }
@@ -125,8 +125,8 @@ class QueryTreeController{
 
         this.DownloadService.getStaticDownloads().then(
             (res) => {
-                let data = res.data;
-                data.forEach((x) => {
+                console.log(res);
+                res.forEach((x) => {
                     if (angular.isDefined(x.category)) {
                         let categoryName = x.category[0].toUpperCase() + x.category.substr(1);
 

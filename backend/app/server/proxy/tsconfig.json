@@ -1,22 +1,19 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "",
-    "declaration": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "lib": ["es2015", "dom"],
-    "mapRoot": "./",
-    "module": "commonjs",
-    "moduleResolution": "Node",
-    "outDir": "../dist/out-tsc",
-    "skipLibCheck": true,
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
     "sourceMap": true,
-    "target": "es5",
-    "types": ["node"],
-    "typeRoots": [
-      "../node_modules/@types"
-    ]
-  },
-  "exclude": ["./src/main/app/lib/chemdoodle/ChemDoodleWeb.css", "./node_modules/**",
-              "./node_modules/angular-dialog-service/dist/dialogs.css"]
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "es2020",
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+  }
 }

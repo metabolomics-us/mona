@@ -4,20 +4,17 @@
  * Stores the current query for persistence and updating between views
  */
 
+import {NGXLogger} from "ngx-logger";
+import {SpectraQueryBuilderService} from "../query/spectra-query-builder.service";
+import {downgradeInjectable} from "@angular/upgrade/static";
+import {Inject} from "@angular/core";
 import * as angular from 'angular';
 
-class QueryCacheService{
-    private static $inject = ['$injector', '$log', '$rootScope'];
-    private $injector;
-    private $log;
-    private $rootScope;
+export class QueryCacheService{
     private query;
     private queryString;
 
-    constructor($injector, $log, $rootScope) {
-        this.$injector = $injector;
-        this.$log = $log;
-        this.$rootScope = $rootScope;
+    constructor(@Inject(NGXLogger) private logger: NGXLogger, @Inject(SpectraQueryBuilderService) private spectraQueryBuilderService: SpectraQueryBuilderService) {
     }
 
     $onInit = () => {
@@ -58,7 +55,8 @@ class QueryCacheService{
         queryType = queryType || undefined;
 
         if (this.query === null && this.queryString === null) {
-            this.$injector.get('SpectraQueryBuilderService').prepareQuery();
+            //this.$injector.get('SpectraQueryBuilderService').prepareQuery();
+            this.spectraQueryBuilderService.prepareQuery();
         }
 
         return typeof(queryType) !== 'undefined' && queryType === 'string' ? this.queryString : this.query;
@@ -69,7 +67,8 @@ class QueryCacheService{
      * @param query
      */
     setSpectraQuery = (query) => {
-        this.$rootScope.$broadcast('spectra:query', query);
+        //Only used for testing
+        //this.$rootScope.$broadcast('spectra:query', query);
 
         this.query = query;
     };
@@ -87,4 +86,4 @@ class QueryCacheService{
 }
 
 angular.module('moaClientApp')
-    .service('QueryCache', QueryCacheService);
+    .factory('QueryCache', downgradeInjectable(QueryCacheService));

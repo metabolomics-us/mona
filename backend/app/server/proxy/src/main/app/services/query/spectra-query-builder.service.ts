@@ -3,23 +3,19 @@
  *
  * a service to build our specific query object to be executed against the Spectrum service, mostly required for the modal query dialog and so kinda special
  */
-
 import * as angular from 'angular';
+import { Router } from "@angular/router";
+import { NGXLogger } from "ngx-logger";
+import { downgradeInjectable } from "@angular/upgrade/static";
+import {Inject} from "@angular/core";
 
-class SpectraQueryBuilderService {
-    private static $inject = ['$log', '$location', '$route'];
-    private $log;
-    private $location;
-    private $route;
+export class SpectraQueryBuilderService {
     private query;
     private queryString;
     private textSearch;
     private similarityQuery;
 
-    constructor($log, $location, $route) {
-        this.$log = $log;
-        this.$location = $location;
-        this.$route = $route;
+    constructor(@Inject(Router) private router: Router, @Inject(NGXLogger) private logger: NGXLogger) {
         /**
          * Stored query
          */
@@ -68,7 +64,7 @@ class SpectraQueryBuilderService {
     };
 
     prepareQuery = () => {
-        this.$log.debug('Resetting query');
+        this.logger.debug('Resetting query');
 
         this.query = [];
         this.queryString = '';
@@ -88,26 +84,57 @@ class SpectraQueryBuilderService {
         }
     };
 
+    reload = () => {
+        let currentUrl = this.router.url;
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.router.onSameUrlNavigation = 'reload';
+        this.router.navigate([currentUrl]).then((res) => {
+            this.logger.info('Page reloaded');
+        });
+    }
+
     executeQuery = (replace) => {
         let query = this.getRSQLQuery();
 
         if (query !== '' || this.textSearch !== '') {
-            this.$log.info('Executing RSQL query: "'+ query + '", and text search: "'+ this.textSearch +'"');
-            this.$location.path('/spectra/browse').search({query: query, text: this.textSearch});
+            this.logger.info('Executing RSQL query: "'+ query + '", and text search: "'+ this.textSearch +'"');
+            this.router.navigate(['/spectra/browse'],
+                {queryParams:
+                        {
+                            query: query,
+                            text: this.textSearch
+                        }
+                }).then((res) => {
+                    this.logger.info('Navigated to /spectra/browse');
+            });
+            //this.$location.path('/spectra/browse').search({query: query, text: this.textSearch});
         } else {
-            if (this.$location.path() === '/spectra/browse' && angular.equals(this.$location.search(), {})) {
-                this.$log.debug('Reloading route');
-                this.$route.reload();
+            this.logger.info(`The current route is: ${this.router.url}`);
+            if (this.router.url === '/spectra/browse') {
+                this.logger.debug('Reloading route');
+                this.reload();
             } else {
-                this.$log.debug('Executing empty query');
-                this.$location.path('/spectra/browse').search({});
+                this.logger.debug('Executing empty query');
+                this.router.navigate(['/spectra/browse'],
+                    {queryParams:
+                            {}
+                    }).then((res) => {
+                    this.logger.info('Navigated to /spectra/browse with empty params');
+                });
             }
         }
 
         replace = typeof replace !== 'undefined' ? replace : false;
 
         if (replace) {
-            this.$location.replace();
+            this.router.navigate(['/spectra/browse'],
+                {
+                    queryParams: {},
+                    replaceUrl: true
+
+                }).then((res) => {
+                this.logger.info('Replaced /spectra/browse');
+            });
         }
     };
 
@@ -229,9 +256,7 @@ class SpectraQueryBuilderService {
     addUserToQuery = (username) => {
         this.query.push('submitter.id=="'+ username +'"');
     };
-
-
 }
 
 angular.module('moaClientApp')
-    .service('SpectraQueryBuilderService', SpectraQueryBuilderService);
+    .factory('SpectraQueryBuilderService', downgradeInjectable(SpectraQueryBuilderService));

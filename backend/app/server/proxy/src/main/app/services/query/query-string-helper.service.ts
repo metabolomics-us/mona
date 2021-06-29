@@ -4,14 +4,14 @@
  */
 
 import * as angular from 'angular';
+import { NGXLogger } from "ngx-logger";
+import {Inject} from "@angular/core";
+import {downgradeInjectable} from "@angular/upgrade/static";
 
-class QueryStringHelper{
-    private static $inject = ['$log'];
-    private $log;
+export class QueryStringHelper{
     private service;
 
-    constructor($log) {
-        this.$log = $log;
+    constructor(@Inject(NGXLogger) private logger: NGXLogger) {
         this.service = {
             buildCompoundString: this.buildCompoundString,
             buildMetaString: this.buildMetaString,
@@ -137,5 +137,5 @@ class QueryStringHelper{
 }
 
 angular.module('moaClientApp')
-    .service('qStrHelper', QueryStringHelper);
+    .factory('qStrHelper', downgradeInjectable(QueryStringHelper));
 

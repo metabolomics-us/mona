@@ -90,6 +90,13 @@ services:
       - curationScheduler
     entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
+  #similarity:
+  #  image: eros.fiehnlab.ucdavis.edu/mona-similarity
+  #  ports:
+  #    - 9999:9999
+  #  depends_on:
+  #    - curationScheduler
+  #  entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
   #
   # Proxy and additional standalone services
   #

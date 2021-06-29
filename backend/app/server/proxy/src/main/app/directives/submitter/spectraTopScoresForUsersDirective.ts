@@ -17,7 +17,7 @@ class SpectraTopScoresForUsersDirective {
             link: ($scope, element, attrs, $ctrl) => {
                 $ctrl.StatisticsService.spectraTopScores().then(
                     (data) => {
-                        $ctrl.scores = data.data;
+                        $ctrl.scores = data;
                         $ctrl.scores.forEach((x) => {
                             x.score -= 0.45;
                         });

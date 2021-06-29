@@ -1,7 +1,7 @@
 import * as angular from 'angular';
+import {downgradeInjectable} from "@angular/upgrade/static";
 
-
-class RegistrationService {
+export class RegistrationService {
     private newSubmitter;
 
     constructor() {
@@ -10,4 +10,4 @@ class RegistrationService {
 
 
 angular.module('moaClientApp')
-    .service('RegistrationService', RegistrationService);
+    .factory('RegistrationService', downgradeInjectable(RegistrationService));

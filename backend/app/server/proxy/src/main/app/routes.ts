@@ -57,7 +57,7 @@ import * as angular from 'angular';
                             return Spectrum.get(
                                 $route.current.params.id).then(
                                 (res) => {
-                                    return res.data;
+                                    return res;
                                 },
                                 (error) => {
                                     alert('failed to obtain spectrum: ' + error);

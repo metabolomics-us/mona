@@ -1,6 +1,6 @@
 import * as angular from 'angular';
 
-class AuthenticationModalController{
+export class AuthenticationModalController{
     private static $inject = ['$scope',  '$timeout', 'AuthenticationService'];
     private $scope;
     private $timeout;

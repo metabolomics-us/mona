@@ -2,16 +2,15 @@
  * Created by wohlgemuth on 10/31/14.
  */
 
+import {CookieService} from "ngx-cookie-service";
+import {Inject} from "@angular/core";
+import {NGXLogger} from "ngx-logger";
+import {downgradeInjectable} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
-class CookieService{
-    private static $inject = ['$cookies', '$log'];
-    private $cookies;
-    private $log;
-
-    constructor($cookies, $log) {
-        this.$cookies = $cookies;
-        this.$log = $log;
+export class CookieMain{
+    constructor(@Inject(CookieService) private cookie: CookieService,
+                @Inject(NGXLogger) private logger: NGXLogger) {
     }
 
      stringToBoolean = (string) => {
@@ -36,7 +35,7 @@ class CookieService{
      * @param value
      */
     update = (name, value) => {
-        this.$cookies.put(name, value);
+        this.cookie.set(name, value);
     }
 
     /**
@@ -44,7 +43,7 @@ class CookieService{
      * @param cookieName
      */
     get = (cookieName) => {
-        return this.$cookies.get(cookieName);
+        return this.cookie.get(cookieName);
     }
 
     /**
@@ -52,7 +51,7 @@ class CookieService{
      * @param cookieName
      */
     remove = (cookieName) => {
-        return this.$cookies.remove(cookieName);
+        return this.cookie.delete(cookieName);
     }
 
     /**
@@ -63,8 +62,8 @@ class CookieService{
     getBooleanValue = (cookieName, defaultValueIfNotFound) => {
         let result = (defaultValueIfNotFound === null) ? false : defaultValueIfNotFound;
 
-        if (this.$cookies.get(cookieName) !== null) {
-            result = this.stringToBoolean(this.$cookies.get(cookieName));
+        if (this.cookie.get(cookieName) !== null) {
+            result = this.stringToBoolean(this.cookie.get(cookieName));
         }
 
         return result;
@@ -72,5 +71,5 @@ class CookieService{
 }
 
 angular.module('moaClientApp')
-    .service('CookieService', CookieService);
+    .factory('CookieService', downgradeInjectable(CookieMain));
 

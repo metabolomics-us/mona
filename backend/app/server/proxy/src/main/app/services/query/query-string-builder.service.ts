@@ -4,22 +4,21 @@
  */
 
 import * as angular from 'angular';
+import {Inject} from "@angular/core";
+import {NGXLogger} from "ngx-logger";
+import {downgradeInjectable} from "@angular/upgrade/static";
+import {QueryStringHelper} from "./query-string-helper.service";
+import {QueryCacheService} from "../cache/query-cache.service";
 
-class QueryStringBuilder{
-    private static $inject = ['$log', 'QueryCache', 'qStrHelper'];
-    private $log;
-    private QueryCache;
-    private qStrHelper;
+export class QueryStringBuilder{
     private defaultQuery;
     private queryStr;
     private operand;
     private compiled;
     private service;
 
-    constructor($log, QueryCache, qStrHelper) {
-        this.$log = $log;
-        this.QueryCache = QueryCache;
-        this.qStrHelper = qStrHelper;
+    constructor(@Inject(QueryStringHelper) private qStrHelper: QueryStringHelper,
+                @Inject(QueryCacheService) private queryCache: QueryCacheService, @Inject(NGXLogger) private logger: NGXLogger) {
         this.defaultQuery = '/rest/spectra';
         this.service = {
             buildQuery: this.buildQuery(),
@@ -35,7 +34,7 @@ class QueryStringBuilder{
      */
      updateQuery = () => {
         // options: compound, metadata, tags
-        let query = this.QueryCache.getSpectraQuery(undefined);
+        let query = this.queryCache.getSpectraQuery(undefined);
         let compiled = [];
         let queryStr: any;
 
@@ -47,7 +46,7 @@ class QueryStringBuilder{
 
         // updates metadata
         if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
-            queryStr = this.qStrHelper.buildMetaString(query.metadata);
+            queryStr = this.qStrHelper.buildMetaString(query.metadata, false);
             compiled.push('and', queryStr);
         }
 
@@ -59,7 +58,7 @@ class QueryStringBuilder{
      * @return rsql query string
      */
      buildQuery = () => {
-        let query = this.QueryCache.getSpectraQuery(undefined);
+        let query = this.queryCache.getSpectraQuery(undefined);
         let compiled = [];
         let queryStr: any;
 
@@ -113,7 +112,7 @@ class QueryStringBuilder{
      * @return rsql query string
      */
     buildAdvanceQuery = () => {
-        let query = this.QueryCache.getSpectraQuery();
+        let query = this.queryCache.getSpectraQuery(undefined);
         let compiled = [];
         let operand: any;
         let queryStr: any;
@@ -146,7 +145,7 @@ class QueryStringBuilder{
 
         // add metadata query
         if (angular.isDefined(query.metadata) && query.metadata.length > 0) {
-            queryStr = this.qStrHelper.buildMetaString(query.metadata);
+            queryStr = this.qStrHelper.buildMetaString(query.metadata, false);
             compiled.push('and', queryStr);
         }
 
@@ -168,7 +167,7 @@ class QueryStringBuilder{
         }
 
         compiled = compiled.length > 0 ? compiled.join(' ') : this.defaultQuery;
-        this.QueryCache.setSpectraQueryString(compiled);
+        this.queryCache.setSpectraQueryString(compiled);
     }
 
     validateOperands(query) {
@@ -191,5 +190,6 @@ class QueryStringBuilder{
 
 
 }
+
 angular.module('moaClientApp')
-    .service("queryStringBuilder", QueryStringBuilder);
+    .factory("queryStringBuilder", downgradeInjectable(QueryStringBuilder));

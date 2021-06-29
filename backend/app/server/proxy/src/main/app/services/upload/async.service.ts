@@ -4,25 +4,19 @@
  * Created by wohlgemuth on 7/17/14.
  */
 
+import {NGXLogger} from "ngx-logger";
+import {Inject} from "@angular/core";
+import {downgradeInjectable} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
-class AsyncService{
-    private static $inject = ['ApplicationError', '$log', '$http', '$interval'];
-    private ApplicationError;
-    private $log;
-    private $http;
-    private $interval;
+export class AsyncService{
     private runningTasks;
     private maxRunningTasks;
     private pool;
     private poolRate;
     private timeout;
 
-    constructor(ApplicationError, $log, $http, $interval) {
-        this.ApplicationError = ApplicationError;
-        this.$log = $log;
-        this.$http = $http;
-        this.$interval = $interval;
+    constructor(@Inject(NGXLogger) private logger: NGXLogger) {
         this.runningTasks = 0;
 
         //firefox allows max 6,
@@ -50,7 +44,7 @@ class AsyncService{
 
     startPool = () => {
 
-        this.$log.info("starting pool and waiting for jobs");
+        this.logger.info("starting pool and waiting for jobs");
 
         //works over the pool
         let handlePool = () => {
@@ -74,17 +68,18 @@ class AsyncService{
             }
             else if (this.pool.length === 0) {
                 //stop the interval to save resources
-                this.$interval.cancel(this.timeout);
+                clearInterval(this.timeout);
+                //this.$interval.cancel(this.timeout);
                 this.timeout = null;
             }
             else {
-                this.$log.debug("waiting for running tasks to finish (" + this.runningTasks + ")");
+                this.logger.debug("waiting for running tasks to finish (" + this.runningTasks + ")");
             }
         };
 
         //start the pull as interval
-
-        this.timeout = this.$interval(handlePool, this.poolRate);
+        this.timeout = setInterval(handlePool, this.poolRate);
+        //this.timeout = this.$interval(handlePool, this.poolRate);
     };
 
     hasPooledTasks = () => {
@@ -98,4 +93,4 @@ class AsyncService{
 
 }
 angular.module('moaClientApp')
-    .service('AsyncService', AsyncService);
+    .factory('AsyncService', downgradeInjectable(AsyncService));

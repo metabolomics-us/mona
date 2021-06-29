@@ -9,24 +9,15 @@
  *
  * general service to optimize metadata and take care of some formating issues
  */
-
+import {NGXLogger} from "ngx-logger";
+import {Inject} from "@angular/core";
+import {downgradeInjectable} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
-class MetaDataOptimizationService{
-    private static $inject = ['ApplicationError', '$log', '$q', '$timeout', '$filter'];
-    private ApplicationError;
-    private $log;
-    private $q;
-    private $timeout;
-    private $filter;
+export class MetadataOptimization {
     private regexNumeric;
 
-    constructor(ApplicationError, $log, $q, $timeout, $filter) {
-        this.ApplicationError = ApplicationError;
-        this.$log = $log;
-        this.$q = $q;
-        this.$timeout = $timeout;
-        this.$filter = $filter;
+    constructor(@Inject(NGXLogger) private logger: NGXLogger) {
         /**
          * numeric value
          * @type {RegExp}
@@ -195,5 +186,5 @@ class MetaDataOptimizationService{
 }
 
 angular.module('moaClientApp')
-    .service('MetaDataOptimizationService', MetaDataOptimizationService);
+    .factory('MetaDataOptimizationService', downgradeInjectable(MetadataOptimization));
 

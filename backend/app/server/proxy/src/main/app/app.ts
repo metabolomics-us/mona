@@ -27,7 +27,7 @@ import 'ng-tags-input';
 import 'angular-msp-parser';
 import 'angular-mgf-parser';
 import 'angular-massbank-parser';
-import 'angular-cts-service';
+//import 'angular-cts-service';
 import 'ng-file-upload';
 import 'angular-masspec-plotter';
 import 'angularjs-toaster';
@@ -47,7 +47,7 @@ angular
         'wohlgemuth.msp.parser',
         'wohlgemuth.mgf.parser',
         'wohlgemuth.massbank.parser',
-        'wohlgemuth.cts',
+        //'wohlgemuth.cts',
         'ngFileUpload',
         'angularMasspecPlotter',
         'toaster',

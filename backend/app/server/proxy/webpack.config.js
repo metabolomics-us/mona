@@ -1,22 +1,25 @@
 let webpack = require('webpack');
-
+let path = require('path');
 module.exports = {
     mode: 'development',
-    entry: "./src/main/app/main.ts",
+    entry: './src/main/app/main.ts',
     output: {
-        filename: "bundle.js",
-        path: __dirname + "/src/main/app/dist"
+        filename: 'bundle.js',
+        path: __dirname + '/src/main/app/dist'
     },
     resolve: {
-        extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"],
+        extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
+        modules: [
+            path.join(__dirname, './node_modules')
+        ]
     },
 
     module: {
         rules: [
-            { test : /\.tsx?$/, loader: "ts-loader" , },
+            { test : /\.tsx?$/, loader: 'ts-loader' , },
             {
                 test: /\.css$/i,
-                use: ["style-loader", "css-loader",],
+                use: ['style-loader', 'css-loader',],
             },
             { test: /\.(scss)$/,
                 use: [{
@@ -26,7 +29,7 @@ module.exports = {
                 }, {
                     loader: 'postcss-loader', // Run post css actions
                     options: {
-                        plugins: function () { // post css plugins, can be exported to postcss.config.js
+                        plugins:  () => { // post css plugins, can be exported to postcss.config.js
                             return [
                                 require('precss'),
                                 require('autoprefixer')
@@ -38,25 +41,26 @@ module.exports = {
                 }]},
             {
                 test: /\.(woff|woff2|eot|ttf|otf|svg)$/,
-                loader: "file-loader",
+                loader: 'file-loader',
                 options: {
-                    outputPath: "../fonts",
+                    outputPath: '../fonts',
                 }
             }
         ]
     },
-    devtool: "source-map",
+    devtool: 'source-map',
     devServer: {
         contentBase: './src/main/app',
     },
     plugins: [
         new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            jquery: "jquery",
-            "window.jquery": "jquery",
-            "window.jQuery": "jquery"
-        })
+            $: 'jquery',
+            jQuery: 'jquery',
+            jquery: 'jquery',
+            'window.jquery': 'jquery',
+            'window.jQuery': 'jquery'
+        }),
+        new webpack.ContextReplacementPlugin(/\@angular(\\|\/)core(\\|\/)fesm5/, path.join(__dirname, './src'))
     ],
 
 };

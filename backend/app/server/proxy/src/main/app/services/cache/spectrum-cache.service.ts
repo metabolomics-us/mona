@@ -5,20 +5,18 @@
  * persistence between controllers and views
  */
 
+import {NGXLogger} from "ngx-logger";
+import {Inject} from "@angular/core";
+import {downgradeInjectable} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
-class SpectrumCacheService{
-    private static $inject = ['$log', '$window'];
-    private $log;
-    private $window;
+export class SpectrumCacheService{
     private browserSpectra;
     private browserSpectraScroll;
     private browserLocation;
     private spectrum;
 
-    constructor($log, $window) {
-        this.$log = $log;
-        this.$window = $window;
+    constructor(@Inject(NGXLogger) private logger: NGXLogger) {
         /**
          * Stored browser spectra
          */
@@ -99,5 +97,5 @@ class SpectrumCacheService{
 }
 
 angular.module('moaClientApp')
-    .service('SpectrumCache', SpectrumCacheService);
+    .factory('SpectrumCache', downgradeInjectable(SpectrumCacheService));
 

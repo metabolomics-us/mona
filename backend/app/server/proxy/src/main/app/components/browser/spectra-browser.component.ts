@@ -81,8 +81,7 @@ class SpectraBrowserController {
         // Get unique metadata values for dropdown
         this.MetadataService.metaDataNames().then(
             (res) => {
-                let data = res.data;
-                data.sort((a, b) => {
+                res.sort((a, b) => {
                     return parseInt(b.count) - parseInt(a.count);
                 }).filter((x) => {
                     return x.name !== 'Last Auto-Curation';
@@ -132,7 +131,6 @@ class SpectraBrowserController {
             // Handle general queries
             if (this.$location.search().hasOwnProperty('query') || this.$location.search().hasOwnProperty('text')) {
                 this.$log.info('Accepting RSQL query from URL: "' + this.$location.search().query + '", and text search: "'+ this.$location.search().text + '"');
-
                 this.query = this.$location.search().query;
                 this.textQuery = this.$location.search().text;
             }
@@ -310,10 +308,10 @@ class SpectraBrowserController {
         this.Spectrum.searchSimilarSpectra(
             this.SpectraQueryBuilderService.getSimilarityQuery()).then(
              (res) => {
-                 let data = res.data;
-                 this.searchSuccess(data);
-                 this.pagination.itemsPerPage = data.length;
-                 this.pagination.totalSize = data.length;
+                 //let data = res.data;
+                 this.searchSuccess(res);
+                 this.pagination.itemsPerPage = res.length;
+                 this.pagination.totalSize = res.length;
             },
             this.searchError
         );
@@ -328,8 +326,8 @@ class SpectraBrowserController {
             query: this.query,
             text: this.textQuery
         }).then((res) => {
-            let data = res.data;
-            this.pagination.totalSize = data.count;
+            //let data = res.data;
+            this.pagination.totalSize = res.count;
         });
     };
 
@@ -351,7 +349,7 @@ class SpectraBrowserController {
      */
     loadPage = () => {
         this.$location.search('page', this.pagination.currentPage);
-        console.log(this.pagination.currentPage);
+        this.$log.debug(this.pagination.currentPage);
     };
 
     loadSpectra = () => {
@@ -389,12 +387,12 @@ class SpectraBrowserController {
     };
 
     searchSuccess = (res) => {
-        let data = res.data;
+        //let data = res.data;
         this.duration = (Date.now() - this.startTime) / 1000;
 
-        if (data.length > 0) {
+        if (res.length > 0) {
             // Add data to spectra object
-            this.spectra = this.addMetadataMap(data);
+            this.spectra = this.addMetadataMap(res);
         }
 
         this.hideSplash();

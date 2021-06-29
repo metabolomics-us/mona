@@ -3,7 +3,7 @@
  */
 
 import * as angular from 'angular';
-import {AuthenticationService} from "../../services/authenticationService";
+import {AuthenticationService} from "../../services/authentication.service";
 
 class AdvancedUploaderController{
 	private static $inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'gwCtsService', 'TagService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http', 'AuthenticationService'];
