@@ -10,7 +10,7 @@ import {downgradeInjectable} from "@angular/upgrade/static";
 import { environment } from "../../environments/environment";
 import * as  angular from 'angular';
 
-export class Tag {
+export class TagService {
     constructor(@Inject(HttpClient) private http: HttpClient) {
     }
 
@@ -20,4 +20,4 @@ export class Tag {
 }
 
 angular.module('moaClientApp')
-    .factory('TagService', downgradeInjectable(Tag));
+    .factory('TagService', downgradeInjectable(TagService));

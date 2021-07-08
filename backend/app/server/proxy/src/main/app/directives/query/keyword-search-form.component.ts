@@ -1,21 +1,15 @@
 import * as angular from 'angular';
+import {Component, Inject, OnInit} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
+import {SpectraQueryBuilderService} from "../../services/query/spectra-query-builder.service";
+import {TagService} from "../../services/persistence/tag.resource";
+import {NGXLogger} from "ngx-logger";
 
-class KeywordSearchFormDirective {
-    constructor() {
-        return {
-            restrict: 'E',
-            templateUrl: '../../views/spectra/query/keywordSearchForm.html',
-            controller: KeywordSearchFormController,
-            controllerAs: 'keywordSearch'
-        };
-    }
-}
-
-class KeywordSearchFormController {
-    private static $inject = ['SpectraQueryBuilderService', 'TagService', '$log'];
-    private SpectraQueryBuilderService;
-    private TagService;
-    private $log;
+@Component({
+    selector: 'keywordSearchForm',
+    templateUrl: '../../views/spectra/query/keywordSearchForm.html'
+})
+export class KeywordSearchFormComponent implements OnInit{
     private query;
     private sourceIntroduction;
     private ionizationMethod;
@@ -25,13 +19,10 @@ class KeywordSearchFormController {
     private queryTags;
     private test;
 
-    constructor(SpectraQueryBuilderService, TagService, $log) {
-        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
-        this.TagService = TagService;
-        this.$log = $log;
-    }
+    constructor(@Inject([SpectraQueryBuilderService, TagService, NGXLogger]) private spectraQueryBuilderService: SpectraQueryBuilderService,
+                private tagService: TagService, private logger: NGXLogger) {}
 
-    $onInit = () => {
+    ngOnInit(): void {
         this.query = {
             exactMassTolerance: 0.5
         };
@@ -57,8 +48,8 @@ class KeywordSearchFormController {
         this.msType = [{name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
         this.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
 
-        this.TagService.query().then(
-             (tags) => {
+        this.tagService.query().then(
+             (tags: any) => {
                 this.queryTags = tags.data.filter((x) => {
                     return x.category != 'library' && !x.ruleBased;
                 });
@@ -68,36 +59,36 @@ class KeywordSearchFormController {
                 });
             },
             (error) => {
-                this.$log.error('Tag pull failed: '+ error);
+                this.logger.error('Tag pull failed: '+ error);
             }
         );
     }
 
     submitQuery =  () => {
-        this.SpectraQueryBuilderService.prepareQuery();
+        this.spectraQueryBuilderService.prepareQuery();
 
         // Query Name/InChIKey search
         if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test(this.query.name)) {
-            this.SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', this.query.name);
+            this.spectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', this.query.name, undefined);
         } else if (/^[A-Z]{14}$/.test(this.query.name)) {
-            this.SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', this.query.name, true);
-        } else if (angular.isDefined(this.query.name)) {
-            this.SpectraQueryBuilderService.addNameToQuery(this.query.name);
+            this.spectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', this.query.name, true);
+        } else if (typeof this.query.name !== 'undefined') {
+            this.spectraQueryBuilderService.addNameToQuery(this.query.name);
         }
 
         // Query compound classification
-        if (angular.isDefined(this.query.classification)) {
-            this.SpectraQueryBuilderService.addGeneralClassificationToQuery(this.query.classification);
+        if (typeof this.query.classification !== 'undefined') {
+            this.spectraQueryBuilderService.addGeneralClassificationToQuery(this.query.classification);
         }
 
         // Query molecular formula
-        if (angular.isDefined(this.query.formula)) {
-            this.SpectraQueryBuilderService.addCompoundMetaDataToQuery('molecular formula', this.query.formula, true);
+        if (typeof this.query.formula !== 'undefined') {
+            this.spectraQueryBuilderService.addCompoundMetaDataToQuery('molecular formula', this.query.formula, true);
         }
 
         // Query exact mass
-        if (angular.isDefined(this.query.exactMass)) {
-            this.SpectraQueryBuilderService.addNumericalCompoundMetaDataToQuery('total exact mass', this.query.exactMass, this.query.exactMassTolerance);
+        if (typeof this.query.exactMass !== 'undefined') {
+            this.spectraQueryBuilderService.addNumericalCompoundMetaDataToQuery('total exact mass', this.query.exactMass, this.query.exactMassTolerance);
         }
 
         // Handle chromatography
@@ -108,7 +99,7 @@ class KeywordSearchFormController {
         }, []);
 
         if (chromatography.length > 0) {
-            this.SpectraQueryBuilderService.addTagToQuery(chromatography);
+            this.spectraQueryBuilderService.addTagToQuery(chromatography, undefined);
         }
 
         // Handle ionization mode
@@ -119,7 +110,7 @@ class KeywordSearchFormController {
         }, []);
 
         if (ionMode.length > 0) {
-            this.SpectraQueryBuilderService.addMetaDataToQuery('ionization mode', ionMode);
+            this.spectraQueryBuilderService.addMetaDataToQuery('ionization mode', ionMode, undefined);
         }
 
         // Handle MS type
@@ -130,7 +121,7 @@ class KeywordSearchFormController {
         }, []);
 
         if (msType.length > 0) {
-            this.SpectraQueryBuilderService.addMetaDataToQuery('ms level', msType);
+            this.spectraQueryBuilderService.addMetaDataToQuery('ms level', msType, undefined);
         }
 
         // Handle library tags
@@ -141,22 +132,24 @@ class KeywordSearchFormController {
         }, []);
 
         if (libraryTags.length > 0) {
-            this.SpectraQueryBuilderService.addTagToQuery(libraryTags);
+            this.spectraQueryBuilderService.addTagToQuery(libraryTags, undefined);
         }
 
         // Handle all other tags
         this.queryTags.forEach((tag) => {
             if (tag.selected == '+') {
-                this.SpectraQueryBuilderService.addTagToQuery(tag.text);
+                this.spectraQueryBuilderService.addTagToQuery(tag.text, undefined);
             } else if (tag.selected == '-') {
-                this.SpectraQueryBuilderService.addTagToQuery(tag.text, 'ne');
+                this.spectraQueryBuilderService.addTagToQuery(tag.text, 'ne');
             }
         });
 
         // Redirect to the spectra browser
-        this.SpectraQueryBuilderService.executeQuery();
+        this.spectraQueryBuilderService.executeQuery(undefined);
     };
 }
 
 angular.module('moaClientApp')
-    .directive('keywordSearchForm', KeywordSearchFormDirective);
+    .directive('keywordSearchForm', downgradeComponent({
+        component: KeywordSearchFormComponent
+    }));

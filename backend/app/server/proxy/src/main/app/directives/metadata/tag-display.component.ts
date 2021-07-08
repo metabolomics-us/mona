@@ -1,51 +1,33 @@
 /**
  * a directive to display our tags and keep track of selections/deselections
  */
-
+import {TagService} from "../../services/persistence/tag.resource";
+import {NGXLogger} from "ngx-logger";
+import {Component, Inject, Input} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
-class TagDisplayDirective {
-    constructor() {
-        return {
-            restrict: 'A',
-            templateUrl: '../../views/templates/query/tagDisplay.html',
-            replace: true,
-            transclude: true,
-            scope: {
-                tags: '='
-            },
-            controller: TagDisplayController,
-            controllerAs: '$ctrl'
-        };
-    }
-}
-
-class TagDisplayController {
-    private static $inject = ['$scope', '$log', '$timeout', 'TagService'];
-    private $scope;
-    private $log;
-    private $timeout;
-    private TagService;
+@Component({
+    selector: 'tagDisplay',
+    templateUrl: '../../views/templates/query/tagDisplay.html'
+})
+export class TagDisplayComponent {
     private maxTagsCount;
-
-    constructor($scope, $log, $timeout, TagService) {
-        this.$scope = $scope;
-        this.$log = $log;
-        this.$timeout = $timeout;
-        this.TagService = TagService;
+    @Input() private tags;
+    constructor(@Inject([NGXLogger, TagService]) private logger: NGXLogger, private tagService: TagService) {
     }
 
 
     $onInit = () => {
-        this.$timeout(() => {
+        setTimeout(() => {
             this.maxTagsCount = 0;
 
-            if (angular.isUndefined(this.$scope.tags)) {
-                this.$scope.tags = [];
+            if (typeof this.tags === 'undefined') {
+                this.tags = [];
 
-                this.TagService.query(
-                    (data) => {
-                        this.$scope.tags = data;
+                this.tagService.query().then(
+                    (data: any) => {
+                        this.tags = data;
 
                         for (let i = 0; i < data.length; i++) {
                             if (data[i].count > this.maxTagsCount)
@@ -53,13 +35,13 @@ class TagDisplayController {
                         }
                     },
                     (error) => {
-                        this.$log.error('Tag pull failed: '+ error);
+                        this.logger.error('Tag pull failed: '+ error);
                     }
                 );
             } else {
-                for (let i = 0; i < this.$scope.tags.length; i++) {
-                    if (this.$scope.tags[i].count > this.maxTagsCount)
-                        this.maxTagsCount = this.$scope.tags[i].count;
+                for (let i = 0; i < this.tags.length; i++) {
+                    if (this.tags[i].count > this.maxTagsCount)
+                        this.maxTagsCount = this.tags[i].count;
                 }
             }
         });
@@ -94,4 +76,7 @@ class TagDisplayController {
 }
 
 angular.module('moaClientApp')
-    .directive('tagDisplay', TagDisplayDirective);
+    .directive('tagDisplay', downgradeComponent({
+        component: TagDisplayComponent,
+        inputs: ['tags']
+    }));

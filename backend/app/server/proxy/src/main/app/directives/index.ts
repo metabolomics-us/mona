@@ -8,7 +8,7 @@ import "./compound/error-handle.component";
 import "./feedback/spectrum-review.component";
 import "./metadata/metadataQueryDirective";
 import "./metadata/gw-meta-query-input.component";
-import "./metadata/splashQueryDirective";
+import "./metadata/splash-query.component";
 import "./metadata/submitterQueryDirective";
 import "./metadata/tagDisplayDirective";
 import "./metadata/tagQueryDirective";

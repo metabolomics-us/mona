@@ -56,7 +56,7 @@ import {Spectrum} from "./services/persistence/spectrum.resource";
 import {SpectrumCacheService} from "./services/cache/spectrum-cache.service";
 import {Statistics} from "./services/persistence/statistics.resource";
 import {Submitter} from "./services/persistence/submitter.resource";
-import {Tag} from "./services/persistence/tag.resource";
+import {TagService} from "./services/persistence/tag.resource";
 import {MetadataOptimization} from "./services/optimization/metadata-optimization.service";
 import {SpectraQueryBuilderService} from "./services/query/spectra-query-builder.service";
 import {QueryCacheService} from "./services/cache/query-cache.service";
@@ -74,6 +74,22 @@ import {ErrorHandleComponent} from "./directives/compound/error-handle.component
 import {DisplayCompoundComponent} from "./directives/compound/display-compound.component";
 import {GwMetaQueryInputComponent} from "./directives/metadata/gw-meta-query-input.component";
 import {MetadataQueryComponent} from "./directives/metadata/metadata-query.component";
+import {SplashQueryComponent} from "./directives/metadata/splash-query.component";
+import {SubmitterQueryComponent} from "./directives/metadata/submitter-query.component";
+import {TagDisplayComponent} from "./directives/metadata/tag-display.component";
+import {TagQueryComponent} from "./directives/metadata/tag-query.component";
+import {TypeaheadFocusComponent} from "./directives/metadata/typeahead-focus.component";
+import {AdminDropDownComponent} from "./directives/navbar/admin-dropdown.component";
+import {BrowseDropDownComponent} from "./directives/navbar/browse-dropdown.component";
+import {DownloadComponent} from "./directives/navbar/download.component";
+import {LoginDropDownComponent} from "./directives/navbar/login-dropdown.component";
+import {ResourceDropDownComponent} from "./directives/navbar/resource-dropdown.component";
+import {SearchBoxComponent} from "./directives/navbar/search-box.component";
+import {TitleHeaderComponent} from "./directives/navbar/title-header.component";
+import {UploadComponent} from "./directives/navbar/upload.component";
+import {AdvancedSearchFormComponent} from "./directives/query/advanced-search-form.component";
+import {KeywordSearchFormComponent} from "./directives/query/keyword-search-form.component";
+import {Key} from "@ng-bootstrap/ng-bootstrap/util/key";
 
 @NgModule({
     imports: [
@@ -103,7 +119,7 @@ import {MetadataQueryComponent} from "./directives/metadata/metadata-query.compo
         SpectrumCacheService,
         Statistics,
         Submitter,
-        Tag,
+        TagService,
         MetadataOptimization,
         SpectraQueryBuilderService,
         QueryCacheService,
@@ -127,7 +143,22 @@ import {MetadataQueryComponent} from "./directives/metadata/metadata-query.compo
         ErrorHandleComponent,
         DisplayCompoundComponent,
         GwMetaQueryInputComponent,
-        MetadataQueryComponent
+        MetadataQueryComponent,
+        SplashQueryComponent,
+        SubmitterQueryComponent,
+        TagDisplayComponent,
+        TagQueryComponent,
+        TypeaheadFocusComponent,
+        AdminDropDownComponent,
+        BrowseDropDownComponent,
+        DownloadComponent,
+        LoginDropDownComponent,
+        ResourceDropDownComponent,
+        SearchBoxComponent,
+        TitleHeaderComponent,
+        UploadComponent,
+        AdvancedSearchFormComponent,
+        KeywordSearchFormComponent
     ],
 
     entryComponents: [
@@ -135,7 +166,22 @@ import {MetadataQueryComponent} from "./directives/metadata/metadata-query.compo
         ErrorHandleComponent,
         DisplayCompoundComponent,
         GwMetaQueryInputComponent,
-        MetadataQueryComponent
+        MetadataQueryComponent,
+        SplashQueryComponent,
+        SubmitterQueryComponent,
+        TagDisplayComponent,
+        TagQueryComponent,
+        TypeaheadFocusComponent,
+        AdminDropDownComponent,
+        BrowseDropDownComponent,
+        DownloadComponent,
+        LoginDropDownComponent,
+        ResourceDropDownComponent,
+        SearchBoxComponent,
+        TitleHeaderComponent,
+        UploadComponent,
+        AdvancedSearchFormComponent,
+        KeywordSearchFormComponent
     ]
 })
 

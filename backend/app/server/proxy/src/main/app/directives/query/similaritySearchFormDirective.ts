@@ -1,4 +1,6 @@
 import * as angular from 'angular';
+import {Component} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 
 class SimilaritySearchFormDirective {
     constructor() {

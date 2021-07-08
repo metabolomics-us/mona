@@ -1,7 +1,8 @@
 /**
  * Modified version of http://github.com/eu81273/angular.treeview
  */
-
+import {Component} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 class QueryTreeDirective {
