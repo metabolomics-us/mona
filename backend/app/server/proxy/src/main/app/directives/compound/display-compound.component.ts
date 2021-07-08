@@ -2,33 +2,34 @@
  * Created by wohlgemuth on 10/16/14.
  */
 
+import {NGXLogger} from "ngx-logger";
+import {ErrorHandleComponent} from "./error-handle.component";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {Component, Inject, Input} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
-class DisplayCompoundController{
-    private static $inject = ['$log', 'dialogs', '$filter', '$timeout'];
-    private $log;
-    private dialogs;
-    private $filter;
-    private $timeout;
+@Component({
+    selector: 'displayCompoundInfo',
+    templateUrl: '../../views/compounds/displayCompound.html'
+})
+export class DisplayCompoundComponent{
+    @Input() private compound;
     private pictureId;
     private chemId;
-    private compound;
     private classifications;
+    private showClassyFireInfo;
 
-    constructor($log, dialogs, $filter, $timeout){
-        this.$log = $log;
-        this.dialogs = dialogs;
-        this.$filter = $filter;
-        this.$timeout = $timeout;
-    }
+    constructor(@Inject([NgbModal, NGXLogger]) private modalService: NgbModal, private logger: NGXLogger){}
 
     $onInit = () => {
         //calculate some unique id for the compound picture
         this.pictureId = Math.floor(Math.random() * 100000);
         this.chemId = Math.floor(Math.random() * 100000);
+        this.showClassyFireInfo = true;
 
         // Build compound classification tree
-        this.$timeout(() => {
+        setTimeout(() => {
             this.classifications = [];
 
             if (this.compound.hasOwnProperty('classification')) {
@@ -111,33 +112,26 @@ class DisplayCompoundController{
     };
 
     downloadAsMOL = () => {
+        let modalRef;
         if (angular.isDefined(this.compound.molFile)) {
             this.downloadData(this.compound.molFile, 'mol', 'chemical/x-mdl-molfile');
         } else {
-            this.dialogs.error('Error generating MOL file', 'MOL file is unavailable!', {size: 'md', backdrop: 'static'});
+            modalRef = this.modalService.open(ErrorHandleComponent);
         }
     };
 
     downloadAsJSON = () => {
-        this.downloadData(this.$filter('json')(this.compound), 'json', 'application/json');
+        this.downloadData(JSON.stringify(this.compound), 'json', 'application/json');
     };
 
 
 
 }
 
-let DisplayCompoundDirective = {
-    require: "ngModel",
-    //restrict: "A",
-    //replace: true,
-    bindings: {
-        compound: '<'
-    },
-    templateUrl: '../../views/compounds/displayCompound.html',
-    controller: DisplayCompoundController
-}
-
 angular.module('moaClientApp')
-    .component('displayCompoundInfo', DisplayCompoundDirective);
+    .directive('displayCompoundInfo', downgradeComponent({
+        component: DisplayCompoundComponent,
+        inputs: ['compound']
+    }));
 
 

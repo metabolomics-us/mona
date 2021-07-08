@@ -4,45 +4,42 @@
  * handles the upload of library spectra to the system
  */
 
+import {NGXLogger} from "ngx-logger";
+import {Spectrum} from "../persistence/spectrum.resource";
+import {MspParserLibService} from "angular-msp-parser/dist/msp-parser-lib";
+import {MgfParserLibService} from "angular-mgf-parser/dist/mgf-parser-lib";
+import {ChemifyService} from "angular-cts-service/dist/cts-lib";
+import {CtsService} from "angular-cts-service/dist/cts-lib";
+import {AuthenticationService} from "../authentication.service";
+import {MassbankParserLibService} from "angular-massbank-parser/dist/massbank-parser-lib";
+import {HttpClient} from "@angular/common/http";
+import {AsyncService} from "./async.service";
+import {MetadataOptimization} from "../optimization/metadata-optimization.service";
+import { Subject } from "rxjs";
+import {Inject} from "@angular/core";
+import {downgradeInjectable} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 export class UploadLibraryService{
-    private static $inject = ['$rootScope', 'ApplicationError', 'Spectrum', 'gwMspService', 'gwMgfService', 'gwChemifyService', 'AuthenticationService', 'gwCtsService', '$log', '$q', 'gwMassbankService', '$filter', 'AsyncService', 'MetaDataOptimizationService'];
-    private $rootScope;
-    private ApplicationError;
-    private Spectrum;
-    private gwMspService;
-    private gwMgfService;
-    private gwChemifyService;
-    private AuthenticationService;
-    private gwCtsService;
-    private $log
-    private $q;
-    private gwMassbankService;
-    private $filter;
-    private AsyncService;
-    private MetaDataOptimizationService;
+    public completedSpectraCountSub = new Subject<number>();
+    public failedSpectraCountSub = new Subject<number>();
+    public uploadedSpectraCountSub = new Subject<number>();
+
     private completedSpectraCount;
     private failedSpectraCount;
     private uploadedSpectraCount;
+
     private uploadStartTime;
     private uploadedSpectra;
+    private Spectrum;
 
-    constructor($rootScope, ApplicationError, Spectrum, gwMspService, gwMgfService, gwChemifyService, AuthenticationService, gwCtsService, $log, $q, gwMassbankService, $filter, AsyncService, MetaDataOptimizationService){
-        this.$rootScope = $rootScope;
-        this.ApplicationError = ApplicationError;
-        this.Spectrum = Spectrum;
-        this.gwMspService = gwMspService;
-        this.gwMgfService = gwMgfService;
-        this.gwChemifyService = gwChemifyService;
-        this.AuthenticationService = AuthenticationService;
-        this.gwCtsService = gwCtsService;
-        this.$log = $log;
-        this.$q = $q;
-        this.gwMassbankService = gwMassbankService;
-        this.$filter = $filter;
-        this.AsyncService = AsyncService;
-        this.MetaDataOptimizationService = MetaDataOptimizationService;
+    constructor(@Inject([NGXLogger, Spectrum, MspParserLibService, MgfParserLibService, ChemifyService, CtsService,
+                AuthenticationService, MassbankParserLibService, HttpClient, AsyncService, MetadataOptimization])
+                private logger: NGXLogger, private spectrum: Spectrum, private mspParserLibService: MspParserLibService,
+                private mgfParserLibService: MgfParserLibService, private chemifyService: ChemifyService,
+                private ctsService: CtsService, private authenticationService: AuthenticationService,
+                private massbankParserLibService: MassbankParserLibService, private http: HttpClient,
+                private asyncService: AsyncService, private metadataOptimization: MetadataOptimization){
         this.completedSpectraCount = 0;
         this.failedSpectraCount = 0;
         this.uploadedSpectraCount = 0;
@@ -64,7 +61,7 @@ export class UploadLibraryService{
          */
         let resolveByName = (spectra, resolve, reject) => {
             if (spectra.name) {
-                this.gwChemifyService.nameToInChIKey(spectra.name, (key) => {
+                this.chemifyService.nameToInChIKey(spectra.name, (key) => {
                     if (key === null) {
                         reject("sorry no InChI Key found for " + spectra.name + ", at name to InChI key!");
                     }
@@ -72,13 +69,13 @@ export class UploadLibraryService{
                         spectra.inchiKey = key;
                         resolve(spectra);
                     }
-                });
+                }, undefined);
             }
 
             //if we have a bunch of names
             else if (spectra.names && spectra.names.length > 0) {
 
-                this.gwChemifyService.nameToInChIKey(spectra.names[0], (key) => {
+                this.chemifyService.nameToInChIKey(spectra.names[0], (key) => {
                     if (key === null) {
                         reject("sorry no InChI Key found for " + spectra.names[0] + ", at names to InChI key!");
                     }
@@ -86,7 +83,7 @@ export class UploadLibraryService{
                         spectra.inchiKey = key;
                         resolve(spectra);
                     }
-                });
+                }, undefined);
             }
 
             //we got nothing so we give up
@@ -102,17 +99,17 @@ export class UploadLibraryService{
             }
             //in case we got a smiles
             else if (spectra.smiles) {
-                this.gwCtsService.convertSmileToInChICode(spectra.smiles, (data) => {
+                this.ctsService.convertSmileToInChICode(spectra.smiles, (data) => {
                     spectra.inchi = data.inchicode;
                     spectra.inchiKey = data.inchikey;
 
                     resolve(spectra);
-                });
+                }, undefined);
             }
 
             //in case we got an inchi
             else if (spectra.inchiKey) {
-                this.gwCtsService.convertInchiKeyToMol(spectra.inchiKey, (molecule) => {
+                this.ctsService.convertInchiKeyToMol(spectra.inchiKey, (molecule) => {
                     if (molecule === null && spectra.inchi === null) {
                         resolveByName(spectra, resolve, reject);
                     }
@@ -122,7 +119,7 @@ export class UploadLibraryService{
                         }
                         resolve(spectra);
                     }
-                });
+                }, undefined);
             }
 
             else {
@@ -165,11 +162,11 @@ export class UploadLibraryService{
                     }
 
                     else {
-                        this.$log.error("invalid " + this.$filter('json')(spectrumWithKey));
+                        this.logger.error("invalid " + JSON.stringify(spectrumWithKey));
                         reject(new Error('dropped object from submission, since it was declared invalid, it had neither an InChI or a Molfile, which means the provide InChI key most likely was not found!'));
                     }
                 }).catch((error) => {
-                    this.$log.warn(error + '\n' + this.$filter('json')(spectrumObject));
+                    this.logger.warn(error + '\n' + JSON.stringify(spectrumObject));
                     reject(error);
                 });
             }
@@ -186,15 +183,9 @@ export class UploadLibraryService{
      * @param additionalData
      */
     submitSpectrum = (spectra, submitter, saveSpectrumCallback, additionalData) => {
-        //$log.debug("submitting spectra...");
-        //$log.debug($filter('json')(spectra));
-
-        //$log.debug("additional data...");
-        //$log.debug($filter('json')(additionalData));
-
         //optimize all our metadata
         const myPromise = new Promise((resolve, reject) => {
-            this.MetaDataOptimizationService.optimizeMetaData(spectra.meta).then((metaData) => {
+            this.metadataOptimization.optimizeMetaData(spectra.meta).then((metaData: Object) => {
 
                 //$log.debug("building final spectra...");
                 let s = this.buildSpectrum();
@@ -205,19 +196,19 @@ export class UploadLibraryService{
                 if (spectra.inchi !== null)
                     s.biologicalCompound.inchi = spectra.inchi;
 
-                if (angular.isDefined(spectra.molFile) && spectra.molFile !== null) {
+                if (typeof spectra.molFile !== 'undefined' && spectra.molFile !== null) {
                     s.biologicalCompound.molFile = spectra.molFile.toString('utf8');
                 }
 
                 //assign all the defined names of the spectra
                 s.biologicalCompound.names = [];
 
-                if (angular.isDefined(spectra.name)) {
+                if (typeof spectra.name !== 'undefined') {
                     if (s.spectrum.name != "")
                         s.biologicalCompound.names.push({name: spectra.name});
                 }
 
-                if (angular.isDefined(spectra.names)) {
+                if (typeof spectra.names !== 'undefined') {
                     for (let i = 0; i < spectra.names.length; i++) {
                         if (spectra.names[i] != "")
                             s.biologicalCompound.names.push({name: spectra.names[i]});
@@ -230,7 +221,7 @@ export class UploadLibraryService{
                 s.compound = [s.biologicalCompound];
                 s.spectrum = spectra.spectrum;
 
-                if (angular.isDefined(spectra.tags)) {
+                if (typeof spectra.tags !== 'undefined') {
                     spectra.tags.forEach((tag) => {
                         s.tags.push(tag);
                     });
@@ -241,12 +232,12 @@ export class UploadLibraryService{
                 //     s.comments.push({comment: spectra.comments});
                 // }
 
-                metaData.forEach((e) => {
+                Object.keys(metaData).forEach((e) => {
                     s.metaData.push(e);
                 });
 
-                if (angular.isDefined(additionalData)) {
-                    if (angular.isDefined(additionalData.tags)) {
+                if (typeof additionalData !== 'undefined') {
+                    if (typeof additionalData.tags !== 'undefined') {
                         additionalData.tags.forEach((tag) => {
                             for (let i = 0; i < s.tags.length; i++) {
                                 if (s.tags[i].text === tag.text)
@@ -257,13 +248,13 @@ export class UploadLibraryService{
                         });
                     }
 
-                    if (angular.isDefined(additionalData.meta)) {
+                    if (typeof additionalData.meta !== 'undefined') {
                         additionalData.meta.forEach((e) => {
                             s.metaData.push(e);
                         });
                     }
 
-                    if (angular.isDefined(additionalData.comments)) {
+                    if (typeof additionalData.comments !== 'undefined') {
                         s.comments.push({comment: additionalData.comments});
                     }
                 }
@@ -309,14 +300,14 @@ export class UploadLibraryService{
         fileReader.onload = (event) => {
             callback(event.target.result, file.name);
 
-            if (angular.isDefined(fireUploadProgress)) {
+            if (typeof fireUploadProgress !== 'undefined') {
                 fireUploadProgress(100);
             }
         };
 
         // progress notification
         fileReader.onprogress = (event) => {
-            if (event.lengthComputable && angular.isDefined(fireUploadProgress)) {
+            if (event.lengthComputable && typeof fireUploadProgress !== 'undefined') {
                 fireUploadProgress((event.loaded / event.total) * 100);
             }
         };
@@ -333,21 +324,21 @@ export class UploadLibraryService{
      * @returns {number}
      */
     countData = (data, origin) => {
-        if (angular.isDefined(origin)) {
+        if (typeof origin !== 'undefined') {
             if (origin.toLowerCase().indexOf(".msp") > 0) {
-                return this.gwMspService.countSpectra(data);
+                return this.mspParserLibService.countSpectra(data);
             }
             else if (origin.toLowerCase().indexOf(".mgf") > 0) {
-                return this.gwMgfService.countSpectra(data);
+                return this.mspParserLibService.countSpectra(data);
             }
             else if (origin.toLowerCase().indexOf(".txt") > 0) {
-                return this.gwMassbankService.countSpectra(data);
+                return this.mspParserLibService.countSpectra(data);
             }
             else {
                 alert('not supported file format!');
             }
         } else {
-            return this.gwMspService.countSpectra(data);
+            return this.mspParserLibService.countSpectra(data);
         }
     };
 
@@ -360,7 +351,7 @@ export class UploadLibraryService{
     processData = (data, callback, origin) => {
         // Add origin to spectrum metadata before callback
         let addOriginMetadata = (spectrum) => {
-            if (angular.isDefined(origin)) {
+            if (typeof origin !== 'undefined') {
                 spectrum.meta.push({name: 'origin', value: origin});
             }
 
@@ -368,24 +359,24 @@ export class UploadLibraryService{
         };
 
         // Parse data
-        if (angular.isDefined(origin)) {
+        if (typeof origin !== 'undefined') {
             if (origin.toLowerCase().indexOf(".msp") > 0) {
-                this.$log.debug("uploading msp file...");
-                this.gwMspService.convertFromData(data, addOriginMetadata);
+                this.logger.debug("uploading msp file...");
+                this.mspParserLibService.convertFromData(data, addOriginMetadata);
             }
             else if (origin.toLowerCase().indexOf(".mgf") > 0) {
-                this.$log.debug("uploading mgf file...");
-                this.gwMgfService.convertFromData(data, addOriginMetadata);
+                this.logger.debug("uploading mgf file...");
+                this.mgfParserLibService.convertFromData(data, addOriginMetadata);
             }
             else if (origin.toLowerCase().indexOf(".txt") > 0) {
-                this.$log.debug("uploading massbank file...");
-                this.gwMassbankService.convertFromData(data, addOriginMetadata);
+                this.logger.debug("uploading massbank file...");
+                this.massbankParserLibService.convertFromData(data, addOriginMetadata);
             }
             else {
                 alert('not supported file format!');
             }
         } else {
-            this.gwMspService.convertFromData(data, addOriginMetadata);
+            this.mspParserLibService.convertFromData(data, addOriginMetadata);
         }
     };
 
@@ -422,25 +413,23 @@ export class UploadLibraryService{
      * @param additionalData
      */
     uploadSpectrum = (wizardData, saveSpectrumCallback, additionalData) => {
-        this.AuthenticationService.getCurrentUser().then((submitter) => {
+        this.authenticationService.getCurrentUser().then((submitter) => {
             this.uploadedSpectraCount += 1;
 
-            this.AsyncService.addToPool(() => {
+            this.asyncService.addToPool(() => {
                 const myPromise = new Promise((resolve, reject) => {
                     this.workOnSpectra(submitter, saveSpectrumCallback, wizardData, additionalData).then((data) => {
                         resolve(data);
                         this.updateUploadProgress(true);
                     }).catch((error) => {
-                        this.$log.error("found an error: " + error);
+                        this.logger.error("found an error: " + error);
                         reject(error);
                         this.updateUploadProgress(false);
                     });
                 })
                 return myPromise;
-            });
+            }, undefined);
         });
-
-        this.broadcastUploadProgress();
     };
 
 
@@ -456,7 +445,7 @@ export class UploadLibraryService{
      * Updates and broadcasts the upload progress
      */
     updateUploadProgress = (success) => {
-        if (angular.isUndefined(success)) {
+        if (typeof success === 'undefined') {
             // do nothing
         } else if (success) {
             this.completedSpectraCount++;
@@ -464,19 +453,15 @@ export class UploadLibraryService{
             this.failedSpectraCount++;
         }
 
-        this.broadcastUploadProgress();
+        //Components will be able to subscribe to these variables to get the counts
+        this.completedSpectraCountSub.next(this.completedSpectraCount);
+        this.failedSpectraCountSub.next(this.failedSpectraCount);
+        this.uploadedSpectraCountSub.next(this.uploadedSpectraCount);
     };
-
-    /**
-     * Requires separate function for broadcasting at start of upload
-     */
-    broadcastUploadProgress = () => {
-        this.$rootScope.$broadcast('spectra:uploadprogress', this.completedSpectraCount, this.failedSpectraCount, this.uploadedSpectraCount);
-    }
 }
 
 
 angular.module('moaClientApp')
-    .service('UploadLibraryService', UploadLibraryService);
+    .factory('UploadLibraryService', downgradeInjectable(UploadLibraryService));
 
 

@@ -14,11 +14,7 @@ import "bootstrap";
 import "angular-dialog-service";
 import "flot";
 import "ng-tags-input";
-//import "angular-cts-service";
-import "angular-msp-parser";
-import "angular-mgf-parser";
-import "angular-massbank-parser";
-import "angular-masspec-plotter";
+
 import "ng-file-upload";
 import "angular-filter";
 import "d3/d3";
@@ -46,14 +42,18 @@ import {UpgradeModule} from '@angular/upgrade/static';
 import {HttpClientModule} from "@angular/common/http";
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {LoggerModule, NgxLoggerLevel} from "ngx-logger";
+import {MatDialogModule} from "@angular/material/dialog";
 
-import {CtsService} from "angular-cts-service/dist/cts-lib";
-import {CtsConstants} from "angular-cts-service/dist/cts-lib";
-import {ChemifyService} from "angular-cts-service/dist/cts-lib";
+import {CtsService, CtsConstants, ChemifyService} from "angular-cts-service/dist/cts-lib";
+import {NgMassSpecPlotterModule} from "@wcmc/ng-mass-spec-plotter";
+import {MassbankParserLibService, MassbankParserLibModule} from "angular-massbank-parser/dist/massbank-parser-lib";
+import {MgfParserLibModule, MgfParserLibService} from "angular-mgf-parser/dist/mgf-parser-lib";
+import {MspParserLibService, MspParserLibModule} from "angular-msp-parser/dist/msp-parser-lib";
 
 import {Download} from "./services/persistence/download.resource";
 import {Metadata} from "./services/persistence/metadata.resource";
 import {Spectrum} from "./services/persistence/spectrum.resource";
+import {SpectrumCacheService} from "./services/cache/spectrum-cache.service";
 import {Statistics} from "./services/persistence/statistics.resource";
 import {Submitter} from "./services/persistence/submitter.resource";
 import {Tag} from "./services/persistence/tag.resource";
@@ -64,9 +64,16 @@ import {QueryStringHelper} from "./services/query/query-string-helper.service";
 import {QueryStringBuilder} from "./services/query/query-string-builder.service";
 import {CookieMain} from "./services/cookie/cookie-main.service";
 import {AsyncService} from "./services/upload/async.service";
+import {UploadLibraryService} from "./services/upload/upload-library.service";
 import {AuthenticationService} from "./services/authentication.service";
 import {CompoundConversionService} from "./services/compound-conversion.service"
 import {RegistrationService} from "./services/registration.service";
+
+import{SpectrumReviewComponent} from "./directives/feedback/spectrum-review.component";
+import {ErrorHandleComponent} from "./directives/compound/error-handle.component";
+import {DisplayCompoundComponent} from "./directives/compound/display-compound.component";
+import {GwMetaQueryInputComponent} from "./directives/metadata/gw-meta-query-input.component";
+import {MetadataQueryComponent} from "./directives/metadata/metadata-query.component";
 
 @NgModule({
     imports: [
@@ -74,7 +81,12 @@ import {RegistrationService} from "./services/registration.service";
         UpgradeModule,
         HttpClientModule,
         CtsLibModule,
+        NgMassSpecPlotterModule,
+        MassbankParserLibModule,
+        MgfParserLibModule,
+        MspParserLibModule,
         NgbModule,
+        MatDialogModule,
         LoggerModule.forRoot({
             level: NgxLoggerLevel.DEBUG,
             serverLogLevel: NgxLoggerLevel.OFF
@@ -88,6 +100,7 @@ import {RegistrationService} from "./services/registration.service";
         Download,
         Metadata,
         Spectrum,
+        SpectrumCacheService,
         Statistics,
         Submitter,
         Tag,
@@ -97,12 +110,32 @@ import {RegistrationService} from "./services/registration.service";
         QueryStringHelper,
         QueryStringBuilder,
         AsyncService,
+        UploadLibraryService,
         CtsConstants,
         CtsService,
         ChemifyService,
         AuthenticationService,
         RegistrationService,
-        CompoundConversionService
+        CompoundConversionService,
+        MassbankParserLibService,
+        MgfParserLibService,
+        MspParserLibService
+    ],
+
+    declarations: [
+        SpectrumReviewComponent,
+        ErrorHandleComponent,
+        DisplayCompoundComponent,
+        GwMetaQueryInputComponent,
+        MetadataQueryComponent
+    ],
+
+    entryComponents: [
+        SpectrumReviewComponent,
+        ErrorHandleComponent,
+        DisplayCompoundComponent,
+        GwMetaQueryInputComponent,
+        MetadataQueryComponent
     ]
 })
 

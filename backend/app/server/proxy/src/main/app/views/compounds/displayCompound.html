@@ -2,10 +2,10 @@
     <div class="row">
         <div class="col-md-6">
             <h4>Chemical Names</h4>
-            <div ng-show="$ctrl.compound.names.length">
+            <div [hidden]="compound.names.length">
                 <ul>
-                    <li ng-repeat="name in $ctrl.compound.names">{{name.name}}</li>
-                    <li ng-hide="$ctrl.compound.names.length">No compound name provided!</li>
+                    <li *ngFor="let name of compound.names; index as i;">{{name.name}}</li>
+                    <li [hidden]="compound.names.length">No compound name provided!</li>
                 </ul>
             </div>
         </div>
@@ -13,32 +13,32 @@
         <div class="col-md-6">
             <div class="text-right">
                 <div class="h5">
-                    <span class="dropdown" uib-dropdown>
-                        <a href class="dropdown-toggle" uib-dropdown-toggle>
+                    <span class="dropdown" ngbDropdown>
+                        <a href class="dropdown-toggle" ngbDropdownToggle>
                             <i class="fa fa-cloud-download"></i> Download Structure
                         </a>
 
-                        <ul class="uib-dropdown-menu" uib-dropdown-menu>
+                        <ul class="uib-dropdown-menu" ngbDropdownMenu>
                             <li>
-                                <a ng-click="$ctrl.downloadAsMOL()" target="_blank">as MOL file</a>
+                                <a ng-click="downloadAsMOL()" target="_blank">as MOL file</a>
                             </li>
                             <li>
-                                <a ng-click="$ctrl.downloadAsJSON()" target="_blank">as MoNA JSON Record</a>
+                                <a ng-click="downloadAsJSON()" target="_blank">as MoNA JSON Record</a>
                             </li>
                         </ul>
                     </span>
                 </div>
 
                 <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
-                     id="big-{{$ctrl.pictureId}}-CompoundViewer_{{$ctrl.chemId}}" ng-model="$ctrl.compound"></div>
+                     id="big-{{pictureId}}-CompoundViewer_{{chemId}}" ng-model="compound"></div>
             </div>
         </div>
     </div>
 
-    <div class="row" ng-if="$ctrl.classifications.length > 0">
+    <div class="row" *ngIf="classifications.length > 0">
         <div class="col-md-12">
-            <h4>Compound Classification (provided by <a ng-href="{{$ctrl.classifications[0].url.replace('.json', '')}}" target="_blank">ClassyFire</a>) <sup><a href ng-click="$ctrl.showClassyFireInfo = !$ctrl.showClassyFireInfo"><i class="fa fa-question-circle"></i></a></sup></h4>
-            <div ng-show="$ctrl.showClassyFireInfo">
+            <h4>Compound Classification (provided by <a ng-href="{{classifications[0].url.replace('.json', '')}}" target="_blank">ClassyFire</a>) <sup><a href (click)="showClassyFireInfo = !showClassyFireInfo"><i class="fa fa-question-circle"></i></a></sup></h4>
+            <div [hidden]="showClassyFireInfo">
                 <a href="http://classyfire.wishartlab.com" target="_blank">ClassyFire</a>
                 is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
                 entities based on their structure. ClassyFire combines structure search, IUPAC name parsing, and evaluation
@@ -46,13 +46,14 @@
                 <hr />
             </div>
 
-            <script type="text/ng-template" id="classyfireTree">
+            <ng-template #classyfireTree>
                 <span class="tree-label"><i class="icon-folder-open"></i> <span metadata-query value="node" classification="true">{{ node.name | titlecase }}</span></span> <span> {{ node.value }}</span>
-
-                <ul ng-if="node.nodes">
-                    <li class="tree-node" ng-repeat="node in node.nodes" ng-include="'classyfireTree'"></li>
+                <ul [hidden]="node.nodes">
+                    <ng-container *ngTemplateOutlet="classyfireTree">
+                        <li class="tree-node" *ngFor="let node of node.nodes"></li>
+                    </ng-container>
                 </ul>
-            </script>
+            </ng-template>
 
             <div class="tree">
                 <ul>

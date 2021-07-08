@@ -24,12 +24,7 @@ import 'angular-animate';
 import 'angular-filter';
 import 'angular-dialog-service/dist/dialogs';
 import 'ng-tags-input';
-import 'angular-msp-parser';
-import 'angular-mgf-parser';
-import 'angular-massbank-parser';
-//import 'angular-cts-service';
 import 'ng-file-upload';
-import 'angular-masspec-plotter';
 import 'angularjs-toaster';
 import 'nvd3';
 import 'angular-google-analytics';
@@ -44,12 +39,7 @@ angular
         'angular.filter',
         'dialogs.main',
         'ngTagsInput',
-        'wohlgemuth.msp.parser',
-        'wohlgemuth.mgf.parser',
-        'wohlgemuth.massbank.parser',
-        //'wohlgemuth.cts',
         'ngFileUpload',
-        'angularMasspecPlotter',
         'toaster',
         'nvd3',
         'angular-google-analytics'

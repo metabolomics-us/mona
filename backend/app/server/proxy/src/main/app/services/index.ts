@@ -14,5 +14,5 @@ import './persistence/tag.resource';
 import './query/query-string-builder.service';
 import './query/query-string-helper.service';
 import './query/spectra-query-builder.service';
-import './upload/uploadLibraryService';
+import './upload/upload-library.service';
 import './upload/async.service';

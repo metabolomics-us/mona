@@ -21,7 +21,7 @@ export class CompoundConversionService{
      * Converts the given name to an InChIKey via Chemify
      */
     nameToInChIKey = (name, callback, errorCallback) => {
-        this.chemifyService.nameToInChIKey(name);
+        this.chemifyService.nameToInChIKey(name, callback, errorCallback);
     };
 
     /**
