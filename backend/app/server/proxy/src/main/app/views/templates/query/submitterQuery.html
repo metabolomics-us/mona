@@ -1,14 +1,14 @@
-<span class="dropdown" uib-dropdown>
-    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+<span class="dropdown" ngbDropdown>
+    <a role="button" class="dropdown-toggle" ngbDropdownToggle>
         <i class='fa fa-search'></i>
-        <span ng-transclude></span>
+        <ng-content></ng-content>
     </a>
 
-    <ul class="uib-dropdown-menu" uib-dropdown-menu>
-        <li><a ng-click="$ctrl.newQuery()">Create New Query</a></li>
-        <li><a ng-click="$ctrl.addToQuery()">Add to Query</a></li>
+    <ul class="uib-dropdown-menu" ngbDropdownMenu>
+        <li><a (click)="newQuery()">Create New Query</a></li>
+        <li><a (click)="addToQuery()">Add to Query</a></li>
 
-        <li ng-show="$ctrl.AuthenticationService.isAdmin()" class="divider"></li>
-        <li ng-show="$ctrl.AuthenticationService.isAdmin()"><a ng-click="$ctrl.curateSpectra()">Curate Spectra by Submitter</a></li>
+        <li [hidden]="isAdmin()" class="divider"></li>
+        <li [hidden]="isAdmin()"><a (click)="curateSpectra()">Curate Spectra by Submitter</a></li>
     </ul>
 </span>

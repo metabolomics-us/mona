@@ -50,6 +50,7 @@ export class KeywordSearchFormComponent implements OnInit{
 
         this.tagService.query().then(
              (tags: any) => {
+                 console.log(tags);
                 this.queryTags = tags.data.filter((x) => {
                     return x.category != 'library' && !x.ruleBased;
                 });

@@ -1,8 +1,9 @@
 /*
  * Component to render our Admin drop down menu
  */
-import {Component} from "@angular/core";
+import {Component, Inject} from "@angular/core";
 import {downgradeComponent} from "@angular/upgrade/static";
+import {AuthenticationService} from "../../services/authentication.service";
 import * as angular from 'angular';
 
 @Component({
@@ -10,7 +11,11 @@ import * as angular from 'angular';
     templateUrl: '../../views/navbar/adminDropdown.html'
 })
 export class AdminDropDownComponent {
-    constructor() {}
+    constructor(@Inject([AuthenticationService]) private authenticationService: AuthenticationService) {}
+
+    isAdmin = () => {
+        return this.authenticationService.isAdmin();
+    }
 }
 
 angular.module('moaClientApp')

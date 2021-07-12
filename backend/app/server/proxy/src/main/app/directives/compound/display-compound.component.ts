@@ -19,6 +19,7 @@ export class DisplayCompoundComponent{
     private chemId;
     private classifications;
     private showClassyFireInfo;
+    private metaData: any;
 
     constructor(@Inject([NgbModal, NGXLogger]) private modalService: NgbModal, private logger: NGXLogger){}
 

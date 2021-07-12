@@ -13,12 +13,15 @@ import {downgradeComponent} from "@angular/upgrade/static";
 })
 export class MetadataQueryComponent {
 
-    @Input() private compound;
+    @Input() private value;
     @Input() private metaData;
     @Input() private classification;
+    private compound;
 
     constructor(@Inject([SpectraQueryBuilderService, NGXLogger]) private spectraQueryBuilderService: SpectraQueryBuilderService,
-                private logger: NGXLogger) {}
+                private logger: NGXLogger) {
+            this.compound = this.value;
+    }
 
     /**
      * Create a new query based on the selected metadata value
@@ -47,5 +50,5 @@ export class MetadataQueryComponent {
 angular.module('moaClientApp')
     .directive('metadataQuery', downgradeComponent({
         component: MetadataQueryComponent,
-        inputs: ['compound', 'metaData', 'classification']
+        inputs: ['value', 'metaData', 'classification']
     }));

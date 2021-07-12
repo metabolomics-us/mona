@@ -17,11 +17,13 @@ import * as angular from 'angular';
 export class AuthenticationService{
     private loggingIn;
     private currentUser;
+    private readonly ADMIN_ROLE_NAME;
     constructor(@Inject(Submitter) private submitter:Submitter, @Inject(CookieMain) private cookie:CookieMain,
                 @Inject(NGXLogger) private logger: NGXLogger, @Inject(NgbModal) private modalService: NgbModal,
                 @Inject(HttpClient) private http:HttpClient) {
         this.loggingIn = false;
         this.currentUser = {};
+        this.ADMIN_ROLE_NAME = 'ROLE_ADMIN';
     }
 
     pullSubmitterData() {
@@ -166,6 +168,17 @@ export class AuthenticationService{
             size: 'sm',
             backdrop: true
         });
+    };
+
+    isAdmin() {
+        if (this.isLoggedIn() && typeof this.currentUser.roles !== 'undefined') {
+            for (let i = 0; i < this.currentUser.roles.length; i++) {
+                if (this.currentUser.roles[i].authority === this.ADMIN_ROLE_NAME)
+                    return true;
+            }
+        }
+
+        return false;
     };
 }
 

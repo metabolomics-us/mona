@@ -1,16 +1,16 @@
-<div class="btn-group top5" uib-dropdown>
-    <button type="button" class="btn dropdown-toggle btn-sm" uib-dropdown-toggle
-            ng-class="{'btn-info' : $ctrl.$scope.tag.ruleBased, 'btn-primary' : !$ctrl.$scope.tag.ruleBased}">
+<div class="btn-group top5" ngbDropdown>
+    <button type="button" class="btn dropdown-toggle btn-sm" ngbDropdownToggle
+            [ngClass]="{'btn-info' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}">
 
-        <span ng-if="$ctrl.$scope.tag.ruleBased">
+        <span *ngIf="tag.ruleBased">
             <i class='fa fa-flask'></i>
         </span>
 
-        {{$ctrl.$scope.tag.text}} <span class="caret left30"></span>
+        {{tag.text}} <span class="caret left30"></span>
     </button>
 
-    <ul class="uib-dropdown-menu" uib-dropdown-menu>
-        <li><a ng-click="$ctrl.newQuery()">Create New Query</a></li>
-        <li><a ng-click="$ctrl.addToQuery()">Add to Query</a></li>
+    <ul class="uib-dropdown-menu" ngbDropdownMenu>
+        <li><a (click)="newQuery()">Create New Query</a></li>
+        <li><a (click)="addToQuery()">Add to Query</a></li>
     </ul>
 </div>

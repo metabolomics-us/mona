@@ -1,14 +1,14 @@
 <form>
     <div class="row">
         <div class="col-sm-12">
-            <uib-accordion close-others="false">
-                <uib-accordion-group>
-                    <uib-accordion-heading>Compound</uib-accordion-heading>
+            <ngb-accordion close-others="false">
+                <ngb-panel>
+                    <ng-template ngbPanelHeader>Compound</ng-template>
                     <div class="form-group row">
                         <div class="col-sm-12">
                             <input id="nameFilter"
                                    name="nameFilter"
-                                   ng-model="compoundQuery.name"
+                                   ngModel="compoundQuery.name"
                                    placeholder="name or inChiKey"
                                    class="form-control"/>
 
@@ -16,7 +16,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-2">
-                            <select class="form-control" ng-model="compoundQuery.operator[0]">
+                            <select class="form-control" ngModel="compoundQuery.operator[0]">
                                 <option>AND</option>
                                 <option>OR</option>
                             </select>
@@ -24,14 +24,14 @@
                         <div class="col-sm-5">
                             <input id="classValueFilter"
                                    name="classValueFilter"
-                                   ng-model="compoundQuery.className"
+                                   ngModel="compoundQuery.className"
                                    placeholder="compound class"
                                    class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-2">
-                            <select class="form-control" ng-model="compoundQuery.operator[1]">
+                            <select class="form-control" ngModel="compoundQuery.operator[1]">
                                 <option>AND</option>
                                 <option>OR</option>
                             </select>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-2">
-                            <select class="form-control" ng-model="compoundQuery.operator[2]">
+                            <select class="form-control" ngModel="compoundQuery.operator[2]">
                                 <option>AND</option>
                                 <option>OR</option>
                             </select>
@@ -51,7 +51,7 @@
                             <input type="number"
                                    id="accurateMass"
                                    name="accurateMass"
-                                   ng-model="compoundQuery.exactMass"
+                                   ngModel="compoundQuery.exactMass"
                                    placeholder="accurate mass"
                                    class="form-control"/>
                         </div>
@@ -61,15 +61,15 @@
                                    id="accurateMassTolerance"
                                    name="accurateMassTolerance"
                                    value="0.5"
-                                   ng-model="compoundQuery.tolerance"
+                                   ngModel="compoundQuery.tolerance"
                                    placeholder="tolerance"
                                    class="form-control"/>
                         </div>
                     </div>
-                </uib-accordion-group>
+                </ngb-panel>
 
-                <uib-accordion-group>
-                    <uib-accordion-heading>Metadata</uib-accordion-heading>
+                <ngb-accordion>
+                    <ng-template ngbPanelHeader>Metadata</ng-template>
                     <div class="form-group row">
                         <div class="col-sm-12">
                             <gw-meta-query-input query="metadataQuery.metadata" editable="false"></gw-meta-query-input>
@@ -77,14 +77,14 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-2">
-                            <select class="form-control" ng-model="metadataQuery.operator">
+                            <select class="form-control" ngModel="metadataQuery.operator">
                                 <option>AND</option>
                                 <option>OR</option>
                             </select>
                         </div>
                         <div class="col-sm-5">
                             <input type="number"
-                                   ng-model="metadataQuery.exactMass"
+                                   ngModel="metadataQuery.exactMass"
                                    placeholder="accurate mass"
                                    class="form-control"/>
                         </div>
@@ -93,21 +93,21 @@
                         <div class="col-sm-3">
                             <input type="number"
                                    id="metaAccurteMass"
-                                   ng-model="metadataQuery.tolerance"
+                                   ngModel="metadataQuery.tolerance"
                                    placeholder="tolerance"
                                    value="0.5"
                                    class="form-control"/>
                         </div>
                     </div>
-                </uib-accordion-group>
-            </uib-accordion>
+                </ngb-accordion>
+            </ngb-accordion>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <button type="submit" class="btn btn-primary" ng-click="submitAdvQuery()">Submit</button>
+                    <button type="submit" class="btn btn-primary" (click)="submitAdvQuery()">Submit</button>
                 </div>
                 <div class="col-sm-2">
                     <button type="reset" class="btn btn-secondary">Reset</button>

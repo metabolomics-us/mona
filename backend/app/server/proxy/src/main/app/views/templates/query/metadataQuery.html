@@ -1,11 +1,11 @@
-<span class="dropdown" uib-dropdown>
-    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+<span class="dropdown" ngbDropdown>
+    <a role="button" class="dropdown-toggle" ngbDropdownToggle>
         <i class='fa fa-search'></i>
-        <span ng-transclude></span>
+        <ng-content></ng-content>
     </a>
 
-    <ul class="uib-dropdown-menu" uib-dropdown-menu>
-        <li><a ng-click="$ctrl.newQuery()">Create New Query</a></li>
-        <li><a ng-click="$ctrl.addToQuery()">Add to Query</a></li>
+    <ul class="uib-dropdown-menu" ngbDropdownMenu>
+        <li><a (click)="newQuery()">Create New Query</a></li>
+        <li><a (click)="addToQuery()">Add to Query</a></li>
     </ul>
 </span>

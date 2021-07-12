@@ -5,7 +5,7 @@
 // TODO: waiting for implementation of return user data for admin from authentication Service
 import * as angular from 'angular';
 
-class AuthenticationController {
+export class AuthenticationController {
     private static $inject = ['$scope','$rootScope', '$uibModal', 'AuthenticationService'];
     private $scope;
     private $rootScope;

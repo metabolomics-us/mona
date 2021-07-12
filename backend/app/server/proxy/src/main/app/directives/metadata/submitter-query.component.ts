@@ -46,6 +46,10 @@ export class SubmitterQueryComponent {
         // TODO Add curation functionality
         // Spectrum.curateSpectraByQuery(query, function(data) {});
     }
+
+    isAdmin = () => {
+        return this.authenticationService.isAdmin();
+    }
 }
 
 angular.module('moaClientApp')

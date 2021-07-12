@@ -33,6 +33,7 @@ import "./directives";
 import "./filters";
 
 import {NgModule} from '@angular/core';
+import {CommonModule} from "@angular/common";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {BrowserModule} from '@angular/platform-browser';
 import {CtsLibModule} from "angular-cts-service/dist/cts-lib";
@@ -42,7 +43,6 @@ import {UpgradeModule} from '@angular/upgrade/static';
 import {HttpClientModule} from "@angular/common/http";
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {LoggerModule, NgxLoggerLevel} from "ngx-logger";
-import {MatDialogModule} from "@angular/material/dialog";
 
 import {CtsService, CtsConstants, ChemifyService} from "angular-cts-service/dist/cts-lib";
 import {NgMassSpecPlotterModule} from "@wcmc/ng-mass-spec-plotter";
@@ -82,18 +82,18 @@ import {TypeaheadFocusComponent} from "./directives/metadata/typeahead-focus.com
 import {AdminDropDownComponent} from "./directives/navbar/admin-dropdown.component";
 import {BrowseDropDownComponent} from "./directives/navbar/browse-dropdown.component";
 import {DownloadComponent} from "./directives/navbar/download.component";
-import {LoginDropDownComponent} from "./directives/navbar/login-dropdown.component";
 import {ResourceDropDownComponent} from "./directives/navbar/resource-dropdown.component";
-import {SearchBoxComponent} from "./directives/navbar/search-box.component";
 import {TitleHeaderComponent} from "./directives/navbar/title-header.component";
 import {UploadComponent} from "./directives/navbar/upload.component";
 import {AdvancedSearchFormComponent} from "./directives/query/advanced-search-form.component";
 import {KeywordSearchFormComponent} from "./directives/query/keyword-search-form.component";
-import {Key} from "@ng-bootstrap/ng-bootstrap/util/key";
+import {QueryTreeComponent} from "./directives/query/query-tree.component";
+import {DisplayCompoundPipe} from "./filters/display-compound.pipe";
 
 @NgModule({
     imports: [
         BrowserModule,
+        CommonModule,
         UpgradeModule,
         HttpClientModule,
         CtsLibModule,
@@ -102,7 +102,6 @@ import {Key} from "@ng-bootstrap/ng-bootstrap/util/key";
         MgfParserLibModule,
         MspParserLibModule,
         NgbModule,
-        MatDialogModule,
         LoggerModule.forRoot({
             level: NgxLoggerLevel.DEBUG,
             serverLogLevel: NgxLoggerLevel.OFF
@@ -139,6 +138,7 @@ import {Key} from "@ng-bootstrap/ng-bootstrap/util/key";
     ],
 
     declarations: [
+        DisplayCompoundPipe,
         SpectrumReviewComponent,
         ErrorHandleComponent,
         DisplayCompoundComponent,
@@ -152,13 +152,12 @@ import {Key} from "@ng-bootstrap/ng-bootstrap/util/key";
         AdminDropDownComponent,
         BrowseDropDownComponent,
         DownloadComponent,
-        LoginDropDownComponent,
         ResourceDropDownComponent,
-        SearchBoxComponent,
         TitleHeaderComponent,
         UploadComponent,
         AdvancedSearchFormComponent,
-        KeywordSearchFormComponent
+        KeywordSearchFormComponent,
+        QueryTreeComponent
     ],
 
     entryComponents: [
@@ -175,13 +174,12 @@ import {Key} from "@ng-bootstrap/ng-bootstrap/util/key";
         AdminDropDownComponent,
         BrowseDropDownComponent,
         DownloadComponent,
-        LoginDropDownComponent,
         ResourceDropDownComponent,
-        SearchBoxComponent,
         TitleHeaderComponent,
         UploadComponent,
         AdvancedSearchFormComponent,
-        KeywordSearchFormComponent
+        KeywordSearchFormComponent,
+        QueryTreeComponent
     ]
 })
 

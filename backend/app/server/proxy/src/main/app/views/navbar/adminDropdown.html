@@ -1,9 +1,9 @@
-<li class="dropdown" uib-dropdown ng-show="auth.isAdmin()">
-    <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+<li class="dropdown" ngbDropdown [hidden]="isAdmin()">
+    <a role="button" class="dropdown-toggle" ngbDropdownToggle>
         Administration
         <span class="fa fa-caret-down"></span>
     </a>
-    <ul class="uib-dropdown-menu">
+    <ul class="uib-dropdown-menu" ngbDropdownMenu>
         <li><a href="admin/submitters">Manage Submitters</a></li>
         <li><a href="admin/news">News</a></li>
     </ul>

@@ -8,41 +8,41 @@
                     <thead>
                     <tr>
                         <th>Compound</th>
-                        <th>{{keywordSearch.sourceIntroduction[0].name}}</th>
+                        <th>{{sourceIntroduction[0].name}}</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ng-model="keywordSearch.query.name"
+                            <input type="text" ngModel="query.name"
                                    class="form-control"
                                    placeholder="Name or InChIKey">
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ng-model="keywordSearch.query.classification"
+                            <input type="text" ngModel="query.classification"
                                    class="form-control"
                                    placeholder="Compound Class"/>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ng-model="keywordSearch.query.formula"
+                            <input type="text" ngModel="query.formula"
                                    class="form-control"
                                    placeholder="Molecular Formula">
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="number" ng-model="keywordSearch.query.exactMass"
+                            <input type="number" ngModel="query.exactMass"
                                    class="form-control"
                                    placeholder="Exact Mass">
                         </td>
                         <td>
                             <div class="input-group">
-                                <div class="input-group-addon">&pm;</div>
-                                <input type="number" ng-model="keywordSearch.query.exactMassTolerance"
+                                <div class="input-group-addon">+</div>
+                                <input type="number" ngModel="query.exactMassTolerance"
                                        class="form-control"
                                        value="0.5">
                                 <div class="input-group-addon">Da</div>
@@ -64,8 +64,8 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td ng-repeat="x in keywordSearch.ionMode">
-                                    <input type="checkbox" ng-model="x.selected"> {{x.name}}
+                                <td *ngFor="let x of ionMode">
+                                    <input type="checkbox" ngModel="x.selected"> {{x.name}}
                                 </td>
                             </tr>
                             </tbody>
@@ -88,8 +88,8 @@
                             <tbody>
                             <tr>
                                 <td>
-                                     <span ng-repeat="x in keywordSearch.sourceIntroduction">
-                                         <input type="checkbox" ng-model="x.selected"> {{x.name}} ({{x.abv}})
+                                     <span *ngFor="let x of sourceIntroduction">
+                                         <input type="checkbox" ngModel="x.selected"> {{x.name}} ({{x.abv}})
                                          <br/>
                                      </span>
                                 </td>
@@ -112,7 +112,7 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td ng-repeat="x in keywordSearch.msType">
+                                <td *ngFor="let x of msType">
                                     <input type="checkbox" ng-model="x.selected"> {{x.name}}
                                 </td>
                             </tr>
@@ -123,7 +123,7 @@
             </div>
 
             <!-- Library tags -->
-            <div class="form-group row" ng-if="keywordSearch.libraryTags && keywordSearch.libraryTags.length > 0">
+            <div class="form-group row" *ngIf="libraryTags && libraryTags.length > 0">
                 <div class="col-sm-12">
                     <div class="table-responsive">
                         <table class="table table-condensed">
@@ -135,8 +135,8 @@
                             <tbody>
                             <tr>
                                 <td>
-                                    <span ng-repeat="x in keywordSearch.libraryTags">
-                                        <input type="checkbox" ng-model="x.selected" label> {{x.text}}
+                                    <span *ngFor="let x of libraryTags">
+                                        <input type="checkbox" ngModel="x.selected" label> {{x.text}}
                                         <br />
                                     </span>
                                 </td>
@@ -149,17 +149,17 @@
         </div>
     </div>
 
-    <div class="row" ng-if="keywordSearch.queryTags.length">
+    <div class="row" *ngIf="queryTags.length">
         <div class="col-md-12">
-            <uib-accordion>
-                <uib-accordion-group is-open="false">
-                    <uib-accordion-heading>
+            <ngb-accordion>
+                <ngb-panel is-open="false">
+                    <ng-template ngbPanelHeader>
                         <div>Add Additional Tags to Query</div>
-                    </uib-accordion-heading>
+                    </ng-template>
 
                     <div tag-display tags="queryTags"></div>
-                </uib-accordion-group>
-            </uib-accordion>
+                </ngb-panel>
+            </ngb-accordion>
         </div>
     </div>
 
@@ -167,7 +167,7 @@
         <div class="col-md-6">
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <button type="submit" ng-click="keywordSearch.submitQuery()" class="btn btn-primary">Search</button>
+                    <button type="submit" (click)="submitQuery()" class="btn btn-primary">Search</button>
                 </div>
                 <div class="col-sm-2">
                     <button type="reset" class="btn btn-secondary">Reset</button>

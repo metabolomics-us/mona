@@ -3,6 +3,7 @@
  */
 
 import {Component} from "@angular/core";
+import {environment} from "../../environments/environment";
 import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
@@ -11,6 +12,7 @@ import * as angular from 'angular';
     templateUrl: '../../views/navbar/titleHeader.html'
 })
 export class TitleHeaderComponent {
+    private env = environment;
     constructor() {}
 }
 

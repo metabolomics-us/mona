@@ -2,7 +2,7 @@
     <div *ngFor="let meta of query">
         <div class="col-sm-4" [ngClass]="{'has-error': !meta.name && meta.name != ''}">
             <input type="text"
-                   [ngModel]="meta.name"
+                   ngModel="meta.name"
                    placeholder="metadata name"
                    [ngbTypeahead]="queryMetadataNames"
                    [editable]=true
@@ -11,15 +11,15 @@
         </div>
         <div class="col-sm-2">
             <select
-                    [ngModel]="meta.selected"
+                    ngModel="meta.selected"
                     class="form-control">
                     <option value="" selected>-- select operator --</option>
-                    <option *ngFor="let item of select" [ngValue]="item.value">{{item.name}}</option>
+                    <option *ngFor="let item of select" ngValue="item.value">{{item.name}}</option>
             </select>
         </div>
         <div class="col-sm-3">
             <input #metadataValues type="text"
-                   [ngModel]="meta.value"
+                   ngModel="meta.value"
                    [hidden]="!meta.name || meta.name === ''"
                    placeholder="value"
                    [ngbTypeahead]="queryMetadataValues(meta.value, metadataValues.value)"
@@ -30,7 +30,7 @@
             <input type="number"
                    [hidden]="meta.value !== '' && isNumber(meta.value)"
                    id="tolerance"
-                   [ngModel]="meta.tolerance"
+                   ngModel="meta.tolerance"
                    placeholder="tolerance range (+/-)"
                    class="form-control"/>
         </div>
