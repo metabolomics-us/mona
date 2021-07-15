@@ -7,11 +7,11 @@ import {AuthenticationService} from "../../services/authentication.service";
 import * as angular from 'angular';
 
 @Component({
-    selector: 'adminDropDown',
+    selector: 'admin-drop-down',
     templateUrl: '../../views/navbar/adminDropdown.html'
 })
 export class AdminDropDownComponent {
-    constructor(@Inject([AuthenticationService]) private authenticationService: AuthenticationService) {}
+    constructor(@Inject(AuthenticationService) private authenticationService: AuthenticationService) {}
 
     isAdmin = () => {
         return this.authenticationService.isAdmin();

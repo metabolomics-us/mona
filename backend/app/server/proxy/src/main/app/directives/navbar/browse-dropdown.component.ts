@@ -8,7 +8,7 @@ import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 @Component({
-    selector: 'browseDropDown',
+    selector: 'browse-drop-down',
     templateUrl: '../../views/navbar/browseDropdown.html'
 })
 export class BrowseDropDownComponent {

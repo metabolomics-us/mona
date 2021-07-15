@@ -151,17 +151,17 @@ h2 {
 /* Navigation */
 /* ------------------------------- */
 
-.navbar-default .navbar-brand {
+.navbar-expand-xl .navbar-brand {
     color: #FFCD00;
     font-size: large;
 }
 
-.navbar-default .navbar-brand:hover,
-.navbar-default .navbar-brand:focus {
+.navbar-expand-xl .navbar-brand:hover,
+.navbar-expand-xl .navbar-brand:focus {
     color: #FFCD00;
 }
 
-.navbar-default {
+.navbar-expand-xl {
     background-color: #1A3E68;
     border-bottom: 5px solid #DFC166;
 
@@ -171,21 +171,21 @@ h2 {
     cursor: pointer;
 }
 
-.navbar-default .navbar-nav > li > a {
+.navbar-expand-xl .navbar-nav > * > li > a {
     color: white;
     font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
     font-size: medium;
 }
 
-.navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus {
+.navbar-expand-xl .navbar-nav > * > li > a:hover,
+.navbar-expand-xl .navbar-nav > * > li > a:focus {
     color: #DFC166;
     background-color: transparent;
 }
 
-.navbar-default .navbar-nav > .open > a,
-.navbar-default .navbar-nav > .open > a:hover,
-.navbar-default .navbar-nav > .open > a:focus {
+.navbar-expand-xl .navbar-nav > * > .open > a,
+.navbar-expand-xl .navbar-nav > * > .open > a:hover,
+.navbar-expand-xl .navbar-nav > * > .open > a:focus {
     background-color: #335379;
     color: #DFC166;
 }
@@ -224,13 +224,13 @@ h2 {
 
 // Mobile Navigation
 @media (max-width: 767px) {
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    .navbar-expand-xl .navbar-nav .open .dropdown-menu > * > li > a {
         color: white;
     }
 }
 
 @media (max-width: 767px) {
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover {
+    .navbar-expand-xl .navbar-nav .open .dropdown-menu > * > li > a:hover {
         color: #DEB31A;
     }
 }

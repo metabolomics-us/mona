@@ -43,6 +43,7 @@ import {UpgradeModule} from '@angular/upgrade/static';
 import {HttpClientModule} from "@angular/common/http";
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {LoggerModule, NgxLoggerLevel} from "ngx-logger";
+import {FormsModule} from "@angular/forms";
 
 import {CtsService, CtsConstants, ChemifyService} from "angular-cts-service/dist/cts-lib";
 import {NgMassSpecPlotterModule} from "@wcmc/ng-mass-spec-plotter";
@@ -88,7 +89,16 @@ import {UploadComponent} from "./directives/navbar/upload.component";
 import {AdvancedSearchFormComponent} from "./directives/query/advanced-search-form.component";
 import {KeywordSearchFormComponent} from "./directives/query/keyword-search-form.component";
 import {QueryTreeComponent} from "./directives/query/query-tree.component";
-import {DisplayCompoundPipe} from "./filters/display-compound.pipe";
+import {SpectraUploadProgressComponent} from "./directives/spectra/spectra-upload-progress.component";
+import {SimilaritySearchFormComponent} from "./directives/query/similarity-search-form.component";
+import {DownloadNotifErrorModalComponent} from "./directives/spectra/download-notif-error-modal.component";
+import {DownloadNotifModalComponent} from "./directives/spectra/download-notif-modal.component";
+import {SpectraDownloadComponent} from "./directives/spectra/spectra-download.component";
+import {SpectraLibraryComponent} from "./directives/spectra/spectra-library.component";
+import {SpectraPanelComponent} from "./directives/spectra/spectra-panel.component";
+import {SpectraCountForUserComponent} from "./directives/submitter/spectra-count-for-user.component";
+import {SpectraScoreForUserComponent} from "./directives/submitter/spectra-score-for-user.component";
+import {FilterPipe} from "./filters/filter.pipe";
 
 @NgModule({
     imports: [
@@ -96,6 +106,7 @@ import {DisplayCompoundPipe} from "./filters/display-compound.pipe";
         CommonModule,
         UpgradeModule,
         HttpClientModule,
+        FormsModule,
         CtsLibModule,
         NgMassSpecPlotterModule,
         MassbankParserLibModule,
@@ -138,7 +149,7 @@ import {DisplayCompoundPipe} from "./filters/display-compound.pipe";
     ],
 
     declarations: [
-        DisplayCompoundPipe,
+        FilterPipe,
         SpectrumReviewComponent,
         ErrorHandleComponent,
         DisplayCompoundComponent,
@@ -157,7 +168,16 @@ import {DisplayCompoundPipe} from "./filters/display-compound.pipe";
         UploadComponent,
         AdvancedSearchFormComponent,
         KeywordSearchFormComponent,
-        QueryTreeComponent
+        QueryTreeComponent,
+        SpectraUploadProgressComponent,
+        SimilaritySearchFormComponent,
+        DownloadNotifErrorModalComponent,
+        DownloadNotifModalComponent,
+        SpectraDownloadComponent,
+        SpectraLibraryComponent,
+        SpectraPanelComponent,
+        SpectraCountForUserComponent,
+        SpectraScoreForUserComponent
     ],
 
     entryComponents: [
@@ -179,7 +199,16 @@ import {DisplayCompoundPipe} from "./filters/display-compound.pipe";
         UploadComponent,
         AdvancedSearchFormComponent,
         KeywordSearchFormComponent,
-        QueryTreeComponent
+        QueryTreeComponent,
+        SpectraUploadProgressComponent,
+        SimilaritySearchFormComponent,
+        DownloadNotifErrorModalComponent,
+        DownloadNotifModalComponent,
+        SpectraDownloadComponent,
+        SpectraLibraryComponent,
+        SpectraPanelComponent,
+        SpectraCountForUserComponent,
+        SpectraScoreForUserComponent
     ]
 })
 

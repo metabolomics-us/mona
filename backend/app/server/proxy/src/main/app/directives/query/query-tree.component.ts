@@ -8,7 +8,7 @@ import {Observable, of} from "rxjs";
 import {delay} from "rxjs/operators";
 
 @Component({
-    selector: 'queryTreeView',
+    selector: 'query-tree-view',
     template: `<div #treeBinder></div>`
 })
 export class QueryTreeComponent implements AfterViewInit {

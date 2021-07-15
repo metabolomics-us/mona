@@ -1,40 +1,33 @@
 import * as angular from 'angular';
-import {Component} from "@angular/core";
+import {Component, Inject, OnInit} from "@angular/core";
 import {downgradeComponent} from "@angular/upgrade/static";
+import {Location} from "@angular/common";
+import {NGXLogger} from "ngx-logger";
+import {UploadLibraryService} from "../../services/upload/upload-library.service";
+import {SpectraQueryBuilderService} from "../../services/query/spectra-query-builder.service";
 
-class SimilaritySearchFormDirective {
-    constructor() {
-        return {
-            restrict: 'E',
-            templateUrl: '../../views/spectra/query/similaritySearchForm.html',
-            controller: SimilaritySearchFormController,
-            controllerAs: '$ctrl'
-        };
-    }
-}
-
-class SimilaritySearchFormController {
-    private static $inject = ['$scope', '$location', '$log', 'UploadLibraryService', 'SpectraQueryBuilderService'];
-    private $scope;
-    private $location;
-    private $log;
-    private UploadLibraryService;
-    private SpectraQueryBuilderService;
+@Component({
+    selector: 'similarity-search-form',
+    templateUrl: '../../views/spectra/query/similaritySearchForm.html'
+})
+export class SimilaritySearchFormComponent implements OnInit{
     private page;
     private pasteError;
     private spectrum;
     private uploadError;
+    private pastedSpectrum;
+    private precursorToleranceUnit;
+    private minSimilarity;
+    private precursorMZ;
+    private precursorMZTolerance;
 
-    constructor($scope, $location, $log, UploadLibraryService, SpectraQueryBuilderService) {
-        this.$scope = $scope;
-        this.$location = $location;
-        this.$log = $log;
-        this.UploadLibraryService = UploadLibraryService;
-        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
-    }
+    constructor(@Inject(NGXLogger) private logger: NGXLogger, @Inject(UploadLibraryService) private uploadLibraryService: UploadLibraryService,
+                @Inject(SpectraQueryBuilderService) private spectraQueryBuilderService: SpectraQueryBuilderService,
+                @Inject(Location) private location: Location) {}
 
-    $onInit = () => {
+    ngOnInit(): void {
         this.page = 0;
+        this.precursorToleranceUnit = 'PPM';
     }
 
     parsePastedSpectrum = (spectrum) => {
@@ -74,26 +67,22 @@ class SimilaritySearchFormController {
         this.spectrum = null;
         this.uploadError = null;
 
-        this.UploadLibraryService.loadSpectraFile(files[0],
+        this.uploadLibraryService.loadSpectraFile(files[0],
             (data, origin) => {
-                this.UploadLibraryService.processData(data, (spectrum) => {
-                    this.$scope.$apply(() => {
-                        // Create list of ions
-                        this.spectrum = spectrum.spectrum;
-                        this.page = 2;
-                    });
+                this.uploadLibraryService.processData(data, (spectrum) => {
+                    // Create list of ions
+                    this.spectrum = spectrum.spectrum;
+                    this.page = 2;
                 }, origin);
             },
             (progress) => {
                 if (progress == 100) {
-                    this.$scope.$apply(() => {
-                        if (this.spectrum == null) {
-                            this.page = 0;
-                            this.uploadError = 'Unable to load spectra!';
-                        } else {
-                            this.page = 2;
-                        }
-                    });
+                    if (this.spectrum == null) {
+                        this.page = 0;
+                        this.uploadError = 'Unable to load spectra!';
+                    } else {
+                        this.page = 2;
+                    }
                 }
             }
         );
@@ -133,13 +122,15 @@ class SimilaritySearchFormController {
             }
         }
 
-        this.$log.info("Submitting similarity request: "+ JSON.stringify(request));
+        this.logger.info("Submitting similarity request: "+ JSON.stringify(request));
 
-        this.SpectraQueryBuilderService.setSimilarityQuery(request);
-        this.$location.path('/spectra/similaritySearch');
+        this.spectraQueryBuilderService.setSimilarityQuery(request);
+        this.location.go('/spectra/similaritySearch');
     };
 
 }
 
 angular.module('moaClientApp')
-    .directive('similaritySearchForm', SimilaritySearchFormDirective);
+    .directive('similaritySearchForm', downgradeComponent({
+        component: SimilaritySearchFormComponent
+    }));

@@ -8,7 +8,7 @@ import {Component, Inject, Input} from "@angular/core";
 import {downgradeComponent} from "@angular/upgrade/static";
 
 @Component({
-    selector: 'metadataQuery',
+    selector: 'metadata-query',
     templateUrl: '../../views/templates/query/metadataQuery.html'
 })
 export class MetadataQueryComponent {
@@ -18,8 +18,8 @@ export class MetadataQueryComponent {
     @Input() private classification;
     private compound;
 
-    constructor(@Inject([SpectraQueryBuilderService, NGXLogger]) private spectraQueryBuilderService: SpectraQueryBuilderService,
-                private logger: NGXLogger) {
+    constructor(@Inject(SpectraQueryBuilderService) private spectraQueryBuilderService: SpectraQueryBuilderService,
+                @Inject(NGXLogger) private logger: NGXLogger) {
             this.compound = this.value;
     }
 

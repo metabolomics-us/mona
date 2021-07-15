@@ -13,7 +13,7 @@ import {downgradeComponent} from "@angular/upgrade/static";
 
 
 @Component({
-    selector: 'gwMetaQueryInput',
+    selector: 'gw-meta-query-input',
     templateUrl: '../../views/templates/metaQueryInput.html'
 })
 export class GwMetaQueryInputComponent{
@@ -22,8 +22,9 @@ export class GwMetaQueryInputComponent{
     @Input() private fullText;
     private select;
 
-    constructor(@Inject([SpectraQueryBuilderService, HttpClient, NGXLogger, SlicePipe]) private spectraQueryBuilderService: SpectraQueryBuilderService,
-                        private http: HttpClient, private logger: NGXLogger, private slice: SlicePipe) {}
+    constructor(@Inject(SpectraQueryBuilderService) private spectraQueryBuilderService: SpectraQueryBuilderService,
+                @Inject(HttpClient) private http: HttpClient, @Inject(NGXLogger) private logger: NGXLogger,
+                @Inject(SlicePipe) private slice: SlicePipe) {}
 
     $onInit = () => {
         this.select = [

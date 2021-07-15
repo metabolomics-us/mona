@@ -7,7 +7,7 @@ import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 @Component({
-    selector: 'downloadButton',
+    selector: 'download-button',
     templateUrl: '../../views/navbar/download.html'
 })
 export class DownloadComponent {

@@ -9,15 +9,14 @@ import {Component, Inject, Input} from "@angular/core";
 import {downgradeComponent} from "@angular/upgrade/static";
 
 @Component({
-    selector: 'submitterQuery',
+    selector: 'submitter-query',
     templateUrl: '../../views/templates/query/submitterQuery.html'
 })
 export class SubmitterQueryComponent {
 
     @Input() private submitter;
-    constructor(@Inject([SpectraQueryBuilderService, AuthenticationService]) private spectraQueryBuilderService: SpectraQueryBuilderService,
-                private authenticationService: AuthenticationService) {
-    }
+    constructor(@Inject(SpectraQueryBuilderService) private spectraQueryBuilderService: SpectraQueryBuilderService,
+                @Inject(AuthenticationService) private authenticationService: AuthenticationService) {}
 
     /**
      * Create a new query based on the selected submitter

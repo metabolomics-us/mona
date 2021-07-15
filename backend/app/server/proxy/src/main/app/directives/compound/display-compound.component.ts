@@ -5,15 +5,15 @@
 import {NGXLogger} from "ngx-logger";
 import {ErrorHandleComponent} from "./error-handle.component";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {Component, Inject, Input} from "@angular/core";
+import {Component, Inject, Input, OnInit} from "@angular/core";
 import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 @Component({
-    selector: 'displayCompoundInfo',
+    selector: 'display-compound-info',
     templateUrl: '../../views/compounds/displayCompound.html'
 })
-export class DisplayCompoundComponent{
+export class DisplayCompoundComponent implements  OnInit{
     @Input() private compound;
     private pictureId;
     private chemId;
@@ -21,9 +21,9 @@ export class DisplayCompoundComponent{
     private showClassyFireInfo;
     private metaData: any;
 
-    constructor(@Inject([NgbModal, NGXLogger]) private modalService: NgbModal, private logger: NGXLogger){}
+    constructor(@Inject(NgbModal) private modalService: NgbModal, @Inject(NGXLogger) private logger: NGXLogger){}
 
-    $onInit = () => {
+    ngOnInit() {
         //calculate some unique id for the compound picture
         this.pictureId = Math.floor(Math.random() * 100000);
         this.chemId = Math.floor(Math.random() * 100000);
@@ -124,9 +124,6 @@ export class DisplayCompoundComponent{
     downloadAsJSON = () => {
         this.downloadData(JSON.stringify(this.compound), 'json', 'application/json');
     };
-
-
-
 }
 
 angular.module('moaClientApp')

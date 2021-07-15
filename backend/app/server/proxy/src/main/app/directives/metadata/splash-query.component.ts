@@ -8,7 +8,7 @@ import * as angular from 'angular';
 import {downgradeComponent} from "@angular/upgrade/static";
 
 @Component({
-    selector: 'splashQuery',
+    selector: 'splash-query',
     templateUrl: '../../views/templates/query/splashQuery.html'
 })
 export class SplashQueryComponent {

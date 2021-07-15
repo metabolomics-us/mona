@@ -8,15 +8,13 @@ import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 @Component({
-    selector: 'tagDisplay',
+    selector: 'tag-display',
     templateUrl: '../../views/templates/query/tagDisplay.html'
 })
 export class TagDisplayComponent {
     private maxTagsCount;
     @Input() private tags;
-    constructor(@Inject([NGXLogger, TagService]) private logger: NGXLogger, private tagService: TagService) {
-    }
-
+    constructor(@Inject(NGXLogger) private logger: NGXLogger, @Inject(TagService)  private tagService: TagService) {}
 
     $onInit = () => {
         setTimeout(() => {

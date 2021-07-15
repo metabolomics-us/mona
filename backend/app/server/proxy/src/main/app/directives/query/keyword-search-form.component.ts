@@ -6,7 +6,7 @@ import {TagService} from "../../services/persistence/tag.resource";
 import {NGXLogger} from "ngx-logger";
 
 @Component({
-    selector: 'keywordSearchForm',
+    selector: 'keyword-search-form',
     templateUrl: '../../views/spectra/query/keywordSearchForm.html'
 })
 export class KeywordSearchFormComponent implements OnInit{

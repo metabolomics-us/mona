@@ -6,11 +6,11 @@ import * as angular from 'angular';
 import {downgradeComponent} from "@angular/upgrade/static";
 
 @Component({
-    selector: 'typeaheadFocus',
+    selector: 'typeahead-focus',
     template: ''
 })
 export class TypeaheadFocusComponent {
-    constructor(@Inject([ElementRef, Renderer2]) private elementRef: ElementRef, private render: Renderer2) {}
+    constructor(@Inject(ElementRef) private elementRef: ElementRef, @Inject(Renderer2) private render: Renderer2) {}
 
     @HostListener('click', ['$event.target'])
     onClick(btn) {

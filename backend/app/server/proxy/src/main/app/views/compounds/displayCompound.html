@@ -77,9 +77,9 @@
 
                 <tbody>
                 <!-- Create New Pipes for this filtering -->
-                <tr *ngFor="let meta of compound.metaData | compoundPipe:{category: '!external id', deleted : '!true', hidden: '!true'}:true: '' ">
+                <tr *ngFor="let meta of compound.metaData | filterPipe:{category: '!external id', deleted : '!true', hidden: '!true'}:true: '' ">
                     <td class="col-lg-4 col-md-6">
-                        <span metadata-query value="meta" compound="true">{{meta.name}}</span>
+                        <metadata-query value="meta" compound="true">{{meta.name}}</metadata-query>
                     </td>
                     <td class="col-lg-8 col-md-6">
                         {{meta.value}} {{meta.unit}}
@@ -99,7 +99,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div [hidden]="(compound.metaData |  compoundPipe:{category: 'external id'}: false: '').length > 0">
+            <div [hidden]="(compound.metaData |  filterPipe:{category: 'external id'}: false: '').length > 0">
                 <table class="table">
                     <thead>
                     <tr>
@@ -108,14 +108,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let meta of compound.metaData |  compoundPipe: {category: 'external id', deleted : '!true', hidden: '!true'}: false: 'name' ">
-                        <td class="col-lg-4 col-md-6" data-metadata-name="{{meta.name}}">
-                            <span metadata-query value="meta" compound="true">
+                    <tr *ngFor="let meta of compound.metaData |  filterPipe: {category: 'external id', deleted : '!true', hidden: '!true'}: false: 'name' ">
+                        <td class="col-lg-4 col-md-6">
+                            <metadata-query value="meta" compound="true">
                                 {{meta.name}}
-                            </span>
+                            </metadata-query>
                         </td>
 
-                        <td class="col-lg-8 col-md-6" data-metadata-value="{{meta.value}}">
+                        <td class="col-lg-8 col-md-6">
                             <span *ngIf="meta.url === ''">{{meta.value}}</span>
 
                             <a *ngIf="meta.url !== ''"  href="{{meta.url}}" target="_blank">

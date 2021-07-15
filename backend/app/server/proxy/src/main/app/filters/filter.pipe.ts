@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform} from "@angular/core";
 
 @Pipe({
-    name: 'compoundPipe',
+    name: 'filterPipe',
     pure: false
 })
-export class DisplayCompoundPipe implements PipeTransform {
+export class FilterPipe implements PipeTransform {
     transform(items: any, filter: any, orderBy: boolean, unique: string): any {
         if(!items || !filter) {
             return items;

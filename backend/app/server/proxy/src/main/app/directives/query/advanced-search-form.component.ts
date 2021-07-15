@@ -4,7 +4,7 @@ import {Component} from "@angular/core";
 import {downgradeComponent} from "@angular/upgrade/static";
 
 @Component({
-    selector: 'advancedSearchForm',
+    selector: 'advanced-search-form',
     templateUrl: '../../views/spectra/query/advancedSearchForm.html'
 })
 export class AdvancedSearchFormComponent {

@@ -16,7 +16,7 @@ import {HttpClient} from "@angular/common/http";
 import {AsyncService} from "./async.service";
 import {MetadataOptimization} from "../optimization/metadata-optimization.service";
 import { Subject } from "rxjs";
-import {Inject} from "@angular/core";
+import {Inject, Injectable} from "@angular/core";
 import {downgradeInjectable} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
@@ -25,21 +25,25 @@ export class UploadLibraryService{
     public failedSpectraCountSub = new Subject<number>();
     public uploadedSpectraCountSub = new Subject<number>();
 
-    private completedSpectraCount;
-    private failedSpectraCount;
-    private uploadedSpectraCount;
+    public completedSpectraCount;
+    public failedSpectraCount;
+    public uploadedSpectraCount;
 
-    private uploadStartTime;
+    public uploadStartTime;
     private uploadedSpectra;
     private Spectrum;
 
-    constructor(@Inject([NGXLogger, Spectrum, MspParserLibService, MgfParserLibService, ChemifyService, CtsService,
-                AuthenticationService, MassbankParserLibService, HttpClient, AsyncService, MetadataOptimization])
-                private logger: NGXLogger, private spectrum: Spectrum, private mspParserLibService: MspParserLibService,
-                private mgfParserLibService: MgfParserLibService, private chemifyService: ChemifyService,
-                private ctsService: CtsService, private authenticationService: AuthenticationService,
-                private massbankParserLibService: MassbankParserLibService, private http: HttpClient,
-                private asyncService: AsyncService, private metadataOptimization: MetadataOptimization){
+    constructor(@Inject(NGXLogger) private logger: NGXLogger,
+                @Inject(Spectrum) private spectrum: Spectrum,
+                @Inject(MspParserLibService) private mspParserLibService: MspParserLibService,
+                @Inject(MgfParserLibService) private mgfParserLibService: MgfParserLibService,
+                @Inject(ChemifyService) private chemifyService: ChemifyService,
+                @Inject(CtsService) private ctsService: CtsService,
+                @Inject(AuthenticationService) private authenticationService: AuthenticationService,
+                @Inject(MassbankParserLibService) private massbankParserLibService: MassbankParserLibService,
+                @Inject(HttpClient) private http: HttpClient,
+                @Inject(AsyncService) private asyncService: AsyncService,
+                @Inject(MetadataOptimization) private metadataOptimization: MetadataOptimization){
         this.completedSpectraCount = 0;
         this.failedSpectraCount = 0;
         this.uploadedSpectraCount = 0;
@@ -436,7 +440,7 @@ export class UploadLibraryService{
     /**
      * Checks if spectra are being processed and uploaded
      */
-    isUploading = () => {
+    isUploading(): boolean {
         return this.completedSpectraCount + this.failedSpectraCount < this.uploadedSpectraCount;
     };
 

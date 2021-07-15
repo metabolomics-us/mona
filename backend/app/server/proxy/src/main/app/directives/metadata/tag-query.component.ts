@@ -9,7 +9,7 @@ import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 @Component({
-    selector: 'tagQuery',
+    selector: 'tag-query',
     templateUrl: '../../views/templates/query/tagQuery.html'
 })
 export class TagQueryComponent {

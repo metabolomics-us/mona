@@ -12,10 +12,9 @@ import {NGXLogger} from "ngx-logger";
 import * as angular from 'angular';
 
 export class CompoundConversionService{
-    constructor(@Inject([CtsService, CtsConstants, ChemifyService, NGXLogger, HttpClient])
-        private ctsService: CtsService, private ctsConstants:CtsConstants, private chemifyService: ChemifyService,
-                private logger: NGXLogger, private http: HttpClient) {
-    }
+    constructor(@Inject(CtsService) private ctsService: CtsService, @Inject(CtsConstants) private ctsConstants: CtsConstants,
+                @Inject(ChemifyService) private chemifyService: ChemifyService, @Inject(NGXLogger) private logger: NGXLogger,
+                @Inject(HttpClient) private http: HttpClient) {}
 
     /**
      * Converts the given name to an InChIKey via Chemify

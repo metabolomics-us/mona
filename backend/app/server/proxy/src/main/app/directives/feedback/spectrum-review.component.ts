@@ -11,7 +11,7 @@ import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 @Component({
-    selector: 'spectrumReview',
+    selector: 'spectrum-review',
     templateUrl: '../../views/templates/feedback/spectrumReview.html'
 })
 
@@ -20,9 +20,8 @@ export class SpectrumReviewComponent{
     protected submitted;
     @Input() private spectrum;
 
-    constructor(@Inject([AuthenticationService, HttpClient, NGXLogger])
-            private authenticationService: AuthenticationService, private http: HttpClient,
-            private logger: NGXLogger) {}
+    constructor(@Inject(AuthenticationService) private authenticationService, @Inject(HttpClient) private http: HttpClient,
+                @Inject(NGXLogger) private logger: NGXLogger) {}
 
     $onInit = () => {
         this.submitting = false;

@@ -7,7 +7,7 @@ import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
 @Component({
-    selector: 'resourceDropDown',
+    selector: 'resource-drop-down',
     templateUrl: '../../views/navbar/resDropdown.html'
 })
 export class ResourceDropDownComponent {
