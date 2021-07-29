@@ -1,9 +1,15 @@
 /**
  * Created by Gert on 5/28/2014.
  */
+import {Component, OnInit} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
-class DocumentationTermController{
+@Component({
+    selector: 'documentation-term',
+    templateUrl: '../../views/documentation/terms.html'
+})
+export class DocumentationTermComponent implements OnInit {
     private static $inject = ['$scope'];
     private terms;
 
@@ -11,7 +17,7 @@ class DocumentationTermController{
 
     }
 
-    $onInit = () => {
+    ngOnInit() {
             this.terms = [
                 {
                     name: "Alex",
@@ -85,15 +91,10 @@ class DocumentationTermController{
     }
 }
 
-let DocumentationTermComponent = {
-    selector: "documentationTerm",
-    templateUrl: "../../views/documentation/terms.html",
-    bindings: {},
-    controller: DocumentationTermController
-}
-
 angular.module('moaClientApp')
-    .component(DocumentationTermComponent.selector, DocumentationTermComponent);
+    .directive('documentationTerm', downgradeComponent({
+        component: DocumentationTermComponent
+    }));
 
 
 

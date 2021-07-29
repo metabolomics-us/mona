@@ -30,11 +30,10 @@ export class UploadLibraryService{
     public uploadedSpectraCount;
 
     public uploadStartTime;
-    private uploadedSpectra;
-    private Spectrum;
+    public uploadedSpectra;
 
     constructor(@Inject(NGXLogger) private logger: NGXLogger,
-                @Inject(Spectrum) private spectrum: Spectrum,
+                @Inject(Spectrum) private spectrumService: Spectrum,
                 @Inject(MspParserLibService) private mspParserLibService: MspParserLibService,
                 @Inject(MgfParserLibService) private mgfParserLibService: MgfParserLibService,
                 @Inject(ChemifyService) private chemifyService: ChemifyService,
@@ -191,6 +190,8 @@ export class UploadLibraryService{
         const myPromise = new Promise((resolve, reject) => {
             this.metadataOptimization.optimizeMetaData(spectra.meta).then((metaData: Object) => {
 
+                console.log('Building Spectra');
+                console.log(metaData);
                 //$log.debug("building final spectra...");
                 let s = this.buildSpectrum();
 
@@ -236,9 +237,11 @@ export class UploadLibraryService{
                 //     s.comments.push({comment: spectra.comments});
                 // }
 
+                console.log(metaData[1]);
                 Object.keys(metaData).forEach((e) => {
-                    s.metaData.push(e);
+                    s.metaData.push(metaData[e]);
                 });
+                console.log(s.metaData);
 
                 if (typeof additionalData !== 'undefined') {
                     if (typeof additionalData.tags !== 'undefined') {
@@ -282,11 +285,21 @@ export class UploadLibraryService{
      * @returns {Spectrum}
      */
     buildSpectrum = () => {
-        let spectrum = this.Spectrum;
-        spectrum.biologicalCompound = {names: []};
-        spectrum.tags = [];
-        spectrum.metaData = [];
-
+        let spectrum = {
+            biologicalCompound: {names: [],
+                inchi: '',
+                inchiKey: '',
+                molFile: '',
+                metaData: [],
+                kind: ''
+            },
+            spectrum: undefined,
+            tags: [],
+            metaData: [],
+            compound: undefined,
+            comments: [],
+            submitter: ''
+        };
         return spectrum;
     };
 
@@ -417,7 +430,7 @@ export class UploadLibraryService{
      * @param additionalData
      */
     uploadSpectrum = (wizardData, saveSpectrumCallback, additionalData) => {
-        this.authenticationService.getCurrentUser().then((submitter) => {
+        this.authenticationService.currentUser.subscribe((submitter) => {
             this.uploadedSpectraCount += 1;
 
             this.asyncService.addToPool(() => {

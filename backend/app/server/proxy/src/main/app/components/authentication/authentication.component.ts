@@ -3,108 +3,102 @@
  */
 
 // TODO: waiting for implementation of return user data for admin from authentication Service
+import {Component, Inject, OnInit} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {NGXLogger} from "ngx-logger";
+import {AuthenticationService} from "../../services/authentication.service";
+import {AuthenticationModalComponent} from "./authentication-modal.component";
+import {RegistrationModalComponent} from "./registration-modal.component";
 import * as angular from 'angular';
 
-export class AuthenticationController {
-    private static $inject = ['$scope','$rootScope', '$uibModal', 'AuthenticationService'];
-    private $scope;
-    private $rootScope;
-    private $uibModal;
-    private AuthenticationService;
+
+@Component({
+    selector: 'authentication',
+    templateUrl: '../../views/navbar/loginDropdown.html'
+})
+export class AuthenticationComponent implements OnInit{
     private ADMIN_ROLE_NAME;
     private currentUser;
     private welcomeMessage;
 
-    constructor($scope, $rootScope, $uibModal, AuthenticationService) {
-        this.$scope =$scope;
-        this.$rootScope = $rootScope;
-        this.$uibModal = $uibModal;
-        this.AuthenticationService = AuthenticationService;
-    }
+    constructor(@Inject(NgbModal) private modalService: NgbModal, @Inject(AuthenticationService) private authenticationService: AuthenticationService,
+                @Inject(NGXLogger) private logger: NGXLogger) {}
 
-    $onInit = () => {
-        this.currentUser = null;
+    ngOnInit() {
+        this.authenticationService.currentUser.subscribe((x) => {
+            this.currentUser = x;
+        });
+
         this.ADMIN_ROLE_NAME = 'ROLE_ADMIN';
         this.welcomeMessage = 'Login/Register';
 
         /**
          * Create a welcome message on login
          */
-        this.$scope.$on('auth:login-success', (event, data, status, headers, config) => {
-
-            this.AuthenticationService.getCurrentUser().then((data) => {
-                this.welcomeMessage = 'Welcome, ' + data.firstName + '!';
-            });
+        this.authenticationService.isAuthenticated.subscribe((authorized) => {
+            if(authorized) {
+                this.welcomeMessage = `Welcome, ${this.authenticationService.getCurrentUser()}!`
+            } else if (!authorized && this.currentUser === null) {
+                /**
+                 * Remove the welcome message on logout
+                 */
+                this.welcomeMessage = 'Login/Register';
+            }
         });
 
-        /**
-         * Remove the welcome message on logout
-         */
-        this.$scope.$on('auth:logout', (event, data, status, headers, config) => {
-            this.welcomeMessage = 'Login/Register';
-        });
 
         /**
          * Listen for external calls to bring up the authentication modal
          */
-        this.$scope.$on('auth:login', (event) => {
-            if (!this.isLoggedIn()) {
-                this.AuthenticationService.openAuthenticationDialog();
+        this.authenticationService.modalRequest.subscribe((request) => {
+            if(request) {
+                this.handleLogin();
             }
         });
-
-        this.AuthenticationService.validate();
     }
 
     isLoggedIn() {
-        return this.AuthenticationService.isLoggedIn();
+        return this.authenticationService.isLoggedIn();
     }
 
     isAdmin() {
-        if (this.AuthenticationService.isLoggedIn() && angular.isDefined(this.$rootScope.currentUser.roles)) {
-            for (let i = 0; i < this.$rootScope.currentUser.roles.length; i++) {
-                if (this.$rootScope.currentUser.roles[i].authority === this.ADMIN_ROLE_NAME)
-                    return true;
-            }
-        }
-
-        return false;
+        return this.authenticationService.isAdmin();
     };
 
     /**
      * Handle login
      */
 
+    /**
+     * Handle login
+     */
     handleLogin() {
-        this.AuthenticationService.handleLogin();
-    }
-
-   /* handleLogin() {
-        if (this.isLoggedIn()) {
-            this.AuthenticationService.logout();
+        if (this.authenticationService.isLoggedIn()) {
+            this.authenticationService.logout();
         } else {
             this.openAuthenticationDialog();
         }
-    };*/
+    };
 
     /**
      * Opens the authentication modal dialog
      */
-    /*openAuthenticationDialog() {
-        this.$uibModal.open({
-            component: 'authenticationModal',
+    openAuthenticationDialog() {
+        let modalRef;
+        modalRef = this.modalService.open(AuthenticationModalComponent, {
             size: 'sm',
-            backdrop: 'true'
+            backdrop: true
         });
-    }; */
+    };
 
     /**
      * Opens the registration modal dialog
      */
     handleRegistration() {
+        let modalRef;
         if (!this.isLoggedIn()) {
-            this.$uibModal.open({
-                component: 'registrationModal',
+            modalRef = this.modalService.open(RegistrationModalComponent,{
                 size: 'md',
                 backdrop: 'static'
             });
@@ -112,18 +106,9 @@ export class AuthenticationController {
     };
 }
 
-let AuthenticationComponent = {
-    selector: "authentication",
-    templateUrl: "../../views/navbar/loginDropdown.html",
-    bindings: {
-        modalInstance: '<',
-        resolve: '<',
-        close: '&'
-    },
-    controller: AuthenticationController
-}
-
 angular.module('moaClientApp')
-    .component(AuthenticationComponent.selector, AuthenticationComponent)
+    .directive('authentication', downgradeComponent({
+        component: AuthenticationComponent,
+    }))
 
 

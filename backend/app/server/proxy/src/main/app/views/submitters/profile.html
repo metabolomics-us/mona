@@ -1,11 +1,11 @@
-<div ng-value="error"></div>
+<div #error></div>
 
 <div class="row">
-    <div class="col-md-12" ng-show="!auth.isLoggedIn()">
-        <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a>!</h3>
+    <div class="col-md-12" *ngIf="!authenticationService.isLoggedIn()">
+        <h3><i class="fa fa-user fa-fw"></i> Please <a href="" (click)="authenticationService.requestModal()">log in</a>!</h3>
     </div>
 
-    <div class="col-md-12" ng-show="auth.isLoggedIn()">
+    <div class="col-md-12" *ngIf="authenticationService.isLoggedIn()">
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xs-offset-0 col-sm-offset-0 col-md-offset-2 col-lg-offset-2 toppad">
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -23,19 +23,19 @@
                                 <tbody>
                                 <tr>
                                     <td>Username:</td>
-                                    <td>{{$ctrl.user.username}}</td>
+                                    <td>{{user.username}}</td>
                                 </tr>
                                 <tr>
                                     <td>Name:</td>
-                                    <td>{{$ctrl.user.firstName}} {{$ctrl.user.lastName}}</td>
+                                    <td>{{user.firstName}} {{user.lastName}}</td>
                                 </tr>
                                 <tr>
                                     <td>Email Address:</td>
-                                    <td>{{$ctrl.user.emailAddress}}</td>
+                                    <td>{{user.emailAddress}}</td>
                                 </tr>
                                 <tr>
                                     <td>Institution:</td>
-                                    <td>{{$ctrl.user.institution}}</td>
+                                    <td>{{user.institution}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="panel-footer">
-                    <a class="btn btn-primary" ng-click="$ctrl.queryUserSpectra()"><i class="fa fa-search"></i> My Submitted Spectra</a>
+                    <a class="btn btn-primary" (click)="queryUserSpectra()"><i class="fa fa-search"></i> My Submitted Spectra</a>
                     <!--
                     <a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
                     <span class="pull-right">

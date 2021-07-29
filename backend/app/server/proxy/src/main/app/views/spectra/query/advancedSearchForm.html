@@ -8,7 +8,7 @@
                         <div class="col-sm-12">
                             <input id="nameFilter"
                                    name="nameFilter"
-                                   ngModel="compoundQuery.name"
+                                   [(ngModel)]="compoundQuery.name"
                                    placeholder="name or inChiKey"
                                    class="form-control"/>
 
@@ -16,7 +16,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-2">
-                            <select class="form-control" ngModel="compoundQuery.operator[0]">
+                            <select class="form-control" [(ngModel)]="compoundQuery.operator[0]">
                                 <option>AND</option>
                                 <option>OR</option>
                             </select>
@@ -24,25 +24,25 @@
                         <div class="col-sm-5">
                             <input id="classValueFilter"
                                    name="classValueFilter"
-                                   ngModel="compoundQuery.className"
+                                   [(ngModel)]="compoundQuery.className"
                                    placeholder="compound class"
                                    class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-2">
-                            <select class="form-control" ngModel="compoundQuery.operator[1]">
+                            <select class="form-control" [(ngModel)]="compoundQuery.operator[1]">
                                 <option>AND</option>
                                 <option>OR</option>
                             </select>
                         </div>
                         <div class="col-sm-10">
-                            <gw-meta-query-input query="compoundQuery.metadata" editable="false"></gw-meta-query-input>
+                            <gw-meta-query-input [query]="compoundQuery.metadata" [editable]="false"></gw-meta-query-input>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-2">
-                            <select class="form-control" ngModel="compoundQuery.operator[2]">
+                            <select class="form-control" [(ngModel)]="compoundQuery.operator[2]">
                                 <option>AND</option>
                                 <option>OR</option>
                             </select>
@@ -51,7 +51,7 @@
                             <input type="number"
                                    id="accurateMass"
                                    name="accurateMass"
-                                   ngModel="compoundQuery.exactMass"
+                                   [(ngModel)]="compoundQuery.exactMass"
                                    placeholder="accurate mass"
                                    class="form-control"/>
                         </div>
@@ -61,7 +61,7 @@
                                    id="accurateMassTolerance"
                                    name="accurateMassTolerance"
                                    value="0.5"
-                                   ngModel="compoundQuery.tolerance"
+                                   [(ngModel)]="compoundQuery.tolerance"
                                    placeholder="tolerance"
                                    class="form-control"/>
                         </div>
@@ -72,19 +72,19 @@
                     <ng-template ngbPanelHeader>Metadata</ng-template>
                     <div class="form-group row">
                         <div class="col-sm-12">
-                            <gw-meta-query-input query="metadataQuery.metadata" editable="false"></gw-meta-query-input>
+                            <gw-meta-query-input [query]="metadataQuery.metadata" [editable]="false"></gw-meta-query-input>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-sm-2">
-                            <select class="form-control" ngModel="metadataQuery.operator">
+                            <select class="form-control" [(ngModel)]="metadataQuery.operator">
                                 <option>AND</option>
                                 <option>OR</option>
                             </select>
                         </div>
                         <div class="col-sm-5">
                             <input type="number"
-                                   ngModel="metadataQuery.exactMass"
+                                   [(ngModel)]="metadataQuery.exactMass"
                                    placeholder="accurate mass"
                                    class="form-control"/>
                         </div>
@@ -93,7 +93,7 @@
                         <div class="col-sm-3">
                             <input type="number"
                                    id="metaAccurteMass"
-                                   ngModel="metadataQuery.tolerance"
+                                   [(ngModel)]="metadataQuery.tolerance"
                                    placeholder="tolerance"
                                    value="0.5"
                                    class="form-control"/>

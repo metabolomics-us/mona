@@ -93,7 +93,7 @@ export class SpectraQueryBuilderService {
         });
     }
 
-    executeQuery = (replace) => {
+    executeQuery = (replace = false) => {
         let query = this.getRSQLQuery();
 
         if (query !== '' || this.textSearch !== '') {

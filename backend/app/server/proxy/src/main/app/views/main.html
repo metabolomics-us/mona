@@ -78,7 +78,7 @@
         <div class="col-md-6">
             <h3>Submitter High Scores</h3>
 
-            <div spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</div>
+            <spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</spectra-top-scores-for-users>
         </div>
     </div>
 
@@ -89,17 +89,17 @@
             <h3>Top Rated Spectral Records</h3>
             <br />
 
-            <uib-carousel interval="7000">
-                <uib-slide ng-repeat="spectrum in $ctrl.showcaseSpectra">
-                    <div class="text-left" display-spectra-panel spectrum="spectrum"></div>
-                </uib-slide>
+            <ngb-carousel interval="7000">
+                <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
+                    <display-spectra-panel class="text-left" spectrum="spectrum"></display-spectra-panel>
+                </ng-template>
 
-                <uib-slide ng-if="$ctrl.showcaseSpectra.length === 0">
+                <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
                     <div class="text-center">
                         <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
                     </div>
-                </uib-slide>
-            </uib-carousel>
+                </ng-template>
+            </ngb-carousel>
         </div>
     </div>
 </div>

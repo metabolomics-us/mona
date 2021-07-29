@@ -8,26 +8,26 @@
             JSON format or as NIST MS Search compatible MSP files.
         </div>
 
-        <div data-query-tree-view data-tree-id="tree" data-tree-model="$ctrl.queryTree"></div>
+        <query-tree-view [treeId]="tree" [treeModel]="queryTree"></query-tree-view>
 
     </div>
 </div>
 
-<div class="row" ng-if="!angular.equals($ctrl.static, {})">
+<div class="row" ng-if="static !== []">
     <div class="col-md-12">
         <h3><i class="fa fa-table"></i> Additional Downloads</h3>
 
         <div class="list-group panel-query-tree well">
-            <div class="list-group-item" data-ng-repeat-start="(category, files) in $ctrl.static">
-                <b>{{category}}</b>
-            </div>
-            <div class="list-group-item" style="padding-left: 3em;" data-ng-repeat-end data-ng-repeat="file in files">
-                <span>{{file.description}}</span>
-                <span class="pull-right">
-                    <a ng-href="{{file.path}}" target="_blank" data-ga-track-event="['download', 'click', file.fileName]">
-                        <i class="fa fa-download"></i> Download
-                    </a>
-                </span>
+            <div class="list-group-item" *ngFor="let st of static">
+                <b>{{st.category}}</b>
+                <div class="list-group-item" style="padding-left: 3em;" *ngFor="let file of st.files">
+                    <span>{{file.description}}</span>
+                    <span class="pull-right">
+                        <a href="{{file.path}}" target="_blank" gaEvent="['download', 'click', file.fileName]">
+                            <i class="fa fa-download"></i> Download
+                        </a>
+                    </span>
+                </div>
             </div>
         </div>
     </div>

@@ -10,6 +10,7 @@ import {SlicePipe} from "@angular/common";
 import * as angular from 'angular';
 import {Component, Inject, Input} from "@angular/core";
 import {downgradeComponent} from "@angular/upgrade/static";
+import {map} from "rxjs/operators";
 
 
 @Component({
@@ -81,9 +82,9 @@ export class GwMetaQueryInputComponent{
                     property: 'stringValue',
                     deleted: false
                 }
-            }).subscribe((res: any) => {
-                return res.data.slice(0, 25);
-            });
+            }).pipe(map((x: string) => {
+                return x.slice(0,25);
+            }));
 
         }
         else if (typeof this.fullText !== 'undefined') {
@@ -94,9 +95,9 @@ export class GwMetaQueryInputComponent{
                     property: 'stringValue',
                     deleted: false
                 }
-            }).subscribe((res: any) => {
-                return res.data.slice(0, 25);
-            });
+            }).pipe(map((res: string) => {
+                return res.slice(0, 25);
+            }));
         }
         else {
             return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/meta/data/search?max=10`, {
@@ -107,9 +108,9 @@ export class GwMetaQueryInputComponent{
                     deleted: false
 
                 }
-            }).subscribe((res: any) => {
-                return res.data.slice(0, 25);
-            });
+            }).pipe(map((res: string) => {
+                return res.slice(0, 25);
+            }));
         }
 
     };

@@ -1,28 +1,32 @@
 /**
  * Created by sajjan on 7/13/16.
  */
-
+import {Location} from "@angular/common";
+import {UploadLibraryService} from "../../services/upload/upload-library.service";
+import {CompoundConversionService} from "../../services/compound-conversion.service";
+import {AsyncService} from "../../services/upload/async.service";
+import {NGXLogger} from "ngx-logger";
+import {environment} from "../../environments/environment";
+import {HttpClient} from "@angular/common/http";
+import {AuthenticationService} from "../../services/authentication.service";
+import {FilterPipe} from "../../filters/filter.pipe";
 import * as angular from 'angular';
+import {Component, Inject, OnInit} from "@angular/core";
+import {catchError, filter, first, map} from "rxjs/operators";
+import {SlicePipe} from "@angular/common";
+import {downgradeComponent} from "@angular/upgrade/static";
+import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {Observable, ErrorObserver} from "rxjs";
 
-class BasicUploaderController{
-    private static $inject = ['$scope', '$rootScope', '$window', '$location', 'UploadLibraryService', 'CompoundConversionService', '$q', '$filter', 'AsyncService', '$log', 'REST_BACKEND_SERVER', '$http', 'AuthenticationService'];
-    private $scope;
-    private $rootScope;
-    private $window;
-    private $location;
-    private UploadLibraryService;
-    private CompoundConversionService;
-    private $q;
-    private $filter;
-    private AsyncService;
-    private $log;
-    private REST_BACKEND_SERVER;
-    private $http;
-    private AuthenticationService;
+@Component({
+    selector: 'basic-uploader',
+    templateUrl: '../../views/spectra/upload/basicUploader.html'
+})
+export class BasicUploaderComponent implements OnInit{
     private FileUploader;
     private currentSpectrum;
     private metadata;
-    private page;
+    public page: number;
     private fileHasMultipleSpectra;
     private showIonTable;
     private ionTableSort;
@@ -37,25 +41,15 @@ class BasicUploaderController{
     private uploadError;
     private error;
     private tags;
-    private metadataNames;
+    public filenames;
+    public pastedSpectrum;
 
-    constructor($scope, $rootScope, $window, $location, UploadLibraryService, CompoundConversionService, $q, $filter, AsyncService, $log, REST_BACKEND_SERVER, $http, AuthenticationService){
-        this.$scope = $scope;
-        this.$rootScope = $rootScope;
-        this.$window = $window;
-        this.$location = $location;
-        this.UploadLibraryService = UploadLibraryService;
-        this.CompoundConversionService = CompoundConversionService;
-        this.$q = $q;
-        this.$filter = $filter;
-        this.AsyncService = AsyncService;
-        this.$log = $log;
-        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
-        this.$http = $http;
-        this.AuthenticationService = AuthenticationService;
-    }
+    constructor(@Inject(Location) private location: Location, @Inject(UploadLibraryService) private uploadLibraryService: UploadLibraryService,
+                @Inject(CompoundConversionService) private compoundConversionService: CompoundConversionService, @Inject(AsyncService) private asyncService: AsyncService,
+                @Inject(NGXLogger) private logger: NGXLogger, @Inject(HttpClient) private http: HttpClient, @Inject(FilterPipe) private filterPipe: FilterPipe,
+                @Inject(AuthenticationService) private authenticationService: AuthenticationService, @Inject(SlicePipe) private slice: SlicePipe){}
 
-    $onInit(){
+    ngOnInit(){
         this.currentSpectrum = null;
         this.metadata = {};
         this.page = 0;
@@ -68,14 +62,38 @@ class BasicUploaderController{
         this.ionTableSort = 'ion';
         this.ionTableSortReverse = false;
 
-        this.$http.get(this.REST_BACKEND_SERVER + '/rest/metaData/names').then((data) => {
-            this.metadataNames = data.data;
-        });
-
         // Get tags
-        this.$http.get(this.REST_BACKEND_SERVER + '/rest/tags').then((data) => {
-            this.tags = data.data;
+        this.http.get(`${environment.REST_BACKEND_SERVER}/rest/tags`).subscribe((data) => {
+            this.tags = data;
         });
+    }
+
+    //ngbTypeahead needs an observable so we shove the metadata typeahead results into an observable and appropriately sort
+    metadataNames = (text$: Observable<string>) => {
+        return text$.pipe(
+            distinctUntilChanged(),
+            debounceTime(300),
+            switchMap((searchText) => {
+                return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/names`)
+                    .pipe(map((data: any) => {
+                        let filtered ;
+                        filtered = data.sort((x, y) => {
+                           if(x.count < y.count){
+                               return 1;
+                           } else if(x.count > y.count) {
+                               return -1;
+                           } else{
+                               return 0;
+                           }
+                        });
+                        filtered = filtered.filter((x) => {
+                            return x.name.includes(searchText);
+                        });
+                        filtered = this.slice.transform(filtered,0, 8);
+                        filtered = filtered.map((x) => x.name);
+                        return filtered;
+                    }))
+            }));
     }
 
     sortIonTable = (column) => {
@@ -102,12 +120,12 @@ class BasicUploaderController{
      * Handle switching pages
      */
     previousPage = () => {
-        this.$window.scrollTo(0, 0);
+        window.scrollTo(0, 0);
         this.page--;
     };
 
     nextPage = () => {
-        this.$window.scrollTo(0, 0);
+        window.scrollTo(0, 0);
         this.page++;
     };
 
@@ -117,7 +135,7 @@ class BasicUploaderController{
         this.fileHasMultipleSpectra = false;
 
         // Scroll to top of the page
-        this.$window.scrollTo(0, 0);
+        window.scrollTo(0, 0);
     };
 
 
@@ -208,7 +226,7 @@ class BasicUploaderController{
         if (names.length == 0) {
             callback(null);
         } else {
-            this.CompoundConversionService.nameToInChIKey(names[0], (molecule) => {
+            this.compoundConversionService.nameToInChIKey(names[0], (molecule) => {
                 if (molecule !== null) {
                     callback(molecule);
                 } else {
@@ -226,7 +244,7 @@ class BasicUploaderController{
     pullNames = (inchiKey) => {
         // Only pull if there are no names provided
         if (this.currentSpectrum.names.length == 0 || (this.currentSpectrum.names.length == 1 && this.currentSpectrum.names[0] == '')) {
-            this.CompoundConversionService.InChIKeyToName(
+            this.compoundConversionService.InChIKeyToName(
                 inchiKey,
                  (data) => {
                     this.currentSpectrum.names = this.currentSpectrum.names.filter((x) => {
@@ -250,14 +268,14 @@ class BasicUploaderController{
      * Pull compound summary given an InChI
      */
     processInChI = (inchi) => {
-        this.CompoundConversionService.parseInChI(
+        this.compoundConversionService.parseInChI(
             this.currentSpectrum.inchi,
              (response) => {
-                this.currentSpectrum.smiles = response.data.smiles;
-                this.currentSpectrum.inchiKey = response.data.inchiKey;
-                this.currentSpectrum.molFile = response.data.molData;
+                this.currentSpectrum.smiles = response.smiles;
+                this.currentSpectrum.inchiKey = response.inchiKey;
+                this.currentSpectrum.molFile = response.molData;
 
-                this.pullNames(response.data.inchiKey);
+                this.pullNames(response.inchiKey);
             },
              (response) => {
                 this.compoundError = 'Unable to process provided InChI!'
@@ -267,7 +285,7 @@ class BasicUploaderController{
     };
 
     processInChIKey = (inchiKey) => {
-        this.CompoundConversionService.getInChIByInChIKey(
+        this.compoundConversionService.getInChIByInChIKey(
             inchiKey,
              (data) => {
                 this.currentSpectrum.inchi = data[0];
@@ -289,7 +307,7 @@ class BasicUploaderController{
      * Generate MOL file from available compound information
      */
     retrieveCompoundData = () => {
-        this.$log.info("Retrieving MOL data...");
+        this.logger.info("Retrieving MOL data...");
 
         this.compoundError = undefined;
         this.compoundProcessing = true;
@@ -302,14 +320,14 @@ class BasicUploaderController{
 
         // Process SMILES
         else if (this.currentSpectrum.smiles) {
-            this.CompoundConversionService.parseSMILES(
+            this.compoundConversionService.parseSMILES(
                 this.currentSpectrum.smiles,
                  (response) => {
-                    this.currentSpectrum.inchi = response.data.inchi;
-                    this.currentSpectrum.inchiKey = response.data.inchiKey;
-                    this.currentSpectrum.molFile = response.data.molData;
+                    this.currentSpectrum.inchi = response.inchi;
+                    this.currentSpectrum.inchiKey = response.inchiKey;
+                    this.currentSpectrum.molFile = response.molData;
 
-                    this.pullNames(response.data.inchiKey);
+                    this.pullNames(response.inchiKey);
                 },
                  (response) => {
                     this.compoundError = 'Unable to process provided SMILES!';
@@ -327,7 +345,7 @@ class BasicUploaderController{
         else if (this.currentSpectrum.names.length > 0) {
             this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
                 if (inchiKey !== null) {
-                    this.$log.info('Found InChIKey: '+ inchiKey);
+                    this.logger.info('Found InChIKey: '+ inchiKey);
                     this.currentSpectrum.inchiKey = inchiKey;
                     this.processInChIKey(inchiKey);
                 } else {
@@ -359,17 +377,17 @@ class BasicUploaderController{
     };
 
     convertMolToInChI =  () => {
-        if (angular.isDefined(this.currentSpectrum.molFile) && this.currentSpectrum.molFile !== '') {
+        if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
             this.compoundProcessing = false;
 
-            this.CompoundConversionService.parseMOL(
+            this.compoundConversionService.parseMOL(
                 this.currentSpectrum.molFile,
                  (response) => {
-                    this.currentSpectrum.inchi = response.data.inchi;
-                    this.currentSpectrum.smiles = response.data.smiles;
-                    this.currentSpectrum.inchiKey = response.data.inchiKey;
+                    this.currentSpectrum.inchi = response.inchi;
+                    this.currentSpectrum.smiles = response.smiles;
+                    this.currentSpectrum.inchiKey = response.inchiKey;
 
-                    this.pullNames(response.data.inchiKey);
+                    this.pullNames(response.inchiKey);
                 },
                  (response) => {
                     this.compoundMolError = 'Unable to process provided MOL data!'
@@ -393,17 +411,17 @@ class BasicUploaderController{
      * Parse spectra
      * @param files
      */
-    parseFiles = (files) => {
+    parseFiles = (event) => {
         this.page = 1;
         this.uploadError = null;
-        this.UploadLibraryService.loadSpectraFile(files[0],
+        this.uploadLibraryService.loadSpectraFile(event.target.files[0],
              (data, origin) => {
-                this.$log.info("Loading file "+ files[0].name +"...");
+                this.logger.info("Loading file "+ event.target.files[0].name +"...");
 
-                this.UploadLibraryService.processData(data, (spectrum) => {
+                this.uploadLibraryService.processData(data, (spectrum) => {
                     if (!this.currentSpectrum) {
                         // Create list of ions
-                        this.$log.info("Parsing ions...");
+                        this.logger.info("Parsing ions...");
 
                         spectrum.basePeak = 0;
                         spectrum.basePeakIntensity = 0;
@@ -440,11 +458,11 @@ class BasicUploaderController{
 
                         // Remove annotations and origin from metadata
                         spectrum.hiddenMetadata = spectrum.meta.filter((metadata) => {
-                            return metadata.name === 'origin' || (angular.isDefined(metadata.category) && metadata.category === 'annotation');
+                            return metadata.name === 'origin' || (typeof metadata.category !== 'undefined' && metadata.category === 'annotation');
                         });
 
                         spectrum.meta = spectrum.meta.filter((metadata) => {
-                            return metadata.name !== 'origin' && (angular.isUndefined(metadata.category) || metadata.category !== 'annotation');
+                            return metadata.name !== 'origin' && (typeof metadata.category !== 'undefined' || metadata.category !== 'annotation');
                         });
 
                         // Add an empty metadata field if none exist
@@ -453,17 +471,15 @@ class BasicUploaderController{
                         }
 
 
-                        this.$log.info("Loaded spectrum from file "+ files[0].name);
+                        this.logger.info("Loaded spectrum from file "+ event.target.files[0].name);
 
-                        this.$scope.$apply(() => {
-                            this.currentSpectrum = spectrum;
-                            this.page = 2;
-                            this.showIonTable = this.currentSpectrum.ions.length < 500;
+                        this.currentSpectrum = spectrum;
+                        this.page = 2;
+                        this.showIonTable = this.currentSpectrum.ions.length < 500;
 
-                            if (!this.currentSpectrum.molFile) {
-                                this.retrieveCompoundData();
-                            }
-                        });
+                        if (!this.currentSpectrum.molFile) {
+                            this.retrieveCompoundData();
+                        }
                     } else {
                         //this.$log.info("Skipping additional spectrum in file "+ files[0].name);
                         this.fileHasMultipleSpectra = true;
@@ -472,14 +488,12 @@ class BasicUploaderController{
             },
             (progress) => {
                 if (progress == 100) {
-                    this.$scope.$apply(() => {
-                        if (this.currentSpectrum == null) {
-                            this.page = 0;
-                            this.uploadError = 'Unable to load spectra!';
-                        } else {
-                            this.page = 2;
-                        }
-                    });
+                    if (this.currentSpectrum == null) {
+                        this.page = 0;
+                        this.uploadError = 'Unable to load spectra!';
+                    } else {
+                        this.page = 2;
+                    }
                 }
             }
         );
@@ -514,15 +528,15 @@ class BasicUploaderController{
             spectrum.errors.push('This spectrum has no selected ions!  It cannot be uploaded.');
         }
 
-        if ((angular.isUndefined(spectrum.inchi) || spectrum.inchi === '') &&
-            (angular.isUndefined(spectrum.molFile) || spectrum.molFile === '') &&
-            (angular.isUndefined(spectrum.smiles) || spectrum.smiles === '')) {
+        if ((typeof spectrum.inchi === 'undefined' || spectrum.inchi === '') &&
+            (typeof spectrum.molFile === 'undefined' || spectrum.molFile === '') &&
+            (typeof spectrum.smiles === 'undefined' || spectrum.smiles === '')) {
             spectrum.errors.push('This spectrum requires a structure in order to upload. Please provide a MOL file or InChI code!');
         }
 
         if (spectrum.errors.length > 0) {
             this.error = 'There are some errors in the data you have provided.';
-            this.$window.scrollTo(0, 0);
+            window.scrollTo(0, 0);
 
             return false;
         } else {
@@ -533,35 +547,35 @@ class BasicUploaderController{
 
     finalizeAndValidateSpectra() {
         // Add additional components to spectrum object
-        if (angular.isDefined(this.metadata.chromatography) && this.metadata.chromatography != "") {
+        if (typeof this.metadata.chromatography !== 'undefined' && this.metadata.chromatography != "") {
             this.currentSpectrum.meta.push({name: "sample introduction", value: this.metadata.chromatography});
         }
 
-        if (angular.isDefined(this.metadata.derivatization) && this.metadata.derivatization != "") {
+        if (typeof this.metadata.derivatization !== 'undefined' && this.metadata.derivatization != "") {
             this.currentSpectrum.meta.push({name: "derivatization", value: this.metadata.derivatization});
         }
 
-        if (angular.isDefined(this.metadata.mslevel) && this.metadata.mslevel != "") {
+        if (typeof this.metadata.mslevel !== 'undefined' && this.metadata.mslevel != "") {
             this.currentSpectrum.meta.push({name: "ms level", value: this.metadata.mslevel});
         }
 
-        if (angular.isDefined(this.metadata.precursormz) && this.metadata.precursormz != "") {
+        if (typeof this.metadata.precursormz !== 'undefined' && this.metadata.precursormz != "") {
             this.currentSpectrum.meta.push({name: "precursor m/z", value: this.metadata.precursormz});
         }
 
-        if (angular.isDefined(this.metadata.precursortype) && this.metadata.precursortype != "") {
+        if (typeof this.metadata.precursortype !== 'undefined' && this.metadata.precursortype != "") {
             this.currentSpectrum.meta.push({name: "precursor type", value: this.metadata.precursortype});
         }
 
-        if (angular.isDefined(this.metadata.ionization) && this.metadata.ionization != "") {
+        if (typeof this.metadata.ionization !== 'undefined' && this.metadata.ionization != "") {
             this.currentSpectrum.meta.push({name: "ionization", value: this.metadata.ionization});
         }
 
-        if (angular.isDefined(this.metadata.ionmode) && this.metadata.ionmode != "") {
+        if (typeof this.metadata.ionmode !== 'undefined' && this.metadata.ionmode != "") {
             this.currentSpectrum.meta.push({name: "ionization mode", value: this.metadata.ionmode});
         }
 
-        if (angular.isDefined(this.metadata.authors) && this.metadata.authors != "") {
+        if (typeof this.metadata.authors !== 'undefined' && this.metadata.authors != "") {
             this.currentSpectrum.meta.push({name: "authors", value: this.metadata.authors});
         }
 
@@ -572,42 +586,31 @@ class BasicUploaderController{
     uploadFile = () => {
         if (this.finalizeAndValidateSpectra()) {
             // Reset the spectrum count if necessary
-            if (!this.UploadLibraryService.isUploading()) {
-                this.UploadLibraryService.completedSpectraCount = 0;
-                this.UploadLibraryService.failedSpectraCount = 0;
-                this.UploadLibraryService.uploadedSpectraCount = 0;
-                this.UploadLibraryService.uploadStartTime = new Date().getTime();
+            if (!this.uploadLibraryService.isUploading()) {
+                this.uploadLibraryService.completedSpectraCount = 0;
+                this.uploadLibraryService.failedSpectraCount = 0;
+                this.uploadLibraryService.uploadedSpectraCount = 0;
+                this.uploadLibraryService.uploadStartTime = new Date().getTime();
             }
 
-            this.UploadLibraryService.uploadSpectra([this.currentSpectrum],  (spectrum) => {
-                this.$log.info("submitting spectrum");
-                this.$log.info(spectrum);
+            this.uploadLibraryService.uploadSpectra([this.currentSpectrum],  (spectrum) => {
+                this.logger.info("submitting spectrum");
+                this.logger.info(spectrum);
+                this.logger.info(this.authenticationService.getCurrentUser().access_token);
+                this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
+                    {headers: {
+                            'Authorization': `Bearer ${this.authenticationService.getCurrentUser().access_token}`
+                    }}).pipe(first()).subscribe((data: any) => {
+                    this.logger.info('Spectra successfully Upload!');
+                    this.logger.info('Reference ID: ' + data.id);
+                    this.logger.info(data);
+                    this.uploadLibraryService.uploadedSpectra.push(data);
+                }, (err) => {
+                        this.logger.info('ERROR', err);
+                });
+            });
 
-                let req = {
-                    method: 'POST',
-                    url: this.REST_BACKEND_SERVER + '/rest/spectra',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + this.AuthenticationService.currentUser.access_token
-                    },
-                    data: JSON.stringify(spectrum)
-                };
-
-                this.$http(req).then((data) => {
-                        this.$log.info('Spectra successfully Upload!');
-                        this.$log.info('Reference ID: ' + data.data.id);
-                        this.$log.info(data);
-                        this.UploadLibraryService.uploadedSpectra.push(data.data);
-                    },
-                     (err) => {
-                         this.$log.info('ERROR');
-                         this.$log.info(err);
-                    });
-
-                //spectrum.$batchSave(spectrum.submitter.access_token);
-            }, [this.currentSpectrum]);
-
-            this.$location.path('/upload/status');
+            this.location.go('/upload/status');
         }
     };
 
@@ -618,17 +621,17 @@ class BasicUploaderController{
      * @param value
      * @returns {*}
      */
-    queryMetadataValues = (name, value) => {
-        if (angular.isUndefined(value) || value.replace(/^\s*/, '').replace(/\s*$/, '') === '')
-            value = '';
-
-        return this.$http.get(
-            this.REST_BACKEND_SERVER + '/rest/metaData/values?name='+ encodeURI(name) +'&search='+ encodeURI(value)
-        ).then((data) => {
-            return data.data.values;
-        });
-    };
-
+    //This rest call is not working at all, will have to dig in backend and see why that is
+    queryMetadataValues(name: any): (text$: Observable<string>) => Observable<any> {
+        return (text$: Observable<string>) =>
+            text$.pipe(
+                debounceTime(300),
+                distinctUntilChanged(),
+                switchMap(switchText => 
+                    this.http.get<any>(`${environment.REST_BACKEND_SERVER}/rest/metaData/values?name=${encodeURI(name)}&search=${encodeURI(switchText)}`)
+                )
+            );
+    }
 
 
     /**
@@ -638,21 +641,13 @@ class BasicUploaderController{
      * Performs initialization and acquisition of data used by the wizard
      */
     loadTags = (query) => {
-        let deferred = this.$q.defer();
-
-        // First filters by the query and then removes any tags already selected
-        deferred.resolve(this.$filter('filter')(this.tags, query));
-
-        return deferred.promise;
+        return new Promise((resolve) => {
+           resolve(this.filterPipe.transform(this.tags, query, false, undefined));
+        });
     };
 }
 
-let BasicUploaderComponent = {
-    selector: "basicUploader",
-    templateUrl: '../../views/spectra/upload/basicUploader.html',
-    bindings: {},
-    controller: BasicUploaderController
-}
-
 angular.module('moaClientApp')
-    .component(BasicUploaderComponent.selector, BasicUploaderComponent);
+    .directive('basicUploader', downgradeComponent({
+        component: BasicUploaderComponent
+    }));

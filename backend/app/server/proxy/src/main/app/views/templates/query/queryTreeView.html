@@ -1,0 +1,26 @@
+<div class="form-group query-tree-display-option" *ngIf="depth === 0">
+    <label><input type="checkbox" [(ngModel)]="showHidden"> Display Hidden Downloads</label>
+</div>
+<div class="list-group panel-query-tree well">
+    <div *ngFor="let node of treeModel">
+        <div class="list-group-item" *ngIf="showHidden || node.display">
+            <i class="fa fa-folder-o" *ngIf="node.children.length && node.collapsed" (click)="treeId.selectNodeHead(node)"></i>
+            <i class="fa fa-folder-open-o" *ngIf="node.children.length && !node.collapsed" (click)="treeId.selectNodeHead(node)"></i>
+            <i class="fa fa-file-text-o" *ngIf="!node.children.length"></i>
+
+            <span *ngIf="node.query !== null"><a href="{{executeQuery(node)}}"><i class="fa fa-search"></i> {{node.singleLabel}}</a> ({{node.queryCount | number:'1.0-0'}} {{node.queryCount === 1 ? "spectrum" : "spectra"}})</span>
+            <span *ngIf="node.query === null"> {{node.singleLabel}}</span>
+
+            <span class="pull-right" [hidden]="node.jsonExport === null || node.mspExport === null || node.sdfExport === null" ngbDropdown>
+                    <a ngbDropdownToggle class="dropdown-toggle"><i class="fa fa-download"></i> Download</a>
+                    <ul class="uib-dropdown-menu dropdown-menu-right" placement="right" ngbDropdownMenu>
+                        <li *ngIf="node.jsonExport !== null"><a href="{{downloadJSON(node)}}" target="_self" download [gaEvent]="['download', 'click', node.downloadLabel +'.json']"><i class="fa fa-download"></i> JSON (Internal MoNA Format) ({{node.jsonExport.size}})</a></li>
+                        <li *ngIf="node.mspExport !== null"><a href="{{downloadMSP(node)}}" target="_self" download [gaEvent]="['download', 'click', node.downloadLabel + '.msp']"><i class="fa fa-download"></i> MSP (NIST compatible) ({{node.mspExport.size}})</a></li>
+                        <li *ngIf="node.sdfExport !== null"><a href="{{downloadSDF(node)}}" target="_self" download [gaEvent]="['download', 'click', node.downloadLabel +'.sdf']"><i class="fa fa-download"></i> SDF (NIST compatible) ({{node.sdfExport.size}})</a></li>
+                    </ul>
+                </span>
+            <span class="pull-right" *ngIf="node.jsonExport === null && node.mspExport === null && node.query !== null">Export generation in progress...</span>
+        </div>
+        <query-tree-view [hidden]="!node.collapsed" class="list-group" *ngIf="node.children.length"  treeDepth="{{depth+1}}" [treeId]="treeId" [treeModel]="node.children"></query-tree-view>
+    </div>
+</div>

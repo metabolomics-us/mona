@@ -1,98 +1,103 @@
 /**
  * Created by sajjan on 11/13/15.
  */
+import {Download} from "../../services/persistence/download.resource";
+import {NGXLogger} from "ngx-logger";
+import {environment} from "../../environments/environment";
 import * as angular from 'angular';
+import {Component, Inject, OnInit, Output, EventEmitter} from "@angular/core";
+import {first} from "rxjs/operators";
+import {downgradeComponent} from "@angular/upgrade/static";
 
-class QueryTreeController{
-    private static $inject = ['$scope', 'DownloadService', '$log', 'REST_BACKEND_SERVER'];
-    private $scope;
-    private DownloadService;
-    private $log;
-    private REST_BACKEND_SERVER;
-    private showEmptyDownloads;
-    private queries;
-    private queryTree;
-    private static;
+@Component({
+    selector: 'query-tree',
+    templateUrl: '../../views/spectra/dbindex/queryTree.html'
 
-    constructor($scope, DownloadService, $log, REST_BACKED_SERVER) {
-        this.$scope = $scope;
-        this.DownloadService = DownloadService;
-        this.$log = $log;
-        this.REST_BACKEND_SERVER = REST_BACKED_SERVER;
-    }
+})
+export class QueryTreeComponent implements OnInit {
+    public showEmptyDownloads;
+    public queries;
+    public queryTree;
+    public static: any;
+    public tree;
 
-    $onInit = () => {
+    constructor(@Inject(Download) private download: Download, @Inject(NGXLogger) private logger: NGXLogger) {}
+
+    ngOnInit() {
         this.showEmptyDownloads = false;
         this.queries = {};
+        this.static = [];
         this.queryTree = [];
+        this.tree = {};
 
         this.getPredefinedQueries();
         this.getStaticDownloads();
     }
 
-    executeQuery = (node) => {
-        return '/spectra/browse?query='+ node.query;
+    executeQuery(node: any): string {
+        return `${environment.REST_BACKEND_SERVER}/spectra/browse?query=${node.query}`;
     };
 
-    downloadJSON = (node) => {
-        return this.REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.jsonExport.id;
+    downloadJSON(node: any): string {
+        return `${environment.REST_BACKEND_SERVER}/rest/downloads/retrieve/${node.jsonExport.id}`;
     };
 
-    downloadMSP = (node) => {
-        return this.REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.mspExport.id;
+    downloadMSP(node: any): string {
+        return `${environment.REST_BACKEND_SERVER}/rest/downloads/retrieve/${node.mspExport.id}`;
     };
 
-    downloadSDF = (node) => {
-        return this.REST_BACKEND_SERVER +'/rest/downloads/retrieve/'+ node.sdfExport.id;
+    downloadSDF(node: any): string {
+        return `${environment.REST_BACKEND_SERVER}/rest/downloads/retrieve/${node.sdfExport.id}`;
     };
 
     /**
      * Get predefined queries and build query tree
      */
     getPredefinedQueries = () => {
-        this.DownloadService.getPredefinedQueries().then(
-            (res) => {
-                console.log(res);
+        let data;
+        this.download.getPredefinedQueries().pipe(first()).subscribe(
+            (res: any) => {
+                data = res;
                 // Header entry for libraries, which is displayed by default if any libraries are being displayed
-                res.unshift({
+                data.unshift({
                     label: "Libraries",
                     query: null,
                     jsonExport: null,
                     mspExport: null,
                     sdfExport: null,
-                    display: res.some((x) => { return x.label.indexOf('Libraries') > -1 && x.queryCount > 0; })
+                    display: data.some((x) => { return x.label.indexOf('Libraries') > -1 && x.queryCount > 0; })
                 });
 
                 // Set up all nodes
-                for (let i = 0; i < res.length; i++) {
-                    this.queries[res[i].label] = res[i];
+                for (let i = 0; i < data.length; i++) {
+                    this.queries[data[i].label] = data[i];
 
-                    let label = res[i].label.split(' - ');
-                    res[i].downloadLabel = res[i].label.replace(/ /g, '_').replace(/\//g, '-');
-                    res[i].depth = label.length;
-                    res[i].id = i;
-                    res[i].children = [];
+                    let label = data[i].label.split(' - ');
+                    data[i].downloadLabel = data[i].label.replace(/ /g, '_').replace(/\//g, '-');
+                    data[i].depth = label.length;
+                    data[i].id = i;
+                    data[i].children = [];
 
                     // Hide downloads with 0 records
                     if (i > 0) {
-                        res[i].display = (res[i].queryCount > 0);
+                        data[i].display = (data[i].queryCount > 0);
                     }
                 }
 
                 // Identify node parents
-                for (let i = 0; i < res.length; i++) {
-                    let label = res[i].label.split(' - ');
-                    res[i].singleLabel = label.pop();
+                for (let i = 0; i < data.length; i++) {
+                    let label = data[i].label.split(' - ');
+                    data[i].singleLabel = label.pop();
                     let parentLabel = label.join(" - ");
 
-                    if (res[i].depth === 1) {
-                        res[i].parent = -1;
-                        this.queryTree.push(res[i]);
+                    if (data[i].depth === 1) {
+                        data[i].parent = -1;
+                        this.queryTree.push(data[i]);
                     } else {
-                        for (let j = 0; j < res.length; j++) {
-                            if (res[j].label === parentLabel) {
-                                res[i].parent = j;
-                                res[j].children.push(res[i]);
+                        for (let j = 0; j < data.length; j++) {
+                            if (data[j].label === parentLabel) {
+                                data[i].parent = j;
+                                data[j].children.push(data[i]);
                                 break;
                             }
                         }
@@ -115,50 +120,43 @@ class QueryTreeController{
                 });
             },
             (error) => {
-                this.$log.error('query tree failed: ' + error);
+                this.logger.error('query tree failed: ' + error);
             }
         );
     };
 
     getStaticDownloads = () => {
-        this.static = {};
-
-        this.DownloadService.getStaticDownloads().then(
-            (res) => {
-                console.log(res);
+        this.download.getStaticDownloads().pipe(first()).subscribe(
+            (res: any) => {
                 res.forEach((x) => {
-                    if (angular.isDefined(x.category)) {
+                    if (typeof x.category !== 'undefined') {
                         let categoryName = x.category[0].toUpperCase() + x.category.substr(1);
 
                         if (!this.static.hasOwnProperty(categoryName)) {
                             this.static[categoryName] = [];
                         }
 
-                        x.path = this.REST_BACKEND_SERVER +'/rest/downloads/static/'+ x.category +'/'+ x.fileName;
+                        x.path = `${environment.REST_BACKEND_SERVER}/rest/downloads/static/${x.category}/${x.fileName}`;
                         this.static[categoryName].push(x);
                     } else {
                         if (!this.static.hasOwnProperty('General')) {
                             this.static['General'] = [];
                         }
 
-                        x.path = this.REST_BACKEND_SERVER +'/rest/downloads/static/'+ x.fileName;
+                        x.path = `${environment.REST_BACKEND_SERVER}/rest/downloads/static/${x.fileName}`;
                         this.static['General'].push(x);
                     }
                 });
             },
             (error) => {
-                this.$log.error('query tree failed: ' + error);
+                this.logger.error('query tree failed: ' + error);
             }
         );
     };
 
 }
 
-let QueryTreeComponent = {
-    selector: "queryTree",
-    templateUrl: "../../views/spectra/dbindex/queryTree.html",
-    bindings: {},
-    controller: QueryTreeController
-}
 angular.module('moaClientApp')
-    .component(QueryTreeComponent.selector, QueryTreeComponent)
+    .directive('queryTree', downgradeComponent({
+        component: QueryTreeComponent
+    }))

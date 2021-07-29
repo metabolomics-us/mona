@@ -29,8 +29,9 @@
                     </span>
                 </div>
 
-                <div style="display:block" chemical-sketcher readonly="true" width="250" height="250"
-                     id="big-{{pictureId}}-CompoundViewer_{{chemId}}" ngModel="compound"></div>
+                <div style="width: 250px; height: 250px; display: block;">
+                    <div [libChemdoodle]="compound" readonly="true" id="big-{{pictureId}}-CompoundViewer_{{chemId}}"></div>
+                </div>
             </div>
         </div>
     </div>

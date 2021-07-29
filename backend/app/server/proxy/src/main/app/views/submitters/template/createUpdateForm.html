@@ -1,93 +1,98 @@
-<form name="submitterForm" class="form-horizontal" novalidate role="form">
-    <p ng-show="formErrors" class="help-block bg-danger">
+<form #submitterForm="ngForm" id="submitterForm" class="form-horizontal" novalidate role="form">
+    <p [hidden]="!formErrors" class="help-block bg-danger">
         {{formErrors}}
     </p>
 
     <div class="form-group"
-         ng-class="{ 'has-error' : submitterForm.firstName.$invalid && !submitterForm.firstName.$pristine}">
+         [ngClass]="{ 'has-error' : !firstName.valid && !firstName.pristine}">
 
         <label for="firstName" class="control-label col-sm-3">First Name:</label>
 
         <div class="col-sm-9">
             <input type="text" class="form-control" id="firstName" name="firstName"
                    placeholder="Please enter your first name"
-                   ng-model="$ctrl.RegistrationService.newSubmitter.firstName" required/>
+                   [(ngModel)]="registrationService.newSubmitter.firstName" #firstName = "ngModel"
+                   required/>
 
-            <p ng-show="submitterForm.firstName.$invalid && !submitterForm.firstName.$pristine" class="help-block">
+            <p *ngIf="!firstName.valid && !firstName.pristine" class="help-block">
                 Your first name is required.</p>
         </div>
     </div>
 
     <div class="form-group"
-         ng-class="{ 'has-error' : submitterForm.lastName.$invalid && !submitterForm.lastName.$pristine}">
+         ng-class="{ 'has-error' : !lastName.valid && !lastName.pristine}">
 
         <label for="lastName" class="control-label col-sm-3">Last Name:</label>
 
         <div class="col-sm-9">
             <input type="text" class="form-control" id="lastName" name="lastName"
-                   placeholder="Please enter your last name" ng-model="$ctrl.RegistrationService.newSubmitter.lastName" required/>
+                   placeholder="Please enter your last name" [(ngModel)]="registrationService.newSubmitter.lastName"
+                   #lastName = "ngModel" required/>
 
-            <p ng-show="submitterForm.lastName.$invalid && !submitterForm.lastName.$pristine" class="help-block">
+            <p *ngIf="!lastName.valid && !lastName.pristine" class="help-block">
                 Your last name is required.</p>
         </div>
     </div>
 
     <div class="form-group"
-         ng-class="{ 'has-error' : submitterForm.institution.$invalid && !submitterForm.institution.$pristine}">
+         [ngClass]="{ 'has-error' : !institution.valid && !institution.pristine}">
 
         <label for="institution" class="control-label col-sm-3">Institution:</label>
 
         <div class="col-sm-9">
             <input type="institution" class="form-control" placeholder="Please enter your institution" id="institution"
-                   name="institution" ng-model="$ctrl.RegistrationService.newSubmitter.institution" required/>
+                   name="institution" [(ngModel)]="registrationService.newSubmitter.institution"
+                   #institution = "ngModel" required/>
 
-            <p ng-show="submitterForm.institution.$invalid && !submitterForm.institution.$pristine" class="help-block">
+            <p *ngIf="!institution.valid && !institution.pristine" class="help-block">
                 Please enter a valid institution.</p>
         </div>
     </div>
 
     <div class="form-group"
-         ng-class="{ 'has-error' : submitterForm.email.$invalid && !submitterForm.email.$pristine}">
+         ng-class="{ 'has-error' : !email.valid && !email.pristine}">
 
         <label for="email" class="control-label col-sm-3">Email Address:</label>
 
         <div class="col-sm-9">
             <input type="email" class="form-control" placeholder="Please enter your email address" id="email"
-                   name="email" ng-model="$ctrl.RegistrationService.newSubmitter.emailAddress" required/>
+                   name="email" [(ngModel)]="registrationService.newSubmitter.emailAddress"
+                   #email = "ngModel" required/>
 
-            <p ng-show="submitterForm.email.$invalid && !submitterForm.email.$pristine" class="help-block">
+            <p *ngIf="!email.valid && !email.pristine" class="help-block">
                 Please enter a valid email.</p>
         </div>
     </div>
 
     <div class="form-group"
-         ng-class="{ 'has-error' : submitterForm.password.$invalid && !submitterForm.password.$pristine}">
+         [ngClass]="{ 'has-error' : !password.valid && !password.pristine}">
 
         <label for="password" class="control-label col-sm-3">Password:</label>
 
         <div class="col-sm-9">
             <input  class="form-control" placeholder="Please enter your password" id="password"
-                   name="password" type="password" ng-model="$ctrl.RegistrationService.newSubmitter.password" required/>
+                   name="password" type="password" [(ngModel)]="registrationService.newSubmitter.password"
+                    #password = "ngModel" required/>
 
-            <p ng-show="submitterForm.password.$invalid && !submitterForm.password.$pristine" class="help-block">
+            <p *ngIf="!password.valid && !password.pristine" class="help-block">
                 Please enter a valid password</p>
         </div>
     </div>
 
-    <div class="form-group" ng-class="{ 'has-error' : (submitterForm.password_match.$invalid &&
-        !submitterForm.password_match.$pristine) || $ctrl.RegistrationService.newSubmitter.password != $ctrl.RegistrationService.newSubmitter.password_match}">
+    <div class="form-group" [ngClass]="{ 'has-error' : (!password_match.valid &&
+        !password_match.pristine) || registrationService.newSubmitter.password != registrationService.newSubmitter.password_match}">
 
         <label for="password_match" class="control-label col-sm-3">Re-enter Password:</label>
 
         <div class="col-sm-9">
-            <input  class="form-control" placeholder="Please re-enter your password" id="password_match"
-                    name="password_match" type="password" ng-model="$ctrl.RegistrationService.newSubmitter.password_match"
-                    password-match="$ctrl.RegistrationService.newSubmitter.password" required/>
+            <input  class="form-control" type="password"  placeholder="Please re-enter your password" id="password_match"
+                    name="password_match" [(ngModel)]="registrationService.newSubmitter.password_match"
+                    #password_match = "ngModel" required/>
 
-            <p ng-show="(submitterForm.password_match.$invalid && !submitterForm.password_match.$pristine) ||
-                $ctrl.RegistrationService.newSubmitter.password != $ctrl.RegistrationService.newSubmitter.password_match" class="help-block">Passwords do not match!</p>
+            <p *ngIf="(!password_match.valid && !password_match.pristine) ||
+                registrationService.newSubmitter.password != registrationService.newSubmitter.password_match" class="help-block">Passwords do not match!</p>
         </div>
     </div>
 
-    <input type="hidden" ng-model="$ctrl.RegistrationService.newSubmitter.id" value="{{$ctrl.RegistrationService.newSubmitter.id}}"/>
+    <input type="hidden" #id = "ngModel" name="id" [(ngModel)]="registrationService.newSubmitter.id" value="{{registrationService.newSubmitter.id}}"/>
 </form>

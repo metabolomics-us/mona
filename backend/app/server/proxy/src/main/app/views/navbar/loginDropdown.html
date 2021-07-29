@@ -1,22 +1,22 @@
 <ul class="nav navbar-nav navbar-top-links navbar-right">
     <!-- User Login -->
-    <li class="dropdown" uib-dropdown>
-        <a role="button" class="dropdown-toggle" uib-dropdown-toggle>
+    <li class="dropdown" ngbDropdown>
+        <a role="button" class="dropdown-toggle" ngbDropdownToggle>
             <i class="fa fa-user fa-fw"></i> <!--<span ng-bind="auth.welcomeMessage"></span>-->
             <i class="fa fa-caret-down"></i>
         </a>
-        <ul class="uib-dropdown-menu dropdown-user" uib-dropdown-menu>
-            <li ng-show="$ctrl.isLoggedIn()">
+        <ul class="uib-dropdown-menu dropdown-user" ngbDropdownMenu>
+            <li [hidden]="!isLoggedIn()">
                 <a href="profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
             </li>
-            <li ng-show="$ctrl.isLoggedIn()" class="divider"></li>
+            <li [hidden]="!isLoggedIn()" class="divider"></li>
 
             <li>
-                <a ng-click="$ctrl.handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{$ctrl.isLoggedIn() ?
+                <a (click)="handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{isLoggedIn() ?
                     "Logout" : "Login"}}</a>
             </li>
-            <li ng-show="!$ctrl.isLoggedIn()">
-                <a ng-click="$ctrl.handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
+            <li [hidden]="isLoggedIn()">
+                <a (click)="handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
             </li>
         </ul>
         <!-- /.dropdown-user -->

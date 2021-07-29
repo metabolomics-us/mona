@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 import {downgradeInjectable} from "@angular/upgrade/static";
 import { environment } from "../../environments/environment";
 import * as  angular from 'angular';
+import {Observable} from "rxjs";
 
 
 export class Spectrum {
@@ -53,7 +54,7 @@ export class Spectrum {
 			.toPromise();
 	}
 
-	searchSimilarSpectra = (data: Object): Promise<Object> => {
+	searchSimilarSpectra = (data: Object): Observable<any> => {
 		const config = {
 			headers: {
 				'Content-Type': 'application/json'
@@ -67,8 +68,7 @@ export class Spectrum {
 					return spectrum.hit;
 				});
 				return data;
-			}))
-			.toPromise();
+			}));
 	}
 
 	batchSave = (token: String): Promise<Object> => {

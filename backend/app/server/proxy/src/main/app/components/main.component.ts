@@ -1,20 +1,20 @@
+import {Spectrum} from "../services/persistence/spectrum.resource";
+import {NGXLogger} from "ngx-logger";
+import {Inject, Component, OnInit} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
 
-class MainController {
-    private static $inject = ['$rootScope', 'Spectrum', '$log'];
+@Component({
+    selector: 'main',
+    templateUrl: '../views/main.html'
+})
+export class MainComponent implements OnInit{
     private showcaseSpectraIds;
     private showcaseSpectra;
-    private $log;
-    private $rootScope;
-    public Spectrum;
 
-    constructor($rootScope, Spectrum, $log) {
-        this.$rootScope = $rootScope;
-        this.Spectrum = Spectrum;
-        this.$log = $log;
-    }
+    constructor(@Inject(Spectrum) private spectrum: Spectrum, @Inject(NGXLogger) private logger: NGXLogger) {}
 
-    checkHttpError() {
+    /* checkHttpError() {
         while (this.$rootScope.httpError.length !== 0) {
             let curError = this.$rootScope.httpError.pop();
 
@@ -28,33 +28,28 @@ class MainController {
                 this.$log.error(message);
             }
         }
-    }
+    }*/
 
-    $onInit(){
+    ngOnInit(){
         this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
         this.showcaseSpectra = [];
 
         this.showcaseSpectraIds.forEach((id) => {
-            this.Spectrum.get(
+            this.spectrum.get(
                 id).then(
                 (data) => {
                     this.showcaseSpectra.push(data);
                 },
                 (error) => {
-                    this.$log.error("Failed to obtain spectrum "+ id)
+                    this.logger.error("Failed to obtain spectrum "+ id)
                 }
             );
         });
     }
 }
 
-let MainComponent = {
-    selector: "main",
-    templateUrl: "../views/main.html",
-    bindings: {},
-    controller: MainController
-}
-
 angular.module('moaClientApp')
-        .component(MainComponent.selector, MainComponent);
+        .directive('main', downgradeComponent({
+            component: MainComponent
+        }));
 

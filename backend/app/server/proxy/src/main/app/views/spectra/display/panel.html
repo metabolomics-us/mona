@@ -26,8 +26,8 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="masspec-medium">
-                            <mass-spec id="massSpec_{{spectrum.id}}" mini
-                                       [(ngModel)]="spectrum.spectrum"></mass-spec>
+                            <lib-ng-mass-spec-plotter id="massSpec_{{spectrum.id}}" mini
+                                       [(ngModel)]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
                         </div>
                     </div>
 
@@ -60,7 +60,7 @@
                     </div>
                     <div class="col-lg-7 col-md-7 col-sm-6">
                         <!-- Remember to finish limitTo but need to see if array or string -->
-                        {{meta.value}}{{meta.value.length > 25 ? '...' : ''}}
+                        {{meta.value | slice: 0:25}}{{meta.value.length > 25 ? '...' : ''}}
                     </div>
                 </div>
             </div>

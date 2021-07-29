@@ -2,24 +2,28 @@
  * Created by Gert on 5/28/2014.
  */
 
+import {Submitter} from "../../services/persistence/submitter.resource";
+import {AuthenticationService} from "../../services/authentication.service";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {Component, Inject, OnInit} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
+import {first} from "rxjs/operators";
+import {SubmitterModalComponent} from "./submitter-modal.component";
 import * as angular from 'angular';
-import SubmitterModalController from "./submitter-modal.component";
 
-class SubmitterController{
-    private static $inject = ['$scope', 'Submitter', '$uibModal'];
-    private $scope;
-    private Submitter;
-    private $uibModal;
-    private submitters;
+
+@Component({
+    selector: 'submitter',
+    templateUrl: '../../views/submitters/list.html'
+})
+export class SubmitterComponent implements OnInit{
+    public submitters;
     private listSubmitter;
 
-    constructor($scope, Submitter, $uibModal){
-        this.$scope = $scope;
-        this.Submitter = Submitter;
-        this.$uibModal = $uibModal;
-    }
+    constructor(@Inject(Submitter) private submitter: Submitter, @Inject(NgbModal) private modal: NgbModal,
+                @Inject(AuthenticationService) private auth: AuthenticationService){}
 
-    $onInit = () => {
+    ngOnInit() {
         /**
          * contains all local objects
          * @type {Array}
@@ -39,13 +43,13 @@ class SubmitterController{
     remove = (index) => {
         let submitterToRemove = this.submitters[index];
 
-        this.Submitter.delete({id: submitterToRemove.id},
+        this.submitter.delete({id: submitterToRemove.id}).pipe(first()).subscribe(
             (data) => {
                 //remove it from the scope and update our table
                 this.submitters.splice(index, 1);
             },
             (errors) => {
-                alert('oh noes an error...');
+                alert('Error Has Occurred while removing submitter');
             }
         );
     };
@@ -54,19 +58,8 @@ class SubmitterController{
      * displays our dialog to create a new submitter
      */
     displayCreateDialog = () => {
-        let modalInstance = this.$uibModal.open({
-            templateUrl: '../../views/submitters/dialog/createDialog.html',
-            /* @ngInject */
-            controller: SubmitterModalController,
-            size: 'lg',
-            backdrop: 'static',
-            resolve: {
-                //just an empty object
-                newSubmitter: () => {
-                    return {};
-                }
-            }
-        });
+        let modalInstance = this.modal.open(SubmitterModalComponent);
+        modalInstance.componentInstance.new = true;
 
         //retrieve the result from the dialog and save it
         modalInstance.result.then((submitter) => {
@@ -80,23 +73,15 @@ class SubmitterController{
      * @param index
      */
     displayEditDialog = (index) => {
-        let modalInstance = this.$uibModal.open({
-            templateUrl: '../../views/submitters/dialog/editDialog.html',
-            /* @ngInject */
-            controller: SubmitterModalController,
+        let modalInstance = this.modal.open(SubmitterModalComponent, {
             size: 'lg',
             backdrop: 'static',
-            resolve: {
-                //populate the dialog with the given submitter at this index
-                newSubmitter: () => {
-                    return this.submitters[index];
-                }
-            }
         });
+        modalInstance.componentInstance.new = false;
 
         //retrieve the result from the dialog and save it
         modalInstance.result.then((submitter) => {
-            //will be handled automatically by angular js
+            //need to figure out how to resolve this one
         });
     };
 
@@ -104,22 +89,18 @@ class SubmitterController{
      * helper function
      */
      list() {
-        this.submitters = this.Submitter.query((data) => {
+        this.submitter.get().pipe(first()).subscribe((data) => {
+            this.submitters = data;
         }, (error) => {
             alert('failed: ' + error);
         });
     }
 }
 
-let SubmitterComponent = {
-    selector: "submitter",
-    templateUrl: "../../views/submitters/list.html",
-    bindings: {},
-    controller: SubmitterController
-}
-
 angular.module('moaClientApp')
-    .component(SubmitterComponent.selector, SubmitterComponent);
+    .directive('submitter', downgradeComponent({
+        component: SubmitterComponent
+    }));
 
 
 

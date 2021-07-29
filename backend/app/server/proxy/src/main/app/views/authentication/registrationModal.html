@@ -1,9 +1,9 @@
 <div class="modal-header">
-    <button type="button" class="close" ng-click="$ctrl.cancelDialog()" aria-hidden="true"
-            ng-if="$ctrl.state == 'register' || $ctrl.state == 'success'">×</button>
+    <button type="button" class="close" (click)="cancelDialog()" aria-hidden="true"
+            *ngIf="state == 'register' || state == 'success'">×</button>
 
     <h3 class="modal-title">Create a MoNA Account</h3>
-    <p ng-if="$ctrl.state == 'register'">
+    <p *ngIf="state == 'register'">
         An account is required to download large queries and to submit spectra.
         Please sign up for a free account by providing the following information:
     </p>
@@ -11,35 +11,36 @@
 
 
 <div class="modal-body" >
-    <div class="alert alert-danger .alert-dismissible " role="alert" ng-show="$ctrl.errors.length">
+    <div class="alert alert-danger .alert-dismissible " role="alert" [hidden]="!errors.length">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
         <span>Error: </span>
-        <span ng-if="$ctrl.errors.length == 1">{{$ctrl.errors[0]}}</span>
-        <ul ng-if="$ctrl.errors.length > 1">
-            <li ng-repeat="error in $ctrl.errors">{{error}}</li>
+        <span *ngIf="errors.length == 1">{{errors[0]}}</span>
+        <ul *ngIf="errors.length > 1">
+            <li *ngFor="let error of errors">{{error}}</li>
         </ul>
     </div>
 
     <!--<div submitter-form ng-show="state == 'register'"></div>-->
-    <submitter-form on-update="$ctrl.newSubmitter=newSubmitter" ng-show="$ctrl.state =='register'"></submitter-form>
+    <submitter-form (formStatus)="submitterFormStatus = $event" [hidden]="state !=='register'"></submitter-form>
 
-    <div ng-show="$ctrl.state == 'registering'">
+    <div [hidden]="state !== 'registering'">
         <h4><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Registering account...</span></h4>
     </div>
 
-    <div ng-show="$ctrl.state == 'success'" class="text-success text-center">
-        <div><span class="h2"><i class="fa fa-check"></i></span> <span class="h4">Success!  You may now log in.</span></div>
+    <div [hidden]="state !== 'success'" class="text-success text-center">
+        <div><span class="h2"><i class="fa fa-check"></i></span> <span class="h4">Success! You may now log in.</span></div>
         <br />
-        <div><button class="btn btn-success btn-lg" ng-click="$ctrl.logIn()">Log In</button></div>
+        <div><button class="btn btn-success btn-lg" (click)="logIn()">Log In</button></div>
     </div>
 </div>
 
+<!-- [disabled]="childForm.submitterForm.invalid" -->
 
-<div class="modal-footer" ng-show="$ctrl.state != 'success'">
+<div class="modal-footer" [hidden]="state === 'success'">
     <button class="btn btn-primary"
-            ng-disabled="$ctrl.submitterForm.$invalid"
-            ng-click="$ctrl.submitRegistration()"
-            ng-if="$ctrl.state == 'register'">Register</button>
+            [disabled]="!submitterFormStatus"
+            (click)="submitRegistration()"
+            *ngIf="state == 'register'">Register</button>
 
-    <button class="btn btn-default" ng-click="$ctrl.cancelDialog()">Close</button>
+    <button class="btn btn-default" (click)="cancelDialog()">Close</button>
 </div>

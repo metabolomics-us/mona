@@ -1,50 +1,50 @@
-<div class="row" ng-show="!auth.isLoggedIn()">
+<div class="row" *ngIf="!auth.isLoggedIn()">
     <div class="col-md-12">
-        <h3><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="auth.handleLogin()">log in</a>!</h3>
+        <h3><i class="fa fa-user fa-fw"></i> Please <a href="" (click)="auth.requestModal()">log in</a>!</h3>
     </div>
 </div>
 
-<div ng-show="auth.isLoggedIn() && auth.isAdmin()">
-    <div ng-value="error"></div>
+<div *ngIf="auth.isLoggedIn()">
+    <div #error></div>
 
     <form role="form">
-        <div class="input-group">
+        <div class="input-group" *ngFor="let sub of submitters; index as i"> <!-- filter:submitter.query -->
             <span class="input-group-addon"> <label for="query">Filter</label></span>
-            <input id="query" class="form-control" ng-model="$ctrl.submitter.query"
+            <input id="query" class="form-control" [(ngModel)]="sub.query"
                    placeholder="Please enter your query term"/>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Institution</th>
+                    <th>Email</th>
+                    <th>Avg Score</th>
+                    <th>Uploaded Spectra</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr id="submitter_{{sub.id}}">
+                    <td><submitter-query submitter="sub">{{sub.firstName}}</submitter-query></td>
+                    <td>{{sub.lastName}}</td>
+                    <td>{{sub.institution}}</td>
+                    <td>{{sub.emailAddress}}</td>
+                    <td><spectra-score-for-user user="sub"></spectra-score-for-user></td>
+                    <td><spectra-count-for-user user="sub"></spectra-count-for-user></td>
+                    <td>
+                        <button (click)="displayEditDialog(i)" class="btn btn-default"><i
+                                class="fa fa-pencil-square-o "></i></button>
+                        <button (click)="remove(i)" class="btn btn-default"><i
+                                class="fa fa-minus-square"></i></button>
+                        <input type="hidden" name="sub.id" [ngModel]="sub.id" value="{{sub.id}}"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>First</th>
-                <th>Last</th>
-                <th>Institution</th>
-                <th>Email</th>
-                <th>Avg Score</th>
-                <th>Uploaded Spectra</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="submitter in $ctrl.submitters | filter:submitter.query" id="submitter_{{submitter.id}}">
-                <td><span submitter-query submitter="submitter">{{submitter.firstName}}</span></td>
-                <td>{{submitter.lastName}}</td>
-                <td>{{submitter.institution}}</td>
-                <td>{{submitter.emailAddress}}</td>
-                <td><span spectra-score-for-user user="submitter"></span></td>
-                <td><span spectra-count-for-user user="submitter"></span></td>
-                <td>
-                    <button ng-click="$ctrl.displayEditDialog($index)" class="btn btn-default"><i
-                            class="fa fa-pencil-square-o "></i></button>
-                    <button ng-click="$ctrl.remove($index)" class="btn btn-default"><i
-                            class="fa fa-minus-square"></i></button>
-                    <input type="hidden" name="submitter.id" ng-value="submitter.id" value="{{submitter.id}}"/>
-                </td>
-            </tr>
-            </tbody>
-        </table>
 
-        <button ng-click="$ctrl.displayCreateDialog()" class="btn btn-default"><i
+        <button (click)="displayCreateDialog()" class="btn btn-default"><i
                 class="fa fa-user"></i>Add a new submitter
         </button>
     </form>

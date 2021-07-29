@@ -7,14 +7,14 @@
         <div class="h5">Upload single mass spectra using a simple, guided wizard</div>
         <br />
 
-        <div ng-show="!$ctrl.AuthenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><i class="fa fa-user fa-fw"></i> Please <a href="" ng-click="$ctrl.AuthenticationService.handleLogin()">log in</a> before uploading spectra!</h4>
+        <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
+            <h4><i class="fa fa-user fa-fw"></i> Please <button class="fakeRef" (click)="authenticationService.requestModal()">log in</button> before uploading spectra!</h4>
             <h5>You can start using the uploader without an account, but you will not be able to submit your spectra without registering and logging in.</h5>
         </div>
 
 
         <!-- Select files to upload -->
-        <div data-ng-if="$ctrl.page == 0" class="panel panel-default">
+        <div *ngIf="page === 0" class="panel panel-default">
             <div class="panel-heading"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
 
             <div class="panel-body">
@@ -26,25 +26,25 @@
                 <br />
 
                 <label>Upload a File:</label>
-                <p class="help-block" data-ng-show="$ctrl.uploadError" data-ng-class="{'has-error': $ctrl.uploadError}"><strong>{{$ctrl.uploadError}}</strong></p>
-                <div class="input-group" data-ng-class="{'has-error': $ctrl.uploadError}">
+                <p class="help-block" *ngIf="uploadError" [ngClass]="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
+                <div class="input-group" class="{'has-error': uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                            Browse&hellip; <input type="file" ngf-select="$ctrl.parseFiles($files)" />
+                            Browse&hellip; <input type="file" (change)="parseFiles($event)" #fileUpload />
                         </span>
                     </span>
 
-                    <input id="spectrumFile" type="text" class="form-control" data-ng-model="filenames" readonly />
+                    <input id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
                 </div>
 
                 <span class="help-block">Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files</span>
 
                 <br /><br />
 
-                <div class="input-group" data-ng-class="{'has-error': $ctrl.pasteError}">
+                <div class="input-group" [ngClass]="{'has-error': pasteError}">
                     <label>Paste a Mass Spectrum:</label>
-                    <p class="help-block" data-ng-show="$ctrl.pasteError"><strong>{{$ctrl.pasteError}}</strong></p>
-                    <textarea class="form-control" rows="10" data-ng-model="pastedSpectrum"></textarea>
+                    <p class="help-block" *ngIf="pasteError"><strong>{{pasteError}}</strong></p>
+                    <textarea class="form-control" rows="10" [(ngModel)]="pastedSpectrum"></textarea>
                     <span class="help-block">
                         Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
                         <code>[m/z] [intensity]</code><br />
@@ -52,14 +52,14 @@
                         <code>...</code>
                     </span>
 
-                    <a class="btn btn-primary" data-ng-click="$ctrl.parsePastedSpectrum(pastedSpectrum)">Load Spectrum</a>
+                    <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Load Spectrum</button>
                 </div>
             </div>
         </div>
 
 
         <!-- Loading message -->
-        <div ng-if="$ctrl.page == 1" class="panel panel-default">
+        <div *ngIf="page === 1" class="panel panel-default">
             <div class="panel-heading"><strong style="font-size: 1.2em;">Loading...</strong></div>
             <div class="panel-body text-center">
                 <span class="spinner">
@@ -71,20 +71,20 @@
 
 
         <!-- Error message if no spectra are found -->
-        <div ng-if="$ctrl.page == 2 && $ctrl.currentSpectrum === null" class="panel panel-default">
+        <div *ngIf="page === 2 && currentSpectrum === null" class="panel panel-default">
             <div class="panel-heading"><strong style="font-size: 1.2em;">Loading...</strong></div>
             <div class="panel-body text-center"><strong>No valid mass spectra found in the uploaded file(s)!</strong></div>
         </div>
 
 
         <!-- Display spectrum -->
-        <div ng-if="$ctrl.page == 2 && $ctrl.currentSpectrum !== null" class="panel panel-default">
+        <div *ngIf="page === 2 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.restart()">&larr; Restart</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="restart()">&larr; Restart</button></li>
                         <li><strong style="font-size: 1.2em;">Spectrum Viewer</strong></li>
-                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
+                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
                     </ul>
                 </nav>
             </div>
@@ -95,43 +95,44 @@
                     you expect <br /> You may also add annotations to specific peaks in the ion table below.</small>
                 </p>
 
-                <p class="lead" ng-if="$ctrl.fileHasMultipleSpectra">
+                <p class="lead" *ngIf="fileHasMultipleSpectra">
                     <small><strong>Note: </strong> The file you uploaded contains multiple mass spectral records.  The basic
                     uploader is only designed to process a single spectrum, and so only the first spectrum in your file
                     will be displayed.</small>
                 </p>
 
-                <div class="masspec-modal">
-                    <mass-spec ng-model="$ctrl.currentSpectrum.ions"></mass-spec>
+                <div class="masspec-modal" style="width: 100%; height: 100%">
+                    <lib-ng-mass-spec-plotter id="masspec-plot" spectrum="currentSpectrum.ions"></lib-ng-mass-spec-plotter>
                 </div>
                 <br />
 
-                <div style="margin-top: 10px;" ng-if="!$ctrl.showIonTable">
+                <div style="margin-top: 10px;" *ngIf="!showIonTable">
                     <p><strong>This mass spectrum is very large!</strong></p>
-                    <p>It contains {{$ctrl.currentSpectrum.ions.length}} individual ions. Loading them all automatically can slow down your browser, but you can manually build the ion table:</p>
+                    <p>It contains {{currentSpectrum.ions.length}} individual ions. Loading them all automatically can slow down your browser, but you can manually build the ion table:</p>
                     <br />
-                    <p class="text-center"><a class="btn btn-primary" ng-click="$parent.showIonTable = true">Build Ion Table</a></p>
+                    <p class="text-center"><button class="btn btn-primary" (click)="showIonTable = true">Build Ion Table</button></p>
                 </div>
 
-                <div style="height: 500px; overflow: auto; margin-top: 10px;" ng-if="$ctrl.showIonTable">
+                <div style="height: 500px; overflow: auto; margin-top: 10px;" *ngIf="showIonTable">
                     <table class="table">
                         <thead>
                         <tr>
                             <th>&nbsp;</th>
-                            <th><a href="" ng-click="$ctrl.sortIonTable('ion')">Ion</a></th>
-                            <th><a href="" ng-click="$ctrl.sortIonTable('intensity')">Intensity</a></th>
-                            <th><a href="" ng-click="$ctrl.sortIonTable('relativeIntensity')">Relative Intensity</a></th>
-                            <th><a href="" ng-click="$ctrl.sortIonTable('annotation')">Annotation</a></th>
+                            <th><button class="fakeRef" (click)="sortIonTable('ion')">Ion</button></th>
+                            <th><button class="fakeRef" (click)="sortIonTable('intensity')">Intensity</button></th>
+                            <th><button class="fakeRef" (click)="sortIonTable('relativeIntensity')">Relative Intensity</button></th>
+                            <th><button class="fakeRef" (click)="sortIonTable('annotation')">Annotation</button></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="ion in $ctrl.currentSpectrum.ions | orderBy:$ctrl.ionTableSort:$ctrl.ionTableSortReverse">
-                            <td><input type="checkbox" ng-model="ion.selected" /></td>
+                        <!-- seperate orderBy pipe -->
+                        <tr *ngFor="let ion of currentSpectrum.ions">
+                            <td><input type="checkbox" [(ngModel)]="ion.selected" /></td>
                             <td>{{ion.ion}}</td>
                             <td>{{ion.intensity}}</td>
-                            <td>{{ion.relativeIntensity | number:0}}</td>
+                            <td>{{ion.relativeIntensity | number:'1.0-0'}}</td>
                             <td>
-                                <input type="text" ng-model="ion.annotation" placeholder="Annotation" class="form-control" />
+                                <input type="text" [(ngModel)]="ion.annotation" placeholder="Annotation" class="form-control" />
                             </td>
                         </tr>
                         </tbody>
@@ -142,8 +143,8 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.restart()">&larr; Restart</a></li>
-                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="restart()">&larr; Restart</button></li>
+                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
                     </ul>
                 </nav>
             </div>
@@ -151,13 +152,13 @@
 
 
         <!-- Compound information -->
-        <div ng-if="$ctrl.page == 3" class="panel panel-default">
+        <div *ngIf="page === 3" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
                         <li><strong style="font-size: 1.2em;">Compound Information</strong></li>
-                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
+                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
                     </ul>
                 </nav>
             </div>
@@ -173,19 +174,18 @@
                 </p>
                 <br />
 
-                <div ng-if="$ctrl.currentSpectrum.molFile && !$ctrl.compoundProcessing" style="text-align: center;">
-                    <div chemical-sketcher readonly="true"
-                         id="compoundViewer"
-                         ng-model="$ctrl.currentSpectrum.molFile"></div>
+                <div *ngIf="currentSpectrum.molFile && !compoundProcessing" style="text-align: center; width: 100%; height: 100%">
+                    <div [libChemdoodle]="currentSpectrum.molFile" readonly="true"
+                         id="compoundViewer"></div>
                 </div>
 
-                <div class="alert alert-info" role="alert" ng-show="$ctrlcompoundProcessing" style="text-align: center;">
+                <div class="alert alert-info" role="alert" *ngIf="compoundProcessing" style="text-align: center;">
                     <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Pulling compound data...</h4>
                 </div>
 
-                <div ng-if="$ctrl.compoundError" class="alert alert-danger" role="alert">
+                <div *ngIf="compoundError" class="alert alert-danger" role="alert">
                     <h3><i class="fa fa-exclamation-triangle"></i> Error!</h3>
-                    <h4>{{$ctrl.compoundError}}</h4>
+                    <h4>{{compoundError}}</h4>
                 </div>
                 <br />
 
@@ -193,11 +193,11 @@
                     <div class="col-lg-3"><label>Names:</label></div>
                     <div class="col-lg-9">
                         <input type="text"
-                               ng-repeat="name in $ctrl.currentSpectrum.names track by $index"
-                               ng-model="$ctrl.currentSpectrum.names[$index]"
+                               *ngFor="let name of currentSpectrum.names; index as i"
+                               [(ngModel)]="currentSpectrum.names[i]"
                                placeholder="Name"
                                class="form-control" />
-                        <button type="button" class="btn btn-default btn-xs" ng-click="$ctrl.addName()">+</button>
+                        <button type="button" class="btn btn-default btn-xs" (click)="addName()">+</button>
                     </div>
                 </div>
 
@@ -205,7 +205,7 @@
                     <div class="col-md-3 col-lg-3"><label>InChI:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               ng-model="$ctrl.currentSpectrum.inchi"
+                               [(ngModel)]="currentSpectrum.inchi"
                                placeholder="InChI"
                                class="form-control" />
                     </div>
@@ -215,7 +215,7 @@
                     <div class="col-md-3 col-lg-3"><label>SMILES</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               ng-model="$ctrl.currentSpectrum.smiles"
+                               [(ngModel)]="currentSpectrum.smiles"
                                placeholder="SMILES"
                                class="form-control" />
                     </div>
@@ -225,91 +225,93 @@
                     <div class="col-md-3 col-lg-3"><label>InChIKey:</label></div>
                     <div class="col-md-9 col-lg-9">
                         <input type="text"
-                               ng-model="$ctrl.currentSpectrum.inchiKey"
+                               [(ngModel)]="currentSpectrum.inchiKey"
                                placeholder="InChIKey"
                                class="form-control" />
                     </div>
                 </div>
 
                 <div class="form-group text-center">
-                    <button type="button" class="btn btn-primary" ng-click="$ctrl.retrieveCompoundData()" ng-disabled="$ctrl.compoundProcessing">
-                        <span ng-if="$ctrl.compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+                    <button type="button" class="btn btn-primary" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
+                        <span *ngIf="compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
                         <span>Update Compound</span>
                     </button>
-                    <button ng-click="$ctrl.resetCompound()" class="btn btn-danger" ng-disabled="$ctrl.compoundProcessing">Reset Compound</button>
+                    <button (click)="resetCompound()" class="btn btn-danger" [disabled]="compoundProcessing">Reset Compound</button>
                 </div>
 
                 <div class="row form-group">
-                    <uib-accordion class="col-sm-12 col-lg-12">
-                        <uib-accordion-group>
-                            <uib-accordion-heading>Import MOL/SDF File</uib-accordion-heading>
+                    <ngb-accordion class="col-sm-12 col-lg-12">
+                        <ngb-panel>
+                            <ng-template ngbPanelTitle>Import MOL/SDF File</ng-template>
+                            <ng-template ngbPanelContent>
+                                <div>
+                                    Load a MOL file to attach to this spectrum record.  Please note that the MOL data must contain explicit hydrogens to
+                                    Convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
+                                    will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                    using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
+                                </div>
+                                <hr />
 
-                            <div>
-                                Load a MOL file to attach to thisd spectrum record.  Please note that the MOL data must contain explicit hydrogens to
-                                Convert a MOL file to an InChI Code and InChIKey.  If uploading to MoNA, the provided MOL file
-                                will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
-                                using this tool will overwrite any existing MOL file, InCHI code or InChIKey.
-                            </div>
-                            <hr />
+                                <div class="form-group">
+                                    <label>Copy and paste a molecular structure:</label>
+                                    <textarea class="form-control" [(ngModel)]="currentSpectrum.molFile" rows="10"></textarea>
+                                </div>
 
-                            <div class="form-group">
-                                <label>Copy and paste a molecular structure:</label>
-                                <textarea class="form-control" ng-model="$ctrl.currentSpectrum.molFile" rows="10"></textarea>
-                            </div>
+                                <div class="form-group text-center">
+                                    <button (click)="convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
+                                </div>
 
-                            <div class="form-group text-center">
-                                <button ng-click="$ctrl.convertMolToInChI()" class="btn btn-primary">Convert to InChI Code and InChIKey</button>
-                            </div>
+                                <div class="form-group">
+                                    <label>Upload a MOL/SDF file.</label>
 
-                            <div class="form-group">
-                                <label>Upload a MOL/SDF file.</label>
-
-                                <div class="input-group">
+                                    <div class="input-group">
                                     <span class="input-group-btn">
                                         <span class="btn btn-primary btn-file">
-                                            Browse&hellip; <input type="file" ng-file-select="$ctrl.parseMolFile($files)" ng-diabled="$ctrl.compoundProcessing" />
+                                            Browse&hellip; <input type="file" (change)="parseMolFile($event)" [disabled]="compoundProcessing" />
                                         </span>
                                     </span>
 
-                                    <input id="molFile" type="text" class="form-control" ng-model="filenames" readonly />
-                                </div>
-                                <div class="input-group">
+                                        <input id="molFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
+                                    </div>
+                                    <div class="input-group">
 
+                                    </div>
                                 </div>
-                            </div>
 
-                            <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
+                                <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
                                 file with multiple structures, only the first structure will be read.</span>
-                        </uib-accordion-group>
+                            </ng-template>
+                        </ngb-panel>
 
-                        <uib-accordion-group>
-                            <uib-accordion-heading>Draw a Molecular Structure</uib-accordion-heading>
-
-                            <div>
-                                Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
-                                will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
-                                using this tool will overwrite any existing MOL file, InChI code or InChIKey.
-                            </div>
-                            <hr />
-
-                            <div class="text-center" chemical-sketcher id="molSketcher" ng-model="$ctrl.currentSpectrum.molFile"></div>
-
-                            <div class="form-group text-center">
-                                <button type="button" class="btn btn-primary" ng-click="$ctrl.convertMolToInChI()" ng-disabled="$ctrl.compoundProcessing">
-                                    <span ng-if="$ctrl.compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
-                                    <span>Pull Compound Info from MOL Data</span>
-                                </button>
-                            </div>
-                        </uib-accordion-group>
-                    </uib-accordion>
+                        <ngb-panel>
+                            <ng-template ngbPanelTitle>Draw a Molecular Structure</ng-template>
+                            <ng-template ngbPanelContent>
+                                <div>
+                                    Draw a structure with the ChemDoodle drawing tool to generate a MOL file.  If uploading to MoNA, the provided MOL file
+                                    will be attached; however the full MOL file cannot be included in an MSP export.  Please note that
+                                    using this tool will overwrite any existing MOL file, InChI code or InChIKey.
+                                </div>
+                                <hr />
+                                <div style="width: 100%; height: 100%">
+                                    <div class="text-center" [libChemdoodle]="currentSpectrum.molFile" id="molSketcher"></div>
+                                </div>
+                                <div class="form-group text-center">
+                                    <button type="button" class="btn btn-primary" (click)="convertMolToInChI()" [disabled]="compoundProcessing">
+                                        <span *ngIf="compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+                                        <span>Pull Compound Info from MOL Data</span>
+                                    </button>
+                                </div>
+                            </ng-template>
+                        </ngb-panel>
+                    </ngb-accordion>
                 </div>
             </div>
 
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
-                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
+                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
                     </ul>
                 </nav>
             </div>
@@ -317,13 +319,13 @@
 
 
         <!-- Recommended spectrum metadata -->
-        <div ng-if="$ctrl.page == 4 && $ctrl.currentSpectrum !== null" class="panel panel-default">
+        <div *ngIf="page === 4 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
                         <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
-                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
+                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
                     </ul>
                 </nav>
             </div>
@@ -342,7 +344,7 @@
                 <div style="margin-top: 10px;">
                     <div>
                         <label>Source Introduction / Chromatography Type:</label> <br />
-                        <select class="form-control" name="chromatography" ng-model="$ctrl.metadata.chromatography">
+                        <select class="form-control" name="chromatography" [(ngModel)]="metadata.chromatography">
                             <option value="" selected="selected">Select One</option>
                             <option value="Liquid Chromatography (LC)">Liquid Chromatography (LC)</option>
                             <option value="Gas Chromatography (GC)">Gas Chromatography (GC)</option>
@@ -352,15 +354,15 @@
                     </div>
                     <br />
 
-                    <div ng-if="$ctrl.metadata.chromatography && $ctrl.metadata.chromatography != 'Select One' && $ctrl.metadata.chromatography == 'Gas Chromatography (GC)'">
+                    <div *ngIf="metadata.chromatography && metadata.chromatography !== 'Select One' && metadata.chromatography === 'Gas Chromatography (GC)'">
                         <label>Derivatization:</label> <br />
-                        <input type="text" class="form-control" name="derivatization" ng-model="$ctrl.metadata.derivatization" />
+                        <input type="text" class="form-control" name="derivatization" [(ngModel)]="metadata.derivatization" />
                         <br />
                     </div>
 
                     <div>
                         <label>MS Type / Level:</label> <br />
-                        <select class="form-control" name="mslevel" ng-model="$ctrl.metadata.mslevel">
+                        <select class="form-control" name="mslevel" [(ngModel)]="metadata.mslevel">
                             <option value="" selected="selected">Select One</option>
                             <option value="MS">MS</option>
                             <option value="MS2">MS2</option>
@@ -371,19 +373,19 @@
                     </div>
                     <br />
 
-                    <div ng-if="$ctrl.metadata.mslevel && $ctrl.metadata.mslevel != 'Select One' && $ctrl.metadata.mslevel != 'MS'">
+                    <div *ngIf="metadata.mslevel && metadata.mslevel !== 'Select One' && metadata.mslevel !== 'MS'">
                         <label>Precursor m/z:</label> <br />
-                        <input type="text" class="form-control" name="precursormz" ng-model="$ctrl.metadata.precursormz" />
+                        <input type="text" class="form-control" name="precursormz" [(ngModel)]="metadata.precursormz" />
                         <br />
 
                         <label>Precursor Type:</label> <br />
-                        <input type="text" class="form-control" name="precursortype" ng-model="$ctrl.metadata.precursortype"  />
+                        <input type="text" class="form-control" name="precursortype" [(ngModel)]="metadata.precursortype"  />
                         <br />
                     </div>
 
                     <div>
                         <label>Ionization Method:</label> <br />
-                        <select class="form-control" name="ionization" ng-model="$ctrl.metadata.ionization">
+                        <select class="form-control" name="ionization" [(ngModel)]="metadata.ionization">
                             <option value="" selected="selected">Select One</option>
                             <option value="Atmospheric Pressure Chemical Ionization (APCI)">Atmospheric Pressure Chemical Ionization (APCI)</option>
                             <option value="Electron Impact (EI)">Electron Impact (EI)</option>
@@ -395,22 +397,9 @@
                     </div>
                     <br />
 
-                    <!--
-                    <div>
-                        <label>Mass Analyzer / Detector Type:</label> <br />
-                        <input type="checkbox" name="ionanalyzer" value="b" /> Magnetic Sector (B) <br />
-                        <input type="checkbox" name="ionanalyzer" value="e" /> Electrostatic Sector (E)<br />
-                        <input type="checkbox" name="ionanalyzer" value="q" /> Quadrupole (Q) <br />
-                        <input type="checkbox" name="ionanalyzer" value="tof" /> Time of Flight (TOF)<br />
-                        <input type="checkbox" name="ionanalyzer" value="it" /> Ion Trap (IT) <br />
-                        <input type="checkbox" name="ionanalyzer" value="ft" /> Fourier Transform (FT)<br />
-                    </div>
-                    <br />
-                    -->
-
                     <div>
                         <label>Polarity / Ion Mode:</label> <br />
-                        <select class="form-control" name="ionmode" ng-model="$ctrl.metadata.ionmode">
+                        <select class="form-control" name="ionmode" [(ngModel)]="metadata.ionmode">
                             <option value="" selected="selected">Select One</option>
                             <option value="Positive">Positive</option>
                             <option value="Negative">Negative</option>
@@ -421,7 +410,7 @@
 
                     <div>
                         <label>Authors (comma-separated):</label> <br />
-                        <input type="text" class="form-control" ng-model="$ctrl.metadata.authors" />
+                        <input type="text" class="form-control" [(ngModel)]="metadata.authors" />
                     </div>
                 </div>
             </div>
@@ -430,8 +419,8 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
-                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
+                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
                     </ul>
                 </nav>
             </div>
@@ -439,13 +428,13 @@
 
 
         <!-- Recommended spectrum metadata -->
-        <div ng-if="$ctrl.page == 5 && $ctrl.currentSpectrum !== null" class="panel panel-default">
+        <div *ngIf="page === 5 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
                         <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
-                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
+                        <li class="next"><button (click)="nextPage()">Next &rarr;</button></li>
                     </ul>
                 </nav>
             </div>
@@ -466,34 +455,34 @@
                 <br />
 
                 <div id="metadata_editor" style="margin-top: 10px;">
-                    <div ng-repeat="meta in $ctrl.currentSpectrum.meta">
-                        <div class="col-sm-5 form-group" ng-class="{'has-error': !meta.name && meta.name != ''}">
+                    <div *ngFor="let meta of currentSpectrum.meta; index as i">
+                        <div class="col-sm-5 form-group" [ngClass]="{'has-error': !meta.name && meta.name != ''}">
                             <input type="text"
-                                   ng-model="meta.name"
+                                   [(ngModel)]="meta.name"
                                    placeholder="Metadata Name"
-                                   uib-typeahead="x.name for x in metadataNames | filter:$viewValue | orderBy:count | limitTo:8"
-                                   typeahead-show-hint="true"
-                                   typeahead-min-length="0"
+                                   [ngbTypeahead]="metadataNames"
+                                   [showHint]="true"
+                                   [minlength]="3"
                                    class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
                             <input type="text"
-                                   ng-model="meta.value"
-                                   ng-disabled="!meta.name || meta.name == ''"
+                                   [(ngModel)]="meta.value"
+                                   [disabled]="!meta.name || meta.name == ''"
                                    placeholder="Metadata Value"
-                                   uib-typeahead="x.value for x in queryMetadataValues(meta.name, $viewValue)"
-                                   typeahead-show-hint="true"
-                                   typeahead-min-length="0"
+                                   [ngbTypeahead]="queryMetadataValues(meta.name)"
+                                   [showHint]="true"
+                                   [minLength]="3"
                                    class="form-control" />
                         </div>
                         <div class="col-sm-2 form-group">
-                            <button ng-click="$ctrl.removeMetadataField($index)" class="btn btn-default"
-                                    tooltip="Remove this metadata field"><i class="fa fa-minus-square"></i></button>
+                            <button (click)="removeMetadataField(i)" class="btn btn-default"
+                                    ngbTooltip="Remove this metadata field"><i class="fa fa-minus-square"></i></button>
                         </div>
                     </div>
 
                     <div class="col-sm-12">
-                        <button type="button" class="btn btn-default btn-xs" ng-click="$ctrl.addMetadataField()" tooltip="Add a new metadata field">+</button>
+                        <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()" ngbTooltip="Add a new metadata field">&#43;</button>
                     </div>
                 </div>
             </div>
@@ -502,69 +491,22 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
-                        <li class="next"><a href="" ng-click="$ctrl.nextPage()">Next &rarr;</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
+                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
                     </ul>
                 </nav>
             </div>
         </div>
-
-
-        <!-- Spectrum tags -->
-        <!--
-        <div ng-if="page == 6 && currentSpectrum !== null" class="panel panel-default">
-            <div class="panel-heading">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
-                        <li><strong style="font-size: 1.2em;">Tags</strong></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
-                    </ul>
-                </nav>
-            </div>
-
-            <div class="panel-body">
-                <p class="lead">
-                    <small>
-                    Tags provide an easy way to categorize spectra and quickly query by these groups.  For example, there
-                    are tags for GC-MS and LC-MS spectra, as well as for spectral libraries such as MassBank and HMDB.
-                    <br /><br />
-                    Please add any tags here that you consider useful identifiers for this spectrum.
-                    </small>
-                </p>
-
-                <tags-input ng-model="currentSpectrum.tags"
-                            min-length="3"
-                            replace-spaces-with-dashes="false">
-
-                    <auto-complete source="loadTags($query)"
-                                   min-length="1"
-                                   load-on-empty="true"
-                                   load-on-down-arrow="true"
-                                   load-on-focus="true"></auto-complete>
-                </tags-input>
-            </div>
-
-            <div class="panel-footer">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="previousPage()">&larr; Previous</a></li>
-                        <li class="next"><a href="" ng-click="nextPage()">Next &rarr;</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-        -->
 
         <!-- Summary -->
-        <div ng-if="$ctrl.page == 6 && $ctrl.currentSpectrum !== null" class="panel panel-default">
+        <div *ngIf="page === 6 && currentSpectrum !== null" class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
                         <li><strong style="font-size: 1.2em;">Summary</strong></li>
-                        <li class="next" ng-if="$ctrl.AuthenticationService.isLoggedIn()"><a href="" ng-click="$ctrl.uploadFile()">Upload to MoNA &rarr;</a></li>
-                        <li class="next" ng-if="!$ctrl.AuthenticationService.isLoggedIn()"><a href="" ng-click="$ctrl.AuthenticationService.handleLogin()">Log in before uploading to MoNA</a></li>
+                        <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA &rarr;</button></li>
+                        <li class="next"*ngIf="!authenticationService.isLoggedIn()"><button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA</button></li>
                     </ul>
                 </nav>
             </div>
@@ -575,20 +517,19 @@
                 </p>
 
                 <div class="page-header"><h3>Mass Spectrum</h3></div>
-                <div class="masspec-modal">
-                    <mass-spec ng-model="$ctrl.currentSpectrum.ions"></mass-spec>
+                <div class="masspec-modal" style="height: 100%; width: 100%">
+                    <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions"></lib-ng-mass-spec-plotter>
                 </div>
 
                 <div class="page-header"><h3>Compound Information</h3></div>
                 <div>
                     <ul>
-                        <li ng-repeat="name in $ctrl.currentSpectrum.names">{{name}}</li>
+                        <li *ngFor="let name of currentSpectrum.names">{{name}}</li>
                     </ul>
                 </div>
-                <div ng-if="$ctrl.currentSpectrum.molFile" style="text-align: center;">
-                    <div chemical-sketcher readonly="true"
-                         id="compoundSummaryViewer"
-                         ng-model="$ctrl.currentSpectrum.molFile"></div>
+                <div *ngIf="currentSpectrum.molFile" style="text-align: center;">
+                    <div [libChemdoodle]="currentSpectrum.molFile" readonly="true"
+                         id="compoundSummaryViewer"></div>
                 </div>
 
 
@@ -603,22 +544,22 @@
                         <tr>
                             <td>InChIKey</td>
                             <td>
-                                <span ng-if="$ctrl.currentSpectrum.inchiKey">{{$ctrl.currentSpectrum.inchiKey}}</span>
-                                <span ng-if="!$ctrl.currentSpectrum.inchiKey"><i>None Provided</i></span>
+                                <span *ngIf="currentSpectrum.inchiKey">{{currentSpectrum.inchiKey}}</span>
+                                <span *ngIf="!currentSpectrum.inchiKey"><i>None Provided</i></span>
                             </td>
                         </tr>
                         <tr>
                             <td>InChI</td>
                             <td style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                <span ng-if="$ctrl.currentSpectrum.inchi">{{$ctrl.currentSpectrum.inchi}}</span>
-                                <span ng-if="!$ctrl.currentSpectrum.inchi"><i>None Provided</i></span>
+                                <span *ngIf="currentSpectrum.inchi">{{currentSpectrum.inchi}}</span>
+                                <span *ngIf="!currentSpectrum.inchi"><i>None Provided</i></span>
                             </td>
                         </tr>
                         <tr>
                             <td>SMILES</td>
                             <td>
-                                <span ng-if="$ctrl.currentSpectrum.smiles">{{$ctrl.currentSpectrum.smiles}}</span>
-                                <span ng-if="!$ctrl.currentSpectrum.smiles"><i>None Provided</i></span>
+                                <span *ngIf="currentSpectrum.smiles">{{currentSpectrum.smiles}}</span>
+                                <span *ngIf="!currentSpectrum.smiles"><i>None Provided</i></span>
                             </td>
                         </tr>
                     </tbody>
@@ -634,42 +575,42 @@
                     </thead>
                     <tbody>
 
-                    <tr ng-if="$ctrl.metadata.chromatography && $ctrl.metadata.chromatography != 'Select One'">
+                    <tr *ngIf="metadata.chromatography && metadata.chromatography != 'Select One'">
                         <td>Source Introduction / Chromatography Type</td>
-                        <td>{{$ctrl.metadata.chromatography}}</td>
+                        <td>{{metadata.chromatography}}</td>
                     </tr>
 
-                    <tr ng-if="$ctrl.metadata.mslevel && $ctrl.metadata.mslevel != 'Select One'">
+                    <tr *ngIf="metadata.mslevel && metadata.mslevel != 'Select One'">
                         <td>MS Type / Level</td>
-                        <td>{{$ctrl.metadata.mslevel}}</td>
+                        <td>{{metadata.mslevel}}</td>
                     </tr>
 
-                    <tr ng-if="$ctrl.metadata.precursormz && $ctrl.metadata.precursormz != 'Select One'">
+                    <tr *ngIf="metadata.precursormz && metadata.precursormz != 'Select One'">
                         <td>Precursor m/z</td>
-                        <td>{{$ctrl.metadata.precursormz}}</td>
+                        <td>{{metadata.precursormz}}</td>
                     </tr>
 
-                    <tr ng-if="$ctrl.metadata.precursortype && $ctrl.metadata.precursortype != 'Select One'">
+                    <tr *ngIf="metadata.precursortype && metadata.precursortype != 'Select One'">
                         <td>Precursor Type</td>
-                        <td>{{$ctrl.metadata.precursortype}}</td>
+                        <td>{{metadata.precursortype}}</td>
                     </tr>
 
-                    <tr ng-if="$ctrl.metadata.ionization && $ctrl.metadata.ionization != 'Select One'">
+                    <tr *ngIf="metadata.ionization && metadata.ionization != 'Select One'">
                         <td>Ionization Method</td>
-                        <td>{{$ctrl.metadata.ionization}}</td>
+                        <td>{{metadata.ionization}}</td>
                     </tr>
 
-                    <tr ng-if="$ctrl.metadata.ionmode && $ctrl.metadata.ionmode != 'Select One'">
+                    <tr *ngIf="metadata.ionmode && metadata.ionmode != 'Select One'">
                         <td>Polarity / Ion Mode</td>
-                        <td>{{$ctrl.metadata.ionmode}}</td>
+                        <td>{{metadata.ionmode}}</td>
                     </tr>
 
-                    <tr ng-if="$ctrl.metadata.authors">
+                    <tr *ngIf="metadata.authors">
                         <td>Authors</td>
-                        <td>{{$ctrl.metadata.authors}}</td>
+                        <td>{{metadata.authors}}</td>
                     </tr>
 
-                    <tr ng-repeat="meta in $ctrl.currentSpectrum.meta">
+                    <tr *ngFor="let meta of currentSpectrum.meta">
                         <td>{{meta.name}}</td>
                         <td>{{meta.value}}</td>
                     </tr>
@@ -679,7 +620,7 @@
                 <!--
                 <div class="page-header"><h3>Tags</h3></div>
                 <ul>
-                    <li ng-if="currentSpectrum.tags.length == 0"><i>None Provided</i></li>
+                    <li *ngIf="currentSpectrum.tags.length == 0"><i>None Provided</i></li>
                     <li ng-repeat="tag in currentSpectrum.tags">{{tag.text}}</li>
                 </ul>
                 -->
@@ -688,9 +629,9 @@
             <div class="panel-footer">
                 <nav>
                     <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><a href="" ng-click="$ctrl.previousPage()">&larr; Previous</a></li>
-                        <li class="next" ng-if="$ctrl.AuthenticationService.isLoggedIn()"><a href="" ng-click="$ctrl.uploadFile()">Upload to MoNA &rarr;</a></li>
-                        <li class="next" ng-if="!$ctrl.AuthenticationService.isLoggedIn()"><a href="" ng-click="$ctrl.AuthenticationService.handleLogin()">Log in before uploading to MoNA</a></li>
+                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
+                        <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA &rarr;</button></li>
+                        <li class="next" *ngIf="!authenticationService.isLoggedIn()"><button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA</button></li>
                     </ul>
                 </nav>
             </div>

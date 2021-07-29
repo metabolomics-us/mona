@@ -1,14 +1,34 @@
-<div class="modal-header">
-    <h4 class="modal-title">Create a new Submitter</h4>
+<ng-template *ngIf="new">
+    <div class="modal-header">
+        <h4 class="modal-title">Create a new Submitter</h4>
 
-    <h5>
-        Please fill out all the properties to define a new Submitter
-    </h5>
-</div>
-<div class="modal-body">
-    <div submitter-form></div>
-</div>
-<div class="modal-footer">
-    <button class="btn btn-warning" ng-click="$ctrl.cancelDialog()">Cancel</button>
-    <button class="btn btn-default" ng-click="$ctrl.createNewSubmitter()" ng-disabled="submitterForm.$invalid">Add</button>
-</div>
+        <h5>
+            Please fill out all the properties to define a new Submitter
+        </h5>
+    </div>
+    <div class="modal-body">
+        <submitter-form (formStatus)="submitterFormStatus = $event"></submitter-form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" (click)="cancelDialog()">Cancel</button>
+        <button class="btn btn-default" (click)="createNewSubmitter()" [disabled]="!submitterFormStatus">Add</button>
+    </div>
+</ng-template>
+
+<ng-template *ngIf="!new">
+    <div class="modal-header">
+        <h4 class="modal-title">Modify an existing Submitter</h4>
+
+        <h5>
+            Please adjust out all the properties of your Submitter
+        </h5>
+    </div>
+
+    <div class="modal-body">
+        <submitter-form (formStatus)="submitterFormStatus = $event"></submitter-form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" (click)="cancelDialog()">Cancel</button>
+        <button class="btn btn-default" (click)="updateSubmitter()" [disabled]="!submitterFormStatus">Update</button>
+    </div>
+</ng-template>

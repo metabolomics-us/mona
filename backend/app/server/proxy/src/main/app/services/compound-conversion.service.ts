@@ -28,9 +28,9 @@ export class CompoundConversionService{
      */
     InChIKeyToName = (inchiKey, callback, errorCallback) => {
         this.http.get(`${CtsConstants.apiUrl}/rest/convert/InChIKey/Chemical%20Name/${inchiKey}`).subscribe(
-            (res) => {
-                if (res["data"].length > 0 && res["data"][0].results.length > 0) {
-                    callback(res["data"][0].results)
+            (res: any) => {
+                if (res.length > 0 && res[0].results.length > 0) {
+                    callback(res[0].results)
                 } else {
                     errorCallback({status: 200})
                 }
@@ -44,9 +44,9 @@ export class CompoundConversionService{
      */
     getInChIByInChIKey = (inchiKey, callback, errorCallback) => {
         this.http.get(`${CtsConstants.apiUrl}/rest/convert/InChIKey/InChI%20Code/${inchiKey}`).subscribe(
-            (response) => {
-                if (response["data"].length > 0 && response["data"][0].results.length > 0) {
-                    callback(response["data"][0].results)
+            (response: any) => {
+                if (response.length > 0 && response[0].results.length > 0) {
+                    callback(response[0].results)
                 } else {
                     errorCallback({status: 200})
                 }

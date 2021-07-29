@@ -10,21 +10,22 @@
     </thead>
 
     <tbody>
-        <tr ng-if="angular.isUndefined($ctrl.scores)">
+        <tr *ngIf="scores === undefined || scores === null">
             <td colspan="4" class="text-center">
                 <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
             </td>
         </tr>
-        <tr ng-repeat="score in $ctrl.scores | limitTo:limit">
+        <!-- again need that limit to pipe -->
+        <tr *ngFor="let score of scores|slice: 0:limit; index as i">
             <td>
-                <i class="fa fa-trophy" ng-show="$index == 0"  style="color:#ffd700"></i>
-                <i class="fa fa-trophy" ng-show="$index == 1"  style="color:#C0C0C0"></i>
-                <i class="fa fa-trophy" ng-show="$index == 2"  style="color:#CD7F32"></i>
-                <span ng-hide="$index < 3">{{$index + 1}}</span>
+                <i class="fa fa-trophy" *ngIf="i == 0"  style="color:#ffd700"></i>
+                <i class="fa fa-trophy" *ngIf="i == 1"  style="color:#C0C0C0"></i>
+                <i class="fa fa-trophy" *ngIf="i == 2"  style="color:#CD7F32"></i>
+                <span [hidden]="i > 3">{{i + 1}}</span>
             </td>
-            <td><span submitter-query submitter="score">{{score.firstName}} {{score.lastName}}</span></td>
-            <td uib-rating ng-model="score.score" max="5" data-readonly="true"></td>
-            <td>{{score.count | number:0}}</td>
+            <td><submitter-query submitter="score">{{score.firstName}} {{score.lastName}}</submitter-query></td>
+            <ngb-rating [(rate)]="score.score" [max]="5" [readonly]="true"></ngb-rating>
+            <td>{{score.count | number: "1.0-0"}}</td>
         </tr>
     </tbody>
 </table>

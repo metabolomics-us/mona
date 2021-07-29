@@ -1,4 +1,4 @@
-<li class="dropdown" ngbDropdown [hidden]="isAdmin()">
+<li class="dropdown" ngbDropdown *ngIf="isAdmin()">
     <a role="button" class="dropdown-toggle" ngbDropdownToggle>
         Administration
         <span class="fa fa-caret-down"></span>

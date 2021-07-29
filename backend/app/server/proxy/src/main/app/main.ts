@@ -34,13 +34,19 @@ import "./filters";
 
 import {NgModule} from '@angular/core';
 import {CommonModule} from "@angular/common";
+import {ReactiveFormsModule} from "@angular/forms";
+import {TagInputModule} from "ngx-chips";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {BrowserModule} from '@angular/platform-browser';
 import {CtsLibModule} from "angular-cts-service/dist/cts-lib";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {ToasterModule, ToasterService} from "angular2-toaster";
+import {NgxGoogleAnalyticsModule} from "ngx-google-analytics";
 import {RouterModule} from "@angular/router";
 import{CookieService} from "ngx-cookie-service";
 import {UpgradeModule} from '@angular/upgrade/static';
 import {HttpClientModule} from "@angular/common/http";
+import {NgChemdoodleModule} from "@wcmc/ng-chemdoodle";
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {LoggerModule, NgxLoggerLevel} from "ngx-logger";
 import {FormsModule} from "@angular/forms";
@@ -86,9 +92,8 @@ import {DownloadComponent} from "./directives/navbar/download.component";
 import {ResourceDropDownComponent} from "./directives/navbar/resource-dropdown.component";
 import {TitleHeaderComponent} from "./directives/navbar/title-header.component";
 import {UploadComponent} from "./directives/navbar/upload.component";
-import {AdvancedSearchFormComponent} from "./directives/query/advanced-search-form.component";
 import {KeywordSearchFormComponent} from "./directives/query/keyword-search-form.component";
-import {QueryTreeComponent} from "./directives/query/query-tree.component";
+import {QueryTreeViewComponent} from "./directives/query/query-tree-view.component";
 import {SpectraUploadProgressComponent} from "./directives/spectra/spectra-upload-progress.component";
 import {SimilaritySearchFormComponent} from "./directives/query/similarity-search-form.component";
 import {DownloadNotifErrorModalComponent} from "./directives/spectra/download-notif-error-modal.component";
@@ -98,7 +103,25 @@ import {SpectraLibraryComponent} from "./directives/spectra/spectra-library.comp
 import {SpectraPanelComponent} from "./directives/spectra/spectra-panel.component";
 import {SpectraCountForUserComponent} from "./directives/submitter/spectra-count-for-user.component";
 import {SpectraScoreForUserComponent} from "./directives/submitter/spectra-score-for-user.component";
+import {SpectraTopScoresForUsersComponent} from "./directives/submitter/spectra-top-scores-for-users.component";
+import {SubmitterFormComponent} from "./directives/submitter/submitter-form.component";
+import {AuthenticationComponent} from "./components/authentication/authentication.component";
+import {AuthenticationModalComponent} from "./components/authentication/authentication-modal.component";
+import {RegistrationModalComponent} from "./components/authentication/registration-modal.component";
+import {QueryTreeComponent} from "./components/browser/query-tree.component";
+import {DocumentationTermComponent} from "./components/documentation/documentation-term.component";
+import {SubmitterComponent} from "./components/submitter/submitter.component";
+import {SubmitterModalComponent} from "./components/submitter/submitter-modal.component";
+import {SubmitterProfileComponent} from "./components/submitter/submitter-profile.component";
+import {SpectrumViewerComponent} from "./components/browser/spectrum-viewer.component";
+import {AdvancedUploaderComponent} from "./components/upload/advanced-uploader.component";
+import {BasicUploaderComponent} from "./components/upload/basic-uploader.component";
+import {SpectraUploadComponent} from "./components/upload/spectra-upload.component";
+import {UploadPageComponent} from "./components/upload/upload-page.component";
+import {MainComponent} from "./components/main.component";
+import {SearchBoxComponent} from "./components/search-box.component";
 import {FilterPipe} from "./filters/filter.pipe";
+import {SlicePipe} from "@angular/common";
 
 @NgModule({
     imports: [
@@ -107,17 +130,23 @@ import {FilterPipe} from "./filters/filter.pipe";
         UpgradeModule,
         HttpClientModule,
         FormsModule,
+        ReactiveFormsModule,
         CtsLibModule,
         NgMassSpecPlotterModule,
         MassbankParserLibModule,
         MgfParserLibModule,
         MspParserLibModule,
+        NgChemdoodleModule,
         NgbModule,
         LoggerModule.forRoot({
             level: NgxLoggerLevel.DEBUG,
             serverLogLevel: NgxLoggerLevel.OFF
         }),
-        RouterModule.forRoot([])
+        BrowserAnimationsModule,
+        ToasterModule.forRoot(),
+        NgxGoogleAnalyticsModule.forRoot('UA-87692241-2'),
+        RouterModule.forRoot([]),
+        TagInputModule
 
     ],
     providers: [
@@ -145,7 +174,9 @@ import {FilterPipe} from "./filters/filter.pipe";
         CompoundConversionService,
         MassbankParserLibService,
         MgfParserLibService,
-        MspParserLibService
+        MspParserLibService,
+        FilterPipe,
+        SlicePipe
     ],
 
     declarations: [
@@ -166,8 +197,8 @@ import {FilterPipe} from "./filters/filter.pipe";
         ResourceDropDownComponent,
         TitleHeaderComponent,
         UploadComponent,
-        AdvancedSearchFormComponent,
         KeywordSearchFormComponent,
+        QueryTreeViewComponent,
         QueryTreeComponent,
         SpectraUploadProgressComponent,
         SimilaritySearchFormComponent,
@@ -177,7 +208,23 @@ import {FilterPipe} from "./filters/filter.pipe";
         SpectraLibraryComponent,
         SpectraPanelComponent,
         SpectraCountForUserComponent,
-        SpectraScoreForUserComponent
+        SpectraScoreForUserComponent,
+        SpectraTopScoresForUsersComponent,
+        SubmitterFormComponent,
+        AuthenticationComponent,
+        AuthenticationModalComponent,
+        RegistrationModalComponent,
+        DocumentationTermComponent,
+        SubmitterComponent,
+        SubmitterModalComponent,
+        SubmitterProfileComponent,
+        SpectrumViewerComponent,
+        AdvancedUploaderComponent,
+        BasicUploaderComponent,
+        SpectraUploadComponent,
+        UploadPageComponent,
+        MainComponent,
+        SearchBoxComponent
     ],
 
     entryComponents: [
@@ -197,8 +244,8 @@ import {FilterPipe} from "./filters/filter.pipe";
         ResourceDropDownComponent,
         TitleHeaderComponent,
         UploadComponent,
-        AdvancedSearchFormComponent,
         KeywordSearchFormComponent,
+        QueryTreeViewComponent,
         QueryTreeComponent,
         SpectraUploadProgressComponent,
         SimilaritySearchFormComponent,
@@ -208,7 +255,23 @@ import {FilterPipe} from "./filters/filter.pipe";
         SpectraLibraryComponent,
         SpectraPanelComponent,
         SpectraCountForUserComponent,
-        SpectraScoreForUserComponent
+        SpectraScoreForUserComponent,
+        SpectraTopScoresForUsersComponent,
+        SubmitterFormComponent,
+        AuthenticationComponent,
+        AuthenticationModalComponent,
+        RegistrationModalComponent,
+        DocumentationTermComponent,
+        SubmitterComponent,
+        SubmitterModalComponent,
+        SubmitterProfileComponent,
+        SpectrumViewerComponent,
+        AdvancedUploaderComponent,
+        BasicUploaderComponent,
+        SpectraUploadComponent,
+        UploadPageComponent,
+        MainComponent,
+        SearchBoxComponent
     ]
 })
 

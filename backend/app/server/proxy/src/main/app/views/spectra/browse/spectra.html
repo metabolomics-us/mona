@@ -133,6 +133,16 @@
 
 <div class="row top7">
     <div class="col-md-12">
+        <div ngbDropdown class="d-inline-block">
+            <button class="btn btn-primary" ngbDropdownToggle>
+                Records Per Page
+            </button>
+            <div ngbDropdownMenu>
+                <button *ngFor="let option of pagination.itemsPerPageOptions" ngbDropdownItem>{{option+' records/page'}}</button>
+            </div>
+
+        </div>
+        <!--
         <select data-multi-select
                 data-ng-model="$ctrl.pagination.itemsPerPageSelection"
                 data-buttonClass="btn btn-primary"
@@ -147,7 +157,7 @@
                 data-buttonText="Select Columns"
                 data-enableFiltering="true"
                 data-ng-options="option for option in pagination.tableColumnOptions">
-        </select>
+        </select> -->
     </div>
 </div>
 

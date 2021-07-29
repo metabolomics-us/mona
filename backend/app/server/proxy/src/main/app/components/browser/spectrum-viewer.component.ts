@@ -5,23 +5,28 @@
  * @param massSpec
  * @constructor
  */
+import {Location} from "@angular/common";
+import {CookieMain} from "../../services/cookie/cookie-main.service";
+import {Spectrum} from "../../services/persistence/spectrum.resource";
+import {AuthenticationService} from "../../services/authentication.service";
+import {NGXLogger} from "ngx-logger";
+import {Component, Inject, Input, OnInit} from "@angular/core";
 import * as angular from 'angular';
+import {first} from "rxjs/operators";
+import {downgradeComponent} from "@angular/upgrade/static";
 
-class SpectrumViewerController{
-    private static $inject = ['$scope', '$location', '$log', 'CookieService', 'Spectrum', 'AuthenticationService'];
-    private $scope;
-    private $location;
-    private $log;
-    private CookieService;
-    private Spectrum;
-    private delayedspectrum;
-    private AuthenticationService;
+@Component({
+    selector: 'spectrum-viewer',
+    templateUrl: '../../views/spectra/display/viewSpectrum.html'
+})
+export class SpectrumViewerComponent implements OnInit{
+    @Input() public delayedspectrum;
     private spectrum;
     private score;
     private massSpec;
     private accordionStatus;
-    private ionTableSort;
-    private ionTableSortReverse;
+    ionTableSort;
+    ionTableSortReverse;
     private loadingSimilarSpectra;
     private similarSpectra;
     private massRegex;
@@ -30,16 +35,13 @@ class SpectrumViewerController{
     private ionRegex;
     private match;
     private intensity;
+    private showScore;
 
-    constructor($scope, $location, $log, CookieService, Spectrum, AuthenticationService){
-        this.$scope = $scope;
-        this.$location = $location;
-        this.CookieService = CookieService;
-        this.Spectrum = Spectrum;
-        this.AuthenticationService = AuthenticationService;
-    }
+    constructor(@Inject(NGXLogger) private logger: NGXLogger, @Inject(CookieMain) private cookie: CookieMain,
+                @Inject(Spectrum) private spectrumService: Spectrum, @Inject(AuthenticationService) private authenticationService: AuthenticationService,
+                @Inject(Location) private location: Location){}
 
-    $onInit = () => {
+    ngOnInit() {
         /**
          * Sort order for the ion table - default m/z ascending
          */
@@ -53,6 +55,8 @@ class SpectrumViewerController{
         this.score = 0;
 
         this.massSpec = [];
+
+        this.showScore = false;
 
         this.massRegex = /^\s*(\d+\.\d{4})\d*\s*$/;
 
@@ -72,7 +76,7 @@ class SpectrumViewerController{
 
 
         // truncate metadata
-        if (angular.isDefined(this.delayedspectrum.metaData)) {
+        if (typeof this.delayedspectrum.metaData !== 'undefined') {
             for (let i = 0; i < this.delayedspectrum.metaData.length; i++) {
                 let curMeta = this.delayedspectrum.metaData[i];
 
@@ -89,7 +93,7 @@ class SpectrumViewerController{
         }
 
         // truncate compounds
-        if (angular.isDefined(this.delayedspectrum.compound)) {
+        if (typeof this.delayedspectrum.compound !== 'undefined') {
             for (let i = 0; i < this.delayedspectrum.compound.length; i++) {
                 let compoundMeta = this.delayedspectrum.compound[i].metaData;
                 for (let j = 0, m = compoundMeta.length; j < m; j++) {
@@ -116,7 +120,7 @@ class SpectrumViewerController{
             let annotation = '';
             let computed = false;
 
-            if (angular.isDefined(this.delayedspectrum.annotations)) {
+            if (typeof this.delayedspectrum.annotations !== 'undefined') {
                 for (let i = 0; i < this.delayedspectrum.annotations.length; i++) {
                     if (this.delayedspectrum.annotations[i].value === parseFloat(match[1])) {
                         annotation = this.delayedspectrum.annotations[i].name;
@@ -157,7 +161,7 @@ class SpectrumViewerController{
             isCompoundOpen: []
         };
 
-        if (angular.isDefined(this.spectrum.compound)) {
+        if (typeof this.spectrum.compound !== 'undefined') {
             for (let i = 0; i < this.spectrum.compound.length; i++) {
                 this.accordionStatus.isCompoundOpen.push(i === 0);
             }
@@ -166,19 +170,18 @@ class SpectrumViewerController{
         /**
          * watch the accordion status and updates related cookies
          */
-        this.$scope.$watch("accordionStatus", (newVal) => {
-            angular.forEach(this.accordionStatus, (value, key) => {
-
-                if(key === 'isCompoundOpen') {
-                    for (let i = 0; i < this.spectrum.compound.length; i++) {
-                        this.CookieService.update('DisplayCompound' + i, value[i]);
-                    }
-                }
-                else {
-                    this.CookieService.update("DisplaySpectra" + key, value);
-                }
-            });
-        }, true);
+        this.accordionStatus.valueChanges.subscribe((value) => {
+           this.accordionStatus.forEach((value, key) => {
+               if(key === 'isCompoundOpen') {
+                   for (let i = 0; i < this.spectrum.compound.length; i++) {
+                       this.cookie.update('DisplayCompound' + i, value[i]);
+                   }
+               }
+               else {
+                   this.cookie.update("DisplaySpectra" + key, value);
+               }
+           })
+        });
 
         /**
          * Loading of similar spectra
@@ -209,9 +212,8 @@ class SpectrumViewerController{
         if (!this.loadingSimilarSpectra)
             return;
 
-        this.Spectrum.searchSimilarSpectra(
-            {spectrum: this.spectrum.spectrum, minSimilarity: 0.5}).then(
-            (res) => {
+        this.spectrumService.searchSimilarSpectra({spectrum: this.spectrum.spectrum, minSimilarity: 0.5}).pipe(first()).subscribe(
+            (res: any) => {
                 let data = res;
                 this.similarSpectra = data.filter((x) => { return x.id !== this.spectrum.id; });
                 this.loadingSimilarSpectra = false;
@@ -228,23 +230,22 @@ class SpectrumViewerController{
      * @param index
      */
     viewSpectrum = (id) => {
-        this.$location.path('/spectra/display/' + id);
+        this.location.go('/spectra/display/' + id);
     };
 
+    checkNumber = (check: any) => {
+        if(typeof check === 'number'){
+            return true;
+        }
+        return false;
+    }
 
-}
-
-let SpectrumViewerComponent = {
-    selector: "spectrumViewer",
-    templateUrl: "../../views/spectra/display/viewSpectrum.html",
-    bindings: {
-        delayedspectrum: '<'
-    },
-    controller: SpectrumViewerController
 }
 
 angular.module('moaClientApp')
-    .component(SpectrumViewerComponent.selector, SpectrumViewerComponent);
+    .directive('spectrumViewer', downgradeComponent({
+        component: SpectrumViewerComponent
+    }));
 
 
 

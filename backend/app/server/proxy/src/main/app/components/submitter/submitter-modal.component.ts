@@ -2,27 +2,31 @@
  * Created by Gert on 5/28/2014.
  */
 
+import {Submitter} from "../../services/persistence/submitter.resource";
+import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+import {NewSubmitter} from "../../mocks/newSubmitter.model";
+import {Component, Inject, EventEmitter, Input} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 import * as angular from 'angular';
+import {first} from "rxjs/operators";
 
-export default class SubmitterModalController{
-    private static $inject = ['$scope', 'Submitter'];
-    private $scope;
-    private Submitter;
-    private modalInstance;
+@Component({
+    selector: 'submitter-modal',
+    templateUrl: '../../views/submitters/dialog/createDialog.html'
+})
+export class SubmitterModalComponent {
     private newSubmitter;
     private formErrors;
+    @Input() public new: boolean;
+    public submitterFormStatus: boolean;
 
-    constructor($scope, Submitter){
-        this.$scope = $scope;
-    }
-
-
+    constructor(@Inject(Submitter) private submitterResource: Submitter, @Inject(NgbActiveModal) private activeModal: NgbActiveModal){}
 
     /**
      * cancels any dialog in this controller
      */
     cancelDialog = () => {
-        this.modalInstance.dismiss('cancel');
+        this.activeModal.dismiss('cancel');
     };
 
     /**
@@ -32,8 +36,8 @@ export default class SubmitterModalController{
         let submitter = this.createSubmitterFromScope();
 
         //update the submitter
-        this.Submitter.update(submitter, function(data) {
-            this.modalInstance.close(submitter);
+        this.submitterResource.update(submitter).pipe(first()).subscribe((data) => {
+            this.activeModal.close(submitter);
         }, (error) => {
             this.handleDialogError(error);
         });
@@ -46,8 +50,8 @@ export default class SubmitterModalController{
         let submitter = this.createSubmitterFromScope();
 
         //no submitter id so create a new one
-        this.Submitter.save(submitter, (savedSubmitter) => {
-            this.modalInstance.close(savedSubmitter);
+        this.submitterResource.update(submitter).pipe(first()).subscribe((savedSubmitter) => {
+            this.activeModal.close(savedSubmitter);
         }, (error) => {
             this.handleDialogError(error);
         });
@@ -58,7 +62,7 @@ export default class SubmitterModalController{
      */
      createSubmitterFromScope = () => {
         //build our object
-        let submitter = new this.Submitter();
+        let submitter = new NewSubmitter();
         submitter.firstName = this.newSubmitter.firstName;
         submitter.lastName = this.newSubmitter.lastName;
         submitter.institution = this.newSubmitter.institution;
@@ -97,17 +101,8 @@ export default class SubmitterModalController{
 
 }
 
-let SubmitterModalComponent = {
-    selector: "submitterModal",
-    bindings: {
-        modalInstance: '<',
-        resolve: '<',
-        close: '&',
-        dismiss: '&',
-    },
-    controller: SubmitterModalController
-}
-
 angular.module('moaClientApp')
-    .component(SubmitterModalComponent.selector, SubmitterModalComponent);
+    .directive('submitterModal', downgradeComponent({
+        component: SubmitterModalComponent
+    }));
 

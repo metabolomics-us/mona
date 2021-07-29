@@ -1,66 +1,60 @@
 /**
  * Created by sajjan on 5/12/15.
  */
-
+import {SpectraQueryBuilderService} from "../services/query/spectra-query-builder.service";
 import * as angular from 'angular';
+import {Component, Inject, OnInit} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 
-class SearchBoxController {
-    private static $inject = ['$location', '$route', 'SpectraQueryBuilderService'];
-    private $location;
-    private $route;
-    private SpectraQueryBuilderService;
+@Component({
+    selector: 'search-box',
+    templateUrl: '../views/navbar/searchBox.html'
+})
+export class SearchBoxComponent implements OnInit {
     private inputError;
+    public searchBoxQuery;
 
-    constructor($location, $route, SpectraQueryBuilderService){
-        this.$location = $location;
-        this.$route = $route;
-        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
-    }
+    constructor(@Inject(SpectraQueryBuilderService) private spectraQueryBuilderService: SpectraQueryBuilderService){}
 
-    $onInit() {
+    ngOnInit() {
         this.inputError = false;
     }
 
-    performSimpleQuery(searchBoxQuery){
+    performSimpleQuery(query){
+        console.log(query);
         // Handle empty query
-        if (angular.isUndefined(searchBoxQuery) || searchBoxQuery === '') {
+        if (typeof query === 'undefined' || query === '') {
             return;
         }
 
-        searchBoxQuery = searchBoxQuery.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-        this.SpectraQueryBuilderService.prepareQuery();
+        query = query.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        this.spectraQueryBuilderService.prepareQuery();
 
         // Handle InChIKey
-        if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test(searchBoxQuery)) {
-            this.SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', searchBoxQuery);
+        if (/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/.test(query)) {
+            this.spectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', query, undefined);
         }
 
-        else if (/^[A-Z]{14}$/.test(searchBoxQuery)) {
-            this.SpectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', searchBoxQuery, true);
+        else if (/^[A-Z]{14}$/.test(query)) {
+            this.spectraQueryBuilderService.addCompoundMetaDataToQuery('InChIKey', query, true);
         }
 
         // Handle SPLASH
-        else if (/^splash[0-9]{2}/.test(searchBoxQuery)) {
-            this.SpectraQueryBuilderService.addSplashToQuery(searchBoxQuery);
+        else if (/^splash[0-9]{2}/.test(query)) {
+            this.spectraQueryBuilderService.addSplashToQuery(query);
         }
 
         // Handle full text search
         else {
-            this.SpectraQueryBuilderService.setTextSearch(searchBoxQuery);
+            this.spectraQueryBuilderService.setTextSearch(query);
         }
-
-        this.SpectraQueryBuilderService.executeQuery();
+        this.searchBoxQuery = '';
+        this.spectraQueryBuilderService.executeQuery();
     }
 
 }
 
-
-let SearchBoxComponent = {
-    selector: "searchBox",
-    templateUrl: "../views/navbar/searchBox.html",
-    bindings: {},
-    controller: SearchBoxController
-}
-
 angular.module('moaClientApp')
-    .component(SearchBoxComponent.selector, SearchBoxComponent)
+    .directive('searchBox', downgradeComponent({
+        component: SearchBoxComponent
+    }))

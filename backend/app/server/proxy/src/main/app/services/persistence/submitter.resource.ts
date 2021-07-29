@@ -7,15 +7,23 @@ import { map } from 'rxjs/operators';
 import {downgradeInjectable} from "@angular/upgrade/static";
 import { environment } from "../../environments/environment";
 import * as  angular from 'angular';
+import {Observable} from "rxjs";
 
 export class Submitter {
     constructor(@Inject(HttpClient) private http: HttpClient) {
     }
 
-    update = (data: Object): Promise<Object> => {
-        return this.http.put(`${environment.REST_BACKEND_SERVER}/rest/submitters/${data["id"]}`, data).toPromise();
+    get = (): Observable<any> => {
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/submitters`);
     }
 
+    update = (data: any): Observable<any> => {
+        return this.http.put(`${environment.REST_BACKEND_SERVER}/rest/submitters/${data.id}`, data);
+    }
+
+    delete = (data: any): Observable<any> => {
+        return this.http.delete(`${environment.REST_BACKEND_SERVER}/rest/submitters/${data.id}`, data);
+    }
 }
 
 angular.module('moaClientApp')

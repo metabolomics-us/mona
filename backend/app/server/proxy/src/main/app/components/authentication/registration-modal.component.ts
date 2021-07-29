@@ -1,34 +1,38 @@
+import {HttpClient} from "@angular/common/http";
+import {AuthenticationService} from "../../services/authentication.service";
+import {RegistrationService} from "../../services/registration.service";
+import {AfterViewInit, Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from "@angular/core";
+import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+import {SubmitterFormComponent} from "../../directives/submitter/submitter-form.component";
+import {downgradeComponent} from "@angular/upgrade/static";
+import {NGXLogger} from "ngx-logger";
+import { first } from 'rxjs/operators';
 import * as angular from 'angular';
+import {Form} from "@angular/forms";
 
-class RegistrationModalController{
-    private static $inject = ['$scope', '$rootScope', '$http', 'AuthenticationService', 'REST_BACKEND_SERVER', 'RegistrationService'];
-    private $scope;
-    private $rootScope;
-    private $http;
-    private AuthenticationService;
-    private REST_BACKEND_SERVER;
-    private RegistrationService;
+@Component({
+    selector: 'registration-modal',
+    templateUrl: '../../views/authentication/registrationModal.html'
+})
+export class RegistrationModalComponent implements OnInit{
     private errors;
     private state;
-    private modalInstance;
+    public submitterFormStatus: boolean;
+    @ViewChild(SubmitterFormComponent) submitterForm: SubmitterFormComponent;
 
-    constructor($scope, $rootScope, $http, AuthenticationService, REST_BACKEND_SERVER, RegistrationService){
-        this.$scope = $scope;
-        this.$rootScope = $rootScope;
-        this.$http = $http;
-        this.AuthenticationService = AuthenticationService;
-        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
-        this.RegistrationService = RegistrationService;
-    }
+    constructor(@Inject(HttpClient) private http: HttpClient, @Inject(AuthenticationService) private authenticationService: AuthenticationService,
+                @Inject(RegistrationService) private registrationService: RegistrationService, @Inject(NgbActiveModal) private activeModal: NgbActiveModal,
+                @Inject(NGXLogger) private logger: NGXLogger){}
 
-    $onInit() {
+    ngOnInit() {
         this.errors = [];
         this.state = 'register';
     }
 
     cancelDialog() {
-        this.modalInstance.dismiss('cancel');
+        this.activeModal.dismiss('cancel');
     };
+
 
     /**
      * closes the dialog and finishes and builds the query
@@ -37,89 +41,37 @@ class RegistrationModalController{
         this.errors = [];
         this.state = 'registering';
 
-        this.$http({
-            method: 'POST',
-            url: this.REST_BACKEND_SERVER + '/rest/users',
-            data: {
-                username: this.RegistrationService.newSubmitter.emailAddress,
-                password: this.RegistrationService.newSubmitter.password
-            },
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(
+        this.registrationService.submit().pipe(first()).subscribe(
             (response) => {
-                this.$http({
-                    method: 'POST',
-                    url: this.REST_BACKEND_SERVER + '/rest/auth/login',
-                    data: {
-                        username: this.RegistrationService.newSubmitter.emailAddress,
-                        password: this.RegistrationService.newSubmitter.password
-                    },
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(
-                    (response) => {
-                        this.$http({
-                            method: 'POST',
-                            url: this.REST_BACKEND_SERVER + '/rest/submitters',
-                            data: {
-                                emailAddress: this.RegistrationService.newSubmitter.emailAddress,
-                                firstName: this.RegistrationService.newSubmitter.firstName,
-                                lastName: this.RegistrationService.newSubmitter.lastName,
-                                institution: this.RegistrationService.newSubmitter.institution
-                            },
-                            headers: {
-                                'Authorization': 'Bearer ' + response.data.token
-                            }
-                        }).then(
-                            (response) => {
-                                this.state = 'success';
-                            },
-                            (response) => {
-                                this.errors.push('An unknown error has occurred: ' + JSON.stringify(response));
-                            }
-                        );
-                    },
-                    (response) => {
-                        this.errors.push('An unknown error has occurred: ' + JSON.stringify(response));
-                    }
-                );
-            },
-            (response) => {
-                this.errors.push('An unknown error has occurred: ' + JSON.stringify(response));
-            }
-        );
-    };
+                this.registrationService.authorize().pipe(first()).subscribe((response: any) => {
+                    this.registrationService.registerAsSubmitter(response.token).pipe(first()).subscribe(
+                        (response) => {
+                            this.state = 'success';
+                        },
+                        (error => {
+                            this.errors.push('An unknown error has occurred: ' + JSON.stringify(error));
+                        }));
+
+                }, (error => {
+                    this.errors.push('An unknown error has occurred: ' + JSON.stringify(error));
+                }));
+
+        }, (error => {
+                this.errors.push('An unknown error has occurred: ' + JSON.stringify(error));
+            }));
+    }
 
     /**
      * Close dialog and open login modal
      */
     logIn() {
-        this.modalInstance.dismiss({$value: 'cancel'});
-        this.$rootScope.$broadcast('auth:login');
+        this.activeModal.dismiss({$value: 'cancel'});
+        this.authenticationService.requestModal();
     };
 
 }
 
-export let RegistrationModalComponent = {
-    selector: "registrationModal",
-    templateUrl: '../../views/authentication/registrationModal.html',
-    bindings: {
-        modalInstance: '<',
-        resolve: '<',
-        close: '&',
-        dismiss: '&',
-        onUpdate: '&'
-    },
-    resolve: {
-        newSubmitter: function(){
-            return this.newSubmitter;
-        }
-    },
-    controller: RegistrationModalController,
-}
-
 angular.module('moaClientApp')
-    .component(RegistrationModalComponent.selector, RegistrationModalComponent);
+    .directive('registrationModal', downgradeComponent({
+        component: RegistrationModalComponent
+    }));

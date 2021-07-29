@@ -1,19 +1,18 @@
 import * as angular from 'angular';
+import {AuthenticationService} from "../../services/authentication.service";
+import {Component, Inject} from "@angular/core";
+import {downgradeComponent} from "@angular/upgrade/static";
 
-class UploadPageController{
-    private static $inject = ['AuthenticationService'];
-    private AuthenticationService;
-    constructor(AuthenticationService) {
-        this.AuthenticationService = AuthenticationService;
-    }
-}
+@Component({
+    selector: 'upload-page',
+    templateUrl: '../../views/spectra/upload/upload.html'
+})
+export class UploadPageComponent {
+    constructor(@Inject(AuthenticationService) private authenticationService: AuthenticationService) {}
 
-let UploadPageComponent = {
-    selector: "uploadPage",
-    templateUrl: "../../views/spectra/upload/upload.html",
-    bindings: {},
-    controller: UploadPageController
 }
 
 angular.module('moaClientApp')
-    .component(UploadPageComponent.selector, UploadPageComponent);
+    .directive('uploadPage', downgradeComponent({
+        component: UploadPageComponent
+    }));

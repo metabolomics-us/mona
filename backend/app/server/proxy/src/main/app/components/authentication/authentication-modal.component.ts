@@ -1,45 +1,31 @@
+import {Component, Inject, Input, OnInit} from "@angular/core";
+import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+import {NGXLogger} from "ngx-logger";
+import {downgradeComponent} from "@angular/upgrade/static";
+import {AuthenticationService} from "../../services/authentication.service";
+import {first} from "rxjs/operators";
 import * as angular from 'angular';
 
-export class AuthenticationModalController{
-    private static $inject = ['$scope',  '$timeout', 'AuthenticationService'];
-    private $scope;
-    private $timeout;
-    private modalInstance;
-    private AuthenticationService;
+
+@Component({
+    selector: 'authentication-modal',
+    templateUrl: '../../views/authentication/authenticationModal.html'
+})
+export class AuthenticationModalComponent implements OnInit {
     private errors;
     private state;
-    private credentials;
+    public credentials;
 
-    constructor($scope, $timeout, AuthenticationService) {
-        this.$scope = $scope;
-        this.$timeout = $timeout;
-        this.AuthenticationService = AuthenticationService;
-    }
+    constructor(@Inject(AuthenticationService) private authenticationService: AuthenticationService, @Inject(NgbActiveModal) private activeModal: NgbActiveModal,
+                @Inject(NGXLogger) private logger: NGXLogger) {}
 
-    $onInit() {
+    ngOnInit() {
         this.errors = [];
         this.state = 'login';
         this.credentials = {
             email: '',
             password: ''
         };
-
-        this.$scope.$on('auth:login-success', (event, data, status, headers, config) => {
-            this.state = 'success';
-            this.$timeout(() =>{
-                this.modalInstance.close();
-            }, 1000);
-        });
-
-        this.$scope.$on('auth:login-error', (event, data, status, headers, config) => {
-            this.$scope.state = 'login';
-
-            if (data.status == '401') {
-                this.errors.push('Invalid email or password');
-            } else {
-                this.errors.push('Unable to reach MoNA server');
-            }
-        });
     }
 
 
@@ -56,28 +42,26 @@ export class AuthenticationModalController{
 
         if (this.errors.length === 0) {
             this.state = 'logging in';
-            this.AuthenticationService.login(this.credentials.email, this.credentials.password);
+            this.authenticationService.login(this.credentials.email, this.credentials.password).pipe(first()).subscribe(
+                (user) => {
+                    this.state = 'success'
+                    setTimeout(() => {
+                        this.activeModal.close();
+                    }, 1000);
+                }, (err => {
+                    this.logger.info(err);
+                    this.errors.push(err);
+                })
+            );
         }
     };
 
     cancelDialog() {
-        this.modalInstance.dismiss('cancel');
+        this.activeModal.dismiss('cancel');
     };
-
-
-
-}
-
-let AuthenticationModalComponent = {
-    selector: "authenticationModal",
-    templateUrl: "../../views/authentication/authenticationModal.html",
-    bindings: {
-        modalInstance: '<',
-        resolve: '<',
-        close: '&'
-    },
-    controller: AuthenticationModalController
 }
 
 angular.module('moaClientApp')
-    .component(AuthenticationModalComponent.selector, AuthenticationModalComponent)
+    .directive('authenticationModal', downgradeComponent({
+        component: AuthenticationModalComponent
+    }))

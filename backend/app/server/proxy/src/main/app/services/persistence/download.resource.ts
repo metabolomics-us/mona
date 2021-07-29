@@ -6,19 +6,20 @@ import {Injectable, Inject} from "@angular/core";
 import {downgradeInjectable} from "@angular/upgrade/static";
 import { environment } from "../../environments/environment";
 import * as  angular from 'angular';
+import {Observable} from "rxjs";
 
 export class Download{
     constructor(@Inject(HttpClient) private http: HttpClient) {
     }
 
-    getPredefinedQueries = (): Promise<Object> => {
+    getPredefinedQueries = (): Observable<any> => {
         const api = `${environment.REST_BACKEND_SERVER}/rest/downloads/predefined`;
-        return this.http.get(api).toPromise();
+        return this.http.get(api);
     }
 
-    getStaticDownloads = (): Promise<Object> => {
+    getStaticDownloads = (): Observable<any> => {
         const api = `${environment.REST_BACKEND_SERVER}/rest/downloads/static`;
-        return this.http.get(api).toPromise();
+        return this.http.get(api);
     }
 }
 
