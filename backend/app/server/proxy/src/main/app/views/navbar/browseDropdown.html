@@ -4,12 +4,12 @@
     </a>
 
     <ul class="uib-dropdown-menu" ngbDropdownMenu>
-        <li><a href="spectra/search">Search Spectra</a></li>
-        <li><a (click)="resetQuery()"  href="spectra/browse">Browse Spectra</a></li>
-        <li><a href="spectra/statistics">Database Index &amp; Statistics</a></li>
+        <li><a [routerLink]="['/spectra/search']">Search Spectra</a></li>
+        <li><a (click)="resetQuery()"  [routerLink]="['/spectra/browse']">Browse Spectra</a></li>
+        <li><a [routerLink]="['/spectra/statistics']">Database Index &amp; Statistics</a></li>
         <li class="divider"></li>
         <li>
-            <a href="upload/status">
+            <a [routerLink]="['/upload/status']">
                 <div>
                     <p>
                         <strong>Upload Progress</strong>

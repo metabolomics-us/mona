@@ -12,15 +12,17 @@ import {AuthenticationService} from "../../services/authentication.service";
 import {NGXLogger} from "ngx-logger";
 import {Component, Inject, Input, OnInit} from "@angular/core";
 import * as angular from 'angular';
-import {first} from "rxjs/operators";
+import {first, map} from "rxjs/operators";
 import {downgradeComponent} from "@angular/upgrade/static";
+import {SpectrumCacheService} from "../../services/cache/spectrum-cache.service";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 
 @Component({
     selector: 'spectrum-viewer',
     templateUrl: '../../views/spectra/display/viewSpectrum.html'
 })
 export class SpectrumViewerComponent implements OnInit{
-    @Input() public delayedspectrum;
+    private delayedspectrum;
     private spectrum;
     private score;
     private massSpec;
@@ -36,12 +38,36 @@ export class SpectrumViewerComponent implements OnInit{
     private match;
     private intensity;
     private showScore;
+    private id;
 
     constructor(@Inject(NGXLogger) private logger: NGXLogger, @Inject(CookieMain) private cookie: CookieMain,
                 @Inject(Spectrum) private spectrumService: Spectrum, @Inject(AuthenticationService) private authenticationService: AuthenticationService,
-                @Inject(Location) private location: Location){}
+                @Inject(Location) private location: Location, @Inject(SpectrumCacheService) private spectrumCache: SpectrumCacheService,
+                @Inject(ActivatedRoute) private route: ActivatedRoute, @Inject(Router) private router: Router){}
 
     ngOnInit() {
+        this.route.queryParamMap.pipe(
+            map((params: ParamMap) => {
+                this.id = params.get('id')
+            } )
+        );
+
+        if (!this.spectrumCache.hasSpectrum() || this.spectrumCache.getSpectrum().id !==  this.id) {
+            return this.spectrumService.get(
+                this.id).then(
+                (res) => {
+                    this.delayedspectrum = res;
+                },
+                (error) => {
+                    alert('failed to obtain spectrum: ' + error);
+                }
+            );
+        }
+        else {
+            let spectrum = this.spectrumCache.getSpectrum();
+            this.spectrumCache.removeSpectrum();
+            this.delayedspectrum = spectrum;
+        }
         /**
          * Sort order for the ion table - default m/z ascending
          */

@@ -2,20 +2,23 @@
  * Created by sajjan on 11/6/14.
  */
 
-import * as angular from 'angular';
+import {HttpClient} from "@angular/common/http";
+import {Location} from "@angular/common";
+import {SpectraQueryBuilderService} from "../../services/query/spectra-query-builder.service";
+import {environment} from "../../environments/environment";
+import {Component, Inject, OnInit} from "@angular/core";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
+import {first, map} from "rxjs/operators";
 import * as d3 from 'd3';
+import 'nvd3';
 
-class SpectraDatabaseIndexController{
-    private static $inject = ['$scope', '$http', '$location', '$window', '$timeout', 'SpectraQueryBuilderService', 'REST_BACKEND_SERVER'];
-    private $scope;
-    private $http;
-    private $location;
-    private $window;
-    private $timeout;
-    private SpectraQueryBuilderService;
-    private REST_BACKEND_SERVER;
+@Component({
+    selector: 'spectra-database-index',
+    templateUrl: '../../views/spectra/dbindex/dbindex.html'
+})
+export class SpectraDatabaseIndexComponent implements OnInit {
     private api;
-    private activeTab;
+    //private activeTab;
     private metadataFields;
     private selectedMetadataField;
     private metadataChartOptions;
@@ -30,23 +33,25 @@ class SpectraDatabaseIndexController{
     private tableDataPage;
     private tableSort;
     private buildHierarchy;
-    private tabIndex;
+    //private tabIndex;
     private sunburstDataMode;
     private activeCompoundClassData;
+    private tabParam;
 
-    constructor($scope, $http, $location, $window, $timeout, SpectraQueryBuilderService, REST_BACKEND_SERVER) {
-        this.$scope = $scope;
-        this.$http = $http;
-        this.$location = $location;
-        this.$window = $window;
-        this.$timeout = $timeout;
-        this.SpectraQueryBuilderService = SpectraQueryBuilderService;
-        this.REST_BACKEND_SERVER = REST_BACKEND_SERVER;
+    constructor(@Inject(HttpClient) private http: HttpClient, @Inject(Location) private location: Location, @Inject(SpectraQueryBuilderService) private spectraQueryBuilderService: SpectraQueryBuilderService,
+                @Inject(ActivatedRoute) private route: ActivatedRoute, @Inject(Router) private router: Router) {
+
     }
 
-    $onInit = () => {
+    ngOnInit() {
+        this.tabParam = undefined;
+        this.route.queryParamMap.pipe(
+            map((params: ParamMap) => {
+                this.tabParam = params.get('tab');
+            })
+        );
         this.api = {};
-        this.activeTab = [false, false, false];
+        //this.activeTab = [false, false, false];
         this.tableDataPage = 1;
         this.tableSort = '-spectra';
 
@@ -74,7 +79,6 @@ class SpectraDatabaseIndexController{
                     dispatch: {
                         elementClick: (e) => {
                             this.executeQuery(this.selectedMetadataField.name, e.data.key);
-                            this.$scope.$apply();
                         }
                     }
                 },
@@ -83,7 +87,7 @@ class SpectraDatabaseIndexController{
                 duration: 500,
                 labelThreshold: 0.01,
                 color: (d, i) => {
-                    let colors = d3.scale.category10().range();
+                    let colors = d3.scaleOrdinal(d3.schemeCategory10);
                     return colors[i % (colors.length - 1)];
                 },
                 legend: {
@@ -109,7 +113,6 @@ class SpectraDatabaseIndexController{
                             let data = e.pos.target.__data__;
                             this.currentPage = 1;
                             this.activeTableData = data.children;
-                            this.$scope.$apply();
                         }
                     }
                 }
@@ -121,13 +124,14 @@ class SpectraDatabaseIndexController{
          */
         this.getMetadataValues = () => {
             this.metadataFields.forEach((field) => {
-                this.$http.get(this.REST_BACKEND_SERVER + '/rest/metaData/values?name='+ field.name)
-                    .then(
-                        (response) => {
+                this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/values?name=${field.name}`)
+                    .pipe(first())
+                    .subscribe(
+                        (response: any) => {
                             field.data = [];
 
                             // Transform data for D3 plot
-                            response.data.values.forEach((x) => {
+                            response.values.forEach((x) => {
                                 field.data.push({
                                     key: x.value,
                                     y: x.count
@@ -146,10 +150,11 @@ class SpectraDatabaseIndexController{
          * Query for total statistics
          */
         this.getGlobalStatistics = () => {
-            return this.$http.get(this.REST_BACKEND_SERVER + '/rest/statistics/global')
-                .then(
-                    (response) => {
-                        this.globalData = response.data;
+            return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/statistics/global`)
+                .pipe(first())
+                .subscribe(
+                    (response: any) => {
+                        this.globalData = response;
                     },
                     (response) => {
                     }
@@ -160,10 +165,11 @@ class SpectraDatabaseIndexController{
          * Query for compound class statistics
          */
         this.getCompoundClassStatistics = () => {
-            return this.$http.get(this.REST_BACKEND_SERVER + '/rest/statistics/compoundClasses')
-                .then(
-                    (response) => {
-                        let transformedData = response.data.map((x) => {
+            return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/statistics/compoundClasses`)
+                .pipe(first())
+                .subscribe(
+                    (response: any) => {
+                        let transformedData = response.map((x) => {
                             return [x.name, x.spectrumCount, x.compoundCount];
                         });
 
@@ -257,20 +263,20 @@ class SpectraDatabaseIndexController{
             return root;
         };
 
-        this.selectTab(0);
+        //this.selectTab(0);
 
         this.getGlobalStatistics();
         this.getCompoundClassStatistics();
         this.getMetadataValues();
     }
 
-    selectTab = (idx) => {
+    /*selectTab = (idx) => {
         // Set tab
-        if (angular.isUndefined(this.tabIndex) && this.$location.search().hasOwnProperty('tab')) {
-            this.tabIndex = parseInt(this.$location.search().tab);
+        if (typeof this.tabIndex === 'undefined' && typeof this.tabParam !== 'undefined') {
+            this.tabIndex = parseInt(this.tabParam);
         } else {
             this.tabIndex = idx;
-            this.$location.search('tab', idx);
+            this.router.navigate(['/spectra/statistics', {tab: this.tabIndex}]).then();
         }
 
         for (let i = 0; i < this.activeTab.length; i++) {
@@ -278,7 +284,7 @@ class SpectraDatabaseIndexController{
         }
 
         // Refresh the charts
-        this.$timeout(() => {
+        setTimeout(() => {
             window.dispatchEvent(new Event('resize'));
 
             for (let k in this.api) {
@@ -287,7 +293,7 @@ class SpectraDatabaseIndexController{
                 }
             }
         }, 50);
-    };
+    }; */
 
 
 
@@ -307,7 +313,7 @@ class SpectraDatabaseIndexController{
         this.activeTableData = this.compoundClassData[this.sunburstDataMode][0].children;
         this.tableDataPage = 1;
 
-        this.$timeout( () => {
+        setTimeout( () => {
             this.api.compoundClassChart.refresh();
         }, 50);
     };
@@ -324,15 +330,15 @@ class SpectraDatabaseIndexController{
         this.activeCompoundClassData = [node];
         this.activeTableData = node.children;
 
-        this.$timeout(() => {
+        setTimeout(() => {
             this.api.compoundClassChart.refresh();
         }, 50);
     };
 
     tableDataExecuteQuery = (node) => {
-        this.SpectraQueryBuilderService.prepareQuery();
-        this.SpectraQueryBuilderService.addGeneralClassificationToQuery(node.name);
-        this.SpectraQueryBuilderService.executeQuery();
+        this.spectraQueryBuilderService.prepareQuery();
+        this.spectraQueryBuilderService.addGeneralClassificationToQuery(node.name);
+        this.spectraQueryBuilderService.executeQuery();
     };
 
 
@@ -342,22 +348,9 @@ class SpectraDatabaseIndexController{
      * @param value
      */
     executeQuery = (name, value) => {
-        this.SpectraQueryBuilderService.prepareQuery();
-        this.SpectraQueryBuilderService.addMetaDataToQuery(name, value);
-        this.SpectraQueryBuilderService.executeQuery();
+        this.spectraQueryBuilderService.prepareQuery();
+        this.spectraQueryBuilderService.addMetaDataToQuery(name, value, undefined);
+        this.spectraQueryBuilderService.executeQuery();
     };
 
 }
-
-let SpectraDatabaseIndexComponent = {
-    selector: "spectraDatabaseIndex",
-    templateUrl: "../../views/spectra/dbindex/dbindex.html",
-    bindings: {},
-    controller: SpectraDatabaseIndexController
-}
-
-angular.module('moaClientApp')
-        .component(SpectraDatabaseIndexComponent.selector, SpectraDatabaseIndexComponent);
-
-
-

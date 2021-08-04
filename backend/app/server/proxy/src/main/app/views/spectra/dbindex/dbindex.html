@@ -2,130 +2,139 @@
     <div class="col-md-12">
         <h3><i class="fa fa-database"></i> Database Index &amp; Statistics</h3>
 
-        <uib-tabset active="activeJustified">
-            <uib-tab index="0" select="$ctrl.selectTab(0)" active="$ctrl.activeTab[0]">
-                <uib-tab-heading class="search-heading">Database Content</uib-tab-heading>
+        <ul ngbNav>
+            <li [ngbNavItem]="0">
+                <a ngbNavLink class="search-heading"> Database Content</a>
 
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>
-                            <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Submitters:</td>
-                        <td>{{$ctrl.globalData.submitterCount | number}}</td>
-                    </tr>
-                    <tr>
-                        <td>Spectral Records:</td>
-                        <td>{{$ctrl.globalData.spectrumCount | number}}</td>
-                    </tr>
-                    <tr>
-                        <td>Unique Compounds (by InChIKey layer):</td>
-                        <td>{{$ctrl.globalData.compoundCount | number}}</td>
-                    </tr>
-                    <tr>
-                        <td>Metadata Types:</td>
-                        <td>{{$ctrl.globalData.metaDataCount | number}}</td>
-                    </tr>
-                    <tr>
-                        <td>Total Metadata Values:</td>
-                        <td>{{$ctrl.globalData.metaDataValueCount | number}}</td>
-                    </tr>
-                    <tr>
-                        <td>Tags Types:</td>
-                        <td>{{$ctrl.globalData.tagCount | number}}</td>
-                    </tr>
-                    <tr>
-                        <td>Total Tags:</td>
-                        <td>{{$ctrl.globalData.tagValueCount | number}}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <ng-template ngbNavContent>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>
+                                <h2 style="margin-top: 0;"><small>Database Content:</small></h2>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Submitters:</td>
+                            <td>{{globalData.submitterCount | number}}</td>
+                        </tr>
+                        <tr>
+                            <td>Spectral Records:</td>
+                            <td>{{globalData.spectrumCount | number}}</td>
+                        </tr>
+                        <tr>
+                            <td>Unique Compounds (by InChIKey layer):</td>
+                            <td>{{globalData.compoundCount | number}}</td>
+                        </tr>
+                        <tr>
+                            <td>Metadata Types:</td>
+                            <td>{{globalData.metaDataCount | number}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Metadata Values:</td>
+                            <td>{{globalData.metaDataValueCount | number}}</td>
+                        </tr>
+                        <tr>
+                            <td>Tags Types:</td>
+                            <td>{{globalData.tagCount | number}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Tags:</td>
+                            <td>{{globalData.tagValueCount | number}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
 
-                <span style="font-size: 0.9em">Last updated on: {{$ctrl.globalData.date | date}}</span>
-            </uib-tab>
+                    <span style="font-size: 0.9em">Last updated on: {{globalData.date | date}}</span>
+                </ng-template>
 
-            <uib-tab index="1" select="$ctrl.selectTab(1)" active="$ctrl.activeTab[1]">
-                <uib-tab-heading class="search-heading">MetaData</uib-tab-heading>
+            </li>
 
-                <div class="h5">
-                    The pie chart below shows the distribution of metadata values for the selected metadata type.
-                    Clicking on the elements in the legend will show/hide chart sections, and clicking on a section in
-                    the pie chart will execute a query for the selected value.
-                </div>
-                <br />
+            <li [ngbNavItem]="1">
+                <a ngbNavLink class="search-heading">MetaData</a>
+                <ng-template ngbNavContent>
+                    <div class="h5">
+                        The pie chart below shows the distribution of metadata values for the selected metadata type.
+                        Clicking on the elements in the legend will show/hide chart sections, and clicking on a section in
+                        the pie chart will execute a query for the selected value.
+                    </div>
+                    <br />
 
-                <div>
-                    <select data-ng-options="f.title for f in $ctrl.metadataFields"
-                            data-ng-model="$ctrl.selectedMetadataField"
-                            data-ng-change="$ctrl.selectMetadataField($ctrl.selectedMetadataField)"></select>
-                </div>
+                    <div>
+                        <select [(ngModel)]="selectedMetadataField"
+                                (change)="selectMetadataField(selectedMetadataField)">
+                            <option [value]=f.title *ngFor="let f of metadataFields">{{f.title}}</option>
+                        </select>
+                    </div>
 
-                <div class="text-center"><h4>{{$ctrl.selectedMetadataField.title}}</h4></div>
+                    <div class="text-center"><h4>{{selectedMetadataField.title}}</h4></div>
 
-                <nvd3 options="$ctrl.metadataChartOptions"
-                      config="{refreshDataOnly: false}"
-                      data="$ctrl.selectedMetadataField.data"
-                      api="$ctrl.api.metadataChart"></nvd3>
-            </uib-tab>
+                    <nvd3 [options]="metadataChartOptions"
+                          [data]="selectedMetadataField.data"></nvd3>
+                </ng-template>
 
-            <uib-tab index="2" select="$ctrl.selectTab(2)" active="$ctrl.activeTab[2]">
-                <uib-tab-heading class="search-heading">Compound Classes</uib-tab-heading>
+            </li>
 
-                <div class="h5">
-                    This sunburst chart displays the breakdown of compound classifications, which were obtained using
-                    <a href="http://classyfire.wishartlab.com/">ClassyFire</a> by Wishart Lab. ClassyFire
-                    is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
-                    entities based on their structure. ClassyFire combines structure search, IUPAC name parsing, and evaluation
-                    of logical expressions to retrieve structural features, which are then mapped to the corresponding ChemOnt classes.
-                    <br /><br />
+            <li [ngbNavItem]="2">
+                <a ngbNavLink class="search-heading">Compound Classes</a>
+                <ng-template ngbNavContent>
+                    <div class="h5">
+                        This sunburst chart displays the breakdown of compound classifications, which were obtained using
+                        <a href="http://classyfire.wishartlab.com/">ClassyFire</a> by Wishart Lab. ClassyFire
+                        is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
+                        entities based on their structure. ClassyFire combines structure search, IUPAC name parsing, and evaluation
+                        of logical expressions to retrieve structural features, which are then mapped to the corresponding ChemOnt classes.
+                        <br /><br />
 
-                    Clicking on a partition
-                    will zoom into it and display a finer-grained view of its child partitions.  Clicking on the center
-                    circle will zoom out to the parent partition.
-                </div>
+                        Clicking on a partition
+                        will zoom into it and display a finer-grained view of its child partitions.  Clicking on the center
+                        circle will zoom out to the parent partition.
+                    </div>
 
-                <div class="btn-group">
-                    <label class="btn btn-primary" ng-model="$ctrl.sunburstDataMode" uib-btn-radio="'spectrum'" ng-click="$ctrl.changeSunburstDataMode('spectrum')">Spectrum Count</label>
-                    <label class="btn btn-primary" ng-model="$ctrl.sunburstDataMode" uib-btn-radio="'compound'" ng-click="$ctrl.changeSunburstDataMode('compound')">Compound Count</label>
-                </div>
+                    <div class="btn-group">
+                        <label ngbButtonLabel class="btn btn-primary">
+                            <input ngbButton type='radio' [(ngModel)]="sunburstDataMode" (click)="changeSunburstDataMode('spectrum')">Spectrum Count
+                        </label>
+                        <label ngbButtonLabel class="btn btn-primary">
+                            <input ngbButton type='radio' [(ngModel)]="sunburstDataMode"  (click)="changeSunburstDataMode('compound')">Compound Count
+                        </label>
+                    </div>
 
-                <nvd3 options="$ctrl.sunburstOptions"
-                      data="$ctrl.activeCompoundClassData"
-                      class="with-3d-shadow with-transitions"
-                      api="$ctrl.api.compoundClassChart"></nvd3>
+                    <nvd3 [options]="sunburstOptions"
+                          [data]="activeCompoundClassData"
+                          class="with-3d-shadow with-transitions"></nvd3>
 
-                <br />
+                    <br />
 
-                <h3>
-                    Sub-Classifications <br />
-                    <small>Please click on the sunburst to refine your queries</small>
-                </h3>
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th style="width: 35%;"><a href data-ng-click="$ctrl.tableDataSort('name')">Classification</a></th>
-                        <th style="width: 25%;"><a href data-ng-click="$ctrl.tableDataSort('spectra')">Spectra</a></th>
-                        <th style="width: 25%;"><a href data-ng-click="$ctrl.tableDataSort('compounds')">Compounds</a></th>
-                        <th style="width: 15%;">&nbsp;</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr data-ng-repeat="node in $ctrl.activeTableData | orderBy: $ctrl.tableSort | limitTo: 10:10*($ctrl.tableDataPage-1)">
-                        <td>{{node.name}}</td>
-                        <td>{{node.spectra | number:0}}</td>
-                        <td>{{node.compounds | number:0}}</td>
-                        <td><button class="btn btn-primary" data-ng-click="$ctrl.tableDataExecuteQuery(node)"><i class="fa fa-search"></i> Query</button></td>
-                    </tr>
-                    </tbody>
-                </table>
+                    <h3>
+                        Sub-Classifications <br />
+                        <small>Please click on the sunburst to refine your queries</small>
+                    </h3>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 35%;"><a [routerLink]="" (click)="tableDataSort('name')">Classification</a></th>
+                            <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('spectra')">Spectra</a></th>
+                            <th style="width: 25%;"><a [routerLink]="" (click)="tableDataSort('compounds')">Compounds</a></th>
+                            <th style="width: 15%;">&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- make order by pipe -->
+                        <tr *ngFor="let node of activeTableData | slice: 10*(tableDataPage-1):10">
+                            <td>{{node.name}}</td>
+                            <td>{{node.spectra | number:'1.0-0'}}</td>
+                            <td>{{node.compounds | number:'1.0-0'}}</td>
+                            <td><button class="btn btn-primary" (click)="tableDataExecuteQuery(node)"><i class="fa fa-search"></i> Query</button></td>
+                        </tr>
+                        </tbody>
+                    </table>
 
-                <ul uib-pagination total-items="$ctrl.activeTableData.length" ng-model="$ctrl.tableDataPage" max-size="5" class="pagination-sm" boundary-links="true" num-pages="numPages"></ul>
-            </uib-tab>
-        </uib-tabset>
+                    <ngb-pagination [collectionSize]="activeTableData.length" [(page)]="tableDataPage" maxSize="5" class="pagination-sm" boundaryLinks="true"></ngb-pagination>
+                </ng-template>
+            </li>
+        </ul>
     </div>
 </div>

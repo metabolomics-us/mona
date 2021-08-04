@@ -50,6 +50,7 @@ import {NgChemdoodleModule} from "@wcmc/ng-chemdoodle";
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {LoggerModule, NgxLoggerLevel} from "ngx-logger";
 import {FormsModule} from "@angular/forms";
+import {NvD3Module} from "ng2-nvd3";
 
 import {CtsService, CtsConstants, ChemifyService} from "angular-cts-service/dist/cts-lib";
 import {NgMassSpecPlotterModule} from "@wcmc/ng-mass-spec-plotter";
@@ -120,8 +121,16 @@ import {SpectraUploadComponent} from "./components/upload/spectra-upload.compone
 import {UploadPageComponent} from "./components/upload/upload-page.component";
 import {MainComponent} from "./components/main.component";
 import {SearchBoxComponent} from "./components/search-box.component";
+import {SearchComponent} from "./components/search-page.component";
+import {DocumentationQueryComponent} from "./components/documentation/documentation-query.component";
+import {DocumentationLicenseComponent} from "./components/documentation/documentation-license.component";
+import {SpectraBrowserComponent} from "./components/browser/spectra-browser.component";
+import {SpectraDatabaseIndexComponent} from "./components/browser/spectra-database-index.component";
 import {FilterPipe} from "./filters/filter.pipe";
 import {SlicePipe} from "@angular/common";
+import {CurlPipe} from "./filters/curl.pipe";
+import {AppRootComponent} from "./app.component";
+import {routes} from "./app.routes";
 
 @NgModule({
     imports: [
@@ -145,8 +154,9 @@ import {SlicePipe} from "@angular/common";
         BrowserAnimationsModule,
         ToasterModule.forRoot(),
         NgxGoogleAnalyticsModule.forRoot('UA-87692241-2'),
-        RouterModule.forRoot([]),
-        TagInputModule
+        RouterModule.forRoot(routes, {useHash: true}),
+        TagInputModule,
+        NvD3Module
 
     ],
     providers: [
@@ -176,11 +186,12 @@ import {SlicePipe} from "@angular/common";
         MgfParserLibService,
         MspParserLibService,
         FilterPipe,
-        SlicePipe
+        CurlPipe
     ],
 
     declarations: [
         FilterPipe,
+        CurlPipe,
         SpectrumReviewComponent,
         ErrorHandleComponent,
         DisplayCompoundComponent,
@@ -224,67 +235,20 @@ import {SlicePipe} from "@angular/common";
         SpectraUploadComponent,
         UploadPageComponent,
         MainComponent,
-        SearchBoxComponent
+        SearchBoxComponent,
+        SearchComponent,
+        DocumentationQueryComponent,
+        DocumentationLicenseComponent,
+        SpectraBrowserComponent,
+        SpectraDatabaseIndexComponent,
+        AppRootComponent
     ],
-
-    entryComponents: [
-        SpectrumReviewComponent,
-        ErrorHandleComponent,
-        DisplayCompoundComponent,
-        GwMetaQueryInputComponent,
-        MetadataQueryComponent,
-        SplashQueryComponent,
-        SubmitterQueryComponent,
-        TagDisplayComponent,
-        TagQueryComponent,
-        TypeaheadFocusComponent,
-        AdminDropDownComponent,
-        BrowseDropDownComponent,
-        DownloadComponent,
-        ResourceDropDownComponent,
-        TitleHeaderComponent,
-        UploadComponent,
-        KeywordSearchFormComponent,
-        QueryTreeViewComponent,
-        QueryTreeComponent,
-        SpectraUploadProgressComponent,
-        SimilaritySearchFormComponent,
-        DownloadNotifErrorModalComponent,
-        DownloadNotifModalComponent,
-        SpectraDownloadComponent,
-        SpectraLibraryComponent,
-        SpectraPanelComponent,
-        SpectraCountForUserComponent,
-        SpectraScoreForUserComponent,
-        SpectraTopScoresForUsersComponent,
-        SubmitterFormComponent,
-        AuthenticationComponent,
-        AuthenticationModalComponent,
-        RegistrationModalComponent,
-        DocumentationTermComponent,
-        SubmitterComponent,
-        SubmitterModalComponent,
-        SubmitterProfileComponent,
-        SpectrumViewerComponent,
-        AdvancedUploaderComponent,
-        BasicUploaderComponent,
-        SpectraUploadComponent,
-        UploadPageComponent,
-        MainComponent,
-        SearchBoxComponent
+    bootstrap: [
+        AppRootComponent
     ]
 })
 
-export class AppModule {
-    ngDoBootstrap(){
+export class AppModule {}
 
-    }
-}
-
-platformBrowserDynamic().bootstrapModule(AppModule).then(platformRef => {
-    console.log("Bootstrapping in Hybrid Mode");
-    const upgrade = platformRef.injector.get(UpgradeModule) as UpgradeModule;
-    upgrade.bootstrap(document.body, ['moaClientApp']);
-})
-
+platformBrowserDynamic().bootstrapModule(AppModule);
 

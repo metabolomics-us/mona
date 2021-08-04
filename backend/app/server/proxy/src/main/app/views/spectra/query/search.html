@@ -1,18 +1,16 @@
 <div id="search-box">
-    <uib-tabset active="activeJustified">
-        <uib-tab index="0">
-            <uib-tab-heading class="search-heading">Quick Search</uib-tab-heading>
-            <keyword-search-form></keyword-search-form>
-        </uib-tab>
-        <!--
-        <uib-tab index="1">
-            <uib-tab-heading class="search-heading">Advanced Query</uib-tab-heading>
-            <div ng-controller="AdvancedSearchController as adv"><advanced-search-form></advanced-search-form></div>
-        </uib-tab>
-        -->
-        <uib-tab index="2">
-            <uib-tab-heading class="search-heading">Similarity Search</uib-tab-heading>
-            <similarity-search-form></similarity-search-form>
-        </uib-tab>
-    </uib-tabset>
+    <ul ngbNav #nav="ngbNav" class="nav-tabs">
+        <li ngbNavItem>
+            <a ngbNavLink>Quick Search</a>
+            <ng-template ngbNavContent>
+                <keyword-search-form></keyword-search-form>
+            </ng-template>
+        </li>
+        <li ngbNavItem>
+            <a ngbNavLink>Similarity Search</a>
+            <ng-template ngbNavContent>
+                <similarity-search-form></similarity-search-form>
+            </ng-template>
+        </li>
+    </ul>
 </div>

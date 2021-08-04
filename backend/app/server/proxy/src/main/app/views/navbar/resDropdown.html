@@ -3,9 +3,9 @@
         <i class="fa fa-question-circle"></i> Help <i class="fa fa-caret-down"></i>
     </a>
     <ul class="uib-dropdown-menu" ngbDropdownMenu>
-        <li><a href="documentation/webservices">Web Services</a></li>
-        <li><a href="documentation/license">License</a></li>
-        <li><a href="documentation/query">REST Service Query</a></li>
+        <li><a [routerLink]="['/documentation/webservices']">Web Services</a></li>
+        <li><a [routerLink]="['/documentation/license']">License</a></li>
+        <li><a [routerLink]="['/documentation/query']">REST Service Query</a></li>
         <li><a
                 href="https://github.com/metabolomics-us/mona/wiki/REST-Authentication-and-Uploading"
                 target="_blank">REST API Authentication</a></li>
@@ -13,7 +13,7 @@
                 href="https://github.com/metabolomics-us/mona/wiki/webhooks-and-synchronization"
                 target="_blank">webhooks and synchronization</a></li>
 
-        <li><a href="documentation/terms">Terms and Abbreviations</a></li>
+        <li><a [routerLink]="['/documentation/terms']">Terms and Abbreviations</a></li>
         <li><a href="https://github.com/metabolomics-us/mona" target="_blank">Sourcecode</a></li>
         <li><a href="http://mona.fiehnlab.ucdavis.edu/repository/">Repository</a></li>
         <li><a href="https://github.com/metabolomics-us/mona/wiki" target="_blank">Wiki</a></li>

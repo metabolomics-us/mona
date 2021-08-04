@@ -642,7 +642,7 @@ export class BasicUploaderComponent implements OnInit{
      */
     loadTags = (query) => {
         return new Promise((resolve) => {
-           resolve(this.filterPipe.transform(this.tags, query, false, undefined));
+           resolve(this.filterPipe.transform(this.tags, query));
         });
     };
 }

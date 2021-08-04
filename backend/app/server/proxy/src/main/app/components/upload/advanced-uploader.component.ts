@@ -527,7 +527,7 @@ export class AdvancedUploaderComponent implements OnInit{
 		return new Observable((observer => {
 			console.log(this.tags);
 			this.logger.info(this.tags);
-			observer.next(this.filterPipe.transform(this.tags, query, false, undefined));
+			observer.next(this.filterPipe.transform(this.tags, query));
 			console.log(this.tags);
 			this.logger.info(this.tags);
 		}));

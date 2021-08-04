@@ -5,20 +5,31 @@ import { Pipe, PipeTransform} from "@angular/core";
     pure: false
 })
 export class FilterPipe implements PipeTransform {
-    transform(items: any, filter: any, orderBy: boolean, unique: string): any {
-        if(!items || !filter) {
-            return items;
-        }
-        if(orderBy) {
-            return items.filter(item => item.title.indexOf(filter.title) !== -1)
-                .sort((a,b) => {
-                    if(a.name < b.name) { return -1; }
-                    if(a.name > b.name) { return 1; }
-                    return 0;
-                });
-        } else{
-            return items.filter(item => item.title.indexOf(filter.title) !== -1);
-        }
+    transform(value: any, args: any): any {
+        if (!value || !args) return value;
+        if (typeof args == "string"){
+            if(args.charAt(0) === '!') {
+                return value.filter(item => item.toString().indexOf(args.toString()) === -1)
+            }
+            return value.filter(item => item.toString().indexOf(args.toString()) !== -1);
+        } else {
+            Object.keys(args).forEach((key) => {
+                value.filter(item => {
+                    if(args[key].charAt(0) === '!'){
+                        let arg = args[key].slice(0);
+                        if(typeof item[key] !== 'undefined') {
+                            return item[key].toString().indexOf(arg.toString()) === -1
+                        }
+                    } else {
+                        if(typeof item[key] !== 'undefined') {
+                            return item[key].toString().indexOf(args[key].toString()) !== -1
+                        }
+                    }
 
+                });
+            });
+            return value;
+
+        }
     }
 }

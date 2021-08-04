@@ -1,8 +1,8 @@
-<div ng-value="error"></div>
+<div #error></div>
 
 <div class="row">
     <div class="col-md-12">
-        <h3>How to interact with {{APP_NAME}}
+        <h3>How to interact with MONA
 
             <small>executing queries against the system using curl or REST based clients</small>
         </h3>
@@ -28,32 +28,32 @@
                 </li>
             </ol>
             <pre>
-                {
-                    "compound": {
+                &#123;
+                    "compound": &#123;
                         "metadata": [
-                            {
+                            &#123;
                                 "name": "molecule formula",
-                                "value": {
+                                "value": &#123;
                                     "eq": "C47H74O12S"
-                                }
-                            }
+                                &#125;
+                            &#125;
                         ]
-                    },
+                    &#125;,
 
                     "metadata": [
-                        {
+                        &#123;
                             "name": "compoundclass",
-                            "value": {
+                            "value": &#123;
                                 "eq": "SQDG"
-                            }
-                        }
+                            &#125;
+                        &#125;
                     ],
 
                     "tags": [
                         "virtual",
                         "lipidblast"
                     ]
-                }
+                &#125;
             </pre>
 
             The return will be a list of spectra object, which all there associated values. You can execute this query
@@ -61,8 +61,8 @@
 
             <p>
                 <samp>
-                    curl -H "Content-Type: application/json" -d '{"compound":{"metadata":[{"name":"molecule
-                    formula","value":{"eq":"C47H74O12S"}}]},"metadata":[{"name":"compoundclass","value":{"eq":"SQDG"}}],"tags":["virtual","lipidblast"],"offset":0}'
+                    curl -H "Content-Type: application/json" -d '&#123;"compound":&#123;"metadata":[&#123;"name":"molecule
+                    formula","value":&#123;"eq":"C47H74O12S"&#125;&#125;]&#125;,"metadata":[&#123;"name":"compoundclass","value":&#123;"eq":"SQDG"&#125;&#125;],"tags":["virtual","lipidblast"],"offset":0&#125;'
                     http://mona.fiehnlab.ucdavis.edu/rest/spectra/search
                 </samp>
 
@@ -73,25 +73,25 @@
             The new query would than look like
 
                         <pre>
-                {
-                    "compound": {
+                &#123;
+                    "compound": &#123;
                         "metadata": [
-                            {
+                            &#123;
                                 "name": "molecule formula",
-                                "value": {
+                                "value": &#123;
                                     "eq": "C47H74O12S"
-                                }
-                            }
+                                &#125;
+                            &#125;
                         ]
-                    },
+                    &#125;,
 
                     "metadata": [
-                        {
+                        &#123;
                             "name": "compoundclass",
-                            "value": {
+                            "value": &#123;
                                 "eq": "SQDG"
-                            }
-                        }
+                            &#125;
+                        &#125;
                     ],
 
                     "tags": [
@@ -100,15 +100,15 @@
                     ],
 
                     "format" : "msp"
-                }
+                &#125;
             </pre>
 
             and can be again invoked like this
 
             <p>
                 <samp>
-                    curl -H "Content-Type: application/json" -d '{"compound":{"metadata":[{"name":"molecule
-                    formula","value":{"eq":"C47H74O12S"}}]},"metadata":[{"name":"compoundclass","value":{"eq":"SQDG"}}],"tags":["virtual","lipidblast"],"offset":0,"format":"msp"}'
+                    curl -H "Content-Type: application/json" -d '&#123;"compound":&#123;"metadata":[&#123;"name":"molecule
+                    formula","value":&#123;"eq":"C47H74O12S"&#125;&#125;]&#125;,"metadata":[&#123;"name":"compoundclass","value":&#123;"eq":"SQDG"&#125;&#125;],"tags":["virtual","lipidblast"],"offset":0,"format":"msp"&#125;'
                     http://mona.fiehnlab.ucdavis.edu/rest/spectra/search
                 </samp>
 
@@ -201,9 +201,9 @@
                 An example query to get all spectra, associated with a given id would be:
             </h5>
             <pre>
-                {
+                &#123;
                     "id":["mona-00d6aa5242967963fb9f34005b1ff071"]
-                }
+                &#125;
             </pre>
 
             Which would return any spectrum with the exact same hashcode.
@@ -220,8 +220,6 @@
         </div>
         <div>
             <h4>Updates</h4>
-
-            <p>
                 To run updates against the system, you can utilize the same approach as running queries. But currently the update is very limited to added or removing tags.
 
                 <h5>
@@ -230,40 +228,38 @@
 
                 <pre>
 
-                    {
-                        query:
+                        &#123;
+                            query:
 
-                        {
-                            id:
-                                [
-                                    {
-                                        value:
-                                            {
-                                                in: [199]
-                                            }
-                                    }
-                                ]
-                        }
+                            &#123;
+                                id:
+                                    [
+                                        &#123;
+                                            value:
+                                                &#123;
+                                                    in: [199]
+                                                &#125;
+                                        &#125;
+                                    ]
+                            &#125;
 
-                        update:
+                            update:
 
-                        {
-                            tags :
-                                [
-                                    'addMyTag',
-                                    '-removeMyTag'
-                                ]
-                        }
-                    }
+                            &#123;
+                                tags :
+                                    [
+                                        'addMyTag',
+                                        '-removeMyTag'
+                                    ]
+                            &#125;
+                        &#125;
                 </pre>
 
                 The endpoint for this would be
 
                 <pre>
-                    http://mona.fiehnlab.ucdavis.edu/rest/spectra/batch/update
+                        http://mona.fiehnlab.ucdavis.edu/rest/spectra/batch/update
                 </pre>
-
-            </p>
         </div>
     </div>
 </div>

@@ -13,10 +13,6 @@ import {downgradeComponent} from "@angular/upgrade/static";
     templateUrl: '../../views/spectra/upload/uploadStatus.html'
 })
 export class SpectraUploadComponent{
-    private AuthenticationService;
-    private UploadLibraryService;
-    private $log;
-
     constructor(@Inject(AuthenticationService) private authenticationService: AuthenticationService, @Inject(NGXLogger) private logger: NGXLogger,
                 @Inject(UploadLibraryService) private uploadLibraryService: UploadLibraryService){}
 }

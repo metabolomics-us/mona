@@ -35,7 +35,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr *ngFor=" let impact of spectrum.score.impacts | filterPipe:'-value': true: undefined"
+                                        <tr *ngFor=" let impact of spectrum.score.impacts | filterPipe:'-value'"
                                             [ngClass]="impact.value < 0 ? 'danger' : (impact.value > 0 ? 'success' : 'warning')">
                                             <td>{{impact.value | number:'1.2-2'}}</td>
                                             <td>{{impact.reason}}</td>
@@ -108,7 +108,7 @@
                                                       'glyphicon-chevron-right': accordionStatus.isSpectraOpen}"></i>
                                     </ng-template>
 
-                                    <div class="masspec-modal">
+                                    <div class="masspec-modal" style="height: 100%; width: 100%">
                                         <lib-ng-mass-spec-plotter id="massSpec_{{spectrum.id}}"
                                                    [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
                                     </div>
@@ -131,7 +131,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr *ngFor="let ion of massSpec | filterPipe:ionTableSort:ionTableSortReverse:undefined">
+                                            <tr *ngFor="let ion of massSpec | filterPipe:ionTableSort">
                                                 <td>{{ion.ion | number : '1.0-6'}}</td>
                                                 <td>{{ion.intensity | number : '1.0-6'}}</td>
                                                 <td>
@@ -198,9 +198,9 @@
                                                          [(ngModel)]="s.compound[0]"></div>
                                                 </td>
                                                 <td>
-                                                    <div class="masspec-mini">
-                                                        <lib-ng-mass-spec-plotter id="massSpec_{{s.id}}" mini
-                                                                   spectrum="s.spectrum"></lib-ng-mass-spec-plotter>
+                                                    <div class="masspec-mini" style="width: 100%; height: 100%">
+                                                        <lib-ng-mass-spec-plotter id="massSpec_{{s.id}}" [miniPlot]
+                                                                   [spectrum]="s.spectrum"></lib-ng-mass-spec-plotter>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -250,7 +250,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}:true:undefined">
+                                    <tr *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
                                         <td class="col-lg-4 col-md-4">
                                             <span metadata-query value="meta"> {{meta.name}}</span>
                                         </td>

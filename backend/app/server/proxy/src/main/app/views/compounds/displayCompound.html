@@ -78,7 +78,7 @@
 
                 <tbody>
                 <!-- Create New Pipes for this filtering -->
-                <tr *ngFor="let meta of compound.metaData | filterPipe:{category: '!external id', deleted : '!true', hidden: '!true'}:true: '' ">
+                <tr *ngFor="let meta of compound.metaData | filterPipe:{category: '!external id', deleted : '!true', hidden: '!true'} ">
                     <td class="col-lg-4 col-md-6">
                         <metadata-query value="meta" compound="true">{{meta.name}}</metadata-query>
                     </td>
@@ -100,7 +100,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div [hidden]="(compound.metaData |  filterPipe:{category: 'external id'}: false: '').length > 0">
+            <div [hidden]="(compound.metaData |  filterPipe:{category: 'external id'}).length > 0">
                 <table class="table">
                     <thead>
                     <tr>
@@ -109,7 +109,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let meta of compound.metaData |  filterPipe: {category: 'external id', deleted : '!true', hidden: '!true'}: false: 'name' ">
+                    <tr *ngFor="let meta of compound.metaData |  filterPipe: {category: 'external id', deleted : '!true', hidden: '!true'} ">
                         <td class="col-lg-4 col-md-6">
                             <metadata-query value="meta" compound="true">
                                 {{meta.name}}

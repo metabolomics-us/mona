@@ -13,9 +13,9 @@ import * as angular from 'angular';
     templateUrl: '../../views/templates/query/tagQuery.html'
 })
 export class TagQueryComponent {
-    @Input() private ruleBased;
-    @Input() private type;
-    @Input() private tag;
+    @Input() public ruleBased;
+    @Input() public type;
+    @Input() public tag;
 
     constructor(@Inject(SpectraQueryBuilderService) private spectraQueryBuilderService) {}
 

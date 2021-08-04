@@ -1,66 +1,20 @@
 <!doctype html>
 <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
+    <base href="/">
     <meta charset="utf-8">
-    <title ng-bind="APP_NAME"></title>
+    <title>MassBank of North America</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- AngularJS SEO -->
-    <base href="/">
     <link rel="stylesheet" href="./lib/chemdoodle-test/ChemDoodleWeb.css">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="stylesheet" href="./styles/main.scss">
+    <link rel="stylesheet" href="./styles/theme.scss">
 
-    <!-- build:css styles/vendor.css -->
-    <!-- endbuild -->
-
-
-    <!-- build:css({target/.tmpGrunt,angularjs}) styles/main.css -->
-    <!--<link rel="stylesheet" href="lib/chemdoodle/ChemDoodleWeb.css">
-    <link rel="stylesheet" href="lib/chemdoodle/ChemDoodleWeb.css">
-    <link rel="stylesheet" href="styles/main.scss">
-    <link rel="stylesheet" href="styles/autocomplete.scss">-->
-    <!-- endbuild -->
 </head>
 <body class="dashboard">
-<!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please
-    <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-<![endif]-->
+    <mona-client-app></mona-client-app>
 
-
-<div id="wrapper">
-    <nav class="navbar navbar-expand-xl navbar-fixed-top navbar-dark">
-        <!-- navbar dropdowns -->
-        <title-header></title-header>
-        <div class="collapse navbar-collapse" role="navigation">
-            <ul class="nav navbar-nav">
-                <browse-drop-down></browse-drop-down>
-                <admin-drop-down></admin-drop-down>
-                <download-button></download-button>
-                <upload-button></upload-button>
-                <resource-drop-down></resource-drop-down>
-            </ul>
-            <authentication></authentication>
-            <!--<login-drop-down></login-drop-down>-->
-            <search-box></search-box>
-        </div>
-
-    </nav>
-
-    <div id="page-wrapper">
-        <div class="row">
-            <div class="col-lg-12 top17">
-                <div ng-view="" autoscroll="true"></div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /#page-wrapper -->
-
-<!-- /#wrapper -->
-
-<script src="./lib/chemdoodle-test/ChemDoodleWeb.js"></script>
-<script src="./dist/bundle.js"></script>
-<!-- endbuild -->
+    <script src="./lib/chemdoodle-test/ChemDoodleWeb.js"></script>
+    <script src="./dist/bundle.js"></script>
 </body>
 </html>

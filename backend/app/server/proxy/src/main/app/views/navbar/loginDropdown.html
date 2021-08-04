@@ -7,7 +7,7 @@
         </a>
         <ul class="uib-dropdown-menu dropdown-user" ngbDropdownMenu>
             <li [hidden]="!isLoggedIn()">
-                <a href="profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                <a [routerLink]="['/profile']"><i class="fa fa-user fa-fw"></i> User Profile</a>
             </li>
             <li [hidden]="!isLoggedIn()" class="divider"></li>
 

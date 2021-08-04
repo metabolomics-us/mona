@@ -1,4 +1,4 @@
 import "./byteFormatFilter";
-import "./curlFilter";
+import "./curl.pipe";
 import "./titleCaseFilter";
 import "./filter.pipe"

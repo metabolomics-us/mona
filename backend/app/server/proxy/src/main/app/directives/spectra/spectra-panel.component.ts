@@ -11,7 +11,7 @@ import * as angular from 'angular';
     templateUrl: '../../views/spectra/display/panel.html'
 })
 export class SpectraPanelComponent implements OnInit{
-    @Input() private spectrum;
+    @Input() public spectrum;
     private IMPORTANT_METADATA;
     private importantMetadata;
     private secondaryMetadata;
@@ -19,6 +19,7 @@ export class SpectraPanelComponent implements OnInit{
     constructor(@Inject(SpectrumCacheService) private spectrumCache: SpectrumCacheService) {}
 
     ngOnInit() {
+        console.log(this.spectrum);
         // Top 10 important metadata fields
         this.IMPORTANT_METADATA = [
             'ms level', 'precursor type', 'precursor m/z', 'instrument', 'instrument type',
