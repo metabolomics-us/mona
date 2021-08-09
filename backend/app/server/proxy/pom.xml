@@ -183,7 +183,7 @@
 
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>mona-web/src/resources</directory>
             </resource>
 
             <resource>
