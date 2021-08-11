@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'mona-client-app',
+    selector: 'app-mona',
     template: `<div id="wrapper">
-        <nav class="navbar navbar-expand-xl navbar-fixed-top navbar-dark">
+        <nav class="navbar navbar-expand-xl fixed-top navbar-dark">
             <!-- navbar dropdowns -->
             <title-header></title-header>
             <div class="collapse navbar-collapse" role="navigation">
@@ -17,9 +17,7 @@ import { Component } from '@angular/core';
                 <authentication></authentication>
                 <search-box></search-box>
             </div>
-
         </nav>
-
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12 top17">

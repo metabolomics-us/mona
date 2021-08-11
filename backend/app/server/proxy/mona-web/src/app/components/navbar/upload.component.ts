@@ -2,7 +2,7 @@
  * renders upload button for nav bar
  */
 
-import {Component} from "@angular/core";
+import {Component} from '@angular/core';
 
 @Component({
     selector: 'upload-button',

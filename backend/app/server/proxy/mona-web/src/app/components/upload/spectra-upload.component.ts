@@ -1,10 +1,10 @@
 /**
  * Created by Gert on 5/28/2014.
  */
-import {AuthenticationService} from "../../services/authentication.service";
-import {UploadLibraryService} from "../../services/upload/upload-library.service";
-import {NGXLogger} from "ngx-logger";
-import {Component} from "@angular/core";
+import {AuthenticationService} from '../../services/authentication.service';
+import {UploadLibraryService} from '../../services/upload/upload-library.service';
+import {NGXLogger} from 'ngx-logger';
+import {Component} from '@angular/core';
 
 @Component({
     selector: 'spectra-upload',

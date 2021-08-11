@@ -16,7 +16,7 @@
 
         <!-- Message indicating loading in background -->
         <div class="h5 text-center" *ngIf="spectraLoaded === 2 && isLoadingSpectra()">
-            <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading additional spectra in background...</span>
+          <span><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>Loading additional spectra in background...</span>
         </div>
 
 
@@ -27,7 +27,7 @@
                 <div class="input-group">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                           <!--  Browse&hellip; <input type="file" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)"/> -->
+                           Browse&hellip; <input type="file" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)"/>
                         </span>
                     </span>
 
@@ -42,7 +42,7 @@
         <!-- Loading message -->
         <div *ngIf="spectraLoaded === 1" class="card">
             <div class="card-header"><strong>Loading and parsing data</strong></div>
-            <div class="card-body text-center"><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Uploading and parsing file...</span></div>
+            <div class="card-body text-center"><span><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Uploading and parsing file...</span></div>
         </div>
 
 
@@ -78,7 +78,7 @@
             <div class="card-body">
                 <ng-container *ngIf="currentSpectrum.errors">
                     <div class="alert alert-danger" role="alert" *ngIf="currentSpectrum.errors.length">
-                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                      <fa-icon [icon]="faExclamationTriangle"></fa-icon>
                         <span class="sr-only">Error:</span>
                         The following issues have been found in this spectrum:
                         <ul>
@@ -87,7 +87,7 @@
                     </div>
                 </ng-container>
 
-                <div class="masspec-modal" style="width: 100%; height: 100%">
+                <div class="masspec-modal">
                     <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" id="masspec"></lib-ng-mass-spec-plotter>
                 </div>
                 <br />
@@ -164,7 +164,7 @@
                                                     <div class="input-group">
                                                 <span class="input-group-btn">
                                                     <span class="btn btn-primary btn-file">
-                                                       <!-- Browse&hellip; <input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseFiles($event)"/> -->
+                                                       Browse&hellip; <input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseFiles($event)"/>
                                                     </span>
                                                 </span>
 
@@ -226,20 +226,20 @@
                                         <input type="text"
                                                [(ngModel)]="meta.value"
                                                ngDefaultControl
-                                               [disabled]="!meta.name || meta.name == ''"
+                                               [disabled]="!meta.name || meta.name === ''"
                                                placeholder="Metadata Value"
                                                class="form-control" />
                                     </div>
                                     <div class="col-sm-2 form-group">
                                         <button (click)="removeMetadataField(i)" class="btn btn-default"
-                                                ngbTooltip="Remove this metadata field" ngDefaultControl><i class="fa fa-minus-square"></i></button>
+                                                ngbTooltip="Remove this metadata field" ngDefaultControl><fa-icon [icon]="faMinusSquare"></fa-icon></button>
                                         <button (click)="applyMetadataToAll(i)" class="btn btn-default"
-                                                ngbTooltip="Copy this metadata value to all spectra" ngDefaultControl><i class="fa fa-files-o"></i></button>
+                                                ngbTooltip="Copy this metadata value to all spectra" ngDefaultControl><fa-icon [icon]="faSave"></fa-icon></button>
                                     </div>
                                 </div>
 
                                 <div class="col-sm-12">
-                                    <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()"  ngDefaultControl ngbTooltip="Add a new metadata field">&#43;</button>
+                                  <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()"  ngDefaultControl ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon></button>
                                 </div>
                             </div>
                         </ng-template>
@@ -261,7 +261,7 @@
                             <br />
 
                             <div class="text-center">
-                                <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-default btn-sm"><i class="fa fa-files-o"></i> Apply these tags to all spectra</button>
+                              <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-default btn-sm"><fa-icon [icon]="faSave"></fa-icon> Apply these tags to all spectra</button>
                             </div>
                         </ng-template>
                     </li>
@@ -335,8 +335,8 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr *ngFor="let ion of currentSpectrum.ions">
-                                        <td><input type="checkbox" ng-model="ion.selected" /></td>
+                                    <tr *ngFor="let ion of currentSpectrum.ions|orderBy: ionTableSort">
+                                        <td><input type="checkbox" [(ngModel)]="ion.selected" /></td>
                                         <td>{{ion.ion | number : '1.0-4'}}</td>
                                         <td>{{ion.intensity | number : '1.0-4'}}</td>
                                         <td>

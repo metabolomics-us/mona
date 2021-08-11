@@ -16,7 +16,7 @@
 
             <spectra-upload-progress-bar></spectra-upload-progress-bar>
             <hr/>
-            <a class="btn btn-primary" href="/upload">Upload More Mass Spectra</a>
+            <a class="btn btn-primary" [routerLink]="['/upload']">Upload More Mass Spectra</a>
 
             <br /><br />
             <hr/>
@@ -27,10 +27,10 @@
                     <h4><i class="fa fa-cog fa-spin fa-2x fa-fw"></i> Loading...</h4>
                 </div>
 
-                <div *ngIf="uploadLibraryService.uploadedSpectra.length > 0">
+                <div *ngIf="uploadLibraryService.uploadedSpectra.length > 0" class="overflow-auto" style="max-height: 300px">
                     <ul>
-                        <li *ngFor="let spectrum of uploadLibraryService.uploadedSpectra | slice: 0: 10">
-                            Spectrum <a href="/spectra/display/{{spectrum.id}}">{{spectrum.id}}</a> was successfully uploaded!
+                        <li *ngFor="let spectrum of uploadLibraryService.uploadedSpectra">
+                            Spectrum <a [routerLink]="['/spectra/display/'+spectrum.id]">{{spectrum.id}}</a> was successfully uploaded!
                         </li>
                     </ul>
                 </div>
@@ -41,7 +41,7 @@
             <h3>The upload queue is empty!</h3>
             <br />
 
-            <a class="btn btn-primary" href="/upload">Upload Mass Spectra</a>
+            <a class="btn btn-primary" [routerLink]="['/upload']">Upload Mass Spectra</a>
 
             <!--
             <h3>Upload Mass Spectra Wizard</h3>
