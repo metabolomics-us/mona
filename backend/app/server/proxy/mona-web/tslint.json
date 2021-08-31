@@ -53,6 +53,8 @@
     ],
     "no-non-null-assertion": true,
     "no-redundant-jsdoc": true,
+    "no-unused-expression": false,
+    "no-conditional-assignment": false,
     "no-switch-case-fall-through": true,
     "no-var-requires": false,
     "object-literal-key-quotes": [

@@ -1,7 +1,8 @@
-import {Component, Inject, OnInit} from "@angular/core";
-import {SpectraQueryBuilderService} from "../../services/query/spectra-query-builder.service";
-import {TagService} from "../../services/persistence/tag.resource";
-import {NGXLogger} from "ngx-logger";
+import {Component, Inject, OnInit} from '@angular/core';
+import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
+import {TagService} from '../../services/persistence/tag.resource';
+import {NGXLogger} from 'ngx-logger';
+import {faSpinner, faSearch} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'keyword-search-form',
@@ -16,8 +17,10 @@ export class KeywordSearchFormComponent implements OnInit{
     public libraryTags;
     public queryTags;
     public test;
+    faSpinner = faSpinner;
+    faSearch = faSearch;
 
-    constructor(@Inject([SpectraQueryBuilderService, TagService, NGXLogger]) public spectraQueryBuilderService: SpectraQueryBuilderService,
+    constructor(public spectraQueryBuilderService: SpectraQueryBuilderService,
                 public tagService: TagService, public logger: NGXLogger) {}
 
     ngOnInit(): void {
@@ -25,6 +28,8 @@ export class KeywordSearchFormComponent implements OnInit{
             exactMassTolerance: 0.5
         };
 
+        this.queryTags = [];
+        this.libraryTags = [];
         /**
          * Form fields
          */
@@ -46,19 +51,21 @@ export class KeywordSearchFormComponent implements OnInit{
         this.msType = [{name: 'MS1'}, {name: 'MS2'}, {name: 'MS3'}, {name: 'MS4'}];
         this.ionMode = [{name: 'Positive'}, {name: 'Negative'}];
 
-        this.tagService.query().then(
+        this.tagService.query().subscribe(
              (tags: any) => {
                  console.log(tags);
-                this.queryTags = tags.data.filter((x) => {
-                    return x.category != 'library' && !x.ruleBased;
-                });
+                 if (tags.length > 0) {
+                   this.queryTags = tags.data.filter((x) => {
+                     return x.category !== 'library' && !x.ruleBased;
+                   });
 
-                this.libraryTags = tags.data.filter((x) => {
-                    return x.category == 'library';
-                });
+                   this.libraryTags = tags.data.filter((x) => {
+                     return x.category === 'library';
+                   });
+                 }
             },
             (error) => {
-                this.logger.error('Tag pull failed: '+ error);
+                this.logger.error('Tag pull failed: ' + error);
             }
         );
     }
@@ -87,13 +94,15 @@ export class KeywordSearchFormComponent implements OnInit{
 
         // Query exact mass
         if (typeof this.query.exactMass !== 'undefined') {
-            this.spectraQueryBuilderService.addNumericalCompoundMetaDataToQuery('total exact mass', this.query.exactMass, this.query.exactMassTolerance);
+            this.spectraQueryBuilderService
+              .addNumericalCompoundMetaDataToQuery('total exact mass', this.query.exactMass, this.query.exactMassTolerance);
         }
 
         // Handle chromatography
-        let chromatography = this.sourceIntroduction.reduce((result, element) => {
-            if (element.selected)
-                result.push(element.abv + '-MS');
+        const chromatography = this.sourceIntroduction.reduce((result, element) => {
+            if (element.selected) {
+              result.push(element.abv + '-MS');
+            }
             return result;
         }, []);
 
@@ -102,9 +111,10 @@ export class KeywordSearchFormComponent implements OnInit{
         }
 
         // Handle ionization mode
-        let ionMode = this.ionMode.reduce((result, element) => {
-            if (element.selected)
-                result.push(element.name.toLowerCase());
+        const ionMode = this.ionMode.reduce((result, element) => {
+            if (element.selected) {
+              result.push(element.name.toLowerCase());
+            }
             return result;
         }, []);
 
@@ -113,9 +123,10 @@ export class KeywordSearchFormComponent implements OnInit{
         }
 
         // Handle MS type
-        let msType = this.msType.reduce((result, element) => {
-            if (element.selected)
-                result.push(element.name);
+        const msType = this.msType.reduce((result, element) => {
+            if (element.selected) {
+              result.push(element.name);
+            }
             return result;
         }, []);
 
@@ -124,9 +135,10 @@ export class KeywordSearchFormComponent implements OnInit{
         }
 
         // Handle library tags
-        let libraryTags = this.libraryTags.reduce((result, element) => {
-            if (element.selected)
-                result.push(element.text);
+        const libraryTags = this.libraryTags.reduce((result, element) => {
+            if (element.selected) {
+              result.push(element.text);
+            }
             return result;
         }, []);
 
@@ -136,14 +148,14 @@ export class KeywordSearchFormComponent implements OnInit{
 
         // Handle all other tags
         this.queryTags.forEach((tag) => {
-            if (tag.selected == '+') {
+            if (tag.selected === '+') {
                 this.spectraQueryBuilderService.addTagToQuery(tag.text, undefined);
-            } else if (tag.selected == '-') {
+            } else if (tag.selected === '-') {
                 this.spectraQueryBuilderService.addTagToQuery(tag.text, 'ne');
             }
         });
 
         // Redirect to the spectra browser
         this.spectraQueryBuilderService.executeQuery(undefined);
-    };
+    }
 }

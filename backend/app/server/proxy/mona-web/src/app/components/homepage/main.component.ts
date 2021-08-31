@@ -1,7 +1,8 @@
-import {Spectrum} from "../../services/persistence/spectrum.resource";
-import {NGXLogger} from "ngx-logger";
-import {Component, OnInit} from "@angular/core";
-import {first} from "rxjs/operators";
+import {Spectrum} from '../../services/persistence/spectrum.resource';
+import {NGXLogger} from 'ngx-logger';
+import {Component, OnInit} from '@angular/core';
+import {first} from 'rxjs/operators';
+import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'main',
@@ -10,6 +11,10 @@ import {first} from "rxjs/operators";
 export class MainComponent implements OnInit{
     public showcaseSpectraIds;
     public showcaseSpectra;
+    faSearch = faSearch;
+    faChartBar = faChartBar;
+    faExclamationTriangle = faExclamationTriangle;
+    faSpinner = faSpinner;
 
     constructor( public spectrum: Spectrum,  public logger: NGXLogger) {}
 
@@ -29,7 +34,7 @@ export class MainComponent implements OnInit{
         }
     }*/
 
-    ngOnInit(){
+    ngOnInit(): void {
         this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
         this.showcaseSpectra = [];
 
@@ -40,7 +45,7 @@ export class MainComponent implements OnInit{
                     this.showcaseSpectra.push(data);
                 },
                 (error) => {
-                    this.logger.error("Failed to obtain spectrum "+ id)
+                    this.logger.error('Failed to obtain spectrum ' + id);
                 }
             );
         });

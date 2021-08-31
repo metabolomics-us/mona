@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <div class="panel-title">
             <span><a style="cursor: pointer" href="{{viewSpectrum()}}">{{spectrum.compound[0].names[0].name}}</a></span>
-            <span class="pull-right">Score: <ngb-rating [(rate)]="spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
+            <span class="pull-right">Score: <ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
         </div>
     </div>
 
@@ -15,7 +15,7 @@
                             <li class="pull-left">
                                 <h4>
                                     <span class="label label-primary" >
-                                        Similarity: {{1000 * spectrum.similarity | number:"0"}}
+                                        Similarity: {{1000 * spectrum.similarity | number:"1.0-0"}}
                                     </span>
                                 </h4>
                             </li>

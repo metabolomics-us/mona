@@ -1,10 +1,10 @@
 /**
  * Created by sajjan on 10/17/2017.
  */
-import {HttpClient} from "@angular/common/http";
-import { environment } from "../../../environments/environment";
-import {Observable} from "rxjs";
-import {Injectable} from "@angular/core";
+import {HttpClient} from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import {Observable} from 'rxjs';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class Download{

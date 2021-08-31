@@ -1,8 +1,9 @@
-import {Component, OnInit} from "@angular/core";
-import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
-import {NGXLogger} from "ngx-logger";
-import {AuthenticationService} from "../../services/authentication.service";
-import {first} from "rxjs/operators";
+import {Component, OnInit} from '@angular/core';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {NGXLogger} from 'ngx-logger';
+import {AuthenticationService} from '../../services/authentication.service';
+import {first} from 'rxjs/operators';
+import {faSpinner, faCheck} from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -13,11 +14,13 @@ export class AuthenticationModalComponent implements OnInit {
     public errors;
     public state;
     public credentials;
+    faSpinner = faSpinner;
+    faCheck = faCheck;
 
     constructor(public authenticationService: AuthenticationService, public activeModal: NgbActiveModal,
                 public logger: NGXLogger) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.errors = [];
         this.state = 'login';
         this.credentials = {
@@ -27,7 +30,7 @@ export class AuthenticationModalComponent implements OnInit {
     }
 
 
-    submitLogin() {
+    submitLogin(): void {
         this.errors = [];
 
         if (this.credentials.email === '') {
@@ -42,19 +45,20 @@ export class AuthenticationModalComponent implements OnInit {
             this.state = 'logging in';
             this.authenticationService.login(this.credentials.email, this.credentials.password).pipe(first()).subscribe(
                 (user) => {
-                    this.state = 'success'
+                    this.state = 'success';
                     setTimeout(() => {
                         this.activeModal.close();
                     }, 1000);
                 }, (err => {
+                    this.state = 'login';
                     this.logger.info(err);
                     this.errors.push(err);
                 })
             );
         }
-    };
+    }
 
-    cancelDialog() {
+    cancelDialog(): void {
         this.activeModal.dismiss('cancel');
-    };
+    }
 }

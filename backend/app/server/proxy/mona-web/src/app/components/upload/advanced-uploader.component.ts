@@ -2,6 +2,8 @@
  * Created by sajjan on 4/20/15.
  */
 import {AuthenticationService} from '../../services/authentication.service';
+import {AdvancedUploadModalComponent} from './advanced-upload-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FilterPipe} from '../../filters/filter.pipe';
 import {ElementRef} from '@angular/core';
 import {Location} from '@angular/common';
@@ -15,7 +17,10 @@ import {environment} from '../../../environments/environment';
 import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare, faSave} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare,
+        faSave, faCloudUploadAlt, faUser, faArrowLeft, faArrowRight,
+        faSignInAlt, faFolderOpen} from '@fortawesome/free-solid-svg-icons';
+import {first, map} from 'rxjs/operators';
 
 @Component({
   selector: 'advanced-uploader',
@@ -53,12 +58,18 @@ export class AdvancedUploaderComponent implements OnInit{
   faMinusSquare = faMinusSquare;
   faPlusSquare = faPlusSquare;
   faSave = faSave;
+  faCloudUploadAlt = faCloudUploadAlt;
+  faUser = faUser;
+  faArrowLeft = faArrowLeft;
+  faArrowRight = faArrowRight;
+  faSignInAlt = faSignInAlt;
+  faFolderOpen = faFolderOpen;
 
 	constructor( public authenticationService: AuthenticationService,  public location: Location,
 				          public uploadLibraryService: UploadLibraryService,  public ctsService: CtsService,
 				          public tagService: TagService,  public asyncService: AsyncService,  public logger: NGXLogger,
 				          public element: ElementRef, public filterPipe: FilterPipe,  public http: HttpClient,
-              public router: Router){}
+              public router: Router, public modalService: NgbModal){}
 
 	ngOnInit(): void {
 		this.spectraLoaded = 0;
@@ -72,17 +83,21 @@ export class AdvancedUploaderComponent implements OnInit{
 		this.addSpectra = new EventEmitter<any>();
 
 		this.addSpectra.subscribe((data) => {
-			this.spectra.push(data);
-			this.loadedSpectra++;
-			this.spectraLoaded = 2;
+      this.spectra.push(data);
+      this.loadedSpectra++;
+      this.spectraLoaded = 2;
 
-			// Force update of current spectrum if needed
-			this.setSpectrum(this.spectraIndex);
+      // Force update of current spectrum if needed
+      this.setSpectrum(this.spectraIndex);
 		});
 
-		this.tagService.query().then(
+		this.tagService.query().subscribe(
 			(data) => {
-				this.tags = data;
+			  console.log(data);
+			  if (data.length > 0) {
+			    this.tags = data;
+        }
+				 this.tags = [{text: ''}];
 			},
 			(error) => {
 				this.logger.error('failed: ' + error);
@@ -195,10 +210,6 @@ export class AdvancedUploaderComponent implements OnInit{
 
 	applyTagsToAll = () => {
 		const tags = this.currentSpectrum.tags;
-		console.log(this.currentSpectrum);
-		console.log(this.currentSpectrum.tags);
-		this.logger.info(this.currentSpectrum);
-		this.logger.info(this.currentSpectrum.tags);
 
 		for (let i = 0; i < this.spectra.length; i++) {
 			if (i !== this.spectraIndex) {
@@ -224,83 +235,157 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
+	batchProcessSTP(data, origin): Promise<any> {
+	  return new Promise((resolve, reject) => {
+      this.uploadLibraryService.processData(data, (spectrum) => {
+        if (spectrum === null) {
+          resolve(true);
+        } else {
+          this.uploadLibraryService.uploadSpectra([spectrum],   (res) => {
+            try {
+              this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, res,
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + res.submitter.access_token
+                  }
+                })
+                .pipe(first())
+                .subscribe((r: any) => {
+                  // If no errors, just resolve the promise and return true
+                  resolve(true);
+                },
+                (err) => {
+                  this.logger.info('ERROR');
+                  this.logger.info(err);
+                  reject(err);
+                });
+            } catch (error) {
+              console.log(error);
+              reject(error);
+            }
+          });
+        }
+      }, origin);
+    });
+  }
+
+  batchProcess(data, origin): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.uploadLibraryService.processData(data, (spectrum) => {
+        this.asyncService.addToPool(async () => {
+          // Create list of ions
+          spectrum.basePeak = 0;
+          spectrum.ions = spectrum.spectrum.split(' ').map((x) => {
+            x = x.split(':');
+            let annotation = '';
+
+            for (let y = 0; y < spectrum.meta.length; y++) {
+              if (spectrum.meta[y].category === 'annotation' && spectrum.meta[y].value === y[0]) {
+                annotation = spectrum.meta[y].name;
+              }
+            }
+
+            const intensity = parseFloat(x[1]);
+
+            if (intensity > spectrum.basePeak) {
+              spectrum.basePeak = intensity;
+            }
+
+            return {
+              ion: parseFloat(x[0]),
+              intensity,
+              annotation,
+              selected: true
+            };
+          });
+
+          // Get structure from InChIKey if no InChI is provided
+          if (typeof spectrum.inchiKey !== 'undefined' && typeof spectrum.inchi === 'undefined') {
+            this.ctsService.convertInchiKeyToMol(spectrum.inchiKey, (molecule) => {
+              if (molecule !== null) {
+                spectrum.molFile = molecule;
+              }
+            }, undefined);
+          }
+
+          // Remove annotations and origin from metadata
+          spectrum.hiddenMetadata = spectrum.meta.filter((metadata) => {
+            return metadata.name === 'origin' || (typeof metadata.category !== 'undefined' && metadata.category === 'annotation');
+          });
+
+          spectrum.meta = spectrum.meta.filter((metadata) => {
+            return metadata.name !== 'origin' && (typeof metadata.category === 'undefined' || metadata.category !== 'annotation');
+          });
+
+          // Add an empty metadata field if none exist
+          if (spectrum.meta.length === 0) {
+            spectrum.meta.push({name: '', value: ''});
+          }
+          await this.addSpectra.emit(spectrum);
+          resolve(true);
+        }, undefined);
+        resolve(true);
+      }, origin);
+    });
+  }
+
+	straightThroughProcessing = (event) => {
+	  let promiseBuffer = [];
+	  // Move to the upload status page then execute the upload process
+   this.router.navigate(['/upload/status']).then(() => {
+     // set timeout for 1 second so we can navigate to upload status page first
+     setTimeout( () => {
+       for (const file of event.target.files) {
+         this.uploadLibraryService.loadSpectraFile(file, async (data, origin) => {
+           // Receive async batch from loadSpectraFile
+           for (const item of data) {
+             // Create an array of promises that will process the files and then upload to server
+             promiseBuffer.push(this.batchProcessSTP(item, origin));
+           }
+           // Execute batch of promises at once but await so that the batch finishes first before moving to new batch
+           // otherwise we may overload the browser and crash it. May experiment with this.
+           await Promise.all(promiseBuffer.map(p => p.catch(() => undefined)));
+           // Reset our array so we can go again.
+           promiseBuffer = [];
+           }, 0);
+         }
+       }, 1000);
+   });
+  }
 
 	/**
 	 * Parse spectra
 	 * @param event Contains an event which serves the files
 	 */
 	parseFiles = (event) => {
-		this.spectraLoaded = 1;
-
-		this.loadedSpectra = 0;
-		this.totalSpectra = 0;
-
-		for (let i = 0; i < event.target.files.length; i++) {
-			this.uploadLibraryService.loadSpectraFile(event.target.files[i],
-				 (data, origin) => {
-					this.uploadLibraryService.processData(data, (spectrum) => {
-						this.asyncService.addToPool(() => {
-							// Create list of ions
-							spectrum.basePeak = 0;
-							spectrum.ions = spectrum.spectrum.split(' ').map((x) => {
-								x = x.split(':');
-								let annotation = '';
-
-								for (let y = 0; y < spectrum.meta.length; y++) {
-									if (spectrum.meta[y].category === 'annotation' && spectrum.meta[y].value === y[0]) {
-										annotation = spectrum.meta[y].name;
-									}
-								}
-
-								const intensity = parseFloat(x[1]);
-
-								if (intensity > spectrum.basePeak) {
-									spectrum.basePeak = intensity;
-								}
-
-								return {
-									ion: parseFloat(x[0]),
-									intensity,
-									annotation,
-									selected: true
-								};
-							});
-
-							// Get structure from InChIKey if no InChI is provided
-							if (typeof spectrum.inchiKey !== 'undefined' && typeof spectrum.inchi === 'undefined') {
-								this.ctsService.convertInchiKeyToMol(spectrum.inchiKey, (molecule) => {
-									if (molecule !== null) {
-										spectrum.molFile = molecule;
-									}
-								}, undefined);
-							}
-
-							// Remove annotations and origin from metadata
-							spectrum.hiddenMetadata = spectrum.meta.filter((metadata) => {
-								return metadata.name === 'origin' || (typeof metadata.category !== 'undefined' && metadata.category === 'annotation');
-							});
-
-							spectrum.meta = spectrum.meta.filter((metadata) => {
-								return metadata.name !== 'origin' && (typeof metadata.category === 'undefined' || metadata.category !== 'annotation');
-							});
-
-							// Add an empty metadata field if none exist
-							if (spectrum.meta.length === 0) {
-								spectrum.meta.push({name: '', value: ''});
-							}
-
-							this.addSpectra.emit(spectrum);
-
-							return new Promise((resolve => {
-								resolve(true);
-							}));
-						}, undefined);
-					}, origin);
-				},
-				 (progress) => {
-				}
-			);
-		}
+	  this.uploadLibraryService.completedSpectraCount = 0;
+	  this.uploadLibraryService.failedSpectraCount = 0;
+	  this.uploadLibraryService.uploadedSpectraCount = 0;
+	  let promiseBuffer = [];
+	  // If the file is larger then 10MB then use straight through processing
+	  if (event.target.files[0].size > 10 * 1024 * 1024) {
+      const modalRef = this.modalService.open(AdvancedUploadModalComponent);
+      modalRef.result.then((res) => {
+        if (res) {
+          this.uploadLibraryService.isSTP = true;
+          this.straightThroughProcessing(event);
+        }
+      });
+      return;
+    } else {
+	    this.uploadLibraryService.isSTP = false;
+     for (let i = 0; i < event.target.files.length; i++) {
+        this.uploadLibraryService.loadSpectraFile(event.target.files[i],
+          async (data, origin) => {
+          for (const item of data) {
+            promiseBuffer.push(this.batchProcess(item, origin));
+          }
+          await Promise.all(promiseBuffer.map(p => p.catch(() => undefined)));
+          promiseBuffer = [];
+          }, 0);
+      }
+    }
 	}
 
 
@@ -313,12 +398,10 @@ export class AdvancedUploaderComponent implements OnInit{
 
 			fileReader.onload = (event) => {
 				let data = event.target.result as string;
-				console.log(data);
 
 				// Accept only the first MOL file
 				let sep1 = data.indexOf('$$$$');
 				const sep2 = data.indexOf('M  END');
-				console.log(sep1 + ' ' + sep2);
 
 				if (sep1 > -1 || sep2 > -1) {
 					if (sep1 === -1 || (sep1 > -1 && sep2 > -1 && sep1 > sep2)) {
@@ -467,7 +550,6 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 
 		return true;
-		// return (invalid.length === 0);
 	}
 
 
@@ -483,7 +565,8 @@ export class AdvancedUploaderComponent implements OnInit{
 
 			// Re-add origin and annotations to metadata:
 			for (let i = 0; i < this.spectra.length; i++) {
-				this.spectra[i].meta.push.apply(this.spectra[i].meta, this.spectra[i].hiddenMetadata);
+			  console.log(this.spectra[i]);
+				 this.spectra[i].meta.push.apply(this.spectra[i].meta, this.spectra[i].hiddenMetadata);
 			}
 
 			this.uploadLibraryService.uploadSpectra(this.spectra,  (spectrum) => {
@@ -491,15 +574,15 @@ export class AdvancedUploaderComponent implements OnInit{
 					{headers: {
 							'Content-Type': 'application/json',
 							Authorization: 'Bearer ' + spectrum.submitter.access_token
-					}}).subscribe((data: any) => {
-						this.uploadLibraryService.uploadedSpectra.push(data);
+					}}).pipe(
+            first()
+        ).subscribe((data: any) => {
+					  console.log('Finished Upload of this Spectra');
 					},
 					 (err) => {
 						this.logger.info('ERROR');
 						this.logger.info(err);
 					});
-
-				// spectrum.$batchSave(spectrum.submitter.access_token);
 			});
 			this.router.navigate(['/upload/status']).then();
 		}
@@ -522,10 +605,13 @@ export class AdvancedUploaderComponent implements OnInit{
 	 * @returns observable: filters the tags and pushes to an observable
 	 * Performs initialization and acquisition of data used by the wizard
 	 */
-	loadTags = (query) => {
-		return new Observable((observer => {
+	loadTags = (text: string): Observable<any> => {
+	  return this.tagService.query().pipe(map((data) => {
+	    this.filterPipe.transform(data, text);
+    }));
+		/* return new Observable((observer => {
 			observer.next(this.filterPipe.transform(this.tags, query));
-		}));
+		})); */
 	}
 
 	/*

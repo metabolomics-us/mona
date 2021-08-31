@@ -4,6 +4,7 @@
 
 import {UploadLibraryService} from '../../services/upload/upload-library.service';
 import {AuthenticationService} from '../../services/authentication.service';
+import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {Component, OnInit} from '@angular/core';
 
 @Component({
@@ -15,9 +16,9 @@ import {Component, OnInit} from '@angular/core';
                     <span style="color: black; white-space: nowrap; font-style: italic; font-weight: bold;" [textContent]="spectraUploadProgressString"></span>
                 </ngb-progressbar>
             </p>
-            <div class="text-center">{{etaString}}</div>
+            <div class="text-center" *ngIf="showETA">{{etaString}}<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> </div>
         </div>
-        <div *ngIf="spectraUploadProgress == -1"><i>No Upload Started</i></div>`,
+        <div class="text-center text-nowrap" *ngIf="spectraUploadProgress === -1"><i>No Upload Started</i></div>`,
 })
 export class SpectraUploadProgressComponent implements OnInit{
     public etaString;
@@ -26,24 +27,18 @@ export class SpectraUploadProgressComponent implements OnInit{
     public failedSpectraCount;
     public spectraUploadProgress;
     public spectraUploadProgressString;
+    public showETA;
+    faSpinner = faSpinner;
 
     constructor( public uploadLibraryService: UploadLibraryService,
                  public authenticationService: AuthenticationService) {}
 
     ngOnInit(): void {
         this.etaString = '';
+        this.showETA = true;
+        this.spectraUploadProgress = -1;
 
-        /*this.$scope.$on('spectra:uploadprogress', (event, completedSpectraCount, failedSpectraCount, uploadedSpectraCount) => {
-            this.completedSpectraCount = completedSpectraCount + failedSpectraCount;
-            this.failedSpectraCount = failedSpectraCount;
-            this.uploadedSpectraCount = uploadedSpectraCount;
-
-            this.spectraUploadProgress = (this.completedSpectraCount / this.uploadedSpectraCount) * 100;
-            this.spectraUploadProgressString = this.spectraUploadProgress + '%';
-            this.buildEtaString();
-        }); */
         this.uploadLibraryService.uploadProcess.subscribe((isUploading: boolean) => {
-          console.log(isUploading);
           if (isUploading) {
             // Temporarily counting completed and failed uploads together
             this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
@@ -51,16 +46,29 @@ export class SpectraUploadProgressComponent implements OnInit{
 
             this.spectraUploadProgress = (this.completedSpectraCount / this.uploadedSpectraCount) * 100;
             this.spectraUploadProgressString = this.spectraUploadProgress + '%';
-          } else {
+          }
+          else if (!isUploading && this.uploadLibraryService.isSTP) {
+            this.spectraUploadProgressString = 'Working on Next Batch of Spectra...';
+          }
+          else if (!isUploading && !this.uploadLibraryService.isSTP) {
+            this.completedSpectraCount = this.uploadLibraryService.completedSpectraCount + this.uploadLibraryService.failedSpectraCount;
+            this.uploadedSpectraCount = this.uploadLibraryService.uploadedSpectraCount;
+            this.showETA = false;
+            this.spectraUploadProgressString = 'STP Completed!';
+          }
+          else {
             this.spectraUploadProgress = -1;
-            this.spectraUploadProgressString = 'Processing...';
+            this.spectraUploadProgressString = 'Still Processing...';
           }
           this.buildEtaString();
         });
     }
 
     buildEtaString = () => {
-        if (this.uploadLibraryService.uploadStartTime === -1 || !this.uploadLibraryService.isUploading()) {
+        if (this.uploadLibraryService.isSTP) {
+          this.etaString = 'Uploading in batches...';
+        }
+        else if (this.uploadLibraryService.uploadStartTime === -1) {
             this.etaString = '';
         } else if (this.completedSpectraCount === 0) {
             this.etaString = 'Loading spectra for processing...';

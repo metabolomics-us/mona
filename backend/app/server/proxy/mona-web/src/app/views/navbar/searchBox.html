@@ -1,4 +1,3 @@
-<!-- ng-controller="$ctrl.SearchBoxController" -->
 <form name="searchBox"
       class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
     <div class="input-group custom-search-form">
@@ -8,7 +7,7 @@
 
         <span class="input-group-btn">
             <button class="btn btn-repeat" type="submit" (click)="performSimpleQuery(searchBoxQuery)">
-                <i class="fa fa-search"></i>
+              <fa-icon [icon]="faSearch"></fa-icon>
             </button>
         </span>
     </div>

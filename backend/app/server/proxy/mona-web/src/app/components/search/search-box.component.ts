@@ -1,8 +1,9 @@
 /**
  * Created by sajjan on 5/12/15.
  */
-import {SpectraQueryBuilderService} from "../../services/query/spectra-query-builder.service";
-import {Component, OnInit} from "@angular/core";
+import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
+import {Component, OnInit} from '@angular/core';
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'search-box',
@@ -11,14 +12,15 @@ import {Component, OnInit} from "@angular/core";
 export class SearchBoxComponent implements OnInit {
     public inputError;
     public searchBoxQuery;
+    faSearch = faSearch;
 
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService){}
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.inputError = false;
     }
 
-    performSimpleQuery(query){
+    performSimpleQuery(query): void{
         console.log(query);
         // Handle empty query
         if (typeof query === 'undefined' || query === '') {

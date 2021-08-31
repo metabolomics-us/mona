@@ -7,15 +7,17 @@ import { Component } from '@angular/core';
             <!-- navbar dropdowns -->
             <title-header></title-header>
             <div class="collapse navbar-collapse" role="navigation">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav mr-auto">
                     <browse-drop-down></browse-drop-down>
                     <admin-drop-down></admin-drop-down>
                     <download-button></download-button>
                     <upload-button></upload-button>
                     <resource-drop-down></resource-drop-down>
                 </ul>
-                <authentication></authentication>
-                <search-box></search-box>
+                <div class="form-inline my-2 my-lg-0">
+                  <search-box></search-box>
+                  <authentication></authentication>
+                </div>
             </div>
         </nav>
         <div id="page-wrapper">

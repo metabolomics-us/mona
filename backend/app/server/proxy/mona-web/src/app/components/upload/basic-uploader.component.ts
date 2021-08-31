@@ -1,34 +1,34 @@
 /**
  * Created by sajjan on 7/13/16.
  */
-import {Location} from "@angular/common";
-import {UploadLibraryService} from "../../services/upload/upload-library.service";
-import {CompoundConversionService} from "../../services/compound-conversion.service";
-import {AsyncService} from "../../services/upload/async.service";
-import {NGXLogger} from "ngx-logger";
-import {environment} from "../../../environments/environment";
-import {HttpClient} from "@angular/common/http";
-import {AuthenticationService} from "../../services/authentication.service";
-import {FilterPipe} from "../../filters/filter.pipe";
-import {Component, OnInit} from "@angular/core";
-import {first, map} from "rxjs/operators";
-import {SlicePipe} from "@angular/common";
-import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
-import {Observable} from "rxjs";
+import {Location} from '@angular/common';
+import {UploadLibraryService} from '../../services/upload/upload-library.service';
+import {CompoundConversionService} from '../../services/compound-conversion.service';
+import {AsyncService} from '../../services/upload/async.service';
+import {NGXLogger} from 'ngx-logger';
+import {environment} from '../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
+import {AuthenticationService} from '../../services/authentication.service';
+import {FilterPipe} from '../../filters/filter.pipe';
+import {Component, OnInit} from '@angular/core';
+import {first, map} from 'rxjs/operators';
+import {SlicePipe} from '@angular/common';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {faCloudUploadAlt, faSpinner, faExclamationTriangle,
+        faMinusSquare, faPlusSquare, faArrowLeft, faArrowRight, faSignInAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'basic-uploader',
     templateUrl: '../../views/spectra/upload/basicUploader.html'
 })
 export class BasicUploaderComponent implements OnInit{
-    public FileUploader;
     public currentSpectrum;
     public metadata;
     public page: number;
     public fileHasMultipleSpectra;
     public showIonTable;
     public ionTableSort;
-    public ionTableSortReverse;
     public pasteError;
     public spectrum;
     public queryState;
@@ -42,14 +42,21 @@ export class BasicUploaderComponent implements OnInit{
     public filenames;
     public pastedSpectrum;
     public fileUpload;
-    public uploadMol;
+    faCloudUpload = faCloudUploadAlt;
+    faSpinner = faSpinner;
+    faExclamationTriangle = faExclamationTriangle;
+    faMinusSquare = faMinusSquare;
+    faPlusSquare = faPlusSquare;
+    faArrowLeft = faArrowLeft;
+    faArrowRight = faArrowRight;
+    faSignInAlt = faSignInAlt;
 
     constructor( public location: Location,  public uploadLibraryService: UploadLibraryService,
                  public compoundConversionService: CompoundConversionService,  public asyncService: AsyncService,
                  public logger: NGXLogger,  public http: HttpClient,  public filterPipe: FilterPipe,
                  public authenticationService: AuthenticationService,  public slice: SlicePipe){}
 
-    ngOnInit(){
+    ngOnInit(): void {
         this.currentSpectrum = null;
         this.metadata = {};
         this.page = 0;
@@ -59,8 +66,7 @@ export class BasicUploaderComponent implements OnInit{
         /**
          * Sort order for the ion table - default m/z ascending
          */
-        this.ionTableSort = 'ion';
-        this.ionTableSortReverse = false;
+        this.ionTableSort = '-ion';
 
         // Get tags
         this.http.get(`${environment.REST_BACKEND_SERVER}/rest/tags`).subscribe((data) => {
@@ -68,7 +74,7 @@ export class BasicUploaderComponent implements OnInit{
         });
     }
 
-    //ngbTypeahead needs an observable so we shove the metadata typeahead results into an observable and appropriately sort
+    // ngbTypeahead needs an observable so we shove the metadata typeahead results into an observable and appropriately sort
     metadataNames = (text$: Observable<string>) => {
         return text$.pipe(
             distinctUntilChanged(),
@@ -76,11 +82,12 @@ export class BasicUploaderComponent implements OnInit{
             switchMap((searchText) => {
                 return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/names`)
                     .pipe(map((data: any) => {
+                        console.log(data);
                         let filtered ;
                         filtered = data.sort((x, y) => {
-                           if(x.count < y.count){
+                           if (x.count < y.count){
                                return 1;
-                           } else if(x.count > y.count) {
+                           } else if (x.count > y.count) {
                                return -1;
                            } else{
                                return 0;
@@ -89,31 +96,24 @@ export class BasicUploaderComponent implements OnInit{
                         filtered = filtered.filter((x) => {
                             return x.name.includes(searchText);
                         });
-                        filtered = this.slice.transform(filtered,0, 8);
+                        filtered = this.slice.transform(filtered, 0, 8);
                         filtered = filtered.map((x) => x.name);
                         return filtered;
-                    }))
+                    }));
             }));
     }
 
-    sortIonTable = (column) => {
-        if (column === 'ion') {
-            this.ionTableSortReverse = (this.ionTableSort === '+ion') ? !this.ionTableSortReverse : false;
-            this.ionTableSort = '+ion';
-        }
-        else if (column === 'intensity') {
-            this.ionTableSortReverse = (this.ionTableSort === '-intensity') ? !this.ionTableSortReverse : false;
-            this.ionTableSort = '-intensity';
-        }
-        else if (column === 'relativeIntensity') {
-            this.ionTableSortReverse = (this.ionTableSort === '-relativeIntensity') ? !this.ionTableSortReverse : false;
-            this.ionTableSort = '-relativeIntensity';
-        }
-        else if (column === 'annotation') {
-            this.ionTableSortReverse = (this.ionTableSort === '-annotation') ? !this.ionTableSortReverse : false;
-            this.ionTableSort = '-annotation';
-        }
-    };
+  sortIonTable = (column) => {
+    if (column === 'ion') {
+      if (this.ionTableSort === '+ion') { this.ionTableSort = '-ion'; } else { this.ionTableSort = '+ion'; }
+    }
+    else if (column === 'intensity') {
+      if (this.ionTableSort === '+intensity') { this.ionTableSort = '-intensity'; } else { this.ionTableSort = '+intensity'; }
+    }
+    else if (column === 'annotation') {
+      if (this.ionTableSort === '+annotation') { this.ionTableSort = '-annotation'; } else { this.ionTableSort = '+annotation'; }
+    }
+  }
 
 
     /**
@@ -122,12 +122,12 @@ export class BasicUploaderComponent implements OnInit{
     previousPage = () => {
         window.scrollTo(0, 0);
         this.page--;
-    };
+    }
 
     nextPage = () => {
         window.scrollTo(0, 0);
         this.page++;
-    };
+    }
 
     restart = () => {
         this.currentSpectrum = null;
@@ -136,7 +136,7 @@ export class BasicUploaderComponent implements OnInit{
 
         // Scroll to top of the page
         window.scrollTo(0, 0);
-    };
+    }
 
 
     parsePastedSpectrum = (spectrum) => {
@@ -145,7 +145,7 @@ export class BasicUploaderComponent implements OnInit{
         let ions = [];
         let basePeakIntensity = 0;
 
-        if (spectrum == null || spectrum == "") {
+        if (spectrum === null || spectrum === '') {
             this.pasteError = 'Please input a valid spectrum!';
         } else if (spectrum.match(/([0-9]*\.?[0-9]+)\s*:\s*([0-9]*\.?[0-9]+)/g)) {
             spectrumString = spectrum;
@@ -161,18 +161,19 @@ export class BasicUploaderComponent implements OnInit{
                     intensityStr: x[1],
                     annotation: '',
                     selected: true
-                }
+                };
             });
         } else if (spectrum.match(/([0-9]+\.?[0-9]*)[ \t]+([0-9]*\.?[0-9]+)(?:\s*(?:[;\n])|(?:"?(.+)"?\n?))?/g)) {
             spectrum = spectrum.split(/[\n\s]+/);
 
-            if (spectrum.length % 2 == 0) {
+            if (spectrum.length % 2 === 0) {
                 this.spectrum = [];
 
                 for (let i = 0; i < spectrum.length / 2; i++) {
-                    if(spectrumString != '')
+                    if (spectrumString !== '') {
                         spectrumString += ' ';
-                    spectrumString += spectrum[2 * i] +':'+ spectrum[2 * i + 1];
+                    }
+                    spectrumString += spectrum[2 * i] + ':' + spectrum[2 * i + 1];
 
                     basePeakIntensity = Math.max(basePeakIntensity, parseFloat(spectrum[2 * i + 1]));
 
@@ -186,15 +187,15 @@ export class BasicUploaderComponent implements OnInit{
                     });
                 }
             } else {
-                this.pasteError = 'Spectrum does not have complete ion/intensity pairs!'
+                this.pasteError = 'Spectrum does not have complete ion/intensity pairs!';
             }
         } else {
-            this.pasteError = 'Unrecognized spectrum format!'
+            this.pasteError = 'Unrecognized spectrum format!';
         }
 
 
         if (this.pasteError === null) {
-            ions.forEach((x) =>{
+            ions.forEach((x) => {
                 x.relativeIntensity = 999 * x.intensity / basePeakIntensity;
             });
 
@@ -202,10 +203,10 @@ export class BasicUploaderComponent implements OnInit{
             this.spectraCount = 1;
             this.page = 2;
 
-            this.currentSpectrum = {names: [''], meta: [{}], ions: ions, spectrum: spectrumString};
+            this.currentSpectrum = {names: [''], meta: [{}], ions, spectrum: spectrumString};
             this.showIonTable = this.currentSpectrum.ions.length < 500;
         }
-    };
+    }
 
 
     resetCompound = () => {
@@ -214,16 +215,16 @@ export class BasicUploaderComponent implements OnInit{
         this.currentSpectrum.inchiKey = '';
         this.currentSpectrum.smiles = '';
         this.currentSpectrum.names = [''];
-    };
+    }
 
 
     /**
      * Convert an array of names to an InChIKey based on the first result
      * @param names array of compound names
-     * @param callback
+     * @param callback callback function to get name
      */
     namesToInChIKey = (names, callback) => {
-        if (names.length == 0) {
+        if (names.length === 0) {
             callback(null);
         } else {
             this.compoundConversionService.nameToInChIKey(names[0], (molecule) => {
@@ -236,19 +237,19 @@ export class BasicUploaderComponent implements OnInit{
                 this.namesToInChIKey(names.slice(1), callback);
             });
         }
-    };
+    }
 
     /**
      * Pull names from CTS given an InChIKey and update the currentSpectrum
      */
     pullNames = (inchiKey) => {
         // Only pull if there are no names provided
-        if (this.currentSpectrum.names.length == 0 || (this.currentSpectrum.names.length == 1 && this.currentSpectrum.names[0] == '')) {
+        if (this.currentSpectrum.names.length === 0 || (this.currentSpectrum.names.length === 1 && this.currentSpectrum.names[0] === '')) {
             this.compoundConversionService.InChIKeyToName(
                 inchiKey,
                  (data) => {
                     this.currentSpectrum.names = this.currentSpectrum.names.filter((x) => {
-                        return x != '';
+                        return x !== '';
                     });
 
                     Array.prototype.push.apply(this.currentSpectrum.names, data);
@@ -262,7 +263,7 @@ export class BasicUploaderComponent implements OnInit{
         } else {
             this.compoundProcessing = false;
         }
-    };
+    }
 
     /**
      * Pull compound summary given an InChI
@@ -278,11 +279,11 @@ export class BasicUploaderComponent implements OnInit{
                 this.pullNames(response.inchiKey);
             },
              (response) => {
-                this.compoundError = 'Unable to process provided InChI!'
+                this.compoundError = 'Unable to process provided InChI!';
                 this.compoundProcessing = false;
             }
         );
-    };
+    }
 
     processInChIKey = (inchiKey) => {
         this.compoundConversionService.getInChIByInChIKey(
@@ -292,7 +293,7 @@ export class BasicUploaderComponent implements OnInit{
                 this.processInChI(data[0]);
             },
              (response) => {
-                if (response.status == 200) {
+                if (response.status === 200) {
                     this.compoundError = 'No results found for provided InChIKey!';
                 } else {
                     this.compoundError = 'Unable to process provided InChIKey!';
@@ -301,13 +302,13 @@ export class BasicUploaderComponent implements OnInit{
                 this.compoundProcessing = false;
             }
         );
-    };
+    }
 
     /**
      * Generate MOL file from available compound information
      */
     retrieveCompoundData = () => {
-        this.logger.info("Retrieving MOL data...");
+        this.logger.info('Retrieving MOL data...');
 
         this.compoundError = undefined;
         this.compoundProcessing = true;
@@ -345,7 +346,7 @@ export class BasicUploaderComponent implements OnInit{
         else if (this.currentSpectrum.names.length > 0) {
             this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
                 if (inchiKey !== null) {
-                    this.logger.info('Found InChIKey: '+ inchiKey);
+                    this.logger.info('Found InChIKey: ' + inchiKey);
                     this.currentSpectrum.inchiKey = inchiKey;
                     this.processInChIKey(inchiKey);
                 } else {
@@ -359,13 +360,13 @@ export class BasicUploaderComponent implements OnInit{
             this.compoundError = 'Please provide compound details!';
             this.compoundProcessing = false;
         }
-    };
+    }
 
 
     parseMolFile = (files) => {
-        if (files.length == 1) {
-            let file = files[0];
-            let fileReader = new FileReader();
+        if (files.length === 1) {
+            const file = files[0];
+            const fileReader = new FileReader();
 
             fileReader.onload = (event) => {
                 this.currentSpectrum.molFile = event.target.result;
@@ -374,7 +375,7 @@ export class BasicUploaderComponent implements OnInit{
 
             fileReader.readAsText(files[0]);
         }
-    };
+    }
 
     convertMolToInChI =  () => {
         if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
@@ -390,38 +391,39 @@ export class BasicUploaderComponent implements OnInit{
                     this.pullNames(response.inchiKey);
                 },
                  (response) => {
-                    this.compoundMolError = 'Unable to process provided MOL data!'
+                    this.compoundMolError = 'Unable to process provided MOL data!';
                     this.compoundProcessing = false;
                 }
             );
         } else {
-            this.compoundMolError = ''
+            this.compoundMolError = '';
         }
-    };
+    }
 
     addName = () => {
         if (this.currentSpectrum.names[this.currentSpectrum.names.length - 1] !== '') {
             this.currentSpectrum.names.push('');
         }
-    };
+    }
 
 
 
     /**
      * Parse spectra
-     * @param files
+     * @param files files from input in html
      */
     parseFiles = (event) => {
         this.page = 1;
         this.uploadError = null;
+        this.uploadLibraryService.isSTP = false;
         this.uploadLibraryService.loadSpectraFile(event.target.files[0],
              (data, origin) => {
-                this.logger.info("Loading file "+ event.target.files[0].name +"...");
+                this.logger.info('Loading file ' + event.target.files[0].name + '...');
 
                 this.uploadLibraryService.processData(data, (spectrum) => {
                     if (!this.currentSpectrum) {
                         // Create list of ions
-                        this.logger.info("Parsing ions...");
+                        this.logger.info('Parsing ions...');
 
                         spectrum.basePeak = 0;
                         spectrum.basePeakIntensity = 0;
@@ -436,8 +438,8 @@ export class BasicUploaderComponent implements OnInit{
                                 }
                             }
 
-                            let mz = parseFloat(x[0]);
-                            let intensity = parseFloat(x[1]);
+                            const mz = parseFloat(x[0]);
+                            const intensity = parseFloat(x[1]);
 
                             if (intensity > spectrum.basePeakIntensity) {
                                 spectrum.basePeak = mz;
@@ -446,10 +448,10 @@ export class BasicUploaderComponent implements OnInit{
 
                             return {
                                 ion: mz,
-                                intensity: intensity,
-                                annotation: annotation,
+                                intensity,
+                                annotation,
                                 selected: true
-                            }
+                            };
                         });
 
                         for (let i = 0; i < spectrum.ions.length; i++) {
@@ -471,7 +473,7 @@ export class BasicUploaderComponent implements OnInit{
                         }
 
 
-                        this.logger.info("Loaded spectrum from file "+ event.target.files[0].name);
+                        this.logger.info('Loaded spectrum from file ' + event.target.files[0].name);
 
                         this.currentSpectrum = spectrum;
                         this.page = 2;
@@ -481,13 +483,12 @@ export class BasicUploaderComponent implements OnInit{
                             this.retrieveCompoundData();
                         }
                     } else {
-                        //this.$log.info("Skipping additional spectrum in file "+ files[0].name);
                         this.fileHasMultipleSpectra = true;
                     }
                 }, origin);
             },
             (progress) => {
-                if (progress == 100) {
+                if (progress === 100) {
                     if (this.currentSpectrum == null) {
                         this.page = 0;
                         this.uploadError = 'Unable to load spectra!';
@@ -497,16 +498,16 @@ export class BasicUploaderComponent implements OnInit{
                 }
             }
         );
-    };
+    }
 
 
     addMetadataField = () => {
         this.currentSpectrum.meta.push({name: '', value: ''});
-    };
+    }
 
     removeMetadataField = (index) => {
         this.currentSpectrum.meta.splice(index, 1);
-    };
+    }
 
 
 
@@ -542,41 +543,41 @@ export class BasicUploaderComponent implements OnInit{
         } else {
             return true;
         }
-    };
+    }
 
 
-    finalizeAndValidateSpectra() {
+    finalizeAndValidateSpectra(): boolean {
         // Add additional components to spectrum object
-        if (typeof this.metadata.chromatography !== 'undefined' && this.metadata.chromatography != "") {
-            this.currentSpectrum.meta.push({name: "sample introduction", value: this.metadata.chromatography});
+        if (typeof this.metadata.chromatography !== 'undefined' && this.metadata.chromatography !== '') {
+            this.currentSpectrum.meta.push({name: 'sample introduction', value: this.metadata.chromatography});
         }
 
-        if (typeof this.metadata.derivatization !== 'undefined' && this.metadata.derivatization != "") {
-            this.currentSpectrum.meta.push({name: "derivatization", value: this.metadata.derivatization});
+        if (typeof this.metadata.derivatization !== 'undefined' && this.metadata.derivatization !== '') {
+            this.currentSpectrum.meta.push({name: 'derivatization', value: this.metadata.derivatization});
         }
 
-        if (typeof this.metadata.mslevel !== 'undefined' && this.metadata.mslevel != "") {
-            this.currentSpectrum.meta.push({name: "ms level", value: this.metadata.mslevel});
+        if (typeof this.metadata.mslevel !== 'undefined' && this.metadata.mslevel !== '') {
+            this.currentSpectrum.meta.push({name: 'ms level', value: this.metadata.mslevel});
         }
 
-        if (typeof this.metadata.precursormz !== 'undefined' && this.metadata.precursormz != "") {
-            this.currentSpectrum.meta.push({name: "precursor m/z", value: this.metadata.precursormz});
+        if (typeof this.metadata.precursormz !== 'undefined' && this.metadata.precursormz !== '') {
+            this.currentSpectrum.meta.push({name: 'precursor m/z', value: this.metadata.precursormz});
         }
 
-        if (typeof this.metadata.precursortype !== 'undefined' && this.metadata.precursortype != "") {
-            this.currentSpectrum.meta.push({name: "precursor type", value: this.metadata.precursortype});
+        if (typeof this.metadata.precursortype !== 'undefined' && this.metadata.precursortype !== '') {
+            this.currentSpectrum.meta.push({name: 'precursor type', value: this.metadata.precursortype});
         }
 
-        if (typeof this.metadata.ionization !== 'undefined' && this.metadata.ionization != "") {
-            this.currentSpectrum.meta.push({name: "ionization", value: this.metadata.ionization});
+        if (typeof this.metadata.ionization !== 'undefined' && this.metadata.ionization !== '') {
+            this.currentSpectrum.meta.push({name: 'ionization', value: this.metadata.ionization});
         }
 
-        if (typeof this.metadata.ionmode !== 'undefined' && this.metadata.ionmode != "") {
-            this.currentSpectrum.meta.push({name: "ionization mode", value: this.metadata.ionmode});
+        if (typeof this.metadata.ionmode !== 'undefined' && this.metadata.ionmode !== '') {
+            this.currentSpectrum.meta.push({name: 'ionization mode', value: this.metadata.ionmode});
         }
 
-        if (typeof this.metadata.authors !== 'undefined' && this.metadata.authors != "") {
-            this.currentSpectrum.meta.push({name: "authors", value: this.metadata.authors});
+        if (typeof this.metadata.authors !== 'undefined' && this.metadata.authors !== '') {
+            this.currentSpectrum.meta.push({name: 'authors', value: this.metadata.authors});
         }
 
         // Validate spectrum object
@@ -594,17 +595,17 @@ export class BasicUploaderComponent implements OnInit{
             }
 
             this.uploadLibraryService.uploadSpectra([this.currentSpectrum],  (spectrum) => {
-                this.logger.info("submitting spectrum");
+                this.logger.info('submitting spectrum');
                 this.logger.info(spectrum);
                 this.logger.info(this.authenticationService.getCurrentUser().access_token);
                 this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
                     {headers: {
-                            'Authorization': `Bearer ${this.authenticationService.getCurrentUser().access_token}`
+                            Authorization: `Bearer ${this.authenticationService.getCurrentUser().access_token}`
                     }}).pipe(first()).subscribe((data: any) => {
                     this.logger.info('Spectra successfully Upload!');
                     this.logger.info('Reference ID: ' + data.id);
                     this.logger.info(data);
-                    this.uploadLibraryService.uploadedSpectra.push(data);
+                    // this.uploadLibraryService.uploadedSpectra.push(data);
                 }, (err) => {
                         this.logger.info('ERROR', err);
                 });
@@ -612,16 +613,15 @@ export class BasicUploaderComponent implements OnInit{
 
             this.location.go('/upload/status');
         }
-    };
+    }
 
 
     /**
      *
-     * @param name
-     * @param value
-     * @returns {*}
+     * @param name string name of metadata
+     * @returns Observable return observable
      */
-    //This rest call is not working at all, will have to dig in backend and see why that is
+    // This rest call is not working at all, will have to dig in backend and see why that is
     queryMetadataValues(name: any): (text$: Observable<string>) => Observable<any> {
         return (text$: Observable<string>) =>
             text$.pipe(
@@ -636,13 +636,13 @@ export class BasicUploaderComponent implements OnInit{
 
     /**
      * provides us with an overview of all our tags
-     * @param query
-     * @returns {*}
+     * @param query json object
+     * @returns Promise with result
      * Performs initialization and acquisition of data used by the wizard
      */
     loadTags = (query) => {
         return new Promise((resolve) => {
            resolve(this.filterPipe.transform(this.tags, query));
         });
-    };
+    }
 }

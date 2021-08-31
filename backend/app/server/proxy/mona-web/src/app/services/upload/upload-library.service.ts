@@ -17,6 +17,7 @@ import {AsyncService} from './async.service';
 import {MetadataOptimization} from '../optimization/metadata-optimization.service';
 import { Subject } from 'rxjs';
 import {Injectable} from '@angular/core';
+import {first} from 'rxjs/operators';
 
 @Injectable()
 export class UploadLibraryService{
@@ -30,7 +31,8 @@ export class UploadLibraryService{
     public uploadedSpectraCount;
 
     public uploadStartTime;
-    public uploadedSpectra;
+    public isSTP;
+    public uploadComplete;
 
     constructor(public logger: NGXLogger,
                 public mspParserLibService: MspParserLibService,
@@ -46,8 +48,8 @@ export class UploadLibraryService{
         this.failedSpectraCount = 0;
         this.uploadedSpectraCount = 0;
         this.uploadStartTime = -1;
-        this.uploadedSpectra = [];
         this.uploadProcess.next(true);
+        this.isSTP = false;
     }
 
     /**
@@ -185,8 +187,8 @@ export class UploadLibraryService{
         const myPromise = new Promise((resolve, reject) => {
             this.metadataOptimization.optimizeMetaData(spectra.meta).then((metaData: object) => {
 
-                console.log('Building Spectra');
-                console.log(metaData);
+                // console.log('Building Spectra');
+                // console.log(metaData);
 
                 const s = this.buildSpectrum();
 
@@ -236,11 +238,11 @@ export class UploadLibraryService{
                 //     s.comments.push({comment: spectra.comments});
                 // }
 
-                console.log(metaData[1]);
+                // console.log(metaData[1]);
                 Object.keys(metaData).forEach((e) => {
                     s.metaData.push(metaData[e]);
                 });
-                console.log(s.metaData);
+                // console.log(s.metaData);
 
                 if (typeof additionalData !== 'undefined') {
                     if (typeof additionalData.tags !== 'undefined') {
@@ -267,9 +269,9 @@ export class UploadLibraryService{
                 }
 
                 s.submitter = submitter;
-                saveSpectrumCallback(s);
-                // assign our result
                 resolve(s);
+                // assign our result
+                saveSpectrumCallback(s);
             });
         });
         return myPromise;
@@ -305,27 +307,107 @@ export class UploadLibraryService{
      * @param callback helper callback
      * @param fireUploadProgress upload progress
      */
-    loadSpectraFile = (file, callback, fireUploadProgress) => {
-        const fileReader = new FileReader();
+    loadSpectraFile = async (file, callback, fireUploadProgress) => {
+      let count = 0;
+      // In order to process data efficiently and in a smaller footprint, the file needs to be sliced into smaller batches
+      // that are individually matched by regex pattern.
+      const getFileExtension = () => {
+        if (file.name.toLowerCase().indexOf('.msp') > 0) {
+          return new RegExp(/((?:.*:\s*[^\n]*\n?)+)\n((?:\s*[0-9]*\.?[0-9]+\s+[0-9]*\.?[0-9]+[;\n]?.*\n?)*)/g);
+        }
+        else if (file.name.toLowerCase().indexOf('.mgf') > 0) {
+          return new RegExp(/BEGIN IONS([\s\S]*?)END IONS/g);
+        }
+        else if (file.name.toLowerCase().indexOf('.txt') > 0) {
+          return new RegExp(/(\w+[\/]*\w)\s(.+)/g);
+        }
+      };
 
-        // Call the callback function with the loaded data once the file has been read
-        fileReader.onload = (event) => {
-            callback(event.target.result, file.name);
+      const readFileAsync = () => {
+        // Create promise that will resolve with an array buffer of the file
+        // we use an array buffer because anything else will crash due to memory
+        // constraints in the browser i.e. readAsText() function
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject;
+          reader.readAsArrayBuffer(file);
+        });
+      };
 
-            if (typeof fireUploadProgress !== 'undefined') {
-                fireUploadProgress(100);
+
+      const arrayBufferToString = async (arrayBuffer) => {
+        // Start with 2MB by default
+        const chunkSize = 2 * 1024 * 1024;
+        // Buffer only 200 spectrum at a time
+        const bufferSize = 200;
+        const decoder = new TextDecoder();
+        // offset is where we begin our starting slice index
+        let offset = 0;
+        let foundSize = 0;
+        let lastIndex = 0;
+        // buffer of size bufferSize max
+        let promiseBuffer = [];
+        let decodedText;
+        let blocks;
+        let slice;
+
+        // Continual loop until we meet conditions to break out when we meet EOF
+        while (true) {
+          const regex = getFileExtension();
+          // Grab a chunk of the arrayBuffer to load into memory for regex matching
+          slice = arrayBuffer.slice(offset, offset + chunkSize);
+          // Decoder will translate array buffer to readable string value
+          decodedText = decoder.decode(slice);
+          // Every loop we match the next regex value in the slice to grab a spectrum
+          // With the /g tag on the regex it will match the entire slice, so everytime
+          // we execute .exec() it will return a matched block until blocks is null
+          // or we hit our poolSize limit.
+          while (( blocks = regex.exec(decodedText)) !== null ) {
+            // Push full match stored in blocks[0] and file name into our promise buffer
+            promiseBuffer.push([blocks[0], file.name]);
+            count++;
+            // regex.lastIndex doesn't seem reliable outside the loop so after every iteration save
+            // the regex.lastIndex into lastIndex until we break out.
+            lastIndex = regex.lastIndex;
+            // Since our regex is sophisticated, we need to pull a reduced amount of spectrum per chunk
+            // so that we do not partial match spectrum resulting in incorrect uploads. Reads are fast
+            // enough that this doesn't cause a big issue.
+            if (promiseBuffer.length === bufferSize) {
+              break;
             }
-        };
+          }
+          // Now that we broke out, we need to move our offset so we take a new chunk from
+          // the buffer where we last left off in the regex. In order to get identical sizing
+          // to the array buffer, we throw a substring of the decodedText into a blob and then
+          // call the .size() function to get an appropriate size of our smaller slice.
+          foundSize = new Blob([decodedText.substring(0, lastIndex)]).size;
+          offset += foundSize;
+          // When our offset is the size of the array buffer, then we reached EOF so send
+          // the last promiseBuffer and break out.
+          if (offset > arrayBuffer.byteLength - 1) {
+            await callback(promiseBuffer);
+            break;
+          } else{
+            await callback(promiseBuffer);
+            promiseBuffer = [];
+            blocks = null;
+          }
+        }
+      };
 
-        // progress notification
-        fileReader.onprogress = (event) => {
-            if (event.lengthComputable && typeof fireUploadProgress !== 'undefined') {
-                fireUploadProgress((event.loaded / event.total) * 100);
-            }
-        };
+      const processFiles = async () => {
+        // Wait for FileReader to return our arrayBuffer
+        const arrayBuff = await readFileAsync();
+        await arrayBufferToString(arrayBuff);
+        this.logger.debug('File Read Complete: Total of ' + count + ' spectra read.');
+      };
 
-        // start the reading
-        fileReader.readAsText(file);
+      await processFiles().then(() => {
+        // Once we finished our read, set isSTP to false so the spectra upload progress bar shows completed.
+        this.isSTP = false;
+        this.uploadProcess.next(false);
+      });
     }
 
 
@@ -341,10 +423,10 @@ export class UploadLibraryService{
                 return this.mspParserLibService.countSpectra(data);
             }
             else if (origin.toLowerCase().indexOf('.mgf') > 0) {
-                return this.mspParserLibService.countSpectra(data);
+                return this.mgfParserLibService.countSpectra(data);
             }
             else if (origin.toLowerCase().indexOf('.txt') > 0) {
-                return this.mspParserLibService.countSpectra(data);
+                return this.massbankParserLibService.countSpectra(data);
             }
             else {
                 alert('not supported file format!');
@@ -366,22 +448,21 @@ export class UploadLibraryService{
             if (typeof origin !== 'undefined') {
                 spectrum.meta.push({name: 'origin', value: origin});
             }
-
             callback(spectrum);
         };
 
         // Parse data
         if (typeof origin !== 'undefined') {
             if (origin.toLowerCase().indexOf('.msp') > 0) {
-                this.logger.debug('uploading msp file...');
+                // this.logger.info('uploading msp file...');
                 this.mspParserLibService.convertFromData(data, addOriginMetadata);
             }
             else if (origin.toLowerCase().indexOf('.mgf') > 0) {
-                this.logger.debug('uploading mgf file...');
+                // this.logger.info('uploading mgf file...');
                 this.mgfParserLibService.convertFromData(data, addOriginMetadata);
             }
             else if (origin.toLowerCase().indexOf('.txt') > 0) {
-                this.logger.debug('uploading massbank file...');
+                // this.logger.info('uploading massbank file...');
                 this.massbankParserLibService.convertFromData(data, addOriginMetadata);
             }
             else {
@@ -425,14 +506,14 @@ export class UploadLibraryService{
      * @param additionalData not sure
      */
     uploadSpectrum = (wizardData, saveSpectrumCallback, additionalData) => {
-        this.authenticationService.currentUser.subscribe((submitter) => {
+        this.authenticationService.currentUser.pipe(first()).subscribe((submitter) => {
             this.uploadedSpectraCount += 1;
 
             this.asyncService.addToPool(() => {
                 const myPromise = new Promise((resolve, reject) => {
                     this.workOnSpectra(submitter, saveSpectrumCallback, wizardData, additionalData).then((data) => {
-                        resolve(data);
                         this.updateUploadProgress(true);
+                        resolve(data);
                     }).catch((error) => {
                         this.logger.error('found an error: ' + error);
                         reject(error);

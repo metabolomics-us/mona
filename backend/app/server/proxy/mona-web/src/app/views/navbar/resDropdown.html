@@ -1,22 +1,21 @@
-<li class="dropdown" ngbDropdown>
+<li class="dropdown mr-4" ngbDropdown>
     <a role="button" class="dropdown-toggle" ngbDropdownToggle>
-        <i class="fa fa-question-circle"></i> Help <i class="fa fa-caret-down"></i>
+      <fa-icon [icon]="faQuestionCircle"></fa-icon> Help <fa-icon [icon]="faCaretDown"></fa-icon>
     </a>
-    <ul class="uib-dropdown-menu" ngbDropdownMenu>
-        <li><a [routerLink]="['/documentation/webservices']">Web Services</a></li>
-        <li><a [routerLink]="['/documentation/license']">License</a></li>
-        <li><a [routerLink]="['/documentation/query']">REST Service Query</a></li>
-        <li><a
+    <ul class="dropdown-menu" ngbDropdownMenu>
+        <li><a ngbDropdownItem [routerLink]="['/documentation/license']">License</a></li>
+        <li><a ngbDropdownItem [routerLink]="['/documentation/query']">REST Service Query</a></li>
+        <li><a ngbDropdownItem
                 href="https://github.com/metabolomics-us/mona/wiki/REST-Authentication-and-Uploading"
                 target="_blank">REST API Authentication</a></li>
-        <li><a
+        <li><a ngbDropdownItem
                 href="https://github.com/metabolomics-us/mona/wiki/webhooks-and-synchronization"
-                target="_blank">webhooks and synchronization</a></li>
+                target="_blank">Webhooks and Synchronization</a></li>
 
-        <li><a [routerLink]="['/documentation/terms']">Terms and Abbreviations</a></li>
-        <li><a href="https://github.com/metabolomics-us/mona" target="_blank">Sourcecode</a></li>
-        <li><a href="http://mona.fiehnlab.ucdavis.edu/repository/">Repository</a></li>
-        <li><a href="https://github.com/metabolomics-us/mona/wiki" target="_blank">Wiki</a></li>
-        <li><a href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona" target="_blank">Bug Reports / Feature requests</a></li>
+        <li><a ngbDropdownItem [routerLink]="['/documentation/terms']">Terms and Abbreviations</a></li>
+        <li><a ngbDropdownItem href="https://github.com/metabolomics-us/mona" target="_blank">Sourcecode</a></li>
+        <li><a ngbDropdownItem href="http://mona.fiehnlab.ucdavis.edu/repository/">Repository</a></li>
+        <li><a ngbDropdownItem href="https://github.com/metabolomics-us/mona/wiki" target="_blank">Wiki</a></li>
+        <li><a ngbDropdownItem href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona" target="_blank">Bug Reports / Feature requests</a></li>
     </ul>
 </li>

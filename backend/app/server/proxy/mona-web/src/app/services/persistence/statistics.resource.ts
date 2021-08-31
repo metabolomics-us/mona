@@ -4,9 +4,9 @@
  * simple service to help with available tags
  */
 
-import {HttpClient, HttpParams} from "@angular/common/http";
-import { environment } from "../../../environments/environment";
-import {Injectable} from "@angular/core";
+import {HttpClient, HttpParams} from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class Statistics {

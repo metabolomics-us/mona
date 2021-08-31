@@ -2,8 +2,8 @@
  * provides top users scores
  */
 
-import {Component, Input, OnInit} from "@angular/core";
-import {Statistics} from "../../services/persistence/statistics.resource";
+import {Component, Input, OnInit} from '@angular/core';
+import {Statistics} from '../../services/persistence/statistics.resource';
 
 @Component({
     selector: 'spectra-top-scores-for-users',
@@ -15,14 +15,12 @@ export class SpectraTopScoresForUsersComponent implements OnInit{
 
     constructor( public statistics: Statistics) {}
 
-    ngOnInit() {
+    ngOnInit(): void{
         this.statistics.spectraTopScores().then((data) => {
             this.scores = data;
             this.scores.forEach((x) => {
                 x.score -= 0.45;
-            })
+            });
         });
-
-        console.log(this.scores);
     }
 }

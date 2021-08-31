@@ -39,6 +39,7 @@
     "flot": "0.8.3",
     "jquery": "1.9.1",
     "json3": "~3.3.3",
+    "line-navigator": "^2.1.6",
     "ng2-nvd3": "^2.0.0",
     "ngx-chips": "^2.2.2",
     "ngx-cookie-service": "10.0.1",
@@ -69,5 +70,10 @@
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~4.0.2"
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false
   }
 }

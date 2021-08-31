@@ -3,12 +3,13 @@
  */
 
 // TODO: waiting for implementation of return user data for admin from authentication Service
-import {Component, OnInit} from "@angular/core";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {NGXLogger} from "ngx-logger";
-import {AuthenticationService} from "../../services/authentication.service";
-import {AuthenticationModalComponent} from "./authentication-modal.component";
-import {RegistrationModalComponent} from "./registration-modal.component";
+import {Component, OnInit} from '@angular/core';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NGXLogger} from 'ngx-logger';
+import {AuthenticationService} from '../../services/authentication.service';
+import {AuthenticationModalComponent} from './authentication-modal.component';
+import {RegistrationModalComponent} from './registration-modal.component';
+import {faUser, faCaretDown, faSignOutAlt, faUsers} from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -19,11 +20,15 @@ export class AuthenticationComponent implements OnInit{
     public ADMIN_ROLE_NAME;
     public currentUser;
     public welcomeMessage;
+    faUser = faUser;
+    faCaretDown = faCaretDown;
+    faSignOutAlt = faSignOutAlt;
+    faUsers = faUsers;
 
     constructor(public modalService: NgbModal, public authenticationService: AuthenticationService,
                 public logger: NGXLogger) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.authenticationService.currentUser.subscribe((x) => {
             this.currentUser = x;
         });
@@ -35,8 +40,8 @@ export class AuthenticationComponent implements OnInit{
          * Create a welcome message on login
          */
         this.authenticationService.isAuthenticated.subscribe((authorized) => {
-            if(authorized) {
-                this.welcomeMessage = `Welcome, ${this.authenticationService.getCurrentUser()}!`
+            if (authorized) {
+                this.welcomeMessage = `Welcome, ${this.authenticationService.getCurrentUser()}!`;
             } else if (!authorized && this.currentUser === null) {
                 /**
                  * Remove the welcome message on logout
@@ -50,19 +55,19 @@ export class AuthenticationComponent implements OnInit{
          * Listen for external calls to bring up the authentication modal
          */
         this.authenticationService.modalRequest.subscribe((request) => {
-            if(request) {
+            if (request) {
                 this.handleLogin();
             }
         });
     }
 
-    isLoggedIn() {
+    isLoggedIn(): boolean {
         return this.authenticationService.isLoggedIn();
     }
 
-    isAdmin() {
+    isAdmin(): boolean {
         return this.authenticationService.isAdmin();
-    };
+    }
 
     /**
      * Handle login
@@ -71,35 +76,33 @@ export class AuthenticationComponent implements OnInit{
     /**
      * Handle login
      */
-    handleLogin() {
+    handleLogin(): void {
         if (this.authenticationService.isLoggedIn()) {
             this.authenticationService.logout();
         } else {
             this.openAuthenticationDialog();
         }
-    };
+    }
 
     /**
      * Opens the authentication modal dialog
      */
-    openAuthenticationDialog() {
-        let modalRef;
-        modalRef = this.modalService.open(AuthenticationModalComponent, {
+    openAuthenticationDialog(): void {
+        this.modalService.open(AuthenticationModalComponent, {
             size: 'sm',
             backdrop: true
         });
-    };
+    }
 
     /**
      * Opens the registration modal dialog
      */
-    handleRegistration() {
-        let modalRef;
+    handleRegistration(): void {
         if (!this.isLoggedIn()) {
-            modalRef = this.modalService.open(RegistrationModalComponent,{
-                size: 'md',
-                backdrop: 'static'
+            this.modalService.open(RegistrationModalComponent, {
+              size: 'md',
+              backdrop: 'static'
             });
         }
-    };
+    }
 }
