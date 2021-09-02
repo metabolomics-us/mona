@@ -15,15 +15,15 @@
                 <div class="h5">
                     <span class="dropdown" ngbDropdown>
                         <button class="dropdown-toggle" ngbDropdownToggle>
-                            <i class="fa fa-cloud-download"></i> Download Structure
+                          <fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Structure
                         </button>
 
                         <ul class="uib-dropdown-menu" ngbDropdownMenu>
-                            <li>
-                                <a [routerLink]="" (click)="downloadAsMOL()" target="_blank">as MOL file</a>
+                            <li ngbDropdownItem>
+                                <button (click)="downloadAsMOL()" target="_blank">as MOL file</button>
                             </li>
-                            <li>
-                                <a [routerLink]="" (click)="downloadAsJSON()" target="_blank">as MoNA JSON Record</a>
+                            <li ngbDropdownItem>
+                                <button (click)="downloadAsJSON()" target="_blank">as MoNA JSON Record</button>
                             </li>
                         </ul>
                     </span>

@@ -18,7 +18,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
-import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner, faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'spectrum-viewer',
@@ -47,6 +47,7 @@ export class SpectrumViewerComponent implements OnInit{
     faQuestionCircle = faQuestionCircle;
     faFlask = faFlask;
     faSpinner = faSpinner;
+    faCloudDownloadAlt = faCloudDownloadAlt;
 
     constructor( public logger: NGXLogger,  public cookie: CookieMain,
                  public spectrumService: Spectrum,  public authenticationService: AuthenticationService,

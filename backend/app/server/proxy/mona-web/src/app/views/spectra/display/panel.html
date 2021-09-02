@@ -1,8 +1,8 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="panel-title">
-            <span><a style="cursor: pointer" href="{{viewSpectrum()}}">{{spectrum.compound[0].names[0].name}}</a></span>
-            <span class="pull-right">Score: <ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <span class="float-left"><a style="cursor: pointer" [routerLink]="[viewSpectrum()]">{{spectrum.compound[0].names[0].name}}</a></span>
+            <span class="float-right">Score: <ngb-rating *ngIf="spectrum.score" [(rate)]="spectrum.score.score" [max]="5" [readonly]="true"></ngb-rating></span>
         </div>
     </div>
 
@@ -43,7 +43,7 @@
                     <hr />
                     <div class="col-lg-12 col-md-12">
                         <ul class="list-unstyled">
-                            <li><div class="h5"><display-library-reference spectrum="spectrum"></display-library-reference></div></li>
+                            <li><div class="h5"><display-library-reference [spectrum]="spectrum"></display-library-reference></div></li>
                         </ul>
                     </div>
                 </div>
@@ -67,21 +67,13 @@
         </div>
     </div>
 
-    <div class="panel-footer">
-        <div class="row">
-            <div class="col-md-12">
-                <ul class="list-inline">
-                    <li class="pull-left" *ngFor="let tag of spectrum.tags">
-                        <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
-                    </li>
-
-                    <li class="pull-right">
-                        <a class="btn btn-success" [routerLink]="[viewSpectrum()]">
-                            <i class="fa fa-external-link fa-fw"></i> Display Full Record
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    <div class="card-footer">
+        <div class="float-left" *ngFor="let tag of spectrum.tags">
+          <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
         </div>
+
+      <a class="btn btn-success float-right" [routerLink]="[viewSpectrum()]">
+        <fa-icon [icon]="faExternalLinkAlt"></fa-icon> Display Full Record
+      </a>
     </div>
 </div>

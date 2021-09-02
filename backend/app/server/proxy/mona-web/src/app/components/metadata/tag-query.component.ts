@@ -5,6 +5,7 @@
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Input} from '@angular/core';
 import {Component} from '@angular/core';
+import {faFlask, faCaretRight} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'tag-query',
@@ -14,6 +15,8 @@ export class TagQueryComponent {
     @Input() public ruleBased;
     @Input() public type;
     @Input() public tag;
+    faFlask = faFlask;
+    faCaretRight = faCaretRight;
 
     constructor( public spectraQueryBuilderService: SpectraQueryBuilderService) {}
 

@@ -35,7 +35,7 @@ export class MainComponent implements OnInit{
     }*/
 
     ngOnInit(): void {
-        this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
+        this.showcaseSpectraIds = ['MoNA000001', 'MoNA000002', 'MoNA000003'];
         this.showcaseSpectra = [];
 
         this.showcaseSpectraIds.forEach((id) => {

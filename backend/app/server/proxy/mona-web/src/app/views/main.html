@@ -89,11 +89,12 @@
             <h3>Top Rated Spectral Records</h3>
             <br />
 
-            <ngb-carousel interval="7000">
+            <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="true">
                 <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
-                    <display-spectra-panel class="text-left" spectrum="spectrum"></display-spectra-panel>
+                    <div class="picsum-img-wrapper">
+                      <display-spectra-panel class="text-left" [spectrum]="spectrum"></display-spectra-panel>
+                    </div>
                 </ng-template>
-
                 <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
                     <div class="text-center">
                       <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Showcase Spectra...</h4>

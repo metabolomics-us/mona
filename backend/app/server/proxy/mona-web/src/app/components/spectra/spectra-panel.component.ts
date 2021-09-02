@@ -3,16 +3,19 @@
  */
 import {Component, Input, OnInit} from '@angular/core';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
+import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'display-spectra-panel',
     templateUrl: '../../views/spectra/display/panel.html'
 })
+
 export class SpectraPanelComponent implements OnInit{
     @Input() public spectrum;
     public IMPORTANT_METADATA;
     public importantMetadata;
     public secondaryMetadata;
+    faExternalLinkAlt = faExternalLinkAlt;
 
     constructor( public spectrumCache: SpectrumCacheService) {}
 
@@ -25,6 +28,10 @@ export class SpectraPanelComponent implements OnInit{
 
         this.importantMetadata = [];
         this.secondaryMetadata = [];
+
+        if (typeof this.spectrum.score === 'undefined' || this.spectrum.score === null) {
+          this.spectrum.score.score = 0;
+        }
 
         this.spectrum.metaData.forEach((metaData, index) => {
             metaData.value = this.truncateDecimal(metaData.value, 4);
