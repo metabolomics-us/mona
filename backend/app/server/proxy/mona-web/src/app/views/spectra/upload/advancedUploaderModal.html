@@ -1,0 +1,21 @@
+<div>
+  <div class="modal-header">
+    <h3 class="modal-title alert-primary">Warning! The submitted file is larger then 10 MB.</h3>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-content" *ngIf="!authenticationService.isLoggedIn()" class="alert alert-primary">
+      <h4> Please <button class="fakeRef" (click)="authenticationService.requestModal()">log in</button> before uploading spectra!</h4>
+      <h5>You can start using the uploader without an account, but you will not be able to submit your spectra without registering and logging in.</h5>
+    </div>
+    <p class="modal-content">
+      This file is too large and will not be able to utilize the advanced uploader edit screen. However, this
+      file can still be directly uploaded into MoNA. Would you like to proceed with straight through processing?
+    </p>
+    <button class="btn btn-lg btn-primary" (click)="activeModal.close(true)" [disabled]="!authenticationService.isLoggedIn()">YES</button>
+    <button class="btn btn-lg btn-secondary" (click)="activeModal.close(false)">NO</button>
+  </div>
+</div>
+

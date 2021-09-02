@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h3><i class="fa fa-cloud-upload"></i> Basic Uploader</h3>
+      <h3><fa-icon [icon]="faCloudUpload"></fa-icon> Basic Uploader</h3>
 
         <div class="h5">Upload single mass spectra using a simple, guided wizard</div>
         <br />
@@ -14,10 +14,10 @@
 
 
         <!-- Select files to upload -->
-        <div *ngIf="page === 0" class="panel panel-default">
-            <div class="panel-heading"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
+        <div *ngIf="page === 0" class="card">
+            <div class="card-header"><strong style="font-size: 1.2em;">Submit a Mass Spectrum to Upload</strong></div>
 
-            <div class="panel-body">
+            <div class="card-body">
                 <p class="lead">
                     <small>Please choose a mass spectrum to upload.  You may choose to upload a file, which the uploader
                     will parse and populate all available compound information and metadata, or you may paste a spectrum
@@ -25,9 +25,9 @@
                 </p>
                 <br />
 
-                <label>Upload a File:</label>
+              <label><strong>Upload a File:</strong></label>
                 <p class="help-block" *ngIf="uploadError" [ngClass]="{'has-error': uploadError}"><strong>{{uploadError}}</strong></p>
-                <div class="input-group" class="{'has-error': uploadError}">
+                <div class="input-group" [ngClass]="{'has-error': uploadError}">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
                             Browse&hellip; <input type="file" (change)="parseFiles($event)" #fileUpload />
@@ -39,31 +39,36 @@
 
                 <span class="help-block">Supports MSP, MGF and MassBank Records Format (.txt) mass spectral data files</span>
 
-                <br /><br />
+                <br />
+                <br />
+                <br />
 
                 <div class="input-group" [ngClass]="{'has-error': pasteError}">
-                    <label>Paste a Mass Spectrum:</label>
+                  <div class="input-group">
+                    <label><strong>Paste a Mass Spectrum:</strong></label>
                     <p class="help-block" *ngIf="pasteError"><strong>{{pasteError}}</strong></p>
-                    <textarea class="form-control" rows="10" [(ngModel)]="pastedSpectrum"></textarea>
-                    <span class="help-block">
-                        Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
-                        <code>[m/z] [intensity]</code><br />
-                        <code>[m/z] [intensity]</code><br />
-                        <code>...</code>
+                  </div>
+                  <textarea class="form-control" [rows]="10" [(ngModel)]="pastedSpectrum"></textarea>
+                  <div class="input-group">
+                    <span class="text-left">
+                      Supports spectra in the single-line format <code>[m/z]:[intensity] [m/z]:[intensity] ...</code> or in multi-line:<br />
+                      <code>[m/z] [intensity]</code><br />
+                      <code>[m/z] [intensity]</code><br />
+                      <code>...</code><br />
                     </span>
-
-                    <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Load Spectrum</button>
+                  </div>
                 </div>
+              <button class="btn btn-primary" (click)="parsePastedSpectrum(pastedSpectrum)">Load Spectrum</button>
             </div>
         </div>
 
 
         <!-- Loading message -->
-        <div *ngIf="page === 1" class="panel panel-default">
-            <div class="panel-heading"><strong style="font-size: 1.2em;">Loading...</strong></div>
-            <div class="panel-body text-center">
+        <div *ngIf="page === 1" class="card">
+            <div class="card-header"><strong style="font-size: 1.2em;">Loading...</strong></div>
+            <div class="card-body text-center">
                 <span class="spinner">
-                    <i class="fa fa-refresh fa-spin"></i>
+                  <fa-icon [icon]="faSpinner" [spin]="true"></fa-icon>
                     Please wait while your file is loaded and processed...
                 </span>
             </div>
@@ -71,25 +76,35 @@
 
 
         <!-- Error message if no spectra are found -->
-        <div *ngIf="page === 2 && currentSpectrum === null" class="panel panel-default">
-            <div class="panel-heading"><strong style="font-size: 1.2em;">Loading...</strong></div>
-            <div class="panel-body text-center"><strong>No valid mass spectra found in the uploaded file(s)!</strong></div>
+        <div *ngIf="page === 2 && currentSpectrum === null" class="card">
+            <div class="card-header"><strong style="font-size: 1.2em;">Loading...</strong></div>
+            <div class="card-body text-center"><strong>No valid mass spectra found in the uploaded file(s)!</strong></div>
         </div>
 
 
         <!-- Display spectrum -->
-        <div *ngIf="page === 2 && currentSpectrum !== null" class="panel panel-default">
-            <div class="panel-heading">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="restart()">&larr; Restart</button></li>
-                        <li><strong style="font-size: 1.2em;">Spectrum Viewer</strong></li>
-                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
+        <div *ngIf="page === 2 && currentSpectrum !== null" class="card">
+            <div class="card-header">
+                <nav class="navbar navbar-expand-md" style="width: 100%;">
+                  <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                    <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                      <li class="previous"><button class="fakeRef" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
+                  </div>
+                  <div class="mx-auto order-0">
+                    <ul class="navbar-nav mx-auto">
+                      <li><strong style="font-size: 1.2em;">Spectrum Viewer</strong></li>
+                    </ul>
+                  </div>
+                  <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                    <ul class="navbar-nav ml-auto">
+                      <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    </ul>
+                  </div>
                 </nav>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
                 <p class="lead">
                     <small>Below is your submitted mass spectrum.  Please verify that it appears as
                     you expect <br /> You may also add annotations to specific peaks in the ion table below.</small>
@@ -101,8 +116,8 @@
                     will be displayed.</small>
                 </p>
 
-                <div class="masspec-modal" style="width: 100%; height: 100%">
-                    <lib-ng-mass-spec-plotter id="masspec-plot" spectrum="currentSpectrum.ions"></lib-ng-mass-spec-plotter>
+                <div class="masspec-modal">
+                    <lib-ng-mass-spec-plotter [id]="'masspec-plot'" [spectrum]="currentSpectrum.ions"></lib-ng-mass-spec-plotter>
                 </div>
                 <br />
 
@@ -126,7 +141,7 @@
                         </thead>
                         <tbody>
                         <!-- seperate orderBy pipe -->
-                        <tr *ngFor="let ion of currentSpectrum.ions">
+                        <tr *ngFor="let ion of currentSpectrum.ions| orderBy: ionTableSort">
                             <td><input type="checkbox" [(ngModel)]="ion.selected" /></td>
                             <td>{{ion.ion}}</td>
                             <td>{{ion.intensity}}</td>
@@ -140,30 +155,46 @@
                 </div>
             </div>
 
-            <div class="panel-footer">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="restart()">&larr; Restart</button></li>
-                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
+            <div class="card-footer">
+                <nav class="navbar navbar-expand-md" style="width: 100%;">
+                  <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                    <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                      <li class="previous"><button class="fakeRef" (click)="restart()"><fa-icon [icon]="faArrowLeft"></fa-icon> Restart</button></li>
                     </ul>
+                  </div>
+                  <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                    <ul class="navbar-nav ml-auto">
+                      <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                    </ul>
+                  </div>
                 </nav>
             </div>
         </div>
 
 
         <!-- Compound information -->
-        <div *ngIf="page === 3" class="panel panel-default">
-            <div class="panel-heading">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
-                        <li><strong style="font-size: 1.2em;">Compound Information</strong></li>
-                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
-                    </ul>
-                </nav>
+        <div *ngIf="page === 3" class="card">
+            <div class="card-header">
+              <nav class="navbar navbar-expand-md" style="width: 100%;">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                  <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                  </ul>
+                </div>
+                <div class="mx-auto order-0">
+                  <ul class="navbar-nav mx-auto">
+                    <li><strong style="font-size: 1.2em;">Compound Information</strong></li>
+                  </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                  </ul>
+                </div>
+              </nav>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
                 <p class="lead">
                     <small>
                         MoNA requires that every spectrum has an associated compound.  Please enter an InChI, InChIKey,
@@ -175,16 +206,16 @@
                 <br />
 
                 <div *ngIf="currentSpectrum.molFile && !compoundProcessing" style="text-align: center; width: 100%; height: 100%">
-                    <div [libChemdoodle]="currentSpectrum.molFile" readonly="true"
-                         id="compoundViewer"></div>
+                    <div [libChemdoodle]="currentSpectrum.molFile"
+                         [id]="'compoundViewer'"></div>
                 </div>
 
                 <div class="alert alert-info" role="alert" *ngIf="compoundProcessing" style="text-align: center;">
-                    <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Pulling compound data...</h4>
+                  <h4>Pulling compound data...<fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></h4>
                 </div>
 
                 <div *ngIf="compoundError" class="alert alert-danger" role="alert">
-                    <h3><i class="fa fa-exclamation-triangle"></i> Error!</h3>
+                  <h3><fa-icon [icon]="faExclamationTriangle"></fa-icon> Error!</h3>
                     <h4>{{compoundError}}</h4>
                 </div>
                 <br />
@@ -233,7 +264,7 @@
 
                 <div class="form-group text-center">
                     <button type="button" class="btn btn-primary" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
-                        <span *ngIf="compoundProcessing" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+                        <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
                         <span>Update Compound</span>
                     </button>
                     <button (click)="resetCompound()" class="btn btn-danger" [disabled]="compoundProcessing">Reset Compound</button>
@@ -307,30 +338,46 @@
                 </div>
             </div>
 
-            <div class="panel-footer">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
-                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
-                    </ul>
-                </nav>
+            <div class="card-footer">
+              <nav class="navbar navbar-expand-md" style="width: 100%;">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                  <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                  </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                  </ul>
+                </div>
+              </nav>
             </div>
         </div>
 
 
         <!-- Recommended spectrum metadata -->
-        <div *ngIf="page === 4 && currentSpectrum !== null" class="panel panel-default">
-            <div class="panel-heading">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
-                        <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
-                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
-                    </ul>
-                </nav>
+        <div *ngIf="page === 4 && currentSpectrum !== null" class="card">
+            <div class="card-header">
+              <nav class="navbar navbar-expand-md" style="width: 100%;">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                  <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                  </ul>
+                </div>
+                <div class="mx-auto order-0">
+                  <ul class="navbar-nav mx-auto">
+                    <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
+                  </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                  </ul>
+                </div>
+              </nav>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
                 <div class="lead">
                     <small>
                         Metadata provides a more complete view of a mass spectrum and allows users to more easily find
@@ -416,30 +463,46 @@
             </div>
 
 
-            <div class="panel-footer">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
-                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
-                    </ul>
-                </nav>
+            <div class="card-footer">
+              <nav class="navbar navbar-expand-md" style="width: 100%;">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                  <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                  </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                  </ul>
+                </div>
+              </nav>
             </div>
         </div>
 
 
         <!-- Recommended spectrum metadata -->
-        <div *ngIf="page === 5 && currentSpectrum !== null" class="panel panel-default">
-            <div class="panel-heading">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
-                        <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
-                        <li class="next"><button (click)="nextPage()">Next &rarr;</button></li>
-                    </ul>
-                </nav>
+        <div *ngIf="page === 5 && currentSpectrum !== null" class="card">
+            <div class="card-header">
+              <nav class="navbar navbar-expand-md" style="width: 100%;">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                  <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                  </ul>
+                </div>
+                <div class="mx-auto order-0">
+                  <ul class="navbar-nav mx-auto">
+                    <li><strong style="font-size: 1.2em;">Spectrum Metadata</strong></li>
+                  </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                  </ul>
+                </div>
+              </nav>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
                 <div class="lead">
                     <small>
                         In addition to the recommended metadata, we encourage users to provide any other information
@@ -456,69 +519,88 @@
 
                 <div id="metadata_editor" style="margin-top: 10px;">
                     <div *ngFor="let meta of currentSpectrum.meta; index as i">
+                      <div class="row">
                         <div class="col-sm-5 form-group" [ngClass]="{'has-error': !meta.name && meta.name != ''}">
-                            <input type="text"
-                                   [(ngModel)]="meta.name"
-                                   placeholder="Metadata Name"
-                                   [ngbTypeahead]="metadataNames"
-                                   [showHint]="true"
-                                   [minlength]="3"
-                                   class="form-control" />
+                          <input type="text"
+                                 [(ngModel)]="meta.name"
+                                 placeholder="Metadata Name"
+                                 [ngbTypeahead]="metadataNames"
+                                 [showHint]="true"
+                                 [minlength]="3"
+                                 class="form-control" />
                         </div>
                         <div class="col-sm-5 form-group">
-                            <input type="text"
-                                   [(ngModel)]="meta.value"
-                                   [disabled]="!meta.name || meta.name == ''"
-                                   placeholder="Metadata Value"
-                                   [ngbTypeahead]="queryMetadataValues(meta.name)"
-                                   [showHint]="true"
-                                   [minLength]="3"
-                                   class="form-control" />
+                          <input type="text"
+                                 [(ngModel)]="meta.value"
+                                 [disabled]="!meta.name || meta.name == ''"
+                                 placeholder="Metadata Value"
+                                 [ngbTypeahead]="queryMetadataValues(meta.name)"
+                                 [showHint]="true"
+                                 [minLength]="3"
+                                 class="form-control" />
                         </div>
-                        <div class="col-sm-2 form-group">
-                            <button (click)="removeMetadataField(i)" class="btn btn-default"
-                                    ngbTooltip="Remove this metadata field"><i class="fa fa-minus-square"></i></button>
+                        <div class="col-sm-5 form-group">
+                          <button (click)="removeMetadataField(i)" class="btn btn-default"
+                                  ngbTooltip="Remove this metadata field"><fa-icon [icon]="faMinusSquare"></fa-icon></button>
                         </div>
+                      </div>
                     </div>
-
                     <div class="col-sm-12">
-                        <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()" ngbTooltip="Add a new metadata field">&#43;</button>
+                        <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()" ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon> </button>
                     </div>
                 </div>
             </div>
 
 
-            <div class="panel-footer">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
-                        <li class="next"><button class="fakeRef" (click)="nextPage()">Next &rarr;</button></li>
-                    </ul>
-                </nav>
+            <div class="card-footer">
+              <nav class="navbar navbar-expand-md" style="width: 100%;">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                  <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                  </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="next"><button class="fakeRef" (click)="nextPage()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
+                  </ul>
+                </div>
+              </nav>
             </div>
         </div>
 
         <!-- Summary -->
-        <div *ngIf="page === 6 && currentSpectrum !== null" class="panel panel-default">
-            <div class="panel-heading">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
-                        <li><strong style="font-size: 1.2em;">Summary</strong></li>
-                        <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA &rarr;</button></li>
-                        <li class="next"*ngIf="!authenticationService.isLoggedIn()"><button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA</button></li>
-                    </ul>
-                </nav>
+        <div *ngIf="page === 6 && currentSpectrum !== null" class="card">
+            <div class="card-header">
+              <nav class="navbar navbar-expand-md" style="width: 100%;">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                  <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                  </ul>
+                </div>
+                <div class="mx-auto order-0">
+                  <ul class="navbar-nav mx-auto">
+                    <li><strong style="font-size: 1.2em;">Summary</strong></li>
+                  </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA <fa-icon [icon]="faCloudUpload"></fa-icon></button></li>
+                    <li class="next"*ngIf="!authenticationService.isLoggedIn()">
+                      <button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
                 <p class="lead">
                     <small>Please verify the provided information before uploading:</small>
                 </p>
 
                 <div class="page-header"><h3>Mass Spectrum</h3></div>
-                <div class="masspec-modal" style="height: 100%; width: 100%">
-                    <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions"></lib-ng-mass-spec-plotter>
+                <div class="masspec-modal">
+                    <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" [id]="'lastSpec'"></lib-ng-mass-spec-plotter>
                 </div>
 
                 <div class="page-header"><h3>Compound Information</h3></div>
@@ -528,7 +610,7 @@
                     </ul>
                 </div>
                 <div *ngIf="currentSpectrum.molFile" style="text-align: center;">
-                    <div [libChemdoodle]="currentSpectrum.molFile" readonly="true"
+                    <div [libChemdoodle]="currentSpectrum.molFile"
                          id="compoundSummaryViewer"></div>
                 </div>
 
@@ -627,16 +709,22 @@
             </div>
 
             <div class="panel-footer">
-                <nav>
-                    <ul class="pager" style="margin: 0px !important;">
-                        <li class="previous"><button class="fakeRef" (click)="previousPage()">&larr; Previous</button></li>
-                        <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA &rarr;</button></li>
-                        <li class="next" *ngIf="!authenticationService.isLoggedIn()"><button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA</button></li>
-                    </ul>
-                </nav>
+              <nav class="navbar navbar-expand-md" style="width: 100%;">
+                <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                  <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
+                    <li class="previous"><button class="fakeRef" (click)="previousPage()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
+                  </ul>
+                </div>
+                <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                  <ul class="navbar-nav ml-auto">
+                    <li class="next" *ngIf="authenticationService.isLoggedIn()"><button class="fakeRef" (click)="uploadFile()">Upload to MoNA <fa-icon [icon]="faCloudUpload"></fa-icon></button></li>
+                    <li class="next"*ngIf="!authenticationService.isLoggedIn()">
+                      <button class="fakeRef" (click)="authenticationService.requestModal()">Log in before uploading to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
             </div>
         </div>
-
-
     </div>
 </div>

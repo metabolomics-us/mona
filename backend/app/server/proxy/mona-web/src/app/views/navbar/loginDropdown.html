@@ -2,21 +2,21 @@
     <!-- User Login -->
     <li class="dropdown" ngbDropdown>
         <a role="button" class="dropdown-toggle" ngbDropdownToggle>
-            <i class="fa fa-user fa-fw"></i> <!--<span ng-bind="auth.welcomeMessage"></span>-->
-            <i class="fa fa-caret-down"></i>
+          <fa-icon [icon]="faUser"></fa-icon>
+          <fa-icon [icon]="faCaretDown"></fa-icon>
         </a>
         <ul class="uib-dropdown-menu dropdown-user" ngbDropdownMenu>
             <li [hidden]="!isLoggedIn()">
-                <a [routerLink]="['/profile']"><i class="fa fa-user fa-fw"></i> User Profile</a>
+              <a [routerLink]="['/profile']"><fa-icon [icon]="faUser"></fa-icon> User Profile</a>
             </li>
             <li [hidden]="!isLoggedIn()" class="divider"></li>
 
             <li>
-                <a (click)="handleLogin()"><i class="fa fa-sign-out fa-fw"></i> {{isLoggedIn() ?
+              <a (click)="handleLogin()"><fa-icon [icon]="faSignOutAlt"></fa-icon> {{isLoggedIn() ?
                     "Logout" : "Login"}}</a>
             </li>
             <li [hidden]="isLoggedIn()">
-                <a (click)="handleRegistration()"><i class="fa fa-users fa-fw"></i> Register</a>
+              <a (click)="handleRegistration()"><fa-icon [icon]="faUsers"></fa-icon> Register</a>
             </li>
         </ul>
         <!-- /.dropdown-user -->

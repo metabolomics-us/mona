@@ -1,25 +1,30 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'mona-client-app',
+    selector: 'app-mona',
     template: `<div id="wrapper">
-        <nav class="navbar navbar-expand-xl navbar-fixed-top navbar-dark">
+        <nav class="navbar navbar-expand-xl fixed-top navbar-dark">
             <!-- navbar dropdowns -->
             <title-header></title-header>
-            <div class="collapse navbar-collapse" role="navigation">
-                <ul class="nav navbar-nav">
-                    <browse-drop-down></browse-drop-down>
-                    <admin-drop-down></admin-drop-down>
-                    <download-button></download-button>
-                    <upload-button></upload-button>
-                    <resource-drop-down></resource-drop-down>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" role="navigation" id="navbarSupportedContent">
+                <ul class="nav navbar-nav mr-auto">
+                    <browse-drop-down class="nav-item"></browse-drop-down>
+                    <admin-drop-down class="nav-item"></admin-drop-down>
+                    <download-button class="nav-item"></download-button>
+                    <upload-button class="nav-item"></upload-button>
+                    <resource-drop-down class="nav-item"></resource-drop-down>
                 </ul>
-                <authentication></authentication>
-                <search-box></search-box>
+                <div class="form-inline my-2 my-lg-0">
+                  <search-box class="nav-item"></search-box>
+                </div>
+                <div class="form-inline my-2 my-lg-0">
+                  <authentication class="nav-item"></authentication>
+                </div>
             </div>
-
         </nav>
-
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12 top17">

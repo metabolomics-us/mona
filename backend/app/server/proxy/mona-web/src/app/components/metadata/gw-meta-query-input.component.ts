@@ -75,13 +75,13 @@ export class GwMetaQueryInputComponent{
         if (typeof value === 'undefined' || value.replace(/^\s*/, '').replace(/\s*$/, '') === '') {
             return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/meta/data/search`, {
                 query: {
-                    name: name,
+                    name,
                     value: {isNotNull: ''},
                     property: 'stringValue',
                     deleted: false
                 }
             }).pipe(map((x: string) => {
-                return x.slice(0,25);
+                return x.slice(0, 25);
             }));
 
         }

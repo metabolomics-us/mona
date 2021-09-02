@@ -22,11 +22,6 @@
       "rxjs/Rx"
     ],
     "import-spacing": true,
-    "indent": {
-      "options": [
-        "spaces"
-      ]
-    },
     "max-classes-per-file": false,
     "max-line-length": [
       true,
@@ -58,12 +53,16 @@
     ],
     "no-non-null-assertion": true,
     "no-redundant-jsdoc": true,
+    "no-unused-expression": false,
+    "no-conditional-assignment": false,
     "no-switch-case-fall-through": true,
     "no-var-requires": false,
     "object-literal-key-quotes": [
       true,
       "as-needed"
     ],
+    "one-variable-per-declaration": false,
+    "prefer-for-of": false,
     "quotemark": [
       true,
       "single"
@@ -139,13 +138,11 @@
     "directive-selector": [
       true,
       "attribute",
-      "app",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "app",
       "kebab-case"
     ]
   }

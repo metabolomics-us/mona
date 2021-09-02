@@ -1,13 +1,13 @@
 <div class="btn-group" placement="top" ngbTooltip="Click to view download options"
      triggers="mouseenter" [openDelay]="2000" ngbDropdown>
     <button class="btn btn-primary dropdown-toggle" ngbDropdownToggle>
-        <i class="fa fa-2x fa-cloud-download fa-fw"></i>
+      <fa-icon [icon]="faCloudDownloadAlt"></fa-icon>
     </button>
 
     <ul class="uib-dropdown-menu dropdown-menu-right" ngbDropdownMenu>
         <li>
-            <a (click)="downloadAsJSON()" target="_blank">as JSON (Internal MoNA Format)</a>
-            <a (click)="downloadAsMSP()" target="_blank">as MSP (NIST-compatible)</a>
+            <button ngbDropdownItem (click)="downloadAsJSON()">as JSON (Internal MoNA Format)</button>
+            <button ngbDropdownItem (click)="downloadAsMSP()">as MSP (NIST-compatible)</button>
         </li>
     </ul>
 </div>

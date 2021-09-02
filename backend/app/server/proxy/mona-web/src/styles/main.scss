@@ -217,6 +217,9 @@ canvas.ChemDoodleWebComponent {
   border: none;
 }
 
+#carousel-override .carousel-indicators > li {
+  background-color: #000000;
+}
 
 /**
  *
@@ -417,7 +420,6 @@ input[readonly] {
   height:30px
 }
 
-
 /**
  * Dropdown for input group
  */
@@ -428,17 +430,6 @@ input[readonly] {
   padding-top: 7px;
   padding-bottom: 7px;
 }
-
-
-/**
- * Bootstrap multiselect dropdown with scrollbar
- */
-.dropdown-menu {
-  max-height: 500px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
 
 /**
  * Carousel

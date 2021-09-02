@@ -1,6 +1,6 @@
-<h3><i class="fa fa-search"></i> Search</h3>
+<h3><fa-icon [icon]="faSearch"></fa-icon> Search</h3>
 
-<form>
+<form (ngSubmit)="submitQuery()">
     <div class="row">
         <div class="col-md-6">
             <div class="table-responsive">
@@ -8,44 +8,48 @@
                     <thead>
                     <tr>
                         <th>Compound</th>
-                        <th>{{sourceIntroduction[0].name}}</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ngModel="query.name"
+                            <input type="text" [(ngModel)]="query.name"
+                                   name="queryName"
                                    class="form-control"
                                    placeholder="Name or InChIKey">
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ngModel="query.classification"
+                            <input type="text" [(ngModel)]="query.classification"
+                                   name="queryClassification"
                                    class="form-control"
                                    placeholder="Compound Class"/>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input type="text" ngModel="query.formula"
+                            <input type="text" [(ngModel)]="query.formula"
+                                   name="queryFormula"
                                    class="form-control"
                                    placeholder="Molecular Formula">
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="number" ngModel="query.exactMass"
+                            <input type="number" [(ngModel)]="query.exactMass"
+                                   name="queryExactMass"
                                    class="form-control"
                                    placeholder="Exact Mass">
                         </td>
                         <td>
                             <div class="input-group">
-                                <div class="input-group-addon">&#177;</div>
-                                <input type="number" ngModel="query.exactMassTolerance"
+                              <div class="input-group-prepend"><span class="input-group-text">&#177;</span></div>
+                                <input type="number" [(ngModel)]="query.exactMassTolerance"
+                                       name="queryMassTolerance"
                                        class="form-control"
                                        value="0.5">
-                                <div class="input-group-addon">Da</div>
+                                <div class="input-group-prepend"><span class="input-group-text">Da</span></div>
                             </div>
                         </td>
                     </tr>
@@ -65,7 +69,7 @@
                             <tbody>
                             <tr>
                                 <td *ngFor="let x of ionMode">
-                                    <input type="checkbox" ngModel="x.selected"> {{x.name}}
+                                    <input type="checkbox" name="ionSelected" [(ngModel)]="x.selected"> {{x.name}}
                                 </td>
                             </tr>
                             </tbody>
@@ -89,7 +93,7 @@
                             <tr>
                                 <td>
                                      <span *ngFor="let x of sourceIntroduction">
-                                         <input type="checkbox" ngModel="x.selected"> {{x.name}} ({{x.abv}})
+                                         <input type="checkbox" name="sourceIntro" [(ngModel)]="x.selected"> {{x.name}} ({{x.abv}})
                                          <br/>
                                      </span>
                                 </td>
@@ -113,7 +117,7 @@
                             <tbody>
                             <tr>
                                 <td *ngFor="let x of msType">
-                                    <input type="checkbox" ng-model="x.selected"> {{x.name}}
+                                    <input type="checkbox" name="msSelected" [(ngModel)]="x.selected"> {{x.name}}
                                 </td>
                             </tr>
                             </tbody>
@@ -136,7 +140,7 @@
                             <tr>
                                 <td>
                                     <span *ngFor="let x of libraryTags">
-                                        <input type="checkbox" ngModel="x.selected" label> {{x.text}}
+                                        <input type="checkbox" name="libraryTag" [(ngModel)]="x.selected" label> {{x.text}}
                                         <br />
                                     </span>
                                 </td>
@@ -156,8 +160,7 @@
                     <ng-template ngbPanelHeader>
                         <div>Add Additional Tags to Query</div>
                     </ng-template>
-
-                    <div tag-display tags="queryTags"></div>
+                  <tag-display [tags]="queryTags"></tag-display>
                 </ngb-panel>
             </ngb-accordion>
         </div>
@@ -167,7 +170,7 @@
         <div class="col-md-6">
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <button type="submit" (click)="submitQuery()" class="btn btn-primary">Search</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
                 </div>
                 <div class="col-sm-2">
                     <button type="reset" class="btn btn-secondary">Reset</button>

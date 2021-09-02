@@ -17,9 +17,9 @@
             <br />
 
             <p style="text-align: center">
-                <a [routerLink]="['/spectra/search']" class="btn btn-info btn-lg"><i class="fa fa-search"></i> Search Spectra</a>
-                <a [routerLink]="['/spectra/browse']" class="btn btn-info btn-lg"><i class="fa fa-bar-chart"></i> Browse Spectra</a>
-                <a href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona" class="btn btn-warning btn-lg"><i class="fa fa-exclamation-triangle"></i> Issue Tracker</a>
+                <a [routerLink]="['/spectra/search']" class="btn btn-info btn-lg mr-1"><fa-icon [icon]="faSearch"></fa-icon> Search Spectra</a>
+              <a [routerLink]="['/spectra/browse']" class="btn btn-info btn-lg mr-1 ml-1"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</a>
+              <a href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona" class="btn btn-warning btn-lg ml-1"><fa-icon [icon]="faExclamationTriangle"></fa-icon> Issue Tracker</a>
             </p>
         </div>
     </div>
@@ -56,7 +56,7 @@
                 <span class="news-title"><h4>MSP Exports Updated</h4></span>
                 <div class="news-date">August 31, 2017</div>
                 <div class="content">
-                    The MSP exports on the <a href="downloads">downloads</a> page have been
+                    The MSP exports on the <a [routerLink]="['/downloads']">downloads</a> page have been
                     restructured to include as much metadata as possible while remaining fully compliant with
                     NIST MS Search format, and is now compatible with
                     <a href="http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/index.html">MS-DIAL v2.70</a>.
@@ -89,14 +89,15 @@
             <h3>Top Rated Spectral Records</h3>
             <br />
 
-            <ngb-carousel interval="7000">
+            <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="true">
                 <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
-                    <display-spectra-panel class="text-left" spectrum="spectrum"></display-spectra-panel>
+                    <div class="picsum-img-wrapper">
+                      <display-spectra-panel class="text-left" [spectrum]="spectrum"></display-spectra-panel>
+                    </div>
                 </ng-template>
-
                 <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
                     <div class="text-center">
-                        <h4 class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading Showcase Spectra...</h4>
+                      <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Showcase Spectra...</h4>
                     </div>
                 </ng-template>
             </ngb-carousel>

@@ -2,10 +2,11 @@
  * Created by wohlgemuth on 10/16/14.
  */
 
-import {NGXLogger} from "ngx-logger";
-import {ErrorHandleComponent} from "./error-handle.component";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {Component, Input, OnInit} from "@angular/core";
+import {NGXLogger} from 'ngx-logger';
+import {ErrorHandleComponent} from './error-handle.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Component, Input, OnInit} from '@angular/core';
+import {faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'display-compound-info',
@@ -18,12 +19,13 @@ export class DisplayCompoundComponent implements  OnInit{
     public classifications;
     public showClassyFireInfo;
     public metaData: any;
+    faCloudDownloadAlt = faCloudDownloadAlt;
 
     constructor(public modalService: NgbModal,  public logger: NGXLogger){}
 
-    ngOnInit() {
+    ngOnInit(): void {
       console.log(this.compound);
-      //calculate some unique id for the compound picture
+      // calculate some unique id for the compound picture
       this.pictureId = Math.floor(Math.random() * 100000);
       this.chemId = Math.floor(Math.random() * 100000);
       this.showClassyFireInfo = true;
@@ -35,7 +37,7 @@ export class DisplayCompoundComponent implements  OnInit{
         // Get high order classifications
         let classes = ['kingdom', 'superclass', 'class', 'subclass']
           .map((value) => {
-            let filteredData = this.compound.classification.filter((x) => {
+            const filteredData = this.compound.classification.filter((x) => {
               return x.name === value;
             });
             return filteredData.length > 0 ? filteredData[0] : null;
@@ -44,7 +46,7 @@ export class DisplayCompoundComponent implements  OnInit{
           });
 
         // Get intermediate classifications
-        let intermediate_parents = this.compound.classification
+        const intermediateParents = this.compound.classification
           .filter((x) => {
             return x.name.indexOf('direct parent level') === 0;
           })
@@ -53,10 +55,10 @@ export class DisplayCompoundComponent implements  OnInit{
             return x;
           });
 
-        classes = classes.concat(intermediate_parents);
+        classes = classes.concat(intermediateParents);
 
         // Get parent classes
-        let direct_parent = this.compound.classification.filter((x) => {
+        const directParent = this.compound.classification.filter((x) => {
           return x.name === 'direct parent';
         });
 
@@ -64,7 +66,7 @@ export class DisplayCompoundComponent implements  OnInit{
         if (classes.length > 0) {
           for (let i = classes.length - 1; i >= 0; i--) {
             if (i === classes.length - 1) {
-              classes[i].nodes = direct_parent;
+              classes[i].nodes = directParent;
             } else {
               classes[i].nodes = [classes[i + 1]];
             }
@@ -78,13 +80,13 @@ export class DisplayCompoundComponent implements  OnInit{
 
     /**
      * Emulate the downloading of a file given its contents and name
-     * @param data
-     * @param filetype
-     * @param mimetype
+     * @param data object
+     * @param filetype string
+     * @param mimetype string
      */
     downloadData = (data, filetype, mimetype) => {
         // Identify and sanitize filename
-        let inchikeys = this.compound.metaData.filter((x) => {
+        const inchikeys = this.compound.metaData.filter((x) => {
             return x.name === 'InChIKey';
         });
 
@@ -94,16 +96,16 @@ export class DisplayCompoundComponent implements  OnInit{
         filename = filename.replace(/[^a-z0-9\-]/gi, '_');
 
         // Emulate download
-        let hiddenElement = document.createElement('a');
+        const hiddenElement = document.createElement('a');
 
-        hiddenElement.href = 'data:'+ mimetype +',' + encodeURI(data);
+        hiddenElement.href = 'data:' + mimetype + ',' + encodeURI(data);
         hiddenElement.target = '_blank';
-        hiddenElement.download = filename +'.'+ filetype;
+        hiddenElement.download = filename + '.' + filetype;
 
         document.body.appendChild(hiddenElement);
         hiddenElement.click();
         document.body.removeChild(hiddenElement);
-    };
+    }
 
     downloadAsMOL = () => {
         let modalRef;
@@ -112,9 +114,9 @@ export class DisplayCompoundComponent implements  OnInit{
         } else {
             modalRef = this.modalService.open(ErrorHandleComponent);
         }
-    };
+    }
 
     downloadAsJSON = () => {
         this.downloadData(JSON.stringify(this.compound), 'json', 'application/json');
-    };
+    }
 }

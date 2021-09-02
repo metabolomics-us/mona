@@ -1,23 +1,21 @@
-<li class="dropdown" ngbDropdown>
+<li class="dropdown navbar-top-links mr-4" ngbDropdown>
     <a role="button" class="dropdown-toggle" ngbDropdownToggle>
-        <i class="fa fa-bar-chart"></i> Spectra <i class="fa fa-caret-down"></i>
+      <fa-icon [icon]="faChartBar"></fa-icon> Spectra <fa-icon [icon]="faCaretDown"></fa-icon>
     </a>
 
-    <ul class="uib-dropdown-menu" ngbDropdownMenu>
-        <li><a [routerLink]="['/spectra/search']">Search Spectra</a></li>
-        <li><a (click)="resetQuery()"  [routerLink]="['/spectra/browse']">Browse Spectra</a></li>
-        <li><a [routerLink]="['/spectra/statistics']">Database Index &amp; Statistics</a></li>
-        <li class="divider"></li>
+    <ul class="dropdown-menu" ngbDropdownMenu>
+        <li><a ngbDropdownItem [routerLink]="['/spectra/search']">Search Spectra</a></li>
+        <li><a ngbDropdownItem (click)="resetQuery()"  [routerLink]="['/spectra/browse']">Browse Spectra</a></li>
+        <li><a ngbDropdownItem [routerLink]="['/spectra/statistics']">Database Index &amp; Statistics</a></li>
+        <div class="dropdown-divider"></div>
         <li>
-            <a [routerLink]="['/upload/status']">
-                <div>
+            <a ngbDropdownItem [routerLink]="['/upload/status']">
                     <p>
                         <strong>Upload Progress</strong>
                         <span class="pull-right text muted">&nbsp;</span>
                     </p>
 
                     <spectra-upload-progress-bar></spectra-upload-progress-bar>
-                </div>
             </a>
         </li>
     </ul>

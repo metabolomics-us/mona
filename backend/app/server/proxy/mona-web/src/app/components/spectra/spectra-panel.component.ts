@@ -1,22 +1,25 @@
 /**
  * Created by wohlgemuth on 10/16/14.
  */
-import {Component, Input, OnInit} from "@angular/core";
-import {SpectrumCacheService} from "../../services/cache/spectrum-cache.service";
+import {Component, Input, OnInit} from '@angular/core';
+import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
+import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'display-spectra-panel',
     templateUrl: '../../views/spectra/display/panel.html'
 })
+
 export class SpectraPanelComponent implements OnInit{
     @Input() public spectrum;
     public IMPORTANT_METADATA;
     public importantMetadata;
     public secondaryMetadata;
+    faExternalLinkAlt = faExternalLinkAlt;
 
     constructor( public spectrumCache: SpectrumCacheService) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         // Top 10 important metadata fields
         this.IMPORTANT_METADATA = [
             'ms level', 'precursor type', 'precursor m/z', 'instrument', 'instrument type',
@@ -25,6 +28,10 @@ export class SpectraPanelComponent implements OnInit{
 
         this.importantMetadata = [];
         this.secondaryMetadata = [];
+
+        if (typeof this.spectrum.score === 'undefined' || this.spectrum.score === null) {
+          this.spectrum.score.score = 0;
+        }
 
         this.spectrum.metaData.forEach((metaData, index) => {
             metaData.value = this.truncateDecimal(metaData.value, 4);
@@ -37,14 +44,14 @@ export class SpectraPanelComponent implements OnInit{
         });
 
         this.importantMetadata = this.importantMetadata.sort((a, b) =>  {
-            if(this.IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) < this.IMPORTANT_METADATA.indexOf(a.name.toLowerCase())){
-                return -1
+            if (this.IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) < this.IMPORTANT_METADATA.indexOf(a.name.toLowerCase())){
+                return -1;
             }
-            if(this.IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) > this.IMPORTANT_METADATA.indexOf(a.name.toLowerCase())){
-                return 1
+            if (this.IMPORTANT_METADATA.indexOf(b.name.toLowerCase()) > this.IMPORTANT_METADATA.indexOf(a.name.toLowerCase())){
+                return 1;
             }
             else{
-                return 0
+                return 0;
             }
         });
 
@@ -53,14 +60,14 @@ export class SpectraPanelComponent implements OnInit{
 
     truncateDecimal = (s, length) => {
         return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
-    };
+    }
 
     /**
      * displays the spectrum for the given index
      */
-    viewSpectrum() {
+    viewSpectrum(): string {
         this.spectrumCache.setSpectrum(this.spectrum);
         return '/spectra/display/' + this.spectrum.id;
-    };
+    }
 
 }

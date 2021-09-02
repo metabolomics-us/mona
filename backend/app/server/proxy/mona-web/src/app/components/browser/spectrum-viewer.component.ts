@@ -5,20 +5,20 @@
  * @param massSpec
  * @constructor
  */
-import {Location} from "@angular/common";
-import {CookieMain} from "../../services/cookie/cookie-main.service";
-import {Spectrum} from "../../services/persistence/spectrum.resource";
-import {AuthenticationService} from "../../services/authentication.service";
-import {NGXLogger} from "ngx-logger";
-import {Component, Input, OnInit} from "@angular/core";
-import {first, map} from "rxjs/operators";
-import {SpectrumCacheService} from "../../services/cache/spectrum-cache.service";
-import {OrderbyPipe} from "../../filters/orderby.pipe";
-import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {BehaviorSubject} from "rxjs";
-import {faAngleRight, faAngleDown} from "@fortawesome/free-solid-svg-icons";
-import {faQuestionCircle, faFlask} from "@fortawesome/free-solid-svg-icons";
-import {faSpinner} from "@fortawesome/free-solid-svg-icons";
+import {Location} from '@angular/common';
+import {CookieMain} from '../../services/cookie/cookie-main.service';
+import {Spectrum} from '../../services/persistence/spectrum.resource';
+import {AuthenticationService} from '../../services/authentication.service';
+import {NGXLogger} from 'ngx-logger';
+import {Component, OnInit} from '@angular/core';
+import {first} from 'rxjs/operators';
+import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
+import {OrderbyPipe} from '../../filters/orderby.pipe';
+import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject} from 'rxjs';
+import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
+import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner, faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'spectrum-viewer',
@@ -30,8 +30,7 @@ export class SpectrumViewerComponent implements OnInit{
     public score;
     public massSpec;
     public accordionStatus;
-    ionTableSort;
-    ionTableSortReverse;
+    public ionTableSort;
     public loadingSimilarSpectra;
     public similarSpectra;
     public massRegex;
@@ -48,6 +47,7 @@ export class SpectrumViewerComponent implements OnInit{
     faQuestionCircle = faQuestionCircle;
     faFlask = faFlask;
     faSpinner = faSpinner;
+    faCloudDownloadAlt = faCloudDownloadAlt;
 
     constructor( public logger: NGXLogger,  public cookie: CookieMain,
                  public spectrumService: Spectrum,  public authenticationService: AuthenticationService,
@@ -56,7 +56,7 @@ export class SpectrumViewerComponent implements OnInit{
 
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
       this.delayedspectrum = this.route.snapshot.data.spectrum;
       console.log(this.route.snapshot.data);
       console.log(this.delayedspectrum);
@@ -70,11 +70,10 @@ export class SpectrumViewerComponent implements OnInit{
        * Sort order for the ion table - default m/z ascending
        */
       this.ionTableSort = '-ion';
-      this.ionTableSortReverse = false;
 
       /**
        * quality score of our spectrum
-       * @type {number}
+       * number
        */
       this.score = 0;
 
@@ -108,10 +107,10 @@ export class SpectrumViewerComponent implements OnInit{
       console.log(this.spectrum);
     }
 
-    setAccordionStatus() {
+    setAccordionStatus = () => {
       /**
        * status of our accordion
-       * @type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
+       * type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
        */
 
       this.accordionStatusSubject = new BehaviorSubject<object>(this.accordionStatus);
@@ -119,16 +118,16 @@ export class SpectrumViewerComponent implements OnInit{
        * watch the accordion status and updates related cookies
        */
       this.accordionStatusSubject.subscribe(() => {
-        for (let key in this.accordionStatus) {
+        for (const key in this.accordionStatus) {
           if (key === 'isCompoundOpen') {
             console.log(this.spectrum);
             for (let i = 0; i < this.spectrum.compound.length; i++) {
-              console.log(this.accordionStatus[key][i])
+              console.log(this.accordionStatus[key][i]);
               this.cookie.update('DisplayCompound' + i, this.accordionStatus[key][i]);
             }
           } else {
             console.log(this.accordionStatus[key]);
-            this.cookie.update("DisplaySpectra" + key, this.accordionStatus[key]);
+            this.cookie.update('DisplaySpectra' + key, this.accordionStatus[key]);
           }
         }
       });
@@ -138,9 +137,9 @@ export class SpectrumViewerComponent implements OnInit{
       // truncate metadata
       if (typeof this.delayedspectrum.metaData !== 'undefined') {
         for (let i = 0; i < this.delayedspectrum.metaData.length; i++) {
-          let curMeta = this.delayedspectrum.metaData[i];
+          const curMeta = this.delayedspectrum.metaData[i];
 
-          let name = curMeta.name.toLowerCase();
+          const name = curMeta.name.toLowerCase();
 
           if (name.indexOf('mass accuracy') > -1) {
             curMeta.value = this.truncateDecimal(curMeta.value, 1);
@@ -155,10 +154,10 @@ export class SpectrumViewerComponent implements OnInit{
       // truncate compounds
       if (typeof this.delayedspectrum.compound !== 'undefined') {
         for (let i = 0; i < this.delayedspectrum.compound.length; i++) {
-          let compoundMeta = this.delayedspectrum.compound[i].metaData;
+          const compoundMeta = this.delayedspectrum.compound[i].metaData;
           for (let j = 0, m = compoundMeta.length; j < m; j++) {
-            let metadata = compoundMeta[j];
-            let name = metadata.name.toLowerCase();
+            const metadata = compoundMeta[j];
+            const name = metadata.name.toLowerCase();
 
             if (name.indexOf('mass') > -1 || name.indexOf('m/z') > -1) {
               metadata.value = this.truncateMass(metadata.value);
@@ -173,9 +172,9 @@ export class SpectrumViewerComponent implements OnInit{
 
 
       // Parse spectrum string to generate ion list
-      let match;
+      let match = this.ionRegex.exec(this.delayedspectrum.spectrum);
 
-      while ((match = this.ionRegex.exec(this.delayedspectrum.spectrum)) !== null) {
+      while (match !== null) {
         // Find annotation
         let annotation = '';
         let computed = false;
@@ -190,23 +189,25 @@ export class SpectrumViewerComponent implements OnInit{
         }
         /**
          * Mass spectrum obtained from cache if it exists, otherwise from REST api
-         * */
+         */
         this.spectrum = this.delayedspectrum;
 
         // Truncate decimal values of m/z
         match[1] = this.truncateMass(match[1]);
 
         // Store ion
-        let intensity = parseFloat(match[2]);
+        const intensity = parseFloat(match[2]);
 
         if (intensity > 0) {
           this.massSpec.push({
             ion: parseFloat(match[1]),
-            intensity: intensity,
-            annotation: annotation,
-            computed: computed
+            intensity,
+            annotation,
+            computed
           });
         }
+
+        match = this.ionRegex.exec(this.delayedspectrum.spectrum);
       }
 
       if (typeof this.spectrum.compound !== 'undefined') {
@@ -216,48 +217,48 @@ export class SpectrumViewerComponent implements OnInit{
       }
     }
 
-    sortIonTable(column) {
+    sortIonTable = (column) => {
         if (column === 'ion') {
-            if (this.ionTableSort === '+ion') this.ionTableSort = '-ion'; else this.ionTableSort = '+ion';
+            if (this.ionTableSort === '+ion') { this.ionTableSort = '-ion'; } else { this.ionTableSort = '+ion'; }
         }
         else if (column === 'intensity') {
-            if (this.ionTableSort === '+intensity') this.ionTableSort = '-intensity'; else this.ionTableSort = '+intensity';
+            if (this.ionTableSort === '+intensity') { this.ionTableSort = '-intensity'; } else { this.ionTableSort = '+intensity'; }
         }
         else if (column === 'annotation') {
-          if (this.ionTableSort === '+annotation') this.ionTableSort = '-annotation'; else this.ionTableSort = '+annotation'
+          if (this.ionTableSort === '+annotation') { this.ionTableSort = '-annotation'; } else { this.ionTableSort = '+annotation'; }
         }
-    };
+    }
 
 
 
 
     loadSimilarSpectra = () => {
-        if (!this.loadingSimilarSpectra)
-            return;
+        if (!this.loadingSimilarSpectra) {
+          return;
+        }
 
         this.spectrumService.searchSimilarSpectra({spectrum: this.spectrum.spectrum, minSimilarity: 0.5}).pipe(first()).subscribe(
             (res: any) => {
-                let data = res;
-                this.similarSpectra = data.filter((x) => { return x.id !== this.spectrum.id; });
+                const data = res;
+                this.similarSpectra = data.filter((x) => x.id !== this.spectrum.id);
                 this.loadingSimilarSpectra = false;
             }, (res) => {
                 this.loadingSimilarSpectra = false;
             }
         );
-    };
+    }
 
     /**
      * @Deprecated
      * displays the spectrum for the given index
-     * @param id
-     * @param index
+     * @param id string containing spectrum id
      */
     viewSpectrum = (id) => {
-        this.location.go('/spectra/display/' + id);
-    };
+        this.router.navigate(['/spectra/display'], {queryParams: {id}}).then();
+    }
 
     checkNumber = (check: any) => {
-        if(typeof check === 'number'){
+        if (typeof check === 'number'){
             return true;
         }
         return false;

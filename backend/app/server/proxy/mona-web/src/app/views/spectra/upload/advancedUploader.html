@@ -1,8 +1,6 @@
-<div></div>
-
 <div class="row">
     <div class="col-md-12">
-        <h3><i class="fa fa-cloud-upload"></i> Advanced Uploader</h3>
+        <h3><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Advanced Uploader</h3>
 
         <div class="h5">
             Upload an spectral library file and dynamically modify the mass spectra and metadata
@@ -10,13 +8,13 @@
         <br />
 
         <div *ngIf="!authenticationService.isLoggedIn()" class="alert alert-warning" role="alert">
-            <h4><i class="fa fa-user fa-fw"></i> Please <button class="fakeRef" (click)="authenticationService.requestModal()">log in</button> before uploading spectra!</h4>
+            <h4><fa-icon [icon]="faUser"></fa-icon> Please <button class="fakeRef" (click)="authenticationService.requestModal()">log in</button> before uploading spectra!</h4>
             <h5>You can start using the uploader without an account, but you will not be able to submit your spectra without registering and logging in.</h5>
         </div>
 
         <!-- Message indicating loading in background -->
         <div class="h5 text-center" *ngIf="spectraLoaded === 2 && isLoadingSpectra()">
-            <span class="spinner"><i class="fa fa-refresh fa-spin"></i> Loading additional spectra in background...</span>
+          <span><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading additional spectra in background</span>
         </div>
 
 
@@ -27,7 +25,7 @@
                 <div class="input-group">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                           <!--  Browse&hellip; <input type="file" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)"/> -->
+                           Browse&hellip; <input type="file" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)"/>
                         </span>
                     </span>
 
@@ -42,7 +40,7 @@
         <!-- Loading message -->
         <div *ngIf="spectraLoaded === 1" class="card">
             <div class="card-header"><strong>Loading and parsing data</strong></div>
-            <div class="card-body text-center"><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Uploading and parsing file...</span></div>
+            <div class="card-body text-center"><span><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Uploading and parsing file...</span></div>
         </div>
 
 
@@ -59,7 +57,9 @@
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                         <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                            <li class="nav-item"><button class="fakeRef" (click)="previousSpectrum()">Previous</button></li>
+                            <li class="nav-item">
+                              <button class="fakeRef" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button>
+                            </li>
                         </ul>
                     </div>
                     <div class="mx-auto order-0">
@@ -69,7 +69,7 @@
                     </div>
                    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                        <ul class="navbar-nav ml-auto">
-                           <li class="nav-item"><button class="fakeRef" (click)="nextSpectrum()">Next</button></li>
+                           <li class="nav-item"><button class="fakeRef" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon></button></li>
                        </ul>
                    </div>
                 </nav>
@@ -78,7 +78,7 @@
             <div class="card-body">
                 <ng-container *ngIf="currentSpectrum.errors">
                     <div class="alert alert-danger" role="alert" *ngIf="currentSpectrum.errors.length">
-                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                      <fa-icon [icon]="faExclamationTriangle"></fa-icon>
                         <span class="sr-only">Error:</span>
                         The following issues have been found in this spectrum:
                         <ul>
@@ -87,7 +87,7 @@
                     </div>
                 </ng-container>
 
-                <div class="masspec-modal" style="width: 100%; height: 100%">
+                <div class="masspec-modal">
                     <lib-ng-mass-spec-plotter [spectrum]="currentSpectrum.ions" id="masspec"></lib-ng-mass-spec-plotter>
                 </div>
                 <br />
@@ -161,18 +161,14 @@
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <div class="input-group">
-                                                <span class="input-group-btn">
-                                                    <span class="btn btn-primary btn-file">
-                                                       <!-- Browse&hellip; <input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseFiles($event)"/> -->
+                                                  <div class="input-group">
+                                                    <span class="input-group-btn">
+                                                        <span class="btn btn-primary btn-file">
+                                                           Browse <fa-icon [icon]="faFolderOpen"></fa-icon><input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseFiles($event)"/>
+                                                        </span>
                                                     </span>
-                                                </span>
-
-                                                        <input id="molFile" type="text" class="form-control" [(ngModel)]="filenames" ngDefaultControl readonly />
-                                                    </div>
-                                                    <div class="input-group">
-
-                                                    </div>
+                                                    <input id="molFile" type="text" class="form-control" [(ngModel)]="filenames" ngDefaultControl readonly />
+                                                  </div>
                                                 </div>
 
                                                 <span class="help-block">Import a MOL or SDF file.  Note that if you upload an SDF
@@ -182,7 +178,6 @@
                                                     <button (click)="convertMolToInChI()" class="btn btn-primary" ngDefaultControl>Convert to InChI Code and InChIKey</button>
                                                 </div>
                                             </ng-template>
-
                                         </ngb-panel>
 
                                         <ngb-panel>
@@ -226,20 +221,20 @@
                                         <input type="text"
                                                [(ngModel)]="meta.value"
                                                ngDefaultControl
-                                               [disabled]="!meta.name || meta.name == ''"
+                                               [disabled]="!meta.name || meta.name === ''"
                                                placeholder="Metadata Value"
                                                class="form-control" />
                                     </div>
                                     <div class="col-sm-2 form-group">
                                         <button (click)="removeMetadataField(i)" class="btn btn-default"
-                                                ngbTooltip="Remove this metadata field" ngDefaultControl><i class="fa fa-minus-square"></i></button>
+                                                ngbTooltip="Remove this metadata field" ngDefaultControl><fa-icon [icon]="faMinusSquare"></fa-icon></button>
                                         <button (click)="applyMetadataToAll(i)" class="btn btn-default"
-                                                ngbTooltip="Copy this metadata value to all spectra" ngDefaultControl><i class="fa fa-files-o"></i></button>
+                                                ngbTooltip="Copy this metadata value to all spectra" ngDefaultControl><fa-icon [icon]="faSave"></fa-icon></button>
                                     </div>
                                 </div>
 
                                 <div class="col-sm-12">
-                                    <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()"  ngDefaultControl ngbTooltip="Add a new metadata field">&#43;</button>
+                                  <button type="button" class="btn btn-default btn-xs" (click)="addMetadataField()"  ngDefaultControl ngbTooltip="Add a new metadata field"><fa-icon [icon]="faPlusSquare"></fa-icon></button>
                                 </div>
                             </div>
                         </ng-template>
@@ -253,6 +248,8 @@
                                 Tags provide an easy way to find and label spectra.
                             </p>
                             <tag-input [(ngModel)]="currentSpectrum.tags"
+                                       [identifyBy]="'text'"
+                                       [displayBy]="'text'"
                                        ngDefaultControl
                                         [minlength]="3"
                                         [trimTags]="false">
@@ -261,7 +258,7 @@
                             <br />
 
                             <div class="text-center">
-                                <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-default btn-sm"><i class="fa fa-files-o"></i> Apply these tags to all spectra</button>
+                              <button (click)="applyTagsToAll()"  ngDefaultControl class="btn btn-default btn-sm"><fa-icon [icon]="faSave"></fa-icon> Apply these tags to all spectra</button>
                             </div>
                         </ng-template>
                     </li>
@@ -313,9 +310,9 @@
                                 </div>
 
                                 <div class="text-center">
-                                    <button class="btn btn-warning" (click)="resetIonCuts()">Reset Spectrum</button>
-                                    <button class="btn btn-primary" (click)="performIonCuts(undefined)">Trim Spectrum</button>
-                                    <button class="btn btn-primary" (click)="performAllIonCuts()">Trim <strong>All</strong> Spectra</button>
+                                    <button class="btn btn-warning mr-1" (click)="resetIonCuts()">Reset Spectrum</button>
+                                    <button class="btn btn-primary mr-1 ml-1" (click)="performIonCuts(undefined)">Trim Spectrum</button>
+                                    <button class="btn btn-primary ml-1" (click)="performAllIonCuts()">Trim <strong>All</strong> Spectra</button>
                                 </div>
                             </div>
                         </ng-template>
@@ -335,8 +332,8 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr *ngFor="let ion of currentSpectrum.ions">
-                                        <td><input type="checkbox" ng-model="ion.selected" /></td>
+                                    <tr *ngFor="let ion of currentSpectrum.ions|orderBy: ionTableSort">
+                                        <td><input type="checkbox" [(ngModel)]="ion.selected" /></td>
                                         <td>{{ion.ion | number : '1.0-4'}}</td>
                                         <td>{{ion.intensity | number : '1.0-4'}}</td>
                                         <td>
@@ -373,7 +370,7 @@
                 <nav class="navbar navbar-expand-md" style="width: 100%;">
                     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                         <ul class="navbar-nav mr-auto" style="margin: 0px !important;">
-                            <li class="nav-item"><button class="fakeRef" (click)="previousSpectrum()">Previous</button></li>
+                            <li class="nav-item"><button class="fakeRef" (click)="previousSpectrum()"><fa-icon [icon]="faArrowLeft"></fa-icon> Previous</button></li>
                         </ul>
                     </div>
                     <div class="mx-auto order-0">
@@ -383,17 +380,16 @@
                     </div>
                     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                         <ul class="navbar-nav ml-auto">
-                            <li class="nav-item"><button class="fakeRef" (click)="nextSpectrum()">Next</button></li>
+                            <li class="nav-item"><button class="fakeRef" (click)="nextSpectrum()">Next <fa-icon [icon]="faArrowRight"></fa-icon> </button></li>
                         </ul>
                     </div>
                 </nav>
                 <hr />
                 <div class="text-center">
-                    <button class="btn btn-warning" (click)="resetFile()">Restart</button>
-                    <button class="btn btn-primary" (click)="exportFile()">Export as MSP</button>
-
-                    <button *ngIf="!authenticationService.isLoggedIn()" class="btn btn-primary" (click)="waitForLogin(); authenticationService.requestModal()">Login to Upload to MoNA</button>
-                    <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary" (click)="uploadFile()">Upload to MoNA</button>
+                    <button class="btn btn-warning mr-1" (click)="resetFile()">Restart</button>
+                    <button class="btn btn-primary ml-1 mr-1" (click)="exportFile()">Export as MSP</button>
+                    <button *ngIf="!authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="waitForLogin(); authenticationService.requestModal()">Login to Upload to MoNA <fa-icon [icon]="faSignInAlt"></fa-icon></button>
+                    <button *ngIf="authenticationService.isLoggedIn()" class="btn btn-primary ml-1" (click)="uploadFile()">Upload to MoNA <fa-icon [icon]="faCloudUploadAlt"></fa-icon></button>
                 </div>
             </div>
         </div>

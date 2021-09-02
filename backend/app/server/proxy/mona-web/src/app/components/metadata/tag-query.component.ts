@@ -2,9 +2,10 @@
  * Executes a tag query
  */
 
-import {SpectraQueryBuilderService} from "../../services/query/spectra-query-builder.service";
-import {Input} from "@angular/core";
-import {Component} from "@angular/core";
+import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
+import {Input} from '@angular/core';
+import {Component} from '@angular/core';
+import {faFlask, faCaretRight} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'tag-query',
@@ -14,6 +15,8 @@ export class TagQueryComponent {
     @Input() public ruleBased;
     @Input() public type;
     @Input() public tag;
+    faFlask = faFlask;
+    faCaretRight = faCaretRight;
 
     constructor( public spectraQueryBuilderService: SpectraQueryBuilderService) {}
 
@@ -23,19 +26,19 @@ export class TagQueryComponent {
     newQuery = () => {
         this.spectraQueryBuilderService.prepareQuery();
         this.addToQuery();
-    };
+    }
 
     /**
      * Add selected tag value to the current query
      */
     addToQuery = () => {
-        if (typeof this.type !== 'undefined' && this.type == 'compound') {
+        if (typeof this.type !== 'undefined' && this.type === 'compound') {
             this.spectraQueryBuilderService.addCompoundTagToQuery(this.tag.text, undefined);
         } else {
             this.spectraQueryBuilderService.addTagToQuery(this.tag.text, undefined);
         }
 
         this.spectraQueryBuilderService.executeQuery();
-    };
+    }
 
 }

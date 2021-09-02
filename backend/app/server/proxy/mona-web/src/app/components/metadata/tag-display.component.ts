@@ -1,9 +1,9 @@
 /**
  * a directive to display our tags and keep track of selections/deselections
  */
-import {TagService} from "../../services/persistence/tag.resource";
-import {NGXLogger} from "ngx-logger";
-import {Component, Input} from "@angular/core";
+import {TagService} from '../../services/persistence/tag.resource';
+import {NGXLogger} from 'ngx-logger';
+import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'tag-display',
@@ -21,30 +21,32 @@ export class TagDisplayComponent {
             if (typeof this.tags === 'undefined') {
                 this.tags = [];
 
-                this.tagService.query().then(
+                this.tagService.query().subscribe(
                     (data: any) => {
                         this.tags = data;
 
                         for (let i = 0; i < data.length; i++) {
-                            if (data[i].count > this.maxTagsCount)
-                                this.maxTagsCount = data[i].count;
+                            if (data[i].count > this.maxTagsCount) {
+                              this.maxTagsCount = data[i].count;
+                            }
                         }
                     },
                     (error) => {
-                        this.logger.error('Tag pull failed: '+ error);
+                        this.logger.error('Tag pull failed: ' + error);
                     }
                 );
             } else {
                 for (let i = 0; i < this.tags.length; i++) {
-                    if (this.tags[i].count > this.maxTagsCount)
+                    if (this.tags[i].count > this.maxTagsCount) {
                         this.maxTagsCount = this.tags[i].count;
+                    }
                 }
             }
         });
     }
 
     tagClass = (tag) => {
-        let tagClass = [];
+        const tagClass = [];
 
         // Button color based on selection
         if (tag.selected === '+') {
@@ -67,6 +69,6 @@ export class TagDisplayComponent {
         }
 
         return tagClass;
-    };
+    }
 
 }
