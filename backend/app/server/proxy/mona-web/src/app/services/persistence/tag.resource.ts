@@ -13,7 +13,7 @@ export class TagService {
     constructor(public http: HttpClient) {
     }
 
-    query = (): Observable<any> => {
+    query(): Observable<any> {
         return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/tags/library`);
     }
 }

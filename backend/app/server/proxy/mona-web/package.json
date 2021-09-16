@@ -1,6 +1,7 @@
 {
   "name": "mona-web",
-  "version": "0.0.0",
+  "author": "Nolan Guzman: nolanguzman97@gmail.com",
+  "version": "1.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -23,6 +24,7 @@
     "@fortawesome/angular-fontawesome": "^0.7.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@ng-bootstrap/ng-bootstrap": "^8.0.4",
     "@wcmc/ng-chemdoodle": "^0.1.1",
     "@wcmc/ng-mass-spec-plotter": "^0.3.1",

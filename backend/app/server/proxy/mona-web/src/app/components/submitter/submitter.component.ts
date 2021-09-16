@@ -1,13 +1,15 @@
 /**
  * Created by Gert on 5/28/2014.
+ * Updated by nolanguzman on 10/31/2021
  */
 
-import {Submitter} from "../../services/persistence/submitter.resource";
-import {AuthenticationService} from "../../services/authentication.service";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {Component, OnInit} from "@angular/core";
-import {first} from "rxjs/operators";
-import {SubmitterModalComponent} from "./submitter-modal.component";
+import {Submitter} from '../../services/persistence/submitter.resource';
+import {AuthenticationService} from '../../services/authentication.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Component, OnInit} from '@angular/core';
+import {first} from 'rxjs/operators';
+import {SubmitterModalComponent} from './submitter-modal.component';
+import {faEdit, faMinusSquare, faUser} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'submitter',
@@ -16,6 +18,9 @@ import {SubmitterModalComponent} from "./submitter-modal.component";
 export class SubmitterComponent implements OnInit{
     public submitters;
     public listSubmitter;
+    faEdit = faEdit;
+    faMinusSquare = faMinusSquare;
+    faUser = faUser;
 
     constructor( public submitter: Submitter,  public modal: NgbModal,
                  public auth: AuthenticationService){}
@@ -23,7 +28,7 @@ export class SubmitterComponent implements OnInit{
     ngOnInit() {
         /**
          * contains all local objects
-         * @type {Array}
+         * @Array objects with submitter info
          */
         this.submitters = [];
 
@@ -35,58 +40,59 @@ export class SubmitterComponent implements OnInit{
 
     /**
      * deletes our submitter from the system
-     * @param submitterId
+     * @param submitterId unique ID of submitter to delete
      */
-    remove = (index) => {
-        let submitterToRemove = this.submitters[index];
+    remove(index) {
+        const submitterToRemove = this.submitters[index];
+        const token = this.auth.getCurrentUser().accessToken;
 
-        this.submitter.delete({id: submitterToRemove.id}).pipe(first()).subscribe(
-            (data) => {
-                //remove it from the scope and update our table
+        this.submitter.delete({id: submitterToRemove.id}, token).pipe(first()).subscribe(
+            () => {
+                // remove it from the scope and update our table
                 this.submitters.splice(index, 1);
             },
-            (errors) => {
+            () => {
                 alert('Error Has Occurred while removing submitter');
             }
         );
-    };
+    }
 
     /**
      * displays our dialog to create a new submitter
      */
-    displayCreateDialog = () => {
-        let modalInstance = this.modal.open(SubmitterModalComponent);
+    displayCreateDialog() {
+        const modalInstance = this.modal.open(SubmitterModalComponent);
         modalInstance.componentInstance.new = true;
+        modalInstance.componentInstance.submitter = undefined;
 
-        //retrieve the result from the dialog and save it
-        modalInstance.result.then((submitter) => {
-            //push our object to the scope now so that our table can show it
-            this.submitters.push(submitter);
-        })
-    };
+        // refresh the results after finish
+        modalInstance.result.then(() => {
+            this.list();
+        });
+    }
 
     /**
      * displays the edit dialog for the select submitter
-     * @param index
      */
-    displayEditDialog = (index) => {
-        let modalInstance = this.modal.open(SubmitterModalComponent, {
+    displayEditDialog(sub) {
+        const modalInstance = this.modal.open(SubmitterModalComponent, {
             size: 'lg',
             backdrop: 'static',
         });
         modalInstance.componentInstance.new = false;
+        modalInstance.componentInstance.submitter = sub;
 
-        //retrieve the result from the dialog and save it
-        modalInstance.result.then((submitter) => {
-            //need to figure out how to resolve this one
+        // refresh the results after finish
+        modalInstance.result.then(() => {
+          this.list();
         });
-    };
+    }
 
     /**
      * helper function
      */
      list() {
-        this.submitter.get().pipe(first()).subscribe((data) => {
+        this.submitter.get(this.auth.getCurrentUser().accessToken).pipe(first()).subscribe((data) => {
             this.submitters = data;
         }, (error) => {
             alert('failed: ' + error);

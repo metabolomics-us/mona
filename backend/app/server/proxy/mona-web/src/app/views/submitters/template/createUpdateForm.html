@@ -3,11 +3,8 @@
         {{formErrors}}
     </p>
 
-    <div class="form-group"
-         [ngClass]="{ 'has-error' : !firstName.valid && !firstName.pristine}">
-
-        <label for="firstName" class="control-label col-sm-3">First Name:</label>
-
+    <div class="form-group row" [ngClass]="{ 'has-error' : !firstName.valid && !firstName.pristine}">
+        <label for="firstName" class="col-sm-3 col-form-label">First Name:</label>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="firstName" name="firstName"
                    placeholder="Please enter your first name"
@@ -19,11 +16,8 @@
         </div>
     </div>
 
-    <div class="form-group"
-         ng-class="{ 'has-error' : !lastName.valid && !lastName.pristine}">
-
-        <label for="lastName" class="control-label col-sm-3">Last Name:</label>
-
+    <div class="form-group row" [ngClass]="{ 'has-error' : !lastName.valid && !lastName.pristine}">
+        <label for="lastName" class="col-sm-3 col-form-label">Last Name:</label>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="lastName" name="lastName"
                    placeholder="Please enter your last name" [(ngModel)]="registrationService.newSubmitter.lastName"
@@ -34,11 +28,8 @@
         </div>
     </div>
 
-    <div class="form-group"
-         [ngClass]="{ 'has-error' : !institution.valid && !institution.pristine}">
-
-        <label for="institution" class="control-label col-sm-3">Institution:</label>
-
+    <div class="form-group row" [ngClass]="{ 'has-error' : !institution.valid && !institution.pristine}">
+        <label for="institution" class="col-sm-3 col-form-label">Institution:</label>
         <div class="col-sm-9">
             <input type="institution" class="form-control" placeholder="Please enter your institution" id="institution"
                    name="institution" [(ngModel)]="registrationService.newSubmitter.institution"
@@ -49,26 +40,19 @@
         </div>
     </div>
 
-    <div class="form-group"
-         ng-class="{ 'has-error' : !email.valid && !email.pristine}">
-
-        <label for="email" class="control-label col-sm-3">Email Address:</label>
-
+    <div class="form-group row" [ngClass]="{ 'has-error' : !email.valid && !email.pristine}">
+        <label for="email" class="col-sm-3 col-form-label">Email Address:</label>
         <div class="col-sm-9">
             <input type="email" class="form-control" placeholder="Please enter your email address" id="email"
                    name="email" [(ngModel)]="registrationService.newSubmitter.emailAddress"
                    #email = "ngModel" required/>
-
             <p *ngIf="!email.valid && !email.pristine" class="help-block">
                 Please enter a valid email.</p>
         </div>
     </div>
 
-    <div class="form-group"
-         [ngClass]="{ 'has-error' : !password.valid && !password.pristine}">
-
-        <label for="password" class="control-label col-sm-3">Password:</label>
-
+    <div class="form-group row" [ngClass]="{ 'has-error' : !password.valid && !password.pristine}">
+        <label for="password" class="col-sm-3 col-form-label">Password:</label>
         <div class="col-sm-9">
             <input  class="form-control" placeholder="Please enter your password" id="password"
                    name="password" type="password" [(ngModel)]="registrationService.newSubmitter.password"
@@ -79,20 +63,17 @@
         </div>
     </div>
 
-    <div class="form-group" [ngClass]="{ 'has-error' : (!password_match.valid &&
-        !password_match.pristine) || registrationService.newSubmitter.password != registrationService.newSubmitter.password_match}">
-
-        <label for="password_match" class="control-label col-sm-3">Re-enter Password:</label>
-
+    <div class="form-group row" [ngClass]="{ 'has-error' : (!passwordMatch.valid &&
+        !passwordMatch.pristine) || registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch}">
+        <label for="passwordMatch" class="col-sm-3 col-form-label">Re-enter Password:</label>
         <div class="col-sm-9">
-            <input  class="form-control" type="password"  placeholder="Please re-enter your password" id="password_match"
-                    name="password_match" [(ngModel)]="registrationService.newSubmitter.password_match"
-                    #password_match = "ngModel" required/>
+            <input  class="form-control" type="password"  placeholder="Please re-enter your password" id="passwordMatch"
+                    name="passwordMatch" [(ngModel)]="registrationService.newSubmitter.passwordMatch"
+                    #passwordMatch = "ngModel" required/>
 
-            <p *ngIf="(!password_match.valid && !password_match.pristine) ||
-                registrationService.newSubmitter.password != registrationService.newSubmitter.password_match" class="help-block">Passwords do not match!</p>
+            <p *ngIf="(!passwordMatch.valid && !passwordMatch.pristine) ||
+                registrationService.newSubmitter.password != registrationService.newSubmitter.passwordMatch" class="help-block">Passwords do not match!</p>
         </div>
     </div>
-
     <input type="hidden" #id = "ngModel" name="id" [(ngModel)]="registrationService.newSubmitter.id" value="{{registrationService.newSubmitter.id}}"/>
 </form>

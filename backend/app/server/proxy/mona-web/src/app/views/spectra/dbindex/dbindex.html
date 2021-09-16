@@ -2,12 +2,11 @@
     <div class="col-md-12">
         <h3><i class="fa fa-database"></i> Database Index &amp; Statistics</h3>
 
-        <ul ngbNav>
+        <ul ngbNav #nav="ngbNav" [destroyOnHide]="false">
             <li [ngbNavItem]="0">
                 <a ngbNavLink class="search-heading"> Database Content</a>
-
                 <ng-template ngbNavContent>
-                    <table class="table table-striped">
+                    <table class="table table-striped" *ngIf="globalData">
                         <thead>
                         <tr>
                             <th>
@@ -47,7 +46,7 @@
                         </tbody>
                     </table>
 
-                    <span style="font-size: 0.9em">Last updated on: {{globalData.date | date}}</span>
+                    <span *ngIf="globalData" style="font-size: 0.9em">Last updated on: {{globalData.date | date}}</span>
                 </ng-template>
 
             </li>
@@ -63,16 +62,17 @@
                     <br />
 
                     <div>
-                        <select [(ngModel)]="selectedMetadataField"
-                                (change)="selectMetadataField(selectedMetadataField)">
-                            <option [value]=f.title *ngFor="let f of metadataFields">{{f.title}}</option>
+                        <select [(ngModel)]="selectedMetadataField" (ngModelChange)="selectMetadataField($event)" >
+                            <option [ngValue]="f" *ngFor="let f of metadataFields">{{f.title}}</option>
                         </select>
                     </div>
 
                     <div class="text-center"><h4>{{selectedMetadataField.title}}</h4></div>
+                    <div style="height: 600px; width: 100%" class="text-center">
+                      <nvd3 [options]="metadataChartOptions"
+                            [data]="selectedMetadataField.data"></nvd3>
+                    </div>
 
-                    <nvd3 [options]="metadataChartOptions"
-                          [data]="selectedMetadataField.data"></nvd3>
                 </ng-template>
 
             </li>
@@ -93,19 +93,20 @@
                         circle will zoom out to the parent partition.
                     </div>
 
-                    <div class="btn-group">
-                        <label ngbButtonLabel class="btn btn-primary">
-                            <input ngbButton type='radio' [(ngModel)]="sunburstDataMode" (click)="changeSunburstDataMode('spectrum')">Spectrum Count
+                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="sunburstDataMode">
+                        <label ngbButtonLabel class="btn-primary">
+                            <input ngbButton type="radio" [value]=true (click)="changeSunburstDataMode('spectrum')">Spectrum Count
                         </label>
-                        <label ngbButtonLabel class="btn btn-primary">
-                            <input ngbButton type='radio' [(ngModel)]="sunburstDataMode"  (click)="changeSunburstDataMode('compound')">Compound Count
+                        <label ngbButtonLabel class="btn-primary">
+                            <input ngbButton type="radio" (click)="changeSunburstDataMode('compound')">Compound Count
                         </label>
                     </div>
-
-                    <nvd3 [options]="sunburstOptions"
-                          [data]="activeCompoundClassData"
-                          class="with-3d-shadow with-transitions"></nvd3>
-
+                    <br />
+                    <div class="text-center">
+                      <nvd3 [options]="sunburstOptions"
+                            [data]="activeCompoundClassData"
+                            class="with-3d-shadow with-transitions"></nvd3>
+                    </div>
                     <br />
 
                     <h3>
@@ -122,19 +123,20 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <!-- make order by pipe -->
-                        <tr *ngFor="let node of activeTableData | slice: 10*(tableDataPage-1):10">
+                        <tr *ngFor="let node of activeTableData | orderBy: tableSort | slice: (tableDataPage - 1) * 5: tableDataPage * 5 ">
                             <td>{{node.name}}</td>
                             <td>{{node.spectra | number:'1.0-0'}}</td>
                             <td>{{node.compounds | number:'1.0-0'}}</td>
-                            <td><button class="btn btn-primary" (click)="tableDataExecuteQuery(node)"><i class="fa fa-search"></i> Query</button></td>
+                          <td><button class="btn btn-primary" (click)="tableDataExecuteQuery(node)"><fa-icon [icon]="faSearch"></fa-icon> Query</button></td>
                         </tr>
                         </tbody>
                     </table>
-
-                    <ngb-pagination [collectionSize]="activeTableData.length" [(page)]="tableDataPage" maxSize="5" class="pagination-sm" boundaryLinks="true"></ngb-pagination>
+                    <div class="d-flex justify-content-center">
+                      <ngb-pagination *ngIf="activeTableData" [collectionSize]="activeTableData.length" [(page)]="tableDataPage" [pageSize]="5" class="pagination-sm" boundaryLinks="true"></ngb-pagination>
+                    </div>
                 </ng-template>
             </li>
         </ul>
+      <div [ngbNavOutlet]="nav"></div>
     </div>
 </div>

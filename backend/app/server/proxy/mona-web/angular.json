@@ -48,9 +48,7 @@
               "node_modules/flot/jquery.flot.resize.js",
               "node_modules/flot/jquery.flot.selection.js",
               "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/line-navigator/line-navigator.js",
-              "node_modules/line-navigator/file-wrapper.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           },
           "configurations": {

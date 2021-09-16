@@ -1,5 +1,6 @@
 /**
  * Created by wohlgemuth on 10/16/14.
+ * Updated by nolanguzman on 10/31/2021
  */
 
 import {NGXLogger} from 'ngx-logger';
@@ -23,8 +24,7 @@ export class DisplayCompoundComponent implements  OnInit{
 
     constructor(public modalService: NgbModal,  public logger: NGXLogger){}
 
-    ngOnInit(): void {
-      console.log(this.compound);
+    ngOnInit() {
       // calculate some unique id for the compound picture
       this.pictureId = Math.floor(Math.random() * 100000);
       this.chemId = Math.floor(Math.random() * 100000);
@@ -75,7 +75,6 @@ export class DisplayCompoundComponent implements  OnInit{
           this.classifications.push(classes[0]);
         }
       }
-      console.log(this.classifications);
     }
 
     /**
@@ -84,7 +83,7 @@ export class DisplayCompoundComponent implements  OnInit{
      * @param filetype string
      * @param mimetype string
      */
-    downloadData = (data, filetype, mimetype) => {
+    downloadData(data, filetype, mimetype) {
         // Identify and sanitize filename
         const inchikeys = this.compound.metaData.filter((x) => {
             return x.name === 'InChIKey';
@@ -107,7 +106,7 @@ export class DisplayCompoundComponent implements  OnInit{
         document.body.removeChild(hiddenElement);
     }
 
-    downloadAsMOL = () => {
+    downloadAsMOL() {
         let modalRef;
         if (typeof this.compound.molFile !== 'undefined') {
             this.downloadData(this.compound.molFile, 'mol', 'chemical/x-mdl-molfile');
@@ -116,7 +115,7 @@ export class DisplayCompoundComponent implements  OnInit{
         }
     }
 
-    downloadAsJSON = () => {
+    downloadAsJSON() {
         this.downloadData(JSON.stringify(this.compound), 'json', 'application/json');
     }
 }

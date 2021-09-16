@@ -1,8 +1,8 @@
-import {HttpClient} from "@angular/common/http";
-import {NewSubmitter} from "../mocks/newSubmitter.model";
-import {environment} from "../../environments/environment";
-import {map} from "rxjs/operators";
-import {Injectable} from "@angular/core";
+import {HttpClient} from '@angular/common/http';
+import {NewSubmitter} from '../mocks/newSubmitter.model';
+import {environment} from '../../environments/environment';
+import {map} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class RegistrationService {
@@ -10,7 +10,7 @@ export class RegistrationService {
 
     constructor(public http: HttpClient) {
         this.newSubmitter = new NewSubmitter();
-    };
+    }
 
     submit() {
         return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/users`,
@@ -42,10 +42,14 @@ export class RegistrationService {
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${token}`
                 }
             }).pipe(map((x) => {
                 this.newSubmitter = new NewSubmitter();
-        }))
+        }));
+    }
+
+    resetSubmitter() {
+      this.newSubmitter = new NewSubmitter();
     }
 }

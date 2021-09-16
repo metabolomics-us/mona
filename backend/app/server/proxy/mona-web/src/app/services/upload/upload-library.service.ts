@@ -29,6 +29,7 @@ export class UploadLibraryService{
     public completedSpectraCount;
     public failedSpectraCount;
     public uploadedSpectraCount;
+    public uploadedSpectra;
 
     public uploadStartTime;
     public isSTP;
@@ -50,6 +51,7 @@ export class UploadLibraryService{
         this.uploadStartTime = -1;
         this.uploadProcess.next(true);
         this.isSTP = false;
+        this.uploadedSpectra = [];
     }
 
     /**
@@ -57,7 +59,7 @@ export class UploadLibraryService{
      * @param spectra type object
      * @returns observable to subscribe to
      */
-     obtainKey = (spectra) => {
+     obtainKey(spectra): Promise<any> {
         /**
          * helper function to resolve the correct inchi by name
          * @param spectra type object
@@ -140,7 +142,7 @@ export class UploadLibraryService{
      * @param spectrumObject spectrum
      * @param additionalData optional
      */
-     workOnSpectra = (submitter, saveSpectrumCallback, spectrumObject, additionalData) => {
+     workOnSpectra(submitter, saveSpectrumCallback, spectrumObject, additionalData): Promise<any> {
         const myPromise = new Promise((resolve, reject) => {
             // if we have a key or an inchi
             if (spectrumObject.inchiKey !== null && spectrumObject.inchi !== null) {
@@ -182,14 +184,10 @@ export class UploadLibraryService{
      * @param saveSpectrumCallback helper callback
      * @param additionalData optional
      */
-    submitSpectrum = (spectra, submitter, saveSpectrumCallback, additionalData) => {
+    submitSpectrum(spectra, submitter, saveSpectrumCallback, additionalData): Promise<any> {
         // optimize all our metadata
-        const myPromise = new Promise((resolve, reject) => {
+        const myPromise = new Promise((resolve) => {
             this.metadataOptimization.optimizeMetaData(spectra.meta).then((metaData: object) => {
-
-                // console.log('Building Spectra');
-                // console.log(metaData);
-
                 const s = this.buildSpectrum();
 
                 // assign structure information
@@ -233,16 +231,9 @@ export class UploadLibraryService{
                     });
                 }
 
-                // s.comments = [{comment: "this spectra was added to the system, by utilizing a library upload."}];
-                // if (angular.isDefined(spectra.comments)) {
-                //     s.comments.push({comment: spectra.comments});
-                // }
-
-                // console.log(metaData[1]);
                 Object.keys(metaData).forEach((e) => {
                     s.metaData.push(metaData[e]);
                 });
-                // console.log(s.metaData);
 
                 if (typeof additionalData !== 'undefined') {
                     if (typeof additionalData.tags !== 'undefined') {
@@ -281,7 +272,7 @@ export class UploadLibraryService{
      *
      * @returns Spectrum built spectrum
      */
-    buildSpectrum = () => {
+    buildSpectrum() {
         const spectrum = {
             biologicalCompound: {names: [],
                 inchi: '',
@@ -307,7 +298,7 @@ export class UploadLibraryService{
      * @param callback helper callback
      * @param fireUploadProgress upload progress
      */
-    loadSpectraFile = async (file, callback, fireUploadProgress) => {
+    async loadSpectraFile(file, callback): Promise<any> {
       let count = 0;
       // In order to process data efficiently and in a smaller footprint, the file needs to be sliced into smaller batches
       // that are individually matched by regex pattern.
@@ -319,7 +310,7 @@ export class UploadLibraryService{
           return new RegExp(/BEGIN IONS([\s\S]*?)END IONS/g);
         }
         else if (file.name.toLowerCase().indexOf('.txt') > 0) {
-          return new RegExp(/(\w+[\/]*\w)\s(.+)/g);
+          return new RegExp(/.*/g);
         }
       };
 
@@ -335,6 +326,17 @@ export class UploadLibraryService{
         });
       };
 
+      const arrayBufferToStringTxtFile = async (arrayBuffer) => {
+        // MassBank Txt files are small so load whole file into memory
+        const promiseBuffer = [];
+        const decoder = new TextDecoder();
+        let decodedText;
+
+        decodedText = decoder.decode(arrayBuffer);
+        promiseBuffer.push([decodedText]);
+        count++;
+        await callback(promiseBuffer, file.name);
+      };
 
       const arrayBufferToString = async (arrayBuffer) => {
         // Start with 2MB by default
@@ -365,7 +367,7 @@ export class UploadLibraryService{
           // or we hit our poolSize limit.
           while (( blocks = regex.exec(decodedText)) !== null ) {
             // Push full match stored in blocks[0] and file name into our promise buffer
-            promiseBuffer.push([blocks[0], file.name]);
+            promiseBuffer.push([blocks[0]]);
             count++;
             // regex.lastIndex doesn't seem reliable outside the loop so after every iteration save
             // the regex.lastIndex into lastIndex until we break out.
@@ -386,10 +388,10 @@ export class UploadLibraryService{
           // When our offset is the size of the array buffer, then we reached EOF so send
           // the last promiseBuffer and break out.
           if (offset > arrayBuffer.byteLength - 1) {
-            await callback(promiseBuffer);
+            await callback(promiseBuffer, file.name);
             break;
           } else{
-            await callback(promiseBuffer);
+            await callback(promiseBuffer, file.name);
             promiseBuffer = [];
             blocks = null;
           }
@@ -399,7 +401,11 @@ export class UploadLibraryService{
       const processFiles = async () => {
         // Wait for FileReader to return our arrayBuffer
         const arrayBuff = await readFileAsync();
-        await arrayBufferToString(arrayBuff);
+        if (file.name.toLowerCase().indexOf('.txt') > 0) {
+          await arrayBufferToStringTxtFile(arrayBuff);
+        } else {
+          await arrayBufferToString(arrayBuff);
+        }
         this.logger.debug('File Read Complete: Total of ' + count + ' spectra read.');
       };
 
@@ -417,7 +423,7 @@ export class UploadLibraryService{
      * @param origin origin
      * @returns number returns count
      */
-    countData = (data, origin) => {
+    countData(data, origin) {
         if (typeof origin !== 'undefined') {
             if (origin.toLowerCase().indexOf('.msp') > 0) {
                 return this.mspParserLibService.countSpectra(data);
@@ -442,7 +448,7 @@ export class UploadLibraryService{
      * @param callback helper callback
      * @param origin optional
      */
-    processData = (data, callback, origin) => {
+    processData(data, callback, origin) {
         // Add origin to spectrum metadata before callback
         const addOriginMetadata = (spectrum) => {
             if (typeof origin !== 'undefined') {
@@ -450,7 +456,6 @@ export class UploadLibraryService{
             }
             callback(spectrum);
         };
-
         // Parse data
         if (typeof origin !== 'undefined') {
             if (origin.toLowerCase().indexOf('.msp') > 0) {
@@ -479,13 +484,13 @@ export class UploadLibraryService{
      * @param saveSpectrumCallback helper callback
      * @param wizardData not sure
      */
-    uploadSpectraFiles = (files, saveSpectrumCallback, wizardData) => {
+    uploadSpectraFiles(files, saveSpectrumCallback, wizardData) {
         for (let i = 0; i < files.length; i++) {
             this.loadSpectraFile(files[i], (data, origin) => {
                 this.processData(data, (spectrum) => {
                     this.uploadSpectrum(spectrum, saveSpectrumCallback, wizardData);
                 }, origin);
-            }, 0);
+            }).finally();
         }
     }
 
@@ -493,7 +498,7 @@ export class UploadLibraryService{
      * @param spectra object of spectra
      * @param saveSpectrumCallback helper callback
      */
-    uploadSpectra = (spectra, saveSpectrumCallback) => {
+    uploadSpectra(spectra, saveSpectrumCallback) {
         for (let i = 0; i < spectra.length; i++) {
             this.uploadSpectrum(spectra[i], saveSpectrumCallback, {});
         }
@@ -505,7 +510,7 @@ export class UploadLibraryService{
      * @param saveSpectrumCallback helper callback
      * @param additionalData not sure
      */
-    uploadSpectrum = (wizardData, saveSpectrumCallback, additionalData) => {
+    uploadSpectrum(wizardData, saveSpectrumCallback, additionalData) {
         this.authenticationService.currentUser.pipe(first()).subscribe((submitter) => {
             this.uploadedSpectraCount += 1;
 
@@ -529,7 +534,7 @@ export class UploadLibraryService{
     /**
      * Checks if spectra are being processed and uploaded
      */
-    isUploading(): boolean {
+    isUploading() {
         return this.completedSpectraCount + this.failedSpectraCount < this.uploadedSpectraCount;
     }
 
@@ -537,7 +542,7 @@ export class UploadLibraryService{
     /**
      * Updates and broadcasts the upload progress
      */
-    updateUploadProgress = (success) => {
+    updateUploadProgress(success) {
         if (typeof success === 'undefined') {
             // do nothing
         } else if (success) {

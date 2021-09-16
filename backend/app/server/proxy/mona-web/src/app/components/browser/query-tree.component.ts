@@ -1,11 +1,13 @@
 /**
  * Created by sajjan on 11/13/15.
+ * Updated by nolanguzman on 10/31/2021
  */
 import {Download} from '../../services/persistence/download.resource';
 import {NGXLogger} from 'ngx-logger';
 import {environment} from '../../../environments/environment';
 import {Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
+import {faDownload, faTable, faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'query-tree',
@@ -18,10 +20,13 @@ export class QueryTreeComponent implements OnInit {
     public queryTree;
     public static: any;
     public tree;
+    faDownload = faDownload;
+    faTable = faTable;
+    faCloudDownloadAlt = faCloudDownloadAlt;
 
     constructor(public download: Download, public logger: NGXLogger) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.showEmptyDownloads = false;
         this.queries = {};
         this.queryTree = [];
@@ -29,8 +34,6 @@ export class QueryTreeComponent implements OnInit {
 
         this.getPredefinedQueries();
         this.getStaticDownloads();
-        console.log(this.queryTree);
-        console.log(this.static);
     }
 
     executeQuery(node: any): string {
@@ -52,7 +55,7 @@ export class QueryTreeComponent implements OnInit {
     /**
      * Get predefined queries and build query tree
      */
-    getPredefinedQueries = () => {
+    getPredefinedQueries() {
         let data;
         this.download.getPredefinedQueries().pipe(first()).subscribe(
             (res: any) => {
@@ -124,7 +127,7 @@ export class QueryTreeComponent implements OnInit {
         );
     }
 
-    getStaticDownloads = () => {
+    getStaticDownloads() {
         this.download.getStaticDownloads().pipe(first()).subscribe(
             (res: any) => {
                 res.forEach((x) => {

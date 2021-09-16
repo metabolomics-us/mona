@@ -1,5 +1,6 @@
 /**
  * Created by sajjan on 12/19/14.
+ * Updated by nolanguzman on 10/31/2021
  */
 
 import {UploadLibraryService} from '../../services/upload/upload-library.service';
@@ -33,7 +34,7 @@ export class SpectraUploadProgressComponent implements OnInit{
     constructor( public uploadLibraryService: UploadLibraryService,
                  public authenticationService: AuthenticationService) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.etaString = '';
         this.showETA = true;
         this.spectraUploadProgress = -1;
@@ -64,7 +65,7 @@ export class SpectraUploadProgressComponent implements OnInit{
         });
     }
 
-    buildEtaString = () => {
+    buildEtaString() {
         if (this.uploadLibraryService.isSTP) {
           this.etaString = 'Uploading in batches...';
         }

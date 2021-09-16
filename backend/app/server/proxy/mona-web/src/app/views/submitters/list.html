@@ -9,8 +9,8 @@
 
     <form role="form">
         <div class="input-group" *ngFor="let sub of submitters; index as i"> <!-- filter:submitter.query -->
-            <span class="input-group-addon"> <label for="query">Filter</label></span>
-            <input id="query" class="form-control" [(ngModel)]="sub.query"
+            <span class="form-check-label"> <label [for]="'query_'+i">Filter</label></span>
+            <input [id]="'query_'+i" class="form-control" name="query" [(ngModel)]="sub.query"
                    placeholder="Please enter your query term"/>
             <table class="table">
                 <thead>
@@ -26,26 +26,26 @@
                 </thead>
                 <tbody>
                 <tr id="submitter_{{sub.id}}">
-                    <td><submitter-query submitter="sub">{{sub.firstName}}</submitter-query></td>
+                    <td><submitter-query [submitter]="sub">{{sub.firstName}}</submitter-query></td>
                     <td>{{sub.lastName}}</td>
                     <td>{{sub.institution}}</td>
                     <td>{{sub.emailAddress}}</td>
-                    <td><spectra-score-for-user user="sub"></spectra-score-for-user></td>
-                    <td><spectra-count-for-user user="sub"></spectra-count-for-user></td>
+                    <td><spectra-score-for-user [user]="sub"></spectra-score-for-user></td>
                     <td>
-                        <button (click)="displayEditDialog(i)" class="btn btn-default"><i
-                                class="fa fa-pencil-square-o "></i></button>
-                        <button (click)="remove(i)" class="btn btn-default"><i
-                                class="fa fa-minus-square"></i></button>
-                        <input type="hidden" name="sub.id" [ngModel]="sub.id" value="{{sub.id}}"/>
+                        <button (click)="displayEditDialog(sub)" class="btn btn-default"><fa-icon
+                                [icon]="faEdit"></fa-icon></button>
+                        <button (click)="remove(i)" class="btn btn-default"><fa-icon
+                                [icon]="faMinusSquare"></fa-icon></button>
+                        <input type="hidden" name="sub.id" name="subid" [(ngModel)]="sub.id" value="{{sub.id}}"/>
                     </td>
                 </tr>
                 </tbody>
+              <br />
             </table>
         </div>
 
-        <button (click)="displayCreateDialog()" class="btn btn-default"><i
-                class="fa fa-user"></i>Add a new submitter
+        <button (click)="displayCreateDialog()" class="btn btn-default"><fa-icon
+                [icon]="faUser"></fa-icon>Add a new submitter
         </button>
     </form>
 </div>

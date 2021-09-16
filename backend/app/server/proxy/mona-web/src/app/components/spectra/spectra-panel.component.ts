@@ -1,5 +1,6 @@
 /**
  * Created by wohlgemuth on 10/16/14.
+ * Updated by nolanguzman on 10/31/2021
  */
 import {Component, Input, OnInit} from '@angular/core';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
@@ -19,7 +20,7 @@ export class SpectraPanelComponent implements OnInit{
 
     constructor( public spectrumCache: SpectrumCacheService) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         // Top 10 important metadata fields
         this.IMPORTANT_METADATA = [
             'ms level', 'precursor type', 'precursor m/z', 'instrument', 'instrument type',
@@ -29,8 +30,8 @@ export class SpectraPanelComponent implements OnInit{
         this.importantMetadata = [];
         this.secondaryMetadata = [];
 
-        if (typeof this.spectrum.score === 'undefined' || this.spectrum.score === null) {
-          this.spectrum.score.score = 0;
+        if (typeof this.spectrum.score === 'undefined') {
+          this.spectrum.score = {score: 0};
         }
 
         this.spectrum.metaData.forEach((metaData, index) => {
@@ -58,7 +59,7 @@ export class SpectraPanelComponent implements OnInit{
         this.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 10);
     }
 
-    truncateDecimal = (s, length) => {
+    truncateDecimal(s, length) {
         return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
     }
 

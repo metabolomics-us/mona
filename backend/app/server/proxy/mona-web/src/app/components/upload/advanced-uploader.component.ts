@@ -1,5 +1,6 @@
 /**
  * Created by sajjan on 4/20/15.
+ * Updated by nolanguzman on 10/31/2021
  */
 import {AuthenticationService} from '../../services/authentication.service';
 import {AdvancedUploadModalComponent} from './advanced-upload-modal.component';
@@ -71,7 +72,7 @@ export class AdvancedUploaderComponent implements OnInit{
 				          public element: ElementRef, public filterPipe: FilterPipe,  public http: HttpClient,
               public router: Router, public modalService: NgbModal){}
 
-	ngOnInit(): void {
+	ngOnInit() {
 		this.spectraLoaded = 0;
 		this.spectra = [];
 		this.spectrumErrors = {};
@@ -93,7 +94,6 @@ export class AdvancedUploaderComponent implements OnInit{
 
 		this.tagService.query().subscribe(
 			(data) => {
-			  console.log(data);
 			  if (data.length > 0) {
 			    this.tags = data;
         }
@@ -105,7 +105,7 @@ export class AdvancedUploaderComponent implements OnInit{
 		);
 	}
 
-  sortIonTable = (column) => {
+  sortIonTable(column) {
     if (column === 'ion') {
       if (this.ionTableSort === '+ion') { this.ionTableSort = '-ion'; } else { this.ionTableSort = '+ion'; }
     }
@@ -122,7 +122,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	 * Perform mass spectrum trimming
 	 */
 
-	performIonCuts =  (index) => {
+	performIonCuts(index) {
 		if (typeof index === 'undefined') {
 			index = this.spectraIndex;
 		}
@@ -161,13 +161,13 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
-	performAllIonCuts =  () => {
+	performAllIonCuts() {
 		for (let i = 0; i < this.spectra.length; i++) {
 			this.performIonCuts(i);
 		}
 	}
 
-	resetIonCuts =  () => {
+	resetIonCuts() {
 	  for (const i of this.currentSpectrum.ions) {
 	    i.selected = true;
     }
@@ -178,7 +178,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	 * Add a new name to the list
 	 */
 
-	addName = () => {
+	addName() {
 		if (this.currentSpectrum.names[this.currentSpectrum.names.length - 1] !== '') {
 			this.currentSpectrum.names.push('');
 		}
@@ -189,16 +189,16 @@ export class AdvancedUploaderComponent implements OnInit{
 	 * Handle metadata functionality
 	 */
 
-	addMetadataField = () => {
+	addMetadataField() {
 		this.currentSpectrum.meta.push({name: '', value: ''});
 		this.element.nativeElement.getElementById('metadata_editor').scrollTop = 0;
 	}
 
-	removeMetadataField = (index) => {
+	removeMetadataField(index) {
 		this.spectra[this.spectraIndex].meta.splice(index, 1);
 	}
 
-	applyMetadataToAll = (index) => {
+	applyMetadataToAll(index) {
 		const metadata = this.currentSpectrum.meta[index];
 
 		for (let i = 0; i < this.spectra.length; i++) {
@@ -208,7 +208,7 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
-	applyTagsToAll = () => {
+	applyTagsToAll() {
 		const tags = this.currentSpectrum.tags;
 
 		for (let i = 0; i < this.spectra.length; i++) {
@@ -247,7 +247,7 @@ export class AdvancedUploaderComponent implements OnInit{
                 {
                   headers: {
                     'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + res.submitter.access_token
+                    Authorization: `Bearer ${this.authenticationService.getCurrentUser().accessToken}`
                   }
                 })
                 .pipe(first())
@@ -261,7 +261,6 @@ export class AdvancedUploaderComponent implements OnInit{
                   reject(err);
                 });
             } catch (error) {
-              console.log(error);
               reject(error);
             }
           });
@@ -330,7 +329,7 @@ export class AdvancedUploaderComponent implements OnInit{
     });
   }
 
-	straightThroughProcessing = (event) => {
+	straightThroughProcessing(event) {
 	  let promiseBuffer = [];
 	  // Move to the upload status page then execute the upload process
    this.router.navigate(['/upload/status']).then(() => {
@@ -348,7 +347,7 @@ export class AdvancedUploaderComponent implements OnInit{
            await Promise.all(promiseBuffer.map(p => p.catch(() => undefined)));
            // Reset our array so we can go again.
            promiseBuffer = [];
-           }, 0);
+           });
          }
        }, 1000);
    });
@@ -358,32 +357,39 @@ export class AdvancedUploaderComponent implements OnInit{
 	 * Parse spectra
 	 * @param event Contains an event which serves the files
 	 */
-	parseFiles = (event) => {
+	parseFiles(event) {
 	  this.uploadLibraryService.completedSpectraCount = 0;
 	  this.uploadLibraryService.failedSpectraCount = 0;
 	  this.uploadLibraryService.uploadedSpectraCount = 0;
 	  let promiseBuffer = [];
-	  // If the file is larger then 10MB then use straight through processing
-	  if (event.target.files[0].size > 10 * 1024 * 1024) {
-      const modalRef = this.modalService.open(AdvancedUploadModalComponent);
-      modalRef.result.then((res) => {
-        if (res) {
-          this.uploadLibraryService.isSTP = true;
-          this.straightThroughProcessing(event);
-        }
-      });
-      return;
-    } else {
-	    this.uploadLibraryService.isSTP = false;
-     for (let i = 0; i < event.target.files.length; i++) {
-        this.uploadLibraryService.loadSpectraFile(event.target.files[i],
-          async (data, origin) => {
-          for (const item of data) {
-            promiseBuffer.push(this.batchProcess(item, origin));
+	  let totalSize = 0;
+
+	  if (event.target.files && event.target.files.length) {
+      for (let y = 0; y < event.target.files.length; y++) {
+        totalSize += event.target.files[y].size;
+      }
+      // If the file is larger then 10MB then use straight through processing
+      if (totalSize > 10 * 1024 * 1024) {
+        const modalRef = this.modalService.open(AdvancedUploadModalComponent);
+        modalRef.result.then((res) => {
+          if (res) {
+            this.uploadLibraryService.isSTP = true;
+            this.straightThroughProcessing(event);
           }
-          await Promise.all(promiseBuffer.map(p => p.catch(() => undefined)));
-          promiseBuffer = [];
-          }, 0);
+        });
+        return;
+      } else {
+        this.uploadLibraryService.isSTP = false;
+        for (let i = 0; i < event.target.files.length; i++) {
+          this.uploadLibraryService.loadSpectraFile(event.target.files[i],
+            async (data, origin) => {
+              for (const item of data) {
+                promiseBuffer.push(this.batchProcess(item, origin));
+              }
+              await Promise.all(promiseBuffer.map(p => p.catch(() => undefined)));
+              promiseBuffer = [];
+            });
+        }
       }
     }
 	}
@@ -392,7 +398,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	/**
 	 * Handle MOL file input
 	 */
-	parseMolFile = (file) => {
+	parseMolFile(file) {
 		if (file.length > 0) {
 			const fileReader = new FileReader();
 
@@ -418,7 +424,7 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
-	convertMolToInChI = () => {
+	convertMolToInChI() {
 		if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
 			this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
 				this.currentSpectrum.inchiKey = result.inchikey;
@@ -430,7 +436,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	/**
 	 * Export a file as MSP
 	 */
-	exportFile = () => {
+	exportFile() {
 		let msp = '';
 
 		for (let i = 0; i < this.spectra.length; i++) {
@@ -499,7 +505,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	/**
 	 *
 	 */
-	waitForLogin = () => {
+	waitForLogin() {
 		this.authenticationService.isAuthenticated.subscribe((authenticate) => {
 			if (authenticate) {
 				if (this.spectraLoaded === 2) {
@@ -513,7 +519,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	/**
 	 * Upload current data
 	 */
-	validateSpectra = () => {
+	validateSpectra() {
 		const invalid = [];
 
 		for (let i = 0; i < this.spectra.length; i++) {
@@ -553,7 +559,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	}
 
 
-	uploadFile = () => {
+	uploadFile() {
 		if (this.validateSpectra()) {
 			// Reset the spectrum count if necessary
 			if (!this.uploadLibraryService.isUploading()) {
@@ -565,7 +571,6 @@ export class AdvancedUploaderComponent implements OnInit{
 
 			// Re-add origin and annotations to metadata:
 			for (let i = 0; i < this.spectra.length; i++) {
-			  console.log(this.spectra[i]);
 				 this.spectra[i].meta.push.apply(this.spectra[i].meta, this.spectra[i].hiddenMetadata);
 			}
 
@@ -573,14 +578,16 @@ export class AdvancedUploaderComponent implements OnInit{
 				this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
 					{headers: {
 							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + spectrum.submitter.access_token
+							Authorization: `Bearer ${this.authenticationService.getCurrentUser().accessToken}`
 					}}).pipe(
             first()
         ).subscribe((data: any) => {
-					  console.log('Finished Upload of this Spectra');
+					  this.logger.debug('Spectra was uploaded');
+					  if (!this.uploadLibraryService.isSTP) {
+              this.uploadLibraryService.uploadedSpectra.push(data.id);
+            }
 					},
 					 (err) => {
-						this.logger.info('ERROR');
 						this.logger.info(err);
 					});
 			});
@@ -588,16 +595,9 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
-
-	/**
-	 *
-	 */
-
-
-	isLoadingSpectra = () => {
+	isLoadingSpectra() {
 		return this.asyncService.hasPooledTasks();
 	}
-
 
 	/**
 	 * provides us with an overview of all our tags
@@ -605,33 +605,30 @@ export class AdvancedUploaderComponent implements OnInit{
 	 * @returns observable: filters the tags and pushes to an observable
 	 * Performs initialization and acquisition of data used by the wizard
 	 */
-	loadTags = (text: string): Observable<any> => {
+	loadTags(text: string): Observable<any> {
 	  return this.tagService.query().pipe(map((data) => {
 	    this.filterPipe.transform(data, text);
     }));
-		/* return new Observable((observer => {
-			observer.next(this.filterPipe.transform(this.tags, query));
-		})); */
 	}
 
 	/*
 		 * Handle switching between spectra
 		 */
-	setSpectrum = (index) => {
+	setSpectrum(index) {
 		this.spectraIndex = index;
 		this.currentSpectrum = this.spectra[this.spectraIndex];
 		this.showIonTable = this.currentSpectrum.ions.length < 500;
 	}
 
-	previousSpectrum = () => {
+	previousSpectrum() {
 		this.setSpectrum((this.spectraIndex + this.spectra.length - 1) % this.spectra.length);
 	}
 
-	nextSpectrum = () => {
+	nextSpectrum() {
 		this.setSpectrum((this.spectraIndex + this.spectra.length + 1) % this.spectra.length);
 	}
 
-	removeCurrentSpectrum = () => {
+	removeCurrentSpectrum() {
 		this.spectra.splice(this.spectraIndex, 1);
 
 		if (this.spectra.length === 0) {
@@ -643,10 +640,13 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
-	resetFile = () => {
+	resetFile() {
 		this.spectraLoaded = 0;
 		this.spectraIndex = 0;
 		this.spectra = [];
+
+		this.filenames = null;
+		this.fileUpload = null;
 
 		// Clear pool
 		this.asyncService.resetPool();

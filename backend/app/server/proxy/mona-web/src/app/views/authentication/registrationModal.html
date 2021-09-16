@@ -1,47 +1,70 @@
 
 <div class="modal-header">
-    <button type="button" class="close" (click)="cancelDialog()" aria-hidden="true"
-            *ngIf="state == 'register' || state == 'success'">×</button>
-
-    <h3 class="modal-title">Create a MoNA Account</h3>
-    <p *ngIf="state == 'register'">
-        An account is required to download large queries and to submit spectra.
-        Please sign up for a free account by providing the following information:
-    </p>
+      <div class="row">
+        <div class="col-sm-12">
+          <h3 class="modal-title">Create a MoNA Account</h3>
+        </div>
+        <div class="col-sm-12">
+          <p class="model-title" *ngIf="state === 'register'">
+            An account is required to download large queries and to submit spectra.
+            Please sign up for a free account by providing the following information:
+          </p>
+        </div>
+      </div>
+      <button class="float right" type="button" class="close" (click)="cancelDialog()" aria-hidden="true"
+          *ngIf="state === 'register' || state === 'success' || state === 'fail'"><span aria-hidden="true">&times;</span></button>
 </div>
 
 
 <div class="modal-body" >
-    <div class="alert alert-danger .alert-dismissible " role="alert" [hidden]="!errors.length">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span>Error: </span>
-        <span *ngIf="errors.length == 1">{{errors[0]}}</span>
+    <div class="alert alert-danger .alert-dismissible" role="alert" *ngIf="errors.length">
+        <div class="text-left" *ngIf="errors.length === 1">
+          <strong><h4>{{errors[0].status}} {{errors[0].name}}</h4></strong><br />
+          <strong>Error:</strong> {{errors[0].error}}<br />
+          <strong>Exception:</strong> {{errors[0].exception}}<br />
+          <strong>Message:</strong> {{errors[0].message}}<br />
+        </div>
         <ul *ngIf="errors.length > 1">
-            <li *ngFor="let error of errors">{{error}}</li>
+            <li *ngFor="let error of errors">
+              <div class="text-left">
+                <strong><h4>{{error.status}} {{error.name}}</h4></strong><br />
+                <strong>Error:</strong> {{error.error}}<br />
+                <strong>Exception:</strong> {{error.exception}}<br />
+                <strong>Message:</strong> {{error.message}}<br />
+              </div>
+            </li>
         </ul>
     </div>
 
     <!--<div submitter-form ng-show="state == 'register'"></div>-->
-    <submitter-form (formStatus)="submitterFormStatus = $event" [hidden]="state !=='register'"></submitter-form>
+    <submitter-form (formStatus)="submitterFormStatus = $event" *ngIf="state ==='register'"></submitter-form>
 
-    <div [hidden]="state !== 'registering'">
-        <h4><span class="spinner"><i class="fa fa-refresh fa-spin"></i> Registering account...</span></h4>
+    <div *ngIf="state === 'registering'">
+        <h4><span class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Registering account...</span></h4>
     </div>
 
-    <div [hidden]="state !== 'success'" class="text-success text-center">
-        <div><span class="h2"><i class="fa fa-check"></i></span> <span class="h4">Success! You may now log in.</span></div>
+    <div *ngIf="state === 'success'" class="text-success text-center">
+        <div><span class="h2"><fa-icon [icon]="faCheck"></fa-icon></span> <span class="h4">Success! You may now log in.</span></div>
         <br />
         <div><button class="btn btn-success btn-lg" (click)="logIn()">Log In</button></div>
     </div>
+
+    <div *ngIf="state === 'fail'" class="text-danger text-center">
+      <div>
+        <h4><fa-icon [icon]="faExclamationTriangle"></fa-icon> An Error Occurred During Registration </h4>
+      </div>
+    </div>
 </div>
 
-<!-- [disabled]="childForm.submitterForm.invalid" -->
-
-<div class="modal-footer" [hidden]="state === 'success'">
+<div class="modal-footer" *ngIf="state !== 'success'">
     <button class="btn btn-primary"
-            [disabled]="!submitterFormStatus"
             (click)="submitRegistration()"
-            *ngIf="state == 'register'">Register</button>
+            [disabled]="!submitterFormStatus"
+            *ngIf="state === 'register'">Register</button>
+  <button class="btn btn-primary"
+          (click)="resetState()"
+          *ngIf="state === 'fail'">Try Again</button>
 
     <button class="btn btn-default" (click)="cancelDialog()">Close</button>
 </div>
+

@@ -3,6 +3,6 @@ export class User {
     firstName: string;
     lastName: string;
     institution: string;
-    access_token: string;
+    accessToken: string;
     roles: any;
 }

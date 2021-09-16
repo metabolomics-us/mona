@@ -11,12 +11,12 @@ export class Download{
     constructor(public http: HttpClient) {
     }
 
-    getPredefinedQueries = (): Observable<any> => {
+    getPredefinedQueries(): Observable<any> {
         const api = `${environment.REST_BACKEND_SERVER}/rest/downloads/predefined`;
         return this.http.get(api);
     }
 
-    getStaticDownloads = (): Observable<any> => {
+    getStaticDownloads(): Observable<any> {
         const api = `${environment.REST_BACKEND_SERVER}/rest/downloads/static`;
         return this.http.get(api);
     }

@@ -13,20 +13,16 @@
         <div class="col-md-6">
             <div class="text-right">
                 <div class="h5">
-                    <span class="dropdown" ngbDropdown>
-                        <button class="dropdown-toggle" ngbDropdownToggle>
+                    <div ngbDropdown>
+                        <button ngbDropdownToggle>
                           <fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Structure
                         </button>
 
-                        <ul class="uib-dropdown-menu" ngbDropdownMenu>
-                            <li ngbDropdownItem>
-                                <button (click)="downloadAsMOL()" target="_blank">as MOL file</button>
-                            </li>
-                            <li ngbDropdownItem>
-                                <button (click)="downloadAsJSON()" target="_blank">as MoNA JSON Record</button>
-                            </li>
-                        </ul>
-                    </span>
+                        <div ngbDropdownMenu>
+                          <button ngbDropdownItem (click)="downloadAsMOL()" target="_blank">as MOL file</button>
+                          <button ngbDropdownItem (click)="downloadAsJSON()" target="_blank">as MoNA JSON Record</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div style="width: 250px; height: 250px;">
@@ -48,8 +44,8 @@
             </div>
             <ng-template #classyfireTree let-classy="classy">
               <ul *ngFor="let node of classy">
-                <span class="tree-label"><i class="icon-folder-open"></i> <metadata-query [metaData]="node" [classification]="true">{{ node.name | titlecase }}</metadata-query></span> <span> {{ node.value }}</span>
                 <li *ngIf="node.nodes" class="tree-node">
+                  <span class="tree-label"><i class="icon-folder-open"></i> <metadata-query [metaData]="node" [classification]="true">{{ node.name | titlecase }}</metadata-query></span> <span> {{ node.value }}</span>
                   <ng-container *ngTemplateOutlet="classyfireTree; context: {classy: node.nodes}"></ng-container>
                 </li>
               </ul>

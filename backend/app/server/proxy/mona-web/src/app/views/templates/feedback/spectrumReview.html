@@ -2,14 +2,14 @@
     <button type="button" class="btn dropdown-toggle btn-sm" ngbDropdownToggle
             [ngClass]="{'btn-info': !submitted, 'btn-success': submitted}"
             [disabled]="submitting || submitted">
-        <i [hidden] ="!submitted" class="fa fa-comments"></i>
-        <i [hidden]="submitted" class="fa fa-check"></i>
+        <fa-icon *ngIf ="!submitted" [icon]="faComments"></fa-icon>
+        <fa-icon *ngIf="submitted" [icon]="faCheck"></fa-icon>
         <span>Review Spectrum Quality</span>
     </button>
 
     <div ngbDropdownMenu>
-        <li><a (click)="rate('clean')">Clean Spectrum</a></li>
-        <li><a (click)="rate('noisy')">Noisy Spectrum</a></li>
-        <li><a (click)="rate('grassy')">Grassy Spectrum</a></li>
+        <li><button ngbDropdownItem (click)="rate('clean')">Clean Spectrum</button></li>
+        <li><button ngbDropdownItem (click)="rate('noisy')">Noisy Spectrum</button></li>
+        <li><button ngbDropdownItem (click)="rate('grassy')">Grassy Spectrum</button></li>
     </div>
 </div>

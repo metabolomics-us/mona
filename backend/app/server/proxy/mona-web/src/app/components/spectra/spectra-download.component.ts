@@ -1,5 +1,6 @@
 /**
  * Created by wohlgemuth on 6/16/15.
+ * Updated by nolanguzman on 10/31/2021
  */
 
 import {Component, Input} from '@angular/core';
@@ -30,7 +31,7 @@ export class SpectraDownloadComponent {
      * @param filename string
      * @param mimetype string
      */
-    downloadData = (data, filename, mimetype) => {
+    downloadData(data, filename, mimetype) {
         const blob = new Blob([data], {type: mimetype});
 
         if (window.navigator.msSaveOrOpenBlob) {
@@ -51,12 +52,15 @@ export class SpectraDownloadComponent {
     /**
      * attempts to download a msp file
      */
-    downloadAsMSP = () => {
+    downloadAsMSP() {
         if (typeof this.spectrum !== 'undefined') {
-            this.http.get<any>(`${environment.REST_BACKEND_SERVER}/rest/spectra/${this.spectrum.id}`, {headers: {Accept: 'text/msp'}})
+          const options = { headers: {Accept: 'text/msp'}, responseType: 'text' as 'text'};
+          this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/${this.spectrum.id}`, options)
                 .subscribe((returnData) => {
                     this.downloadData(returnData, this.spectrum.id + '.msp', 'text/msp');
-             });
+             }, (error) => {
+                  this.logger.warn(error);
+                });
             } else {
                 const query = this.spectraQueryBuilderService.getQuery();
                 query.format = 'msp';
@@ -68,9 +72,9 @@ export class SpectraDownloadComponent {
     /**
      * attempts to download as a mona file
      */
-    downloadAsJSON = () => {
+    downloadAsJSON() {
         if (typeof this.spectrum !== 'undefined') {
-            this.http.get<any>(`${environment.REST_BACKEND_SERVER}/rest/spectra/${this.spectrum.id}`,
+            this.http.get(`${environment.REST_BACKEND_SERVER}/rest/spectra/${this.spectrum.id}`,
                     {headers: {Accept: 'application/json'}}).subscribe((response) => {
                 this.downloadData(JSON.stringify(response), this.spectrum.id + '.json', 'application/json' );
             });
@@ -85,11 +89,11 @@ export class SpectraDownloadComponent {
     /**
      * submit query for exporting and show modal dialog response
      */
-    submitQueryExportRequest = (query) => {
+    submitQueryExportRequest(query) {
         const uri = `${environment.REST_BACKEND_SERVER}/rest/spectra/search/export`;
 
         this.http.post<any>(uri, query).subscribe(
-            (response) => {
+            () => {
                 const modalRef = this.modalService.open(DownloadNotifModalComponent);
             },
             (response) => {

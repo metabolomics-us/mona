@@ -1,4 +1,5 @@
-/*
+/**
+ * Updated by nolanguzman on 10/31/2021
  * Component to render our Browse drop down menu
  */
 
@@ -16,7 +17,7 @@ export class BrowseDropDownComponent {
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService) {}
 
     // Reset query when user click browse
-    resetQuery = () => {
+    resetQuery() {
         this.spectraQueryBuilderService.prepareQuery();
     }
 }

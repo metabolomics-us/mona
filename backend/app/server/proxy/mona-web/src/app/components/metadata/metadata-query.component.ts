@@ -1,9 +1,10 @@
 /**
+ * Updated by nolanguzman on 10/31/2021
  * links a metadata field to a query builder and executes the spectra query for us
  */
-import {SpectraQueryBuilderService} from "../../services/query/spectra-query-builder.service";
-import {NGXLogger} from "ngx-logger";
-import {Component, Input} from "@angular/core";
+import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
+import {NGXLogger} from 'ngx-logger';
+import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'metadata-query',
@@ -22,15 +23,15 @@ export class MetadataQueryComponent {
     /**
      * Create a new query based on the selected metadata value
      */
-    newQuery = () => {
+    newQuery() {
         this.spectraQueryBuilderService.prepareQuery();
         this.addToQuery();
-    };
+    }
 
     /**
      * Add selected metadata value to the current query
      */
-    addToQuery = () => {
+    addToQuery() {
         if (typeof this.compound !== 'undefined') {
             this.spectraQueryBuilderService.addCompoundMetaDataToQuery(this.metaData.name, this.metaData.value, undefined);
         } else if (typeof this.classification !== 'undefined') {
@@ -40,5 +41,5 @@ export class MetadataQueryComponent {
         }
 
         this.spectraQueryBuilderService.executeQuery(undefined);
-    };
+    }
 }

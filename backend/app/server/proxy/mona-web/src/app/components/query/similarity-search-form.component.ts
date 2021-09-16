@@ -1,3 +1,6 @@
+/**
+ * Updated by nolanguzman on 10/31/2021
+ */
 import {Component, OnInit} from '@angular/core';
 import {Location} from '@angular/common';
 import {NGXLogger} from 'ngx-logger';
@@ -29,12 +32,12 @@ export class SimilaritySearchFormComponent implements OnInit{
                  public spectraQueryBuilderService: SpectraQueryBuilderService,
                  public location: Location, public router: Router) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.page = 0;
         this.precursorToleranceUnit = 'PPM';
     }
 
-    parsePastedSpectrum = (spectrum) => {
+    parsePastedSpectrum(spectrum) {
         this.pasteError = null;
 
         if (spectrum == null || spectrum === '') {
@@ -66,7 +69,7 @@ export class SimilaritySearchFormComponent implements OnInit{
      * Parse spectra
      * @param files input file
      */
-    parseFiles = (event) => {
+    parseFiles(event) {
         this.page = 1;
         this.spectrum = null;
         this.uploadError = null;
@@ -78,16 +81,6 @@ export class SimilaritySearchFormComponent implements OnInit{
                     this.spectrum = spectrum.spectrum;
                     this.page = 2;
                 }, origin);
-            },
-            (progress) => {
-                if (progress === 100) {
-                    if (this.spectrum == null) {
-                        this.page = 0;
-                        this.uploadError = 'Unable to load spectra!';
-                    } else {
-                        this.page = 2;
-                    }
-                }
             }
         );
     }
@@ -99,7 +92,7 @@ export class SimilaritySearchFormComponent implements OnInit{
      * @param precursorMZTolerance string
      * @param precursorToleranceUnit integer
      */
-    search = (minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit) => {
+    search(minSimilarity, precursorMZ, precursorMZTolerance, precursorToleranceUnit) {
         const request = {
             spectrum: this.spectrum,
             minSimilarity: 500,

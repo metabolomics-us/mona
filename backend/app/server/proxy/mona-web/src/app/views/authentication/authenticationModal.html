@@ -9,7 +9,7 @@
 
 
     <div class="modal-body" *ngIf="state === 'login'">
-        <div class="alert alert-danger alert-dismissible" role="alert" [hidden]="!errors.length">
+        <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="errors.length > 0">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <span>Error:</span>
             <span *ngIf="errors.length === 1">{{errors[0]}}</span>

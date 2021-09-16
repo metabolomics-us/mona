@@ -27,8 +27,23 @@
     <div class="bor-bot"></div><br />
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 float-left">
             <h3>News</h3>
+
+            <div class="news-cell">
+              <span class="news-title"><h4>MoNA Upgraded to Angular 10</h4></span>
+              <div class="news-date">October 31st, 2021</div>
+              <div class="content">
+                MoNA has undergone a technological update to use the Angular 10 framework.
+                Included in the update is an overhaul of the Advanced Uploader system to handle
+                large file uploads as well as a straight through processing system for anything
+                over 10 MB. Various bugfixes have been included to help improve usability for
+                our users. We will continue working to improve MoNA with new features and
+                bugfixes. Checkout the <a href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona">YouTrack</a>
+                page for updates on what we are working on!
+              </div>
+            </div>
+            <hr />
 
             <div class="news-cell">
                 <span class="news-title"><h4>Fiehn HILIC Library</h4></span>
@@ -36,18 +51,6 @@
                 <div class="content">
                     The Fiehn Lab HILIC MS/MS and retention time library has been uploaded, consisting of
                     over 1,100 standards acquired on both Q Exactive and TripleTOF.
-                </div>
-            </div>
-            <hr />
-
-            <div class="news-cell">
-                <span class="news-title"><h4>Improved Spectrum Browser</h4></span>
-                <div class="news-date">September 8, 2017</div>
-                <div class="content">
-                    The spectrum browser has been updated with improved panel and table views.
-                    The infinite scroll has been replaced with pagination to make browsing spectra easier,
-                    the panel view now displays the most valuable metadata first, and the table view has fully
-                    customizable columns.
                 </div>
             </div>
             <hr />
@@ -62,20 +65,9 @@
                     <a href="http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/index.html">MS-DIAL v2.70</a>.
                 </div>
             </div>
-            <!-- <hr />
-
-            <div class="news-cell">
-                <span class="news-title"><h4>Search Improvements</h4></span>
-                <div class="news-date">July 20, 2017</div>
-                <div class="content">
-                    Full text search has been added in addition to our dynamic RSQL query system.  The quick search
-                    box in the site header will now query the MoNA database by term, making finding spectra by
-                    simple keyword much more efficient.
-                </div>
-            </div> -->
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 float-right">
             <h3>Submitter High Scores</h3>
 
             <spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</spectra-top-scores-for-users>

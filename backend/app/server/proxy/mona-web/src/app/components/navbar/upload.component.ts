@@ -1,4 +1,5 @@
-/*
+/**
+ * Updated by nolanguzman on 10/31/2021
  * renders upload button for nav bar
  */
 

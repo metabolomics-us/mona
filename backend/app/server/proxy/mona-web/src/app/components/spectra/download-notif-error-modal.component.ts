@@ -1,5 +1,8 @@
-import {Component, Input} from "@angular/core";
-import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+/**
+ * Created by nolanguzman on 10/31/2021
+ */
+import {Component, Input} from '@angular/core';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'ngbd-modal-download-notif-error',
