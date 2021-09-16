@@ -3,3 +3,4 @@ backend/core/domain/src/test/resources/monaRecords.json filter=lfs diff=lfs merg
 backend/core/domain/src/test/resources/monaRecord.json filter=lfs diff=lfs merge=lfs -text
 backend/core/domain/src/test/resources/legacy/monaRecord.json filter=lfs diff=lfs merge=lfs -text
 backend/core/domain/src/test/resources/legacy/monaRecords.json filter=lfs diff=lfs merge=lfs -text
+git backend/app/server/proxy/mona-web/src/resources/GeoLite2-City.mmdb filter=lfs diff=lfs merge=lfs -text
