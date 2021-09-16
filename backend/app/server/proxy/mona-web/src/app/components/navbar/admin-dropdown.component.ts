@@ -1,9 +1,10 @@
-/*
+/**
+ * Updated by nolanguzman on 10/31/2021
  * Component to render our Admin drop down menu
  */
 import {Component} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
-import {faCaretDown} from '@fortawesome/free-solid-svg-icons';
+import {faCaretDown, faUserShield} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'admin-drop-down',
@@ -11,9 +12,10 @@ import {faCaretDown} from '@fortawesome/free-solid-svg-icons';
 })
 export class AdminDropDownComponent {
     faCaretDown = faCaretDown;
+    faUserShield = faUserShield;
     constructor(public authenticationService: AuthenticationService) {}
 
-    isAdmin = () => {
+    isAdmin() {
         return this.authenticationService.isAdmin();
     }
 }

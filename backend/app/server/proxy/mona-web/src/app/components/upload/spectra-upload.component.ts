@@ -3,7 +3,7 @@
  */
 import {AuthenticationService} from '../../services/authentication.service';
 import {UploadLibraryService} from '../../services/upload/upload-library.service';
-import {faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare, faSave} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 import {NGXLogger} from 'ngx-logger';
 import {Component} from '@angular/core';
 

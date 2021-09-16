@@ -5,48 +5,49 @@
 /**
  * simple service to help with available tags
  */
-import {HttpClient} from "@angular/common/http";
-import { environment } from "../../../environments/environment";
-import {Injectable} from "@angular/core";
+import {HttpClient} from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class Metadata {
     constructor(public http: HttpClient) {
     }
 
-    metadata = (): Promise<Object> => {
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/meta/data?max=100`).toPromise();
+    metadata(): Observable<any> {
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/meta/data?max=100`);
     }
 
-    categories = (): Promise<Object> => {
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/meta/category?max=100`).toPromise();
+    categories(): Observable<any> {
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/meta/category?max=100`);
     }
 
-    categoryData = (): Promise<Object> => {
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/meta/category/data?max=100`).toPromise();
+    categoryData(): Observable<any> {
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/meta/category/data?max=100`);
     }
 
-    dataValues = (): Promise<Object> => {
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/meta/data/value?max=100`).toPromise();
+    dataValues(): Observable<any> {
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/meta/data/value?max=100`);
     }
 
-    queryValues = (data: Object): Promise<Object> => {
+    queryValues(data: any): Observable<any> {
         const config = {
             headers: {
                 'Content-Type': 'application/json'
             },
             params: {query: '@query'}
         };
-        return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/meta/data/search?max=10`, data).toPromise();
+        return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/meta/data/search?max=10`, data);
     }
 
-    metaDataNames = (): Promise<Object> => {
+    metaDataNames(): Observable<any> {
         const config = {
             headers: {
                 'Content-Type': 'application/json'
             },
             cache: true
         };
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/names`, config).toPromise();
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/names`, config);
     }
 }

@@ -1,20 +1,21 @@
 /**
+ * Updated by nolanguzman on 10/31/2021
  * a directive to display our tags and keep track of selections/deselections
  */
 import {TagService} from '../../services/persistence/tag.resource';
 import {NGXLogger} from 'ngx-logger';
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
     selector: 'tag-display',
     templateUrl: '../../views/templates/query/tagDisplay.html'
 })
-export class TagDisplayComponent {
+export class TagDisplayComponent implements OnInit{
     public maxTagsCount;
     @Input() public tags;
     constructor( public logger: NGXLogger,   public tagService: TagService) {}
 
-    $onInit = () => {
+    ngOnInit() {
         setTimeout(() => {
             this.maxTagsCount = 0;
 
@@ -45,7 +46,7 @@ export class TagDisplayComponent {
         });
     }
 
-    tagClass = (tag) => {
+    tagClass(tag) {
         const tagClass = [];
 
         // Button color based on selection

@@ -1,3 +1,6 @@
+/**
+ * Updated by nolanguzman on 10/31/2021
+ */
 import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {NGXLogger} from 'ngx-logger';
 import {Component, OnInit} from '@angular/core';
@@ -18,24 +21,8 @@ export class MainComponent implements OnInit{
 
     constructor( public spectrum: Spectrum,  public logger: NGXLogger) {}
 
-    /* checkHttpError() {
-        while (this.$rootScope.httpError.length !== 0) {
-            let curError = this.$rootScope.httpError.pop();
-
-            if (angular.isDefined(curError)) {
-                let method = curError.config.method;
-                let url = curError.config.url;
-                let status = curError.status;
-
-                let message = 'Unable to ' + method + ' from ' + url + ' Status: ' + status;
-
-                this.$log.error(message);
-            }
-        }
-    }*/
-
-    ngOnInit(): void {
-        this.showcaseSpectraIds = ['MoNA000001', 'MoNA000002', 'MoNA000003'];
+    ngOnInit() {
+        this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
         this.showcaseSpectra = [];
 
         this.showcaseSpectraIds.forEach((id) => {

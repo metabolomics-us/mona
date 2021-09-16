@@ -1,4 +1,5 @@
 /**
+ * Updated by nolanguzman on 10/31/2021
  * displays our spectra
  * @param $scope
  * @param spectrum
@@ -18,7 +19,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
-import {faSpinner, faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
+import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'spectrum-viewer',
@@ -47,7 +48,6 @@ export class SpectrumViewerComponent implements OnInit{
     faQuestionCircle = faQuestionCircle;
     faFlask = faFlask;
     faSpinner = faSpinner;
-    faCloudDownloadAlt = faCloudDownloadAlt;
 
     constructor( public logger: NGXLogger,  public cookie: CookieMain,
                  public spectrumService: Spectrum,  public authenticationService: AuthenticationService,
@@ -56,10 +56,8 @@ export class SpectrumViewerComponent implements OnInit{
 
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
       this.delayedspectrum = this.route.snapshot.data.spectrum;
-      console.log(this.route.snapshot.data);
-      console.log(this.delayedspectrum);
       this.accordionStatus = {
         isSpectraOpen: true,
         isIonTableOpen: false,
@@ -104,10 +102,9 @@ export class SpectrumViewerComponent implements OnInit{
 
       this.setSpectrum();
       this.setAccordionStatus();
-      console.log(this.spectrum);
     }
 
-    setAccordionStatus = () => {
+    setAccordionStatus() {
       /**
        * status of our accordion
        * type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
@@ -120,20 +117,17 @@ export class SpectrumViewerComponent implements OnInit{
       this.accordionStatusSubject.subscribe(() => {
         for (const key in this.accordionStatus) {
           if (key === 'isCompoundOpen') {
-            console.log(this.spectrum);
             for (let i = 0; i < this.spectrum.compound.length; i++) {
-              console.log(this.accordionStatus[key][i]);
               this.cookie.update('DisplayCompound' + i, this.accordionStatus[key][i]);
             }
           } else {
-            console.log(this.accordionStatus[key]);
             this.cookie.update('DisplaySpectra' + key, this.accordionStatus[key]);
           }
         }
       });
     }
 
-    setSpectrum(): void {
+    setSpectrum() {
       // truncate metadata
       if (typeof this.delayedspectrum.metaData !== 'undefined') {
         for (let i = 0; i < this.delayedspectrum.metaData.length; i++) {
@@ -217,7 +211,7 @@ export class SpectrumViewerComponent implements OnInit{
       }
     }
 
-    sortIonTable = (column) => {
+    sortIonTable(column) {
         if (column === 'ion') {
             if (this.ionTableSort === '+ion') { this.ionTableSort = '-ion'; } else { this.ionTableSort = '+ion'; }
         }
@@ -232,7 +226,7 @@ export class SpectrumViewerComponent implements OnInit{
 
 
 
-    loadSimilarSpectra = () => {
+    loadSimilarSpectra() {
         if (!this.loadingSimilarSpectra) {
           return;
         }
@@ -253,11 +247,11 @@ export class SpectrumViewerComponent implements OnInit{
      * displays the spectrum for the given index
      * @param id string containing spectrum id
      */
-    viewSpectrum = (id) => {
+    viewSpectrum(id) {
         this.router.navigate(['/spectra/display'], {queryParams: {id}}).then();
     }
 
-    checkNumber = (check: any) => {
+    checkNumber(check: any) {
         if (typeof check === 'number'){
             return true;
         }

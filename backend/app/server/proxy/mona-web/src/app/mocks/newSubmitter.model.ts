@@ -4,6 +4,6 @@ export class NewSubmitter {
     institution: string;
     emailAddress: string;
     password: string;
-    password_match: string;
+    passwordMatch: string;
     id: string;
 }

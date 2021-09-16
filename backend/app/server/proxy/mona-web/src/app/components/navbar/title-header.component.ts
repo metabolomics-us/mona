@@ -1,4 +1,5 @@
-/*
+/**
+ * Updated by nolanguzman on 10/31/2021
  * Component to render Header for our navbar
  */
 

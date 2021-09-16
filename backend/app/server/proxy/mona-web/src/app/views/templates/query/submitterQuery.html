@@ -1,14 +1,14 @@
 <span class="dropdown" ngbDropdown>
     <a role="button" class="dropdown-toggle" ngbDropdownToggle>
-        <i class='fa fa-search'></i>
+      <fa-icon [icon]="faSearch"></fa-icon>
         <ng-content></ng-content>
     </a>
 
     <ul class="uib-dropdown-menu" ngbDropdownMenu>
-        <li><a (click)="newQuery()">Create New Query</a></li>
-        <li><a (click)="addToQuery()">Add to Query</a></li>
+        <li><button ngbDropdownItem (click)="newQuery()">Create New Query</button></li>
+        <li><button ngbDropdownItem (click)="addToQuery()">Add to Query</button></li>
 
-        <li [hidden]="isAdmin()" class="divider"></li>
-        <li [hidden]="isAdmin()"><a (click)="curateSpectra()">Curate Spectra by Submitter</a></li>
+        <li *ngIf="isAdmin()" class="divider"></li>
+        <li *ngIf="isAdmin()"><button ngbDropdownItem (click)="curateSpectra()">Curate Spectra by Submitter</button></li>
     </ul>
 </span>

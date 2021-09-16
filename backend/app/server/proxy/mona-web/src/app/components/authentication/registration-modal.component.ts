@@ -1,3 +1,6 @@
+/**
+ * Updated by nolanguzman on 10/31/2021
+ */
 import {HttpClient} from '@angular/common/http';
 import {AuthenticationService} from '../../services/authentication.service';
 import {RegistrationService} from '../../services/registration.service';
@@ -6,6 +9,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {SubmitterFormComponent} from '../submitter/submitter-form.component';
 import {NGXLogger} from 'ngx-logger';
 import { first } from 'rxjs/operators';
+import {faSpinner, faCheck, faExclamation, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'registration-modal',
@@ -16,17 +20,20 @@ export class RegistrationModalComponent implements OnInit{
     public state;
     public submitterFormStatus: boolean;
     @ViewChild(SubmitterFormComponent) submitterForm: SubmitterFormComponent;
+    faSpinner = faSpinner;
+    faCheck = faCheck;
+    faExclamationTriangle = faExclamationTriangle;
 
     constructor(public http: HttpClient, public authenticationService: AuthenticationService,
                 public registrationService: RegistrationService, public activeModal: NgbActiveModal,
                 public logger: NGXLogger){}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.errors = [];
         this.state = 'register';
     }
 
-    cancelDialog(): void {
+    cancelDialog() {
         this.activeModal.dismiss('cancel');
     }
 
@@ -34,7 +41,7 @@ export class RegistrationModalComponent implements OnInit{
     /**
      * closes the dialog and finishes and builds the query
      */
-    submitRegistration(): void {
+    submitRegistration() {
         this.errors = [];
         this.state = 'registering';
 
@@ -46,24 +53,35 @@ export class RegistrationModalComponent implements OnInit{
                             this.state = 'success';
                         },
                         (error => {
-                            this.errors.push('An unknown error has occurred: ' + JSON.stringify(error));
+                            this.errors.push({status: error.status, name: error.name, error: error.error.error,
+                                              exception: error.error.exception, message: error.error.message});
+                            this.state = 'fail';
                         }));
 
                 }, (error => {
-                    this.errors.push('An unknown error has occurred: ' + JSON.stringify(error));
+                    this.errors.push({status: error.status, name: error.name, error: error.error.error,
+                      exception: error.error.exception, message: error.error.message});
+                    this.state = 'fail';
                 }));
 
         }, (error => {
-                this.errors.push('An unknown error has occurred: ' + JSON.stringify(error));
+                this.errors.push({status: error.status, name: error.name, error: error.error.error,
+                    exception: error.error.exception, message: error.error.message});
+                this.state = 'fail';
             }));
     }
 
     /**
      * Close dialog and open login modal
      */
-    logIn(): void {
+    logIn() {
         this.activeModal.dismiss({$value: 'cancel'});
         this.authenticationService.requestModal();
+    }
+
+    resetState() {
+      this.state = 'register';
+      this.errors = [];
     }
 
 }

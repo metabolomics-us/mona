@@ -113,70 +113,32 @@
 
                 <configuration>
                     <installDirectory>target</installDirectory>
+                    <nodeVersion>v14.16.1</nodeVersion>
+                    <npmVersion>6.14.13</npmVersion>
                 </configuration>
 
                 <executions>
                     <execution>
                         <id>install node and npm</id>
-
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
-
-                        <configuration>
-                            <nodeVersion>v14.16.1</nodeVersion>
-                            <npmVersion>6.14.13</npmVersion>
-                        </configuration>
                     </execution>
-
                     <execution>
                         <id>npm install</id>
-
                         <goals>
                             <goal>npm</goal>
                         </goals>
-
-                        <!-- Optional configuration which provides for running any npm command -->
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
                     </execution>
-                    <!--
                     <execution>
-                        <id>bower install</id>
-
+                        <id>npm run build</id>
                         <goals>
-                            <goal>bower</goal>
-                        </goals>
-
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    -->
-
-                    <execution>
-                        <id>webpack build</id>
-
-                        <goals>
-                            <goal>webpack</goal>
-                        </goals>
-
-                        <configuration>
-                        </configuration>
-                    </execution>
-
-                    <!--
-                    <execution>
-                        <id>javascript tests</id>
-                        <goals>
-                            <goal>karma</goal>
+                            <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <karmaConfPath>src/test/javascript/karma.conf.ci.js</karmaConfPath>
+                            <arguments>run build</arguments>
                         </configuration>
                     </execution>
-                    -->
                 </executions>
             </plugin>
         </plugins>

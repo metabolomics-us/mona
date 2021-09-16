@@ -37,7 +37,7 @@ export class SpectraQueryBuilderService {
         this.similarityQuery = null;
     }
 
-    getQuery = () => {
+    getQuery() {
         if (this.query == null) {
             this.prepareQuery();
         }
@@ -45,25 +45,25 @@ export class SpectraQueryBuilderService {
         return this.query;
     }
 
-    setQuery = (query) => {
+    setQuery(query) {
         this.query = query;
         this.queryString = '';
     }
 
-    setQueryString = (queryString) => {
+    setQueryString(queryString) {
         this.query = [];
         this.queryString = queryString;
     }
 
-    getTextSearch = () => {
+    getTextSearch() {
         return this.textSearch;
     }
 
-    setTextSearch = (textSearch) => {
+    setTextSearch(textSearch) {
         this.textSearch = textSearch;
     }
 
-    prepareQuery = () => {
+    prepareQuery() {
         this.logger.debug('Resetting query');
 
         this.query = [];
@@ -76,7 +76,7 @@ export class SpectraQueryBuilderService {
      * if provided so that a user can start with a predefined or user-specified query
      * and add additional search terms to it.
      */
-    getRSQLQuery = () => {
+    getRSQLQuery() {
         if (this.queryString === '') {
             return this.query.join(' and ');
         } else {
@@ -84,7 +84,7 @@ export class SpectraQueryBuilderService {
         }
     }
 
-    reload = () => {
+    reload() {
         const currentUrl = this.router.url;
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.router.onSameUrlNavigation = 'reload';
@@ -93,7 +93,7 @@ export class SpectraQueryBuilderService {
         });
     }
 
-    executeQuery = (replace = false) => {
+    executeQuery(replace = false) {
         const query = this.getRSQLQuery();
 
         if (query !== '' || this.textSearch !== '') {
@@ -109,18 +109,10 @@ export class SpectraQueryBuilderService {
             });
         } else {
             this.logger.info(`The current route is: ${this.router.url}`);
-            if (this.router.url === '/spectra/browse') {
-                this.logger.debug('Reloading route');
-                this.reload();
-            } else {
-                this.logger.debug('Executing empty query');
-                this.router.navigate(['/spectra/browse'],
-                    {queryParams:
-                            {}
-                    }).then((res) => {
-                    this.logger.info('Navigated to /spectra/browse with empty params');
-                });
-            }
+            this.logger.debug('Executing empty query');
+            this.router.navigate(['/spectra/browse']).then((res) => {
+                this.logger.info('Navigated to /spectra/browse with empty params');
+              });
         }
 
         replace = typeof replace !== 'undefined' ? replace : false;
@@ -137,15 +129,15 @@ export class SpectraQueryBuilderService {
         }
     }
 
-    setSimilarityQuery(query): void{
+    setSimilarityQuery(query) {
         this.similarityQuery = query;
     }
 
-    hasSimilarityQuery(): boolean {
+    hasSimilarityQuery()  {
         return this.similarityQuery !== null;
     }
 
-    getSimilarityQuery(): string{
+    getSimilarityQuery() {
         return this.similarityQuery;
     }
 
@@ -158,7 +150,7 @@ export class SpectraQueryBuilderService {
      * @param partialQuery whether to perform a partial string search
      * @returns string metadata query
      */
-    buildMetaDataQuery =  (name, value, collection, tolerance, partialQuery) => {
+    buildMetaDataQuery(name, value, collection, tolerance, partialQuery) {
         // Handle array of values
         if (Array.isArray(value)) {
             const subqueries = value.map((x) => {
@@ -183,35 +175,35 @@ export class SpectraQueryBuilderService {
         }
     }
 
-    addMetaDataToQuery = (name, value, partialQuery) => {
+    addMetaDataToQuery(name, value, partialQuery) {
         this.query.push(this.buildMetaDataQuery(name, value, 'metaData', undefined, partialQuery));
     }
 
-    addNumericalMetaDataToQuery = (name, value, tolerance) => {
+    addNumericalMetaDataToQuery(name, value, tolerance) {
         this.query.push(this.buildMetaDataQuery(name, value, 'metaData', tolerance, undefined));
     }
 
-    addCompoundMetaDataToQuery = (name, value, partialQuery) => {
+    addCompoundMetaDataToQuery(name, value, partialQuery) {
         this.query.push(this.buildMetaDataQuery(name, value, 'compound.metaData', undefined, partialQuery));
     }
 
-    addNumericalCompoundMetaDataToQuery = (name, value, tolerance) => {
+    addNumericalCompoundMetaDataToQuery(name, value, tolerance) {
         this.query.push(this.buildMetaDataQuery(name, value, 'compound.metaData', tolerance, undefined));
     }
 
-    addClassificationToQuery = (name, value, partialQuery) => {
+    addClassificationToQuery(name, value, partialQuery) {
         this.query.push(this.buildMetaDataQuery(name, value, 'compound.classification', undefined, partialQuery));
     }
 
-    addGeneralClassificationToQuery = (value) => {
+    addGeneralClassificationToQuery(value) {
         this.query.push('compound.classification=q=\'value=match=".*' + value + '.*"\'');
     }
 
-    addNameToQuery = (name) => {
+    addNameToQuery(name) {
         this.query.push('compound.names=q=\'name=like="' + name + '"\'');
     }
 
-    buildTagQuery = (value, collection, queryType) => {
+    buildTagQuery(value, collection, queryType) {
         // Handle array of values
         if (Array.isArray(value)) {
             const subqueries = value.map((x) => {
@@ -233,15 +225,15 @@ export class SpectraQueryBuilderService {
         }
     }
 
-    addTagToQuery = (query, queryType) => {
+    addTagToQuery(query, queryType) {
         this.query.push(this.buildTagQuery(query, 'tags', queryType));
     }
 
-    addCompoundTagToQuery = (query, queryType) => {
+    addCompoundTagToQuery(query, queryType) {
         this.query.push(this.buildTagQuery(query, 'compound.tags', queryType));
     }
 
-    addSplashToQuery = (query) => {
+    addSplashToQuery(query) {
         if (/^(splash[0-9]{2}-[a-z0-9]{4}-[0-9]{10}-[a-z0-9]{20})$/.test(query)) {
             this.query.push('splash.splash=="' + query + '"');
         } else if (/^splash[0-9]{2}/.test(query)) {
@@ -251,7 +243,7 @@ export class SpectraQueryBuilderService {
         }
     }
 
-    addUserToQuery = (username) => {
+    addUserToQuery(username) {
         this.query.push('submitter.id=="' + username + '"');
     }
 }

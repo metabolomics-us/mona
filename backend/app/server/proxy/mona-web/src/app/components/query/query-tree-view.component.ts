@@ -1,30 +1,35 @@
 /**
+ * Updated by nolanguzman on 10/31/2021
  * Modified version of http://github.com/eu81273/angular.treeview
  */
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
-import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
+import {faFolder, faFolderOpen, faFile, faFileDownload, faSearch} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'query-tree-view',
     templateUrl: '../../views/templates/query/queryTreeView.html'
 })
 export class QueryTreeViewComponent implements OnInit {
-    public templateHtml$: Observable<string>;
     public showHidden;
     public templatePrime;
     public newStyle;
     public depth;
+    faFolder = faFolder;
+    faFolderOpen = faFolderOpen;
+    faFile = faFile;
+    faFileDownload = faFileDownload;
+    faSearch = faSearch;
 
     @Input() public treeId;
     @Input() public treeModel;
     @Input() public treeDepth;
 
-    constructor( public elementRef: ElementRef,  public logger: NGXLogger) {}
+    constructor( public elementRef: ElementRef,  public logger: NGXLogger, public http: HttpClient) {}
 
-    ngOnInit(): void {
-        console.log(this.treeModel);
+    ngOnInit() {
         this.depth = (typeof this.treeDepth === 'undefined') ? 0 : parseInt(this.treeDepth, 10);
         this.newStyle = this.depth > 0 ? 'padding-left: ' + (3 * this.depth) + 'em' : '';
 
@@ -64,10 +69,6 @@ export class QueryTreeViewComponent implements OnInit {
             }
         }
 
-    }
-
-    executeQuery(node: any): string {
-        return `/spectra/browse?query=${node.query}`;
     }
 
     downloadJSON(node: any): string {

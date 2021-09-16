@@ -1,5 +1,6 @@
 /**
  * Created by wohlgemuth on 7/11/14.
+ * Updated by nolanguzman on 10/31/2021
  */
 
 // TODO: waiting for implementation of return user data for admin from authentication Service
@@ -28,7 +29,7 @@ export class AuthenticationComponent implements OnInit{
     constructor(public modalService: NgbModal, public authenticationService: AuthenticationService,
                 public logger: NGXLogger) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.authenticationService.currentUser.subscribe((x) => {
             this.currentUser = x;
         });
@@ -76,7 +77,7 @@ export class AuthenticationComponent implements OnInit{
     /**
      * Handle login
      */
-    handleLogin(): void {
+    handleLogin() {
         if (this.authenticationService.isLoggedIn()) {
             this.authenticationService.logout();
         } else {
@@ -87,7 +88,7 @@ export class AuthenticationComponent implements OnInit{
     /**
      * Opens the authentication modal dialog
      */
-    openAuthenticationDialog(): void {
+    openAuthenticationDialog() {
         this.modalService.open(AuthenticationModalComponent, {
             size: 'sm',
             backdrop: true
@@ -97,7 +98,7 @@ export class AuthenticationComponent implements OnInit{
     /**
      * Opens the registration modal dialog
      */
-    handleRegistration(): void {
+    handleRegistration() {
         if (!this.isLoggedIn()) {
             this.modalService.open(RegistrationModalComponent, {
               size: 'md',

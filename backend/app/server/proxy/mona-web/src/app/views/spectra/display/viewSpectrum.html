@@ -1,18 +1,17 @@
 <div>
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h3>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Spectrum {{spectrum.id}} for {{spectrum.compound[0].names[0].name}}</h3>
                 </div>
 
-                <div class="panel-body">
+                <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
                             <span placement="right"
                                   ngbTooltip="Click to see the explaination for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5 score"
-                                  triggers="mouseenter" [openDelay]='10'
-                                  (click)="showScore =! showScore">
+                                  (click)="showScore = !showScore">
                                 Rating:
                                 <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
                               <fa-icon [icon]="faQuestionCircle"></fa-icon>
@@ -22,11 +21,11 @@
 
                     <div class="row" *ngIf="showScore">
                         <div class="col-md-12">
-                            <div class="panel top17 panel-default" *ngIf="spectrum.score">
-                                <div class="panel-heading">
+                            <div class="card top17" *ngIf="spectrum.score">
+                                <div class="card-header">
                                     Explanation for the {{spectrum.score.score | number:'1.2-2'}} / 5 star score
                                 </div>
-                                <div class="panel-body">
+                                <div class="card-body">
                                     <table class="table">
                                         <thead>
                                         <tr>
@@ -44,7 +43,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="panel top17" *ngIf="spectrum.score">This spectrum has not yet been curated.</div>
+                            <div class="card top17" *ngIf="spectrum.score">This spectrum has not yet been curated.</div>
                         </div>
                     </div>
 
@@ -100,11 +99,11 @@
                     <!-- mass spectral properties -->
                     <div class="row">
                         <div class="col-md-12">
-                            <ngb-accordion #acc="ngbAccordion" [closeOthers]="false">
+                            <ngb-accordion #acc="ngbAccordion" [closeOthers]="false" activeIds="masspecPanel">
                                 <ngb-panel id="masspecPanel">
                                     <ng-template ngbPanelHeader>
                                       <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
-                                        Mass Spectrum
+                                        <strong>Mass Spectrum</strong>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('masspecPanel')"></fa-icon>
                                         <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('masspecPanel')"></fa-icon>
                                       </button>
@@ -120,7 +119,7 @@
                                 <ngb-panel id="ionPanel">
                                   <ng-template ngbPanelHeader>
                                     <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
-                                      Ion Table / Peak Table
+                                      <strong>Ion Table / Peak Table</strong>
                                       <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('ionPanel')"></fa-icon>
                                       <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('ionPanel')"></fa-icon>
                                     </button>
@@ -156,7 +155,7 @@
                                 <ngb-panel id="similarityPanel">
                                     <ng-template ngbPanelHeader>
                                       <button ngbPanelToggle (click)="loadSimilarSpectra()" class="btn btn-link container-fluid text-left pl-0">
-                                        Similar Spectra
+                                        <strong>Similar Spectra</strong>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc.isExpanded('similarityPanel')"></fa-icon>
                                         <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc.isExpanded('similarityPanel')"></fa-icon>
                                       </button>
@@ -198,8 +197,9 @@
                                             </td>
                                             <td>
                                               <div style="width: 100px; height: 100px">
-                                                <div [libChemdoodle]="s.compound[0].molFile" class="center-block"
-                                                     [id]="'bioSketch_'+s.id"></div>
+                                                <div [libChemdoodle]="s.compound[0].molFile"
+                                                     id="{{'bioSketch_'+s.id}}"
+                                                      [width]="100" [height]="100"></div>
                                               </div>
 
                                             </td>
@@ -227,12 +227,12 @@
                         <div class="col-md-12">
                             <h4>Compound Information</h4>
 
-                            <ngb-accordion #acc2="ngbAccordion">
+                            <ngb-accordion #acc2="ngbAccordion" activeIds="compoundInfo">
                                 <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
                                     <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
                                       <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
-                                        <span *ngIf="compound.kind !== null">{{compound.kind}}</span>
-                                        <span *ngIf="compound.kind === null">Submitted Compound</span>
+                                        <span *ngIf="compound.kind !== null"><strong>{{compound.kind}}</strong></span>
+                                        <span *ngIf="compound.kind === null"><strong>Submitted Compound</strong></span>
                                         <fa-icon [icon]="faAngleDown" pull="right" *ngIf="acc2.isExpanded('compoundInfo')"></fa-icon>
                                         <fa-icon [icon]="faAngleRight" pull="right" *ngIf="!acc2.isExpanded('compoundInfo')"></fa-icon>
                                       </button>

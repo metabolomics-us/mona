@@ -7,35 +7,36 @@
 import {HttpClient, HttpParams} from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class Statistics {
     constructor(public http: HttpClient) {
     }
 
-    public cleanParameters = (data: Object) : HttpParams => {
+    private cleanParameters(data: any): any {
         let params = new HttpParams();
-        Object.keys(data).forEach(k => {data[k] ? params = params.set(k, data[k]): {}});
+        Object.keys(data).forEach(k => {data[k] ? params = params.set(k, data[k]) : {}; });
 
         return params;
     }
 
-    executionTime = (data: Object): Promise<Object> => {
-        let params = this.cleanParameters(data);
+    executionTime(data: any): Observable<any> {
+        const params = this.cleanParameters(data);
 
-        let api = `${environment.REST_BACKEND_SERVER}/rest/statistics/category/${params["method"]}/${params["time"]}`;
-        return this.http.get(api, {params: params}).toPromise();
+        const api = `${environment.REST_BACKEND_SERVER}/rest/statistics/category/${params.method}/${params.time}`;
+        return this.http.get(api, {params});
     }
 
-    pendingJobs = (): Promise<Object> => {
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/statistics/jobs/pending`).toPromise();
+    pendingJobs(): Observable<any> {
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/statistics/jobs/pending`);
     }
 
-    spectraCount = (data: Object): Promise<Object> => {
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/statistics/submitters/count/${data["id"]}`).toPromise();
+    spectraCount(data: any): Observable<any> {
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/statistics/submitters/count/${data.id}`);
     }
 
-    spectraTopScores = (): Promise<Object> => {
-        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/statistics/submitters`).toPromise();
+    spectraTopScores(): Observable<any> {
+        return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/statistics/submitters`);
     }
 }

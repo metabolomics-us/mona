@@ -1,5 +1,6 @@
 /**
  * Created by sajjan on 5/12/15.
+ * Updated by nolanguzman on 10/31/2021
  */
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {Component, OnInit} from '@angular/core';
@@ -16,12 +17,11 @@ export class SearchBoxComponent implements OnInit {
 
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService){}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.inputError = false;
     }
 
-    performSimpleQuery(query): void{
-        console.log(query);
+    performSimpleQuery(query) {
         // Handle empty query
         if (typeof query === 'undefined' || query === '') {
             return;

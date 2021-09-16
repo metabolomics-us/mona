@@ -1,3 +1,6 @@
+/**
+ * Updated by nolanguzman on 10/31/2021
+ */
 import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {NGXLogger} from 'ngx-logger';
@@ -20,7 +23,7 @@ export class AuthenticationModalComponent implements OnInit {
     constructor(public authenticationService: AuthenticationService, public activeModal: NgbActiveModal,
                 public logger: NGXLogger) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.errors = [];
         this.state = 'login';
         this.credentials = {
@@ -30,7 +33,7 @@ export class AuthenticationModalComponent implements OnInit {
     }
 
 
-    submitLogin(): void {
+    submitLogin() {
         this.errors = [];
 
         if (this.credentials.email === '') {
@@ -58,7 +61,7 @@ export class AuthenticationModalComponent implements OnInit {
         }
     }
 
-    cancelDialog(): void {
+    cancelDialog() {
         this.activeModal.dismiss('cancel');
     }
 }

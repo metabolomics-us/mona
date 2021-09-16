@@ -1,4 +1,5 @@
-/*
+/**
+ * Updated by nolanguzman on 10/31/2021
  * Component to render our Resources drop down menu
  */
 

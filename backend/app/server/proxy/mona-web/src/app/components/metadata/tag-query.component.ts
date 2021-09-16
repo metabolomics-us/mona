@@ -1,4 +1,5 @@
 /**
+ * Updated by nolanguzman on 10/31/2021
  * Executes a tag query
  */
 
@@ -23,7 +24,7 @@ export class TagQueryComponent {
     /**
      * Create a new query based on the selected tag value
      */
-    newQuery = () => {
+    newQuery() {
         this.spectraQueryBuilderService.prepareQuery();
         this.addToQuery();
     }
@@ -31,7 +32,7 @@ export class TagQueryComponent {
     /**
      * Add selected tag value to the current query
      */
-    addToQuery = () => {
+    addToQuery() {
         if (typeof this.type !== 'undefined' && this.type === 'compound') {
             this.spectraQueryBuilderService.addCompoundTagToQuery(this.tag.text, undefined);
         } else {

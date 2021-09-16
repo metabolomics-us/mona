@@ -25,11 +25,11 @@
                 <div class="input-group">
                     <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
-                           Browse&hellip; <input type="file" name="upload" [(ngModel)]="fileUpload" (change)="parseFiles($event)"/>
+                           Browse&hellip; <input type="file" name="upload" multiple [(ngModel)]="fileUpload" (change)="parseFiles($event)"/>
                         </span>
                     </span>
 
-                    <input id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly />
+                    <input id="spectrumFile" type="text" class="form-control" [(ngModel)]="filenames" readonly/>
                 </div>
 
                 <span class="help-block">Supports MSP and MGF mass spectral library files and MassBank Records Format</span>

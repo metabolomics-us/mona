@@ -1,12 +1,14 @@
 /**
  * Created by Gert on 5/28/2014.
+ * Updated by nolanguzman on 10/31/2021
  */
 
-import {Submitter} from "../../services/persistence/submitter.resource";
-import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
-import {NewSubmitter} from "../../mocks/newSubmitter.model";
-import {Component, Input} from "@angular/core";
-import {first} from "rxjs/operators";
+import {Submitter} from '../../services/persistence/submitter.resource';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {RegistrationService} from '../../services/registration.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {Component, Input} from '@angular/core';
+import {first} from 'rxjs/operators';
 
 @Component({
     selector: 'submitter-modal',
@@ -16,76 +18,70 @@ export class SubmitterModalComponent {
     public newSubmitter;
     public formErrors;
     @Input() public new: boolean;
+    @Input() public submitter;
     public submitterFormStatus: boolean;
 
-    constructor( public submitterResource: Submitter,  public activeModal: NgbActiveModal){}
+    constructor( public submitterResource: Submitter,  public activeModal: NgbActiveModal,
+                 public registrationService: RegistrationService, public authenticationService: AuthenticationService){}
 
     /**
      * cancels any dialog in this controller
      */
-    cancelDialog = () => {
-        this.activeModal.dismiss('cancel');
-    };
+    cancelDialog() {
+        this.activeModal.close();
+    }
 
     /**
      * takes care of updates
      */
-    updateSubmitter = () => {
-        let submitter = this.createSubmitterFromScope();
+    updateSubmitter() {
+        const submitter = this.registrationService.newSubmitter;
+        const token = this.authenticationService.getCurrentUser().accessToken;
 
-        //update the submitter
-        this.submitterResource.update(submitter).pipe(first()).subscribe((data) => {
-            this.activeModal.close(submitter);
+        // update the submitter
+        this.submitterResource.update(submitter, token).pipe(first()).subscribe(() => {
+            this.activeModal.close();
         }, (error) => {
             this.handleDialogError(error);
         });
-    };
+    }
 
     /**
      * takes care of creates
      */
-    createNewSubmitter = () => {
-        let submitter = this.createSubmitterFromScope();
+    createNewSubmitter() {
+      this.registrationService.submit().pipe(first()).subscribe(
+        () => {
+          this.registrationService.authorize().pipe(first()).subscribe((res: any) => {
+            this.registrationService.registerAsSubmitter(res.token).pipe(first()).subscribe(
+              () => {
+                this.activeModal.close();
+              },
+              (error => {
+                this.handleDialogError(error);
+              }));
 
-        //no submitter id so create a new one
-        this.submitterResource.update(submitter).pipe(first()).subscribe((savedSubmitter) => {
-            this.activeModal.close(savedSubmitter);
-        }, (error) => {
+          }, (error => {
             this.handleDialogError(error);
-        });
-    };
+          }));
 
-    /**
-     * creates our submitter object
-     */
-     createSubmitterFromScope = () => {
-        //build our object
-        let submitter = new NewSubmitter();
-        submitter.firstName = this.newSubmitter.firstName;
-        submitter.lastName = this.newSubmitter.lastName;
-        submitter.institution = this.newSubmitter.institution;
-        submitter.emailAddress = this.newSubmitter.emailAddress;
-        submitter.password = this.newSubmitter.password;
-
-        if (this.newSubmitter.id) {
-            submitter.id = this.newSubmitter.id;
-        }
-
-        return submitter;
+        }, (error => {
+          this.handleDialogError(error);
+        }));
     }
 
     /**
      * handles our dialog errors
-     * @param error
+     * @param error error object
      */
-     handleDialogError = (error) => {
-        let errorReport = [];
+     handleDialogError(error) {
+        const errorReport = [];
 
         if (error.data) {
             for (let i = 0; i < error.data.errors.length; i++) {
-                let obj = error.data.errors[i];
+                const obj = error.data.errors[i];
 
-                //remove the none needed object
+                // remove the none needed object
                 delete obj.object;
                 errorReport.push(obj);
             }
@@ -93,7 +89,7 @@ export class SubmitterModalComponent {
             this.formErrors = errorReport;
         }
         else {
-            this.formErrors = "we had an unexpected error, please check the JS console";
+            this.formErrors = 'we had an unexpected error, please check the JS console';
         }
     }
 

@@ -9,7 +9,7 @@
     <div class="card-body">
         <div class="card-group">
             <div class="col-lg-6 col-md-7 col-sm-6">
-                <div class="card-columns" *ngIf="spectrum.similarity !== 'undefined'">
+                <div class="card-columns" *ngIf="spectrum.similarity">
                     <div class="col-md-12">
                         <ul class="list-inline">
                             <li class="pull-left">
@@ -54,12 +54,11 @@
                      *ngFor="let meta of spectrum.metaData | filterPipe: {category: '!annotation', deleted : '!true', hidden: '!true'}">
 
                     <div class="col-lg-5 col-md-5 col-sm-6">
-                        <metadata-query value="meta">
+                        <metadata-query [metaData]="meta">
                             {{meta.name}}
                         </metadata-query>
                     </div>
                     <div class="col-lg-7 col-md-7 col-sm-6">
-                        <!-- Remember to finish limitTo but need to see if array or string -->
                         {{meta.value | slice: 0:25}}{{meta.value.length > 25 ? '...' : ''}}
                     </div>
                 </div>

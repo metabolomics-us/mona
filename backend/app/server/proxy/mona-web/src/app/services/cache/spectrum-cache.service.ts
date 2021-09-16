@@ -5,8 +5,8 @@
  * persistence between controllers and views
  */
 
-import {NGXLogger} from "ngx-logger";
-import {Injectable} from "@angular/core";
+import {NGXLogger} from 'ngx-logger';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class SpectrumCacheService{
@@ -40,57 +40,64 @@ export class SpectrumCacheService{
     /**
      * Clear all values stored in this cache factory
      */
-    clear = () => {
+    clear() {
         this.removeBrowserSpectra();
         this.removeBrowserLocation();
         this.removeSpectrum();
-    };
+    }
 
 
-    hasBrowserSpectra = () => {
+    hasBrowserSpectra() {
         return this.browserSpectra !== null;
-    };
-    getBrowserSpectra = () =>{
+    }
+
+    getBrowserSpectra() {
         return this.browserSpectra;
-    };
-    setBrowserSpectra = (browserSpectra) =>{
-        this.browserSpectraScroll = window.scrollTo(0,0);
+    }
+
+    setBrowserSpectra(browserSpectra) {
+        this.browserSpectraScroll = window.scrollTo(0, 0);
         this.browserSpectra = browserSpectra;
-    };
-    removeBrowserSpectra = () =>{
+    }
+
+    removeBrowserSpectra() {
         this.browserSpectraScroll = null;
         this.browserSpectra = null;
-    };
+    }
 
-    getBrowserSpectraScrollLocation = () =>{
+    getBrowserSpectraScrollLocation() {
         return this.browserSpectraScroll;
-    };
+    }
 
+    hasBrowserLocation() {
+      return this.browserLocation !== null;
+    }
 
-    hasBrowserLocation = () =>{
-        return this.browserLocation !== null;
-    };
-    getBrowserLocation = () =>{
+    getBrowserLocation() {
         return this.browserLocation;
-    };
-    setBrowserLocation = (browserLocation) =>{
+    }
+
+    setBrowserLocation(browserLocation) {
         this.browserLocation = browserLocation;
-    };
-    removeBrowserLocation = () =>{
+    }
+
+    removeBrowserLocation() {
         this.browserLocation = null;
-    };
+    }
 
-
-    hasSpectrum = () =>{
+    hasSpectrum() {
         return this.spectrum !== null;
-    };
-    getSpectrum = () =>{
+    }
+
+    getSpectrum() {
         return this.spectrum;
-    };
-    setSpectrum = (spectrum) =>{
+    }
+
+    setSpectrum(spectrum) {
         this.spectrum = spectrum;
-    };
-    removeSpectrum = () =>{
+    }
+
+    removeSpectrum() {
         this.spectrum = null;
-    };
+    }
 }

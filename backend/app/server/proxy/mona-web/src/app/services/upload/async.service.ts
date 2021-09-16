@@ -32,7 +32,7 @@ export class AsyncService{
      * adds a function, which takes one argument and our obect to the pool
      * @param executeFunction function to run in job
      */
-    addToPool = (executeFunction, data) => {
+    addToPool(executeFunction, data) {
         this.pool.push({execute: executeFunction, data});
 
         if (this.timeout === null) {
@@ -42,7 +42,7 @@ export class AsyncService{
         }
     }
 
-    startPool = () => {
+    startPool() {
         // works over the pool
       if (this.runningTasks < this.maxRunningTasks) {
         for (let i = 0; i < this.maxRunningTasks; i++) {
@@ -70,11 +70,11 @@ export class AsyncService{
       }
     }
 
-    hasPooledTasks = () => {
+    hasPooledTasks() {
         return this.pool.length > 0;
     }
 
-    resetPool = () => {
+    resetPool() {
         this.pool = [];
         this.timeout = null;
     }

@@ -116,13 +116,13 @@ import {AdvancedUploadModalComponent} from './app/components/upload/advanced-upl
         NgChemdoodleModule,
         NgbModule,
         LoggerModule.forRoot({
-            level: NgxLoggerLevel.INFO,
-            serverLogLevel: NgxLoggerLevel.OFF
+            level: environment.loggerLevel,
+            serverLogLevel: environment.serverLevel
         }),
         BrowserAnimationsModule,
         ToasterModule.forRoot(),
-        NgxGoogleAnalyticsModule.forRoot('UA-87692241-2'),
-        RouterModule.forRoot(routes, {useHash: true}),
+        NgxGoogleAnalyticsModule.forRoot(environment.google_analytics),
+        RouterModule.forRoot(routes, {useHash: false}),
         TagInputModule,
         NvD3Module,
         FontAwesomeModule

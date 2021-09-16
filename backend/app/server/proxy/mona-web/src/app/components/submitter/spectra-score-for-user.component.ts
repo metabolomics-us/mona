@@ -1,9 +1,10 @@
 /**
+ * Updated by nolanguzman on 10/31/2021
  * provides user score
  */
 
-import {Component, Input, OnInit} from "@angular/core";
-import {Statistics} from "../../services/persistence/statistics.resource";
+import {Component, Input, OnInit} from '@angular/core';
+import {Statistics} from '../../services/persistence/statistics.resource';
 
 @Component({
     selector: 'spectra-score-for-user',

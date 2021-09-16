@@ -1,4 +1,7 @@
-import {Component, Inject, OnInit} from '@angular/core';
+/**
+ * Updated by nolanguzman on 10/31/2021
+ */
+import {Component, OnInit} from '@angular/core';
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {TagService} from '../../services/persistence/tag.resource';
 import {NGXLogger} from 'ngx-logger';
@@ -23,7 +26,7 @@ export class KeywordSearchFormComponent implements OnInit{
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService,
                 public tagService: TagService, public logger: NGXLogger) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.query = {
             exactMassTolerance: 0.5
         };
@@ -53,7 +56,6 @@ export class KeywordSearchFormComponent implements OnInit{
 
         this.tagService.query().subscribe(
              (tags: any) => {
-                 console.log(tags);
                  if (tags.length > 0) {
                    this.queryTags = tags.data.filter((x) => {
                      return x.category !== 'library' && !x.ruleBased;
@@ -70,7 +72,7 @@ export class KeywordSearchFormComponent implements OnInit{
         );
     }
 
-    submitQuery =  () => {
+    submitQuery() {
         this.spectraQueryBuilderService.prepareQuery();
 
         // Query Name/InChIKey search

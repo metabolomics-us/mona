@@ -1,5 +1,6 @@
 /**
  * Created by sajjan on 7/13/16.
+ * Updated by nolanguzman on 10/31/2021
  */
 import {Location} from '@angular/common';
 import {UploadLibraryService} from '../../services/upload/upload-library.service';
@@ -56,7 +57,7 @@ export class BasicUploaderComponent implements OnInit{
                  public logger: NGXLogger,  public http: HttpClient,  public filterPipe: FilterPipe,
                  public authenticationService: AuthenticationService,  public slice: SlicePipe){}
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.currentSpectrum = null;
         this.metadata = {};
         this.page = 0;
@@ -75,14 +76,13 @@ export class BasicUploaderComponent implements OnInit{
     }
 
     // ngbTypeahead needs an observable so we shove the metadata typeahead results into an observable and appropriately sort
-    metadataNames = (text$: Observable<string>) => {
+    metadataNames(text$: Observable<string>) {
         return text$.pipe(
             distinctUntilChanged(),
             debounceTime(300),
             switchMap((searchText) => {
                 return this.http.get(`${environment.REST_BACKEND_SERVER}/rest/metaData/names`)
                     .pipe(map((data: any) => {
-                        console.log(data);
                         let filtered ;
                         filtered = data.sort((x, y) => {
                            if (x.count < y.count){
@@ -103,7 +103,7 @@ export class BasicUploaderComponent implements OnInit{
             }));
     }
 
-  sortIonTable = (column) => {
+  sortIonTable(column) {
     if (column === 'ion') {
       if (this.ionTableSort === '+ion') { this.ionTableSort = '-ion'; } else { this.ionTableSort = '+ion'; }
     }
@@ -119,17 +119,17 @@ export class BasicUploaderComponent implements OnInit{
     /**
      * Handle switching pages
      */
-    previousPage = () => {
+    previousPage() {
         window.scrollTo(0, 0);
         this.page--;
     }
 
-    nextPage = () => {
+    nextPage() {
         window.scrollTo(0, 0);
         this.page++;
     }
 
-    restart = () => {
+    restart() {
         this.currentSpectrum = null;
         this.page = 0;
         this.fileHasMultipleSpectra = false;
@@ -139,7 +139,7 @@ export class BasicUploaderComponent implements OnInit{
     }
 
 
-    parsePastedSpectrum = (spectrum) => {
+    parsePastedSpectrum(spectrum) {
         this.pasteError = null;
         let spectrumString = '';
         let ions = [];
@@ -209,7 +209,7 @@ export class BasicUploaderComponent implements OnInit{
     }
 
 
-    resetCompound = () => {
+    resetCompound() {
         this.currentSpectrum.molFile = '';
         this.currentSpectrum.inchi = '';
         this.currentSpectrum.inchiKey = '';
@@ -223,7 +223,7 @@ export class BasicUploaderComponent implements OnInit{
      * @param names array of compound names
      * @param callback callback function to get name
      */
-    namesToInChIKey = (names, callback) => {
+    namesToInChIKey(names, callback) {
         if (names.length === 0) {
             callback(null);
         } else {
@@ -242,7 +242,7 @@ export class BasicUploaderComponent implements OnInit{
     /**
      * Pull names from CTS given an InChIKey and update the currentSpectrum
      */
-    pullNames = (inchiKey) => {
+    pullNames(inchiKey) {
         // Only pull if there are no names provided
         if (this.currentSpectrum.names.length === 0 || (this.currentSpectrum.names.length === 1 && this.currentSpectrum.names[0] === '')) {
             this.compoundConversionService.InChIKeyToName(
@@ -268,7 +268,7 @@ export class BasicUploaderComponent implements OnInit{
     /**
      * Pull compound summary given an InChI
      */
-    processInChI = (inchi) => {
+    processInChI(inchi) {
         this.compoundConversionService.parseInChI(
             this.currentSpectrum.inchi,
              (response) => {
@@ -285,7 +285,7 @@ export class BasicUploaderComponent implements OnInit{
         );
     }
 
-    processInChIKey = (inchiKey) => {
+    processInChIKey(inchiKey) {
         this.compoundConversionService.getInChIByInChIKey(
             inchiKey,
              (data) => {
@@ -307,7 +307,7 @@ export class BasicUploaderComponent implements OnInit{
     /**
      * Generate MOL file from available compound information
      */
-    retrieveCompoundData = () => {
+    retrieveCompoundData() {
         this.logger.info('Retrieving MOL data...');
 
         this.compoundError = undefined;
@@ -363,7 +363,7 @@ export class BasicUploaderComponent implements OnInit{
     }
 
 
-    parseMolFile = (files) => {
+    parseMolFile(files) {
         if (files.length === 1) {
             const file = files[0];
             const fileReader = new FileReader();
@@ -377,7 +377,7 @@ export class BasicUploaderComponent implements OnInit{
         }
     }
 
-    convertMolToInChI =  () => {
+    convertMolToInChI() {
         if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
             this.compoundProcessing = false;
 
@@ -400,7 +400,7 @@ export class BasicUploaderComponent implements OnInit{
         }
     }
 
-    addName = () => {
+    addName() {
         if (this.currentSpectrum.names[this.currentSpectrum.names.length - 1] !== '') {
             this.currentSpectrum.names.push('');
         }
@@ -412,7 +412,7 @@ export class BasicUploaderComponent implements OnInit{
      * Parse spectra
      * @param files files from input in html
      */
-    parseFiles = (event) => {
+    parseFiles(event) {
         this.page = 1;
         this.uploadError = null;
         this.uploadLibraryService.isSTP = false;
@@ -486,26 +486,16 @@ export class BasicUploaderComponent implements OnInit{
                         this.fileHasMultipleSpectra = true;
                     }
                 }, origin);
-            },
-            (progress) => {
-                if (progress === 100) {
-                    if (this.currentSpectrum == null) {
-                        this.page = 0;
-                        this.uploadError = 'Unable to load spectra!';
-                    } else {
-                        this.page = 2;
-                    }
-                }
             }
         );
     }
 
 
-    addMetadataField = () => {
+    addMetadataField() {
         this.currentSpectrum.meta.push({name: '', value: ''});
     }
 
-    removeMetadataField = (index) => {
+    removeMetadataField(index) {
         this.currentSpectrum.meta.splice(index, 1);
     }
 
@@ -514,7 +504,7 @@ export class BasicUploaderComponent implements OnInit{
     /**
      * Upload current data
      */
-    validateSpectrum = (spectrum) => {
+    validateSpectrum(spectrum) {
         spectrum.errors = [];
 
         let ionCount = 0;
@@ -546,7 +536,7 @@ export class BasicUploaderComponent implements OnInit{
     }
 
 
-    finalizeAndValidateSpectra(): boolean {
+    finalizeAndValidateSpectra() {
         // Add additional components to spectrum object
         if (typeof this.metadata.chromatography !== 'undefined' && this.metadata.chromatography !== '') {
             this.currentSpectrum.meta.push({name: 'sample introduction', value: this.metadata.chromatography});
@@ -584,7 +574,7 @@ export class BasicUploaderComponent implements OnInit{
         return true;
     }
 
-    uploadFile = () => {
+    uploadFile() {
         if (this.finalizeAndValidateSpectra()) {
             // Reset the spectrum count if necessary
             if (!this.uploadLibraryService.isUploading()) {
@@ -597,15 +587,15 @@ export class BasicUploaderComponent implements OnInit{
             this.uploadLibraryService.uploadSpectra([this.currentSpectrum],  (spectrum) => {
                 this.logger.info('submitting spectrum');
                 this.logger.info(spectrum);
-                this.logger.info(this.authenticationService.getCurrentUser().access_token);
+                this.logger.info(this.authenticationService.getCurrentUser().accessToken);
                 this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
                     {headers: {
-                            Authorization: `Bearer ${this.authenticationService.getCurrentUser().access_token}`
+                            Authorization: `Bearer ${this.authenticationService.getCurrentUser().accessToken}`
                     }}).pipe(first()).subscribe((data: any) => {
                     this.logger.info('Spectra successfully Upload!');
                     this.logger.info('Reference ID: ' + data.id);
                     this.logger.info(data);
-                    // this.uploadLibraryService.uploadedSpectra.push(data);
+                    this.uploadLibraryService.uploadedSpectra.push(data.id);
                 }, (err) => {
                         this.logger.info('ERROR', err);
                 });
@@ -640,7 +630,7 @@ export class BasicUploaderComponent implements OnInit{
      * @returns Promise with result
      * Performs initialization and acquisition of data used by the wizard
      */
-    loadTags = (query) => {
+    loadTags(query) {
         return new Promise((resolve) => {
            resolve(this.filterPipe.transform(this.tags, query));
         });
