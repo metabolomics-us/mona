@@ -1,0 +1,38 @@
+#basic configuration how to connect to the configuration server
+spring:
+  application:
+    name: proxy-service
+  cloud:
+    config:
+      uri:  http://localhost:1111
+  http:
+    multipart:
+      max-file-size: 128MB
+      max-request-size: 128MB
+
+#basic information who we are
+info:
+  component: MoNA Edge Server
+
+logging:
+  level:
+    ROOT: INFO
+
+#on which port do we run
+server:
+  port: 8080
+
+#configuration for the failover clients
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: THREAD
+          thread:
+            timeoutInMilliseconds: 61000
+
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 6000

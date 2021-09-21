@@ -1,9 +1,0 @@
-<li class="dropdown mr-4" ngbDropdown *ngIf="isAdmin()">
-    <a role="button" class="dropdown-toggle" ngbDropdownToggle>
-        <fa-icon [icon]="faUserShield"></fa-icon> Administration
-        <fa-icon [icon]="faCaretDown"></fa-icon>
-    </a>
-    <ul class="dropdown-menu" ngbDropdownMenu>
-        <li><button ngbDropdownItem [routerLink]="['admin/submitters']">Manage Submitters</button></li>
-    </ul>
-</li>

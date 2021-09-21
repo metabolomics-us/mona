@@ -1,0 +1,11 @@
+<span class="dropdown" ngbDropdown>
+    <a role="button" class="dropdown-toggle" ngbDropdownToggle>
+        <i class='fa fa-search'></i>
+        {{value.splash}}
+    </a>
+
+    <ul class="uib-dropdown-menu" ngbDropdownMenu>
+        <li><button ngbDropdownItem (click)="newQuery()">Create New Query</button></li>
+        <li><button ngbDropdownItem (click)="addToQuery()">Add to Query</button></li>
+    </ul>
+</span>

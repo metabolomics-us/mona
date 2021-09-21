@@ -1,0 +1,16 @@
+<div class="btn-group top5" ngbDropdown [placement]="['right']">
+    <button type="button" class="btn dropdown-toggle btn-sm" ngbDropdownToggle
+            [ngClass]="{'btn-info' : tag.ruleBased, 'btn-primary' : !tag.ruleBased}">
+
+        <span *ngIf="tag.ruleBased">
+          <fa-icon [icon]="faFlask"></fa-icon>
+        </span>
+
+      {{tag.text}} <fa-icon [icon]="faCaretRight"></fa-icon>
+    </button>
+
+    <ul class="uib-dropdown-menu" ngbDropdownMenu>
+        <li><button ngbDropdownItem (click)="newQuery()">Create New Query</button></li>
+        <li><button ngbDropdownItem (click)="addToQuery()">Add to Query</button></li>
+    </ul>
+</div>

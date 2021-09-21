@@ -1,0 +1,98 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Welcome to MoNA!</h2>
+
+            <p>
+                MassBank of North America (MoNA) is a metadata-centric, auto-curating repository designed for efficient storage and querying of mass spectral records.
+                It intends to serve as a the framework for a centralized, collaborative database of metabolite mass spectra, metadata and associated compounds.
+                MoNA currently contains over 200,000 mass spectral records from experimental and in-silico libraries as well as from user contributions.
+            </p>
+
+            <p>
+                MoNA has recently been redesigned, with significant improvements to server-side architecture, query structure, and search speed.
+                We are actively improving and adding features, so please be patient as functionality is added.
+                If you notice any major issues, feel free to report them using the issue tracker linked below.
+            </p>
+            <br />
+
+            <p style="text-align: center">
+                <a [routerLink]="['/spectra/search']" class="btn btn-info btn-lg mr-1"><fa-icon [icon]="faSearch"></fa-icon> Search Spectra</a>
+              <a [routerLink]="['/spectra/browse']" class="btn btn-info btn-lg mr-1 ml-1"><fa-icon [icon]="faChartBar"></fa-icon> Browse Spectra</a>
+              <a href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona" class="btn btn-warning btn-lg ml-1"><fa-icon [icon]="faExclamationTriangle"></fa-icon> Issue Tracker</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="bor-bot"></div><br />
+
+    <div class="row">
+        <div class="col-md-6 float-left">
+            <h3>News</h3>
+
+            <div class="news-cell">
+              <span class="news-title"><h4>MoNA Upgraded to Angular 10</h4></span>
+              <div class="news-date">October 31st, 2021</div>
+              <div class="content">
+                MoNA has undergone a technological update to use the Angular 10 framework.
+                Included in the update is an overhaul of the Advanced Uploader system to handle
+                large file uploads as well as a straight through processing system for anything
+                over 10 MB. Various bugfixes have been included to help improve usability for
+                our users. We will continue working to improve MoNA with new features and
+                bugfixes. Checkout the <a href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona">YouTrack</a>
+                page for updates on what we are working on!
+              </div>
+            </div>
+            <hr />
+
+            <div class="news-cell">
+                <span class="news-title"><h4>Fiehn HILIC Library</h4></span>
+                <div class="news-date">May 10, 2018</div>
+                <div class="content">
+                    The Fiehn Lab HILIC MS/MS and retention time library has been uploaded, consisting of
+                    over 1,100 standards acquired on both Q Exactive and TripleTOF.
+                </div>
+            </div>
+            <hr />
+
+            <div class="news-cell">
+                <span class="news-title"><h4>MSP Exports Updated</h4></span>
+                <div class="news-date">August 31, 2017</div>
+                <div class="content">
+                    The MSP exports on the <a [routerLink]="['/downloads']">downloads</a> page have been
+                    restructured to include as much metadata as possible while remaining fully compliant with
+                    NIST MS Search format, and is now compatible with
+                    <a href="http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/index.html">MS-DIAL v2.70</a>.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 float-right">
+            <h3>Submitter High Scores</h3>
+
+            <spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</spectra-top-scores-for-users>
+        </div>
+    </div>
+
+    <div class="bor-bot"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Top Rated Spectral Records</h3>
+            <br />
+
+            <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="true">
+                <ng-template ngbSlide *ngFor="let spectrum of showcaseSpectra">
+                    <div class="picsum-img-wrapper">
+                      <display-spectra-panel class="text-left" [spectrum]="spectrum"></display-spectra-panel>
+                    </div>
+                </ng-template>
+                <ng-template ngbSlide *ngIf="showcaseSpectra.length === 0">
+                    <div class="text-center">
+                      <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Showcase Spectra...</h4>
+                    </div>
+                </ng-template>
+            </ngb-carousel>
+        </div>
+    </div>
+</div>

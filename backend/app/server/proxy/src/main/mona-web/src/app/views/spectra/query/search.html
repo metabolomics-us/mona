@@ -1,0 +1,18 @@
+<div id="search-box">
+    <ul ngbNav #nav="ngbNav" class="nav-tabs">
+        <li ngbNavItem>
+            <a ngbNavLink>Quick Search</a>
+            <ng-template ngbNavContent>
+                <keyword-search-form></keyword-search-form>
+            </ng-template>
+        </li>
+        <li ngbNavItem>
+            <a ngbNavLink>Similarity Search</a>
+            <ng-template ngbNavContent>
+                <similarity-search-form></similarity-search-form>
+            </ng-template>
+        </li>
+    </ul>
+    <div [ngbNavOutlet]="nav">
+    </div>
+</div>
