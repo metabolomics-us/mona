@@ -130,7 +130,7 @@ services:
 
   # The main entrypoint for MoNA
   proxy:
-    image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
+    image: eros.fiehnlab.ucdavis.edu/mona-proxy:tester
     ports:
       - 80:8080
     depends_on:

@@ -1,0 +1,59 @@
+<div #error></div>
+
+<div class="row">
+    <div class="col-md-12" *ngIf="!authenticationService.isLoggedIn()">
+        <h3><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="authenticationService.requestModal()">log in</a>!</h3>
+    </div>
+
+    <div class="col-md-12" *ngIf="authenticationService.isLoggedIn()">
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xs-offset-0 col-sm-offset-0 col-md-offset-2 col-lg-offset-2 toppad">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><fa-icon [icon]="faUser"></fa-icon> User Profile</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4 col-lg-4" align="center">
+                            <img alt="User Pic" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=100" class="img-circle">
+                            <br />
+                        </div>
+
+                        <div class=" col-md-8 col-lg-8">
+                            <table class="table table-user-information borderless">
+                                <tbody>
+                                <tr>
+                                    <td>Username:</td>
+                                    <td>{{user.emailAddress}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Name:</td>
+                                    <td>{{user.firstName}} {{user.lastName}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Email Address:</td>
+                                    <td>{{user.emailAddress}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Institution:</td>
+                                    <td>{{user.institution}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <a class="btn btn-primary" (click)="queryUserSpectra()"><fa-icon [icon]="faSearch"></fa-icon> My Submitted Spectra</a>
+                    <!--
+                    <a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
+                    <span class="pull-right">
+                        <a href="edit.html" data-original-title="Edit this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
+                    </span>
+                    -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

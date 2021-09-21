@@ -3,6 +3,3 @@ cluster:
 
 node:
   name: ${HOSTNAME}
-
-transport-host:
-  localhost

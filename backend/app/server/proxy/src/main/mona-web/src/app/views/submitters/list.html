@@ -1,0 +1,51 @@
+<div class="row" *ngIf="!auth.isLoggedIn()">
+    <div class="col-md-12">
+        <h3><fa-icon [icon]="faUser"></fa-icon> Please <a href="" (click)="auth.requestModal()">log in</a>!</h3>
+    </div>
+</div>
+
+<div *ngIf="auth.isLoggedIn()">
+    <div #error></div>
+
+    <form role="form">
+        <div class="input-group" *ngFor="let sub of submitters; index as i"> <!-- filter:submitter.query -->
+            <span class="form-check-label"> <label [for]="'query_'+i">Filter</label></span>
+            <input [id]="'query_'+i" class="form-control" name="query" [(ngModel)]="sub.query"
+                   placeholder="Please enter your query term"/>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Institution</th>
+                    <th>Email</th>
+                    <th>Avg Score</th>
+                    <th>Uploaded Spectra</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr id="submitter_{{sub.id}}">
+                    <td><submitter-query [submitter]="sub">{{sub.firstName}}</submitter-query></td>
+                    <td>{{sub.lastName}}</td>
+                    <td>{{sub.institution}}</td>
+                    <td>{{sub.emailAddress}}</td>
+                    <td><spectra-score-for-user [user]="sub"></spectra-score-for-user></td>
+                    <td>
+                        <button (click)="displayEditDialog(sub)" class="btn btn-default"><fa-icon
+                                [icon]="faEdit"></fa-icon></button>
+                        <button (click)="remove(i)" class="btn btn-default"><fa-icon
+                                [icon]="faMinusSquare"></fa-icon></button>
+                        <input type="hidden" name="sub.id" name="subid" [(ngModel)]="sub.id" value="{{sub.id}}"/>
+                    </td>
+                </tr>
+                </tbody>
+              <br />
+            </table>
+        </div>
+
+        <button (click)="displayCreateDialog()" class="btn btn-default"><fa-icon
+                [icon]="faUser"></fa-icon>Add a new submitter
+        </button>
+    </form>
+</div>

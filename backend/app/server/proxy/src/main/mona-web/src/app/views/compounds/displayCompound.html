@@ -1,0 +1,143 @@
+<div>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Chemical Names</h4>
+            <div *ngIf="compound.names.length === 0 || !compound.name">
+                <ul>
+                    <li *ngFor="let name of compound.names; index as i;">{{name.name}}</li>
+                    <li *ngIf="!compound.names">No compound name provided!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="text-right">
+                <div class="h5">
+                    <div ngbDropdown>
+                        <button ngbDropdownToggle>
+                          <fa-icon [icon]="faCloudDownloadAlt"></fa-icon> Download Structure
+                        </button>
+
+                        <div ngbDropdownMenu>
+                          <button ngbDropdownItem (click)="downloadAsMOL()" target="_blank">as MOL file</button>
+                          <button ngbDropdownItem (click)="downloadAsJSON()" target="_blank">as MoNA JSON Record</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="width: 250px; height: 250px;">
+                    <div [libChemdoodle]="compound.molFile"  [id]="'big-'+pictureId+'-CompoundViewer_'+chemId"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="classifications.length > 0">
+        <div class="col-md-12">
+            <h4>Compound Classification (provided by <a [routerLink]="null" target="_blank">ClassyFire</a>) <sup><a [routerLink]=null (click)="showClassyFireInfo = !showClassyFireInfo"><fa-icon [icon]="faQuestionCircle"></fa-icon></a></sup></h4>
+            <div *ngIf="showClassyFireInfo">
+                <a href="http://classyfire.wishartlab.com" target="_blank">ClassyFire</a>
+                is a freely accessible computational tool that uses the ChemOnt taxonomy to classify chemical
+                entities based on their structure. ClassyFire combines structure search, IUPAC name parsing, and evaluation
+                of logical expressions to retrieve structural features, which are then mapped to the corresponding ChemOnt classes.
+                <hr />
+            </div>
+            <ng-template #classyfireTree let-classy="classy">
+              <ul *ngFor="let node of classy">
+                <li *ngIf="node.nodes" class="tree-node">
+                  <span class="tree-label"><i class="icon-folder-open"></i> <metadata-query [metaData]="node" [classification]="true">{{ node.name | titlecase }}</metadata-query></span> <span> {{ node.value }}</span>
+                  <ng-container *ngTemplateOutlet="classyfireTree; context: {classy: node.nodes}"></ng-container>
+                </li>
+              </ul>
+            </ng-template>
+            <div class="tree">
+              <ng-container *ngTemplateOutlet="classyfireTree; context:{classy: classifications}"></ng-container>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Compound Metadata</h4>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <!-- Create New Pipes for this filtering -->
+                <tr *ngFor="let meta of compound.metaData | filterPipe:{category: '!external id', deleted : '!true', hidden: '!true'} ">
+                    <td class="col-lg-4 col-md-6">
+                        <metadata-query [metaData]="meta" [classification]="true">{{meta.name}}</metadata-query>
+                    </td>
+                    <td class="col-lg-8 col-md-6">
+                        {{meta.value}} {{meta.unit}}
+
+                        <!-- display this, if there seems to be something odd with this value -->
+                        <fa-icon *ngIf="meta.suspect == true" [icon]="faQuestionCircle"></fa-icon>
+
+                        <!-- display this, if it's a computed value -->
+                        <fa-icon *ngIf="meta.computed == true" [icon]="faFlask" placement="top"
+                           ngbTooltip="Calculated by MoNA Auto Curation"></fa-icon>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div *ngIf="(compound.metaData |  filterPipe:{category: 'external id'}).length > 0">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>External Identifier</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let meta of compound.metaData |  filterPipe: {category: 'external id', deleted : '!true', hidden: '!true'} ">
+                        <td class="col-lg-4 col-md-6">
+                            <metadata-query [metaData]="meta" [compound]="true">
+                                {{meta.name}}
+                            </metadata-query>
+                        </td>
+
+                        <td class="col-lg-8 col-md-6">
+                            <span *ngIf="meta.url === ''">{{meta.value}}</span>
+
+                            <a *ngIf="meta.url !== ''"  routerLink="[{{meta.url}}]" target="_blank">
+                                {{meta.value}}
+                            </a>
+
+                            <!-- display this, if there seems to be something odd with this value -->
+                            <fa-icon *ngIf="meta.suspect === true" [icon]="faExclamationTriangle"></fa-icon>
+
+                            <!-- display this, if it's a computed value -->
+                            <fa-icon *ngIf="meta.computed === true" [icon]="faFlask" placement="top"
+                               ngbTooltip="Calculated by MoNA auto curation"></fa-icon>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div *ngIf="compound.tags.length">
+                <ul class="list-inline">
+                    <li *ngFor="let tag of compound.tags">
+                      <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="compound"></tag-query>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

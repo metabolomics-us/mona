@@ -8,3 +8,4 @@ node_modules
 *.st
 backend/load_test/*.hprof
 ./data
+git.properties

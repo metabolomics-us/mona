@@ -136,7 +136,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build</arguments>
+                            <arguments>run prod</arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -145,7 +145,7 @@
 
         <resources>
             <resource>
-                <directory>mona-web/src/resources</directory>
+                <directory>src/main/resources</directory>
             </resource>
 
             <resource>

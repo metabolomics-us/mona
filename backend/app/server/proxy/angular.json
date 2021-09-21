@@ -1,0 +1,148 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "proxy": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src/main/mona-web/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "target/public",
+            "index": "src/main/mona-web/src/index.html",
+            "main": "src/main/mona-web/src/main.ts",
+            "polyfills": "src/main/mona-web/src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "allowedCommonJsDependencies": [
+              "ng2-nvd3",
+              "d3",
+              "nvd3"
+            ],
+            "assets": [
+              "src/main/mona-web/src/favicon.ico",
+              "src/main/mona-web/src/assets"
+            ],
+            "styles": [
+              "src/main/mona-web/src/styles/main.scss",
+              "src/main/mona-web/src/styles/theme.scss",
+              "src/main/mona-web/src/styles/search.scss",
+              "src/main/mona-web/src/styles/autocomplete.scss",
+              "src/main/mona-web/lib/ChemDoodleWeb/ChemDoodleWeb.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/angular2-toaster/toaster.scss"
+            ],
+            "scripts": [
+              "node_modules/jquery/jquery.js",
+              "node_modules/flot/jquery.flot.js",
+              "node_modules/flot/jquery.flot.resize.js",
+              "node_modules/flot/jquery.flot.selection.js",
+              "src/main/mona-web/lib/ChemDoodleWeb/ChemDoodleWeb.js",
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/main/mona-web/src/environments/environment.ts",
+                  "with": "src/main/mona-web/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "proxy:build",
+            "port": 9090
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "proxy:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "proxy:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/main/mona-web/src/test.ts",
+            "polyfills": "src/main/mona-web/src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": [
+              "src/main/mona-web/src/favicon.ico",
+              "src/main/mona-web/src/assets"
+            ],
+            "styles": [
+              "src/main/mona-web/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "tsconfig.app.json",
+              "tsconfig.spec.json",
+              "src/main/mona-web/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "src/main/mona-web/e2e/protractor.conf.js",
+            "devServerTarget": "proxy:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "proxy:serve:production"
+            }
+          }
+        }
+      }
+    }},
+  "defaultProject": "proxy"
+}
