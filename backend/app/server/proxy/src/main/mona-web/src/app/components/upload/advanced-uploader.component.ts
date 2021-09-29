@@ -44,6 +44,23 @@ export class AdvancedUploaderComponent implements OnInit{
   public filenames;
   public fileUpload;
   public convMolUpload;
+  public files;
+  public showLibraryForm;
+
+  // library variables
+  public library = {
+    library: null,
+    description: null,
+    link: null,
+    tag: {
+      ruleBased: false,
+      text: null
+    }
+  };
+
+  public libraryName;
+  public libraryDescription;
+  public libraryLink;
   /**
    * * Sort order for the ion table - default m/z ascending
    */
@@ -77,6 +94,9 @@ export class AdvancedUploaderComponent implements OnInit{
 		this.spectra = [];
 		this.spectrumErrors = {};
 		this.spectraIndex = 0;
+		this.fileUpload = null;
+		this.files = null;
+		this.showLibraryForm = false;
 		this.ionCuts = {
 		};
 		this.ionTableSort = '-ion';
@@ -235,6 +255,15 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
+	setFiles(event) {
+	  if (event.target.files.length > 0) {
+	    this.files = event.target.files;
+    } else {
+	    this.files = undefined;
+	    this.fileUpload = null;
+    }
+  }
+
 	batchProcessSTP(data, origin): Promise<any> {
 	  return new Promise((resolve, reject) => {
       this.uploadLibraryService.processData(data, (spectrum) => {
@@ -272,6 +301,10 @@ export class AdvancedUploaderComponent implements OnInit{
   batchProcess(data, origin): Promise<any> {
     return new Promise((resolve, reject) => {
       this.uploadLibraryService.processData(data, (spectrum) => {
+        if (this.showLibraryForm) {
+          spectrum.library = this.library;
+          spectrum.tags = [this.library.tag];
+        }
         this.asyncService.addToPool(async () => {
           // Create list of ions
           spectrum.basePeak = 0;
@@ -364,9 +397,13 @@ export class AdvancedUploaderComponent implements OnInit{
 	  let promiseBuffer = [];
 	  let totalSize = 0;
 
-	  if (event.target.files && event.target.files.length) {
-      for (let y = 0; y < event.target.files.length; y++) {
-        totalSize += event.target.files[y].size;
+	  if (typeof event !== 'undefined' && event !== null) {
+	    this.files = event.target.files;
+    }
+
+	  if (this.files && this.files.length) {
+      for (let y = 0; y < this.files.length; y++) {
+        totalSize += this.files[y].size;
       }
       // If the file is larger then 10MB then use straight through processing
       if (totalSize > 10 * 1024 * 1024) {
@@ -380,8 +417,8 @@ export class AdvancedUploaderComponent implements OnInit{
         return;
       } else {
         this.uploadLibraryService.isSTP = false;
-        for (let i = 0; i < event.target.files.length; i++) {
-          this.uploadLibraryService.loadSpectraFile(event.target.files[i],
+        for (let i = 0; i < this.files.length; i++) {
+          this.uploadLibraryService.loadSpectraFile(this.files[i],
             async (data, origin) => {
               for (const item of data) {
                 promiseBuffer.push(this.batchProcess(item, origin));
@@ -573,7 +610,6 @@ export class AdvancedUploaderComponent implements OnInit{
 			for (let i = 0; i < this.spectra.length; i++) {
 				 this.spectra[i].meta.push.apply(this.spectra[i].meta, this.spectra[i].hiddenMetadata);
 			}
-
 			this.uploadLibraryService.uploadSpectra(this.spectra,  (spectrum) => {
 				this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
 					{headers: {

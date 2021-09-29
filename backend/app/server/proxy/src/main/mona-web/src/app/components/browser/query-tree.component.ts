@@ -18,7 +18,7 @@ export class QueryTreeComponent implements OnInit {
     public showEmptyDownloads;
     public queries;
     public queryTree;
-    public static: any;
+    public static;
     public tree;
     faDownload = faDownload;
     faTable = faTable;
@@ -31,6 +31,7 @@ export class QueryTreeComponent implements OnInit {
         this.queries = {};
         this.queryTree = [];
         this.tree = {};
+        this.static = [];
 
         this.getPredefinedQueries();
         this.getStaticDownloads();

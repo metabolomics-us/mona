@@ -123,7 +123,7 @@
 
 <div class="row top17">
     <!-- display spectra as list -->
-    <div class="col-md-12" [hidden]="pagination.table === true">
+    <div class="col-md-12" *ngIf="pagination.table !== true">
         <div *ngFor="let spectrum of spectra" class="m-md-3">
             <display-spectra-panel [spectrum]="spectrum"></display-spectra-panel>
         </div>
@@ -132,7 +132,7 @@
     <!-- display spectra as table-->
     <!-- we have to use hidden tag here bug there is a rendering bug problem with
       the masspec plotter when its first loaded -->
-    <div class="col-md-12" [hidden]="pagination.table !== true">
+    <div class="col-md-12" *ngIf="pagination.table === true">
         <table class="table table-hover table-striped" style="table-layout: fixed;">
             <thead>
             <tr>
@@ -142,11 +142,11 @@
             </thead>
 
             <tbody>
-            <tr *ngIf="spectra.length == 0"></tr>
+            <tr *ngIf="spectra.length === 0"></tr>
 
-            <tr *ngFor="let spectrum of spectra; index as i" (click)="viewSpectrum(spectrum.id)">
-                <td *ngFor="let column of  pagination.tableColumnSelected" [ngSwitch]="column">
-                    <div *ngSwitchCase="'ID'">
+            <tr *ngFor="let spectrum of spectra" (click)="viewSpectrum(spectrum.id)">
+                <td>
+                    <div>
                         <div><a style="cursor: pointer" [routerLink]="[viewSpectrum(spectrum.id)]">{{spectrum.id}}</a></div>
                         <div>
                             <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
@@ -155,30 +155,28 @@
                             <h4><span class="label label-primary" >Similarity: {{spectrum.similarity * 1000 | number:'1.0-0'}}</span></h4>
                         </div>
                     </div>
-
-                    <div *ngSwitchCase="'Name'">
+                </td>
+                <td>
+                    <div>
                         <ul class="list-unstyled">
                             <li *ngFor="let name of spectrum.compound[0].names | slice:0:3">{{name.name}}</li>
                         </ul>
                     </div>
-
-                    <div *ngSwitchCase="'Structure'" class="text-center" style="width:150px;height:150px">
+                </td>
+                <td>
+                    <div class="text-center" style="width:150px;height:150px">
                         <div [libChemdoodle]="spectrum.compound[0].molFile" class="center-block" readonly="true"
                              [id]="'bioSketch_'+spectrum.id+'_true'" [width]="150" [height]="150"></div>
                     </div>
-
-                    <div *ngSwitchCase="'Mass Spectrum'" class="text-center">
-                        <div class="masspec-mini">
-                            <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
-                        </div>
-                    </div>
-
-                    <div *ngSwitchCase="'Accurate Mass'">
+                </td>
+                <td>
+                  <div class="masspec-mini text-center">
+                    <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id" [miniPlot]="true" [spectrum]="spectrum.spectrum"></lib-ng-mass-spec-plotter>
+                  </div>
+                </td>
+                <td>
+                    <div>
                         <p class="text-center">{{spectrum.metaDataMap['total exact mass']}}</p>
-                    </div>
-
-                    <div *ngSwitchDefault>
-                        <p class="text-center">{{spectrum.metaDataMap[column]}}</p>
                     </div>
                 </td>
             </tr>

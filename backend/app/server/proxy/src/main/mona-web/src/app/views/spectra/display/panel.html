@@ -39,13 +39,8 @@
 
                     </div>
                 </div>
-                <div class="card-columns" *ngIf="spectrum.library">
-                    <hr />
-                    <div class="col-lg-12 col-md-12">
-                        <ul class="list-unstyled">
-                            <li><div class="h5"><display-library-reference [spectrum]="spectrum"></display-library-reference></div></li>
-                        </ul>
-                    </div>
+                <div class="card-text p-2 text-left" *ngIf="spectrum.library">
+                  <h5><display-library-reference [spectrum]="spectrum"></display-library-reference></h5>
                 </div>
             </div>
 
@@ -67,7 +62,7 @@
     </div>
 
     <div class="card-footer">
-        <div class="float-left" *ngFor="let tag of spectrum.tags">
+        <div class="float-left mr-1" *ngFor="let tag of spectrum.tags">
           <tag-query [ruleBased]="tag.ruleBased" [tag]="tag" [type]="spectrum"></tag-query>
         </div>
 

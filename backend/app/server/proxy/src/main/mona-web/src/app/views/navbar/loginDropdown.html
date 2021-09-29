@@ -7,16 +7,16 @@
         </a>
         <ul class="uib-dropdown-menu dropdown-user" ngbDropdownMenu>
             <li *ngIf="isLoggedIn()">
-              <a ngbDropdownItem [routerLink]="['/profile']"><fa-icon [icon]="faUser"></fa-icon> User Profile</a>
+              <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/profile']"><fa-icon [icon]="faUser"></fa-icon> User Profile</a>
             </li>
             <li *ngIf="isLoggedIn()" class="divider"></li>
 
             <li>
-              <a ngbDropdownItem (click)="handleLogin()"><fa-icon [icon]="faSignOutAlt"></fa-icon> {{isLoggedIn() ?
+              <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleLogin()"><fa-icon [icon]="faSignOutAlt"></fa-icon> {{isLoggedIn() ?
                     "Logout" : "Login"}}</a>
             </li>
             <li *ngIf="!isLoggedIn()">
-              <a ngbDropdownItem (click)="handleRegistration()"><fa-icon [icon]="faUsers"></fa-icon> Register</a>
+              <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="handleRegistration()"><fa-icon [icon]="faUsers"></fa-icon> Register</a>
             </li>
         </ul>
         <!-- /.dropdown-user -->

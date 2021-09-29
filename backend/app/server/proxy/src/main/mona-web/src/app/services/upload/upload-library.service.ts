@@ -231,6 +231,10 @@ export class UploadLibraryService{
                     });
                 }
 
+                if (typeof spectra.library !== 'undefined') {
+                  s.library = spectra.library;
+                }
+
                 Object.keys(metaData).forEach((e) => {
                     s.metaData.push(metaData[e]);
                 });
@@ -282,6 +286,7 @@ export class UploadLibraryService{
                 kind: ''
             },
             spectrum: undefined,
+            library: undefined,
             tags: [],
             metaData: [],
             compound: undefined,
