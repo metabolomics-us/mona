@@ -208,6 +208,7 @@ export class SpectraBrowserComponent implements OnInit{
 
     setTable() {
       this.tableSubject.next(this.pagination.table);
+      this.router.navigate(['/spectra/browse']).then();
     }
 
     setTableColumnsSelection() {
@@ -283,7 +284,6 @@ export class SpectraBrowserComponent implements OnInit{
         const itemsPerPage = this.cookie.get('spectraBrowser-pagination-itemsPerPage');
         const tableView = this.cookie.getBooleanValue('spectraBrowser-pagination-table', false);
         const tableColumnsSelected = this.cookie.get('spectraBrowser-pagination-tableColumnsSelected');
-
         if (tableView) {
             this.pagination.table = tableView;
             this.setTable();

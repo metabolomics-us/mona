@@ -52,10 +52,10 @@ export class AuthenticationModalComponent implements OnInit {
                     setTimeout(() => {
                         this.activeModal.close();
                     }, 1000);
-                }, (err => {
+                }, (error => {
                     this.state = 'login';
-                    this.logger.info(err);
-                    this.errors.push(err);
+                    this.logger.debug(error);
+                    this.errors.push({status: error.status, name: error.name, error: error.error.error, message: error.error.message});
                 })
             );
         }

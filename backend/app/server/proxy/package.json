@@ -24,8 +24,8 @@
     "@angular/router": "~10.2.4",
     "@fortawesome/angular-fontawesome": "^0.7.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@ng-bootstrap/ng-bootstrap": "^8.0.4",
     "@wcmc/ng-chemdoodle": "^0.1.1",
     "@wcmc/ng-mass-spec-plotter": "^0.3.1",
@@ -72,10 +72,5 @@
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~4.0.2"
-  },
-  "browser": {
-    "fs": false,
-    "os": false,
-    "path": false
   }
 }

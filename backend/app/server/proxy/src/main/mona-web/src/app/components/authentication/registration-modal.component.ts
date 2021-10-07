@@ -65,9 +65,22 @@ export class RegistrationModalComponent implements OnInit{
                 }));
 
         }, (error => {
-                this.errors.push({status: error.status, name: error.name, error: error.error.error,
+                if (error.status === 409) {
+                  this.errors.push({status: error.status, name: error.name, error: 'REST API Error',
+                    exception: 'Problem when calling Registration REST API',
+                    message: 'This problem typically arises when the account being registered already exists. Please contact the admin if you need your password reset.'
+                  });
+                  this.state = 'fail';
+                }
+                else if (error.error !== null) {
+                  this.errors.push({status: error.status, name: error.name, error: error.error.error,
                     exception: error.error.exception, message: error.error.message});
-                this.state = 'fail';
+                  this.state = 'fail';
+                } else{
+                  this.errors.push({status: error.status, name: error.name, error: 'REST Error',
+                    exception: 'REST Error', message: 'Unknown Problem with REST Call'});
+                  this.state = 'fail';
+                }
             }));
     }
 

@@ -135,16 +135,18 @@ export class SpectraDatabaseIndexComponent implements OnInit {
                         (response: any) => {
                             field.data = [];
 
-                            // Transform data for D3 plot
-                            response.values.forEach((x) => {
+                            if (response !== null && typeof response !== 'undefined') {
+                              // Transform data for D3 plot
+                              response.values.forEach((x) => {
                                 field.data.push({
-                                    key: x.value,
-                                    y: x.count
+                                  key: x.value,
+                                  y: x.count
                                 });
-                            });
+                              });
 
-                            field.data.sort((a, b) => b.y - a.y);
-                            field.data = field.data.slice(0, 10);
+                              field.data.sort((a, b) => b.y - a.y);
+                              field.data = field.data.slice(0, 10);
+                            }
                         },
                         (response) => {}
                     );

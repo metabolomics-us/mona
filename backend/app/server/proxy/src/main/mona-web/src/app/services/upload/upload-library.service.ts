@@ -189,7 +189,9 @@ export class UploadLibraryService{
         const myPromise = new Promise((resolve) => {
             this.metadataOptimization.optimizeMetaData(spectra.meta).then((metaData: object) => {
                 const s = this.buildSpectrum();
-
+                if (spectra.id) {
+                  s.id = spectra.id;
+                }
                 // assign structure information
                 if (spectra.inchiKey !== null) {
                   s.biologicalCompound.inchiKey = spectra.inchiKey;
@@ -231,6 +233,10 @@ export class UploadLibraryService{
                     });
                 }
 
+                if (typeof spectra.library !== 'undefined') {
+                  s.library = spectra.library;
+                }
+
                 Object.keys(metaData).forEach((e) => {
                     s.metaData.push(metaData[e]);
                 });
@@ -259,7 +265,11 @@ export class UploadLibraryService{
                     }
                 }
 
-                s.submitter = submitter;
+                if (spectra.submitter) {
+                  s.submitter = spectra.submitter;
+                } else {
+                  s.submitter = submitter;
+                }
                 resolve(s);
                 // assign our result
                 saveSpectrumCallback(s);
@@ -274,6 +284,7 @@ export class UploadLibraryService{
      */
     buildSpectrum() {
         const spectrum = {
+            id: undefined,
             biologicalCompound: {names: [],
                 inchi: '',
                 inchiKey: '',
@@ -282,6 +293,7 @@ export class UploadLibraryService{
                 kind: ''
             },
             spectrum: undefined,
+            library: undefined,
             tags: [],
             metaData: [],
             compound: undefined,

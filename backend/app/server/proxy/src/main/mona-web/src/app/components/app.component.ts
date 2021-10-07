@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import {Router, NavigationEnd} from '@angular/router';
 
 @Component({
     selector: 'app-mona',
@@ -34,4 +35,16 @@ import { Component } from '@angular/core';
         </div>
     </div>`
 })
-export class AppRootComponent {}
+export class AppRootComponent implements OnInit{
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    // scroll to top of page on new page entry
+    this.router.events.subscribe((event) => {
+      if (!(event instanceof NavigationEnd)) {
+        return;
+      }
+      window.scrollTo(0, 0);
+    });
+  }
+}

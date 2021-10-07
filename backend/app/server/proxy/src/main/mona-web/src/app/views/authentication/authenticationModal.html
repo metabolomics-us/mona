@@ -9,14 +9,22 @@
 
 
     <div class="modal-body" *ngIf="state === 'login'">
-        <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="errors.length > 0">
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <span>Error:</span>
-            <span *ngIf="errors.length === 1">{{errors[0]}}</span>
-            <ul *ngIf="errors.length > 1">
-                <li *ngFor="let error of errors">{{error}}</li>
-            </ul>
+      <div class="alert alert-danger .alert-dismissible" role="alert" *ngIf="errors.length">
+        <div class="text-left" *ngIf="errors.length === 1">
+          <strong><h4>{{errors[0].status}} {{errors[0].name}}</h4></strong><br />
+          <strong>Error:</strong> {{errors[0].error}}<br />
+          <strong>Message:</strong> {{errors[0].message}}<br />
         </div>
+        <ul *ngIf="errors.length > 1">
+          <li *ngFor="let error of errors">
+            <div class="text-left">
+              <strong><h4>{{error.status}} {{error.name}}</h4></strong><br />
+              <strong>Error:</strong> {{error.error}}<br />
+              <strong>Message:</strong> {{error.message}}<br />
+            </div>
+          </li>
+        </ul>
+      </div>
 
         <div class="form-group align-items-center row" *ngIf="state === 'login'">
           <div class="col">

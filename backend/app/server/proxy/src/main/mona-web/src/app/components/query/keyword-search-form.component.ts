@@ -57,11 +57,11 @@ export class KeywordSearchFormComponent implements OnInit{
         this.tagService.query().subscribe(
              (tags: any) => {
                  if (tags.length > 0) {
-                   this.queryTags = tags.data.filter((x) => {
+                   this.queryTags = tags.filter((x) => {
                      return x.category !== 'library' && !x.ruleBased;
                    });
 
-                   this.libraryTags = tags.data.filter((x) => {
+                   this.libraryTags = tags.filter((x) => {
                      return x.category === 'library';
                    });
                  }

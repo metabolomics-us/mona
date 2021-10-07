@@ -4,12 +4,12 @@
     </a>
 
     <ul class="dropdown-menu" ngbDropdownMenu>
-        <li><a ngbDropdownItem [routerLink]="['/spectra/search']">Search Spectra</a></li>
-        <li><a ngbDropdownItem (click)="resetQuery()"  [routerLink]="['/spectra/browse']">Browse Spectra</a></li>
-        <li><a ngbDropdownItem [routerLink]="['/spectra/statistics']">Database Index &amp; Statistics</a></li>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/spectra/search']">Search Spectra</a></li>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" (click)="resetQuery()"  [routerLink]="['/spectra/browse']">Browse Spectra</a></li>
+        <li><a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/spectra/statistics']">Database Index &amp; Statistics</a></li>
         <div class="dropdown-divider"></div>
         <li>
-            <a ngbDropdownItem [routerLink]="['/upload/status']">
+            <a ngbDropdownItem data-toggle="collapse" data-target=".navbar-collapse.show" [routerLink]="['/upload/status']">
                     <p>
                         <strong>Upload Progress</strong>
                         <span class="pull-right text muted">&nbsp;</span>

@@ -44,6 +44,29 @@ export class AdvancedUploaderComponent implements OnInit{
   public filenames;
   public fileUpload;
   public convMolUpload;
+  public files;
+  public showLibraryForm;
+
+  // library variables
+  public library = {
+    id: null,
+    library: null,
+    description: null,
+    link: null,
+    tag: {
+      ruleBased: false,
+      text: null
+    },
+    submitter: {
+      id: null,
+      emailAddress: null,
+      firstName: null,
+      lastName: null,
+      institution: null
+    }
+  };
+  public libraryPrefix;
+  public libraryIDNum;
   /**
    * * Sort order for the ion table - default m/z ascending
    */
@@ -77,6 +100,12 @@ export class AdvancedUploaderComponent implements OnInit{
 		this.spectra = [];
 		this.spectrumErrors = {};
 		this.spectraIndex = 0;
+		this.fileUpload = null;
+		this.files = null;
+		this.convMolUpload = null;
+		this.showLibraryForm = false;
+		this.libraryPrefix = null;
+		this.libraryIDNum = 0;
 		this.ionCuts = {
 		};
 		this.ionTableSort = '-ion';
@@ -95,9 +124,10 @@ export class AdvancedUploaderComponent implements OnInit{
 		this.tagService.query().subscribe(
 			(data) => {
 			  if (data.length > 0) {
-			    this.tags = data;
+			    this.tags = data.map(x => x.text);
+        } else{
+          this.tags = [''];
         }
-				 this.tags = [{text: ''}];
 			},
 			(error) => {
 				this.logger.error('failed: ' + error);
@@ -235,12 +265,31 @@ export class AdvancedUploaderComponent implements OnInit{
 		}
 	}
 
+	setFiles(event) {
+	  if (event.target.files.length > 0) {
+	    this.files = event.target.files;
+    } else {
+	    this.files = undefined;
+	    this.fileUpload = null;
+    }
+  }
+
 	batchProcessSTP(data, origin): Promise<any> {
 	  return new Promise((resolve, reject) => {
       this.uploadLibraryService.processData(data, (spectrum) => {
         if (spectrum === null) {
           resolve(true);
         } else {
+          if (this.showLibraryForm) {
+            spectrum.id = `${this.libraryPrefix}${String(this.libraryIDNum).padStart(6, '0')}`;
+            this.libraryIDNum += 1;
+            spectrum.library = this.library;
+            spectrum.tags = [this.library.tag];
+            if (this.library.submitter.emailAddress !== null) {
+              this.library.submitter.id = this.library.submitter.emailAddress;
+              spectrum.submitter = this.library.submitter;
+            }
+          }
           this.uploadLibraryService.uploadSpectra([spectrum],   (res) => {
             try {
               this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, res,
@@ -272,6 +321,16 @@ export class AdvancedUploaderComponent implements OnInit{
   batchProcess(data, origin): Promise<any> {
     return new Promise((resolve, reject) => {
       this.uploadLibraryService.processData(data, (spectrum) => {
+        if (this.showLibraryForm) {
+          spectrum.id = `${this.libraryPrefix}${String(this.libraryIDNum).padStart(6, '0')}`;
+          this.libraryIDNum += 1;
+          spectrum.library = this.library;
+          spectrum.tags = [this.library.tag];
+          if (this.library.submitter.emailAddress !== null) {
+            this.library.submitter.id = this.library.submitter.emailAddress;
+            spectrum.submitter = this.library.submitter;
+          }
+        }
         this.asyncService.addToPool(async () => {
           // Create list of ions
           spectrum.basePeak = 0;
@@ -329,13 +388,13 @@ export class AdvancedUploaderComponent implements OnInit{
     });
   }
 
-	straightThroughProcessing(event) {
+	straightThroughProcessing() {
 	  let promiseBuffer = [];
 	  // Move to the upload status page then execute the upload process
    this.router.navigate(['/upload/status']).then(() => {
      // set timeout for 1 second so we can navigate to upload status page first
      setTimeout( () => {
-       for (const file of event.target.files) {
+       for (const file of this.files) {
          this.uploadLibraryService.loadSpectraFile(file, async (data, origin) => {
            // Receive async batch from loadSpectraFile
            for (const item of data) {
@@ -357,16 +416,17 @@ export class AdvancedUploaderComponent implements OnInit{
 	 * Parse spectra
 	 * @param event Contains an event which serves the files
 	 */
-	parseFiles(event) {
+	parseFiles() {
 	  this.uploadLibraryService.completedSpectraCount = 0;
 	  this.uploadLibraryService.failedSpectraCount = 0;
 	  this.uploadLibraryService.uploadedSpectraCount = 0;
+	  this.libraryIDNum = null;
 	  let promiseBuffer = [];
 	  let totalSize = 0;
 
-	  if (event.target.files && event.target.files.length) {
-      for (let y = 0; y < event.target.files.length; y++) {
-        totalSize += event.target.files[y].size;
+	  if (this.files && this.files.length) {
+      for (let y = 0; y < this.files.length; y++) {
+        totalSize += this.files[y].size;
       }
       // If the file is larger then 10MB then use straight through processing
       if (totalSize > 10 * 1024 * 1024) {
@@ -374,14 +434,14 @@ export class AdvancedUploaderComponent implements OnInit{
         modalRef.result.then((res) => {
           if (res) {
             this.uploadLibraryService.isSTP = true;
-            this.straightThroughProcessing(event);
+            this.straightThroughProcessing();
           }
         });
         return;
       } else {
         this.uploadLibraryService.isSTP = false;
-        for (let i = 0; i < event.target.files.length; i++) {
-          this.uploadLibraryService.loadSpectraFile(event.target.files[i],
+        for (let i = 0; i < this.files.length; i++) {
+          this.uploadLibraryService.loadSpectraFile(this.files[i],
             async (data, origin) => {
               for (const item of data) {
                 promiseBuffer.push(this.batchProcess(item, origin));
@@ -573,7 +633,6 @@ export class AdvancedUploaderComponent implements OnInit{
 			for (let i = 0; i < this.spectra.length; i++) {
 				 this.spectra[i].meta.push.apply(this.spectra[i].meta, this.spectra[i].hiddenMetadata);
 			}
-
 			this.uploadLibraryService.uploadSpectra(this.spectra,  (spectrum) => {
 				this.http.post(`${environment.REST_BACKEND_SERVER}/rest/spectra`, spectrum,
 					{headers: {
@@ -605,10 +664,9 @@ export class AdvancedUploaderComponent implements OnInit{
 	 * @returns observable: filters the tags and pushes to an observable
 	 * Performs initialization and acquisition of data used by the wizard
 	 */
-	loadTags(text: string): Observable<any> {
-	  return this.tagService.query().pipe(map((data) => {
-	    this.filterPipe.transform(data, text);
-    }));
+	loadTags() {
+	  // this.tagService.query().pipe(map(data => data.map(x => x.text)));
+	  return this.tags.map(x => x.text);
 	}
 
 	/*
