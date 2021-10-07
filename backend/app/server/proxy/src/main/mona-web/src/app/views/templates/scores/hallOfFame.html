@@ -21,7 +21,7 @@
                 <fa-icon [icon]="faTrophy" *ngIf="i === 0" style="color: #ffd700"></fa-icon>
                 <fa-icon [icon]="faTrophy" *ngIf="i === 1" style="color: #C0C0C0"></fa-icon>
                 <fa-icon [icon]="faTrophy" *ngIf="i === 2" style="color: #CD7F32"></fa-icon>
-                <span *ngIf="i > 3">{{i + 1}}</span>
+                <span *ngIf="i > 2">{{i + 1}}</span>
             </td>
             <td>
               <submitter-query [submitter]="score">{{score.firstName}} {{score.lastName}}</submitter-query>

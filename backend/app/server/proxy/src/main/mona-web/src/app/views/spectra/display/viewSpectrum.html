@@ -8,9 +8,9 @@
 
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-12" *ngIf="spectrum.score">
                             <span placement="right"
-                                  ngbTooltip="Click to see the explaination for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5 score"
+                                  ngbTooltip="Click to see the explanation for the {{0.0 + spectrum.score.score | number:'1.2-2'}} / 5 score"
                                   (click)="showScore = !showScore">
                                 Rating:
                                 <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
@@ -19,9 +19,9 @@
                         </div>
                     </div>
 
-                    <div class="row" *ngIf="showScore">
+                    <div class="row" *ngIf="showScore && spectrum.score">
                         <div class="col-md-12">
-                            <div class="card top17" *ngIf="spectrum.score">
+                            <div class="card top17">
                                 <div class="card-header">
                                     Explanation for the {{spectrum.score.score | number:'1.2-2'}} / 5 star score
                                 </div>

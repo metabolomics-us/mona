@@ -33,14 +33,30 @@
                 </div>
 
                 <span class="help-block">Supports MSP and MGF mass spectral library files and MassBank Records Format</span>
-                <div class="form-check">
+                <div class="form-check" *ngIf="authenticationService.isAdmin()">
                   <input type="checkbox" class="form-check-input" id="libraryBool" name="librayBool" [(ngModel)]="showLibraryForm">
                   <label class="form-check-label" for="libraryBool">Create New Library</label>
                 </div>
                 <div *ngIf="showLibraryForm">
+                  <br/>
                   <form #libForm="ngForm"  id="libForm" class="form-horizontal" novalidate role="form">
+                    <div class="form-group row">
+                      <label for="libraryLink" class="col-sm-3 col-form-label"><strong>Library</strong></label>
+                    </div>
+                    <hr/>
+                    <div class="form-group row" [ngClass]="{ 'has-error': !libraryPre.valid && !libraryPre.pristine }">
+                      <label for="libraryPre" class="col-sm-2 col-form-label">Library ID Prefix: </label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" id="libraryPre" name="libraryPre"
+                               placeholder="Required" [(ngModel)]="libraryPrefix" #libraryPre = "ngModel" required />
+                        <p *ngIf="!libraryPre.valid && !libraryPre.pristine" class="help-block">
+                          Library ID Prefix is required.
+                        </p>
+                      </div>
+                    </div>
+
                     <div class="form-group row" [ngClass]="{ 'has-error': !libraryName.valid && !libraryName.pristine }">
-                      <label for="libraryName" class="col-sm-3 col-form-label">Library Name: </label>
+                      <label for="libraryName" class="col-sm-2 col-form-label">Library Name: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="libraryName" name="libraryName"
                                placeholder="Required" [(ngModel)]="library.library" #libraryName = "ngModel"
@@ -52,7 +68,7 @@
                     </div>
 
                     <div class="form-group row" [ngClass]="{ 'has-error': !libraryDescription.valid && !libraryDescription.pristine }">
-                      <label for="libraryDescription" class="col-sm-3 col-form-label">Description: </label>
+                      <label for="libraryDescription" class="col-sm-2 col-form-label">Description: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="libraryDescription" name="libraryDescription"
                                placeholder="Required" [(ngModel)]="library.description" #libraryDescription = "ngModel" required />
@@ -63,7 +79,7 @@
                     </div>
 
                     <div class="form-group row" [ngClass]="{ 'has-error': !libraryLink.valid && !libraryLink.pristine }">
-                      <label for="libraryLink" class="col-sm-3 col-form-label">Link: </label>
+                      <label for="libraryLink" class="col-sm-2 col-form-label">Link: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="libraryLink" name="libraryLink"
                                placeholder="Required" [(ngModel)]="library.link" #libraryLink = "ngModel" required />
@@ -72,10 +88,43 @@
                         </p>
                       </div>
                     </div>
-                    <button class="btn-info float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles(undefined)">Submit</button>
+
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label"><strong>Submitter</strong></label>
+                    </div>
+                    <hr/>
+                    <div class="form-group row">
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterEmail">Email Address: </label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" id="librarySubmitterEmail" name="librarySubmitterEmail"
+                               placeholder="Optional" [(ngModel)]="library.submitter.emailAddress">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterFirst">First Name: </label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" id="librarySubmitterFirst" name="librarySubmitterFirst"
+                               placeholder="Optional" [(ngModel)]="library.submitter.firstName">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterLast">Last Name: </label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" id="librarySubmitterLast" name="librarySubmitterLast"
+                               placeholder="Optional" [(ngModel)]="library.submitter.lastName">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterInstitution">Institution: </label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" id="librarySubmitterInstitution" name="librarySubmitterInstitution"
+                               placeholder="Optional" [(ngModel)]="library.submitter.institution">
+                      </div>
+                    </div>
+                    <button class="btn-info float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Submit</button>
                   </form>
                 </div>
-                <button class="btn-info float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles(undefined)">Submit</button>
+                <button class="btn-info float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Submit</button>
             </div>
         </div>
 
@@ -207,10 +256,13 @@
                                                   <div class="input-group">
                                                     <span class="input-group-btn">
                                                         <span class="btn btn-primary btn-file">
-                                                           Browse <fa-icon [icon]="faFolderOpen"></fa-icon><input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseFiles($event)"/>
+                                                           Browse <fa-icon [icon]="faFolderOpen"></fa-icon><input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="setFiles($event)"/>
                                                         </span>
                                                     </span>
-                                                    <input id="molFile" type="text" class="form-control" [(ngModel)]="filenames" ngDefaultControl readonly />
+                                                    <input id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly />
+                                                  </div>
+                                                  <div class="input-group">
+                                                    <button class="float-left" [disabled]="convMolUpload === null" (click)="parseFiles()">Submit</button>
                                                   </div>
                                                 </div>
 
@@ -296,7 +348,7 @@
                                        ngDefaultControl
                                         [minlength]="3"
                                         [trimTags]="false">
-                                <tag-input-dropdown [autocompleteObservable]="loadTags"></tag-input-dropdown>
+                                <tag-input-dropdown [autocompleteItems]="tags"></tag-input-dropdown>
                             </tag-input>
                             <br />
 
