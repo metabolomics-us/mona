@@ -6,7 +6,7 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class RegistrationService {
-    public newSubmitter: NewSubmitter;
+    newSubmitter: NewSubmitter;
 
     constructor(public http: HttpClient) {
         this.newSubmitter = new NewSubmitter();

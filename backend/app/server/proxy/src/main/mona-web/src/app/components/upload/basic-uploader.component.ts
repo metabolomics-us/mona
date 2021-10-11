@@ -24,25 +24,26 @@ import {faCloudUploadAlt, faSpinner, faExclamationTriangle, faUser,
     templateUrl: '../../views/spectra/upload/basicUploader.html'
 })
 export class BasicUploaderComponent implements OnInit{
-    public currentSpectrum;
-    public metadata;
-    public page: number;
-    public fileHasMultipleSpectra;
-    public showIonTable;
-    public ionTableSort;
-    public pasteError;
-    public spectrum;
-    public queryState;
-    public spectraCount;
-    public compoundProcessing;
-    public compoundError;
-    public compoundMolError;
-    public uploadError;
-    public error;
-    public tags;
-    public filenames;
-    public pastedSpectrum;
-    public fileUpload;
+    currentSpectrum;
+    metadata;
+    page: number;
+    fileHasMultipleSpectra;
+    showIonTable;
+    ionTableSort;
+    pasteError;
+    spectrum;
+    queryState;
+    spectraCount;
+    compoundProcessing;
+    compoundError;
+    compoundMolError;
+    uploadError;
+    error;
+    tags;
+    filenames;
+    pastedSpectrum;
+    fileUpload;
+
     faCloudUpload = faCloudUploadAlt;
     faSpinner = faSpinner;
     faExclamationTriangle = faExclamationTriangle;

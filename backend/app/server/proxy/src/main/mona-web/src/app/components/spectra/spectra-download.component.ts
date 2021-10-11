@@ -18,7 +18,7 @@ import {faCloudDownloadAlt} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/templates/spectra/download.html'
 })
 export class SpectraDownloadComponent {
-    @Input() public spectrum;
+    @Input() spectrum;
     faCloudDownloadAlt = faCloudDownloadAlt;
 
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService,

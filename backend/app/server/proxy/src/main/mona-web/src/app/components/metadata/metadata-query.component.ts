@@ -12,9 +12,9 @@ import {Component, Input} from '@angular/core';
 })
 export class MetadataQueryComponent {
 
-    @Input() public compound;
-    @Input() public metaData;
-    @Input() public classification;
+    @Input() compound;
+    @Input() metaData;
+    @Input() classification;
 
     constructor( public spectraQueryBuilderService: SpectraQueryBuilderService,
                  public logger: NGXLogger) {

@@ -21,19 +21,19 @@ import {first} from 'rxjs/operators';
 
 @Injectable()
 export class UploadLibraryService{
-    public completedSpectraCountSub = new Subject<number>();
-    public failedSpectraCountSub = new Subject<number>();
-    public uploadedSpectraCountSub = new Subject<number>();
-    public uploadProcess = new Subject<boolean>();
+    completedSpectraCountSub = new Subject<number>();
+    failedSpectraCountSub = new Subject<number>();
+    uploadedSpectraCountSub = new Subject<number>();
+    uploadProcess = new Subject<boolean>();
 
-    public completedSpectraCount;
-    public failedSpectraCount;
-    public uploadedSpectraCount;
-    public uploadedSpectra;
+    completedSpectraCount;
+    failedSpectraCount;
+    uploadedSpectraCount;
+    uploadedSpectra;
 
-    public uploadStartTime;
-    public isSTP;
-    public uploadComplete;
+    uploadStartTime;
+    isSTP;
+    uploadComplete;
 
     constructor(public logger: NGXLogger,
                 public mspParserLibService: MspParserLibService,

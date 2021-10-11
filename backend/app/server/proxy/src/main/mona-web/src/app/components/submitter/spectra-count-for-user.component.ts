@@ -11,8 +11,8 @@ import {Component, Input, OnInit} from '@angular/core';
     template: '<span>{{spectraCount}}</span>'
 })
 export class SpectraCountForUserComponent implements OnInit{
-    @Input() public user;
-    public spectraCount;
+    @Input() user;
+    spectraCount;
     constructor( public statisticsService: Statistics) {
         this.spectraCount = 'loading...';
     }

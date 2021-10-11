@@ -11,8 +11,8 @@ import {faSearch} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/navbar/searchBox.html'
 })
 export class SearchBoxComponent implements OnInit {
-    public inputError;
-    public searchBoxQuery;
+    inputError;
+    searchBoxQuery;
     faSearch = faSearch;
 
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService){}

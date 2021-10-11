@@ -14,12 +14,12 @@ import {faCloudDownloadAlt, faQuestionCircle, faExclamationTriangle, faFlask} fr
     templateUrl: '../../views/compounds/displayCompound.html'
 })
 export class DisplayCompoundComponent implements  OnInit{
-    @Input() public compound;
-    public pictureId;
-    public chemId;
-    public classifications;
-    public showClassyFireInfo;
-    public metaData: any;
+    @Input() compound;
+    pictureId;
+    chemId;
+    classifications;
+    showClassyFireInfo;
+    metaData: any;
     faCloudDownloadAlt = faCloudDownloadAlt;
     faQuestionCircle = faQuestionCircle;
     faExclamationTriangle = faExclamationTriangle;

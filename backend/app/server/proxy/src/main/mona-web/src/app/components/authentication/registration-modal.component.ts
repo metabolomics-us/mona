@@ -16,9 +16,9 @@ import {faSpinner, faCheck, faExclamation, faExclamationTriangle} from '@fortawe
     templateUrl: '../../views/authentication/registrationModal.html'
 })
 export class RegistrationModalComponent implements OnInit{
-    public errors;
-    public state;
-    public submitterFormStatus: boolean;
+    errors;
+    state;
+    submitterFormStatus: boolean;
     @ViewChild(SubmitterFormComponent) submitterForm: SubmitterFormComponent;
     faSpinner = faSpinner;
     faCheck = faCheck;

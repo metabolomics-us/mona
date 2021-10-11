@@ -9,11 +9,11 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class AsyncService{
-    public runningTasks;
-    public maxRunningTasks;
-    public pool;
-    public poolRate;
-    public timeout;
+    runningTasks;
+    maxRunningTasks;
+    pool;
+    poolRate;
+    timeout;
 
     constructor(public logger: NGXLogger) {
         this.runningTasks = 0;

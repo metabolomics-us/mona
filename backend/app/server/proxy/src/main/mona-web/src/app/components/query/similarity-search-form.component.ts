@@ -14,17 +14,17 @@ import {Router} from '@angular/router';
     templateUrl: '../../views/spectra/query/similaritySearchForm.html'
 })
 export class SimilaritySearchFormComponent implements OnInit{
-    public page;
-    public pasteError;
-    public spectrum;
-    public uploadError;
-    public pastedSpectrum;
-    public precursorToleranceUnit;
-    public minSimilarity;
-    public precursorMZ;
-    public precursorMZTolerance;
-    public fileUpload;
-    public filenames;
+    page;
+    pasteError;
+    spectrum;
+    uploadError;
+    pastedSpectrum;
+    precursorToleranceUnit;
+    minSimilarity;
+    precursorMZ;
+    precursorMZTolerance;
+    fileUpload;
+    filenames;
     faSearch = faSearch;
     faSpinner = faSpinner;
 

@@ -10,8 +10,8 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class QueryCacheService{
-    public query;
-    public queryString;
+    query;
+    queryString;
 
 
     constructor(public logger: NGXLogger, public spectraQueryBuilderService: SpectraQueryBuilderService) {

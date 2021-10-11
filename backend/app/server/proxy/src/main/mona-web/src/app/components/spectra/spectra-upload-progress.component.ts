@@ -22,13 +22,13 @@ import {Component, OnInit} from '@angular/core';
         <div class="text-center text-nowrap" *ngIf="spectraUploadProgress === -1"><i>No Upload Started</i></div>`,
 })
 export class SpectraUploadProgressComponent implements OnInit{
-    public etaString;
-    public completedSpectraCount;
-    public uploadedSpectraCount;
-    public failedSpectraCount;
-    public spectraUploadProgress;
-    public spectraUploadProgressString;
-    public showETA;
+    etaString;
+    completedSpectraCount;
+    uploadedSpectraCount;
+    failedSpectraCount;
+    spectraUploadProgress;
+    spectraUploadProgressString;
+    showETA;
     faSpinner = faSpinner;
 
     constructor( public uploadLibraryService: UploadLibraryService,

@@ -12,8 +12,8 @@ import {faTrophy, faSpinner} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/templates/scores/hallOfFame.html'
 })
 export class SpectraTopScoresForUsersComponent implements OnInit{
-    @Input() public limit;
-    public scores;
+    @Input() limit;
+    scores;
     faTrophy = faTrophy;
     faSpinner = faSpinner;
 

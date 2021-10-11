@@ -13,7 +13,7 @@ import {faUser, faSearch} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/submitters/profile.html'
 })
 export class SubmitterProfileComponent implements OnInit{
-    public user: User;
+    user: User;
     faUser = faUser;
     faSearch = faSearch;
 

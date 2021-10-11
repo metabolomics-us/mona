@@ -9,11 +9,11 @@ import {Component, OnInit} from '@angular/core';
     templateUrl: '../../views/documentation/terms.html'
 })
 export class DocumentationTermComponent implements OnInit {
-    public terms;
+    terms;
 
     constructor() {}
 
-    ngOnInit = () => {
+    ngOnInit() {
             this.terms = [
                 {
                     name: 'Alex',

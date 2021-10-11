@@ -15,7 +15,7 @@ import {CookieService} from 'ngx-cookie-service';
 import {HttpClientModule} from '@angular/common/http';
 import {NgChemdoodleModule} from '@wcmc/ng-chemdoodle';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
+import {LoggerModule} from 'ngx-logger';
 import {FormsModule} from '@angular/forms';
 import {NvD3Module} from 'ng2-nvd3';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
@@ -224,5 +224,5 @@ export class AppModule {}
 if (environment.production) {
   enableProdMode();
 }
-platformBrowserDynamic().bootstrapModule(AppModule);
+platformBrowserDynamic().bootstrapModule(AppModule).finally();
 

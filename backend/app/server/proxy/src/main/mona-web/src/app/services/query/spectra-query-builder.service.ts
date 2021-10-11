@@ -10,10 +10,10 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class SpectraQueryBuilderService {
-    public query;
-    public queryString;
-    public textSearch;
-    public similarityQuery;
+    query;
+    queryString;
+    textSearch;
+    similarityQuery;
 
     constructor(public router: Router, public logger: NGXLogger) {
         /**

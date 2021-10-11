@@ -10,10 +10,10 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class SpectrumCacheService{
-    public browserSpectra;
-    public browserSpectraScroll;
-    public browserLocation;
-    public spectrum;
+    browserSpectra;
+    browserSpectraScroll;
+    browserLocation;
+    spectrum;
 
     constructor(public logger: NGXLogger) {
         /**

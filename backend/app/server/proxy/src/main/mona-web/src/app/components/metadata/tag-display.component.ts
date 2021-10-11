@@ -12,8 +12,8 @@ import {faFlask} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/templates/query/tagDisplay.html'
 })
 export class TagDisplayComponent implements OnInit{
-    public maxTagsCount;
-    @Input() public tags;
+    maxTagsCount;
+    @Input() tags;
     faFlask = faFlask;
 
     constructor( public logger: NGXLogger,   public tagService: TagService) {}

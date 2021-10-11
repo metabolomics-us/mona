@@ -14,9 +14,9 @@ import {faSpinner, faCheck} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/authentication/authenticationModal.html'
 })
 export class AuthenticationModalComponent implements OnInit {
-    public errors;
-    public state;
-    public credentials;
+    errors;
+    state;
+    credentials;
     faSpinner = faSpinner;
     faCheck = faCheck;
 

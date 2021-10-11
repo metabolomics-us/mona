@@ -16,9 +16,9 @@ import {faComments, faCheck} from '@fortawesome/free-solid-svg-icons';
 })
 
 export class SpectrumReviewComponent implements OnInit{
-    public submitting;
-    public submitted;
-    @Input() public spectrum;
+    submitting;
+    submitted;
+    @Input() spectrum;
     faComments = faComments;
     faCheck = faCheck;
 

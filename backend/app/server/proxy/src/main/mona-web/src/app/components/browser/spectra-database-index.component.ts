@@ -19,24 +19,24 @@ import 'nvd3';
     templateUrl: '../../views/spectra/dbindex/dbindex.html'
 })
 export class SpectraDatabaseIndexComponent implements OnInit {
-    public api;
-    public metadataFields;
-    public selectedMetadataField;
-    public metadataChartOptions;
-    public sunburstOptions;
-    public getMetadataValues;
-    public getGlobalStatistics;
-    public globalData;
-    public getCompoundClassStatistics;
-    public currentPage;
-    public activeTableData;
-    public compoundClassData;
-    public tableDataPage;
-    public tableSort;
-    public buildHierarchy;
-    public sunburstDataMode;
-    public activeCompoundClassData;
-    public tabParam;
+    api;
+    metadataFields;
+    selectedMetadataField;
+    metadataChartOptions;
+    sunburstOptions;
+    getMetadataValues;
+    getGlobalStatistics;
+    globalData;
+    getCompoundClassStatistics;
+    currentPage;
+    activeTableData;
+    compoundClassData;
+    tableDataPage;
+    tableSort;
+    buildHierarchy;
+    sunburstDataMode;
+    activeCompoundClassData;
+    tabParam;
     faSearch = faSearch;
     faDatabase = faDatabase;
 

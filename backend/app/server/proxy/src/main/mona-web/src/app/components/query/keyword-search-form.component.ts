@@ -12,14 +12,14 @@ import {faSpinner, faSearch} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/spectra/query/keywordSearchForm.html'
 })
 export class KeywordSearchFormComponent implements OnInit{
-    public query;
-    public sourceIntroduction;
-    public ionizationMethod;
-    public msType;
-    public ionMode;
-    public libraryTags;
-    public queryTags;
-    public test;
+    query;
+    sourceIntroduction;
+    ionizationMethod;
+    msType;
+    ionMode;
+    libraryTags;
+    queryTags;
+    test;
     faSpinner = faSpinner;
     faSearch = faSearch;
 

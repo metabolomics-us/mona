@@ -12,10 +12,10 @@ import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 })
 
 export class SpectraPanelComponent implements OnInit{
-    @Input() public spectrum;
-    public IMPORTANT_METADATA;
-    public importantMetadata;
-    public secondaryMetadata;
+    @Input() spectrum;
+    IMPORTANT_METADATA;
+    importantMetadata;
+    secondaryMetadata;
     faExternalLinkAlt = faExternalLinkAlt;
 
     constructor( public spectrumCache: SpectrumCacheService) {}

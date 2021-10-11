@@ -16,8 +16,8 @@ import {faEdit, faMinusSquare, faUser} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/submitters/list.html'
 })
 export class SubmitterComponent implements OnInit{
-    public submitters;
-    public listSubmitter;
+    submitters;
+    listSubmitter;
     faEdit = faEdit;
     faMinusSquare = faMinusSquare;
     faUser = faUser;

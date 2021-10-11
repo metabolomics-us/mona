@@ -13,10 +13,10 @@ import {faFolder, faFolderOpen, faFile, faFileDownload, faSearch} from '@fortawe
     templateUrl: '../../views/templates/query/queryTreeView.html'
 })
 export class QueryTreeViewComponent implements OnInit {
-    public showHidden;
-    public templatePrime;
-    public newStyle;
-    public depth;
+    showHidden;
+    templatePrime;
+    newStyle;
+    depth;
     faFolder = faFolder;
     faFolderOpen = faFolderOpen;
     faFile = faFile;

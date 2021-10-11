@@ -18,10 +18,10 @@ import {map} from 'rxjs/operators';
     templateUrl: '../../views/templates/metaQueryInput.html'
 })
 export class GwMetaQueryInputComponent implements OnInit {
-    @Input() public query;
-    @Input() public editable;
-    @Input() public fullText;
-    public select;
+    @Input() query;
+    @Input() editable;
+    @Input() fullText;
+    select;
 
     constructor( public spectraQueryBuilderService: SpectraQueryBuilderService,
                  public http: HttpClient,  public logger: NGXLogger,

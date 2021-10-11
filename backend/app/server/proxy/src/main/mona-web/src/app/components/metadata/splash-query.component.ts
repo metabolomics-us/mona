@@ -12,8 +12,8 @@ import {faSearch} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/templates/query/splashQuery.html'
 })
 export class SplashQueryComponent {
-    public SpectraQueryBuilderService;
-    @Input() public value;
+    SpectraQueryBuilderService;
+    @Input() value;
     faSearch = faSearch;
 
     constructor(public spectraQueryBuilderService: SpectraQueryBuilderService) {}

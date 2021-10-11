@@ -10,8 +10,8 @@ import {Component, Input, AfterViewInit, ElementRef} from '@angular/core';
     template: '<div #libraryBinder></div>'
 })
 export class SpectraLibraryComponent implements AfterViewInit {
-    @Input() public spectrum;
-    public libraryString;
+    @Input() spectrum;
+    libraryString;
 
     constructor( public elementRef: ElementRef) {}
 

@@ -11,6 +11,6 @@ import {environment} from '../../../environments/environment';
     templateUrl: '../../views/navbar/titleHeader.html'
 })
 export class TitleHeaderComponent {
-    public env = environment;
+    env = environment;
     constructor() {}
 }

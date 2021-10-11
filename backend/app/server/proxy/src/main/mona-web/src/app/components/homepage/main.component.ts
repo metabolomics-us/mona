@@ -12,8 +12,8 @@ import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortaweso
     templateUrl: '../../views/main.html'
 })
 export class MainComponent implements OnInit{
-    public showcaseSpectraIds;
-    public showcaseSpectra;
+    showcaseSpectraIds;
+    showcaseSpectra;
     faSearch = faSearch;
     faChartBar = faChartBar;
     faExclamationTriangle = faExclamationTriangle;

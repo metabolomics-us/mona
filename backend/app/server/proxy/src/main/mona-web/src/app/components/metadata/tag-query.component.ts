@@ -13,9 +13,9 @@ import {faFlask, faCaretRight} from '@fortawesome/free-solid-svg-icons';
     templateUrl: '../../views/templates/query/tagQuery.html'
 })
 export class TagQueryComponent {
-    @Input() public ruleBased;
-    @Input() public type;
-    @Input() public tag;
+    @Input() ruleBased;
+    @Input() type;
+    @Input() tag;
     faFlask = faFlask;
     faCaretRight = faCaretRight;
 

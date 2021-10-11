@@ -29,26 +29,26 @@ import {first, map} from 'rxjs/operators';
 })
 export class AdvancedUploaderComponent implements OnInit{
   // Loaded spectra data/status
-  public spectraLoaded;
-  public currentSpectrum;
-  public spectra;
-  public spectrumErrors;
-  public spectraIndex;
-  public loadedSpectra;
-  public totalSpectra;
-  public spectrum;
-  public tags;
-  public showIonTable;
-  public addSpectra;
-  public error;
-  public filenames;
-  public fileUpload;
-  public convMolUpload;
-  public files;
-  public showLibraryForm;
+  spectraLoaded;
+  currentSpectrum;
+  spectra;
+  spectrumErrors;
+  spectraIndex;
+  loadedSpectra;
+  totalSpectra;
+  spectrum;
+  tags;
+  showIonTable;
+  addSpectra;
+  error;
+  filenames;
+  fileUpload;
+  convMolUpload;
+  files;
+  showLibraryForm;
 
   // library variables
-  public library = {
+  library = {
     id: null,
     library: null,
     description: null,
@@ -65,16 +65,16 @@ export class AdvancedUploaderComponent implements OnInit{
       institution: null
     }
   };
-  public libraryPrefix;
-  public libraryIDNum;
+  libraryPrefix;
+  libraryIDNum;
   /**
    * * Sort order for the ion table - default m/z ascending
    */
 
-  public ionTableSort;
+  ionTableSort;
 
   // Parameters provided for trimming spectra
-  public ionCuts;
+  ionCuts;
 
   // Icons
   faSpinner = faSpinner;
@@ -420,7 +420,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	  this.uploadLibraryService.completedSpectraCount = 0;
 	  this.uploadLibraryService.failedSpectraCount = 0;
 	  this.uploadLibraryService.uploadedSpectraCount = 0;
-	  this.libraryIDNum = null;
+	  this.libraryIDNum = 0;
 	  let promiseBuffer = [];
 	  let totalSize = 0;
 

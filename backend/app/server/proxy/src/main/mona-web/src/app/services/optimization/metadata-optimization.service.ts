@@ -14,7 +14,7 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class MetadataOptimization {
-    public regexNumeric;
+    private regexNumeric;
 
     constructor(public logger: NGXLogger) {
         /**

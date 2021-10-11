@@ -11,8 +11,8 @@ import {Statistics} from '../../services/persistence/statistics.resource';
     template: `<ngb-rating [(rate)]="score" [max]="5" [readonly]="true"></ngb-rating>`
 })
 export class SpectraScoreForUserComponent implements OnInit{
-    @Input() public user;
-    public score;
+    @Input() user;
+    score;
 
     constructor( public statisticsService: Statistics) {}
 

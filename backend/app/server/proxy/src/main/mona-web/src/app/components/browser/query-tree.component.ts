@@ -15,11 +15,11 @@ import {faDownload, faTable, faCloudDownloadAlt} from '@fortawesome/free-solid-s
 
 })
 export class QueryTreeComponent implements OnInit {
-    public showEmptyDownloads;
-    public queries;
-    public queryTree;
-    public static;
-    public tree;
+    showEmptyDownloads;
+    queries;
+    queryTree;
+    static;
+    tree;
     faDownload = faDownload;
     faTable = faTable;
     faCloudDownloadAlt = faCloudDownloadAlt;

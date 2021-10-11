@@ -14,11 +14,11 @@ import {NgForm} from '@angular/forms';
     templateUrl: '../../views/submitters/template/createUpdateForm.html'
 })
 export class SubmitterFormComponent implements AfterViewInit, OnDestroy, OnInit{
-    public formErrors;
-    @Input() public submitter;
+    formErrors;
+    @Input() submitter;
     @Output() formStatus = new EventEmitter<boolean>();
     @ViewChild('submitterForm') form: NgForm;
-    public validStatus: boolean;
+    validStatus: boolean;
 
     constructor( public registrationService: RegistrationService,
                  public logger: NGXLogger) {}

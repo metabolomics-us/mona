@@ -16,14 +16,14 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class AuthenticationService{
-    public currentUserSubject = new BehaviorSubject<User>(null);
-    public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
+    currentUserSubject = new BehaviorSubject<User>(null);
+    currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
 
-    public isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-    public isAuthenticated = this.isAuthenticatedSubject.asObservable();
+    isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+    isAuthenticated = this.isAuthenticatedSubject.asObservable();
 
-    public modalRequestSubject = new BehaviorSubject<boolean>(false);
-    public modalRequest = this.modalRequestSubject.asObservable();
+    modalRequestSubject = new BehaviorSubject<boolean>(false);
+    modalRequest = this.modalRequestSubject.asObservable();
 
     private readonly ADMIN_ROLE_NAME;
     constructor(public submitter: Submitter, public cookie: CookieMain,

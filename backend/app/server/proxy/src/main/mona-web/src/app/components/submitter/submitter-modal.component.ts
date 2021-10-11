@@ -15,11 +15,11 @@ import {first} from 'rxjs/operators';
     templateUrl: '../../views/submitters/dialog/createDialog.html'
 })
 export class SubmitterModalComponent {
-    public newSubmitter;
-    public formErrors;
-    @Input() public new: boolean;
-    @Input() public submitter;
-    public submitterFormStatus: boolean;
+    newSubmitter;
+    formErrors;
+    @Input() new: boolean;
+    @Input() submitter;
+    submitterFormStatus: boolean;
 
     constructor( public submitterResource: Submitter,  public activeModal: NgbActiveModal,
                  public registrationService: RegistrationService, public authenticationService: AuthenticationService){}

@@ -18,9 +18,10 @@ import {faUser, faCaretDown, faSignOutAlt, faUsers} from '@fortawesome/free-soli
     templateUrl: '../../views/navbar/loginDropdown.html'
 })
 export class AuthenticationComponent implements OnInit{
-    public ADMIN_ROLE_NAME;
-    public currentUser;
-    public welcomeMessage;
+    ADMIN_ROLE_NAME;
+    currentUser;
+    welcomeMessage;
+
     faUser = faUser;
     faCaretDown = faCaretDown;
     faSignOutAlt = faSignOutAlt;
