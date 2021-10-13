@@ -18,6 +18,7 @@ import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {faCloudUploadAlt, faSpinner, faExclamationTriangle, faUser,
         faMinusSquare, faPlusSquare, faArrowLeft, faArrowRight, faSignInAlt} from '@fortawesome/free-solid-svg-icons';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'basic-uploader',
@@ -57,7 +58,8 @@ export class BasicUploaderComponent implements OnInit{
     constructor( public location: Location,  public uploadLibraryService: UploadLibraryService,
                  public compoundConversionService: CompoundConversionService,  public asyncService: AsyncService,
                  public logger: NGXLogger,  public http: HttpClient,  public filterPipe: FilterPipe,
-                 public authenticationService: AuthenticationService,  public slice: SlicePipe){}
+                 public authenticationService: AuthenticationService,  public slice: SlicePipe,
+                 public router: Router){}
 
     ngOnInit() {
         this.currentSpectrum = null;
@@ -603,7 +605,7 @@ export class BasicUploaderComponent implements OnInit{
                 });
             });
 
-            this.location.go('/upload/status');
+            this.router.navigate(['/upload/status']).then();
         }
     }
 
