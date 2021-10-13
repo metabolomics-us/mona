@@ -38,6 +38,24 @@ services:
 
 
   #
+  # Nginx entrypoint
+  #
+
+  nginx:
+    image: public.ecr.aws/e9g7q7c7/nginx-letsencrypt:latest
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - DOMAIN=mona.fiehnlab.ucdavis.edu,massbank.us
+      - EMAIL=noguzman@ucdavis.edu
+    volumes:
+      - ./nginx_v2/certs:/etc/letsencrypt
+      - ./nginx_v2/config/mona.fiehnlab.ucdavis.edu.conf:/etc/nginx/conf.d/mona.fiehnlab.ucdavis.edu.conf
+      - ./nginx_v2/config/massbank.us.conf:/etc/nginx/conf.d/massbank.us.conf
+
+
+  #
   # MoNA base services
   #
 
@@ -52,9 +70,9 @@ services:
       - rabbitmq
     entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -Dspring.profiles.active=docker -jar *.jar"
     environment:
-      - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
-      - GIT_USER=${GIT_USER}
-      - GIT_PASS=${GIT_PASS}
+        - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
+        - GIT_USER=${GIT_USER}
+        - GIT_PASS=${GIT_PASS}
 
 
   #
@@ -120,10 +138,10 @@ services:
   similarity:
     image: public.ecr.aws/e9g7q7c7/mona-similarity
     ports:
-    - 9999:9999
+      - 9999:9999
     depends_on:
       - curationScheduler
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
 
   #
@@ -134,7 +152,7 @@ services:
   proxy:
     image: public.ecr.aws/e9g7q7c7/mona-proxy:latest
     ports:
-      - 80:8080
+      - 8080:8080
     depends_on:
       - persistence
     environment:
@@ -148,7 +166,7 @@ services:
       - 7777:7777
     depends_on:
       - persistence
-    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx1g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
     volumes:
       - downloader-data:/data
 
