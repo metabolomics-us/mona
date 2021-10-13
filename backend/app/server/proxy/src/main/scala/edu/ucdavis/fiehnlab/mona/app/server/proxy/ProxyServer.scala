@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.servlet.DispatcherServlet
 import org.springframework.web.servlet.config.annotation.{CorsRegistry, ResourceHandlerRegistry, WebMvcConfigurerAdapter}
 import org.springframework.web.servlet.resource.PathResourceResolver
+import org.springframework.core.io.ClassPathResource
 
 /**
   * Created by wohlgemuth on 3/28/16.
@@ -72,6 +73,7 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
       "/**/*.css", "/**/*.html", "/**/*.js", "/**/*.json", "/**/*.jpg",
       "/**/*.jpeg", "/**/*.png", "/**/*.ttf", "/**/*.eot", "/**/*.svg", "/**/*.woff", "/**/*.woff2",
 
+
       // API endpoints
       "/rest/**", "/**/v2/api-docs"
     )
@@ -79,7 +81,7 @@ class CorsConfig extends WebMvcConfigurerAdapter with LazyLogging {
       .setCachePeriod(resourceProperties.getCachePeriod)
 
     // Handle all other paths with angular
-    registry.addResourceHandler("/**")
+    registry.addResourceHandler("/**/*")
       .addResourceLocations(resourceProperties.getStaticLocations.map(x => x + "index.html"): _*)
       .setCachePeriod(resourceProperties.getCachePeriod)
       .resourceChain(true)

@@ -1,0 +1,14 @@
+<form name="searchBox"
+      class="nav navbar-form navbar-right ng-pristine ng-valid" role="search">
+    <div class="input-group custom-search-form">
+        <input type="text" class="form-control ng-pristine ng-valid ng-touched" [(ngModel)]="searchBoxQuery"
+               placeholder="Search..." ngbTooltip="Search database by any term" triggers="focus"
+               placement="bottom" name="search-box"/>
+
+        <span class="input-group-btn">
+            <button data-toggle="collapse" data-target=".navbar-collapse.show" class="btn btn-repeat" type="submit" (click)="performSimpleQuery(searchBoxQuery)">
+              <fa-icon [icon]="faSearch"></fa-icon>
+            </button>
+        </span>
+    </div>
+</form>

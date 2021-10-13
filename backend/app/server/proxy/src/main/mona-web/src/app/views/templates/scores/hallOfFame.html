@@ -1,0 +1,35 @@
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>&nbsp;</th>
+        <th>Name</th>
+        <th>Avg. Score</th>
+        <th>Spectra</th>
+    </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngIf="scores === undefined || scores === null">
+            <td colspan="4" class="text-center">
+              <h4 class="spinner"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon> Loading Showcase Spectra...</h4>
+            </td>
+        </tr>
+        <!-- again need that limit to pipe -->
+        <tr *ngFor="let score of scores|slice: 0:limit; index as i">
+            <td>
+                <fa-icon [icon]="faTrophy" *ngIf="i === 0" style="color: #ffd700"></fa-icon>
+                <fa-icon [icon]="faTrophy" *ngIf="i === 1" style="color: #C0C0C0"></fa-icon>
+                <fa-icon [icon]="faTrophy" *ngIf="i === 2" style="color: #CD7F32"></fa-icon>
+                <span *ngIf="i > 2">{{i + 1}}</span>
+            </td>
+            <td>
+              <submitter-query [submitter]="score">{{score.firstName}} {{score.lastName}}</submitter-query>
+            </td>
+            <td>
+              <ngb-rating [(rate)]="score.score" [max]="5" [readonly]="true"></ngb-rating>
+            </td>
+            <td>{{score.count | number: "1.0-0"}}</td>
+        </tr>
+    </tbody>
+</table>

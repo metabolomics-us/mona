@@ -1,0 +1,18 @@
+<div class="row">
+    <div class="col-md-12">
+        <h3>Commonly used terms and abbreviations
+        </h3>
+
+      <!--OrderBy -->
+        <div *ngFor="let term of terms">
+        <div class="list-group">
+
+            <h4 class="list-group-item-heading">{{term.name}}</h4>
+            <p class="list-group-item-text">
+                {{term.info}}
+            </p>
+        </div>
+
+        </div>
+    </div>
+</div>

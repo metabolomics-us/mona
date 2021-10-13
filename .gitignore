@@ -4,4 +4,8 @@ node_modules
 **/*.iml
 **/.idea/
 *.log
+*.ckp
+*.st
 backend/load_test/*.hprof
+./data
+git.properties
