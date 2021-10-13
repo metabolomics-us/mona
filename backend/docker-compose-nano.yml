@@ -42,15 +42,17 @@ services:
   # The discovery service provided us with a local overview of our services
   # and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
-    image: eros.fiehnlab.ucdavis.edu/mona-discovery:latest
+    image: public.ecr.aws/e9g7q7c7/mona-discovery:latest
     ports:
       - 8761:8761
     depends_on:
       - mongodb
       - rabbitmq
-    entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
+    entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -Dspring.profiles.active=docker -jar *.jar"
     environment:
-      - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
+        - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
+        - GIT_USER=${GIT_USER}
+        - GIT_PASS=${GIT_PASS}
 
 
   #
@@ -59,14 +61,14 @@ services:
 
   # Persistence service with qery interface
   persistence:
-    image: eros.fiehnlab.ucdavis.edu/mona-persistence-server:latest
+    image: public.ecr.aws/e9g7q7c7/mona-persistence-server:latest
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
 
   # Main authentication service
   auth:
-    image: eros.fiehnlab.ucdavis.edu/mona-auth-server:latest
+    image: public.ecr.aws/e9g7q7c7/mona-auth-server:latest
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
@@ -77,7 +79,7 @@ services:
 
   # The main entrypoint for MoNA
   proxy:
-    image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
+    image: public.ecr.aws/e9g7q7c7/mona-proxy:latest
     ports:
       - 8080:8080
     depends_on:

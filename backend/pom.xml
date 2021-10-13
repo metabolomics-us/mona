@@ -307,7 +307,7 @@
             </activation>
 
             <properties>
-                <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
+                <docker.registry>public.ecr.aws/e9g7q7c7</docker.registry>
                 <docker.baseImage>java</docker.baseImage>
                 <docker.imagePrefix>mona</docker.imagePrefix>
                 <docker.imageName>${docker.imagePrefix}-${project.name}</docker.imageName>
@@ -356,7 +356,7 @@
                     <plugin>
                         <groupId>com.spotify</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.4.13</version>
+                        <version>1.2.2</version>
                         <configuration>
                             <imageName>${docker.registry}/${docker.imageName}</imageName>
                             <baseImage>${docker.baseImage}</baseImage>
@@ -379,7 +379,7 @@
 
                             <imageTags>
                                 <imageTag>${project.version}</imageTag>
-                                <imageTag>tester</imageTag>
+                                <imageTag>latest</imageTag>
                             </imageTags>
 
                             <runs>
@@ -413,7 +413,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <imageName>${docker.registry}/${docker.imageName}:tester</imageName>
+                                    <imageName>${docker.registry}/${docker.imageName}:latest</imageName>
                                 </configuration>
                             </execution>
                         </executions>
