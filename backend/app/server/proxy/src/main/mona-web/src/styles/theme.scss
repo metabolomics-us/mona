@@ -107,10 +107,19 @@ body {
 
 h2 {
     font-family: "Garamond,Baskerville,Baskerville Old Face,Hoefler Text,Times New Roman,serif";
-    color: #1A3E68;
+    color: #022851;
     font-weight: bold;
 }
 
+.btn.btn-primary:hover,
+.btn.btn-primary:focus,
+.btn.btn-primary:active,
+.btn.btn-primary.active,
+.btn.btn-primary{
+  background-color: #355B85 !important;
+  border-color: #355B85 !important;
+
+}
 .news-title > h4 {
     color: #4D688C;
     font-weight: bold;
@@ -153,18 +162,18 @@ h2 {
 /* ------------------------------- */
 
 .navbar-expand-xl .navbar-header .navbar-brand {
-    color: #FFCD00;
+    color: #FFBF00;
     font-size: large;
 }
 
 .navbar-expand-xl .navbar-header .navbar-brand:hover,
 .navbar-expand-xl .navbar-header .navbar-brand:focus {
-    color: #FFCD00;
+    color: #FFBF00;
 }
 
 .navbar-expand-xl {
-    background-color: #1A3E68;
-    border-bottom: 5px solid #DFC166;
+    background-color: #1a3e68;
+    border-bottom: 5px solid #FFBF00;
 
 }
 
@@ -180,15 +189,15 @@ h2 {
 
 .navbar-expand-xl .navbar-nav > * > li > a:hover,
 .navbar-expand-xl .navbar-nav > * > li > a:focus {
-    color: #DFC166;
+    color: #FFBF00;
     background-color: transparent;
 }
 
 .navbar-expand-xl .navbar-nav > * > .open > a,
 .navbar-expand-xl .navbar-nav > * > .open > a:hover,
 .navbar-expand-xl .navbar-nav > * > .open > a:focus {
-    background-color: #335379;
-    color: #DFC166;
+    background-color: #1a3e68;
+    color: #FFBF00;
 }
 
 .dropdown-toggle::after{
@@ -202,7 +211,7 @@ h2 {
 
 .dropdown-menu > li > a:hover {
     color: white;
-    background-color: #335379;
+    background-color: #1a3e68;
 }
 
 .navbar-nav > * > li > .dropdown-menu {
@@ -237,25 +246,25 @@ h2 {
 
 @media (max-width: 767px) {
     .navbar-expand-xl .navbar-nav .open .dropdown-menu > * > li > a:hover {
-        color: #DEB31A;
+        color: #FFBF00;
     }
 }
 
 // search button
 .nav .input-group-btn:last-child > .btn {
     margin-left: -1px;
-    color: #002855;
-    background-color: #DEB31A;
+    color: #1a3e68;
+    background-color: #FFBF00;
 }
 
 // Top Right Navigation Dropdown Styles*****
 .nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
-    background-color: #335379;
-    color: #DFC166;
+    background-color: #1a3e68;
+    color: #FFBF00;
 }
 
 .navbar-top-links {
-    background-color: #1A3E68;
+    background-color: #1a3e68;
 }
 
 .navbar-top-links > li > a {
@@ -266,7 +275,7 @@ h2 {
 
 .navbar-top-links > li > a:hover {
     text-decoration: none;
-    color: #DFC166;
+    color: #FFBF00;
     background-color: transparent;
 }
 

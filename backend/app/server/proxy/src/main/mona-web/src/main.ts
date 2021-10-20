@@ -94,6 +94,7 @@ import {SpectraDatabaseIndexComponent} from './app/components/browser/spectra-da
 import {FilterPipe} from './app/filters/filter.pipe';
 import {CurlPipe} from './app/filters/curl.pipe';
 import {OrderbyPipe} from './app/filters/orderby.pipe';
+import {BytesPipe} from './app/filters/bytes.pipe';
 import {SlicePipe} from '@angular/common';
 import {AppRootComponent} from './app/components/app.component';
 import {environment} from './environments/environment';
@@ -155,6 +156,7 @@ import {AdvancedUploadModalComponent} from './app/components/upload/advanced-upl
         FilterPipe,
         CurlPipe,
         OrderbyPipe,
+        BytesPipe,
         SlicePipe,
         SpectrumResolver
     ],
@@ -162,6 +164,7 @@ import {AdvancedUploadModalComponent} from './app/components/upload/advanced-upl
     declarations: [
         FilterPipe,
         CurlPipe,
+        BytesPipe,
         OrderbyPipe,
         SpectrumReviewComponent,
         ErrorHandleComponent,

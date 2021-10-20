@@ -11,7 +11,7 @@ import {CookieMain} from '../../services/cookie/cookie-main.service';
 import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {AuthenticationService} from '../../services/authentication.service';
 import {NGXLogger} from 'ngx-logger';
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {OrderbyPipe} from '../../filters/orderby.pipe';
@@ -20,12 +20,14 @@ import {BehaviorSubject} from 'rxjs';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {NgbAccordion} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'spectrum-viewer',
     templateUrl: '../../views/spectra/display/viewSpectrum.html'
 })
-export class SpectrumViewerComponent implements OnInit{
+export class SpectrumViewerComponent implements OnInit, AfterViewInit{
+    @ViewChild('acc') accordion: NgbAccordion;
     delayedspectrum;
     spectrum;
     score;
@@ -101,30 +103,17 @@ export class SpectrumViewerComponent implements OnInit{
       };
 
       this.setSpectrum();
-      this.setAccordionStatus();
     }
 
-    setAccordionStatus() {
-      /**
-       * status of our accordion
-       * type {{isBiologicalCompoundOpen: boolean, isChemicalCompoundOpen: boolean, isDerivatizedCompoundOpen: boolean}}
-       */
+    ngAfterViewInit() {
+      // Have to use timeout timer since canvas won't draw fast enough on first load for masspecPanel
+      setTimeout(() => {
+        this.setAccordionStatus();
+      }, 100);
+    }
 
-      this.accordionStatusSubject = new BehaviorSubject<object>(this.accordionStatus);
-      /**
-       * watch the accordion status and updates related cookies
-       */
-      this.accordionStatusSubject.subscribe(() => {
-        for (const key in this.accordionStatus) {
-          if (key === 'isCompoundOpen') {
-            for (let i = 0; i < this.spectrum.compound.length; i++) {
-              this.cookie.update('DisplayCompound' + i, this.accordionStatus[key][i]);
-            }
-          } else {
-            this.cookie.update('DisplaySpectra' + key, this.accordionStatus[key]);
-          }
-        }
-      });
+  setAccordionStatus() {
+      this.accordion.expand('masspecPanel');
     }
 
     setSpectrum() {

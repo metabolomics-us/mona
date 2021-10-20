@@ -17,11 +17,11 @@ import {Component, EventEmitter, OnInit} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
 import {faSpinner, faExclamationTriangle, faMinusSquare, faPlusSquare,
         faSave, faCloudUploadAlt, faUser, faArrowLeft, faArrowRight,
         faSignInAlt, faFolderOpen} from '@fortawesome/free-solid-svg-icons';
-import {first, map} from 'rxjs/operators';
+import {first} from 'rxjs/operators';
+import {ToasterConfig, ToasterService} from 'angular2-toaster';
 
 @Component({
   selector: 'advanced-uploader',
@@ -76,6 +76,8 @@ export class AdvancedUploaderComponent implements OnInit{
   // Parameters provided for trimming spectra
   ionCuts;
 
+  toasterOptions;
+
   // Icons
   faSpinner = faSpinner;
   faExclamationTriangle = faExclamationTriangle;
@@ -93,7 +95,7 @@ export class AdvancedUploaderComponent implements OnInit{
 				          public uploadLibraryService: UploadLibraryService,  public ctsService: CtsService,
 				          public tagService: TagService,  public asyncService: AsyncService,  public logger: NGXLogger,
 				          public element: ElementRef, public filterPipe: FilterPipe,  public http: HttpClient,
-              public router: Router, public modalService: NgbModal){}
+              public router: Router, public modalService: NgbModal, public toaster: ToasterService){}
 
 	ngOnInit() {
 		this.spectraLoaded = 0;
@@ -105,9 +107,8 @@ export class AdvancedUploaderComponent implements OnInit{
 		this.convMolUpload = null;
 		this.showLibraryForm = false;
 		this.libraryPrefix = null;
-		this.libraryIDNum = 0;
-		this.ionCuts = {
-		};
+		this.libraryIDNum = 1;
+		this.ionCuts = {};
 		this.ionTableSort = '-ion';
 
 		this.addSpectra = new EventEmitter<any>();
@@ -133,6 +134,12 @@ export class AdvancedUploaderComponent implements OnInit{
 				this.logger.error('failed: ' + error);
 			}
 		);
+		this.toasterOptions = new ToasterConfig({
+      positionClass: 'toast-top-center',
+      timeout: 5000,
+      showCloseButton: true,
+      mouseoverTimerStop: true
+    });
 	}
 
   sortIonTable(column) {
@@ -189,6 +196,11 @@ export class AdvancedUploaderComponent implements OnInit{
 				this.spectra[index].ions[retainedIons[i]].selected = false;
 			}
 		}
+		this.toaster.pop({
+      type: 'success',
+      title: 'Ion Cuts Performed on Spectrum',
+      body: `Ion cuts were performed successfully on spectrum, see Ion Table for cuts.`
+    });
 	}
 
 	performAllIonCuts() {
@@ -201,6 +213,11 @@ export class AdvancedUploaderComponent implements OnInit{
 	  for (const i of this.currentSpectrum.ions) {
 	    i.selected = true;
     }
+	  this.toaster.pop({
+      type: 'success',
+      title: 'Ion Cuts Reset',
+      body: `Ion cuts were successfully reset on spectrum.`
+    });
 	}
 
 
@@ -283,6 +300,9 @@ export class AdvancedUploaderComponent implements OnInit{
           if (this.showLibraryForm) {
             spectrum.id = `${this.libraryPrefix}${String(this.libraryIDNum).padStart(6, '0')}`;
             this.libraryIDNum += 1;
+            if (this.library.link === null) {
+              this.library.link = 'http://massbank.us';
+            }
             spectrum.library = this.library;
             spectrum.tags = [this.library.tag];
             if (this.library.submitter.emailAddress !== null) {
@@ -324,6 +344,9 @@ export class AdvancedUploaderComponent implements OnInit{
         if (this.showLibraryForm) {
           spectrum.id = `${this.libraryPrefix}${String(this.libraryIDNum).padStart(6, '0')}`;
           this.libraryIDNum += 1;
+          if (this.library.link === null) {
+            this.library.link = 'http://massbank.us';
+          }
           spectrum.library = this.library;
           spectrum.tags = [this.library.tag];
           if (this.library.submitter.emailAddress !== null) {
@@ -420,7 +443,7 @@ export class AdvancedUploaderComponent implements OnInit{
 	  this.uploadLibraryService.completedSpectraCount = 0;
 	  this.uploadLibraryService.failedSpectraCount = 0;
 	  this.uploadLibraryService.uploadedSpectraCount = 0;
-	  this.libraryIDNum = 0;
+	  this.libraryIDNum = 1;
 	  let promiseBuffer = [];
 	  let totalSize = 0;
 
@@ -458,12 +481,12 @@ export class AdvancedUploaderComponent implements OnInit{
 	/**
 	 * Handle MOL file input
 	 */
-	parseMolFile(file) {
-		if (file.length > 0) {
+	parseMolFile(event) {
+		if (event.target.files.length > 0) {
 			const fileReader = new FileReader();
 
-			fileReader.onload = (event) => {
-				let data = event.target.result as string;
+			fileReader.onload = (e) => {
+				let data = e.target.result as string;
 
 				// Accept only the first MOL file
 				let sep1 = data.indexOf('$$$$');
@@ -480,13 +503,14 @@ export class AdvancedUploaderComponent implements OnInit{
 				this.currentSpectrum.molFile = data;
 			};
 
-			fileReader.readAsText(file[0]);
+			fileReader.readAsText(event.target.files[0]);
 		}
 	}
 
 	convertMolToInChI() {
 		if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
-			this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
+		  console.log(this.currentSpectrum.molFile);
+		  this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
 				this.currentSpectrum.inchiKey = result.inchikey;
 			}, undefined);
 		}
@@ -696,6 +720,11 @@ export class AdvancedUploaderComponent implements OnInit{
 		} else {
 			this.setSpectrum(this.spectraIndex);
 		}
+		this.toaster.pop({
+      type: 'success',
+      title: 'Removed Spectrum',
+      body: `Spectrum at index: ${this.spectraIndex + 1} has been removed.`
+    });
 	}
 
 	resetFile() {

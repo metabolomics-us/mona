@@ -227,7 +227,7 @@
                         <div class="col-md-12">
                             <h4>Compound Information</h4>
 
-                            <ngb-accordion #acc2="ngbAccordion" activeIds="compoundInfo">
+                            <ngb-accordion #acc2 activeIds="compoundInfo">
                                 <ngb-panel id="compoundInfo" *ngFor="let compound of spectrum.compound; index as i">
                                     <ng-template *ngIf="accordionStatus.isCompoundOpen[i]" ngbPanelHeader>
                                       <button ngbPanelToggle class="btn btn-link container-fluid text-left pl-0">
