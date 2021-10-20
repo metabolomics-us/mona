@@ -6,7 +6,8 @@ import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {faFolder, faFolderOpen, faFile, faFileDownload, faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faFileDownload, faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faFolder, faFolderOpen, faFile} from '@fortawesome/free-regular-svg-icons';
 
 @Component({
     selector: 'query-tree-view',

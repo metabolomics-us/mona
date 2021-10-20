@@ -72,11 +72,6 @@ export class BasicUploaderComponent implements OnInit{
          * Sort order for the ion table - default m/z ascending
          */
         this.ionTableSort = '-ion';
-
-        // Get tags
-        this.http.get(`${environment.REST_BACKEND_SERVER}/rest/tags`).subscribe((data) => {
-            this.tags = data;
-        });
     }
 
     // ngbTypeahead needs an observable so we shove the metadata typeahead results into an observable and appropriately sort
@@ -276,6 +271,7 @@ export class BasicUploaderComponent implements OnInit{
         this.compoundConversionService.parseInChI(
             this.currentSpectrum.inchi,
              (response) => {
+                this.logger.debug('Parse Inchi response: ' + response);
                 this.currentSpectrum.smiles = response.smiles;
                 this.currentSpectrum.inchiKey = response.inchiKey;
                 this.currentSpectrum.molFile = response.molData;
@@ -293,6 +289,7 @@ export class BasicUploaderComponent implements OnInit{
         this.compoundConversionService.getInChIByInChIKey(
             inchiKey,
              (data) => {
+                this.logger.info('InChi By InchiKey Reponse: ' + data);
                 this.currentSpectrum.inchi = data[0];
                 this.processInChI(data[0]);
             },
@@ -328,6 +325,7 @@ export class BasicUploaderComponent implements OnInit{
             this.compoundConversionService.parseSMILES(
                 this.currentSpectrum.smiles,
                  (response) => {
+                    this.logger.debug('Parse smiles response ' + response);
                     this.currentSpectrum.inchi = response.inchi;
                     this.currentSpectrum.inchiKey = response.inchiKey;
                     this.currentSpectrum.molFile = response.molData;
@@ -349,6 +347,7 @@ export class BasicUploaderComponent implements OnInit{
         // Process names
         else if (this.currentSpectrum.names.length > 0) {
             this.namesToInChIKey(this.currentSpectrum.names, (inchiKey) => {
+                this.logger.debug('Name to inchikey response: ' + inchiKey);
                 if (inchiKey !== null) {
                     this.logger.info('Found InChIKey: ' + inchiKey);
                     this.currentSpectrum.inchiKey = inchiKey;

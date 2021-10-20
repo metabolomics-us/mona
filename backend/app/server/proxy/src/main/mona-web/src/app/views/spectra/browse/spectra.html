@@ -78,7 +78,7 @@
             </button>
 
             <button class="btn btn-primary mr-1"
-                    *ngIf="pagination.table == true" (click)="pagination.table = false; setTable()"
+                    *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
                     placement="right"
                     ngbTooltip="Display Spectra in Panel Mode">
               <fa-icon [icon]="faList" size="2x"></fa-icon>
@@ -101,7 +101,8 @@
 
               <fa-icon [icon]="faBookmark" size="2x"></fa-icon>
               <span *ngIf="authenticationService.isAdmin() && duration !== undefined"> ({{duration | number: '1.2-2'}} s)</span>
-              <strong>{{pagination.totalSize > -1 ? pagination.totalSize : "Loading..."}}</strong>
+              <strong *ngIf="pagination.totalSize > -1"> {{pagination.totalSize|number}}</strong>
+              <strong *ngIf="pagination.totalSize <= -1"> Loading...</strong>
             </button>
         </div>
     </div>

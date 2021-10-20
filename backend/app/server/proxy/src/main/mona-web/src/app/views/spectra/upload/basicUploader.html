@@ -263,7 +263,7 @@
                 </div>
 
                 <div class="form-group text-center">
-                    <button type="button" class="btn btn-primary" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
+                    <button type="button" class="btn btn-primary mr-1" (click)="retrieveCompoundData()" [disabled]="compoundProcessing">
                         <span *ngIf="compoundProcessing"><fa-icon [icon]="faSpinner" [spin]="true"></fa-icon></span>
                         <span>Update Compound</span>
                     </button>
@@ -698,14 +698,6 @@
                     </tr>
                     </tbody>
                 </table>
-
-                <!--
-                <div class="page-header"><h3>Tags</h3></div>
-                <ul>
-                    <li *ngIf="currentSpectrum.tags.length == 0"><i>None Provided</i></li>
-                    <li ng-repeat="tag in currentSpectrum.tags">{{tag.text}}</li>
-                </ul>
-                -->
             </div>
 
             <div class="panel-footer">

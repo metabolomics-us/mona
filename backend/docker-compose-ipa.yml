@@ -53,9 +53,9 @@ services:
       - rabbitmq
     entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.cloud.config.server.git.username=$GIT_USER -Dspring.cloud.config.server.git.password=$GIT_PASS -Dspring.profiles.active=docker -jar *.jar"
     environment:
-      - JAVA_OPTS='-Xmx4g -XX:+UseParallelGC'
-      - GIT_USER=${GIT_USER}
-      - GIT_PASS=${GIT_PASS}
+        - JAVA_OPTS='-Xmx4g -XX:+UseParallelGC'
+        - GIT_USER=${GIT_USER}
+        - GIT_PASS=${GIT_PASS}
 
 
   #
@@ -73,7 +73,7 @@ services:
   webhooks:
     image: public.ecr.aws/fiehnlab/mona-webhooks-server:test
     ports:
-      - 4444:4444
+      - 4443:4444
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx4g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
@@ -121,7 +121,7 @@ services:
   similarity:
     image: public.ecr.aws/fiehnlab/mona-similarity:test
     ports:
-    - 9999:9999
+      - 9999:9999
     depends_on:
       - curationScheduler
     entrypoint: bash -c "./wait-for-it.sh curationScheduler:5555 -t 3600 --strict -- java -Xmx8g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
