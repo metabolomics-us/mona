@@ -24,7 +24,6 @@
         </div>
     </div>
 </div>
-
 <toaster-container [toasterconfig]="toasterOptions"></toaster-container>
 
 <div #error></div>
@@ -111,7 +110,7 @@
 <div class="row top7">
     <div class="col-md-12">
         <div ngbDropdown class="d-inline-block">
-            <button class="btn btn-primary" ngbDropdownToggle>
+            <button class="btn btn-primary" ngbDropdownToggle [disabled]="isSimilaritySearch()">
                {{pagination.itemsPerPage}} Records Per Page
             </button>
             <div ngbDropdownMenu>
@@ -149,7 +148,7 @@
                 <td>
                     <div>
                         <div><a style="cursor: pointer" [routerLink]="[viewSpectrum(spectrum.id)]">{{spectrum.id}}</a></div>
-                        <div>
+                        <div *ngIf="spectrum.score">
                             <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
                         </div>
                         <div *ngIf="spectrum.similarity !== undefined">
@@ -199,7 +198,7 @@
 </div>
 
 <!-- pagination -->
-<div *ngIf="!pagination.loading && pagination.totalSize > -1" class="d-flex justify-content-center">
+<div *ngIf="!pagination.loading && pagination.totalSize > -1 && !isSimilaritySearch()" class="d-flex justify-content-center">
   <ngb-pagination
     [collectionSize]="pagination.totalSize"
     [maxSize]="pagination.maxSize"

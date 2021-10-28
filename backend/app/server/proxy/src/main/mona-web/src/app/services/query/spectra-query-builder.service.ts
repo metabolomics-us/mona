@@ -110,7 +110,7 @@ export class SpectraQueryBuilderService {
         } else {
             this.logger.info(`The current route is: ${this.router.url}`);
             this.logger.debug('Executing empty query');
-            this.router.navigate(['/spectra/browse']).then((res) => {
+            this.router.navigate(['/spectra/browse'], {skipLocationChange: false, replaceUrl: true}).then((res) => {
                 this.logger.info('Navigated to /spectra/browse with empty params');
               });
         }
