@@ -122,7 +122,7 @@ export class SimilaritySearchFormComponent implements OnInit{
         this.logger.info('Submitting similarity request: ' + JSON.stringify(request));
 
         this.spectraQueryBuilderService.setSimilarityQuery(request);
-        this.router.navigate(['spectra/similaritySearch']).finally();
+        this.router.navigate(['spectra/similaritySearch'], {skipLocationChange: false, replaceUrl: true}).then();
     }
 
 }

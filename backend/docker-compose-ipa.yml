@@ -16,7 +16,7 @@ services:
       - 27017:27017
     volumes:
       - mongo-data:/data/db
-    command: --wiredTigerCacheSizeGB 10
+    command: --wiredTigerCacheSizeGB 6
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:

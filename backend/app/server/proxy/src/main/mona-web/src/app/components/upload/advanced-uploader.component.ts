@@ -509,7 +509,6 @@ export class AdvancedUploaderComponent implements OnInit{
 
 	convertMolToInChI() {
 		if (typeof this.currentSpectrum.molFile !== 'undefined' && this.currentSpectrum.molFile !== '') {
-		  console.log(this.currentSpectrum.molFile);
 		  this.ctsService.convertToInchiKey(this.currentSpectrum.molFile, (result) => {
 				this.currentSpectrum.inchiKey = result.inchikey;
 			}, undefined);

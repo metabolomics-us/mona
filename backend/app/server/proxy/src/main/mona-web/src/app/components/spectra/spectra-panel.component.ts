@@ -59,7 +59,7 @@ export class SpectraPanelComponent implements OnInit{
         this.spectrum.metaData = this.importantMetadata.concat(this.secondaryMetadata).slice(0, 10);
     }
 
-    truncateDecimal(s, length) {
+  truncateDecimal(s, length) {
         return (typeof(s) === 'number') ?  s.toFixed(length) :  s;
     }
 

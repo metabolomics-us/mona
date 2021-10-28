@@ -10,17 +10,15 @@
         <div class="card-group">
             <div class="col-lg-6 col-md-7 col-sm-6">
                 <div class="card-columns" *ngIf="spectrum.similarity">
-                    <div class="col-md-12">
                         <ul class="list-inline">
-                            <li class="pull-left">
-                                <h4>
-                                    <span class="label label-primary" >
+                            <li>
+                                <h4 class="text-md-left">
+                                    <label>
                                         Similarity: {{1000 * spectrum.similarity | number:"1.0-0"}}
-                                    </span>
+                                    </label>
                                 </h4>
                             </li>
                         </ul>
-                    </div>
                 </div>
 
                 <div class="card-columns">
@@ -31,9 +29,9 @@
                       </div>
                     </div>
                     <div class="col-12 offset-4">
-                      <div style="width: 200px; height: 200px">
+                      <div style="width: 175px; height: 175px">
                         <div [libChemdoodle]="spectrum.compound[0].molFile" readonly="true"
-                             [id]="'bioSketch_'+spectrum.id+'_false'" [height]="200" [width]="200">
+                             [id]="'bioSketch_'+spectrum.id+'_false'" [height]="175" [width]="175">
                         </div>
                       </div>
                     </div>
