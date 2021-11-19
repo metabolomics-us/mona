@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.parsers
 
 import edu.ucdavis.fiehnlab.mona.backend.core.io.massbank.groups._
-import org.scalatest._
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class MassSpectralDataGroupParserTest extends WordSpec with Matchers with MassSpectralDataGroupParser {
+class MassSpectralDataGroupParserTest extends AnyWordSpec with Matchers with MassSpectralDataGroupParser {
   "An `MassSpectralDataGroupParser`" should {
     "correctly parse complete base metadata" in {
       val input =

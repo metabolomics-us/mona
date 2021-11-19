@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.config.MongoConf
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.mongo.repository.ISpectrumMongoRepositoryCustom
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
@@ -19,7 +19,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 @RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
-class CompoundClassStatisticsServiceTest extends WordSpec {
+class CompoundClassStatisticsServiceTest extends AnyWordSpec {
 
   @Autowired
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null

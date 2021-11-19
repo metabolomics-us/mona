@@ -16,7 +16,7 @@ import org.openscience.cdk.tools.manipulator.{AtomContainerManipulator, Molecula
 import org.openscience.cdk.{AtomContainer, DefaultChemObjectBuilder}
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 8/31/16.

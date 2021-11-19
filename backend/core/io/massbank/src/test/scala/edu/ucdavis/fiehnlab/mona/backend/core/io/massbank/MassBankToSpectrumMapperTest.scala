@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.io.massbank
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
-import org.scalatest._
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.io.Source
 import scala.util.{Success, Try}
 
-class MassBankToSpectrumMapperTest extends WordSpec with Matchers {
+class MassBankToSpectrumMapperTest extends AnyWordSpec with Matchers {
   protected val rootPath = "/testdata"
 
   "The MassBank record parser" when {

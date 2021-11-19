@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.math.histogram.Histogram
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
 import edu.ucdavis.fiehnlab.mona.core.similarity.util.SpectrumUtils
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 /**

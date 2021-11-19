@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.mona.core.similarity.math.binning.BinningMethod
 import edu.ucdavis.fiehnlab.mona.core.similarity.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.mona.core.similarity.run.Calculate
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{BinnedSimpleSpectrum, ComputationalResult, SimpleSpectrum}
+import scala.collection.parallel.CollectionConverters._
 
 /**
   * The definition of a spectral index

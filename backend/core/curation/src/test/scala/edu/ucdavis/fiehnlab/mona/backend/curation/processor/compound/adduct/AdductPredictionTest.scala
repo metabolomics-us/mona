@@ -4,12 +4,13 @@ import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
   * Created by sajjan on 3/21/16.
   */
-class AdductPredictionTest extends WordSpec with Matchers {
+class AdductPredictionTest extends AnyWordSpec with Matchers {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 

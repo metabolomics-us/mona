@@ -6,12 +6,13 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by sajjan on 4/24/17.
   */
-class PeakIndexTest extends WordSpec with Matchers with LazyLogging {
+class PeakIndexTest extends AnyWordSpec with Matchers with LazyLogging {
 
   "a peak index" should {
 

@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.mona.backend.core.workflow
 
 import edu.ucdavis.fiehnlab.mona.backend.core.workflow.graph.ProcessingStep
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by wohlgemuth on 4/20/16.
   */
-class WorkflowBuilderTest extends WordSpec {
+class WorkflowBuilderTest extends AnyWordSpec {
 
   /**
     * completely manual approach of creating the processing steps and

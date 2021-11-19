@@ -6,7 +6,7 @@ import java.lang.Iterable
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.data.domain.{Page, PageRequest}
 import org.springframework.data.repository.CrudRepository
 
@@ -16,7 +16,7 @@ import scala.util.Properties
 /**
   * Created by wohlg_000 on 3/9/2016.
   */
-abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends WordSpec with LazyLogging {
+abstract class RSQLRepositoryCustomTest[T: ClassTag, Q] extends AnyWordSpec with LazyLogging {
 
   val keepRunning: Boolean = Properties.envOrElse("keep.server.running", "false").toBoolean
 

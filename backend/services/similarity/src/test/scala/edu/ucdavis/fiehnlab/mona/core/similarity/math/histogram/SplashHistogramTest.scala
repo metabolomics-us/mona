@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity.math.histogram
 
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.SimpleSpectrum
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
   * Created by sajjan on 12/28/16.
   */
-class SplashHistogramTest extends FlatSpec with Matchers {
+class SplashHistogramTest extends AnyFlatSpec with Matchers {
 
   "Histogram" should "match SPLASH spectra with one ion" in {
     // MassBank EA034401

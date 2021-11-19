@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.mona.core.similarity
 
 import edu.ucdavis.fiehnlab.mona.core.similarity.types.{Ion, SimpleSpectrum}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by sajjan on 12/14/16.
   */
-class SimpleSpectrumTest extends WordSpec with Matchers {
+class SimpleSpectrumTest extends AnyWordSpec with Matchers {
   val spectrum: SimpleSpectrum = new SimpleSpectrum("", "100:100 102:32 103:22 104:33 105:55 106:99 107:3 108:80")
 
   "A created SimpleSpectrum" should {

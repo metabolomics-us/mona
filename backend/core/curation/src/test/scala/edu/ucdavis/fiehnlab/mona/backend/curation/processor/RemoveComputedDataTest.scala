@@ -4,12 +4,12 @@ import java.io.InputStreamReader
 
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by wohlgemuth on 3/11/16.
   */
-class RemoveComputedDataTest extends WordSpec {
+class RemoveComputedDataTest extends AnyWordSpec {
 
   val reader: JSONDomainReader[Spectrum] = JSONDomainReader.create[Spectrum]
 

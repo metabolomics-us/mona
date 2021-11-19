@@ -17,7 +17,7 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.scheduling.annotation.{Async, Scheduled}
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Created by sajjan on 8/2/16.

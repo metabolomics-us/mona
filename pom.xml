@@ -23,7 +23,6 @@
         <encoding>UTF-8</encoding>
         <scala.version>2.13</scala.version>
         <scala.minor.version>6</scala.minor.version>
-        <groovy.version>3.0.5</groovy.version>
         <java.version>1.8</java.version>
         <jackson.version>2.12.4</jackson.version>
     </properties>
@@ -144,6 +143,13 @@
                     <scope>test</scope>
                 </dependency>
 
+                <dependency>
+                    <groupId>org.scalatestplus</groupId>
+                    <artifactId>scalacheck-1-15_2.13</artifactId>
+                    <version>3.2.9.0</version>
+                    <scope>test</scope>
+                </dependency>
+
                 <!-- https://mvnrepository.com/artifact/org.scala-lang.modules/scala-parser-combinators -->
                 <dependency>
                     <groupId>org.scala-lang.modules</groupId>
@@ -156,6 +162,12 @@
                     <groupId>org.scala-lang.modules</groupId>
                     <artifactId>scala-xml_2.13</artifactId>
                     <version>2.0.1</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.scala-lang.modules</groupId>
+                    <artifactId>scala-parallel-collections_2.13</artifactId>
+                    <version>0.2.0</version>
                 </dependency>
             </dependencies>
 
@@ -192,7 +204,7 @@
                     <plugin>
                         <groupId>net.alchim31.maven</groupId>
                         <artifactId>scala-maven-plugin</artifactId>
-                        <version>4.5.0</version>
+                        <version>4.5.3</version>
                         <executions>
                             <execution>
                                 <id>scala-compile</id>
@@ -381,6 +393,12 @@
                     <artifactId>scalatest_${scala.version}</artifactId>
                     <version>3.2.9</version>
                     <scope>test</scope>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.scala-lang.modules</groupId>
+                    <artifactId>scala-parallel-collections_2.13</artifactId>
+                    <version>0.2.0</version>
                 </dependency>
 
                 <!-- https://mvnrepository.com/artifact/org.scala-lang.modules/scala-parser-combinators -->

@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.io.json.JSONDomainReader
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.concurrent.Eventually
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -24,7 +24,7 @@ import scala.language.postfixOps
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[CurationRunner], classOf[TestConfig]))
-class CurationRunnerTest extends WordSpec with Eventually with LazyLogging {
+class CurationRunnerTest extends AnyWordSpec with Eventually with LazyLogging {
 
   @Autowired
   val curationListener: TestCurationListener = null

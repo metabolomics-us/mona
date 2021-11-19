@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.server.controlle
 
 import java.util.concurrent.Future
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
-
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.HelperTypes.{LoginInfo, WrappedString}
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.{Spectrum, Submitter}
@@ -17,14 +16,14 @@ import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.scheduling.annotation.{Async, AsyncResult}
 import org.springframework.web.bind.annotation.{RequestMapping, _}
+import com.typesafe.scalalogging.LazyLogging
 
-import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuffer
+import scala.jdk.CollectionConverters._
 
 @CrossOrigin
 @RestController
 @RequestMapping(Array("/rest/spectra"))
-class SpectrumRestController extends GenericRESTController[Spectrum] {
+class SpectrumRestController extends GenericRESTController[Spectrum] with LazyLogging {
 
   @Autowired
   val httpServletRequest: HttpServletRequest = null
@@ -40,6 +39,7 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
 
   @Autowired
   val loginService: LoginService = null
+
 
 
   /**
@@ -72,14 +72,21 @@ class SpectrumRestController extends GenericRESTController[Spectrum] {
                  request: HttpServletRequest, response: HttpServletResponse): Future[ResponseEntity[Iterable[Spectrum]]] = {
 
     def sendQuery(rsqlQuery: String, textQuery: String, page: Integer, size: Integer): Iterable[Spectrum] = {
+
       if (size != null) {
         if (page != null) {
-          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(page, size)).getContent.asScala
+          val test = spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(page, size)).getContent.asScala
+          logger.info(s"test var is class of${test.getClass}")
+          test
         } else {
-          spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(0, size)).getContent.asScala
+          val test = spectrumPersistenceService.findAll(rsqlQuery, textQuery, new PageRequest(0, size)).getContent.asScala
+          logger.info(s"test var is class of ${test.getClass}")
+          test
         }
       } else {
-        spectrumPersistenceService.findAll(rsqlQuery, textQuery).asScala
+        val test = spectrumPersistenceService.findAll(rsqlQuery, textQuery).asScala
+        logger.info(s"test var is class of ${test.getClass}")
+        test
       }
     }
 

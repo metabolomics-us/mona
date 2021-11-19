@@ -3,12 +3,12 @@ package edu.ucdavis.fiehnlab.mona.backend.curation.reader
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by wohlgemuth on 3/18/16.
   */
-class JSONFileSpectraReaderTest extends WordSpec with LazyLogging {
+class JSONFileSpectraReaderTest extends AnyWordSpec with LazyLogging {
 
   "JSONFileSpectraReaderTest" should {
 

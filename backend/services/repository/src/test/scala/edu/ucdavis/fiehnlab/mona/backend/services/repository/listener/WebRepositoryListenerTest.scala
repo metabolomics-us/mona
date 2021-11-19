@@ -15,7 +15,7 @@ import edu.ucdavis.fiehnlab.mona.backend.services.repository.WebRepository
 import edu.ucdavis.fiehnlab.mona.backend.services.repository.utility.FindDirectory
 import org.apache.commons.io.FileUtils
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
@@ -31,7 +31,7 @@ import scala.util.Properties
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[WebRepository]), webEnvironment = WebEnvironment.DEFINED_PORT)
-class WebRepositoryListenerTest extends WordSpec with LazyLogging {
+class WebRepositoryListenerTest extends AnyWordSpec with LazyLogging {
 
   @LocalServerPort
   private val port = 0

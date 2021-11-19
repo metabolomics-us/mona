@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.statistics.TestConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.repository.MetaDataStatisticsMongoRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.statistics.types.{MetaDataStatistics, MetaDataStatisticsSummary, MetaDataValueCount}
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager, TestPropertySource}
@@ -21,7 +21,7 @@ import org.springframework.test.context.{ContextConfiguration, TestContextManage
 @RunWith(classOf[SpringRunner])
 @ContextConfiguration(classes = Array(classOf[MongoConfig], classOf[TestConfig]))
 @TestPropertySource(locations = Array("classpath:application.properties"))
-class MetaDataStatisticsServiceTest extends WordSpec {
+class MetaDataStatisticsServiceTest extends AnyWordSpec {
 
   @Autowired
   val spectrumMongoRepository: ISpectrumMongoRepositoryCustom = null

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import springfox.documentation.swagger.web.{SwaggerResource, SwaggerResourcesProvider}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 
 @Component
@@ -37,7 +37,7 @@ class GatewaySwaggerResourcesProvider extends SwaggerResourcesProvider with Lazy
     routeLocator.getRoutes.asScala.foreach { route =>
       logger.info("path: " + route.getPath + " and service " + route.getLocation)
 
-      val services: Seq[ServiceInstance] = discoveryClient.getInstances(route.getLocation).asScala
+      val services: Seq[ServiceInstance] = discoveryClient.getInstances(route.getLocation).asScala.toSeq
 
       if (services.nonEmpty) {
         val location: String = "http://" + services.head.getHost + ":" + services.head.getPort + "/v2/api-docs"

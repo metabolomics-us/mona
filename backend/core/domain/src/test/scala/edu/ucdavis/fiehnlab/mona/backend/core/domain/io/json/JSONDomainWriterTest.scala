@@ -4,12 +4,12 @@ import java.io.{InputStreamReader, StringReader, StringWriter}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.Spectrum
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 /**
   * Created by wohlgemuth on 5/27/16.
   */
-class JSONDomainWriterTest extends WordSpec with LazyLogging {
+class JSONDomainWriterTest extends AnyWordSpec with LazyLogging {
 
   "we should be able to create an instance of the writer" when {
     val reader = JSONDomainReader.create[Spectrum]
