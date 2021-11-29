@@ -1,3 +1,4 @@
+<toaster-container [toasterconfig]="toasterOptions"></toaster-container>
 <div class="row">
     <div class="col-md-12">
         <h3><fa-icon [icon]="faCloudUploadAlt"></fa-icon> Advanced Uploader</h3>
@@ -33,7 +34,7 @@
                 </div>
 
                 <span class="help-block">Supports MSP and MGF mass spectral library files and MassBank Records Format</span>
-                <div class="form-check" *ngIf="authenticationService.isAdmin()">
+                <div class="form-check">
                   <input type="checkbox" class="form-check-input" id="libraryBool" name="librayBool" [(ngModel)]="showLibraryForm">
                   <label class="form-check-label" for="libraryBool">Create New Library</label>
                 </div>
@@ -45,7 +46,7 @@
                     </div>
                     <hr/>
                     <div class="form-group row" [ngClass]="{ 'has-error': !libraryPre.valid && !libraryPre.pristine }">
-                      <label for="libraryPre" class="col-sm-2 col-form-label">Library ID Prefix: </label>
+                      <label for="libraryPre" class="col-sm-2 col-form-label" ngbTooltip="The unique prefix used to create a unique ID for every spectrum. Accepts numbers and letters.">Library ID Prefix: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="libraryPre" name="libraryPre"
                                placeholder="Required" [(ngModel)]="libraryPrefix" #libraryPre = "ngModel" required />
@@ -56,7 +57,7 @@
                     </div>
 
                     <div class="form-group row" [ngClass]="{ 'has-error': !libraryName.valid && !libraryName.pristine }">
-                      <label for="libraryName" class="col-sm-2 col-form-label">Library Name: </label>
+                      <label for="libraryName" class="col-sm-2 col-form-label" ngbTooltip="The name of the Library that will be showcased on the spectra panel. This will also be the unique tag name. I.E. MassBank">Library Name: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="libraryName" name="libraryName"
                                placeholder="Required" [(ngModel)]="library.library" #libraryName = "ngModel"
@@ -68,7 +69,7 @@
                     </div>
 
                     <div class="form-group row" [ngClass]="{ 'has-error': !libraryDescription.valid && !libraryDescription.pristine }">
-                      <label for="libraryDescription" class="col-sm-2 col-form-label">Description: </label>
+                      <label for="libraryDescription" class="col-sm-2 col-form-label" ngbTooltip="A description of the library being uploaded.">Description: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="libraryDescription" name="libraryDescription"
                                placeholder="Required" [(ngModel)]="library.description" #libraryDescription = "ngModel" required />
@@ -79,12 +80,12 @@
                     </div>
 
                     <div class="form-group row" [ngClass]="{ 'has-error': !libraryLink.valid && !libraryLink.pristine }">
-                      <label for="libraryLink" class="col-sm-2 col-form-label">Link: </label>
+                      <label for="libraryLink" class="col-sm-2 col-form-label" ngbTooltip="A web link to the website of the library's original submission. Must be http:// or https://">Link: </label>
                       <div class="col-sm-9">
-                        <input type="text" class="form-control" id="libraryLink" name="libraryLink"
-                               placeholder="Required" [(ngModel)]="library.link" #libraryLink = "ngModel" required />
+                        <input type="url" pattern="https*://.*" class="form-control" id="libraryLink" name="libraryLink"
+                               placeholder="Optional - Default is http://massbank.us" [(ngModel)]="library.link" #libraryLink = "ngModel"/>
                         <p *ngIf="!libraryLink.valid && !libraryLink.pristine" class="help-block">
-                          Link is required.
+                          Link is must be http:// or https://.
                         </p>
                       </div>
                     </div>
@@ -94,37 +95,38 @@
                     </div>
                     <hr/>
                     <div class="form-group row">
-                      <label class="col-sm-2 col-form-label" for="librarySubmitterEmail">Email Address: </label>
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterEmail" ngbTooltip="Fill out if original submitter is not yourself">Email Address: </label>
                       <div class="col-sm-9">
-                        <input type="text" class="form-control" id="librarySubmitterEmail" name="librarySubmitterEmail"
+                        <input type="email" class="form-control" id="librarySubmitterEmail" name="librarySubmitterEmail"
                                placeholder="Optional" [(ngModel)]="library.submitter.emailAddress">
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-2 col-form-label" for="librarySubmitterFirst">First Name: </label>
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterFirst" ngbTooltip="Fill out if original submitter is not yourself">First Name: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="librarySubmitterFirst" name="librarySubmitterFirst"
                                placeholder="Optional" [(ngModel)]="library.submitter.firstName">
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-2 col-form-label" for="librarySubmitterLast">Last Name: </label>
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterLast" ngbTooltip="Fill out if original submitter is not yourself">Last Name: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="librarySubmitterLast" name="librarySubmitterLast"
                                placeholder="Optional" [(ngModel)]="library.submitter.lastName">
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-2 col-form-label" for="librarySubmitterInstitution">Institution: </label>
+                      <label class="col-sm-2 col-form-label" for="librarySubmitterInstitution" ngbTooltip="Fill out if original submitter is not yourself">Institution: </label>
                       <div class="col-sm-9">
                         <input type="text" class="form-control" id="librarySubmitterInstitution" name="librarySubmitterInstitution"
                                placeholder="Optional" [(ngModel)]="library.submitter.institution">
                       </div>
                     </div>
-                    <button class="btn-info float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Submit</button>
+                    <button class="btn btn-info float-right" [disabled]="!libForm.valid || fileUpload === null" (click)="parseFiles()">Submit</button>
                   </form>
                 </div>
-                <button class="btn-info float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Submit</button>
+                <br *ngIf="!showLibraryForm"/>
+                <button class="btn btn-info float-right" *ngIf="!showLibraryForm" [disabled]="fileUpload === null" (click)="parseFiles()">Submit</button>
             </div>
         </div>
 
@@ -256,13 +258,10 @@
                                                   <div class="input-group">
                                                     <span class="input-group-btn">
                                                         <span class="btn btn-primary btn-file">
-                                                           Browse <fa-icon [icon]="faFolderOpen"></fa-icon><input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="setFiles($event)"/>
+                                                           Browse <fa-icon [icon]="faFolderOpen"></fa-icon><input type="file" name="conMolUpload" [(ngModel)]="convMolUpload" (change)="parseMolFile($event)"/>
                                                         </span>
                                                     </span>
                                                     <input id="molFile" type="text" class="form-control" [(ngModel)]="convMolUpload" ngDefaultControl readonly />
-                                                  </div>
-                                                  <div class="input-group">
-                                                    <button class="float-left" [disabled]="convMolUpload === null" (click)="parseFiles()">Submit</button>
                                                   </div>
                                                 </div>
 

@@ -158,6 +158,6 @@ export class KeywordSearchFormComponent implements OnInit{
         });
 
         // Redirect to the spectra browser
-        this.spectraQueryBuilderService.executeQuery(undefined);
+        this.spectraQueryBuilderService.executeQuery();
     }
 }

@@ -1,4 +1,5 @@
 version: "3"
+#YML is used for the kvm-node-db-2 environment which used the latest/prod images without using the nginx server
 
 volumes:
   mongo-data:
@@ -16,7 +17,7 @@ services:
       - 27017:27017
     volumes:
       - mongo-data:/data/db
-    command: --wiredTigerCacheSizeGB 48
+    command: --wiredTigerCacheSizeGB 24
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
@@ -36,24 +37,6 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
-
-
-  #
-  # Nginx entrypoint
-  #
-
-  nginx:
-    image: public.ecr.aws/fiehnlab/nginx-letsencrypt:latest
-    ports:
-      - 80:80
-      - 443:443
-    environment:
-      - DOMAIN=mona.fiehnlab.ucdavis.edu,massbank.us
-      - EMAIL=noguzman@ucdavis.edu
-    volumes:
-      - ./nginx_v2/certs:/etc/letsencrypt
-      - ./nginx_v2/config/mona.fiehnlab.ucdavis.edu.conf:/etc/nginx/conf.d/mona.fiehnlab.ucdavis.edu.conf
-      - ./nginx_v2/config/massbank.us.conf:/etc/nginx/conf.d/massbank.us.conf
 
 
   #
@@ -153,7 +136,7 @@ services:
   proxy:
     image: public.ecr.aws/fiehnlab/mona-proxy:latest
     ports:
-      - 8080:8080
+      - 80:8080
     depends_on:
       - persistence
     environment:

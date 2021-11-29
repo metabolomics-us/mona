@@ -3,7 +3,7 @@
  */
 
 import {HttpClient, HttpParams} from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
@@ -56,7 +56,7 @@ export class Spectrum {
 			}
 		};
 		return this.http.post(`${environment.REST_BACKEND_SERVER}/rest/similarity/search`, data, config)
-			.pipe(map((res: any) => {
+			.pipe(first(), map((res: any) => {
 				 let result;
 				 result = res.map((spectrum) => {
 					spectrum.hit.similarity = spectrum.score;

@@ -24,7 +24,6 @@
         </div>
     </div>
 </div>
-
 <toaster-container [toasterconfig]="toasterOptions"></toaster-container>
 
 <div #error></div>
@@ -78,7 +77,7 @@
             </button>
 
             <button class="btn btn-primary mr-1"
-                    *ngIf="pagination.table == true" (click)="pagination.table = false; setTable()"
+                    *ngIf="pagination.table === true" (click)="pagination.table = false; setTable()"
                     placement="right"
                     ngbTooltip="Display Spectra in Panel Mode">
               <fa-icon [icon]="faList" size="2x"></fa-icon>
@@ -101,7 +100,8 @@
 
               <fa-icon [icon]="faBookmark" size="2x"></fa-icon>
               <span *ngIf="authenticationService.isAdmin() && duration !== undefined"> ({{duration | number: '1.2-2'}} s)</span>
-              <strong>{{pagination.totalSize > -1 ? pagination.totalSize : "Loading..."}}</strong>
+              <strong *ngIf="pagination.totalSize > -1"> {{pagination.totalSize|number}}</strong>
+              <strong *ngIf="pagination.totalSize <= -1"> Loading...</strong>
             </button>
         </div>
     </div>
@@ -110,7 +110,7 @@
 <div class="row top7">
     <div class="col-md-12">
         <div ngbDropdown class="d-inline-block">
-            <button class="btn btn-primary" ngbDropdownToggle>
+            <button class="btn btn-primary" ngbDropdownToggle [disabled]="isSimilaritySearch()">
                {{pagination.itemsPerPage}} Records Per Page
             </button>
             <div ngbDropdownMenu>
@@ -148,7 +148,7 @@
                 <td>
                     <div>
                         <div><a style="cursor: pointer" [routerLink]="[viewSpectrum(spectrum.id)]">{{spectrum.id}}</a></div>
-                        <div>
+                        <div *ngIf="spectrum.score">
                             <ngb-rating [(rate)]="spectrum.score.score" max="5" readonly="true"></ngb-rating>
                         </div>
                         <div *ngIf="spectrum.similarity !== undefined">
@@ -198,7 +198,7 @@
 </div>
 
 <!-- pagination -->
-<div *ngIf="!pagination.loading && pagination.totalSize > -1" class="d-flex justify-content-center">
+<div *ngIf="!pagination.loading && pagination.totalSize > -1 && !isSimilaritySearch()" class="d-flex justify-content-center">
   <ngb-pagination
     [collectionSize]="pagination.totalSize"
     [maxSize]="pagination.maxSize"

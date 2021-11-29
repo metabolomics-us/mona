@@ -10,37 +10,35 @@
         <div class="card-group">
             <div class="col-lg-6 col-md-7 col-sm-6">
                 <div class="card-columns" *ngIf="spectrum.similarity">
-                    <div class="col-md-12">
                         <ul class="list-inline">
-                            <li class="pull-left">
-                                <h4>
-                                    <span class="label label-primary" >
+                            <li>
+                                <h4 class="text-md-left">
+                                    <label>
                                         Similarity: {{1000 * spectrum.similarity | number:"1.0-0"}}
-                                    </span>
+                                    </label>
                                 </h4>
                             </li>
                         </ul>
-                    </div>
                 </div>
 
                 <div class="card-columns">
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="masspec-medium">
-                            <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id" [spectrum]="spectrum.spectrum" [miniPlot]="true"></lib-ng-mass-spec-plotter>
-                        </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="masspec-medium">
+                        <lib-ng-mass-spec-plotter [id]="'massSpec_'+spectrum.id" [spectrum]="spectrum.spectrum" [miniPlot]="true"></lib-ng-mass-spec-plotter>
+                      </div>
                     </div>
-
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div style="width: 200px; height: 200px">
-                            <div [libChemdoodle]="spectrum.compound[0].molFile" readonly="true"
-                                 [id]="'bioSketch_'+spectrum.id+'_false'">
-                            </div>
+                    <div class="col-12 offset-4">
+                      <div style="width: 175px; height: 175px">
+                        <div [libChemdoodle]="spectrum.compound[0].molFile" readonly="true"
+                             [id]="'bioSketch_'+spectrum.id+'_false'" [height]="175" [width]="175">
                         </div>
-
+                      </div>
                     </div>
+                  </div>
                 </div>
                 <div class="card-text p-2 text-left" *ngIf="spectrum.library">
-                  <h5><display-library-reference [spectrum]="spectrum"></display-library-reference></h5>
+                  <h6><display-library-reference [spectrum]="spectrum"></display-library-reference></h6>
                 </div>
             </div>
 

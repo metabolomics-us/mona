@@ -307,7 +307,7 @@
             </activation>
 
             <properties>
-                <docker.registry>public.ecr.aws/e9g7q7c7</docker.registry>
+                <docker.registry>public.ecr.aws/fiehnlab</docker.registry>
                 <docker.baseImage>java</docker.baseImage>
                 <docker.imagePrefix>mona</docker.imagePrefix>
                 <docker.imageName>${docker.imagePrefix}-${project.name}</docker.imageName>

@@ -5,6 +5,7 @@
 import {SpectraQueryBuilderService} from '../../services/query/spectra-query-builder.service';
 import {NGXLogger} from 'ngx-logger';
 import {Component, Input} from '@angular/core';
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'metadata-query',
@@ -15,6 +16,7 @@ export class MetadataQueryComponent {
     @Input() compound;
     @Input() metaData;
     @Input() classification;
+    faSearch = faSearch;
 
     constructor( public spectraQueryBuilderService: SpectraQueryBuilderService,
                  public logger: NGXLogger) {
