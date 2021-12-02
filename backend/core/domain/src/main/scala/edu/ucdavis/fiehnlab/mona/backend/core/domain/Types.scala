@@ -485,6 +485,9 @@ case class BlacklistedSplash(@(Id@field) splash: String)
 case class SpectrumFeedback(
                             @(Id@field)
                             id: String,
+                            @(Indexed@field)
+                            @(TextIndexed@field)
+                            @(Field@field)(`type` = FieldType.String, index = FieldIndex.not_analyzed)
                             monaID: String,
                             userID: String,
                             name: String,
