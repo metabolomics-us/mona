@@ -9,6 +9,7 @@
 import {Location} from '@angular/common';
 import {CookieMain} from '../../services/cookie/cookie-main.service';
 import {Spectrum} from '../../services/persistence/spectrum.resource';
+import {FeedbackCacheService} from "../../services/feedback/feedback-cache.service";
 import {AuthenticationService} from '../../services/authentication.service';
 import {NGXLogger} from 'ngx-logger';
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
@@ -16,7 +17,6 @@ import {first} from 'rxjs/operators';
 import {SpectrumCacheService} from '../../services/cache/spectrum-cache.service';
 import {OrderbyPipe} from '../../filters/orderby.pipe';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {faQuestionCircle, faFlask} from '@fortawesome/free-solid-svg-icons';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
@@ -44,22 +44,27 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
     intensity;
     showScore;
     id;
-    accordionStatusSubject;
     faAngleRight = faAngleRight;
     faAngleDown = faAngleDown;
     faQuestionCircle = faQuestionCircle;
     faFlask = faFlask;
     faSpinner = faSpinner;
+    currentFeedback;
 
     constructor( public logger: NGXLogger,  public cookie: CookieMain,
                  public spectrumService: Spectrum,  public authenticationService: AuthenticationService,
                  public location: Location,  public spectrumCache: SpectrumCacheService,
-                 public route: ActivatedRoute,  public router: Router, public orderbyPipe: OrderbyPipe){
-
+                 public route: ActivatedRoute,  public router: Router, public orderbyPipe: OrderbyPipe,
+                 public feedbackCache: FeedbackCacheService){
+      this.currentFeedback = [];
     }
 
     ngOnInit() {
+
       this.delayedspectrum = this.route.snapshot.data.spectrum;
+      this.feedbackCache.resolveFeedback(this.delayedspectrum.id).pipe(first()).subscribe((res) => {
+        this.currentFeedback = res;
+      })
       this.accordionStatus = {
         isSpectraOpen: true,
         isIonTableOpen: false,
@@ -112,7 +117,7 @@ export class SpectrumViewerComponent implements OnInit, AfterViewInit{
       }, 100);
     }
 
-  setAccordionStatus() {
+    setAccordionStatus() {
       this.accordion.expand('masspecPanel');
     }
 

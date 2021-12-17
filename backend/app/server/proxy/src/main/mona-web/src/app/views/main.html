@@ -1,12 +1,12 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h2>Welcome to MoNA!</h2>
+          <span class="news-title fon"><h2 class="font-weight-bold">Welcome to MoNA!</h2></span>
 
             <p>
                 MassBank of North America (MoNA) is a metadata-centric, auto-curating repository designed for efficient storage and querying of mass spectral records.
                 It intends to serve as a the framework for a centralized, collaborative database of metabolite mass spectra, metadata and associated compounds.
-                MoNA currently contains over 200,000 mass spectral records from experimental and in-silico libraries as well as from user contributions.
+                MoNA currently contains {{totalCount}} mass spectral records from experimental and in-silico libraries as well as from user contributions.
             </p>
 
             <p>
@@ -28,47 +28,38 @@
 
     <div class="row">
         <div class="col-md-6 float-left">
-            <h3>News</h3>
+            <h3 class="font-weight-bold">News</h3>
+            <hr/>
 
+          <div class="news-cell">
+            <span class="news-title"><h4>"Create as Library" Feature</h4></span>
+            <div class="news-date">November 21st, 2021</div>
+            <div class="content">
+              <p>
+               The ability to upload spectra as a library has now been added to the <a [routerLink]="['/upload/advanced']">Advanced Uploader</a>.
+                Please see this <a [routerLink]="['documentation/uploadLibrary']">help</a> page for more information on how to use it.
+              </p>
+            </div>
+          </div>
+          <hr/>
             <div class="news-cell">
-              <span class="news-title"><h4>MoNA Upgraded to Angular 10</h4></span>
+              <span class="news-title"><h4>Angular 10 Upgrade</h4></span>
               <div class="news-date">October 31st, 2021</div>
               <div class="content">
+                <p>
                 MoNA has undergone a technological update to use the Angular 10 framework.
-                Included in the update is an overhaul of the Advanced Uploader system to handle
-                large file uploads as well as a straight through processing system for anything
-                over 10 MB. Various bugfixes have been included to help improve usability for
+                Various bugfixes have been included to help improve usability for
                 our users. We will continue working to improve MoNA with new features and
                 bugfixes. Checkout the <a href="https://wcmc.myjetbrains.com/youtrack/issues?q=mona">YouTrack</a>
-                page for updates on what we are working on!
+                page for more up to date information.
+                </p>
               </div>
             </div>
             <hr />
-
-            <div class="news-cell">
-                <span class="news-title"><h4>Fiehn HILIC Library</h4></span>
-                <div class="news-date">May 10, 2018</div>
-                <div class="content">
-                    The Fiehn Lab HILIC MS/MS and retention time library has been uploaded, consisting of
-                    over 1,100 standards acquired on both Q Exactive and TripleTOF.
-                </div>
-            </div>
-            <hr />
-
-            <div class="news-cell">
-                <span class="news-title"><h4>MSP Exports Updated</h4></span>
-                <div class="news-date">August 31, 2017</div>
-                <div class="content">
-                    The MSP exports on the <a [routerLink]="['/downloads']">downloads</a> page have been
-                    restructured to include as much metadata as possible while remaining fully compliant with
-                    NIST MS Search format, and is now compatible with
-                    <a href="http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/index.html">MS-DIAL v2.70</a>.
-                </div>
-            </div>
         </div>
 
         <div class="col-md-6 float-right">
-            <h3>Submitter High Scores</h3>
+            <h3 class="font-weight-bold">Submitter High Scores</h3>
 
             <spectra-top-scores-for-users limit="10">Please wait while we load the data for you...</spectra-top-scores-for-users>
         </div>
@@ -78,7 +69,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <h3>Top Rated Spectral Records</h3>
+            <h3 class="font-weight-bold">Top Rated Spectral Records</h3>
             <br />
 
             <ngb-carousel id="carousel-override" [interval]="7000" [showNavigationArrows]="false" [showNavigationIndicators]="true">

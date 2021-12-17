@@ -3,7 +3,9 @@
  */
 import {Spectrum} from '../../services/persistence/spectrum.resource';
 import {NGXLogger} from 'ngx-logger';
-import {Component, OnInit} from '@angular/core';
+import {NgcCookieConsentService} from "ngx-cookieconsent";
+import {Subscription} from "rxjs";
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
 import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortawesome/free-solid-svg-icons';
 
@@ -11,17 +13,25 @@ import {faSearch, faChartBar, faExclamationTriangle, faSpinner} from '@fortaweso
     selector: 'main',
     templateUrl: '../../views/main.html'
 })
-export class MainComponent implements OnInit{
+export class MainComponent implements OnInit, OnDestroy{
+    private popupOpenSubscription!: Subscription;
     showcaseSpectraIds;
     showcaseSpectra;
+    totalCount;
     faSearch = faSearch;
     faChartBar = faChartBar;
     faExclamationTriangle = faExclamationTriangle;
     faSpinner = faSpinner;
 
-    constructor( public spectrum: Spectrum,  public logger: NGXLogger) {}
+    constructor( public spectrum: Spectrum,  public logger: NGXLogger, private ccService: NgcCookieConsentService) {
+      this.totalCount = 0;
+    }
 
     ngOnInit() {
+      this.calculateResultCount();
+        this.popupOpenSubscription = this.ccService.popupOpen$.subscribe(() => {
+
+        });
         this.showcaseSpectraIds = ['BSU00002', 'AU101801', 'UT001119'];
         this.showcaseSpectra = [];
 
@@ -36,5 +46,17 @@ export class MainComponent implements OnInit{
                 }
             );
         });
+    }
+
+    ngOnDestroy() {
+      this.popupOpenSubscription.unsubscribe();
+    }
+
+    calculateResultCount() {
+      this.spectrum.searchSpectraCount({
+        endpoint: 'count'
+      }).pipe(first()).subscribe((res: any) => {
+        this.totalCount = res.count;
+      });
     }
 }

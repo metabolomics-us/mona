@@ -13,6 +13,7 @@ import {NGXLogger} from 'ngx-logger';
 import {ToasterConfig, ToasterService} from 'angular2-toaster';
 import {GoogleAnalyticsService} from 'ngx-google-analytics';
 import {AuthenticationService} from '../../services/authentication.service';
+import {FeedbackCacheService} from "../../services/feedback/feedback-cache.service";
 import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 import {first} from 'rxjs/operators';
@@ -58,7 +59,7 @@ export class SpectraBrowserComponent implements OnInit{
     constructor(public spectrum: Spectrum, public spectraQueryBuilderService: SpectraQueryBuilderService,  public location: Location,
                 public spectrumCache: SpectrumCacheService,  public metadata: Metadata,  public cookie: CookieMain,
                 public logger: NGXLogger,  public toaster: ToasterService,  public $gaProvider: GoogleAnalyticsService,
-                public route: ActivatedRoute,  public router: Router,
+                public route: ActivatedRoute,  public router: Router, public feedbackCache: FeedbackCacheService,
                 public authenticationService: AuthenticationService, public activatedRoute: ActivatedRoute) {
     }
 
@@ -483,5 +484,11 @@ export class SpectraBrowserComponent implements OnInit{
       } else {
         return false;
       }
+    }
+
+    getFeedback(id): any {
+      this.feedbackCache.resolveFeedback(id).pipe(first()).subscribe((res) => {
+        return res;
+      });
     }
 }
